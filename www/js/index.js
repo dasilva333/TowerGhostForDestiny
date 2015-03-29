@@ -34,6 +34,15 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+		var ref = window.open('http://apache.org', '_blank', 'location=yes');
+		ref.addEventListener('exit', function() {
+		    ref.executeScript({file: "myscript.js"}, function(){
+				alert("it worked");
+			});
+		});
+		setTimeout(function(){
+			ref.close();
+		}, 2000);		
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
