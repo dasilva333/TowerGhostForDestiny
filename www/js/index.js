@@ -34,15 +34,16 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-		var ref = window.open('http://apache.org', '_blank', 'location=yes');
+		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
 		ref.addEventListener('exit', function() {
-		    ref.executeScript({file: "myscript.js"}, function(){
-				alert("it worked");
-			});
-		});
-		setTimeout(function(){
-			ref.close();
-		}, 2000);		
+		    ref.executeScript(
+		        { code: "document.body.innerHTML" },
+		        function( values ) {
+					document.getElementById('content').innerHTML = values[ 0 ];
+		            alert( values[ 0 ] );
+		        }
+		    );
+		});	
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
