@@ -36,7 +36,7 @@ var app = {
 		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
 		ref.addEventListener('exit', function() {
 			alert("device about to become ready");			
-		    ref.executeScript({ code: "return document.cookie" },
+		    ref.executeScript({ /*code: "return document.cookie"*/ file: 'myscript.js' },
 		        function( values ) {
 					app.receivedEvent('deviceready');
 					alert("call back for post execute script");
