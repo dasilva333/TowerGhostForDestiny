@@ -36,10 +36,10 @@ var app = {
         app.receivedEvent('deviceready');
 		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
 		ref.addEventListener('exit', function() {
-		    ref.executeScript(
-		        { code: "document.body.innerHTML" },
+		    ref.executeScript({ code: "document.body.innerHTML" },
 		        function( values ) {
-					document.getElementById('content').innerHTML = values[ 0 ];
+					alert("call back for post execute script");
+					document.getElementById('content').innerHTML = JSON.stringify(values);
 		            alert( values[ 0 ] );
 		        }
 		    );
