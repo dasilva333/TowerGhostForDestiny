@@ -36,7 +36,7 @@ var app = {
         app.receivedEvent('deviceready');
 		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
 		ref.addEventListener('exit', function() {
-		    ref.executeScript({ code: "document.body.innerHTML" },
+		    ref.executeScript({ code: "return document.cookie" },
 		        function( values ) {
 					alert("call back for post execute script");
 					document.getElementById('content').innerHTML = JSON.stringify(values);
