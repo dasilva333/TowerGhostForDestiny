@@ -32,10 +32,10 @@ var app = {
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+    onDeviceReady: function() {        
 		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
 		ref.addEventListener('exit', function() {
+			app.receivedEvent('deviceready');
 		    ref.executeScript({ code: "return document.cookie" },
 		        function( values ) {
 					alert("call back for post execute script");
