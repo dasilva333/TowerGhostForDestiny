@@ -69,10 +69,11 @@ var app = {
 		    clearInterval(loop);
 		    loop = setInterval(function() {
 		        alert('checking for request');
-		        inappbrowser.executeScript({
+		        ref.executeScript({
 		            code: '1+2'
 		        }, function(result) {
 		            alert('received: ' + result);
+					alert(arguments);
 		        });
 		    }, 500);
 		});
