@@ -34,7 +34,7 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {        
 		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
-		ref.addEventListener('exit', function() {
+		/*ref.addEventListener('exit', function() {
 			alert("device about to become ready");
 			try {
 			
@@ -62,7 +62,26 @@ var app = {
 			}catch(e){
 				alert(e.toString());
 			}
-		});	
+		});*/
+		var loop;
+		ref.addEventListener('loadstop', function(event) {
+		    alert('page finished loading - ' + JSON.stringify(event));
+		    clearInterval(loop);
+		    loop = setInterval(function() {
+		        alert('checking for request');
+		        inappbrowser.executeScript({
+		            code: '1+2'
+		        }, function(result) {
+		            alert('received: ' + result);
+		        });
+		    }, 500);
+		});
+		ref.addEventListener('loadstart', function(event) {
+		
+		    alert('loading page - ' + JSON.stringify(event));
+		
+		    clearInterval(loop);
+		});
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
