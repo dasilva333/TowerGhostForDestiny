@@ -51,13 +51,11 @@ function bungie(cookieString) {
   }
 
   function _request(opts) {
-  	console.log("request");
   	var r = new XMLHttpRequest();
 	    r.open(opts.method, url + "Platform" + opts.route, true);
 	    r.setRequestHeader('X-API-Key', apikey);
 	    r.onload = function() {
 		  var response = this.response;
-		  console.log("response " + response);
 		  try {
 		  	response = JSON.parse(this.response);
 		  }catch(e){
@@ -75,7 +73,6 @@ function bungie(cookieString) {
 	    r.onerror = function() { opts.complete({error: 'connection error'}); };
 	
 		token = readCookie('bungled');
-		console.log("using token " + token);
       if(token != "") {
         r.withCredentials = true;
         r.setRequestHeader('x-csrf', token);
