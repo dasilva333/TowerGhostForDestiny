@@ -1,33 +1,5 @@
-var isChrome = (typeof chrome != "undefined");
-if (isChrome){
-	chrome.browserAction.onClicked.addListener(function(tab) {
-		var optionsUrl = chrome.extension.getURL('window.html');
-		chrome.tabs.query({url: optionsUrl}, function(tabs) {
-		    if (tabs.length) {
-		        chrome.tabs.update(tabs[0].id, {active: true});
-		    } else {
-		        chrome.tabs.create({url: optionsUrl});
-		    }
-		});
-	});
-}
+var isChrome = true;
 
-
-/* this will be the drag & drop functionality
-//connect items with observableArrays
-ko.bindingHandlers.sortableList = {
-	init: function (element, valueAccessor) {
-		var list = valueAccessor();
-		
-		$(element).sortable({
-			update: function (event, ui) {
-				console.log(arguments);				
-				console.log(list);
-			}
-		});
-	}
-};
-*/
 
 var dialog = (function(){
 	var self = this;
@@ -764,22 +736,6 @@ var app = new (function() {
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);
-		if (isChrome){
-			chrome.storage.sync.get("autoRefresh", function(result){
-				if ("autoRefresh" in result){
-					_doRefresh(result.autoRefresh);
-				}
-				self.refreshHandler();
-			});
-			chrome.storage.sync.get('loadouts', function(result) {
-			  if (result.loadouts){
-			  	var loadouts = JSON.parse(result.loadouts);
-				_.each(loadouts, function(loadout){				
-					self.loadouts.push(new Loadout(loadout));
-				});
-			  }
-		    });		
-		}
 		var loop, cookie;
 		var ref = window.open('https://www.bungie.net/en/User/SignIn/Wlid', '_blank', 'location=yes');		
 		ref.addEventListener('loadstop', function(event) {
