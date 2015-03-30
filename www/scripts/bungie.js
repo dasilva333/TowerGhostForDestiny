@@ -41,7 +41,7 @@ function bungie(cookieString) {
 	} 
 
   function _getCookie(name, callback) {
-	callback(readCookie(name));
+	callback(readCookie('bungled'));
   }
 
   function _getToken(callback) {
@@ -77,16 +77,22 @@ function bungie(cookieString) {
 	
 	    r.onerror = function() { opts.complete({error: 'connection error'}); };
 	
-	    _getToken(function(token) {
-			console.log("found token " + token);
-	      if(token != null && token != "") {
-	        r.withCredentials = true;
-	        r.setRequestHeader('x-csrf', token);
-	        r.send(JSON.stringify(opts.payload));
-	      } else {
-	        opts.complete({error: 'cookie not found'});
-	      }
-	    });	
+		token = readCookie('bungled');
+		console.log("found token " + token);
+      if(token != "") {
+        r.withCredentials = true;
+        r.setRequestHeader('x-csrf', token);
+		if (opts.payload){
+			r.send(JSON.stringify(opts.payload));
+		}
+        else {
+			console.log("sending wo a payload");
+			r.send();
+		}
+      } else {
+        opts.complete({error: 'cookie not found'});
+      }
+
 	}
 	else {
 		var event = document.createEvent('CustomEvent');
