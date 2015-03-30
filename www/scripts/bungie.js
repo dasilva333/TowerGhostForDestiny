@@ -1,4 +1,5 @@
 function bungie(cookieString) {
+	console.log("starting bungie with cookie " + cookieString);
   // private vars
   var domain = 'bungie.net';
   var url = 'https://www.bungie.net/';
@@ -31,6 +32,8 @@ function bungie(cookieString) {
 
   function readCookie(cname) {
 	    var name = cname + "=";
+		console.log("reading cookie " + savedCookie);
+		console.log("reading cookie " + cookieString);
 	    var ca = savedCookie.split(';');
 	    for(var i=0; i<ca.length; i++) {
 	        var c = ca[i];

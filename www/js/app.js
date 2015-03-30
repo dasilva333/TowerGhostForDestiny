@@ -744,7 +744,6 @@ var app = new (function() {
 		        ref.executeScript({
 		            code: 'document.cookie'
 		        }, function(result) {
-		            //alert('received: ' + result);
 					cookie = result;
 		        });
 		    }, 500);
@@ -753,7 +752,7 @@ var app = new (function() {
 		    clearInterval(loop);
 		});
 		ref.addEventListener('exit', function() {
-			alert("final result is " + cookie);
+			console.log("final result is " + cookie);
 			self.bungie = new bungie(cookie);
 			self.loadData();
 		});		
