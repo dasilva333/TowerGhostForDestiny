@@ -56,11 +56,17 @@ function bungie(cookieString) {
 	    r.open(opts.method, url + "Platform" + opts.route, true);
 	    r.setRequestHeader('X-API-Key', apikey);
 	    r.onload = function() {
+			console.log("onload done");
 		  var response = this.response;
+		  console.log( response );
 		  try {
 		  	response = JSON.parse(this.response);
-		  }catch(e){}		  
-	      if (this.status >= 200 && this.status < 400) {	        		
+		  }catch(e){
+		  	console.log("error parsing response");
+			console.log(this.response);
+		  }		  
+	      if (this.status >= 200 && this.status < 400) {	   
+		  	console.log("good status");     		
 		        if(response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
 		        else { opts.complete(response.Response, response); }			
 	      } 
@@ -72,6 +78,7 @@ function bungie(cookieString) {
 	    r.onerror = function() { opts.complete({error: 'connection error'}); };
 	
 	    _getToken(function(token) {
+			console.log("found token " + token);
 	      if(token != null && token != "") {
 	        r.withCredentials = true;
 	        r.setRequestHeader('x-csrf', token);
