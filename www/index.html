@@ -23,8 +23,6 @@
     <script language="JavaScript" type="text/javascript" src="js/dependencies/underscore-min.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/loadouts.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/app.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/destinydb.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/tooltips.min.js"></script>
 	<script type="text/javascript" src="cordova.js"></script>
   </head>
 
@@ -170,7 +168,7 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a href="http://www.bungie.net/en/Profile/" target="_blank">Bungie.net</a></li>
+						<li>Visit <a data-bind="click:$root.openBungieWindow" target="_blank">Bungie.net</a></li>
 						<li>Click Sign In the top right</li>
 						<li>Refresh this page</li>
 					</ol>

@@ -1,5 +1,4 @@
 function bungie(cookieString) {
-	console.log("starting bungie with cookie " + cookieString);
   // private vars
   var domain = 'bungie.net';
   var url = 'https://www.bungie.net/';
@@ -32,9 +31,7 @@ function bungie(cookieString) {
 
   function readCookie(cname) {
 	    var name = cname + "=";
-		console.log("reading cookie " + savedCookie);
-		console.log("reading cookie " + cookieString);
-	    var ca = savedCookie.split(';');
+	    var ca = savedCookie.toString().split(';');
 	    for(var i=0; i<ca.length; i++) {
 	        var c = ca[i];
 	        while (c.charAt(0)==' ') c = c.substring(1);
@@ -54,22 +51,19 @@ function bungie(cookieString) {
   }
 
   function _request(opts) {
-  	if (isChrome){
-		var r = new XMLHttpRequest();
+  	console.log("request");
+  	var r = new XMLHttpRequest();
 	    r.open(opts.method, url + "Platform" + opts.route, true);
 	    r.setRequestHeader('X-API-Key', apikey);
 	    r.onload = function() {
-			console.log("onload done");
 		  var response = this.response;
-		  console.log( response );
+		  console.log("response " + response);
 		  try {
 		  	response = JSON.parse(this.response);
 		  }catch(e){
 		  	console.log("error parsing response");
-			console.log(this.response);
 		  }		  
-	      if (this.status >= 200 && this.status < 400) {	   
-		  	console.log("good status");     		
+	      if (this.status >= 200 && this.status < 400) {	   		
 		        if(response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
 		        else { opts.complete(response.Response, response); }			
 	      } 
@@ -81,7 +75,7 @@ function bungie(cookieString) {
 	    r.onerror = function() { opts.complete({error: 'connection error'}); };
 	
 		token = readCookie('bungled');
-		console.log("found token " + token);
+		console.log("using token " + token);
       if(token != "") {
         r.withCredentials = true;
         r.setRequestHeader('x-csrf', token);
@@ -89,21 +83,12 @@ function bungie(cookieString) {
 			r.send(JSON.stringify(opts.payload));
 		}
         else {
-			console.log("sending wo a payload");
 			r.send();
 		}
       } else {
         opts.complete({error: 'cookie not found'});
       }
 
-	}
-	else {
-		var event = document.createEvent('CustomEvent');
-		opts.route = url + "Platform" + opts.route;
-		event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });
-		requests[id] = opts;
-		document.documentElement.dispatchEvent(event);	
-	}
   }
 
   // privileged methods

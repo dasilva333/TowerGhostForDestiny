@@ -659,7 +659,8 @@ var app = new (function() {
 	}
 		
 	this.loadData = function(){
-		//console.log("refreshing");
+		console.log("refreshing w " + self.bungie_cookies); 
+		self.bungie = new bungie(self.bungie_cookies); 
 		self.characters.removeAll();
 		self.bungie.user(function(user){			
 			self.activeUser(user);
@@ -732,11 +733,8 @@ var app = new (function() {
 		}
 	}
 	
-	this.init = function(){
-		self.doRefresh.subscribe(self.refreshHandler);
-		self.refreshSeconds.subscribe(self.refreshHandler);
-		self.loadoutMode.subscribe(self.refreshHandler);
-		var loop, cookie;
+	this.openBungieWindow = function(){
+		var loop, newCookie;
 		var ref = window.open('https://www.bungie.net/en/User/SignIn/Wlid', '_blank', 'location=yes');		
 		ref.addEventListener('loadstop', function(event) {
 		    clearInterval(loop);
@@ -744,18 +742,41 @@ var app = new (function() {
 		        ref.executeScript({
 		            code: 'document.cookie'
 		        }, function(result) {
-					cookie = result;
+					if (result != ""){					
+						newCookie = result;
+						clearInterval(loop);
+					}
 		        });
-		    }, 500);
+		    }, 10);
 		});
 		ref.addEventListener('loadstart', function(event) {
 		    clearInterval(loop);
 		});
 		ref.addEventListener('exit', function() {
-			console.log("final result is " + cookie);
-			self.bungie = new bungie(cookie);
+			console.log("exit event");
+			console.log("new cookie " + newCookie);
+			if (newCookie != ""){
+				self.bungie_cookies = newCookie;
+				window.localStorage.setItem("bungie_cookies", newCookie);				
+				self.loadData();
+			}
+			else {
+				alert("Credentials not found, try Signing into Bungie.net again");
+			}			
+		});
+	}
+	
+	this.init = function(){
+		self.doRefresh.subscribe(self.refreshHandler);
+		self.refreshSeconds.subscribe(self.refreshHandler);
+		self.loadoutMode.subscribe(self.refreshHandler);
+		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
+		if (_.isEmpty(self.bungie_cookies) || self.bungie_cookies == "undefined"){
+			self.openBungieWindow();
+		}
+		else {
 			self.loadData();
-		});		
+		}
 		$("form").bind("submit", false);
 		$(window).click(function(e){
 			if (e.target.className !== "itemImage") {
