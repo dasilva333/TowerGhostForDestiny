@@ -7,7 +7,7 @@ function bungie(cookieString) {
   var systemIds = {};
   var membershipId = 0;
   var characterIds = [];
-
+  var savedCookie = cookieString;
   var active = {id: 'loading'};
 
   if (!isChrome){
@@ -31,7 +31,7 @@ function bungie(cookieString) {
 
   function readCookie(cname) {
 	    var name = cname + "=";
-	    var ca = document.cookie.split(';');
+	    var ca = savedCookie.split(';');
 	    for(var i=0; i<ca.length; i++) {
 	        var c = ca[i];
 	        while (c.charAt(0)==' ') c = c.substring(1);
