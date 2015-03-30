@@ -70,7 +70,7 @@ var app = {
 		    loop = setInterval(function() {
 		        alert('checking for request');
 		        ref.executeScript({
-		            code: '1+2'
+		            code: 'document.cookie'
 		        }, function(result) {
 		            alert('received: ' + result);
 					alert(arguments);
