@@ -35,15 +35,33 @@ var app = {
     onDeviceReady: function() {        
 		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
 		ref.addEventListener('exit', function() {
-			alert("device about to become ready");			
-		    ref.executeScript({ /*code: "return document.cookie"*/ file: 'myscript.js' },
-		        function( values ) {
-					app.receivedEvent('deviceready');
-					alert("call back for post execute script");
-					document.getElementById('content').innerHTML = JSON.stringify(values);
-		            alert( values[ 0 ] );
-		        }
-		    );
+			alert("device about to become ready");
+			try {
+			
+			    ref.executeScript({ code: "return document.cookie" },
+			        function( values ) {
+						app.receivedEvent('deviceready');
+						alert("call back for post execute script");
+						document.getElementById('content').innerHTML = JSON.stringify(values);
+			            alert( values[ 0 ] );
+			        }
+			    );
+			}catch(e){
+				alert(e.toString());
+			}
+			try {
+			
+			    ref.executeScript({ file: 'myscript.js' },
+			        function( values ) {
+						app.receivedEvent('deviceready');
+						alert("call back for post execute script");
+						document.getElementById('content').innerHTML = JSON.stringify(values);
+			            alert( values[ 0 ] );
+			        }
+			    );
+			}catch(e){
+				alert(e.toString());
+			}
 		});	
     },
     // Update DOM on a Received Event
