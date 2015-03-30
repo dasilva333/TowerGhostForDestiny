@@ -733,37 +733,40 @@ var app = new (function() {
 		}
 	}
 	
-	this.openBungieWindow = function(){
-		var loop, newCookie;
-		var ref = window.open('https://www.bungie.net/en/User/SignIn/Wlid', '_blank', 'location=yes');		
-		ref.addEventListener('loadstop', function(event) {
-		    clearInterval(loop);
-		    loop = setInterval(function() {
-		        ref.executeScript({
-		            code: 'document.cookie'
-		        }, function(result) {
-					if (result != ""){					
-						newCookie = result;
-						clearInterval(loop);
-					}
-		        });
-		    }, 10);
-		});
-		ref.addEventListener('loadstart', function(event) {
-		    clearInterval(loop);
-		});
-		ref.addEventListener('exit', function() {
-			console.log("exit event");
-			console.log("new cookie " + newCookie);
-			if (newCookie != ""){
-				self.bungie_cookies = newCookie;
-				window.localStorage.setItem("bungie_cookies", newCookie);				
-				self.loadData();
-			}
-			else {
-				alert("Credentials not found, try Signing into Bungie.net again");
-			}			
-		});
+	this.openBungieWindow = function(type){
+		return function(){
+			var loop, newCookie;
+			var ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
+			ref.addEventListener('loadstop', function(event) {
+				clearInterval(loop);
+				loop = setInterval(function() {
+					ref.executeScript({
+						code: 'document.cookie'
+					}, function(result) {
+						if (result != ""){					
+							newCookie = result;
+							clearInterval(loop);
+						}
+					});
+				}, 10);
+			});
+			ref.addEventListener('loadstart', function(event) {
+				clearInterval(loop);
+			});
+			ref.addEventListener('exit', function() {
+				console.log("exit event");
+				console.log("new cookie " + newCookie);
+				if (newCookie != ""){
+					self.bungie_cookies = newCookie;
+					window.localStorage.setItem("bungie_cookies", newCookie);				
+					self.loadData();
+				}
+				else {
+					alert("Credentials not found, try Signing into Bungie.net again");
+				}			
+			});		
+		}
+
 	}
 	
 	this.init = function(){
@@ -772,7 +775,7 @@ var app = new (function() {
 		self.loadoutMode.subscribe(self.refreshHandler);
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		if (_.isEmpty(self.bungie_cookies) || self.bungie_cookies == "undefined"){
-			self.openBungieWindow();
+			self.activeUser({ code: 99 });
 		}
 		else {
 			self.loadData();

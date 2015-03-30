@@ -168,7 +168,7 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="click:$root.openBungieWindow" target="_blank">Bungie.net</a></li>
+						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid')" target="_blank">Bungie.net PSN</a> or <a data-bind="click:$root.openBungieWindow('Wlid')" target="_blank">Bungie.net Xbox</a> </li>
 						<li>Click Sign In the top right</li>
 						<li>Refresh this page</li>
 					</ol>
