@@ -15,7 +15,7 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {        
-		var ref = window.open('http://bungie.net/mobile', '_blank', 'location=yes,enableViewportScale=yes,presentationstyle=pagesheet');
+		var ref = window.open('https://www.bungie.net/en/User/SignIn/Wlid', '_blank', 'location=yes');
 		var loop, cookie;
 		ref.addEventListener('loadstop', function(event) {
 		    clearInterval(loop);
