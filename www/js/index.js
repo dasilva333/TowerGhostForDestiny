@@ -1,21 +1,4 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
+getCookie()
 var app = {
     // Application Constructor
     initialize: function() {
@@ -33,55 +16,24 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {        
-		var ref = window.open('http://bungie.net', '_blank', 'location=yes');
-		/*ref.addEventListener('exit', function() {
-			alert("device about to become ready");
-			try {
-			
-			    ref.executeScript({ code: "return document.cookie" },
-			        function( values ) {
-						app.receivedEvent('deviceready');
-						alert("call back for post execute script");
-						document.getElementById('content').innerHTML = JSON.stringify(values);
-			            alert( values[ 0 ] );
-			        }
-			    );
-			}catch(e){
-				alert(e.toString());
-			}
-			try {
-			
-			    ref.executeScript({ file: 'myscript.js' },
-			        function( values ) {
-						app.receivedEvent('deviceready');
-						alert("call back for post execute script");
-						document.getElementById('content').innerHTML = JSON.stringify(values);
-			            alert( values[ 0 ] );
-			        }
-			    );
-			}catch(e){
-				alert(e.toString());
-			}
-		});*/
-		var loop;
+		var ref = window.open('http://bungie.net/mobile', '_blank', 'location=yes');
+		var loop, cookie;
 		ref.addEventListener('loadstop', function(event) {
-		    alert('page finished loading - ' + JSON.stringify(event));
 		    clearInterval(loop);
 		    loop = setInterval(function() {
-		        alert('checking for request');
 		        ref.executeScript({
 		            code: 'document.cookie'
 		        }, function(result) {
 		            alert('received: ' + result);
-					alert(arguments);
+					cookie = result;
 		        });
 		    }, 500);
 		});
 		ref.addEventListener('loadstart', function(event) {
-		
-		    alert('loading page - ' + JSON.stringify(event));
-		
 		    clearInterval(loop);
+		});
+		ref.addEventListener('exit', function() {
+			alert("final result is " + cookie);
 		});
     },
     // Update DOM on a Received Event
