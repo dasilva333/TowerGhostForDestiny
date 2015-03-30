@@ -780,8 +780,8 @@ var app = new (function() {
 			  }
 		    });		
 		}
-		var ref = window.open('https://www.bungie.net/en/User/SignIn/Wlid', '_blank', 'location=yes');
 		var loop, cookie;
+		var ref = window.open('https://www.bungie.net/en/User/SignIn/Wlid', '_blank', 'location=yes');		
 		ref.addEventListener('loadstop', function(event) {
 		    clearInterval(loop);
 		    loop = setInterval(function() {
@@ -811,4 +811,4 @@ var app = new (function() {
 	}
 });
 
-$(document).ready(app.init);
+document.addEventListener('deviceready', app.init, false);
