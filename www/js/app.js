@@ -772,7 +772,7 @@ var app = new (function() {
 		return function(){
 			var loop, newCookie;
 			var ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
-			ref.addEventListener('loadstop', function(event) {
+			/*ref.addEventListener('loadstop', function(event) {
 				clearInterval(loop);
 				loop = setInterval(function() {
 					ref.executeScript({
@@ -785,19 +785,25 @@ var app = new (function() {
 						}
 					});
 				}, 500);
-			});
+			});*/
 			ref.addEventListener('loadstart', function(event) {
 				clearInterval(loop);
 			});
 			ref.addEventListener('exit', function() {
-				if (newCookie !== ""){
-					self.bungie_cookies = newCookie;
-					window.localStorage.setItem("bungie_cookies", newCookie);
-					self.loadData();				
-				}
-				else {
-					alert("Credentials not found, try Signing into Bungie.net again");
-				}			
+				clearInterval(loop);
+				loop = setInterval(function() {
+					ref.executeScript({
+						code: 'document.cookie'
+					}, function(result) {
+						//console.log("found result " + result);
+						if ((result || "").toString().indexOf("bungled") > -1){											
+							self.bungie_cookies = result;
+							window.localStorage.setItem("bungie_cookies", result);
+							self.loadData();		
+							clearInterval(loop);
+						}
+					});
+				}, 500); 		
 			});		
 		}
 
