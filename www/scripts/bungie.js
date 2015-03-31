@@ -1,4 +1,6 @@
 function bungie(cookieString) {
+	console.log("bungie constructed w " + cookieString);
+	
   // private vars
   var domain = 'bungie.net';
   var url = 'https://www.bungie.net/';
@@ -10,7 +12,7 @@ function bungie(cookieString) {
   var savedCookie = cookieString;
   var active = {id: 'loading'};
 
-  if (!isChrome){
+  if (!isChrome && !isMobile){
 	var _token, id = 0;
 	window.requests = {};  
 	window.addEventListener("message", function(event) {
@@ -30,6 +32,7 @@ function bungie(cookieString) {
   }
 
   function readCookie(cname) {
+  		console.log("trying to read cookie passed " + savedCookie);
 	    var name = cname + "=";
 	    var ca = savedCookie.toString().split(';');
 	    for(var i=0; i<ca.length; i++) {
@@ -37,6 +40,7 @@ function bungie(cookieString) {
 	        while (c.charAt(0)==' ') c = c.substring(1);
 	        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
 	    }
+		console.log("found no match");
 	    return "";
 	} 
 
@@ -87,6 +91,7 @@ function bungie(cookieString) {
 	    r.onerror = function() { opts.complete({error: 'connection error'}); };
 	
 	    _getToken(function(token) {
+			console.log("_getToken finished with " + token);
 	      if(token != null) {
 	        r.withCredentials = true;
 	        r.setRequestHeader('x-csrf', token);

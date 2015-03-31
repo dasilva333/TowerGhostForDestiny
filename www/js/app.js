@@ -1,5 +1,5 @@
-var isChrome = (typeof chrome != "undefined");
-var isMobile = (typeof cordova != "undefined");
+window.isChrome = (typeof chrome !== "undefined");
+window.isMobile = (/ios|iphone|ipod|ipad|android/i.test(navigator.userAgent));
 
 var dialog = (function(options){
 	var self = this;
@@ -453,6 +453,8 @@ var app = new (function() {
 		showMissing: false,
 		showUniques: false
 	};
+	this.retryCount = ko.observable(0);
+	this.loadingUser = ko.observable(false);
 	this.loadoutMode = ko.observable(false);
 	this.activeLoadout = ko.observable(new Loadout());
 	this.loadouts = ko.observableArray();
@@ -658,11 +660,19 @@ var app = new (function() {
 	}
 		
 	this.loadData = function(){
-		//console.log("refreshing w " + self.bungie_cookies); 
+		//console.log("refreshing w " + self.bungie_cookies);
+		self.loadingUser(true);
 		self.bungie = new bungie(self.bungie_cookies); 
 		self.characters.removeAll();
-		self.bungie.user(function(user){			
+		self.bungie.user(function(user){
+			console.log("user finished");
+			console.log(user);
+			self.loadingUser(false);
 			self.activeUser(user);
+			if (user.code && user.code == 99){
+				console.log("received a code 99 revalidating cookie");
+				setTimeout(function(){ self.revalidateBungieCookie(); self.retryCount(self.retryCount()++) }, 2000);
+			}
 			if (user.error){
 				return
 			}
@@ -732,6 +742,32 @@ var app = new (function() {
 		}
 	}
 	
+	
+	this.revalidateBungieCookie = function(){
+		console.log("creating hidden window");
+		var loop, ref = window.open('https://www.bungie.net', '_blank', 'location=no');
+		ref.addEventListener('loadstop', function(event) {
+			console.log("window finished loading");
+			setTimeout(function(){
+				clearInterval(loop);
+				loop = setInterval(function() {
+					ref.executeScript({
+						code: 'document.cookie'
+					}, function(result) {
+						if (result != ""){
+							clearInterval(loop);
+							console.log("got a new cookie " + result);
+							ref.close();		
+							self.bungie_cookies = result.toString();
+							window.localStorage.setItem("bungie_cookies", result.toString());
+							self.loadData();
+						}
+					});
+				}, 10);
+			}, 10000);			
+		});
+	}
+	
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop, newCookie;
@@ -742,7 +778,8 @@ var app = new (function() {
 					ref.executeScript({
 						code: 'document.cookie'
 					}, function(result) {
-						if (result != ""){					
+						console.log("found result " + result);
+						if ((result || "").toString().indexOf("bungled") > -1){											
 							newCookie = result;
 							clearInterval(loop);
 						}
@@ -753,10 +790,10 @@ var app = new (function() {
 				clearInterval(loop);
 			});
 			ref.addEventListener('exit', function() {
-				if (newCookie != ""){
+				if (newCookie !== ""){
 					self.bungie_cookies = newCookie;
-					window.localStorage.setItem("bungie_cookies", newCookie);				
-					self.loadData();
+					window.localStorage.setItem("bungie_cookies", newCookie);
+					self.loadData();				
 				}
 				else {
 					alert("Credentials not found, try Signing into Bungie.net again");
@@ -767,14 +804,19 @@ var app = new (function() {
 	}
 	
 	this.init = function(){
+		
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
-		self.loadoutMode.subscribe(self.refreshHandler);
+		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-		if (isMobile && _.isEmpty(self.bungie_cookies)){
-			self.activeUser({ code: 99 });
+		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
+		console.log(self.bungie_cookies + " app.init " + isEmptyCookie);
+		if (isMobile && isEmptyCookie){
+			console.log("code 99");
+			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
 		}	
 		else {
+			console.log("loadData");
 			setTimeout(self.loadData, isChrome ? 1 : 5000);		
 		}
 		$("form").bind("submit", false);

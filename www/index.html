@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	<script src="http://jsconsole.com/remote.js?81D7A66F-6ABC-4501-9618-8923291E458E"></script>
 	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/itemdef.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/lzstring.min.js"></script>
@@ -164,7 +165,7 @@
 		</div>		
 		<div data-bind="with: $root.activeUser()" style="margin-top:20px;">
 			<div class="alert alert-danger" data-bind="visible: typeof error !== 'undefined'" style="display:none;">
-				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
+				<strong>Error: (retrying to sign in <span data-bind="text: $root.retryCount"></span>)</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
 						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid')" target="_blank">Bungie.net PSN</a> or <a data-bind="click:$root.openBungieWindow('Wlid')" target="_blank">Bungie.net Xbox</a> </li>
@@ -173,6 +174,9 @@
 					</ol>
 				</div>
 			</div>
+		</div>		
+		<div class="progress progress-striped active" style="display:none;" data-bind="visible: loadingUser">
+			<div class="progress-bar progress-bar-info" style="width: 100%"></div>
 		</div>
 		<div data-bind="with: activeItem" id="move-popup">
 			<div class="move-popup">
