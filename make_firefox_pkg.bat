@@ -1,4 +1,4 @@
-## TO download SDK: https://ftp.mozilla.org/pub/mozilla.org/labs/jetpack/jetpack-sdk-latest.zip
+:: TO download SDK: https://ftp.mozilla.org/pub/mozilla.org/labs/jetpack/jetpack-sdk-latest.zip
 call ".\addon-sdk-1.17\bin\activate"
 cd www
 mkdir temp
