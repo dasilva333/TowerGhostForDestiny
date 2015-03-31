@@ -781,7 +781,7 @@ var app = new (function() {
 						//console.log("found result " + result);
 						if ((result || "").toString().indexOf("bungled") > -1){											
 							newCookie = result;
-							//clearInterval(loop);
+							clearInterval(loop);
 						}
 					});
 				}, 500);
