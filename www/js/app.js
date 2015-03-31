@@ -669,10 +669,10 @@ var app = new (function() {
 			console.log(user);
 			self.loadingUser(false);
 			self.activeUser(user);
-			if (user.code && user.code == 99){
+			/*if (user.code && user.code == 99){
 				console.log("received a code 99 revalidating cookie");
 				setTimeout(function(){ self.revalidateBungieCookie(); self.retryCount(self.retryCount()++) }, 2000);
-			}
+			}*/
 			if (user.error){
 				return
 			}
