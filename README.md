@@ -3,7 +3,7 @@
 ##Current Features Supported
 
 -    Equipping items & transferring items across characters
--    Filter by Perk Name, Description, Gun Name
+-    Filter by Perk Name, Description, Gun Name [Screenshot](http://i.imgur.com/qGNNduy.png)
 -    Filter by gun progress (Maxed (gold border), Full XP, Missing XP)
 -    Filter by burn (Kinetic, Arc, Solar, Void)
 -    Filter by weapon type (Scout, Auto, Hand Cannon, etc...)
