@@ -784,7 +784,7 @@ var app = new (function() {
 							clearInterval(loop);
 						}
 					});
-				}, 10);
+				}, 500);
 			});
 			ref.addEventListener('loadstart', function(event) {
 				clearInterval(loop);
