@@ -778,10 +778,10 @@ var app = new (function() {
 					ref.executeScript({
 						code: 'document.cookie'
 					}, function(result) {
-						console.log("found result " + result);
+						//console.log("found result " + result);
 						if ((result || "").toString().indexOf("bungled") > -1){											
 							newCookie = result;
-							clearInterval(loop);
+							//clearInterval(loop);
 						}
 					});
 				}, 500);
