@@ -52,14 +52,14 @@ Deploying this via SD card doesn't work, when you try to tap on the XAP it just 
 -    Go to Extensions
 -    Tick Developer Mode
 -    Load Unpacked Extensions
--    Point it to the directory where you unzipped the destiny_item_viewer.zip file
+-    Point it to the directory where you unzipped the [destiny_item_viewer.zip](https://github.com/dasilva333/DIM/blob/master/destiny_item_viewer.zip?raw=true) file
 
 ##Manual Firefox Install Instructions
 
 -    Go to Tools
 -    Go to Add-ons
 -    Find the button that says "Install addon from file"
--    Point it to the destiny_item_viewer.xpi file
+-    Point it to the (destiny_item_viewer.xpi)[https://github.com/dasilva333/DIM/blob/master/destiny_item_viewer.xpi?raw=true] file
 
 ##Store Install Instructions
 
