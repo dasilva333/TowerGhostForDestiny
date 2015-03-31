@@ -7,13 +7,23 @@
 -    Filter by gun progress (Maxed (gold border), Full XP, Missing XP)
 -    Filter by burn (Kinetic, Arc, Solar, Void)
 -    Filter by weapon type (Scout, Auto, Hand Cannon, etc...)
--    Filter by Tier (Exotic, Legendary, Rare, etc...)
--    Auto Refresh Toggle, Custom set seconds
--    DestinyDB tooltips now display personal perks attached to your weapon
--    Personal primary stats in transfer popup
--    DestinyExotics integration and more
--    Inline stat values on the item icons
+-    Filter by Tier (Exotic, Legendary, Rare, etc...) [Screenshot](http://i.imgur.com/BZkdB12.png)
+-    Auto Refresh Toggle, Custom set seconds [Screenshot](http://i.imgur.com/Tk6pwcr.png)
+-    DestinyDB tooltips now display personal perks attached to your weapon [Screenshot)[http://i.imgur.com/UH8AvGq.png]
+-    Personal primary stats in transfer popup [Screenshot](http://i.imgur.com/hjLrO9i.png)
+-    DestinyExotics integration and more [Screenshot](http://i.imgur.com/jl3j1ZM.png)
+-    Inline stat values on the item icons [Screenshot](http://i.imgur.com/gMpnHIh.png)
     
+Screenshot Running on IOS
+
+[Weapons View](http://i.imgur.com/Sbe7qt2.png)
+
+[Login Prompt](http://i.imgur.com/xzrpKxV.png)
+
+[Menu Toolbar](http://i.imgur.com/T9xI80E.png)
+
+[Transfer Popup](http://i.imgur.com/odUJb7s.png)
+
 
 ##Features Incoming
 -    Drag & Drop Items
@@ -59,7 +69,7 @@ Deploying this via SD card doesn't work, when you try to tap on the XAP it just 
 -    Go to Tools
 -    Go to Add-ons
 -    Find the button that says "Install addon from file"
--    Point it to the (destiny_item_viewer.xpi)[https://github.com/dasilva333/DIM/blob/master/destiny_item_viewer.xpi?raw=true] file
+-    Point it to the [destiny_item_viewer.xpi](https://github.com/dasilva333/DIM/blob/master/destiny_item_viewer.xpi?raw=true) file
 
 ##Store Install Instructions
 
