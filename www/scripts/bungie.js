@@ -4,7 +4,7 @@ function bungie(cookieString) {
   // private vars
   var domain = 'bungie.net';
   var url = 'https://www.bungie.net/';
-  var apikey = '57c5ff5864634503a0340ffdfbeb20c0';
+  var apikey = '5cae9cdee67a42848025223b4e61f929'; //this one is linked to dasilva333
 
   var systemIds = {};
   var membershipId = 0;

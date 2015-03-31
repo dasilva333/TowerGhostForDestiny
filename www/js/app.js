@@ -451,7 +451,8 @@ var app = new (function() {
 		shareView: false,
 		shareUrl: "",
 		showMissing: false,
-		showUniques: false
+		showUniques: false,
+		tooltipsEnabled: isMobile ? false : true
 	};
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
@@ -459,16 +460,25 @@ var app = new (function() {
 	this.activeLoadout = ko.observable(new Loadout());
 	this.loadouts = ko.observableArray();
 	this.searchKeyword = ko.observable(defaults.searchKeyword);
-	var _doRefresh = ko.observable(defaults.doRefresh);
+	var _doRefresh = ko.observable(window.localStorage.getItem("autoRefresh") || defaults.doRefresh);
+	var _tooltipsEnabled = ko.observable(window.localStorage.getItem("tooltipsEnabled") || defaults.tooltipsEnabled);
 	this.doRefresh = ko.computed({
 		read: function(){
 			return _doRefresh();
 		},
 		write: function(newValue){
-			chrome.storage.sync.set({
-			  'autoRefresh': newValue
-			}, function() { });
+			window.localStorage.setItem("autoRefresh", newValue);
 			_doRefresh(newValue);
+		}
+	});
+	this.tooltipsEnabled = ko.computed({
+		read: function(){
+			return _tooltipsEnabled();
+		},
+		write: function(newValue){
+			$ZamTooltips.isEnabled = newValue;
+			window.localStorage.setItem("tooltipsEnabled", newValue);
+			_tooltipsEnabled(newValue);
 		}
 	});
 	this.refreshSeconds = ko.observable(defaults.refreshSeconds);
@@ -549,6 +559,12 @@ var app = new (function() {
 		}		
 		callback($content.html());
 	}
+	this.toggleRefresh = function(){
+		self.doRefresh(!self.doRefresh());
+	}	
+	this.toggleDestinyTooltips = function(){
+		self.tooltipsEnabled(!self.tooltipsEnabled());		
+	}
 	this.toggleShareView = function(){
 		self.shareView(!self.shareView());
 	}
@@ -594,9 +610,7 @@ var app = new (function() {
 	this.setProgressFilter = function(model, event){
 		self.progressFilter($(event.target).parent().attr("value"));
 	}
-	this.toggleRefresh = function(){
-		self.doRefresh(!self.doRefresh());
-	}
+
 	var processItem = function(profile, itemDefs, perkDefs, talentPerks){	
 		return function(item){
 			var info = itemDefs[item.itemHash];
@@ -666,8 +680,8 @@ var app = new (function() {
 		self.characters.removeAll();
 		self.bungie.user(function(user){
 			console.log("user finished");
-			console.log(user);
-			self.loadingUser(false);
+			//console.log(user);
+			
 			self.activeUser(user);
 			/*if (user.code && user.code == 99){
 				console.log("received a code 99 revalidating cookie");
@@ -679,6 +693,7 @@ var app = new (function() {
 			self.bungie.search(function(e){
 				var avatars = e.data.characters;
 				self.bungie.vault(function(results){
+					self.loadingUser(false);
 					var buckets = results.data.buckets;
 					var profile = new Profile({ race: "", order: 0, gender: "Tower",  classType: "Vault", id: "Vault", level: "", icon: "", background: "" });
 					window.r = results.definitions;
@@ -816,7 +831,7 @@ var app = new (function() {
 		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		console.log(self.bungie_cookies + " app.init " + isEmptyCookie);
+		window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: self.renderCallback, isEnabled: self.tooltipsEnabled() };
 		if (isMobile && isEmptyCookie){
 			console.log("code 99");
 			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
