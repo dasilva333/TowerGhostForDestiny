@@ -35,7 +35,7 @@
 -    DestinyExotics doesn't recognize certain weapons you might have
 -    Mobile app has problems logging in
 -    Visit the [Issues](https://github.com/dasilva333/DIM/issues) for more information
-  
+-    Layout issues in big screen mobile devices  
 
 ##Troubleshooting 
 Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials [Screenshot](http://i.imgur.com/xzrpKxV.png) if you don't see that message then go to Settings > Log in XBL/PSN and click Done when complete. After clicking Done the items should load automatically give it a few seconds to load, if the page doesn't load after sign in then try Settings > Refresh Items. Good luck guys and remember this is still a beta build.
