@@ -838,7 +838,6 @@ var app = new (function() {
 		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: self.renderCallback, isEnabled: self.tooltipsEnabled() };
 		console.log(isMobile + " isEmptyCookie " + isEmptyCookie);
 		if (isMobile && isEmptyCookie){
 			console.log("code 99");
@@ -857,6 +856,8 @@ var app = new (function() {
 		ko.applyBindings(self);
 	}
 });
+
+window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: self.renderCallback, isEnabled: app.tooltipsEnabled() };
 
 if (isMobile){
 	document.addEventListener('deviceready', app.init, false);

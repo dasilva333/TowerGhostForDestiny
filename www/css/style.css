@@ -138,7 +138,7 @@ body {
 .attkIcon > div { 
 	position: absolute; 
 	bottom: 1px; 
-	right: 6px; 
+	left: 0px; 
 	color: #333;
 	font-weight: bold;
 	font-size: 0.9em; 
@@ -212,4 +212,3 @@ body {
     padding-right:0;
     padding-left:0;
 }
-
