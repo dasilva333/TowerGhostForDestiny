@@ -25,21 +25,21 @@
   <body>
 		<script type="text/html" id="sections-template">
 			<div class="title"><span data-bind="text: list.split('.')[1]"></span> (<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length"></span>)</div>
-			<div class="row">
+			<div class="row no-gutter">
 				<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 itemBucket">
 					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
 						<span class="col-xs-4 col-sm-4 col-md-4 col-lg-4" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 							<a data-bind="attr:{href:item.href, id:item._id}">
 								<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 							</a>
-							<div class="attkIcon" data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div>
+							<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 						</span>
 					</div>
 				</div>
 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(list.split('.')[0], list.split('.')[1])">
 					<span data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a data-bind="attr:{href:href, id:_id}"><img class="itemImage" data-bind="attr: { src: icon }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
-						<div class="attkIcon" data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div>
+						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
 				</div>				
 			</div>	
