@@ -795,7 +795,9 @@ var app = new (function() {
 					}, function(result) {
 						console.log("found result in loadstop " + result);
 						if ((result || "").toString().indexOf("bungled") > -1){											
-							newCookie = result;
+							self.bungie_cookies = result;
+							window.localStorage.setItem("bungie_cookies", result);
+							self.loadData();	
 							clearInterval(loop);
 						}
 					});
@@ -806,6 +808,8 @@ var app = new (function() {
 			});
 			ref.addEventListener('exit', function() {
 				clearInterval(loop);
+				if (self.characters().length == 0)
+					self.loadData();
 				loop = setInterval(function() {
 					ref.executeScript({
 						code: 'document.cookie'
