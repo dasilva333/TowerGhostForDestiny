@@ -787,20 +787,20 @@ var app = new (function() {
 		return function(){
 			var loop, newCookie;
 			var ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
-			/*ref.addEventListener('loadstop', function(event) {
+			ref.addEventListener('loadstop', function(event) {
 				clearInterval(loop);
 				loop = setInterval(function() {
 					ref.executeScript({
 						code: 'document.cookie'
 					}, function(result) {
-						//console.log("found result " + result);
+						console.log("found result in loadstop " + result);
 						if ((result || "").toString().indexOf("bungled") > -1){											
 							newCookie = result;
 							clearInterval(loop);
 						}
 					});
 				}, 500);
-			});*/
+			});
 			ref.addEventListener('loadstart', function(event) {
 				clearInterval(loop);
 			});
@@ -810,7 +810,7 @@ var app = new (function() {
 					ref.executeScript({
 						code: 'document.cookie'
 					}, function(result) {
-						console.log("found result " + result);
+						console.log("found result in exit " + result);
 						if ((result || "").toString().indexOf("bungled") > -1){											
 							self.bungie_cookies = result;
 							window.localStorage.setItem("bungie_cookies", result);
