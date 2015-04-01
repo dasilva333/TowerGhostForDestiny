@@ -832,6 +832,7 @@ var app = new (function() {
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
 		window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: self.renderCallback, isEnabled: self.tooltipsEnabled() };
+		console.log(isMobile + " isEmptyCookie " + isEmptyCookie);
 		if (isMobile && isEmptyCookie){
 			console.log("code 99");
 			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
