@@ -688,6 +688,7 @@ var app = new (function() {
 				setTimeout(function(){ self.revalidateBungieCookie(); self.retryCount(self.retryCount()++) }, 2000);
 			}*/
 			if (user.error){
+				self.loadingUser(false);
 				return
 			}
 			self.bungie.search(function(e){
