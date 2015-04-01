@@ -1,5 +1,5 @@
 window.isChrome = (typeof chrome !== "undefined");
-window.isMobile = (/ios|iphone|ipod|ipad|android/i.test(navigator.userAgent));
+window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
 
 var dialog = (function(options){
 	var self = this;
