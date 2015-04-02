@@ -790,7 +790,7 @@ var app = new (function() {
 		return function(){
 			var loop, newCookie;
 			var ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
-			ref.addEventListener('loadstop', function(event) {
+			/*ref.addEventListener('loadstop', function(event) {
 				clearInterval(loop);
 				loop = setInterval(function() {
 					ref.executeScript({
@@ -805,7 +805,7 @@ var app = new (function() {
 						}
 					});
 				}, 500);
-			});
+			});*/
 			ref.addEventListener('loadstart', function(event) {
 				clearInterval(loop);
 			});
