@@ -653,7 +653,7 @@ var app = new (function() {
 				profile.armor.push( new Item(itemObject,profile,'armor') );
 			}
 			else if (info.bucketTypeHash in DestinyBucketTypes){
-				if (itemObject.typeName == "Emblem"){
+				if (itemObject.typeName && itemObject.typeName == "Emblem"){
 					itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
 				}
 				if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables"){
