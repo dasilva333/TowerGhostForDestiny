@@ -629,7 +629,7 @@ var app = new (function() {
 				characterId: profile.id,
 				damageType: item.damageType,
 				damageTypeName: DestinyDamageTypes[item.damageType],
-				description: info.itemName, 
+				description: ("itemName" in info || ""), 
 				bucketType: DestinyBucketTypes[info.bucketTypeHash],
 				type: info.itemSubType, //12 (Sniper)
 				typeName: info.itemTypeName, //Sniper Rifle
@@ -638,6 +638,11 @@ var app = new (function() {
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete
 			};
+			if (!("itemName" in info)){
+				console.log("found item wo a description");
+				console.log(info);
+				console.log(itemObject);
+			}
 			if (item.primaryStat){
 				itemObject.primaryStat = item.primaryStat.value;
 			}	
