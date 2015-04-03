@@ -2,7 +2,7 @@
   "name": "destiny_item_viewer",
   "title": "Destiny Item Viewer",
   "id": "jid1-Lecsmv0nvgnC2g",
-  "description": "Robust interface to view weapons in Destiny.",
+  "description": "This app allows you to transfer items between profiles, with various filters.",
   "author": "Richard Pinedo",
   "license": "MPL 2.0",
   "version": "1.3.8",

@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Destiny Item Viewer",
   "version": "1.3.8",
-  "description": "Robust interface to view weapons in Destiny.",
+  "description": "This app allows you to transfer items between profiles, with various filters.",
   "icons": {
     "16": "www/assets/icon16.png",
     "48": "www/assets/icon48.png",
