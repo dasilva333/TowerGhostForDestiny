@@ -231,11 +231,16 @@
 							<div class="title"><strong>Styling</strong></div>
 							<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['items.Shader','items.Emblem','items.Ship','items.Sparrow'], as: 'list' }">
 							</div>
-						  </div>
-						  
+						  </div>						  
 						</div>
 					</div>
 				</div>
+				<!-- ko if: $index() == 1 -->
+					<div class="clearfix visibile-sm-block hidden-md hidden-lg"></div>
+				<!--/ko  -->
+				<!-- ko if: $index() == 2 -->
+					<div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
+				<!--/ko  -->
 			</div>
 		</div>
 		<div id="loadout-create" data-bind="visible: loadoutMode" style="display:none;">
