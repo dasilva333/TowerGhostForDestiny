@@ -50,7 +50,7 @@ var Loadout = function(model){
 		}
 		app.loadouts.push( self );
 		var loadouts = ko.toJSON(app.loadouts());
-		chrome.storage.sync.set({ loadouts: loadouts }, function(){ /*console.log("done saving");*/ });
+		window.localStorage.setItem("loadouts", loadouts);
 	}
 	this.items = ko.computed(function(){
 		var _items = _.map(self.ids(), function(instanceId){

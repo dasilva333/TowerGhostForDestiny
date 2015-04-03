@@ -254,7 +254,7 @@
 		  			<!--/ko  -->
 					<p id="loadout-error" data-bind="visible: items().length == 0">no items in loadout, click items to add.</p>
 				</div>
-				<div id="loadout-contents" class="row no-gutter" data-bind="foreach: { data: items, as: 'item' }">
+				<div id="loadout-contents" class="row" data-bind="foreach: { data: items, as: 'item' }">
 					<span class="item col-xs-1 col-sm-1 col-md-1 col-lg-1" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a data-bind="attr:{href:item.href, id:item._id}, click:">
 							<img class="itemImage" style="height:75px;" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">

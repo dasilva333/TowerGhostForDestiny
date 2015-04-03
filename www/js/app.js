@@ -510,6 +510,7 @@ var app = new (function() {
 	
 	this.createLoadout = function(){
 		self.loadoutMode(true);
+		$("body").css("padding-bottom","260px")
 		self.activeLoadout(new Loadout());
 	}
 	this.cancelLoadout = function(){
@@ -636,7 +637,7 @@ var app = new (function() {
 				characterId: profile.id,
 				damageType: item.damageType,
 				damageTypeName: DestinyDamageTypes[item.damageType],
-				description: ("itemName" in info || ""), 
+				description: info.itemName, 
 				bucketType: DestinyBucketTypes[info.bucketTypeHash],
 				type: info.itemSubType, //12 (Sniper)
 				typeName: info.itemTypeName, //Sniper Rifle
@@ -859,7 +860,15 @@ var app = new (function() {
 		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		console.log(isMobile + " isEmptyCookie " + isEmptyCookie);
+		var _loadouts = window.localStorage.getItem("loadouts");
+		if (!_.isEmpty(_loadouts)){
+			self.loadouts(
+				_.map(JSON.parse(_loadouts), function(loadout){
+					return new Loadout(loadout);
+				})
+			);
+		}		
+		
 		if (isMobile && isEmptyCookie){
 			console.log("code 99");
 			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
