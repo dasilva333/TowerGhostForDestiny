@@ -1,5 +1,5 @@
 function bungie(cookieString) {
-	console.log("bungie constructed w " + cookieString);
+	//console.log("bungie constructed w " + cookieString);
 	
   // private vars
   var domain = 'bungie.net';
@@ -16,9 +16,21 @@ function bungie(cookieString) {
 	var _token, id = 0;
 	window.requests = {};  
 	window.addEventListener("message", function(event) {
-		var reply = event.data;
-		var response = JSON.parse(reply.response);
-		requests[reply.id].complete(response.Response, response);
+		//console.log("received a firefox response");
+		try {
+			var reply = event.data;
+			//console.log(reply);
+			var response = JSON.parse(reply.response);
+			var opts = requests[reply.id];			
+			if(response.ErrorCode === 36){ 
+				//console.log("throttle retrying"); 
+				opts.route = opts.route.replace(url + "Platform",''); 
+				setTimeout(function () { requests[id+1] = opts; _request(opts); }, 1000); 
+			}
+	        else { opts.complete(response.Response, response); }			
+		}catch(e){
+			console.log(e);
+		}		
 	}, false);  
   }
 
@@ -32,7 +44,7 @@ function bungie(cookieString) {
   }
 
   function readCookie(cname) {
-  		console.log("trying to read cookie passed " + savedCookie);
+  		//console.log("trying to read cookie passed " + savedCookie);
 	    var name = cname + "=";
 	    var ca = savedCookie.toString().split(';');
 	    for(var i=0; i<ca.length; i++) {
@@ -40,7 +52,7 @@ function bungie(cookieString) {
 	        while (c.charAt(0)==' ') c = c.substring(1);
 	        if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
 	    }
-		console.log("found no match");
+		//console.log("found no match");
 	    return "";
 	} 
 
@@ -70,6 +82,7 @@ function bungie(cookieString) {
 
   function _request(opts) {
   	//This is for Mobile platform/Chrome
+	//console.log("received a _request");
   	if (isChrome || isMobile){
 		var r = new XMLHttpRequest();
 	    r.open(opts.method, url + "Platform" + opts.route, true);
@@ -91,7 +104,7 @@ function bungie(cookieString) {
 	    r.onerror = function() { opts.complete({error: 'connection error'}); };
 	
 	    _getToken(function(token) {
-			console.log("_getToken finished with " + token);
+			//console.log("_getToken finished with " + token);
 	      if(token != null) {
 	        r.withCredentials = true;
 	        r.setRequestHeader('x-csrf', token);
@@ -108,6 +121,7 @@ function bungie(cookieString) {
 	}
 	//This piece is for Firefox
 	else {
+		//console.log("sending firefox request");
 		var event = document.createEvent('CustomEvent');
 		opts.route = url + "Platform" + opts.route;
 		event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Destiny Item Viewer",
-  "version": "1.3.9",
+  "version": "1.4.0",
   "description": "This app allows you to transfer items between profiles, with various filters.",
   "icons": {
     "16": "www/assets/icon16.png",

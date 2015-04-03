@@ -5,7 +5,7 @@
     <title>Destiny Item Viewer</title>    
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
-	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	<meta name="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
 	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/itemdef.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/lzstring.min.js"></script>
@@ -56,7 +56,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.3.8</a>
+		      <a class="navbar-brand" href="#">DIV 1.4.0</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -160,16 +160,16 @@
 		    </div>
 		  </div>
 		</nav>
-		<div class="alert alert-info" data-bind="visible: shareView" style="display:none; margin-top:20px;">
+		<div class="alert alert-info" data-bind="visible: shareView" style="display:none; ">
 			<strong>DestinyExotics.com</strong> Share URL: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
 		</div>
-		<div class="alert alert-success" data-bind="visible: showMissing" style="display:none; margin-top:20px;">
+		<div class="alert alert-success" data-bind="visible: showMissing" style="display:none; ">
 			<strong>Missing Items</strong> 
 			<span data-bind="foreach: { data: missingSets }">
 				<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }"><img data-bind="attr:{src: $root.bungie.getUrl() + _itemDefs[ $data ].icon, title: _itemDefs[ $data ].name }" width="48"></a>
 			</span>
 		</div>		
-		<div data-bind="with: $root.activeUser()" style="margin-top:20px;">
+		<div data-bind="with: $root.activeUser()" style="">
 			<div class="alert alert-danger" data-bind="visible: typeof error !== 'undefined'" style="display:none;">
 				<strong>Error: (retrying to sign in <span data-bind="text: $root.retryCount"></span>)</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
@@ -200,7 +200,7 @@
 			  </div>
 			</div>
 		</div>
-		<div class="container-fluid" style="margin-top:20px;">
+		<div class="container-fluid" style="">
 			<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
 				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 					<div class="character">
@@ -236,7 +236,7 @@
 					</div>
 				</div>
 				<!-- ko if: $index() == 1 -->
-					<div class="clearfix visibile-sm-block hidden-md hidden-lg"></div>
+					<div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
 				<!--/ko  -->
 				<!-- ko if: $index() == 2 -->
 					<div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
