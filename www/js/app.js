@@ -623,6 +623,13 @@ var app = new (function() {
 	var processItem = function(profile, itemDefs, perkDefs, talentPerks){	
 		return function(item){
 			var info = itemDefs[item.itemHash];
+			if (!(item.itemHash in itemDefs)){
+				//issue #25 4th horseman definition not provided by Bungie
+				console.log("found an item without a definition!");
+				console.log(item.itemHash);
+				console.log(item);
+				return;
+			}
 			var itemObject = { 
 				id: item.itemHash,
 				_id: item.itemInstanceId,
