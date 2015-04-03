@@ -1,4 +1,5 @@
 body {
+	font-size: 1em;
     margin: 0 auto;
     padding-top: 40px;
     background: radial-gradient(transparent,70%,#000) fixed,rgb(105, 125, 123);
@@ -9,7 +10,6 @@ body {
     background-size: cover;
     color: #fff;
     font-family: HelveticaNeue-Light,'Helvetica Neue Light','Helvetica Neue',Helvetica,Arial,sans-serif;
-	font-size: 12px;
 }
 .loadout-button {
     position: relative;
@@ -137,22 +137,22 @@ body {
 }
 .attkIcon > div { 
 	position: absolute; 
-	bottom: 1px; 
+	bottom: 0px; 
 	left: 0px; 
 	color: #333;
 	font-weight: bold;
 	font-size: 0.9em; 
-	width: 20px;
+	width: 2em;
 }
+#loadout-contents .itemImage { height:75px }
 .itemImage {
-	max-width: 100%;
+	max-width: 97%;
 	border:1px solid white;
 }
 .itemBucket {
 	border:1px solid white;
-	padding:0;
-	margin:0;
 }
+.icon { width: 24px; }
 .title {
     text-transform: uppercase;
     position: relative;

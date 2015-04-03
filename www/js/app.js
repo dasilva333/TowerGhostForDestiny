@@ -381,6 +381,7 @@ var DestinyBucketTypes = {
 }
 var DestinyDamageTypeColors = {
 	"None": "#BBB",
+	"Kinetic": "#BBB",
 	"Arc": "#85C5EC",
 	"Solar": "#C48A01",
 	"Void": "#B184C5"
@@ -452,7 +453,8 @@ var app = new (function() {
 		shareUrl: "",
 		showMissing: false,
 		showUniques: false,
-		tooltipsEnabled: isMobile ? false : true
+		tooltipsEnabled: isMobile ? false : true,
+		listenerEnabled: true //ive had to turn it off for iPhone and Android it's buggy
 	};
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
@@ -481,6 +483,8 @@ var app = new (function() {
 			_tooltipsEnabled(newValue);
 		}
 	});
+
+	this.listenerEnabled = ko.observable(defaults.listenerEnabled);
 	this.refreshSeconds = ko.observable(defaults.refreshSeconds);
 	this.tierFilter = ko.observable(defaults.tierFilter);
 	this.typeFilter = ko.observable(defaults.typeFilter);
@@ -558,6 +562,9 @@ var app = new (function() {
 			$content.find(".destt-primary-min").html( activeItem.primaryStat );
 		}		
 		callback($content.html());
+	}
+	this.toggleListener = function(){
+		self.listenerEnabled(!self.listenerEnabled());
 	}
 	this.toggleRefresh = function(){
 		self.doRefresh(!self.doRefresh());
@@ -790,22 +797,24 @@ var app = new (function() {
 		return function(){
 			var loop, newCookie;
 			var ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
-			/*ref.addEventListener('loadstop', function(event) {
-				clearInterval(loop);
-				loop = setInterval(function() {
-					ref.executeScript({
-						code: 'document.cookie'
-					}, function(result) {
-						console.log("found result in loadstop " + result);
-						if ((result || "").toString().indexOf("bungled") > -1){											
-							self.bungie_cookies = result;
-							window.localStorage.setItem("bungie_cookies", result);
-							self.loadData();	
-							clearInterval(loop);
-						}
-					});
-				}, 500);
-			});*/
+			ref.addEventListener('loadstop', function(event) {
+				if (self.listenerEnabled() == true){
+					clearInterval(loop);
+					loop = setInterval(function() {
+						ref.executeScript({
+							code: 'document.cookie'
+						}, function(result) {
+							console.log("found result in loadstop " + result);
+							if ((result || "").toString().indexOf("bungled") > -1){											
+								self.bungie_cookies = result;
+								window.localStorage.setItem("bungie_cookies", result);
+								self.loadData();	
+								clearInterval(loop);
+							}
+						});
+					}, 500);				
+				}
+			});
 			ref.addEventListener('loadstart', function(event) {
 				clearInterval(loop);
 			});
@@ -857,7 +866,7 @@ var app = new (function() {
 	}
 });
 
-window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: self.renderCallback, isEnabled: app.tooltipsEnabled() };
+window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: app.renderCallback, isEnabled: app.tooltipsEnabled() };
 
 if (isMobile){
 	document.addEventListener('deviceready', app.init, false);

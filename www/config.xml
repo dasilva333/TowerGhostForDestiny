@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.destinyitemviewer" version="1.3.6" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.destinyitemviewer" version="1.3.8" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Destiny Item Viewer</name>
     <description>
-		This app allows you to transfer items between profiles, with various filters
+		This app allows you to transfer items between profiles, with various filters.
     </description>
     <author email="author@email.com" href="https://github.com/dasilva333/DIM/">
         Richard Pinedo

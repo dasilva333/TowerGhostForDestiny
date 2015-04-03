@@ -24,11 +24,14 @@
 
   <body>
 		<script type="text/html" id="sections-template">
-			<div class="title"><span data-bind="text: list.split('.')[1]"></span> (<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length"></span>)</div>
-			<div class="row no-gutter">
-				<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 itemBucket">
+			<div class="title">
+				<span data-bind="text: list.split('.')[1]"></span> 
+				(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span><span data-bind="visible: character.id !== 'Vault'">/10</span>)
+			</div>
+			<div class="row no-gutter" style="margin:auto;">
+				<div class="itemBucket" data-bind="css: character.id == 'Vault' ? 'col-xs-12 col-sm-12 col-md-12 col-lg-11' : 'col-xs-9 col-sm-9 col-md-9 col-lg-6'">
 					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
-						<span class="col-xs-4 col-sm-4 col-md-4 col-lg-4" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+						<span data-bind="css: character.id == 'Vault' ? 'col-xs-4 col-sm-4 col-md-4 col-lg-2' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4'" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 							<a data-bind="attr:{href:item.href, id:item._id}">
 								<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 							</a>
@@ -37,7 +40,7 @@
 					</div>
 				</div>
 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(list.split('.')[0], list.split('.')[1])">
-					<span data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+					<span class="col-xs-12 col-sm-12 col-md-12 col-lg-8 col-lg-offset-2" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a data-bind="attr:{href:href, id:_id}"><img class="itemImage" data-bind="attr: { src: icon }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
@@ -53,7 +56,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.3.7</a>
+		      <a class="navbar-brand" href="#">DIV 1.3.8</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -69,6 +72,7 @@
 						<li><a href="#" data-bind="click: loadData">Refresh Items</a></li>
 						<li><a href="#" data-bind="click: $root.openBungieWindow('Psnid')">PSN Login</a></li>
 						<li><a href="#" data-bind="click: $root.openBungieWindow('Wlid')">XBL Login</a></li>
+						<li data-bind="click: toggleListener, css: listenerEnabled() == true ? 'active' : ''"><a href="#">Loadstop Listener</a></li>
 						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
 						<li data-bind="click: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 		          </ul>
@@ -151,7 +155,7 @@
 		      </ul>
 		      <form class="navbar-form navbar-right" role="search">
 				<input type="Text" class="form-control" data-bind="value: refreshSeconds" size="1" title="Refresh Automatically (in seconds)">
-				<input class="form-control" placeholder="Name or Perk" size="9" type="text" data-bind="value: searchKeyword">
+				<input class="form-control" placeholder="Search" size="8" type="text" data-bind="value: searchKeyword">
 		      </form>
 		    </div>
 		  </div>
@@ -245,14 +249,14 @@
 		  			<!--/ko  -->
 					<p id="loadout-error" data-bind="visible: items().length == 0">no items in loadout, click items to add.</p>
 				</div>
-				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
-					<span class="item" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+				<div id="loadout-contents" class="row no-gutter" data-bind="foreach: { data: items, as: 'item' }">
+					<span class="item col-xs-1 col-sm-1 col-md-1 col-lg-1" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a data-bind="attr:{href:item.href, id:item._id}, click:">
-							<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
+							<img class="itemImage" style="height:75px;" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 						</a>
-						<div class="attkIcon" data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div>
+						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
-				</span>	 	
+				</div>	 	
 			</div>
 		</div>
 		<div id="about" style="display:none">
