@@ -31,7 +31,7 @@
 			<div class="row no-gutter" style="margin:auto;">
 				<div class="itemBucket" data-bind="css: character.id == 'Vault' ? 'col-xs-12 col-sm-12 col-md-12 col-lg-11' : 'col-xs-9 col-sm-9 col-md-9 col-lg-6'">
 					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
-						<span data-bind="css: character.id == 'Vault' ? 'col-xs-4 col-sm-4 col-md-4 col-lg-2' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4'" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+						<span data-bind="css: (character.id == 'Vault' ? 'col-xs-4 col-sm-4 col-md-4 col-lg-2' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 							<a data-bind="attr:{href:item.href, id:item._id}">
 								<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 							</a>
