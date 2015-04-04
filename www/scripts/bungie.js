@@ -171,7 +171,7 @@ function bungie(cookieString) {
   }
   this.search = function(callback) {
     _request({
-      route: '/Destiny/SearchDestinyPlayer/' + active.type + '/' + active.id + '/?definitions=true',
+      route: '/Destiny/SearchDestinyPlayer/' + active.type + '/' + active.id + '/',
       method: 'GET',
       complete: function(membership) {
         if(membership[0] === undefined) {
@@ -182,7 +182,7 @@ function bungie(cookieString) {
         membershipId = membership[0].membershipId;
         _request({
           route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
-                  '/Account/' + membershipId + '/?definitions=true',
+                  '/Account/' + membershipId + '/',
           method: 'GET',
           complete: callback
         });
@@ -191,7 +191,7 @@ function bungie(cookieString) {
   }
   this.vault = function(callback) {
     _request({
-      route: '/Destiny/' + active.type + '/MyAccount/Vault/?definitions=true',
+      route: '/Destiny/' + active.type + '/MyAccount/Vault/',
       method: 'GET',
       complete: callback
     });
@@ -201,7 +201,7 @@ function bungie(cookieString) {
       route: '/Destiny/' + active.type +
               '/Account/' + membershipId +
               '/Character/' + characterId +
-              '/Inventory/?definitions=true',
+              '/Inventory/',
       method: 'GET',
       complete: callback
     });

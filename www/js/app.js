@@ -620,17 +620,16 @@ var app = new (function() {
 	this.setProgressFilter = function(model, event){
 		self.progressFilter($(event.target).parent().attr("value"));
 	}
-
-	var processItem = function(profile, itemDefs, perkDefs, talentPerks){	
+						
+	var processItem = function(profile){	
 		return function(item){
-			var info = itemDefs[item.itemHash];
-			if (!(item.itemHash in itemDefs)){
+			if (!(item.itemHash in window._itemDefs)){
 				//issue #25 4th horseman definition not provided by Bungie
-				console.log("found an item without a definition!");
+				console.log("found an item without a definition! " + JSON.stringify(item));
 				console.log(item.itemHash);
-				console.log(item);
 				return;
 			}
+			var info = window._itemDefs[item.itemHash];
 			var itemObject = { 
 				id: item.itemHash,
 				_id: item.itemInstanceId,
@@ -659,14 +658,24 @@ var app = new (function() {
 			}
 			if (info.itemType == 3){
 				itemObject.perks = item.perks.map(function(perk){
-					var p = perkDefs[perk.perkHash];
-					return {
-						iconPath: app.bungie.getUrl() + perk.iconPath,
-						name: p.displayName,
-						description: p.displayDescription
+					if (perk.perkHash in window._perkDefs){
+						var p = window._perkDefs[perk.perkHash];
+						return {
+							iconPath: app.bungie.getUrl() + perk.iconPath,
+							name: p.displayName,
+							description: p.displayDescription
+						}
 					}
+					else {
+						return perk;
+					}					
 				});
-				itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(talentPerks[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
+				if (info.talentGridHash in window._talentGridDefs){
+					itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
+				}
+				else {
+					itemObject.isUnique = false;
+				}
 				profile.weapons.push( new Item(itemObject,profile,'weapons') );
 			}
 			else if (info.itemType == 2){
@@ -719,13 +728,9 @@ var app = new (function() {
 					self.loadingUser(false);
 					var buckets = results.data.buckets;
 					var profile = new Profile({ race: "", order: 0, gender: "Tower",  classType: "Vault", id: "Vault", level: "", icon: "", background: "" });
-					window.r = results.definitions;
-					var def = results.definitions.items;
-					var def_perks = results.definitions.perks;
-					var def_talents = results.definitions.talentGrids;
 					
 					buckets.forEach(function(bucket){
-						bucket.items.forEach(processItem(profile, def, def_perks, def_talents));
+						bucket.items.forEach(processItem(profile));
 					});
 					self.addWeaponTypes(profile.weapons());
 					self.characters.push(profile);
@@ -741,12 +746,9 @@ var app = new (function() {
 							icon: self.makeBackgroundUrl(character.emblemPath),
 							background: self.makeBackgroundUrl(character.backgroundPath),
 							level: character.characterLevel,
-							race: e.definitions.races[character.characterBase.raceHash].raceName
+							race: window._raceDefs[character.characterBase.raceHash].raceName
 						});
 						var items = [];
-						var def = response.definitions.items;
-						var def_perks = response.definitions.perks;
-						var def_talents = response.definitions.talentGrids;
 						
 						response.data.buckets.Equippable.forEach(function(obj){
 							obj.items.forEach(function(item){
@@ -761,7 +763,7 @@ var app = new (function() {
 						//Currency bucket indicates how many Vanguard/Crucible marks you have
 						//Invisible bucket is for medallions and other things in the bottom left square
 						
-						items.forEach(processItem(profile, def, def_perks, def_talents));
+						items.forEach(processItem(profile));
 						self.addWeaponTypes(profile.weapons());
 						self.characters.push(profile);
 						if (avatars.length == (index + 1)){
