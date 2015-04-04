@@ -866,6 +866,15 @@ var app = new (function() {
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
 		var _loadouts = window.localStorage.getItem("loadouts");
+		(function() {
+		  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+		    var msViewportStyle = document.createElement("style");
+		    msViewportStyle.appendChild(
+		      document.createTextNode("@-ms-viewport{width:auto!important}")
+		    );
+		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+		  }
+		})();
 		if (!_.isEmpty(_loadouts)){
 			self.loadouts(
 				_.map(JSON.parse(_loadouts), function(loadout){

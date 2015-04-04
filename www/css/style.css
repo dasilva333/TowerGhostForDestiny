@@ -1,3 +1,6 @@
+@-ms-viewport {
+  width: device-width;
+}
 body {
 	font-size: 1em;
     margin: 0 auto;
