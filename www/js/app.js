@@ -860,8 +860,6 @@ var app = new (function() {
 	}
 	
 	this.init = function(){
-		var viewportScale = 1 / window.devicePixelRatio;
-		$("#viewport").attr("content","user-scalable=yes, initial-scale="+viewportScale+", minimum-scale=0.2, maximum-scale=2, width=device-width")
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);		
