@@ -10,6 +10,7 @@
 	<script language="JavaScript" type="text/javascript" src="data/perkDefs.json"></script>
 	<script language="JavaScript" type="text/javascript" src="data/talentGridDefs.json"></script>
 	<script language="JavaScript" type="text/javascript" src="data/raceDefs.json"></script>
+	<script language="JavaScript" type="text/javascript" src="js/hammer.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/lzstring.min.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/bungie.js"></script>
@@ -40,8 +41,8 @@
 				<div class="itemBucket" data-bind="css: character.id == 'Vault' ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
 					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
 						<span data-bind="css: (character.id == 'Vault' ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
-							<a data-bind="attr:{href:item.href, id:item._id}">
-								<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
+							<a data-bind="attr:{href:item.href, instanceId:item._id}">
+								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 							</a>
 							<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 						</span>
@@ -49,7 +50,7 @@
 				</div>
 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(list.split('.')[0], list.split('.')[1])">
 					<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-						<a data-bind="attr:{href:href, id:_id}"><img class="itemImage" data-bind="attr: { src: icon }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
+						<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
 				</div>				

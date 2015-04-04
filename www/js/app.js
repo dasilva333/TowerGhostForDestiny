@@ -63,7 +63,12 @@ var moveItemPositionHandler = function(element, item){
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-		$(element).bind("click", moveItemPositionHandler(element, viewModel));
+		Hammer(element)
+			.on("tap", moveItemPositionHandler(element, viewModel))
+			.on("doubletap", function() {
+				$ZamTooltips.lastElement = element;
+				$ZamTooltips.show("destinydb","items",viewModel.id, element);
+			});
     }
 };
 
@@ -545,7 +550,7 @@ var app = new (function() {
 	}
 	this.renderCallback = function(context, content, element, callback){
 		if (element) lastElement = element
-		var instanceId = lastElement.id, activeItem, $content = $("<div>" + content + "</div>");
+		var instanceId = $(lastElement).attr("instanceId"), activeItem, $content = $("<div>" + content + "</div>");
 		self.characters().forEach(function(character){
 		  ['weapons','armor'].forEach(function(list){
 	          var item = _.findWhere( character[list](), { '_id': instanceId });
@@ -561,7 +566,8 @@ var app = new (function() {
 				$content.find(".destt-info").prepend(perksTemplate({ perks: activeItem.perks }));
 			}
 			$content.find(".destt-primary-min").html( activeItem.primaryStat );
-		}		
+		}
+		console.log(activeItem);	
 		callback($content.html());
 	}
 	this.toggleListener = function(){
