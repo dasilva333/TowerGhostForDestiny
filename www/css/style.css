@@ -101,7 +101,7 @@ body {
 }
 #loadout-options { margin: 5px }
 #loadout-options input { width: 150px }
-#loadout-options span {
+#loadout-options span, #loadout-contents span {
     display: inline-block;
     width: 65px;
     border-radius: 3px;
@@ -148,7 +148,9 @@ body {
 	font-size: 0.9em; 
 	width: 2em;
 }
-#loadout-contents .itemImage { height:75px }
+.list-group-item .itemImage {
+	width: 48px;
+}
 .itemImage {
 	max-width: 97%;
 	border:1px solid white;

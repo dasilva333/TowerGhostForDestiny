@@ -26,12 +26,17 @@
 		<script type="text/html" id="sections-template">
 			<div class="title">
 				<span data-bind="text: list.split('.')[1]"></span> 
-				(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span><span data-bind="visible: character.id !== 'Vault'">/10</span>)
+				<span data-bind="visible: character.id !== 'Vault'">
+					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span><span>/10</span>)
+				</span>
+				<span data-bind="visible: character.id == 'Vault'">
+					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length"></span>)
+				</span>				
 			</div>
 			<div class="row no-gutter" style="margin:auto;">
-				<div class="itemBucket" data-bind="css: character.id == 'Vault' ? 'col-xs-12 col-sm-12 col-md-12 col-lg-11' : 'col-xs-9 col-sm-9 col-md-9 col-lg-6'">
+				<div class="itemBucket" data-bind="css: character.id == 'Vault' ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
 					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
-						<span data-bind="css: (character.id == 'Vault' ? 'col-xs-4 col-sm-4 col-md-4 col-lg-2' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
+						<span data-bind="css: (character.id == 'Vault' ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 							<a data-bind="attr:{href:item.href, id:item._id}">
 								<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 							</a>
@@ -40,7 +45,7 @@
 					</div>
 				</div>
 				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(list.split('.')[0], list.split('.')[1])">
-					<span class="col-xs-12 col-sm-12 col-md-12 col-lg-8 col-lg-offset-2" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+					<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a data-bind="attr:{href:href, id:_id}"><img class="itemImage" data-bind="attr: { src: icon }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
@@ -56,7 +61,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.4.1</a>
+		      <a class="navbar-brand" href="#">DIV 1.4.3</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -200,47 +205,49 @@
 			  </div>
 			</div>
 		</div>
-		<div class="container-fluid" style="">
-			<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-					<div class="character">
-					  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
-						<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
-						<div class="class" data-bind="text: classType"></div>
-						<div class="level" data-bind="text: level"></div>
-					  </div>				
-					</div>
-					<div>
-						<div class="items" data-type="item">
-						  <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-							<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>)</div>
-							<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['weapons.Primary','weapons.Special','weapons.Heavy'], as: 'list' }">
+		<div class="container">
+			<div class="container-fluid" style="">
+				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
+					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+						<div class="character">
+						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
+							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
+							<div class="class" data-bind="text: classType"></div>
+							<div class="level" data-bind="text: level"></div>
+						  </div>				
+						</div>
+						<div>
+							<div class="items" data-type="item">
+							  <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
+								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>)</div>
+								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['weapons.Primary','weapons.Special','weapons.Heavy'], as: 'list' }">
+								</div>
+							  </div>
+							  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
+								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>)</div>
+								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['armor.Helmet','armor.Gauntlet','armor.Chest', 'armor.Boots'], as: 'list' }">
+								</div>
+							  </div>
+							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
+								<div class="title"><strong>Misc</strong></div>
+								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['items.Consumables','items.Materials'], as: 'list' }">
+								</div>
+							  </div>
+							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
+								<div class="title"><strong>Styling</strong></div>
+								<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['items.Shader','items.Emblem','items.Ship','items.Sparrow'], as: 'list' }">
+								</div>
+							  </div>						  
 							</div>
-						  </div>
-						  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-							<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>)</div>
-							<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['armor.Helmet','armor.Gauntlet','armor.Chest', 'armor.Boots'], as: 'list' }">
-							</div>
-						  </div>
-						  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-							<div class="title"><strong>Misc</strong></div>
-							<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['items.Consumables','items.Materials'], as: 'list' }">
-							</div>
-						  </div>
-						  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-							<div class="title"><strong>Styling</strong></div>
-							<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['items.Shader','items.Emblem','items.Ship','items.Sparrow'], as: 'list' }">
-							</div>
-						  </div>						  
 						</div>
 					</div>
+					<!-- ko if: $index() == 1 -->
+						<div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
+					<!--/ko  -->
+					<!-- ko if: $index() == 2 -->
+						<div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
+					<!--/ko  -->
 				</div>
-				<!-- ko if: $index() == 1 -->
-					<div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
-				<!--/ko  -->
-				<!-- ko if: $index() == 2 -->
-					<div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
-				<!--/ko  -->
 			</div>
 		</div>
 		<div id="loadout-create" data-bind="visible: loadoutMode" style="display:none;">
@@ -254,16 +261,16 @@
 		  			<!--/ko  -->
 					<p id="loadout-error" data-bind="visible: items().length == 0">no items in loadout, click items to add.</p>
 				</div>
-				<div id="loadout-contents" class="row" data-bind="foreach: { data: items, as: 'item' }">
-					<span class="item col-xs-1 col-sm-1 col-md-1 col-lg-1" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
+					<span class="item" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a data-bind="attr:{href:item.href, id:item._id}, click:">
-							<img class="itemImage" style="height:75px;" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
+							<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 						</a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
-				</div>	 	
+				</span>	 	
 			</div>
-		</div>
+		</div>		
 		<div id="about" style="display:none">
 			<h5>About Me</h5>
 			

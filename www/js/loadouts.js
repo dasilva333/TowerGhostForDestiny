@@ -8,15 +8,15 @@ var swapTemplate3 = _.template('<ul class="list-group">' +
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
-				'<div class="col-lg-6">' +
+				'<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
 					'<%= pair.description %>' +
 				'</div>' +
-				'<div class="col-lg-3">' +
+				'<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">' +
 					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' + 
 						'<img class="itemImage" src="<%= pair.targetItem && pair.targetItem.icon %>">' +
 					'</a>' +
 				'</div>' +
-				'<div class="col-lg-3">' +
+				'<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">' +
 					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' + 
 						'<img class="itemImage" src="<%= pair.swapItem && pair.swapItem.icon %>">' +
 					'</a>' +

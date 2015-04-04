@@ -601,7 +601,7 @@ var app = new (function() {
 		return missingIds;
 	})
 	
-	this.activeView = ko.observable(1);
+	this.activeView = ko.observable(0);
 	this.setView = function(model, event){
 		self.activeView($(event.target).parent().attr("value"));
 	}	
