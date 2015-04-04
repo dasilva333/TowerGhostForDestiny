@@ -436,7 +436,7 @@ var perksTemplate = _.template('<div class="destt-talent">' +
 		'</div>' +
 	'<% }) %>' +
 '</div>');
-window.stats = {};		
+
 var app = new (function() {
 	var self = this;
 

@@ -1,13 +1,32 @@
-var fs = require("fs");
+var fs = require("fs"),
+	_ = require("lodash");
 var bungieURL = "http://www.bungie.net";
 var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
 var dbPath = "mobileWorldContent.db";
 var jsonPath = "www/data/";
 var neededFiles = [
-	{ table: "DestinySandboxPerkDefinition", name: "perkDefs", key: "perkHash" },
-	{ table: "DestinyInventoryItemDefinition", name: "itemDefs", key: "itemHash" },
-	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash" },
-	{ table: "DestinyRaceDefinition", name: "raceDefs", key: "raceHash" },
+	{ table: "DestinySandboxPerkDefinition", name: "perkDefs", key: "perkHash", reduce: function(item){
+		return item;
+	}},
+	{ table: "DestinyInventoryItemDefinition", name: "itemDefs", key: "itemHash", reduce: function(item){
+		var obj = item;
+		delete obj.stats;
+		delete obj.values;
+		delete obj.sources;
+		delete obj.itemLevels;
+		delete obj.perkHashes;
+		delete obj.sourceHashes;
+		delete obj.equippingBlock;
+		return obj;
+	}},
+	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash", reduce: function(item){
+		var obj = {};
+		obj.node = _.where( item.node, { column: 5 });
+		return obj;
+	}},
+	{ table: "DestinyRaceDefinition", name: "raceDefs", key: "raceHash", reduce: function(item){
+		return item;
+	}}
 ];
 if ( fs.existsSync(dbPath) ){
 	var sqlite3 = require('sqlite3').verbose();  
@@ -19,7 +38,7 @@ if ( fs.existsSync(dbPath) ){
 			var obj = {};
 	        rows.forEach(function (row) {  
 				var entry = JSON.parse(row.json);
-	            obj[entry[set.key]] = entry;
+	            obj[entry[set.key]] = set.reduce(entry);
 	        });
 			fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 	    });
