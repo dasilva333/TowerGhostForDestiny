@@ -809,7 +809,8 @@ var app = new (function() {
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop, newCookie;
-			var ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
+			//overwrite the same reference to avoid crashing?
+			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
 			ref.addEventListener('loadstop', function(event) {
 				if (self.listenerEnabled() == true){
 					clearInterval(loop);
@@ -834,19 +835,24 @@ var app = new (function() {
 			ref.addEventListener('exit', function() {
 				if (self.characters().length == 0){
 					clearInterval(loop);
-					loop = setInterval(function() {
-						ref.executeScript({
-							code: 'document.cookie'
-						}, function(result) {
-							console.log("found result in exit " + result);
-							if ((result || "").toString().indexOf("bungled") > -1){											
-								self.bungie_cookies = result;
-								window.localStorage.setItem("bungie_cookies", result);
-								self.loadData();		
-								clearInterval(loop);
-							}
-						});
-					}, 500); 					
+					if (_.isEmpty(self.bungie_cookies)){
+						loop = setInterval(function() {
+							ref.executeScript({
+								code: 'document.cookie'
+							}, function(result) {
+								console.log("found result in exit " + result);
+								if ((result || "").toString().indexOf("bungled") > -1){											
+									self.bungie_cookies = result;
+									window.localStorage.setItem("bungie_cookies", result);
+									self.loadData();		
+									clearInterval(loop);
+								}
+							});
+						}, 500); 						
+					}
+					else {
+						self.loadData();
+					}				
 				}	
 			});		
 		}
@@ -854,7 +860,8 @@ var app = new (function() {
 	}
 	
 	this.init = function(){
-		
+		var viewportScale = 1 / window.devicePixelRatio;
+		$("#viewport").attr("content","user-scalable=yes, initial-scale="+viewportScale+", minimum-scale=0.2, maximum-scale=2, width=device-width")
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);		
