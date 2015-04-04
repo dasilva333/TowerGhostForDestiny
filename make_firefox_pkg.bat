@@ -6,6 +6,7 @@ mkdir temp\data
 cp assets temp\data -R
 cp css temp\data -R
 cp js temp\data -R
+cp data temp\data -R
 cp scripts temp\data -R
 cp lib temp -R
 cp *.html temp\data

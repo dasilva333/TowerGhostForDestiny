@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.destinyitemviewer" version="1.4.7" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.destinyitemviewer" version="1.4.8" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Destiny Item Viewer</name>
     <description>
 		This app allows you to transfer items between profiles, with various filters.
