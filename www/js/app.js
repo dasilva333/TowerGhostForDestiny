@@ -832,22 +832,22 @@ var app = new (function() {
 				clearInterval(loop);
 			});
 			ref.addEventListener('exit', function() {
-				clearInterval(loop);
-				if (self.characters().length == 0)
-					self.loadData();
-				loop = setInterval(function() {
-					ref.executeScript({
-						code: 'document.cookie'
-					}, function(result) {
-						console.log("found result in exit " + result);
-						if ((result || "").toString().indexOf("bungled") > -1){											
-							self.bungie_cookies = result;
-							window.localStorage.setItem("bungie_cookies", result);
-							self.loadData();		
-							clearInterval(loop);
-						}
-					});
-				}, 500); 		
+				if (self.characters().length == 0){
+					clearInterval(loop);
+					loop = setInterval(function() {
+						ref.executeScript({
+							code: 'document.cookie'
+						}, function(result) {
+							console.log("found result in exit " + result);
+							if ((result || "").toString().indexOf("bungled") > -1){											
+								self.bungie_cookies = result;
+								window.localStorage.setItem("bungie_cookies", result);
+								self.loadData();		
+								clearInterval(loop);
+							}
+						});
+					}, 500); 					
+				}	
 			});		
 		}
 
