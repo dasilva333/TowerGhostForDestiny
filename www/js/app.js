@@ -382,7 +382,8 @@ var DestinyBucketTypes = {
 	"2025709351": "Sparrow",
 	"284967655": "Ship",
 	"3865314626": "Materials",
-	"1469714392": "Consumables"
+	"1469714392": "Consumables",
+	"1585787867": "Class Items"
 }
 var DestinyDamageTypeColors = {
 	"None": "#BBB",
@@ -629,7 +630,6 @@ var app = new (function() {
 	var processItem = function(profile){	
 		return function(item){
 			if (!(item.itemHash in window._itemDefs)){
-				//issue #25 4th horseman definition not provided by Bungie
 				console.log("found an item without a definition! " + JSON.stringify(item));
 				console.log(item.itemHash);
 				return;
@@ -650,11 +650,6 @@ var app = new (function() {
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete
 			};
-			if (!("itemName" in info)){
-				console.log("found item wo a description");
-				console.log(info);
-				console.log(itemObject);
-			}
 			if (item.primaryStat){
 				itemObject.primaryStat = item.primaryStat.value;
 			}	
@@ -683,7 +678,7 @@ var app = new (function() {
 				}
 				profile.weapons.push( new Item(itemObject,profile,'weapons') );
 			}
-			else if (info.itemType == 2){
+			else if (info.itemType == 2 && !(info.bucketTypeHash in DestinyBucketTypes)){
 				profile.armor.push( new Item(itemObject,profile,'armor') );
 			}
 			else if (info.bucketTypeHash in DestinyBucketTypes){
@@ -753,20 +748,15 @@ var app = new (function() {
 							level: character.characterLevel,
 							race: window._raceDefs[character.characterBase.raceHash].raceName
 						});
-						var items = [];
+						var items = [];						
 						
-						response.data.buckets.Equippable.forEach(function(obj){
-							obj.items.forEach(function(item){
-								items.push(item);
+						Object.keys(response.data.buckets).forEach(function(bucket){
+							response.data.buckets[bucket].forEach(function(obj){
+								obj.items.forEach(function(item){
+									items.push(item);
+								});
 							});
 						});
-						response.data.buckets.Item.forEach(function(obj){
-							obj.items.forEach(function(item){
-								items.push(item);
-							});
-						});
-						//Currency bucket indicates how many Vanguard/Crucible marks you have
-						//Invisible bucket is for medallions and other things in the bottom left square
 						
 						items.forEach(processItem(profile));
 						self.addWeaponTypes(profile.weapons());

@@ -1,6 +1,6 @@
 {
   "name": "destiny-item-viewer-builder",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {
