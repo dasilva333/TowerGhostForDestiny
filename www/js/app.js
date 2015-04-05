@@ -569,12 +569,27 @@ var app = new (function() {
 	      });
 	   	});
 		if (activeItem){
+			/* Weapons */
 			if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1){
 				var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
 				$content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
 			}
 			if (activeItem.perks && $content.find(".destt-talent").length == 0){
 				$content.find(".destt-info").prepend(perksTemplate({ perks: activeItem.perks }));
+			}
+			/* Armor */
+			var stats = $content.find(".destt-stat");
+			if (stats.length > 0){
+				stats.html(
+					stats.find(".stat-bar").map(function(index, stat){ 
+						var $stat = $("<div>"+stat.outerHTML+"</div>");
+						var label = $stat.find(".stat-bar-label");
+						var labelText = $.trim(label.text()); 
+						label.text(labelText + ": " + activeItem.stats[labelText]);
+						$stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+						return $stat.html();
+					}).get().join("")
+				);
 			}
 			$content.find(".destt-primary-min").html( activeItem.primaryStat );
 		}
@@ -688,7 +703,14 @@ var app = new (function() {
 				}
 				profile.weapons.push( new Item(itemObject,profile,'weapons') );
 			}
-			else if (info.itemType == 2 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){
+			else if (info.itemType == 2 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
+				itemObject.stats = {};
+				_.each(item.stats, function(stat){
+					if (stat.value > 0 && stat.statHash in window._statDefs){
+						var p = window._statDefs[stat.statHash];
+						itemObject.stats[p.statName] = stat.value;
+					}
+				});
 				profile.armor.push( new Item(itemObject,profile,'armor') );
 			}
 			else if (info.bucketTypeHash in DestinyBucketTypes){

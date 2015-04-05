@@ -26,6 +26,11 @@ var neededFiles = [
 	}},
 	{ table: "DestinyRaceDefinition", name: "raceDefs", key: "raceHash", reduce: function(item){
 		return item;
+	}},
+	{ table: "DestinyStatDefinition", name: "statDefs", key: "statHash", reduce: function(item){
+		delete item.statDescription;
+		delete item.icon;
+		return item;
 	}}
 ];
 if ( fs.existsSync(dbPath) ){
