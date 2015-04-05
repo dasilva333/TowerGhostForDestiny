@@ -31,7 +31,7 @@
 			<div class="title">
 				<span data-bind="text: list.split('.')[1]"></span> 
 				<span data-bind="visible: character.id !== 'Vault'">
-					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span><span>/10</span>)
+					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span><span>/<span data-bind="text: (list.split('.')[1] == 'Materials' || list.split('.')[1] == 'Consumables') ? 15 : 10"></span>)</span>
 				</span>
 				<span data-bind="visible: character.id == 'Vault'">
 					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length"></span>)
@@ -65,7 +65,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.5.1</a>
+		      <a class="navbar-brand" href="#">DIV 1.5.2</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

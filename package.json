@@ -5,8 +5,10 @@
   "description": "This app allows you to transfer items between profiles, with various filters.",
   "author": "Richard Pinedo",
   "license": "MPL 2.0",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "permissions": {
-    "cross-domain-content": ["https://www.bungie.net"]
+    "cross-domain-content": [
+      "https://www.bungie.net"
+    ]
   }
 }
