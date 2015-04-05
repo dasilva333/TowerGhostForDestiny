@@ -385,6 +385,7 @@ var DestinyBucketTypes = {
 	"1469714392": "Consumables",
 	"1585787867": "Class Items"
 }
+var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
 var DestinyDamageTypeColors = {
 	"None": "#BBB",
 	"Kinetic": "#BBB",
@@ -687,7 +688,7 @@ var app = new (function() {
 				}
 				profile.weapons.push( new Item(itemObject,profile,'weapons') );
 			}
-			else if (info.itemType == 2 && !(info.bucketTypeHash in DestinyBucketTypes)){
+			else if (info.itemType == 2 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){
 				profile.armor.push( new Item(itemObject,profile,'armor') );
 			}
 			else if (info.bucketTypeHash in DestinyBucketTypes){
