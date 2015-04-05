@@ -467,8 +467,8 @@ var app = new (function() {
 	this.activeLoadout = ko.observable(new Loadout());
 	this.loadouts = ko.observableArray();
 	this.searchKeyword = ko.observable(defaults.searchKeyword);
-	var _doRefresh = ko.observable(window.localStorage.getItem("autoRefresh") || defaults.doRefresh);
-	var _tooltipsEnabled = ko.observable(window.localStorage.getItem("tooltipsEnabled") || defaults.tooltipsEnabled);
+	var _doRefresh = ko.observable(Boolean(window.localStorage.getItem("autoRefresh")) || defaults.doRefresh);
+	var _tooltipsEnabled = ko.observable(Boolean(window.localStorage.getItem("tooltipsEnabled")) || defaults.tooltipsEnabled);
 	this.doRefresh = ko.computed({
 		read: function(){
 			return _doRefresh();
@@ -567,7 +567,6 @@ var app = new (function() {
 			}
 			$content.find(".destt-primary-min").html( activeItem.primaryStat );
 		}
-		console.log(activeItem);	
 		callback($content.html());
 	}
 	this.toggleListener = function(){
@@ -676,7 +675,7 @@ var app = new (function() {
 						return perk;
 					}					
 				});
-				if (info.talentGridHash in window._talentGridDefs){
+				if (info.talentGridHash in window._talentGridDefs){					
 					itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
 				}
 				else {

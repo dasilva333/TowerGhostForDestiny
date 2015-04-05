@@ -38,9 +38,9 @@
 				</span>				
 			</div>
 			<div class="row no-gutter" style="margin:auto;">
-				<div class="itemBucket" data-bind="css: character.id == 'Vault' ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
+				<div class="itemBucket" data-bind="css: (character.id == 'Vault' || list == 'items.Consumables' || list == 'items.Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
 					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
-						<span data-bind="css: (character.id == 'Vault' ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
+						<span data-bind="css: ((character.id == 'Vault' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 							<a data-bind="attr:{href:item.href, instanceId:item._id}">
 								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 							</a>
@@ -65,7 +65,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.5.0</a>
+		      <a class="navbar-brand" href="#">DIV 1.5.1</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">

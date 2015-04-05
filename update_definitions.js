@@ -21,7 +21,7 @@ var neededFiles = [
 	}},
 	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash", reduce: function(item){
 		var obj = {};
-		obj.node = _.where( item.node, { column: 5 });
+		obj.nodes = _.where( item.nodes, { column: 5 });
 		return obj;
 	}},
 	{ table: "DestinyRaceDefinition", name: "raceDefs", key: "raceHash", reduce: function(item){
