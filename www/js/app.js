@@ -448,7 +448,7 @@ var app = new (function() {
 
 	var defaults = {
 		searchKeyword: "",
-		doRefresh: true,
+		doRefresh: isMobile ? false : true,
 		refreshSeconds: 300,
 		tierFilter: 0,
 		typeFilter: 0,
@@ -462,14 +462,23 @@ var app = new (function() {
 		tooltipsEnabled: isMobile ? false : true,
 		listenerEnabled: true //ive had to turn it off for iPhone and Android it's buggy
 	};
+	var getValue = function(key){
+		var saved = window.localStorage.getItem(key);
+		if (_.isEmpty(saved)){
+			return defaults[key];
+		}
+		else {
+			return saved == "true"
+		}
+	}
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
 	this.loadoutMode = ko.observable(false);
 	this.activeLoadout = ko.observable(new Loadout());
 	this.loadouts = ko.observableArray();
 	this.searchKeyword = ko.observable(defaults.searchKeyword);
-	var _doRefresh = ko.observable(Boolean(window.localStorage.getItem("autoRefresh")) || defaults.doRefresh);
-	var _tooltipsEnabled = ko.observable(Boolean(window.localStorage.getItem("tooltipsEnabled")) || defaults.tooltipsEnabled);
+	var _doRefresh = ko.observable(getValue("doRefresh"));
+	var _tooltipsEnabled = ko.observable(getValue("tooltipsEnabled"));
 	this.doRefresh = ko.computed({
 		read: function(){
 			return _doRefresh();
