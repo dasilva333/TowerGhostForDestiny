@@ -579,14 +579,16 @@ var app = new (function() {
 			}
 			/* Armor */
 			var stats = $content.find(".destt-stat");
-			if (stats.length > 0){
+			if (activeItem.stats && stats.length > 0){
 				stats.html(
 					stats.find(".stat-bar").map(function(index, stat){ 
 						var $stat = $("<div>"+stat.outerHTML+"</div>");
-						var label = $stat.find(".stat-bar-label");
-						var labelText = $.trim(label.text()); 
-						label.text(labelText + ": " + activeItem.stats[labelText]);
-						$stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+						if (labelText in activeItem.stats){						
+							var label = $stat.find(".stat-bar-label");
+							var labelText = $.trim(label.text()); 
+							label.text(labelText + ": " + activeItem.stats[labelText]);
+							$stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+						}
 						return $stat.html();
 					}).get().join("")
 				);
@@ -706,7 +708,7 @@ var app = new (function() {
 			else if (info.itemType == 2 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
 				itemObject.stats = {};
 				_.each(item.stats, function(stat){
-					if (stat.value > 0 && stat.statHash in window._statDefs){
+					if (stat.statHash in window._statDefs){
 						var p = window._statDefs[stat.statHash];
 						itemObject.stats[p.statName] = stat.value;
 					}
