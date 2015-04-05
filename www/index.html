@@ -65,7 +65,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.5.3</a>
+		      <a class="navbar-brand" href="#">DIV 1.5.4</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -197,7 +197,7 @@
 			<div class="move-popup">
 			  <div class="item-name" data-bind="text: description + ' (Primary Stat: ' + primaryStat + ')'"></div>
 			  <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
-				<div class="move-button" style="display: block;" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
+				<div class="move-button" style="display: block;" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, style: { backgroundImage: icon }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
 					<span>vault</span>								
 				</div>
 				<div class="move-button" style="display: block;" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, style: { backgroundImage: icon }, visible: $parent.characterId != avatar.id && avatar.id !== 'Vault'">

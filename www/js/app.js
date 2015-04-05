@@ -732,7 +732,7 @@ var app = new (function() {
 				self.bungie.vault(function(results){
 					self.loadingUser(false);
 					var buckets = results.data.buckets;
-					var profile = new Profile({ race: "", order: 0, gender: "Tower",  classType: "Vault", id: "Vault", level: "", icon: "", background: "" });
+					var profile = new Profile({ race: "", order: 0, gender: "Tower",  classType: "Vault", id: "Vault", level: "", icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) });
 					
 					buckets.forEach(function(bucket){
 						bucket.items.forEach(processItem(profile));
