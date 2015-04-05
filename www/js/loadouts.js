@@ -115,7 +115,7 @@ var Loadout = function(model){
 				}
 			}
 		};
-		['weapons','armor'].forEach(function(list){			
+		var globalSwapArray = _.flatten(_.map(['weapons','armor'], function(list){
 			var sourceItems =  _.where( self.items(), { list: list });
 			if (sourceItems.length > 0){
 				var targetList = targetCharacter[list]();				
@@ -164,16 +164,20 @@ var Loadout = function(model){
 						});
 					}
 					return swapArray;
-				}));				
-				(new dialog({buttons:[ 
-					{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
-						alert("Item(s) transferred successfully");
-						dialog.close()
-					}); }},
-					{label: "Cancel", action: function(dialog){ dialog.close() }}
-				]})).title("Transfer Confirm").content(swapTemplate3({ swapArray: masterSwapArray })).show();
-			}			
-		});
+				}));
+				return masterSwapArray;
+			}
+			else return [];
+		}));
+		if (globalSwapArray.length > 0){
+			(new dialog({buttons:[ 
+				{label: "Transfer", action: function(dialog){ self.swapItems(globalSwapArray, targetCharacterId, function(){
+					alert("Item(s) transferred successfully");
+					dialog.close()
+				}); }},
+				{label: "Cancel", action: function(dialog){ dialog.close() }}
+			]})).title("Transfer Confirm").content(swapTemplate3({ swapArray: globalSwapArray })).show();		
+		}
 	}
 }
 
