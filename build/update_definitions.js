@@ -3,7 +3,7 @@ var fs = require("fs"),
 var bungieURL = "http://www.bungie.net";
 var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
 var dbPath = "mobileWorldContent.db";
-var jsonPath = "www/data/";
+var jsonPath = "../www/data/";
 var neededFiles = [
 	{ table: "DestinySandboxPerkDefinition", name: "perkDefs", key: "perkHash", reduce: function(item){
 		return item;
