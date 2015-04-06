@@ -1,6 +1,6 @@
 {
-  "name": "destiny-item-viewer-builder",
-  "version": "1.6.0",
+  "name": "tower-ghost-builder",
+  "version": "1.6.1",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {

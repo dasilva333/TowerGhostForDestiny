@@ -21,5 +21,5 @@ fs.writeFileSync(adobeBuildConfigFile, xmlConfig);
 
 var indexHomePage = "../www/index.html";
 var indexContent = fs.readFileSync(indexHomePage).toString("utf8");
-indexContent = indexContent.replace(/<a class=\"navbar-brand\" href=\"#\">DIV (.*)<\/a>/,'<a class="navbar-brand" href="#">DIV ' + versionInfo + '</a>');
+indexContent = indexContent.replace(/<a class=\"navbar-brand\" href=\"#\">TGD (.*)<\/a>/,'<a class="navbar-brand" href="#">TGD ' + versionInfo + '</a>');
 fs.writeFileSync(indexHomePage, indexContent);
