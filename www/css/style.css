@@ -46,22 +46,6 @@ body {
     z-index: 2;
     cursor: pointer;
 }
-.move-popup.little {
-  width: 85px;
-  left: -21px;
-}
-.move-popup.little:before {
-  left: 39px;
-}
-.move-popup {
-    position: absolute;
-    z-index: 2;
-    top: -75px;
-    width: 315px;
-    height: 75px;
-    background-color: rgba(21,13,13,1);
-    cursor: default;
-}
 .move-popup .item-name {
     color: #000;
 	background-color: white;
@@ -69,30 +53,9 @@ body {
     padding: 1px;
     padding-left: 3px;
 }
-.move-button {
-    background-size: cover;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    line-height: 10px;
-    float: left;
-    margin: 6px;
-    cursor: pointer;
-}
-.move-loadout { 
-	float: none !important;
-	display: inline-block !important;
-}
-.move-button span {
-    display: inline-block;
-    text-transform: uppercase;
-    background: rgba(0,0,0,.4);
-    line-height: 40px;
-    width: 100%;
-    height: 100%;
-	font-size: 0.9em;
-}
-.move-button span:hover { background: rgba(0,0,0,.1) }
+.move-popup .attkIcon div { background-color: white; text-transform: uppercase; padding:2px; width:4em; } 
+.col-centered { float:none; margin:0 auto; }
+.locations img { max-width: 97%; }
 #loadout-create {
     position: fixed;
     width: 100%;

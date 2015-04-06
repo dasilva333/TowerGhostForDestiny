@@ -49,13 +49,8 @@ var moveItemPositionHandler = function(element, item){
 				activeElement = null;
 			}	
 			else {
-				activeElement = element;
-				$( "#move-popup" ).show().position({
-					my: "left bottom",
-					at: "left top",
-					collision: "none fit",
-					of: element
-				});
+				activeElement = element;				
+				$( "#move-popup" ).show();
 			}
 		}	
 	}
@@ -582,10 +577,10 @@ var app = new (function() {
 			if (activeItem.stats && stats.length > 0){
 				stats.html(
 					stats.find(".stat-bar").map(function(index, stat){ 
-						var $stat = $("<div>"+stat.outerHTML+"</div>");
-						if (labelText in activeItem.stats){						
-							var label = $stat.find(".stat-bar-label");
-							var labelText = $.trim(label.text()); 
+						var $stat = $("<div>"+stat.outerHTML+"</div>"),
+							label = $stat.find(".stat-bar-label"),
+							labelText = $.trim(label.text());
+						if (labelText in activeItem.stats){							 
 							label.text(labelText + ": " + activeItem.stats[labelText]);
 							$stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
 						}
@@ -761,7 +756,17 @@ var app = new (function() {
 				self.bungie.vault(function(results){
 					self.loadingUser(false);
 					var buckets = results.data.buckets;
-					var profile = new Profile({ race: "", order: 0, gender: "Tower",  classType: "Vault", id: "Vault", level: "", icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) });
+					var profile = new Profile({ 
+						race: "", 
+						order: 0, 
+						gender: "Tower",
+						classType: "Vault", 
+						id: "Vault", 
+						level: "",
+						imgIcon: "assets/vault_icon.jpg",
+						icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
+						background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
+					});
 					
 					buckets.forEach(function(bucket){
 						bucket.items.forEach(processItem(profile));
@@ -777,6 +782,7 @@ var app = new (function() {
 							gender: DestinyGender[character.characterBase.genderType],
 							classType: DestinyClass[character.characterBase.classType],
 							id: character.characterBase.characterId,
+							imgIcon: self.bungie.getUrl() + character.emblemPath,
 							icon: self.makeBackgroundUrl(character.emblemPath),
 							background: self.makeBackgroundUrl(character.backgroundPath),
 							level: character.characterLevel,

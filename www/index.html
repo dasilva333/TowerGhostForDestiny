@@ -66,7 +66,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">DIV 1.5.9</a>
+		      <a class="navbar-brand" href="#">DIV 1.6.0</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -194,22 +194,30 @@
 		<div class="progress progress-striped active" style="display:none;" data-bind="visible: loadingUser">
 			<div class="progress-bar progress-bar-info" style="width: 100%"></div>
 		</div>
-		<div data-bind="with: activeItem" id="move-popup">
-			<div class="move-popup">
-			  <div class="item-name" data-bind="text: description + ' (Primary Stat: ' + primaryStat + ')'"></div>
-			  <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
-				<div class="move-button" style="display: block;" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, style: { backgroundImage: icon }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
-					<span>vault</span>								
+		<nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
+			<div class="container-fluid">
+				<div class="move-popup row no-gutter">
+				  <div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				  	Move: <span  data-bind="text: description"></span>
+						  <span data-bind="visible: primaryStat">(Primary Stat: <span data-bind="text: primaryStat"></span>)</span>
+				  </div>
+				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
+						<img data-bind="attr: { src : imgIcon }">
+						<div class="attkIcon"><div>vault</div></div>
+					</div>
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.characterId != avatar.id && avatar.id !== 'Vault'">
+						<img data-bind="attr: { src : imgIcon }">
+						<div class="attkIcon"><div>store</div></div>
+					</div>
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: !$parent.isEquipped() && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables' || $parent.characterId != avatar.id && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables'">
+						<img data-bind="attr: { src : imgIcon }">
+						<div class="attkIcon"><div>equip</div></div>
+					</div>								
+				  </div>
 				</div>
-				<div class="move-button" style="display: block;" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, style: { backgroundImage: icon }, visible: $parent.characterId != avatar.id && avatar.id !== 'Vault'">
-					<span>store</span>								
-				</div>
-				<div class="move-button" style="display: block;" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, style: { backgroundImage: icon }, visible: !$parent.isEquipped() && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables' || $parent.characterId != avatar.id && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables'">
-					<span>equip</span>								
-				</div>								
-			  </div>
 			</div>
-		</div>
+		</nav>
 		<div class="container">
 			<div class="container-fluid" style="">
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
