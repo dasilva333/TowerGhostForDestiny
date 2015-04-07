@@ -866,7 +866,8 @@ var app = new (function() {
 								if ((result || "").toString().indexOf("bungled") > -1){
 									self.bungie_cookies = result;
 									window.localStorage.setItem("bungie_cookies", result);
-									self.loadData();	
+									self.loadData();
+									ref.close();
 									clearInterval(loop);
 								}
 							});
