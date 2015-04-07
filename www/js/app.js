@@ -594,6 +594,17 @@ var app = new (function() {
 			}
 			$content.find(".destt-primary-min").html( activeItem.primaryStat );
 		}
+		else {
+			//remove the "Emblem" title from the image issue #31
+			if ($content.find(".fhtt-emblem").length > 0){
+				$content.find("span").remove();
+			}
+		}
+		var width = $(window).width();
+		//this fixes issue #35 makes destinydb tooltips fit on a mobile screen
+		if (width < 340){
+			$content.find(".fhtt.des").css("width","auto");
+		}
 		callback($content.html());
 	}
 	this.toggleListener = function(){
