@@ -87,7 +87,10 @@ var Profile = function(model){
 	this.items = ko.observableArray([]);
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
 	this.get = function(list, type){
-		return self[list]().filter(filterItemByType(type, false));
+		if (type)
+			return self[list]().filter(filterItemByType(type, false));
+		else
+			return self[list]();
 	}
 	this.itemEquipped = function(list, type){
 		return ko.utils.arrayFirst(self[list](), filterItemByType(type, true));
@@ -378,7 +381,8 @@ var DestinyBucketTypes = {
 	"284967655": "Ship",
 	"3865314626": "Materials",
 	"1469714392": "Consumables",
-	"1585787867": "Class Items"
+	"1585787867": "Class Items",
+	"12345": "Post Master"
 }
 var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
 var DestinyDamageTypeColors = {
@@ -711,6 +715,8 @@ var app = new (function() {
 				profile.armor.push( new Item(itemObject,profile,'armor') );
 			}
 			else if (info.bucketTypeHash in DestinyBucketTypes){
+				if (item.location == 4)
+					itemObject.bucketType = "Post Master";
 				if (itemObject.typeName && itemObject.typeName == "Emblem"){
 					itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
 				}
@@ -847,53 +853,63 @@ var app = new (function() {
 		return function(){
 			var loop, newCookie;
 			//overwrite the same reference to avoid crashing?
-			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
-			ref.addEventListener('loadstop', function(event) {
-				if (self.listenerEnabled() == true){
-					clearInterval(loop);
-					loop = setInterval(function() {
-						ref.executeScript({
-							code: 'document.cookie'
-						}, function(result) {
-							console.log("found result in loadstop " + result);
-							if ((result || "").toString().indexOf("bungled") > -1){											
-								self.bungie_cookies = result;
-								window.localStorage.setItem("bungie_cookies", result);
-								self.loadData();	
-								clearInterval(loop);
-							}
-						});
-					}, 500);				
-				}
-			});
-			ref.addEventListener('loadstart', function(event) {
-				clearInterval(loop);
-			});
-			ref.addEventListener('exit', function() {
-				if (self.characters().length == 0){
-					clearInterval(loop);
-					if (_.isEmpty(self.bungie_cookies)){
+			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');			
+			if (isMobile){
+				ref.addEventListener('loadstop', function(event) {
+					if (self.listenerEnabled() == true){
+						clearInterval(loop);
 						loop = setInterval(function() {
 							ref.executeScript({
 								code: 'document.cookie'
 							}, function(result) {
-								console.log("found result in exit " + result);
-								if ((result || "").toString().indexOf("bungled") > -1){											
+								console.log("found result in loadstop " + result);
+								if ((result || "").toString().indexOf("bungled") > -1){
 									self.bungie_cookies = result;
 									window.localStorage.setItem("bungie_cookies", result);
-									self.loadData();		
+									self.loadData();	
 									clearInterval(loop);
 								}
 							});
-						}, 500); 						
+						}, 500);				
 					}
-					else {
+				});
+				ref.addEventListener('loadstart', function(event) {
+					clearInterval(loop);
+				});
+				ref.addEventListener('exit', function() {
+					if (self.characters().length == 0){
+						clearInterval(loop);
+						if (_.isEmpty(self.bungie_cookies)){
+							loop = setInterval(function() {
+								ref.executeScript({
+									code: 'document.cookie'
+								}, function(result) {
+									console.log("found result in exit " + result);
+									if ((result || "").toString().indexOf("bungled") > -1){
+										self.bungie_cookies = result;
+										window.localStorage.setItem("bungie_cookies", result);
+										self.loadData();		
+										clearInterval(loop);
+									}
+								});
+							}, 500);
+						}
+						else {
+							self.loadData();
+						}
+					}
+				});
+			}
+			else {
+				clearInterval(loop);
+				loop = setInterval(function(){
+					if (window.ref.closed){
+						clearInterval(loop);
 						self.loadData();
-					}				
-				}	
-			});		
+					}
+				}, 100);
+			}
 		}
-
 	}
 	
 	this.init = function(){
