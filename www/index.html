@@ -208,8 +208,7 @@
 			<div class="container-fluid">
 				<div class="move-popup row no-gutter">
 				  <div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				  	Move: <span  data-bind="text: description"></span>
-						  <span data-bind="visible: primaryStat">(Primary Stat: <span data-bind="text: primaryStat"></span>)</span>
+				  	Move: <span data-bind="text: description"></span>
 				  </div>
 				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">

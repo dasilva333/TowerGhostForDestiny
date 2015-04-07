@@ -603,7 +603,7 @@ var app = new (function() {
 		var width = $(window).width();
 		//this fixes issue #35 makes destinydb tooltips fit on a mobile screen
 		if (width < 340){
-			$content.find(".fhtt.des").css("width","auto");
+			$content.find(".fhtt.des").css("width", width + "px");
 		}
 		callback($content.html());
 	}
@@ -957,8 +957,8 @@ var app = new (function() {
 			setTimeout(self.loadData, isChrome ? 1 : 5000);		
 		}
 		$("form").bind("submit", false);
-		$(window).click(function(e){
-			if (e.target.className !== "itemImage") {
+		$("html").click(function(e){
+			if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
 				$("#move-popup").hide();
 			}
 		});

@@ -53,7 +53,7 @@ body {
     padding: 1px;
     padding-left: 3px;
 }
-.move-popup .attkIcon div { background-color: white; text-transform: uppercase; padding:2px; width:4em; } 
+.move-popup .attkIcon div { background-color: white; text-transform: uppercase; padding:1px; width:3em; } 
 .col-centered { float:none; margin:0 auto; }
 .locations img { max-width: 97%; }
 #loadout-create {
