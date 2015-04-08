@@ -321,26 +321,31 @@ var Item = function(model, profile, list){
 			}		
 		}
 		if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
-			(new dialog({
-	            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
-	            buttons: [
-					{
-	                	label: 'Transfer',
-						cssClass: 'btn-primary',
-						action: function(dialogItself){
-							transferAmount = parseInt($("input#materialsAmount").val());
-							if (!isNaN(transferAmount)){ done(); dialogItself.close(); }
-							else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
-						}
-	            	}, 
-					{
-		                label: 'Close',		                
-		                action: function(dialogItself){
-		                    dialogItself.close();
-		                }
-	            	}
-	            ]
-	        })).title("Transfer Materials").show();
+			if (self.primaryStat == 1){
+				done();
+			}
+			else {
+				(new dialog({
+		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
+		            buttons: [
+						{
+		                	label: 'Transfer',
+							cssClass: 'btn-primary',
+							action: function(dialogItself){
+								transferAmount = parseInt($("input#materialsAmount").val());
+								if (!isNaN(transferAmount)){ done(); dialogItself.close(); }
+								else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
+							}
+		            	}, 
+						{
+			                label: 'Close',		                
+			                action: function(dialogItself){
+			                    dialogItself.close();
+			                }
+		            	}
+		            ]
+		        })).title("Transfer Materials").show();			
+			}
 		}
 		else {
 			done();
