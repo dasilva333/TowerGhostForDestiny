@@ -1,6 +1,6 @@
 {
   "name": "tower-ghost-builder",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {
@@ -13,18 +13,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dasilva333/DIM"
+    "url": "https://github.com/dasilva333/TowerGhostForDestiny"
   },
   "keywords": [
     "companion",
     "app",
     "destiny",
     "item",
-    "viewer"
+    "viewer",
+	"tower ghost"
   ],
   "author": "Richard Pinedo",
   "license": "BSD",
   "bugs": {
-    "url": "https://github.com/dasilva333/DIM/issues"
+    "url": "https://github.com/dasilva333/TowerGhostForDestiny/issues"
   }
 }

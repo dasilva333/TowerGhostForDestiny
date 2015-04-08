@@ -170,13 +170,17 @@ var Loadout = function(model){
 			else return [];
 		}));
 		if (globalSwapArray.length > 0){
+			var $template = $(swapTemplate3({ swapArray: globalSwapArray }));
+			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
+			console.log( $template );
 			(new dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(globalSwapArray, targetCharacterId, function(){
 					alert("Item(s) transferred successfully");
 					dialog.close()
 				}); }},
 				{label: "Cancel", action: function(dialog){ dialog.close() }}
-			]})).title("Transfer Confirm").content(swapTemplate3({ swapArray: globalSwapArray })).show();		
+			]})).title("Transfer Confirm").content($template).show();
+			
 		}
 	}
 }
