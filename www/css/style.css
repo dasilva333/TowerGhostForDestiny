@@ -43,6 +43,15 @@ body {
     z-index: 2;
     cursor: pointer;
 }
+.desktop .move-popup {
+    position: absolute;
+    z-index: 2;
+    top: -75px;
+    width: 380px;
+    height: 75px;
+    background-color: rgba(21,13,13,1);
+    cursor: default;
+}
 .move-popup .item-name {
     color: #000;
 	background-color: white;

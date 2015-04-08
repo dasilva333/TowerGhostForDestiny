@@ -44,25 +44,27 @@ var moveItemPositionHandler = function(element, item){
 			}
 		}
 		else {
+			var $movePopup = $( "#move-popup" );
 			if (item.bucketType == "Post Master"){
 				return alert("Post Master items cannot be transferred with the API.");
 			}
 			if (element	== activeElement){
-				$( "#move-popup" ).hide();
+				$movePopup.hide();
 				activeElement = null;
 			}	
 			else {
-				/* if isMobile */
-					activeElement = element;				
-					$( "#move-popup" ).show();
-				/* else TODO: issue #33
-					$( "#move-popup" ).show().position({
+				activeElement = element;
+				if (window.isMobile){
+					$movePopup.show();
+				}
+				else {
+					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
 						my: "left bottom",
 						at: "left top",
 						collision: "none fit",
-						of: $(".itemImage:eq(1)")
+						of: element
 					});
-				*/
+				}
 			}
 		}	
 	}
