@@ -288,7 +288,7 @@
 					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add.</p>
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
-					<span class="item" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+					<span class="item" data-bind="css: isGridComplete ? 'complete' : ''">
 						<a data-bind="attr:{href:item.href, instanceId:item._id}, click:">
 							<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 						</a>

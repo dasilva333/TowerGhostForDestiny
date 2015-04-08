@@ -49,8 +49,17 @@ var moveItemPositionHandler = function(element, item){
 				activeElement = null;
 			}	
 			else {
-				activeElement = element;				
-				$( "#move-popup" ).show();
+				/* if isMobile */
+					activeElement = element;				
+					$( "#move-popup" ).show();
+				/* else TODO: issue #33
+					$( "#move-popup" ).show().position({
+						my: "left bottom",
+						at: "left top",
+						collision: "none fit",
+						of: $(".itemImage:eq(1)")
+					});
+				*/
 			}
 		}	
 	}
