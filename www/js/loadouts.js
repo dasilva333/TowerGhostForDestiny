@@ -56,7 +56,7 @@ var Loadout = function(model){
 		var _items = _.map(self.ids(), function(instanceId){
 			var itemFound;
 			app.characters().forEach(function(character){
-				['weapons','armor'].forEach(function(list){
+				['weapons','armor','items'].forEach(function(list){
 					var match = _.findWhere(character[list]() , { _id: instanceId });
 					if (match) itemFound = match;
 				});
@@ -115,7 +115,7 @@ var Loadout = function(model){
 				}
 			}
 		};
-		var globalSwapArray = _.flatten(_.map(['weapons','armor'], function(list){
+		var globalSwapArray = _.flatten(_.map(['weapons','armor','items'], function(list){
 			var sourceItems =  _.where( self.items(), { list: list });
 			if (sourceItems.length > 0){
 				var targetList = targetCharacter[list]();				
