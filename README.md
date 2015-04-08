@@ -33,7 +33,7 @@
 -    Moving materials/consumables causing splits/merges is still buggy
 -    DestinyExotics doesn't recognize certain weapons you might have
 -    Mobile app has problems logging in
--    Visit the [Issues](https://github.com/dasilva333/DIM/issues) for more information
+-    Visit the [Issues](https://github.com/dasilva333/TowerGhostForDestiny/issues) for more information
 -    Keyboard hides away for some users
 
 ##Troubleshooting 
@@ -52,7 +52,7 @@ http://www.reddit.com/r/DestinyTheGame/comments/316hx4/discussion_destiny_item_v
 
 You can find the latest download for each platform here:
 
-https://github.com/dasilva333/DIM/tree/div-movile-dist/
+https://github.com/dasilva333/TowerGhostForDestiny/tree/div-movile-dist/
 
 ##Manual Chrome Install Instructions
 
@@ -75,7 +75,7 @@ Visit this store Link:
 
 [Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
 
-[Tower Ghost in Firefox Store](https://addons.mozilla.org/En-us/firefox/addon/destiny-item-viewer/)
+[Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
 
 [Tower Ghost in Amazon Store](http://www.amazon.com/gp/product/B00VQYLURG)
 

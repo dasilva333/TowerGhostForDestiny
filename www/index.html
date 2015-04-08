@@ -157,7 +157,7 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Burn <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="None"><a href="#"><img src="assets/kinetic.png" class="icon">Kinetic (None)</a></li>
+					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Kinetic"><a href="#"><img src="assets/kinetic.png" class="icon">Kinetic (None)</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Solar"><a href="#"><img src="assets/solar.png" class="icon">Solar</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Arc"><a href="#"><img src="assets/arc.png" class="icon">Arc</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Void"><a href="#"><img src="assets/void.png" class="icon">Void</a></li>
@@ -281,7 +281,7 @@
 					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
 					<span id="loadout-save" data-bind="click: save">Save</span>
 					<span id="loadout-save" data-bind="click: remove">Delete</span>
-					<span id="loadout-save" data-bind="click: $root.cancelLoadout">Cancel</span>
+					<span id="loadout-save" data-bind="click: $root.cancelLoadout">Close</span>
 					<!-- ko foreach: { data: $root.characters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
@@ -330,26 +330,20 @@
 				<li>Change Emblem dynamically</li>
 			</ul>
 			
-			<h5>Troubleshooting on Mobile</h5>
+			<div data-bind="visible: isMobile">
+				<h5>Troubleshooting on Mobile</h5>
 
-			<p>Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials.<br>
-				If you don't see that message then go to <strong>Settings</strong> then <strong> Log in XBL/PSN</strong> and close the pop up window after Bungie.net has completely finished loading.<br>		
-				After the window closes the items should load automatically give it a few seconds to load you should see a blue loading bar while its getting your information.<br>
-				If the page doesn't load after sign in then try <strong>Settings</strong> then <strong>Refresh Items</strong>. <br>
-				Good luck guys and remember this is still a beta build.
-			</p>
-			
-			<h5>Chrome Store Install</h5>		
-			
-			<a href="https://chrome.google.com/webstore/detail/gdjndlpockopgjbonnfdmkcmkcikjhge" target="_blank">https://chrome.google.com/webstore/detail/gdjndlpockopgjbonnfdmkcmkcikjhge</a>
-			
-			<h5>Firefox Store Install</h5>		
-			
-			<a href="https://addons.mozilla.org/En-us/firefox/addon/destiny-item-viewer/" target="_blank">https://addons.mozilla.org/En-us/firefox/addon/destiny-item-viewer/</a>
+				<p>Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials.<br>
+					If you don't see that message then go to <strong>Settings</strong> then <strong> Log in XBL/PSN</strong> and close the pop up window after Bungie.net has completely finished loading.<br>		
+					After the window closes the items should load automatically give it a few seconds to load you should see a blue loading bar while its getting your information.<br>
+					If the page doesn't load after sign in then try <strong>Settings</strong> then <strong>Refresh Items</strong>. <br>
+					Good luck guys and remember this is still a beta build.
+				</p>
+			</div>
 			
 			<h5>Support and New Issues</h5>
 			
-			<a href="https://github.com/dasilva333/DIM/tree/mixed" target="_blank">https://github.com/dasilva333/DIM/</a>	
+			<a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_blank">https://github.com/dasilva333/TowerGhostForDestiny/</a>	
 		</div>
 		<div id="help" style="display:none">
 			<ul>
