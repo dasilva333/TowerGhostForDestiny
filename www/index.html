@@ -80,20 +80,23 @@
 		      <ul class="nav navbar-nav">
 				
 				<li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings <span class="caret"></span></a>
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/cog.png"> <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
 		            	<li><a href="#" data-bind="click: showAbout">About</a></li>
 						<li><a href="#" data-bind="click: showHelp">Help</a></li>
+						<li class="active"><a href="#" data-bind="click: donate">Donate</a></li>
+						<li class="divider"></li>
 						<li><a href="#" data-bind="click: toggleShareView">Share URL</a></li>
 						<li><a href="#" data-bind="click: clearFilters">Clear Filters</a></li>
-						<li><a href="#" data-bind="click: loadData">Refresh Items</a></li>
 						<li><a href="#" data-bind="click: $root.openBungieWindow('Psnid')">PSN Login</a></li>
 						<li><a href="#" data-bind="click: $root.openBungieWindow('Wlid')">XBL Login</a></li>
-						<li data-bind="click: toggleListener, css: listenerEnabled() == true ? 'active' : ''"><a href="#">Loadstop Listener</a></li>
+						<li data-bind="visible: isMobile, click: toggleListener, css: listenerEnabled() == true ? 'active' : ''"><a href="#">Loadstop Listener</a></li>
 						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
 						<li data-bind="click: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 		          </ul>
 		        </li>
+				<li class="dropdown"><a data-bind="click: loadData" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
+				</li>
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">View <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
@@ -202,7 +205,7 @@
 			</div>
 		</div>		
 		<div class="progress progress-striped active" style="display:none;" data-bind="visible: loadingUser">
-			<div class="progress-bar progress-bar-info" style="width: 100%"></div>
+			<div class="progress-bar progress-bar-info" id="loadingBar" style="width: 100%"></div>
 		</div>
 		<nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
 			<div class="container-fluid">
@@ -278,6 +281,7 @@
 					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
 					<span id="loadout-save" data-bind="click: save">Save</span>
 					<span id="loadout-save" data-bind="click: remove">Delete</span>
+					<span id="loadout-save" data-bind="click: $root.cancelLoadout">Cancel</span>
 					<!-- ko foreach: { data: $root.characters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
@@ -285,7 +289,7 @@
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
 					<span class="item" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-						<a data-bind="attr:{href:item.href, id:item._id}, click:">
+						<a data-bind="attr:{href:item.href, instanceId:item._id}, click:">
 							<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 						</a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>

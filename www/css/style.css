@@ -189,6 +189,7 @@ body {
     background-size: cover;
     width: 40px;
     height: 40px;
+	padding-top: 40px;
     text-align: center;
     line-height: 10px;
     float: left;
