@@ -220,3 +220,4 @@ body {
 	font-size: 0.9em;
 }
 #loadout-options .move-button span:hover { background: rgba(0,0,0,.1) }
+.label { white-space: normal; }
