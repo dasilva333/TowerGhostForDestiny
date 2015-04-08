@@ -155,7 +155,7 @@
 		          </ul>
 		        </li>
 				<li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Damage <span class="caret"></span></a>
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Burn <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="None"><a href="#"><img src="assets/kinetic.png" class="icon">Kinetic (None)</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Solar"><a href="#"><img src="assets/solar.png" class="icon">Solar</a></li>
@@ -234,7 +234,7 @@
 			<div class="container-fluid" style="">
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
 					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-						<div class="character">
+						<div class="character clearfix">
 						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
 							<div class="class" data-bind="text: classType"></div>

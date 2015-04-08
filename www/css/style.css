@@ -14,9 +14,6 @@ body {
     color: #fff;
     font-family: HelveticaNeue-Light,'Helvetica Neue Light','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
-@media screen and (min-width: 1024px) and (max-width: 1124px) {
-    body { padding-top: 100px; }
-}
 .loadout-button {
     position: relative;
     display: inline-block;
@@ -122,21 +119,25 @@ body {
 	border:1px solid white;
 }
 .itemBucket {
-	border:1px solid white;
+  /* border: 1px solid white; */
+  background: rgba(255,255,255,.1);
 }
 .icon { width: 24px; }
 .title {
-    text-transform: uppercase;
-    position: relative;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    border-bottom: 2px solid rgba(245,245,245,.6);
-    font-size: 15px;
-    font-weight: 500;
-    color: rgba(245,245,245,.6);
+  text-transform: uppercase;
+  position: relative;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  /* border-bottom: 2px solid rgba(245,245,245,.6); */
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(245,245,245,.6);
+  background: rgba(0,0,0,.2);
+  padding-left: 5px;
 }
 .complete .itemImage { border-color: #f5dc56; }
-
+.navbar-brand { font-size: 0.8em }
+.nav > li > a { padding: 10px; }
 .character-box {
     position: relative;
     display: inline-block;
