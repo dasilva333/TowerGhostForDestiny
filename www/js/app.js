@@ -44,6 +44,9 @@ var moveItemPositionHandler = function(element, item){
 			}
 		}
 		else {
+			if (item.bucketType == "Post Master"){
+				return alert("Post Master items cannot be transferred with the API.");
+			}
 			if (element	== activeElement){
 				$( "#move-popup" ).hide();
 				activeElement = null;
@@ -706,7 +709,10 @@ var app = new (function() {
 			if (item.progression){
 				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 			}
-			if (info.itemType == 3){
+			if (item.location == 4)
+					itemObject.bucketType = "Post Master";
+					
+			if (info.itemType == 3 && item.location !== 4){
 				itemObject.perks = item.perks.map(function(perk){
 					if (perk.perkHash in window._perkDefs){
 						var p = window._perkDefs[perk.perkHash];
@@ -728,7 +734,7 @@ var app = new (function() {
 				}
 				profile.weapons.push( new Item(itemObject,profile,'weapons') );
 			}
-			else if (info.itemType == 2 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
+			else if (info.itemType == 2 && item.location !== 4 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
 				itemObject.stats = {};
 				_.each(item.stats, function(stat){
 					if (stat.statHash in window._statDefs){
@@ -739,8 +745,6 @@ var app = new (function() {
 				profile.armor.push( new Item(itemObject,profile,'armor') );
 			}
 			else if (info.bucketTypeHash in DestinyBucketTypes){
-				if (item.location == 4)
-					itemObject.bucketType = "Post Master";
 				if (itemObject.typeName && itemObject.typeName == "Emblem"){
 					itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
 				}
