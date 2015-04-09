@@ -780,7 +780,7 @@ var app = new (function() {
 				self.loadingUser(false);
 			}
 		}
-		//if (self.loadingUser() == false){
+		if (self.loadingUser() == false){
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
 			self.characters.removeAll();
@@ -843,9 +843,9 @@ var app = new (function() {
 							done();
 						});
 					});
-				});
-			});
-		//}
+				});			
+			});		
+		}
 	}
 	
 	this.refreshHandler = function(){
@@ -891,7 +891,7 @@ var app = new (function() {
 		window.open("http://bit.ly/1Jmb4wQ","_blank");
 	}
 	
-	this.openBungieWindow = function(type, autoClose){
+	this.openBungieWindow = function(type){
 		return function(){
 			var loop, newCookie;
 			//overwrite the same reference to avoid crashing?
@@ -909,8 +909,7 @@ var app = new (function() {
 									self.bungie_cookies = result;
 									window.localStorage.setItem("bungie_cookies", result);
 									self.loadData();
-									if (autoClose == true)
-										ref.close();
+									ref.close();
 									clearInterval(loop);
 								}
 							});
