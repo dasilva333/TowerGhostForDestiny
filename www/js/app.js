@@ -39,14 +39,14 @@ var moveItemPositionHandler = function(element, item){
 					app.activeLoadout().ids.push(item._id);
 				}
 				else {
-					BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
+					alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
 				}
 			}
 		}
 		else {
 			var $movePopup = $( "#move-popup" );
 			if (item.bucketType == "Post Master"){
-				return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
+				return alert("Post Master items cannot be transferred with the API.");
 			}
 			if (element	== activeElement){
 				$movePopup.hide();
@@ -234,7 +234,7 @@ var Item = function(model, profile, list){
 				}
 				else {
 					if (callback) callback(false);
-					else BootstrapDialog.alert(result.Message);
+					else alert(result.Message);
 				}
 			});
 		}
@@ -301,7 +301,7 @@ var Item = function(model, profile, list){
 					if (cb) cb(y,x);
 				}
 				else {
-					BootstrapDialog.alert(result.Message);
+					alert(result.Message);
 				}
 			});		
 		//}, 1000);
@@ -768,34 +768,8 @@ var app = new (function() {
 	this.makeBackgroundUrl = function(path, excludeDomain){
 		return "url(" + (excludeDomain ? "" : self.bungie.getUrl()) + path + ")";
 	}
-	
-	this.hasBothAccounts = function(){
-		return self.activeUser() && !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
-	}
-	
-	this.hasXboxAccount = ko.computed(function(){
-		return self.activeUser() && !_.isEmpty(self.activeUser().gamerTag) && self.hasBothAccounts();
-	})
-	
-	this.hasPsnAccount = ko.computed(function(){
-		return self.activeUser() && !_.isEmpty(self.activeUser().psnId) && self.hasBothAccounts();
-	})
-	
-	this.useXboxAccount = function(){
-		self.activeUser().activeSystem("XBL");
-		self.characters.removeAll();
-		self.loadingUser(true);
-		self.search();
-	}
-	
-	this.usePlaystationAccount = function(){
-		self.activeUser().activeSystem("PSN");
-		self.characters.removeAll();
-		self.loadingUser(true);
-		self.search();
-	}	
-	
-	this.search = function(){
+		
+	this.loadData = function(){
 		var total = 0, count = 0;
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
 		function done(){
@@ -805,89 +779,71 @@ var app = new (function() {
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
 			}
-		}	
-		self.bungie.search(self.activeUser().activeSystem(),function(e){
-			if (e.error){
-				/* if the first account fails retry the next one*/
-				if (self.hasBothAccounts()){
-					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );
-					self.search();
-				}
-				else {
-					BootstrapDialog.alert("Account has no data");
-				}				
-				self.loadingUser(false);
-				return
-			}
-			var avatars = e.data.characters;
-			total = avatars.length + 1;
-			self.bungie.vault(function(results){
-				var buckets = results.data.buckets;
-				var profile = new Profile({ 
-					race: "", 
-					order: 0, 
-					gender: "Tower",
-					classType: "Vault", 
-					id: "Vault", 
-					level: "",
-					imgIcon: "assets/vault_icon.jpg",
-					icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
-					background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
-				});
-				
-				buckets.forEach(function(bucket){
-					bucket.items.forEach(processItem(profile));
-				});
-				self.addWeaponTypes(profile.weapons());
-				self.characters.push(profile);
-				done()
-			});
-			avatars.forEach(function(character, index){
-				self.bungie.inventory(character.characterBase.characterId, function(response) {
-					var profile = new Profile({
-						order: index+1,
-						gender: DestinyGender[character.characterBase.genderType],
-						classType: DestinyClass[character.characterBase.classType],
-						id: character.characterBase.characterId,
-						imgIcon: self.bungie.getUrl() + character.emblemPath,
-						icon: self.makeBackgroundUrl(character.emblemPath),
-						background: self.makeBackgroundUrl(character.backgroundPath),
-						level: character.characterLevel,
-						race: window._raceDefs[character.characterBase.raceHash].raceName
-					});
-					var items = [];						
-					
-					Object.keys(response.data.buckets).forEach(function(bucket){
-						response.data.buckets[bucket].forEach(function(obj){
-							obj.items.forEach(function(item){
-								items.push(item);
-							});
-						});
-					});
-					
-					items.forEach(processItem(profile));
-					self.addWeaponTypes(profile.weapons());
-					self.characters.push(profile);
-					done();
-				});
-			});
-		});		
-	}
-	
-	this.loadData = function(){
+		}
 		if (self.loadingUser() == false){
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
 			self.characters.removeAll();
 			self.bungie.user(function(user){
-				//try loading the Playstation account first
-				user.activeSystem = ko.observable(user.psnId ? "PSN" : "XBL" );			
 				self.activeUser(user);
 				if (user.error){
 					self.loadingUser(false);
 					return
-				}				
-				self.search();			
+				}
+				self.bungie.search(function(e){
+					var avatars = e.data.characters;
+					total = avatars.length + 1;
+					self.bungie.vault(function(results){
+						var buckets = results.data.buckets;
+						var profile = new Profile({ 
+							race: "", 
+							order: 0, 
+							gender: "Tower",
+							classType: "Vault", 
+							id: "Vault", 
+							level: "",
+							imgIcon: "assets/vault_icon.jpg",
+							icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
+							background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
+						});
+						
+						buckets.forEach(function(bucket){
+							bucket.items.forEach(processItem(profile));
+						});
+						self.addWeaponTypes(profile.weapons());
+						self.characters.push(profile);
+						done()
+					});
+					avatars.forEach(function(character, index){
+						self.bungie.inventory(character.characterBase.characterId, function(response) {
+							var profile = new Profile({
+								order: index+1,
+								gender: DestinyGender[character.characterBase.genderType],
+								classType: DestinyClass[character.characterBase.classType],
+								id: character.characterBase.characterId,
+								imgIcon: self.bungie.getUrl() + character.emblemPath,
+								icon: self.makeBackgroundUrl(character.emblemPath),
+								background: self.makeBackgroundUrl(character.backgroundPath),
+								level: character.characterLevel,
+								race: window._raceDefs[character.characterBase.raceHash].raceName
+							});
+							var items = [];						
+							
+							Object.keys(response.data.buckets).forEach(function(bucket){
+								response.data.buckets[bucket].forEach(function(obj){
+									obj.items.forEach(function(item){
+										items.push(item);
+									});
+								});
+							});
+							
+							items.forEach(processItem(profile));
+							self.addWeaponTypes(profile.weapons());
+							self.characters.push(profile);
+							done();
+						});
+					});
+				});			
 			});		
 		}
 	}
