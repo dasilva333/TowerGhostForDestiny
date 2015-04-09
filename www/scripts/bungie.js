@@ -140,6 +140,9 @@ try {
 	  this.gamertag = function() {
 	    return active.id;
 	  }
+	  this.gamertype = function() {
+	    return active.type;
+	  }
 	  this.system = function() {
 	    return systemIds;
 	  }
@@ -161,20 +164,16 @@ try {
 	        systemIds.xbl = {id: res.gamerTag, type: 1};
 	        systemIds.psn = {id: res.psnId, type: 2};
 	
-	        active = systemIds.xbl;
-	
-	        if(res.psnId)
-	          active = systemIds.psn;
-	
 	        callback(res);
 	      }
 	    });
 	  }
-	  this.search = function(callback) {
+	  this.search = function(activeSystem, callback) {
+	  	this.setsystem(activeSystem);
 	    _request({
 	      route: '/Destiny/SearchDestinyPlayer/' + active.type + '/' + active.id + '/',
 	      method: 'GET',
-	      complete: function(membership) {
+	      complete: function(membership,response) {
 	        if(membership[0] === undefined) {
 	          //console.log('error finding bungie account!', membership)
 	          callback({error: true})
