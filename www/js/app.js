@@ -891,7 +891,7 @@ var app = new (function() {
 		window.open("http://bit.ly/1Jmb4wQ","_blank");
 	}
 	
-	this.openBungieWindow = function(type){
+	this.openBungieWindow = function(type, autoClose){
 		return function(){
 			var loop, newCookie;
 			//overwrite the same reference to avoid crashing?
@@ -909,7 +909,8 @@ var app = new (function() {
 									self.bungie_cookies = result;
 									window.localStorage.setItem("bungie_cookies", result);
 									self.loadData();
-									ref.close();
+									if (autoClose == true)
+										ref.close();
 									clearInterval(loop);
 								}
 							});

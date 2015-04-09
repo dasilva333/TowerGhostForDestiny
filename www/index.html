@@ -88,8 +88,8 @@
 						<li class="divider"></li>
 						<li><a href="#" data-bind="click: toggleShareView">Share URL</a></li>
 						<li><a href="#" data-bind="click: clearFilters">Clear Filters</a></li>
-						<li><a href="#" data-bind="click: $root.openBungieWindow('Psnid')">PSN Login</a></li>
-						<li><a href="#" data-bind="click: $root.openBungieWindow('Wlid')">XBL Login</a></li>
+						<li><a href="#" data-bind="click: $root.openBungieWindow('Psnid', false)">PSN Login</a></li>
+						<li><a href="#" data-bind="click: $root.openBungieWindow('Wlid', false)">XBL Login</a></li>
 						<li data-bind="visible: isMobile, click: toggleListener, css: listenerEnabled() == true ? 'active' : ''"><a href="#">Loadstop Listener</a></li>
 						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
 						<li data-bind="click: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
@@ -194,7 +194,7 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid')" target="_blank">Bungie.net PSN</a> or <a data-bind="click:$root.openBungieWindow('Wlid')" target="_blank">Bungie.net Xbox</a> </li>
+						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid', true)" target="_blank">Bungie.net PSN</a> or <a data-bind="click:$root.openBungieWindow('Wlid', true)" target="_blank">Bungie.net Xbox</a> </li>
 						<li>Sign in with your credentials</li>
 						<li>Wait until homepage completely finishes loading</li>
 						<li>Close Bungie.net window and items should be loaded</li>
