@@ -667,7 +667,7 @@ var app = new (function() {
 		self.activeView($(event.target).parent().attr("value"));
 	}	
 	this.setDmgFilter = function(model, event){
-		var dmgType = $(event.target).parent().attr("value");
+		var dmgType = $(event.target).parents('li:first').attr("value");
 		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
 		//not sure why this happens
 		self.dmgFilter.remove(undefined);
