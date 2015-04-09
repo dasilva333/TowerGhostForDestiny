@@ -25,7 +25,7 @@
     <gap:plugin name="org.apache.cordova.globalization" />
     <gap:plugin name="org.apache.cordova.inappbrowser" />
     <gap:plugin name="org.apache.cordova.statusbar" />
-    <gap:plugin name="org.apache.cordova.plugin.device" source="plugins.cordova.io" />
+    <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
