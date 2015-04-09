@@ -780,7 +780,7 @@ var app = new (function() {
 				self.loadingUser(false);
 			}
 		}
-		if (self.loadingUser() == false){
+		//if (self.loadingUser() == false){
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
 			self.characters.removeAll();
@@ -843,9 +843,9 @@ var app = new (function() {
 							done();
 						});
 					});
-				});			
-			});		
-		}
+				});
+			});
+		//}
 	}
 	
 	this.refreshHandler = function(){
