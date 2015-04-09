@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+	<?xml version='1.0' encoding='utf-8'?>
 <widget id="com.richardpinedo.towerghostfordestiny" version="1.6.7" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
@@ -25,7 +25,7 @@
     <gap:plugin name="org.apache.cordova.globalization" />
     <gap:plugin name="org.apache.cordova.inappbrowser" />
     <gap:plugin name="org.apache.cordova.statusbar" />
-    <gap:plugin name="org.apache.cordova.plugin.device" />
+    <gap:plugin name="org.apache.cordova.plugin.device" source="plugins.cordova.io" />
 
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
