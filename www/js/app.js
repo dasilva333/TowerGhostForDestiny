@@ -1001,6 +1001,11 @@ window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, 
 
 if (isMobile){
 	document.addEventListener('deviceready', app.init, false);
+	$(document).on('deviceready', function () {
+	    if (window.device && parseFloat(window.device.version) >= 7.0) {
+		$('body').addClass('iOS7');
+	    }
+	});
 } else {
 	$(document).ready(app.init);
 }
