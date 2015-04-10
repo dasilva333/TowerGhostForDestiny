@@ -556,6 +556,7 @@ var app = new (function() {
 	});
 	
 	this.createLoadout = function(){
+		if ($(".navbar-toggle").is(":visible")) $(".navbar-toggle").click();
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
 	}
