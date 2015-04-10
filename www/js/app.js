@@ -39,14 +39,14 @@ var moveItemPositionHandler = function(element, item){
 					app.activeLoadout().ids.push(item._id);
 				}
 				else {
-					alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
+					BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
 				}
 			}
 		}
 		else {
 			var $movePopup = $( "#move-popup" );
 			if (item.bucketType == "Post Master"){
-				return alert("Post Master items cannot be transferred with the API.");
+				return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
 			}
 			if (element	== activeElement){
 				$movePopup.hide();
@@ -234,7 +234,7 @@ var Item = function(model, profile, list){
 				}
 				else {
 					if (callback) callback(false);
-					else alert(result.Message);
+					else BootstrapDialog.alert(result.Message);
 				}
 			});
 		}
@@ -301,7 +301,7 @@ var Item = function(model, profile, list){
 					if (cb) cb(y,x);
 				}
 				else {
-					alert(result.Message);
+					BootstrapDialog.alert(result.Message);
 				}
 			});		
 		//}, 1000);
@@ -462,6 +462,15 @@ var perksTemplate = _.template('<div class="destt-talent">' +
 	'<% }) %>' +
 '</div>');
 
+var User = function(model){
+	var self = this;
+	_.each(model, function(value, key){
+		self[key] = value;
+	});	
+	//try loading the Playstation account first
+	this.activeSystem = ko.observable(self.psnId ? "PSN" : "XBL" );
+}
+
 var app = new (function() {
 	var self = this;
 
@@ -532,7 +541,7 @@ var app = new (function() {
 	this.showUniques =  ko.observable(defaults.showUniques);
 	
 	this.activeItem = ko.observable();
-	this.activeUser = ko.observable();
+	this.activeUser = ko.observable(new User());
 
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
@@ -768,8 +777,26 @@ var app = new (function() {
 	this.makeBackgroundUrl = function(path, excludeDomain){
 		return "url(" + (excludeDomain ? "" : self.bungie.getUrl()) + path + ")";
 	}
-		
-	this.loadData = function(){
+	
+	this.hasBothAccounts = function(){
+		return !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
+	}
+	
+	this.useXboxAccount = function(){
+		self.activeUser().activeSystem("XBL");
+		self.characters.removeAll();
+		self.loadingUser(true);
+		self.search();
+	}
+	
+	this.usePlaystationAccount = function(){
+		self.activeUser().activeSystem("PSN");
+		self.characters.removeAll();
+		self.loadingUser(true);
+		self.search();
+	}	
+	
+	this.search = function(){
 		var total = 0, count = 0;
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
 		function done(){
@@ -779,71 +806,91 @@ var app = new (function() {
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
 			}
-		}
+		}	
+		self.bungie.search(self.activeUser().activeSystem(),function(e){
+			if (e.error){
+				/* if the first account fails retry the next one*/
+				if (self.hasBothAccounts()){
+					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );
+					self.search();
+				}
+				else {
+					BootstrapDialog.alert("Account has no data");
+				}				
+				self.loadingUser(false);
+				return
+			}
+			var avatars = e.data.characters;
+			total = avatars.length + 1;
+			self.bungie.vault(function(results){
+				var buckets = results.data.buckets;
+				var profile = new Profile({ 
+					race: "", 
+					order: 0, 
+					gender: "Tower",
+					classType: "Vault", 
+					id: "Vault", 
+					level: "",
+					imgIcon: "assets/vault_icon.jpg",
+					icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
+					background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
+				});
+				
+				buckets.forEach(function(bucket){
+					bucket.items.forEach(processItem(profile));
+				});
+				self.addWeaponTypes(profile.weapons());
+				self.characters.push(profile);
+				done()
+			});
+			avatars.forEach(function(character, index){
+				self.bungie.inventory(character.characterBase.characterId, function(response) {
+					var profile = new Profile({
+						order: index+1,
+						gender: DestinyGender[character.characterBase.genderType],
+						classType: DestinyClass[character.characterBase.classType],
+						id: character.characterBase.characterId,
+						imgIcon: self.bungie.getUrl() + character.emblemPath,
+						icon: self.makeBackgroundUrl(character.emblemPath),
+						background: self.makeBackgroundUrl(character.backgroundPath),
+						level: character.characterLevel,
+						race: window._raceDefs[character.characterBase.raceHash].raceName
+					});
+					var items = [];						
+					
+					Object.keys(response.data.buckets).forEach(function(bucket){
+						response.data.buckets[bucket].forEach(function(obj){
+							obj.items.forEach(function(item){
+								items.push(item);
+							});
+						});
+					});
+					
+					items.forEach(processItem(profile));
+					self.addWeaponTypes(profile.weapons());
+					self.characters.push(profile);
+					done();
+				});
+			});
+		});		
+	}
+	
+	this.loadData = function(ref, loop){
 		if (self.loadingUser() == false){
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
 			self.characters.removeAll();
 			self.bungie.user(function(user){
-				self.activeUser(user);
+				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
 					return
 				}
-				self.bungie.search(function(e){
-					var avatars = e.data.characters;
-					total = avatars.length + 1;
-					self.bungie.vault(function(results){
-						var buckets = results.data.buckets;
-						var profile = new Profile({ 
-							race: "", 
-							order: 0, 
-							gender: "Tower",
-							classType: "Vault", 
-							id: "Vault", 
-							level: "",
-							imgIcon: "assets/vault_icon.jpg",
-							icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
-							background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
-						});
-						
-						buckets.forEach(function(bucket){
-							bucket.items.forEach(processItem(profile));
-						});
-						self.addWeaponTypes(profile.weapons());
-						self.characters.push(profile);
-						done()
-					});
-					avatars.forEach(function(character, index){
-						self.bungie.inventory(character.characterBase.characterId, function(response) {
-							var profile = new Profile({
-								order: index+1,
-								gender: DestinyGender[character.characterBase.genderType],
-								classType: DestinyClass[character.characterBase.classType],
-								id: character.characterBase.characterId,
-								imgIcon: self.bungie.getUrl() + character.emblemPath,
-								icon: self.makeBackgroundUrl(character.emblemPath),
-								background: self.makeBackgroundUrl(character.backgroundPath),
-								level: character.characterLevel,
-								race: window._raceDefs[character.characterBase.raceHash].raceName
-							});
-							var items = [];						
-							
-							Object.keys(response.data.buckets).forEach(function(bucket){
-								response.data.buckets[bucket].forEach(function(obj){
-									obj.items.forEach(function(item){
-										items.push(item);
-									});
-								});
-							});
-							
-							items.forEach(processItem(profile));
-							self.addWeaponTypes(profile.weapons());
-							self.characters.push(profile);
-							done();
-						});
-					});
-				});			
+				if (ref && loop){
+					ref.close();
+					clearInterval(loop);
+				}
+				self.search();			
 			});		
 		}
 	}
@@ -859,32 +906,6 @@ var app = new (function() {
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
 			self.refreshInterval = setInterval(self.loadData, self.refreshSeconds() * 1000);
 		}
-	}
-	
-	
-	this.revalidateBungieCookie = function(){
-		console.log("creating hidden window");
-		var loop, ref = window.open('https://www.bungie.net', '_blank', 'location=no');
-		ref.addEventListener('loadstop', function(event) {
-			console.log("window finished loading");
-			setTimeout(function(){
-				clearInterval(loop);
-				loop = setInterval(function() {
-					ref.executeScript({
-						code: 'document.cookie'
-					}, function(result) {
-						if (result != ""){
-							clearInterval(loop);
-							console.log("got a new cookie " + result);
-							ref.close();		
-							self.bungie_cookies = result.toString();
-							window.localStorage.setItem("bungie_cookies", result.toString());
-							self.loadData();
-						}
-					});
-				}, 10);
-			}, 10000);			
-		});
 	}
 	
 	this.donate = function(){
@@ -908,9 +929,7 @@ var app = new (function() {
 								if ((result || "").toString().indexOf("bungled") > -1){
 									self.bungie_cookies = result;
 									window.localStorage.setItem("bungie_cookies", result);
-									self.loadData();
-									ref.close();
-									clearInterval(loop);
+									self.loadData(ref, loop);
 								}
 							});
 						}, 500);				
@@ -981,7 +1000,7 @@ var app = new (function() {
 		
 		if (isMobile && isEmptyCookie){
 			console.log("code 99");
-			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
+			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
 		}	
 		else {
 			console.log("loadData");
@@ -995,7 +1014,7 @@ var app = new (function() {
 		});
 		ko.applyBindings(self);
 	}
-});
+}); 
 
 window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: app.renderCallback, isEnabled: app.tooltipsEnabled() };
 
