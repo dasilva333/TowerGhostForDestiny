@@ -574,10 +574,10 @@ var app = new (function() {
 		self.refreshSeconds(defaults.refreshSeconds);
 		self.tierFilter(defaults.tierFilter);
 		self.typeFilter(defaults.typeFilter);
-		self.dmgFilter(defaults.dmgFilter);
+		self.dmgFilter.removeAll();
 		self.progressFilter(defaults.progressFilter);
-		self.setFilter(defaults.setFilter);
-		self.setFilterFix(defaults.setFilter);
+		self.setFilter.removeAll()
+		self.setFilterFix.removeAll()
 		self.shareView(defaults.shareView);
 		self.shareUrl (defaults.shareUrl);
 		self.showMissing(defaults.showMissing);
