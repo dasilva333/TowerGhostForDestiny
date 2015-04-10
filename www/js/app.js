@@ -678,8 +678,6 @@ var app = new (function() {
 	this.setDmgFilter = function(model, event){
 		var dmgType = $(event.target).parents('li:first').attr("value");
 		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
-		//not sure why this happens
-		self.dmgFilter.remove(undefined);
 	}
 	this.setTierFilter = function(model, event){
 		self.tierFilter($(event.target).parent().attr("value"));
