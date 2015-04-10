@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" version="1.7.2" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" version="1.7.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
 		Formerly known as DIV. This app allows you to transfer items between profiles, with various filters.
