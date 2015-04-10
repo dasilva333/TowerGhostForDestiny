@@ -999,11 +999,14 @@ var app = new (function() {
 				})
 			);
 		}		
-		
-		if (isMobile && isEmptyCookie){
-			console.log("code 99");
-			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
-		}	
+
+		if(isMobile) {
+		    if (isEmptyCookie){
+			    console.log("code 99");
+			    self.activeUser({"code": 99, "error": "Please sign-in to continue."});
+		    }
+		    StatusBar.hide();
+		}
 		else {
 			console.log("loadData");
 			setTimeout(self.loadData, isChrome ? 1 : 5000);		
@@ -1022,11 +1025,6 @@ window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, 
 
 if (isMobile){
 	document.addEventListener('deviceready', app.init, false);
-	$(document).on('deviceready', function () {
-	    if (window.device && parseFloat(window.device.version) >= 7.0) {
-		$('body').addClass('iOS7');
-	    }
-	});
 } else {
 	$(document).ready(app.init);
 }
