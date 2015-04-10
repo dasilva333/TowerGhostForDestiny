@@ -556,7 +556,6 @@ var app = new (function() {
 	});
 	
 	this.createLoadout = function(){
-		if ($(".navbar-toggle").is(":visible")) $(".navbar-toggle").click();
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
 	}
@@ -901,6 +900,7 @@ var app = new (function() {
 	this.refreshHandler = function(){
 		clearInterval(self.refreshInterval);
 		if (self.loadoutMode() == true){
+			if ($(".navbar-toggle").is(":visible")) $(".navbar-toggle").click();
 			$("body").css("padding-bottom","260px");
 		}
 		else {
