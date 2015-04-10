@@ -55,7 +55,10 @@ var moveItemPositionHandler = function(element, item){
 			else {
 				activeElement = element;
 				if (window.isMobile){
-					$movePopup.show();
+					$("body").css("padding-bottom","80px");
+					setTimeout(function(){
+						$movePopup.show();
+					},500);					
 				}
 				else {
 					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -634,7 +637,7 @@ var app = new (function() {
 		var width = $(window).width();
 		//this fixes issue #35 makes destinydb tooltips fit on a mobile screen
 		if (width < 340){
-			$content.find(".fhtt.des").css("width", width + "px");
+			$content.find(".fhtt.des").css("width", (width-15) + "px");
 		}
 		callback($content.html());
 	}
@@ -1023,11 +1026,6 @@ window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, 
 
 if (isMobile){
 	document.addEventListener('deviceready', app.init, false);
-	$(document).on('deviceready', function () {
-	    if (window.device && parseFloat(window.device.version) >= 7.0) {
-		$('body').addClass('iOS7');
-	    }
-	});
 } else {
 	$(document).ready(app.init);
 }

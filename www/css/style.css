@@ -221,7 +221,3 @@ body {
 }
 #loadout-options .move-button span:hover { background: rgba(0,0,0,.1) }
 .label { white-space: normal; }
-
-body.iOS7 {
-    -webkit-transform: translate3d(0, 20px, 0);
-}
