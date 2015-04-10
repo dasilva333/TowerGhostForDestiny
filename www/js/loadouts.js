@@ -1,4 +1,4 @@
-
+	
 /*
 targetItem: item,
 swapItem: swapItem,
@@ -34,6 +34,7 @@ var Loadout = function(model){
 	});	
 	this.name = self.name || "";
 	this.ids = ko.observableArray(self.ids || []);
+	this.equipIds = ko.observableArray(self.equipIds || []);
 	this.setActive = function(){
 		app.loadoutMode(true);
 		app.activeLoadout(self);
@@ -56,15 +57,34 @@ var Loadout = function(model){
 		var _items = _.map(self.ids(), function(instanceId){
 			var itemFound;
 			app.characters().forEach(function(character){
+				//TODO make this array built into each character so it's easier to enumerate over everything
+				//app.characters.everything().forEach
 				['weapons','armor','items'].forEach(function(list){
 					var match = _.findWhere(character[list]() , { _id: instanceId });
 					if (match) itemFound = match;
 				});
 			});
+			if(itemFound){
+				itemFound.doEquip = self.bindEquipIds(itemFound._id);
+				itemFound.markAsEquip = self.markAsEquip;
+			}				
 			return itemFound;
 		});	
 		return _items;
 	});
+	this.markAsEquip = function(item, event){
+		var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
+		if ( existingItem.length > 0 ){
+			self.equipIds.remove(existingItem[0]);
+		}
+		self.equipIds.push({ bucketType: item.bucketType, _id: item._id });
+		return true;
+	}
+	this.bindEquipIds = function(instanceId){
+		return ko.computed(function(){
+			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
+		});
+	}
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	this.findReference = function(item){
 		var c = _.findWhere(app.characters(),{ id: item.character.id });
@@ -74,13 +94,15 @@ var Loadout = function(model){
 	this.swapItems = function(swapArray, targetCharacterId, callback){
 		var itemIndex = -1;
 		var transferNextItem = function(){
+			//console.log("transferNextItem");
 			var pair = swapArray[++itemIndex];
 			if (pair){
 				/* at this point it doesn't matter who goes first but lets transfer the loadout first */				
 				if ( typeof pair.targetItem !== "undefined"){
-					var owner = pair.targetItem.character.id;
-					//console.log("going to transfer first item " + pair.targetItem.description);
-					self.findReference(pair.targetItem).store(targetCharacterId, function(targetProfile){			
+					var owner = pair.targetItem.character.id;					
+					var action = (_.where( self.equipIds(), { _id: pair.targetItem._id }).length == 0) ? "store" : "equip";
+					//console.log("going to " + action + " first item " + pair.targetItem.description);
+					self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
 						if (typeof pair.swapItem !== "undefined"){
 							self.findReference(pair.swapItem).store(owner, transferNextItem);
@@ -91,6 +113,7 @@ var Loadout = function(model){
 				else { transferNextItem(); }
 			}
 			else {
+				//console.log("pair is not defined, calling callback");
 				if (callback)
 					callback();
 			}
@@ -172,10 +195,9 @@ var Loadout = function(model){
 		if (globalSwapArray.length > 0){
 			var $template = $(swapTemplate3({ swapArray: globalSwapArray }));
 			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
-			console.log( $template );
 			(new dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(globalSwapArray, targetCharacterId, function(){
-					alert("Item(s) transferred successfully");
+					BootstrapDialog.alert("Item(s) transferred successfully");
 					dialog.close()
 				}); }},
 				{label: "Cancel", action: function(dialog){ dialog.close() }}

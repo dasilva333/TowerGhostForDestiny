@@ -216,8 +216,10 @@ var Item = function(model, profile, list){
 		}
 	}
 	this.equip = function(targetCharacterId, callback){
+		//console.log("equip called");
 		var sourceCharacterId = self.characterId;
 		if (targetCharacterId == sourceCharacterId){
+			//console.log("item is already in the character");
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
 					self.isEquipped(true);
@@ -239,10 +241,12 @@ var Item = function(model, profile, list){
 			});
 		}
 		else {
+			//console.log("item is NOT already in the character");
 			self.store(targetCharacterId, function(newProfile){
+				//console.log("item is now in the target destination");
 				self.character = newProfile;
 				self.characterId = newProfile.id;
-				self.equip(targetCharacterId);
+				self.equip(targetCharacterId, callback);
 			});
 		}
 	}
@@ -800,7 +804,7 @@ var app = new (function() {
 		function done(){
 			count++;
 			if (count == total){
-				console.log("finished loading");
+				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
 			}
