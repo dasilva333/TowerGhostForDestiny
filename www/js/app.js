@@ -562,7 +562,8 @@ var app = new (function() {
 	
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
-
+	this.activeView = ko.observable(0);
+	
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
 	this.orderedCharacters = ko.computed(function(){
@@ -656,28 +657,56 @@ var app = new (function() {
 		callback($content.html());
 	}
 	this.toggleListener = function(){
+		self.toggleBootstrapMenu();
 		self.listenerEnabled(!self.listenerEnabled());
 	}
 	this.toggleRefresh = function(){
+		self.toggleBootstrapMenu();
 		self.doRefresh(!self.doRefresh());
 	}	
 	this.toggleDestinyTooltips = function(){
+		self.toggleBootstrapMenu();
 		self.tooltipsEnabled(!self.tooltipsEnabled());		
 	}
 	this.toggleShareView = function(){
+		self.toggleBootstrapMenu();
 		self.shareView(!self.shareView());
 	}
 	this.toggleShowUniques = function(){
+		self.toggleBootstrapMenu();
 		self.showUniques(!self.showUniques());
 	}
 	this.toggleShowMissing = function(){
+		self.toggleBootstrapMenu();
 		self.showMissing(!self.showMissing());
 	}
 	this.setSetFilter = function(model, event){
+		self.toggleBootstrapMenu();
 		var collection = $(event.target).parent().attr("value");
 		self.setFilter(collection == "All" ? [] : _collections[collection]);
 		self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
 	}
+	this.setView = function(model, event){
+		self.toggleBootstrapMenu();
+		self.activeView($(event.target).parent().attr("value"));
+	}	
+	this.setDmgFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		var dmgType = $(event.target).parents('li:first').attr("value");
+		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
+	}
+	this.setTierFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		self.tierFilter($(event.target).parent().attr("value"));
+	}
+	this.setTypeFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		self.typeFilter($(event.target).parent().attr("value"));
+	}
+	this.setProgressFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		self.progressFilter($(event.target).parent().attr("value"));
+	}	
 	this.missingSets = ko.computed(function(){
 		var missingIds = [];
 		self.setFilter().concat(self.setFilterFix()).forEach(function(item){
@@ -691,24 +720,6 @@ var app = new (function() {
 		});
 		return missingIds;
 	})
-	
-	this.activeView = ko.observable(0);
-	this.setView = function(model, event){
-		self.activeView($(event.target).parent().attr("value"));
-	}	
-	this.setDmgFilter = function(model, event){
-		var dmgType = $(event.target).parents('li:first').attr("value");
-		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
-	}
-	this.setTierFilter = function(model, event){
-		self.tierFilter($(event.target).parent().attr("value"));
-	}
-	this.setTypeFilter = function(model, event){
-		self.typeFilter($(event.target).parent().attr("value"));
-	}
-	this.setProgressFilter = function(model, event){
-		self.progressFilter($(event.target).parent().attr("value"));
-	}
 						
 	var processItem = function(profile){	
 		return function(item){
@@ -927,10 +938,15 @@ var app = new (function() {
 		}
 	}
 	
+	this.toggleBootstrapMenu = function(){
+		if ($(".navbar-toggle").is(":visible")) 
+			$(".navbar-toggle").click();
+	}
+	
 	this.refreshHandler = function(){
 		clearInterval(self.refreshInterval);
 		if (self.loadoutMode() == true){
-			if ($(".navbar-toggle").is(":visible")) $(".navbar-toggle").click();
+			self.toggleBootstrapMenu();
 			$("body").css("padding-bottom","260px");
 		}
 		else {
