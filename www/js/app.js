@@ -238,7 +238,7 @@ var Item = function(model, profile){
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
 					self.isEquipped(true);
-					self.items().forEach(function(item){
+					self.character.items().forEach(function(item){
 						if (item != self && item.bucketType == self.bucketType){
 							item.isEquipped(false);							
 						}

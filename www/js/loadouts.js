@@ -148,11 +148,21 @@ var Loadout = function(model){
 					if (sourceBucket.length + targetBucket.length > 9){
 						var sourceBucketIds = _.pluck( sourceBucket, "_id");
 						var swapArray = _.map(sourceBucket, function(item){
-							/* if the item is already in the targetBucket then return an object indicating to do nothing */
+							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
-								return {
-									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
+								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+								if ( _.where(self.equipIds(), { _id: item._id }).length > 0 ){
+									return {
+										targetItem: item,
+										description: item.description + " will be just be equipped."
+									}
 								}
+								/* then return an object indicating to do nothing */
+								else {
+									return {
+										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
+									}
+								}								
 							}
 							else {
 								var itemFound = false;
@@ -185,7 +195,6 @@ var Loadout = function(model){
 					return swapArray;
 				}));
 			}
-			console.log(masterSwapArray);
 			if (masterSwapArray.length > 0){
 				var $template = $(swapTemplate3({ swapArray: masterSwapArray }));
 				$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
