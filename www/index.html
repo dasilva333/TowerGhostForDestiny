@@ -29,35 +29,35 @@
 
   <body>
 		<script type="text/html" id="sections-template">
-			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && list !== 'items.Post Master') -->
+			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
 				<div class="title">
-					<span data-bind="text: list.split('.')[1]"></span> 
+					<span data-bind="text: bucketType"></span> 
 					<span data-bind="visible: character.id !== 'Vault'">
-						<!-- ko if: !(list == 'items.Materials' || list == 'items.Consumables' || list == 'items.Post Master') -->
-							(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span>/10)
+						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
+							(<span data-bind="text: character.get(bucketType).length+1"></span>/10)
 						<!--/ko  -->
-						<!-- ko if: (list == 'items.Materials' || list == 'items.Consumables' || list == 'items.Post Master') -->
-							(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length"></span>/15)
+						<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
+							(<span data-bind="text: character.get(bucketType).length"></span>/15)
 						<!--/ko  -->
 					</span>
 					<span data-bind="visible: character.id == 'Vault'">
-						(<span data-bind="text: character.get(list.split('.')[0]).length"></span>/<span>20</span>)
+						(<span data-bind="text: character.get(bucketType).length"></span>/<span>20</span>)
 					</span>				
 				</div>
 				<div class="row no-gutter" style="margin:auto;">
-					<div class="itemBucket" data-bind="css: (character.id == 'Vault' || list == 'items.Post Master' || list == 'items.Consumables' || list == 'items.Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
-						<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
+					<div class="itemBucket" data-bind="css: (character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
+						<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
 							<span data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 								<a data-bind="attr:{href:item.href, instanceId:item._id}">
-									<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: function(){ setActiveItem(list, this) }, moveItem: true">
+									<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
 								</a>
 								<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 							</span>
 						</div>
 					</div>
-					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(list.split('.')[0], list.split('.')[1])">
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
 						<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-							<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
+							<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: setActiveItem, moveItem: true"></a>
 							<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 						</span>
 					</div>
@@ -73,7 +73,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 1.7.3</a>
+		      <a class="navbar-brand" href="#">TGD 1.7.4</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -187,9 +187,9 @@
 			<strong>DestinyExotics.com</strong> Share URL: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
 		</div>
 		<div class="alert alert-success" data-bind="visible: showMissing" style="display:none; ">
-			<strong>Missing Items</strong> 
+			<strong class="col-xs-12 col-md-12 col-md-1 col-lg-1">Missing Items</strong> 
 			<span data-bind="foreach: { data: missingSets }">
-				<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>
+				<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, click: function(){ return false }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>
 			</span>
 		</div>		
 		<div data-bind="with: $root.activeUser()" style="">
@@ -224,7 +224,7 @@
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>store</div></div>
 					</div>
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: !$parent.isEquipped() && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables' || $parent.characterId != avatar.id && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables'">
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>equip</div></div>
 					</div>								
@@ -246,23 +246,23 @@
 						<div>
 							<div class="items" data-type="item">
 							  <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>)</div>
-								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['weapons.Primary','weapons.Special','weapons.Heavy'], as: 'list' }">
+								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 20 : 30"></span>)</div>
+								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>)</div>
-								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['armor.Helmet','armor.Gauntlet','armor.Chest', 'armor.Boots'], as: 'list' }">
+								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 20 : 30"></span>)</div>
+								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
 								<div class="title"><strong>Misc</strong></div>
-								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['items.Post Master','items.Consumables','items.Materials'], as: 'list' }">
+								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Consumables','Materials'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
 								<div class="title"><strong>Styling</strong></div>
-								<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['items.Shader','items.Emblem','items.Class Items','items.Ship','items.Sparrow'], as: 'list' }">
+								<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['Shader','Emblem','Class Items','Ship','Sparrow'], as: 'bucketType' }">
 								</div>
 							  </div>						  
 							</div>
@@ -292,7 +292,7 @@
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
 					<span class="item" data-bind="css: isGridComplete ? 'complete' : ''">
 						<a data-bind="attr:{href:item.href, instanceId:item._id}, click:">
-							<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
+							<img class="itemImage" data-bind="attr: { src: item.icon }, click: setActiveItem, moveItem: true">
 						</a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>

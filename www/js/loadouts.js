@@ -57,12 +57,8 @@ var Loadout = function(model){
 		var _items = _.map(self.ids(), function(instanceId){
 			var itemFound;
 			app.characters().forEach(function(character){
-				//TODO make this array built into each character so it's easier to enumerate over everything
-				//app.characters.everything().forEach
-				['weapons','armor','items'].forEach(function(list){
-					var match = _.findWhere(character[list]() , { _id: instanceId });
-					if (match) itemFound = match;
-				});
+				var match = _.findWhere(character.items() , { _id: instanceId });
+				if (match) itemFound = match;
 			});
 			if(itemFound){
 				itemFound.doEquip = self.bindEquipIds(itemFound._id);
@@ -88,7 +84,7 @@ var Loadout = function(model){
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	this.findReference = function(item){
 		var c = _.findWhere(app.characters(),{ id: item.character.id });
-		var x = _.findWhere(c[item.list](),{ _id: item._id });
+		var x = _.findWhere(c.items(),{ _id: item._id });
 		return x;
 	}
 	this.swapItems = function(swapArray, targetCharacterId, callback){
@@ -127,21 +123,21 @@ var Loadout = function(model){
 	/* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	/* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
 	this.transfer = function(targetCharacterId){
-		var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
-		var getFirstItem = function(sourceBucketIds, itemFound){
-			return function(otherItem){
-				/* if the otherItem is not part of the sourceBucket then it can go */
-				if ( sourceBucketIds.indexOf( otherItem._id ) == -1 && itemFound == false){
-					itemFound = true;
-					sourceBucketIds.push(otherItem._id);
-					return otherItem;
+		try {
+			var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
+			var getFirstItem = function(sourceBucketIds, itemFound){
+				return function(otherItem){
+					/* if the otherItem is not part of the sourceBucket then it can go */
+					if ( sourceBucketIds.indexOf( otherItem._id ) == -1 && itemFound == false){
+						itemFound = true;
+						sourceBucketIds.push(otherItem._id);
+						return otherItem;
+					}
 				}
-			}
-		};
-		var globalSwapArray = _.flatten(_.map(['weapons','armor','items'], function(list){
-			var sourceItems =  _.where( self.items(), { list: list });
+			};
+			var masterSwapArray= [], sourceItems =  self.items();
 			if (sourceItems.length > 0){
-				var targetList = targetCharacter[list]();				
+				var targetList = targetCharacter.items();				
 				var sourceGroups = _.groupBy( sourceItems, 'bucketType' );
 				var targetGroups = _.groupBy( targetList, 'bucketType' );	
 				var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key){
@@ -188,22 +184,23 @@ var Loadout = function(model){
 					}
 					return swapArray;
 				}));
-				return masterSwapArray;
 			}
-			else return [];
-		}));
-		if (globalSwapArray.length > 0){
-			var $template = $(swapTemplate3({ swapArray: globalSwapArray }));
-			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
-			(new dialog({buttons:[ 
-				{label: "Transfer", action: function(dialog){ self.swapItems(globalSwapArray, targetCharacterId, function(){
-					BootstrapDialog.alert("Item(s) transferred successfully");
-					dialog.close()
-				}); }},
-				{label: "Cancel", action: function(dialog){ dialog.close() }}
-			]})).title("Transfer Confirm").content($template).show();
-			
-		}
+			console.log(masterSwapArray);
+			if (masterSwapArray.length > 0){
+				var $template = $(swapTemplate3({ swapArray: masterSwapArray }));
+				$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
+				(new dialog({buttons:[ 
+					{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
+						BootstrapDialog.alert("Item(s) transferred successfully");
+						dialog.close()
+					}); }},
+					{label: "Cancel", action: function(dialog){ dialog.close() }}
+				]})).title("Transfer Confirm").content($template).show();
+				
+			}		
+		}catch(e){
+			console.log(e.toString());
+		}		
 	}
 }
 

@@ -99,27 +99,33 @@ var Profile = function(model){
 	
 	this.icon = ko.observable(self.icon);	
 	this.background = ko.observable(self.background);
-	this.weapons = ko.observableArray([]);
-	this.armor = ko.observableArray([]);
 	this.items = ko.observableArray([]);
+	this.weapons = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (DestinyWeaponPieces.indexOf(item.bucketType) > -1 )
+				return item;
+		});
+	});	
+	this.armor = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (DestinyArmorPieces.indexOf(item.bucketType) > -1 )
+				return item;
+		});
+	});	
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-	this.get = function(list, type){
-		if (type)
-			return self[list]().filter(filterItemByType(type, false));
-		else
-			return self[list]();
+	this.get = function(type){
+		return self.items().filter(filterItemByType(type, false));
 	}
-	this.itemEquipped = function(list, type){
-		return ko.utils.arrayFirst(self[list](), filterItemByType(type, true));
+	this.itemEquipped = function(type){
+		return ko.utils.arrayFirst(self.items(), filterItemByType(type, true));
 	}
 }
 
-var Item = function(model, profile, list){
+var Item = function(model, profile){
 	var self = this;
 	_.each(model, function(value, key){
 		self[key] = value;
 	});
-	this.list = list;
 	this.character = profile;
 	this.href = "https://destinydb.com/items/" + self.id;
 	this.isEquipped = ko.observable(self.isEquipped);
@@ -159,6 +165,12 @@ var Item = function(model, profile, list){
 		else {
 			return false;
 		}
+	}
+	this.isEquippable = function(avatarId){
+		return ko.computed(function(){
+			 return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1) || 
+			 	(self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1);
+		});
 	}
 	this.isVisible = ko.computed(function(){
 		var $parent = app;
@@ -226,12 +238,12 @@ var Item = function(model, profile, list){
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
 					self.isEquipped(true);
-					self.character[self.list]().forEach(function(item){
+					self.items().forEach(function(item){
 						if (item != self && item.bucketType == self.bucketType){
 							item.isEquipped(false);							
 						}
 					});
-					if (self.list == "items" && self.bucketType == "Emblem"){
+					if (self.bucketType == "Emblem"){
 						self.character.icon(app.makeBackgroundUrl(self.icon, true));
 						self.character.background(self.backgroundPath);
 					}
@@ -278,32 +290,32 @@ var Item = function(model, profile, list){
 						//console.log("need to split reference of self and push it into x and y");
 						var remainder = self.primaryStat - amount;
 						/* at this point we can either add the item to the inventory or merge it with existing items there */
-						var existingItem = _.findWhere( y[self.list](), { description: self.description });
+						var existingItem = _.findWhere( y.items(), { description: self.description });
 						if (existingItem){
-							y[self.list].remove(existingItem);
+							y.items.remove(existingItem);
 							existingItem.primaryStat = existingItem.primaryStat + amount;
-							y[self.list].push(existingItem);
+							y.items.push(existingItem);
 						}
 						else {
 							self.characterId = targetCharacterId
 							self.character = y;
 							self.primaryStat = amount;
-							y[self.list].push(self);
+							y.items.push(self);
 						}
 						/* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
-						x[self.list].remove(self);
+						x.items.remove(self);
 						if (remainder > 0){
 							self.characterId = sourceCharacterId
 							self.character = x;
 							self.primaryStat = remainder;
-							x[self.list].push(self);
+							x.items.push(self);
 						}
 					}
 					else {
 						self.characterId = targetCharacterId
 						self.character = y;
-						y[self.list].push(self);
-						x[self.list].remove(self);
+						y.items.push(self);
+						x.items.remove(self);
 					}
 					if (cb) cb(y,x);
 				}
@@ -411,6 +423,7 @@ var DestinyBucketTypes = {
 	"12345": "Post Master"
 }
 var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
+var DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 var DestinyDamageTypeColors = {
 	"None": "#BBB",
 	"Kinetic": "#BBB",
@@ -638,6 +651,7 @@ var app = new (function() {
 		//this fixes issue #35 makes destinydb tooltips fit on a mobile screen
 		if (width < 340){
 			$content.find(".fhtt.des").css("width", (width-15) + "px");
+			$content.find(".stat-bar-empty").css("width", "125px");
 		}
 		callback($content.html());
 	}
@@ -719,6 +733,11 @@ var app = new (function() {
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete
 			};
+			/*if ( itemObject.description.indexOf("Engram") > -1 ){
+				console.log(itemObject);
+				console.log(info);
+				console.log(itemObject.typeName + " " + info.classType);
+			}*/
 			if (item.primaryStat){
 				itemObject.primaryStat = item.primaryStat.value;
 			}	
@@ -726,49 +745,57 @@ var app = new (function() {
 				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 			}
 			if (item.location == 4)
-					itemObject.bucketType = "Post Master";
-					
-			if (info.itemType == 3 && item.location !== 4){
-				itemObject.perks = item.perks.map(function(perk){
-					if (perk.perkHash in window._perkDefs){
-						var p = window._perkDefs[perk.perkHash];
-						return {
-							iconPath: app.bungie.getUrl() + perk.iconPath,
-							name: p.displayName,
-							description: p.displayDescription
+				itemObject.bucketType = "Post Master";
+
+			if (info.bucketTypeHash in DestinyBucketTypes){
+			
+				/* both weapon engrams and weapons fit under this condition*/
+				if (itemObject.bucketType in DestinyWeaponPieces){
+					/*console.log(itemObject);
+					console.log(info);
+					console.log(itemObject.typeName + " " + info.classType);*/
+					/* only actual weapons fit under this condition */
+					if ( info.itemType == 3 ){
+						itemObject.perks = item.perks.map(function(perk){
+							if (perk.perkHash in window._perkDefs){
+								var p = window._perkDefs[perk.perkHash];
+								return {
+									iconPath: app.bungie.getUrl() + perk.iconPath,
+									name: p.displayName,
+									description: p.displayDescription
+								}
+							}
+							else {
+								return perk;
+							}					
+						});
+						if (info.talentGridHash in window._talentGridDefs){					
+							itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
 						}
-					}
-					else {
-						return perk;
-					}					
-				});
-				if (info.talentGridHash in window._talentGridDefs){					
-					itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
+						else {
+							itemObject.isUnique = false;
+						}				
+					}				
 				}
-				else {
-					itemObject.isUnique = false;
-				}
-				profile.weapons.push( new Item(itemObject,profile,'weapons') );
-			}
-			else if (info.itemType == 2 && item.location !== 4 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
-				itemObject.stats = {};
-				_.each(item.stats, function(stat){
-					if (stat.statHash in window._statDefs){
-						var p = window._statDefs[stat.statHash];
-						itemObject.stats[p.statName] = stat.value;
-					}
-				});
-				profile.armor.push( new Item(itemObject,profile,'armor') );
-			}
-			else if (info.bucketTypeHash in DestinyBucketTypes){
+			
 				if (itemObject.typeName && itemObject.typeName == "Emblem"){
 					itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
 				}
 				if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables"){
 					itemObject.primaryStat = item.stackSize;
 				}
-				profile.items.push( new Item(itemObject,profile,'items') );
+				if ( info.itemType == 2 ){
+					itemObject.stats = {};
+					_.each(item.stats, function(stat){
+						if (stat.statHash in window._statDefs){
+							var p = window._statDefs[stat.statHash];
+							itemObject.stats[p.statName] = stat.value;
+						}
+					});
+				}
+				profile.items.push( new Item(itemObject,profile) );
 			}
+			
 		}
 	}
 	
@@ -872,7 +899,7 @@ var app = new (function() {
 					});
 					
 					items.forEach(processItem(profile));
-					self.addWeaponTypes(profile.weapons());
+					self.addWeaponTypes(profile.items());
 					self.characters.push(profile);
 					done();
 				});

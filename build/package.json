@@ -1,6 +1,6 @@
 {
   "name": "tower-ghost-builder",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {

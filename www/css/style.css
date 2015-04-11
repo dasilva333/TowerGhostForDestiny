@@ -221,3 +221,9 @@ body {
 }
 #loadout-options .move-button span:hover { background: rgba(0,0,0,.1) }
 .label { white-space: normal; }
+.alert {
+  padding: 10px;
+  margin-bottom: 20px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
