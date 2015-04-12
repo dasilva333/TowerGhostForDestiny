@@ -930,6 +930,8 @@ var app = new (function() {
 					return
 				}
 				if (ref && loop){
+					console.log(ref);
+					console.log(loop);
 					ref.close();
 					clearInterval(loop);
 				}
@@ -953,7 +955,7 @@ var app = new (function() {
 			$("body").css("padding-bottom","0");
 		}
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
-			self.refreshInterval = setInterval(self.loadData, self.refreshSeconds() * 1000);
+			self.refreshInterval = setInterval(function(){ self.loadData() }, self.refreshSeconds() * 1000);
 		}
 	}
 	
@@ -1053,7 +1055,7 @@ var app = new (function() {
 		}	
 		else {
 			console.log("loadData");
-			setTimeout(self.loadData, isChrome ? 1 : 5000);		
+			setTimeout(function(){ self.loadData() }, isChrome || isMobile ? 1 : 5000);		
 		}
 		$("form").bind("submit", false);
 		$("html").click(function(e){
