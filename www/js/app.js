@@ -202,7 +202,7 @@ var Item = function(model, profile){
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
-			var otherItems = _.where( self.character[self.list](), { bucketType: self.bucketType });
+			var otherItems = _.where( self.character.items(), { bucketType: self.bucketType });
 			var tryNextItem = function(){			
 				var item = otherItems[++itemIndex];
 				//console.log(item.description);
@@ -507,8 +507,7 @@ var app = new (function() {
 		shareUrl: "",
 		showMissing: false,
 		showUniques: false,
-		tooltipsEnabled: isMobile ? false : true,
-		listenerEnabled: true //ive had to turn it off for iPhone and Android it's buggy
+		tooltipsEnabled: isMobile ? false : true
 	};
 	var getValue = function(key){
 		var saved = window.localStorage.getItem(key);
@@ -547,7 +546,6 @@ var app = new (function() {
 		}
 	});
 
-	this.listenerEnabled = ko.observable(defaults.listenerEnabled);
 	this.refreshSeconds = ko.observable(defaults.refreshSeconds);
 	this.tierFilter = ko.observable(defaults.tierFilter);
 	this.typeFilter = ko.observable(defaults.typeFilter);
@@ -655,10 +653,6 @@ var app = new (function() {
 			$content.find(".stat-bar-empty").css("width", "125px");
 		}
 		callback($content.html());
-	}
-	this.toggleListener = function(){
-		self.toggleBootstrapMenu();
-		self.listenerEnabled(!self.listenerEnabled());
 	}
 	this.toggleRefresh = function(){
 		self.toggleBootstrapMenu();
@@ -930,13 +924,11 @@ var app = new (function() {
 					return
 				}
 				if (ref && loop){
-					console.log(ref);
-					console.log(loop);
 					ref.close();
 					clearInterval(loop);
 				}
 				self.search();			
-			});		
+			});			
 		}
 	}
 	
@@ -963,48 +955,47 @@ var app = new (function() {
 		window.open("http://bit.ly/1Jmb4wQ","_blank");
 	}
 	
+	this.readBungieCookie = function(ref, loop){
+		ref.executeScript({
+			code: 'document.cookie'
+		}, function(result) {
+			if ((result || "").toString().indexOf("bungled") > -1){
+				self.bungie_cookies = result;
+				window.localStorage.setItem("bungie_cookies", result);
+				self.loadData(ref, loop);
+			}
+		});	
+	}
+	
 	this.openBungieWindow = function(type){
 		return function(){
-			var loop, newCookie;
+			var loop;
 			//overwrite the same reference to avoid crashing?
 			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');			
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
-					if (self.listenerEnabled() == true){
-						clearInterval(loop);
-						loop = setInterval(function() {
-							ref.executeScript({
-								code: 'document.cookie'
-							}, function(result) {
-								console.log("found result in loadstop " + result);
-								if ((result || "").toString().indexOf("bungled") > -1){
-									self.bungie_cookies = result;
-									window.localStorage.setItem("bungie_cookies", result);
-									self.loadData(ref, loop);
-								}
-							});
-						}, 500);				
-					}
+					clearInterval(loop);
+					ref.executeScript({
+						code: 'document.location.href'
+					}, function(result) {
+						/* only load cookie reader on homepage */		
+						if (result.toString() == self.bungie.getUrl()){
+							loop = setInterval(function() {
+								self.readBungieCookie(ref, loop);							
+							}, 500);
+						}
+					});
+					
 				});
 				ref.addEventListener('loadstart', function(event) {
 					clearInterval(loop);
 				});
 				ref.addEventListener('exit', function() {
-					if (self.characters().length == 0){
+					if (self.loadingUser() == false){
 						clearInterval(loop);
 						if (_.isEmpty(self.bungie_cookies)){
 							loop = setInterval(function() {
-								ref.executeScript({
-									code: 'document.cookie'
-								}, function(result) {
-									console.log("found result in exit " + result);
-									if ((result || "").toString().indexOf("bungled") > -1){
-										self.bungie_cookies = result;
-										window.localStorage.setItem("bungie_cookies", result);
-										self.loadData();		
-										clearInterval(loop);
-									}
-								});
+								self.readBungieCookie(ref, loop);
 							}, 500);
 						}
 						else {
@@ -1050,11 +1041,10 @@ var app = new (function() {
 		}		
 		
 		if (isMobile && isEmptyCookie){
-			console.log("code 99");
+			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
 		}	
 		else {
-			console.log("loadData");
 			setTimeout(function(){ self.loadData() }, isChrome || isMobile ? 1 : 5000);		
 		}
 		$("form").bind("submit", false);

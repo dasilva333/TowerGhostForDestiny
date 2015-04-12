@@ -93,7 +93,6 @@
 						<li class="divider"></li>
 						<li><a href="#" data-bind="click: toggleShareView">Share URL</a></li>
 						<li><a href="#" data-bind="click: clearFilters">Clear Filters</a></li>
-						<li data-bind="visible: isMobile, click: toggleListener, css: listenerEnabled() == true ? 'active' : ''"><a href="#">Loadstop Listener</a></li>
 						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
 						<li data-bind="click: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 		          </ul>
@@ -202,7 +201,6 @@
 						<li>Wait until homepage completely finishes loading</li>
 						<li>The Bungie.net window will auto close and items should be loaded</li>
 					</ol>
-					<div class="label label-info" data-bind="visible: window.isMobile">Keyboard Disappears? <br>Disable <i>Loadstop Listener</i> under Settings and login then enable it again.</div>
 				</div>
 			</div>
 		</div>		
