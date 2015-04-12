@@ -564,11 +564,11 @@ var app = new (function() {
 	
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
-	this.orderedCharacters = ko.computed(function(){
+	/*this.orderedCharacters = ko.computed(function(){
 		return self.characters().sort(function(a,b){
 			return a.order - b.order;
 		});
-	});
+	});*/
 	
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
@@ -1016,6 +1016,13 @@ var app = new (function() {
 		}
 	}
 	
+	this.shiftArrayLeft = function(){
+		self.characters.unshift( self.characters.splice(self.characters().length-1,1)[0] );
+	}
+	this.shiftArrayRight = function(){
+		self.characters(self.characters().concat( self.characters.splice(0,1) ));
+	}
+	
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
@@ -1039,7 +1046,11 @@ var app = new (function() {
 				})
 			);
 		}		
-		
+		if (isMobile){
+			Hammer(document.getElementById('charactersContainer'))
+				.on("swipeleft", self.shiftArrayLeft)
+				.on("swiperight", self.shiftArrayRight);
+		}		
 		if (isMobile && isEmptyCookie){
 			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
@@ -1053,6 +1064,8 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
+		
+		
 		ko.applyBindings(self);
 	}
 }); 
