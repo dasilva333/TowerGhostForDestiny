@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Tower Ghost for Destiny",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "description": "Formerly known as DIV. This app allows you to transfer items between profiles, with various filters.",
   "icons": {
     "16": "www/assets/icon16.png",
