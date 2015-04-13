@@ -1017,11 +1017,12 @@ var app = new (function() {
 				})
 			);
 		}		
+		/* breaks on Windows Phone
 		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
 				.on("swipeleft", self.shiftArrayLeft)
 				.on("swiperight", self.shiftArrayRight);
-		}		
+		}*/
 		if (isMobile && isEmptyCookie){
 			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
