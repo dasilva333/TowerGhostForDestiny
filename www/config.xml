@@ -26,6 +26,10 @@
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 
+    <feature name="StatusBar">
+	<param name="ios-package" value="CDVStatusBar" onload="true" />
+    </feature>
+
     <preference name="StatusBarOverlaysWebView" value="false"/>
     <preference name="StatusBarBackgroundColor" value="#000000"/>
     <preference name="StatusBarStyle" value="lightcontent" />
