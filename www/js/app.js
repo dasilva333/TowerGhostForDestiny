@@ -308,7 +308,7 @@ var Item = function(model, profile){
 				//console.log("item is now in the target destination");
 				self.character = newProfile;
 				self.characterId = newProfile.id;
-				self.equip(targetCharacterId, callback);
+				self.equip(targetCharacterId, callback, allowReplacement);
 			});
 		}
 	}
