@@ -43,7 +43,7 @@
 						<!--/ko  -->
 					</span>
 					<span data-bind="visible: character.id == 'Vault'">
-						(<span data-bind="text: character.get(bucketType).length"></span>/<span>20</span>)
+						(<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
 					</span>				
 				</div>
 				<div class="row no-gutter" style="margin:auto;">
@@ -246,12 +246,12 @@
 						<div>
 							<div class="items" data-type="item">
 							  <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 20 : 30"></span>)</div>
+								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
 								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 20 : 30"></span>)</div>
+								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 30"></span>)</div>
 								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots'], as: 'bucketType' }">
 								</div>
 							  </div>
