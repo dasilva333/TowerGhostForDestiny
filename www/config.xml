@@ -23,7 +23,7 @@
     <preference name="android-installLocation" value="auto" />
     <gap:plugin name="org.apache.cordova.globalization" />
     <gap:plugin name="org.apache.cordova.inappbrowser" version="0.6.0" source="plugins.cordova.io" />
-    <gap:plugin name="org.apache.cordova.statusbar" />
+    <gap:plugin name="org.apache.cordova.statusbar" version="0.1.10" source="plugins.cordova.io" />
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 
     <feature name="StatusBar">
