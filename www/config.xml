@@ -24,7 +24,7 @@
     <gap:plugin name="org.apache.cordova.globalization" />
     <gap:plugin name="org.apache.cordova.inappbrowser" version="0.6.0" source="plugins.cordova.io" />
     <gap:plugin name="org.apache.cordova.statusbar" version="0.1.10" source="plugins.cordova.io" />
-    <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
+    <gap:plugin name="org.apache.cordova.device" version="0.2.12" />
 
     <feature name="StatusBar">
 	<param name="ios-package" value="CDVStatusBar" onload="true" />
