@@ -209,38 +209,48 @@ var Item = function(model, profile){
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
-			var otherItems = _.where( self.character.items(), { bucketType: self.bucketType });
-			var tryNextItem = function(){			
-				var item = otherItems[++itemIndex];
-				//console.log(item.description);
-				/* still haven't found a match */
-				if (otherEquipped == false){
-					if (item != self){
-						//console.log("trying to equip " + item.description);
-						item.equip(self.characterId, function(isEquipped){
-							//console.log("result was " + isEquipped);
-							if (isEquipped == true){ otherEquipped = true; callback(); }
-							else { tryNextItem(); /*console.log("tryNextItem")*/ }
-						});				
-					}
-					else {
-						tryNextItem()
-						//console.log("tryNextItem")
+			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
+				return item.tierType != 6;
+			});
+			if ( otherItems.length > 0){
+				var tryNextItem = function(){			
+					var item = otherItems[++itemIndex];
+					//console.log(item.description);
+					/* still haven't found a match */
+					if (otherEquipped == false){
+						if (item != self){
+							//console.log("trying to equip " + item.description);
+							item.equip(self.characterId, function(isEquipped){
+								//console.log( item.description + " result was " + isEquipped);
+								if (isEquipped == true){ otherEquipped = true; callback(); }
+								else { tryNextItem(); /*console.log("tryNextItem")*/ }
+							});				
+						}
+						else {
+							tryNextItem()
+							//console.log("tryNextItem")
+						}
 					}
 				}
+				//console.log("tryNextItem")
+				tryNextItem();			
 			}
-			tryNextItem();		
-			//console.log("tryNextItem")
+			else {
+				callback(false);
+			}
 		}
 		else {
 			//console.log("but not equipped");
 			callback();
 		}
 	}
-	this.equip = function(targetCharacterId, callback){
+	this.equip = function(targetCharacterId, callback, allowReplacement){
 		var done = function(){
+			//console.log("making bungie call to equip " + self.description);
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
+					//console.log("result was OKed");
+					//console.log(result);
 					self.isEquipped(true);
 					self.character.items().forEach(function(item){
 						if (item != self && item.bucketType == self.bucketType){
@@ -254,24 +264,31 @@ var Item = function(model, profile){
 					if (callback) callback(true);
 				}
 				else {
+					//console.log("result failed");
+					/* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
 					if (callback) callback(false);
 					else BootstrapDialog.alert(result.Message);
 				}
 			});		
 		}
 		//console.log("equip called");
-		var sourceCharacterId = self.characterId;
-		//console.log("item is already in the character");
+		var sourceCharacterId = self.characterId;		
 		if (targetCharacterId == sourceCharacterId){
+			//console.log("item is already in the character");
 			/* if item is exotic */
-			if ( self.tierType == 6 ){
-				var otherBucketTypes = _.clone(DestinyWeaponPieces), otherExoticFound = false;
-				otherBucketTypes.splice(DestinyWeaponPieces.indexOf(self.bucketType),1);				
+			if ( self.tierType == 6 && allowReplacement){
+				//console.log("item is exotic");
+				var otherExoticFound = false,
+					otherBucketTypes = DestinyWeaponPieces.indexOf(self.bucketType) > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+				otherBucketTypes.splice(DestinyWeaponPieces.indexOf(self.bucketType),1);
+				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));	
 				_.each(otherBucketTypes, function(bucketType){
 					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
 						return item.isEquipped();
 					});
+					//console.log( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
 					if ( otherExotic.length > 0 ){
+						//console.log("found another exotic equipped " + otherExotic[0].description);
 						otherExoticFound = true;
 						otherExotic[0].unequip(done);
 					}					
@@ -281,6 +298,7 @@ var Item = function(model, profile){
 				}
 			}
 			else {
+				//console.log("item is not exotic");
 				done()
 			}			
 		}
@@ -537,7 +555,11 @@ var app = new (function() {
 	
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
-	
+	this.orderedCharacters = ko.computed(function(){
+		return self.characters().sort(function(a,b){
+			return a.order - b.order;
+		});
+	});		
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
