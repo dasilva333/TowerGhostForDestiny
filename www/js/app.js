@@ -1047,11 +1047,13 @@ var app = new (function() {
 		}*/
 
 		if (isMobile) {
-		    if (device.platform === "iOS" && device.version >= 7.0) {
-			StatusBar.overlaysWebView(false);
+		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+				StatusBar.overlaysWebView(false);
 		    }
-		    StatusBar.styleLightContent();
-		    StatusBar.backgroundColorByHexString("#000");
+			if (typeof StatusBar !== "undefined"){		
+			    StatusBar.styleLightContent();
+			    StatusBar.backgroundColorByHexString("#000");
+			}
 		}
 
 		if (isMobile && isEmptyCookie){
