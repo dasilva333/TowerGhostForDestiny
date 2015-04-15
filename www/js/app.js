@@ -1,5 +1,6 @@
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
+window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
 	var self = this;
@@ -581,6 +582,7 @@ var app = new (function() {
 			return a.order - b.order;
 		});
 	});		
+	
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
@@ -854,9 +856,6 @@ var app = new (function() {
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
 				setTimeout(self.bucketSizeHandler, 500);
-				self.characters(self.characters().sort(function(a,b){
-					return a.order - b.order;
-				}));
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -942,7 +941,8 @@ var app = new (function() {
 					ref.close();
 					clearInterval(loop);
 				}
-				self.search();			
+				self.loadLoadouts();
+				self.search();
 			});			
 		}
 	}
@@ -1051,13 +1051,79 @@ var app = new (function() {
 		self.characters(self.characters().concat( self.characters.splice(0,1) ));
 	}
 	
+	this.yqlRequest = function(params, callback){
+		var request = window.encodeURIComponent("http://www.towerghostfordestiny.com/api.cfm?" + $.param(params))
+		var requestURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%3D%22" + request + "%22&format=json&callback=";
+		$.ajax({
+			url: requestURL,
+			success: function(response){
+				callback(response.query.results);
+			}
+		});
+	}
+	
+	this.saveLoadouts = function(includeMessage){
+		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
+		if (supportsCloudSaves == true){
+			var params = {
+				action: "save",
+				membershipId: parseFloat(app.activeUser().user.membershipId),
+				loadouts: JSON.stringify(self.loadouts())
+			}
+			self.yqlRequest(params, function(results){
+				if (_includeMessage == true){
+					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+					else BootstrapDialog.alert("Error has occurred saving loadouts");
+				}
+			});
+		}
+		else {
+			var loadouts = ko.toJSON(self.loadouts());
+			window.localStorage.setItem("loadouts", loadouts);
+		}
+	}
+
+	this.loadLoadouts = function(){
+		var _loadouts = window.localStorage.getItem("loadouts");
+		if (!_.isEmpty(_loadouts)){
+			_loadouts = _.map(JSON.parse(_loadouts), function(loadout){
+				return new Loadout(loadout);
+			})
+		}
+		if (supportsCloudSaves == true){
+			self.yqlRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
+				var _results = [];
+				if (results && results.json && results.json.loadouts){
+				    _results = _.isArray(results.json.loadouts) ? results.json.loadouts : [results.json.loadouts];
+					_results = _.map(_results, function(loadout){
+						loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+						loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+						loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+						return new Loadout(loadout);
+					});
+				}
+				/* one time migrate joins the two arrays and clears the local one */
+				if(_loadouts.length > 0){
+					_results = _loadouts.concat(_results);
+					window.localStorage.setItem("loadouts", "");
+				}	
+				self.loadouts(_results);
+				/* one time migrate saves the new joined array to the cloud */
+				if(_loadouts.length > 0){
+					self.saveLoadouts(false);
+				}
+			});
+		}
+		else if (_loadouts.length > 0){
+			self.loadouts(_loadouts);
+		}
+	}
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		var _loadouts = window.localStorage.getItem("loadouts");
 		(function() {
 		  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
 		    var msViewportStyle = document.createElement("style");
@@ -1067,13 +1133,6 @@ var app = new (function() {
 		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
 		  }
 		})();
-		if (!_.isEmpty(_loadouts)){
-			self.loadouts(
-				_.map(JSON.parse(_loadouts), function(loadout){
-					return new Loadout(loadout);
-				})
-			);
-		}		
 		/* breaks on Windows Phone
 		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))

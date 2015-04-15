@@ -5,7 +5,6 @@ body {
 	font-size: 1em;
     margin: 0 auto;
     padding-top: 55px;
-	padding-bottom: 80px;
     background: radial-gradient(transparent,70%,#000) fixed,rgb(105, 125, 123);
     background: radial-gradient(transparent,70%,#000) fixed,url(https://www.bungie.net/img/theme/destiny/bgs/gradient_green.jpg) fixed;
     -webkit-background-size: cover;

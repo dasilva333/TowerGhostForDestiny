@@ -50,8 +50,7 @@ var Loadout = function(model){
 			app.loadouts.splice(app.loadouts().indexOf(ref),1);
 		}
 		app.loadouts.push( self );
-		var loadouts = ko.toJSON(app.loadouts());
-		window.localStorage.setItem("loadouts", loadouts);
+		app.saveLoadouts();
 	}
 	this.items = ko.computed(function(){
 		var _items = _.map(self.ids(), function(instanceId){
