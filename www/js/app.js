@@ -1045,6 +1045,15 @@ var app = new (function() {
 				.on("swipeleft", self.shiftArrayLeft)
 				.on("swiperight", self.shiftArrayRight);
 		}*/
+
+		if (isMobile) {
+		    if (device.platform === "iOS" && device.version >= 7.0) {
+			StatusBar.overlaysWebView(false);
+		    }
+		    StatusBar.styleLightContent();
+		    StatusBar.backgroundColorByHexString("#000");
+		}
+
 		if (isMobile && isEmptyCookie){
 			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
