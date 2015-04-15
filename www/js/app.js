@@ -64,8 +64,15 @@ var moveItemPositionHandler = function(element, item){
 					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
 						my: "left bottom",
 						at: "left top",
-						collision: "none fit",
-						of: element
+						collision: "none",
+						of: element,
+						using: function(pos, ui){
+							var box = $(ui.element.element).find(".move-popup").width();
+							if (box + pos.left > ui.element.width){
+								pos.left = pos.left - box;
+							}
+							$(this).css(pos);	
+						}	
 					});
 				}
 			}
