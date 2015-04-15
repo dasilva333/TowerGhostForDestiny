@@ -56,9 +56,8 @@ var moveItemPositionHandler = function(element, item){
 				activeElement = element;
 				if (window.isMobile){
 					$("body").css("padding-bottom","80px");
-					setTimeout(function(){
-						$movePopup.show();
-					},500);					
+					/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
+					$movePopup.show();
 				}
 				else {
 					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -67,11 +66,14 @@ var moveItemPositionHandler = function(element, item){
 						collision: "none",
 						of: element,
 						using: function(pos, ui){
-							var box = $(ui.element.element).find(".move-popup").width();
-							if (box + pos.left > ui.element.width){
-								pos.left = pos.left - box;
-							}
-							$(this).css(pos);	
+							var obj = $(this);
+							setTimeout(function(){
+								var box = $(ui.element.element).find(".move-popup").width();
+								if (box + pos.left > ui.element.width){
+									pos.left = pos.left - box;
+								}
+								obj.css(pos);	
+							},10);
 						}	
 					});
 				}
@@ -937,6 +939,11 @@ var app = new (function() {
 			$(".navbar-toggle").click();
 	}
 	
+	this.refreshButton = function(){
+		self.toggleBootstrapMenu();
+		self.loadData();
+	}
+	
 	this.refreshHandler = function(){
 		clearInterval(self.refreshInterval);
 		if (self.loadoutMode() == true){
@@ -944,7 +951,7 @@ var app = new (function() {
 			$("body").css("padding-bottom","260px");
 		}
 		else {
-			$("body").css("padding-bottom","0");
+			$("body").css("padding-bottom","80px");
 		}
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
 			self.refreshInterval = setInterval(function(){ self.loadData() }, self.refreshSeconds() * 1000);
