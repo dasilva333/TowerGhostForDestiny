@@ -1090,6 +1090,9 @@ var app = new (function() {
 				return new Loadout(loadout);
 			})
 		}
+		else {
+			_loadouts = [];
+		}		
 		if (supportsCloudSaves == true){
 			self.yqlRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
 				var _results = [];
