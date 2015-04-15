@@ -127,7 +127,19 @@ var Profile = function(model){
 			if (DestinyArmorPieces.indexOf(item.bucketType) > -1 )
 				return item;
 		});
-	});	
+	});
+	this.general = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (DestinyArmorPieces.indexOf(item.bucketType) == -1 && DestinyWeaponPieces.indexOf(item.bucketType) == -1)
+				return item;
+		});
+	});
+	this.postmaster = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (item.bucketType == "Post Master")
+				return item;
+		});
+	});
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
 	this.get = function(type){
 		return self.items().filter(filterItemByType(type, false));
@@ -841,9 +853,10 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
-				self.characters().sort(function(a,b){
+				setTimeout(self.bucketSizeHandler, 500);
+				self.characters(self.characters().sort(function(a,b){
 					return a.order - b.order;
-				});
+				}));
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -956,6 +969,14 @@ var app = new (function() {
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
 			self.refreshInterval = setInterval(function(){ self.loadData() }, self.refreshSeconds() * 1000);
 		}
+	}
+	
+	this.bucketSizeHandler = function(){
+		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
+		var maxHeight = Math.max.apply(null, buckets.map(function(){
+		return $(this).height()
+		}));
+		buckets.css("height", maxHeight);	
 	}
 	
 	this.donate = function(){
@@ -1083,7 +1104,8 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
-		
+		/* this fixes issue #16 */
+		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
 		
 		ko.applyBindings(self);
 	}

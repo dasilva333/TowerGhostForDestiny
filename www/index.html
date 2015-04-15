@@ -38,8 +38,11 @@
 						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
 							(<span data-bind="text: character.get(bucketType).length+1"></span>/10)
 						<!--/ko  -->
-						<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
+						<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
 							(<span data-bind="text: character.get(bucketType).length"></span>/15)
+						<!--/ko  -->
+						<!-- ko if: ( bucketType == 'Post Master' ) -->
+							(<span data-bind="text: character.get(bucketType).length"></span>/20)
 						<!--/ko  -->
 					</span>
 					<span data-bind="visible: character.id == 'Vault'">
@@ -107,7 +110,7 @@
 				    <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="0"><a href="#">All</a></li>
 		            <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="1"><a href="#">Weapons</a></li>
 					<li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="2"><a href="#">Armor</a></li>
-		            <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="3"><a href="#">Other</a></li>
+		            <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="3"><a href="#">General</a></li>
 		          </ul>
 		        </li>
 		        <li class="dropdown">
@@ -235,7 +238,7 @@
 		<div class="container">
 			<div class="container-fluid" id="charactersContainer">
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile">
 						<div class="character clearfix">
 						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
@@ -251,20 +254,21 @@
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 30"></span>)</div>
-								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots'], as: 'bucketType' }">
+								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
+								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-								<div class="title"><strong>Misc</strong></div>
-								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Consumables','Materials'], as: 'bucketType' }">
-								</div>
+								<div class="title"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
+								<!--- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 --->
+								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
+								</div>								
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-								<div class="title"><strong>Styling</strong></div>
-								<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['Shader','Emblem','Class Items','Ship','Sparrow'], as: 'bucketType' }">
-								</div>
-							  </div>						  
+								<div class="title"><strong>Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
+								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }">
+								</div>								
+							  </div>					  
 							</div>
 						</div>
 					</div>
