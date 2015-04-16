@@ -6,13 +6,14 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<meta name="viewport" id="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-	<script language="JavaScript" type="text/javascript" src="data/itemDefs.js"></script>
-	<script language="JavaScript" type="text/javascript" src="data/statDefs.js"></script>
-	<script language="JavaScript" type="text/javascript" src="data/perkDefs.js"></script>
-	<script language="JavaScript" type="text/javascript" src="data/talentGridDefs.js"></script>
-	<script language="JavaScript" type="text/javascript" src="data/raceDefs.js"></script>
-	<script language="JavaScript" type="text/javascript" src="data/destinyDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/itemDefs.json"></script>
+	<script language="JavaScript" type="text/javascript" src="data/statDefs.json"></script>
+	<script language="JavaScript" type="text/javascript" src="data/perkDefs.json"></script>
+	<script language="JavaScript" type="text/javascript" src="data/talentGridDefs.json"></script>
+	<script language="JavaScript" type="text/javascript" src="data/raceDefs.json"></script>	
+	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/lzstring.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="scripts/bungie.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/hammer.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/jquery.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/jquery-ui.js"></script>
@@ -20,9 +21,6 @@
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/bootstrap-dialog.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/knockout.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/underscore-min.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/dependencies/fastclick.js"></script>
-	<script language="JavaScript" type="text/javascript" src="scripts/bungie.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/loadouts.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/app.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/tooltips.min.js"></script>	
@@ -31,43 +29,33 @@
 
   <body>
 		<script type="text/html" id="sections-template">
-			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
-				<div class="title">
-					<span data-bind="text: bucketType"></span> 
-					<span data-bind="visible: character.id !== 'Vault'">
-						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
-							(<span data-bind="text: character.get(bucketType).length+1"></span>/10)
-						<!--/ko  -->
-						<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
-							(<span data-bind="text: character.get(bucketType).length"></span>/15)
-						<!--/ko  -->
-						<!-- ko if: ( bucketType == 'Post Master' ) -->
-							(<span data-bind="text: character.get(bucketType).length"></span>/20)
-						<!--/ko  -->
-					</span>
-					<span data-bind="visible: character.id == 'Vault'">
-						(<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
-					</span>				
-				</div>
-				<div class="row no-gutter" style="margin:auto;">
-					<div class="itemBucket" data-bind="css: (character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
-						<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
-							<span data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
-								<a data-bind="attr:{href:item.href, instanceId:item._id}">
-									<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
-								</a>
-								<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
-							</span>
-						</div>
-					</div>
-					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
-						<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-							<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: setActiveItem, moveItem: true"></a>
+			<div class="title">
+				<span data-bind="text: list.split('.')[1]"></span> 
+				<span data-bind="visible: character.id !== 'Vault'">
+					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length+1"></span><span>/<span data-bind="text: (list.split('.')[1] == 'Materials' || list.split('.')[1] == 'Consumables') ? 15 : 10"></span>)</span>
+				</span>
+				<span data-bind="visible: character.id == 'Vault'">
+					(<span data-bind="text: character.get(list.split('.')[0], list.split('.')[1]).length"></span>)
+				</span>				
+			</div>
+			<div class="row no-gutter" style="margin:auto;">
+				<div class="itemBucket" data-bind="css: (character.id == 'Vault' || list == 'items.Consumables' || list == 'items.Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
+					<div data-bind="foreach: { data: character.get(list.split('.')[0], list.split('.')[1]), as: 'item' }, sortableList: character.get(list.split('.')[0], list.split('.')[1])">
+						<span data-bind="css: ((character.id == 'Vault' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
+							<a data-bind="attr:{href:item.href, instanceId:item._id}">
+								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: function(){ setActiveItem(list, this) }, moveItem: true">
+							</a>
 							<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 						</span>
 					</div>
 				</div>
-			<!--/ko  -->
+				<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(list.split('.')[0], list.split('.')[1])">
+					<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+						<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: function(){ setActiveItem(list, this) }, moveItem: true"></a>
+						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
+					</span>
+				</div>				
+			</div>	
 		</script>		
 		<nav class="navbar navbar-default navbar-fixed-top">
 		  <div class="container-fluid">
@@ -78,32 +66,27 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 1.8.8</a>
+		      <a class="navbar-brand" href="#">TGD 1.6.2</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
 				
 				<li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/cog.png"> <span class="caret"></span></a>
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-		            	<li><a href="#" data-bind="fastclick: showAbout">About</a></li>
-						<li><a href="#" data-bind="fastclick: showHelp">Help</a></li>
-						<li class="active"><a href="#" data-bind="fastclick: donate">Donate</a></li>
-						<li class="divider"></li>						
-						<li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
-						<li><a href="#" data-bind="fastclick: openBungieWindow('Wlid')">Live Login</a></li>
-						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
-						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount">Use Playstation Account</a></li>
-						<li class="divider"></li>
-						<li><a href="#" data-bind="fastclick: toggleShareView">Share URL</a></li>
-						<li><a href="#" data-bind="fastclick: clearFilters">Clear Filters</a></li>
-						<li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
-						<li data-bind="fastclick: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
+		            	<li><a href="#" data-bind="click: showAbout">About</a></li>
+						<li><a href="#" data-bind="click: showHelp">Help</a></li>
+						<li><a href="#" data-bind="click: toggleShareView">Share URL</a></li>
+						<li><a href="#" data-bind="click: clearFilters">Clear Filters</a></li>
+						<li><a href="#" data-bind="click: loadData">Refresh Items</a></li>
+						<li><a href="#" data-bind="click: $root.openBungieWindow('Psnid')">PSN Login</a></li>
+						<li><a href="#" data-bind="click: $root.openBungieWindow('Wlid')">XBL Login</a></li>
+						<li data-bind="click: toggleListener, css: listenerEnabled() == true ? 'active' : ''"><a href="#">Loadstop Listener</a></li>
+						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
+						<li data-bind="click: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 		          </ul>
 		        </li>
-				<li class="dropdown"><a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
-				</li>
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">View <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
@@ -153,18 +136,18 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Loadouts <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-		            <li data-bind="fastclick: createLoadout"><a href="#">Create</a></li>
-					<li data-bind="fastclick: cancelLoadout"><a href="#">Cancel</a></li>
+		            <li data-bind="click: createLoadout"><a href="#">Create</a></li>
+					<li data-bind="click: cancelLoadout"><a href="#">Cancel</a></li>
 					<li class="divider"></li>
 					<!-- ko foreach: { data: loadouts, as: 'loadout' } -->
-						<li data-bind="fastclick: setActive"><a data-bind="text: loadout.name" href="#"></a></li>
+						<li data-bind="click: setActive"><a data-bind="text: loadout.name" href="#"></a></li>
 		  			<!--/ko  -->
 		          </ul>
 		        </li>
 				<li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Burn <span class="caret"></span></a>
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Damage <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Kinetic"><a href="#"><img src="assets/kinetic.png" class="icon">Kinetic (None)</a></li>
+					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="None"><a href="#"><img src="assets/kinetic.png" class="icon">Kinetic (None)</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Solar"><a href="#"><img src="assets/solar.png" class="icon">Solar</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Arc"><a href="#"><img src="assets/arc.png" class="icon">Arc</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Void"><a href="#"><img src="assets/void.png" class="icon">Void</a></li>
@@ -191,34 +174,34 @@
 			<strong>DestinyExotics.com</strong> Share URL: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
 		</div>
 		<div class="alert alert-success" data-bind="visible: showMissing" style="display:none; ">
-			<strong class="col-xs-12 col-md-12 col-md-1 col-lg-1">Missing Items</strong> 
+			<strong>Missing Items</strong> 
 			<span data-bind="foreach: { data: missingSets }">
-				<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, click: function(){ return false }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>
+				<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }"><img data-bind="attr:{src: $root.bungie.getUrl() + _itemDefs[ $data ].icon, title: _itemDefs[ $data ].name }" width="48"></a>
 			</span>
 		</div>		
 		<div data-bind="with: $root.activeUser()" style="">
 			<div class="alert alert-danger" data-bind="visible: typeof error !== 'undefined'" style="display:none;">
-				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
+				<strong>Error: (retrying to sign in <span data-bind="text: $root.retryCount"></span>)</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="fastclick:$root.openBungieWindow('Wlid')" target="_blank">Windows Live ID</a> </li>
-						<li>Sign in with your credentials</li>
-						<li>Wait until homepage completely finishes loading</li>
-						<li>The Bungie.net window will auto close and items should be loaded</li>
+						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid')" target="_blank">Bungie.net PSN</a> or <a data-bind="click:$root.openBungieWindow('Wlid')" target="_blank">Bungie.net Xbox</a> </li>
+						<li>Click Sign In the top right</li>
+						<li>Refresh this page</li>
 					</ol>
 				</div>
 			</div>
 		</div>		
 		<div class="progress progress-striped active" style="display:none;" data-bind="visible: loadingUser">
-			<div class="progress-bar progress-bar-info" id="loadingBar" style="width: 100%"></div>
+			<div class="progress-bar progress-bar-info" style="width: 100%"></div>
 		</div>
 		<nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
 			<div class="container-fluid">
 				<div class="move-popup row no-gutter">
 				  <div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				  	Move: <span data-bind="text: description"></span>
+				  	Move: <span  data-bind="text: description"></span>
+						  <span data-bind="visible: primaryStat">(Primary Stat: <span data-bind="text: primaryStat"></span>)</span>
 				  </div>
-				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.characters, as: 'avatar' }">
+				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>vault</div></div>
@@ -227,7 +210,7 @@
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>store</div></div>
 					</div>
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: !$parent.isEquipped() && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables' || $parent.characterId != avatar.id && avatar.id !== 'Vault' && $parent.bucketType != 'Materials' && $parent.bucketType != 'Consumables'">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>equip</div></div>
 					</div>								
@@ -236,10 +219,10 @@
 			</div>
 		</nav>
 		<div class="container">
-			<div class="container-fluid" id="charactersContainer">
+			<div class="container-fluid" style="">
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile">
-						<div class="character clearfix">
+					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+						<div class="character">
 						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
 							<div class="class" data-bind="text: classType"></div>
@@ -249,26 +232,25 @@
 						<div>
 							<div class="items" data-type="item">
 							  <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
-								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }">
+								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>)</div>
+								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['weapons.Primary','weapons.Special','weapons.Heavy'], as: 'list' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
-								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }">
+								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>)</div>
+								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['armor.Helmet','armor.Gauntlet','armor.Chest', 'armor.Boots'], as: 'list' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-								<div class="title"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
-								<!--- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 --->
-								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
-								</div>								
+								<div class="title"><strong>Misc</strong></div>
+								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['items.Consumables','items.Materials'], as: 'list' }">
+								</div>
 							  </div>
-							  <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-								<div class="title"><strong>Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
-								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }">
-								</div>								
-							  </div>					  
+							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
+								<div class="title"><strong>Styling</strong></div>
+								<div class="item-Styling sections" data-bind="template: { name: 'sections-template', foreach: ['items.Shader','items.Emblem','items.Class Items','items.Ship','items.Sparrow'], as: 'list' }">
+								</div>
+							  </div>						  
 							</div>
 						</div>
 					</div>
@@ -285,22 +267,20 @@
 			<div class="content" data-bind="with: activeLoadout">
 				<div id="loadout-options">
 					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
-					<span id="loadout-save" data-bind="fastclick: save">Save</span>
-					<span id="loadout-save" data-bind="fastclick: remove">Delete</span>
-					<span id="loadout-save" data-bind="fastclick: $root.cancelLoadout">Close</span>
-					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
+					<span id="loadout-save" data-bind="click: save">Save</span>
+					<span id="loadout-save" data-bind="click: remove">Delete</span>
+					<!-- ko foreach: { data: $root.characters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
-					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, check to equip.</p>
+					<p id="loadout-error" data-bind="visible: items().length == 0">no items in loadout, click items to add.</p>
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
-					<span class="item" data-bind="css: isGridComplete ? 'complete' : ''">
-						<a data-bind="attr:{href:item.href, instanceId:item._id}, click:">
-							<img class="itemImage" data-bind="attr: { src: item.icon }, click: setActiveItem, moveItem: true">
+					<span class="item" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+						<a data-bind="attr:{href:item.href, id:item._id}, click:">
+							<img class="itemImage" data-bind="attr: { src: item.icon }, click: function(){ setActiveItem(list, this) }, moveItem: true">
 						</a>
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
-					<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip" title="Enable to mark as the equip item">
 				</span>	 	
 			</div>
 		</div>		
@@ -337,20 +317,26 @@
 				<li>Change Emblem dynamically</li>
 			</ul>
 			
-			<div data-bind="visible: isMobile">
-				<h5>Troubleshooting on Mobile</h5>
+			<h5>Troubleshooting on Mobile</h5>
 
-				<p>Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials.<br>
-					If you don't see that message then go to <strong>Settings</strong> then <strong> Log in XBL/PSN</strong> and close the pop up window after Bungie.net has completely finished loading.<br>		
-					After the window closes the items should load automatically give it a few seconds to load you should see a blue loading bar while its getting your information.<br>
-					If the page doesn't load after sign in then try <strong>Settings</strong> then <strong>Refresh Items</strong>. <br>
-					Good luck guys and remember this is still a beta build.
-				</p>
-			</div>
+			<p>Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials.<br>
+				If you don't see that message then go to <strong>Settings</strong> then <strong> Log in XBL/PSN</strong> and close the pop up window after Bungie.net has completely finished loading.<br>		
+				After the window closes the items should load automatically give it a few seconds to load you should see a blue loading bar while its getting your information.<br>
+				If the page doesn't load after sign in then try <strong>Settings</strong> then <strong>Refresh Items</strong>. <br>
+				Good luck guys and remember this is still a beta build.
+			</p>
+			
+			<h5>Chrome Store Install</h5>		
+			
+			<a href="https://chrome.google.com/webstore/detail/gdjndlpockopgjbonnfdmkcmkcikjhge" target="_blank">https://chrome.google.com/webstore/detail/gdjndlpockopgjbonnfdmkcmkcikjhge</a>
+			
+			<h5>Firefox Store Install</h5>		
+			
+			<a href="https://addons.mozilla.org/En-us/firefox/addon/destiny-item-viewer/" target="_blank">https://addons.mozilla.org/En-us/firefox/addon/destiny-item-viewer/</a>
 			
 			<h5>Support and New Issues</h5>
 			
-			<a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_blank">https://github.com/dasilva333/TowerGhostForDestiny/</a>	
+			<a href="https://github.com/dasilva333/DIM/tree/mixed" target="_blank">https://github.com/dasilva333/DIM/</a>	
 		</div>
 		<div id="help" style="display:none">
 			<ul>
@@ -368,5 +354,5 @@
 				<li><strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds.</li>
 			</ul>			
 		</div>
-	</body>
+  </body>
 </html>

@@ -1,14 +1,3 @@
-##Store Install Instructions
-
-[Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
-
-[Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
-
-[Tower Ghost in Amazon Store](http://www.amazon.com/gp/product/B00VQYLURG)
-
-[Tower Ghost in Google Play Store](https://play.google.com/store/apps/details?id=com.richardpinedo.towerghostfordestiny)
-
-[Tower Ghost in Windows Phone Store](http://www.windowsphone.com/en-us/store/app/destiny-item-viewer/f98e5060-3464-419c-b83d-14300714a676)
 
 
 ##Current Features Supported
@@ -35,6 +24,7 @@
 
 [Transfer Popup](http://i.imgur.com/odUJb7s.png)
 
+
 ##Features Incoming
 -    Drag & Drop Items
 -    Cloud based Loadouts
@@ -44,26 +34,27 @@
 -    Moving materials/consumables causing splits/merges is still buggy
 -    DestinyExotics doesn't recognize certain weapons you might have
 -    Mobile app has problems logging in
--    Visit the [Issues](https://github.com/dasilva333/TowerGhostForDestiny/issues) for more information
--    Keyboard hides away for some users
+-    Visit the [Issues](https://github.com/dasilva333/DIM/issues) for more information
+-    Layout issues in big screen mobile devices  
 
 ##Troubleshooting 
 Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials [Screenshot](http://i.imgur.com/xzrpKxV.png) if you don't see that message then go to Settings > Log in XBL/PSN and click Done when complete. After clicking Done the items should load automatically give it a few seconds to load, if the page doesn't load after sign in then try Settings > Refresh Items. Good luck guys and remember this is still a beta build.
-Keyboard Disappears? Go to Settings and disable Loadstop Listener, log in, enable it back in, and log in again.
 
 ##Mobile Install
 
-Recent Information for each mobile platform found here:
-http://www.reddit.com/r/DestinyTheGame/comments/31p69l/tower_ghost_for_destiny_formerly_known_as_destiny/
+IPA - iOS Users only works if you're jailbroken, expect an App Store release soon
+[https://github.com/dasilva333/DIM/blob/div-mobile-dist/dist/DestinyItemViewer.ipa?raw=true](https://github.com/dasilva333/DIM/blob/div-mobile-dist/dist/DestinyItemViewer.ipa?raw=true)
 
-Install Guides for each platform is found here: 
-http://www.reddit.com/r/DestinyTheGame/comments/316hx4/discussion_destiny_item_viewer_for/
+[iOS JB Install Guide](https://forum.appaddict.org/index.php?/topic/2163-how-to-install-ipas-using-ifunbox/)
 
-##Download Files
+APK - Android users, should have no problem installing this file, it looks like Blackberry 10 users should also be able to install this app.
 
-You can find the latest download for each platform here:
+[Android Install Guide](http://www.greenbot.com/article/2452614/how-to-sideload-an-app-onto-your-android-phone-or-tablet.html)
 
-https://github.com/dasilva333/TowerGhostForDestiny/tree/div-movile-dist/
+XAP - Windows Phone users, you need to have developer mode enabled on your phone to be able to side load.
+
+[WP Install Guide] (http://www.windowsphone.com/en-us/how-to/wp8/apps/how-do-i-install-apps-from-an-sd-card)
+Deploying this via SD card doesn't work, when you try to tap on the XAP it just says failed to install company app. However, deploying it from a PC using the Application Deployment tool does work properly.
 
 ##Manual Chrome Install Instructions
 
@@ -71,12 +62,19 @@ https://github.com/dasilva333/TowerGhostForDestiny/tree/div-movile-dist/
 -    Go to Extensions
 -    Tick Developer Mode
 -    Load Unpacked Extensions
--    Point it to the directory where you unzipped the tower_ghost.zip (found in Downloads section)
+-    Point it to the directory where you unzipped the [destiny_item_viewer.zip](https://github.com/dasilva333/DIM/blob/master/destiny_item_viewer.zip?raw=true) file
 
 ##Manual Firefox Install Instructions
 
 -    Go to Tools
 -    Go to Add-ons
 -    Find the button that says "Install addon from file"
--    Point it to the tower_ghost.xpi (found in Downloads section) file
+-    Point it to the [destiny_item_viewer.xpi](https://github.com/dasilva333/DIM/blob/master/destiny_item_viewer.xpi?raw=true) file
 
+##Store Install Instructions
+
+Visit this store Link:
+
+[Destiny Item Viewer in Chrome Store](https://chrome.google.com/webstore/detail/destiny-item-viewer/gdjndlpockopgjbonnfdmkcmkcikjhge)
+
+[Destiny Item Viewer in Firefox Store](https://addons.mozilla.org/En-us/firefox/addon/destiny-item-viewer/)

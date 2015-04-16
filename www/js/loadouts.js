@@ -1,4 +1,4 @@
-	
+
 /*
 targetItem: item,
 swapItem: swapItem,
@@ -34,7 +34,6 @@ var Loadout = function(model){
 	});	
 	this.name = self.name || "";
 	this.ids = ko.observableArray(self.ids || []);
-	this.equipIds = ko.observableArray(self.equipIds || []);
 	this.setActive = function(){
 		app.loadoutMode(true);
 		app.activeLoadout(self);
@@ -50,65 +49,48 @@ var Loadout = function(model){
 			app.loadouts.splice(app.loadouts().indexOf(ref),1);
 		}
 		app.loadouts.push( self );
-		app.saveLoadouts();
+		var loadouts = ko.toJSON(app.loadouts());
+		window.localStorage.setItem("loadouts", loadouts);
 	}
 	this.items = ko.computed(function(){
 		var _items = _.map(self.ids(), function(instanceId){
 			var itemFound;
 			app.characters().forEach(function(character){
-				var match = _.findWhere(character.items() , { _id: instanceId });
-				if (match) itemFound = match;
+				['weapons','armor'].forEach(function(list){
+					var match = _.findWhere(character[list]() , { _id: instanceId });
+					if (match) itemFound = match;
+				});
 			});
-			if(itemFound){
-				itemFound.doEquip = self.bindEquipIds(itemFound._id);
-				itemFound.markAsEquip = self.markAsEquip;
-			}				
 			return itemFound;
 		});	
 		return _items;
 	});
-	this.markAsEquip = function(item, event){
-		var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
-		if ( existingItem.length > 0 ){
-			self.equipIds.remove(existingItem[0]);
-		}
-		self.equipIds.push({ bucketType: item.bucketType, _id: item._id });
-		return true;
-	}
-	this.bindEquipIds = function(instanceId){
-		return ko.computed(function(){
-			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
-		});
-	}
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	this.findReference = function(item){
 		var c = _.findWhere(app.characters(),{ id: item.character.id });
-		var x = _.findWhere(c.items(),{ _id: item._id });
+		var x = _.findWhere(c[item.list](),{ _id: item._id });
 		return x;
 	}
 	this.swapItems = function(swapArray, targetCharacterId, callback){
 		var itemIndex = -1;
 		var transferNextItem = function(){
-			//console.log("transferNextItem");
 			var pair = swapArray[++itemIndex];
 			if (pair){
 				/* at this point it doesn't matter who goes first but lets transfer the loadout first */				
 				if ( typeof pair.targetItem !== "undefined"){
-					var owner = pair.targetItem.character.id;					
-					var action = (_.where( self.equipIds(), { _id: pair.targetItem._id }).length == 0) ? "store" : "equip";
-					//console.log("going to " + action + " first item " + pair.targetItem.description);
-					self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
+					var owner = pair.targetItem.character.id;
+					//console.log("going to transfer first item " + pair.targetItem.description);
+					self.findReference(pair.targetItem).store(targetCharacterId, function(targetProfile){			
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
 						if (typeof pair.swapItem !== "undefined"){
 							self.findReference(pair.swapItem).store(owner, transferNextItem);
 						}	
 						else { transferNextItem(); }
-					}, true);
+					});
 				}
 				else { transferNextItem(); }
 			}
 			else {
-				//console.log("pair is not defined, calling callback");
 				if (callback)
 					callback();
 			}
@@ -122,21 +104,21 @@ var Loadout = function(model){
 	/* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	/* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
 	this.transfer = function(targetCharacterId){
-		try {
-			var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
-			var getFirstItem = function(sourceBucketIds, itemFound){
-				return function(otherItem){
-					/* if the otherItem is not part of the sourceBucket then it can go */
-					if ( sourceBucketIds.indexOf( otherItem._id ) == -1 && itemFound == false){
-						itemFound = true;
-						sourceBucketIds.push(otherItem._id);
-						return otherItem;
-					}
+		var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
+		var getFirstItem = function(sourceBucketIds, itemFound){
+			return function(otherItem){
+				/* if the otherItem is not part of the sourceBucket then it can go */
+				if ( sourceBucketIds.indexOf( otherItem._id ) == -1 && itemFound == false){
+					itemFound = true;
+					sourceBucketIds.push(otherItem._id);
+					return otherItem;
 				}
-			};
-			var masterSwapArray= [], sourceItems =  self.items();
+			}
+		};
+		var globalSwapArray = _.flatten(_.map(['weapons','armor'], function(list){
+			var sourceItems =  _.where( self.items(), { list: list });
 			if (sourceItems.length > 0){
-				var targetList = targetCharacter.items();				
+				var targetList = targetCharacter[list]();				
 				var sourceGroups = _.groupBy( sourceItems, 'bucketType' );
 				var targetGroups = _.groupBy( targetList, 'bucketType' );	
 				var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key){
@@ -147,21 +129,11 @@ var Loadout = function(model){
 					if (sourceBucket.length + targetBucket.length > 9){
 						var sourceBucketIds = _.pluck( sourceBucket, "_id");
 						var swapArray = _.map(sourceBucket, function(item){
-							/* if the item is already in the targetBucket */
+							/* if the item is already in the targetBucket then return an object indicating to do nothing */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
-								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-								if ( _.where(self.equipIds(), { _id: item._id }).length > 0 ){
-									return {
-										targetItem: item,
-										description: item.description + " will be just be equipped."
-									}
+								return {
+									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
 								}
-								/* then return an object indicating to do nothing */
-								else {
-									return {
-										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
-									}
-								}								
 							}
 							else {
 								var itemFound = false;
@@ -178,21 +150,10 @@ var Loadout = function(model){
 					else {
 						/* do a clean move by returning a swap object without a swapItem */
 						var swapArray = _.map(sourceBucket, function(item){
-							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
-								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-								if ( _.where(self.equipIds(), { _id: item._id }).length > 0 ){
-									return {
-										targetItem: item,
-										description: item.description + " will be just be equipped."
-									}
+								return {
+									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
 								}
-								/* then return an object indicating to do nothing */
-								else {
-									return {
-										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
-									}
-								}								
 							}
 							else {							
 								return {
@@ -204,22 +165,19 @@ var Loadout = function(model){
 					}
 					return swapArray;
 				}));
+				return masterSwapArray;
 			}
-			if (masterSwapArray.length > 0){
-				var $template = $(swapTemplate3({ swapArray: masterSwapArray }));
-				$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
-				(new dialog({buttons:[ 
-					{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
-						BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_blank\">buy me a beer</a> ;)");
-						dialog.close()
-					}); }},
-					{label: "Cancel", action: function(dialog){ dialog.close() }}
-				]})).title("Transfer Confirm").content($template).show();
-				
-			}		
-		}catch(e){
-			console.log(e.toString());
-		}		
+			else return [];
+		}));
+		if (globalSwapArray.length > 0){
+			(new dialog({buttons:[ 
+				{label: "Transfer", action: function(dialog){ self.swapItems(globalSwapArray, targetCharacterId, function(){
+					alert("Item(s) transferred successfully");
+					dialog.close()
+				}); }},
+				{label: "Cancel", action: function(dialog){ dialog.close() }}
+			]})).title("Transfer Confirm").content(swapTemplate3({ swapArray: globalSwapArray })).show();		
+		}
 	}
 }
 

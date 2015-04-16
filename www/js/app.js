@@ -1,6 +1,5 @@
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
-window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
 	var self = this;
@@ -40,55 +39,22 @@ var moveItemPositionHandler = function(element, item){
 					app.activeLoadout().ids.push(item._id);
 				}
 				else {
-					BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
+					alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
 				}
 			}
 		}
 		else {
-			var $movePopup = $( "#move-popup" );
-			if (item.bucketType == "Post Master"){
-				return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
-			}
 			if (element	== activeElement){
-				$movePopup.hide();
+				$( "#move-popup" ).hide();
 				activeElement = null;
 			}	
 			else {
-				activeElement = element;
-				if (window.isMobile){
-					$("body").css("padding-bottom","80px");
-					/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
-					$movePopup.show();
-				}
-				else {
-					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
-						my: "left bottom",
-						at: "left top",
-						collision: "none",
-						of: element,
-						using: function(pos, ui){
-							var obj = $(this);
-							setTimeout(function(){
-								var box = $(ui.element.element).find(".move-popup").width();
-								if (box + pos.left > ui.element.width){
-									pos.left = pos.left - box;
-								}
-								obj.css(pos);	
-							},10);
-						}	
-					});
-				}
+				activeElement = element;				
+				$( "#move-popup" ).show();
 			}
 		}	
 	}
 }
-
-window.ko.bindingHandlers.fastclick = {
-	init: function(element, valueAccessor) {
-		FastClick.attach(element);
-		return ko.bindingHandlers.click.init.apply(this, arguments);
-	}
-};
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -116,45 +82,24 @@ var Profile = function(model){
 	
 	this.icon = ko.observable(self.icon);	
 	this.background = ko.observable(self.background);
+	this.weapons = ko.observableArray([]);
+	this.armor = ko.observableArray([]);
 	this.items = ko.observableArray([]);
-	this.weapons = ko.computed(function(){
-		return _.filter(self.items(), function(item){
-			if (DestinyWeaponPieces.indexOf(item.bucketType) > -1 )
-				return item;
-		});
-	});	
-	this.armor = ko.computed(function(){
-		return _.filter(self.items(), function(item){
-			if (DestinyArmorPieces.indexOf(item.bucketType) > -1 )
-				return item;
-		});
-	});
-	this.general = ko.computed(function(){
-		return _.filter(self.items(), function(item){
-			if (DestinyArmorPieces.indexOf(item.bucketType) == -1 && DestinyWeaponPieces.indexOf(item.bucketType) == -1)
-				return item;
-		});
-	});
-	this.postmaster = ko.computed(function(){
-		return _.filter(self.items(), function(item){
-			if (item.bucketType == "Post Master")
-				return item;
-		});
-	});
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-	this.get = function(type){
-		return self.items().filter(filterItemByType(type, false));
+	this.get = function(list, type){
+		return self[list]().filter(filterItemByType(type, false));
 	}
-	this.itemEquipped = function(type){
-		return ko.utils.arrayFirst(self.items(), filterItemByType(type, true));
+	this.itemEquipped = function(list, type){
+		return ko.utils.arrayFirst(self[list](), filterItemByType(type, true));
 	}
 }
 
-var Item = function(model, profile){
+var Item = function(model, profile, list){
 	var self = this;
 	_.each(model, function(value, key){
 		self[key] = value;
 	});
+	this.list = list;
 	this.character = profile;
 	this.href = "https://destinydb.com/items/" + self.id;
 	this.isEquipped = ko.observable(self.isEquipped);
@@ -195,12 +140,6 @@ var Item = function(model, profile){
 			return false;
 		}
 	}
-	this.isEquippable = function(avatarId){
-		return ko.computed(function(){
-			 return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1) || 
-			 	(self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1);
-		});
-	}
 	this.isVisible = ko.computed(function(){
 		var $parent = app;
 		var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) || 
@@ -231,106 +170,62 @@ var Item = function(model, profile){
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
-			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6;
-			});
-			if ( otherItems.length > 0){
-				var tryNextItem = function(){			
-					var item = otherItems[++itemIndex];
-					//console.log(item.description);
-					/* still haven't found a match */
-					if (otherEquipped == false){
-						if (item != self){
-							//console.log("trying to equip " + item.description);
-							item.equip(self.characterId, function(isEquipped){
-								//console.log( item.description + " result was " + isEquipped);
-								if (isEquipped == true){ otherEquipped = true; callback(); }
-								else { tryNextItem(); /*console.log("tryNextItem")*/ }
-							});				
-						}
-						else {
-							tryNextItem()
-							//console.log("tryNextItem")
-						}
+			var otherItems = _.where( self.character[self.list](), { bucketType: self.bucketType });
+			var tryNextItem = function(){			
+				var item = otherItems[++itemIndex];
+				//console.log(item.description);
+				/* still haven't found a match */
+				if (otherEquipped == false){
+					if (item != self){
+						//console.log("trying to equip " + item.description);
+						item.equip(self.characterId, function(isEquipped){
+							//console.log("result was " + isEquipped);
+							if (isEquipped == true){ otherEquipped = true; callback(); }
+							else { tryNextItem(); /*console.log("tryNextItem")*/ }
+						});				
+					}
+					else {
+						tryNextItem()
+						//console.log("tryNextItem")
 					}
 				}
-				//console.log("tryNextItem")
-				tryNextItem();			
 			}
-			else {
-				callback(false);
-			}
+			tryNextItem();		
+			//console.log("tryNextItem")
 		}
 		else {
 			//console.log("but not equipped");
 			callback();
 		}
 	}
-	this.equip = function(targetCharacterId, callback, allowReplacement){
-		var done = function(){
-			//console.log("making bungie call to equip " + self.description);
+	this.equip = function(targetCharacterId, callback){
+		var sourceCharacterId = self.characterId;
+		if (targetCharacterId == sourceCharacterId){
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
-					//console.log("result was OKed");
-					//console.log(result);
 					self.isEquipped(true);
-					self.character.items().forEach(function(item){
+					self.character[self.list]().forEach(function(item){
 						if (item != self && item.bucketType == self.bucketType){
 							item.isEquipped(false);							
 						}
 					});
-					if (self.bucketType == "Emblem"){
+					if (self.list == "items" && self.bucketType == "Emblem"){
 						self.character.icon(app.makeBackgroundUrl(self.icon, true));
 						self.character.background(self.backgroundPath);
 					}
 					if (callback) callback(true);
 				}
 				else {
-					//console.log("result failed");
-					/* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
 					if (callback) callback(false);
-					else BootstrapDialog.alert(result.Message);
+					else alert(result.Message);
 				}
-			});		
-		}
-		//console.log("equip called");
-		var sourceCharacterId = self.characterId;		
-		if (targetCharacterId == sourceCharacterId){
-			//console.log("item is already in the character");
-			/* if item is exotic */
-			if ( self.tierType == 6 && allowReplacement){
-				//console.log("item is exotic");
-				var otherExoticFound = false,
-					otherBucketTypes = DestinyWeaponPieces.indexOf(self.bucketType) > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
-				otherBucketTypes.splice(DestinyWeaponPieces.indexOf(self.bucketType),1);
-				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));	
-				_.each(otherBucketTypes, function(bucketType){
-					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
-						return item.isEquipped();
-					});
-					//console.log( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
-					if ( otherExotic.length > 0 ){
-						//console.log("found another exotic equipped " + otherExotic[0].description);
-						otherExoticFound = true;
-						otherExotic[0].unequip(done);
-					}					
-				});
-				if (otherExoticFound == false){
-					done();
-				}
-			}
-			else {
-				//console.log("item is not exotic");
-				done()
-			}			
+			});
 		}
 		else {
-			//console.log("item is NOT already in the character");
 			self.store(targetCharacterId, function(newProfile){
-				//console.log("item is now in the target destination");
 				self.character = newProfile;
 				self.characterId = newProfile.id;
-				self.equip(targetCharacterId, callback, allowReplacement);
+				self.equip(targetCharacterId);
 			});
 		}
 	}
@@ -359,37 +254,37 @@ var Item = function(model, profile){
 						//console.log("need to split reference of self and push it into x and y");
 						var remainder = self.primaryStat - amount;
 						/* at this point we can either add the item to the inventory or merge it with existing items there */
-						var existingItem = _.findWhere( y.items(), { description: self.description });
+						var existingItem = _.findWhere( y[self.list](), { description: self.description });
 						if (existingItem){
-							y.items.remove(existingItem);
+							y[self.list].remove(existingItem);
 							existingItem.primaryStat = existingItem.primaryStat + amount;
-							y.items.push(existingItem);
+							y[self.list].push(existingItem);
 						}
 						else {
 							self.characterId = targetCharacterId
 							self.character = y;
 							self.primaryStat = amount;
-							y.items.push(self);
+							y[self.list].push(self);
 						}
 						/* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
-						x.items.remove(self);
+						x[self.list].remove(self);
 						if (remainder > 0){
 							self.characterId = sourceCharacterId
 							self.character = x;
 							self.primaryStat = remainder;
-							x.items.push(self);
+							x[self.list].push(self);
 						}
 					}
 					else {
 						self.characterId = targetCharacterId
 						self.character = y;
-						y.items.push(self);
-						x.items.remove(self);
+						y[self.list].push(self);
+						x[self.list].remove(self);
 					}
 					if (cb) cb(y,x);
 				}
 				else {
-					BootstrapDialog.alert(result.Message);
+					alert(result.Message);
 				}
 			});		
 		//}, 1000);
@@ -423,36 +318,85 @@ var Item = function(model, profile){
 			}		
 		}
 		if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
-			if (self.primaryStat == 1){
-				done();
-			}
-			else {
-				(new dialog({
-		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
-		            buttons: [
-						{
-		                	label: 'Transfer',
-							cssClass: 'btn-primary',
-							action: function(dialogItself){
-								transferAmount = parseInt($("input#materialsAmount").val());
-								if (!isNaN(transferAmount)){ done(); dialogItself.close(); }
-								else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
-							}
-		            	}, 
-						{
-			                label: 'Close',		                
-			                action: function(dialogItself){
-			                    dialogItself.close();
-			                }
-		            	}
-		            ]
-		        })).title("Transfer Materials").show();			
-			}
+			(new dialog({
+	            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
+	            buttons: [
+					{
+	                	label: 'Transfer',
+						cssClass: 'btn-primary',
+						action: function(dialogItself){
+							transferAmount = parseInt($("input#materialsAmount").val());
+							if (!isNaN(transferAmount)){ done(); dialogItself.close(); }
+							else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
+						}
+	            	}, 
+					{
+		                label: 'Close',		                
+		                action: function(dialogItself){
+		                    dialogItself.close();
+		                }
+	            	}
+	            ]
+	        })).title("Transfer Materials").show();
 		}
 		else {
 			done();
 		}
 	}
+}
+
+var DestinyGender = {
+	"0": "Male",
+	"1": "Female",
+	"2": "Unknown"
+};
+var DestinyClass = {
+    "0": "Titan",
+    "1": "Hunter",
+    "2": "Warlock",
+    "3": "Unknown"
+};
+var DestinyDamageTypes = {
+    "0": "None",
+    "1": "Kinetic",
+    "2": "Arc",
+    "3": "Solar",
+    "4": "Void",
+    "5": "Raid"
+};
+var DestinyBucketTypes = {
+	"1498876634": "Primary",
+	"2465295065": "Special",
+	"953998645": "Heavy",
+	"3448274439": "Helmet",
+	"3551918588": "Gauntlet",
+	"14239492": "Chest",
+	"20886954": "Boots",
+	"2973005342": "Shader",
+	"4274335291": "Emblem",
+	"2025709351": "Sparrow",
+	"284967655": "Ship",
+	"3865314626": "Materials",
+	"1469714392": "Consumables",
+	"1585787867": "Class Items"
+}
+var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
+var DestinyDamageTypeColors = {
+	"None": "#BBB",
+	"Kinetic": "#BBB",
+	"Arc": "#85C5EC",
+	"Solar": "#C48A01",
+	"Void": "#B184C5"
+}
+var _collectionsFix = {
+	"exoticWeapons": [],
+	"vaultWeapons": [],
+	"crotaWeapons": [],
+	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,337037804,1487387187], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
+	"exoticArmor": [],
+	"vaultArmor": [],
+	"crotaArmor": [],
+	"ironArmor": []
 }
 
 /*
@@ -495,15 +439,6 @@ var perksTemplate = _.template('<div class="destt-talent">' +
 	'<% }) %>' +
 '</div>');
 
-var User = function(model){
-	var self = this;
-	_.each(model, function(value, key){
-		self[key] = value;
-	});	
-	//try loading the Playstation account first
-	this.activeSystem = ko.observable(self.psnId ? "PSN" : "XBL" );
-}
-
 var app = new (function() {
 	var self = this;
 
@@ -520,7 +455,8 @@ var app = new (function() {
 		shareUrl: "",
 		showMissing: false,
 		showUniques: false,
-		tooltipsEnabled: isMobile ? false : true
+		tooltipsEnabled: isMobile ? false : true,
+		listenerEnabled: true //ive had to turn it off for iPhone and Android it's buggy
 	};
 	var getValue = function(key){
 		var saved = window.localStorage.getItem(key);
@@ -559,6 +495,7 @@ var app = new (function() {
 		}
 	});
 
+	this.listenerEnabled = ko.observable(defaults.listenerEnabled);
 	this.refreshSeconds = ko.observable(defaults.refreshSeconds);
 	this.tierFilter = ko.observable(defaults.tierFilter);
 	this.typeFilter = ko.observable(defaults.typeFilter);
@@ -572,19 +509,19 @@ var app = new (function() {
 	this.showUniques =  ko.observable(defaults.showUniques);
 	
 	this.activeItem = ko.observable();
-	this.activeUser = ko.observable(new User());
-	this.activeView = ko.observable(0);
-	
+	this.activeUser = ko.observable();
+
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
 	this.orderedCharacters = ko.computed(function(){
 		return self.characters().sort(function(a,b){
 			return a.order - b.order;
 		});
-	});		
+	});
 	
 	this.createLoadout = function(){
-		self.loadoutMode(true);		
+		self.loadoutMode(true);
+		$("body").css("padding-bottom","260px")
 		self.activeLoadout(new Loadout());
 	}
 	this.cancelLoadout = function(){
@@ -606,10 +543,10 @@ var app = new (function() {
 		self.refreshSeconds(defaults.refreshSeconds);
 		self.tierFilter(defaults.tierFilter);
 		self.typeFilter(defaults.typeFilter);
-		self.dmgFilter.removeAll();
+		self.dmgFilter(defaults.dmgFilter);
 		self.progressFilter(defaults.progressFilter);
-		self.setFilter.removeAll()
-		self.setFilterFix.removeAll()
+		self.setFilter(defaults.setFilter);
+		self.setFilterFix(defaults.setFilter);
 		self.shareView(defaults.shareView);
 		self.shareUrl (defaults.shareUrl);
 		self.showMissing(defaults.showMissing);
@@ -653,67 +590,31 @@ var app = new (function() {
 			}
 			$content.find(".destt-primary-min").html( activeItem.primaryStat );
 		}
-		else {
-			//remove the "Emblem" title from the image issue #31
-			if ($content.find(".fhtt-emblem").length > 0){
-				$content.find("span").remove();
-			}
-		}
-		var width = $(window).width();
-		//this fixes issue #35 makes destinydb tooltips fit on a mobile screen
-		if (width < 340){
-			$content.find(".fhtt.des").css("width", (width-15) + "px");
-			$content.find(".stat-bar-empty").css("width", "125px");
-		}
 		callback($content.html());
 	}
+	this.toggleListener = function(){
+		self.listenerEnabled(!self.listenerEnabled());
+	}
 	this.toggleRefresh = function(){
-		self.toggleBootstrapMenu();
 		self.doRefresh(!self.doRefresh());
 	}	
 	this.toggleDestinyTooltips = function(){
-		self.toggleBootstrapMenu();
 		self.tooltipsEnabled(!self.tooltipsEnabled());		
 	}
 	this.toggleShareView = function(){
-		self.toggleBootstrapMenu();
 		self.shareView(!self.shareView());
 	}
 	this.toggleShowUniques = function(){
-		self.toggleBootstrapMenu();
 		self.showUniques(!self.showUniques());
 	}
 	this.toggleShowMissing = function(){
-		self.toggleBootstrapMenu();
 		self.showMissing(!self.showMissing());
 	}
 	this.setSetFilter = function(model, event){
-		self.toggleBootstrapMenu();
 		var collection = $(event.target).parent().attr("value");
 		self.setFilter(collection == "All" ? [] : _collections[collection]);
 		self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
 	}
-	this.setView = function(model, event){
-		self.toggleBootstrapMenu();
-		self.activeView($(event.target).parent().attr("value"));
-	}	
-	this.setDmgFilter = function(model, event){
-		self.toggleBootstrapMenu();
-		var dmgType = $(event.target).parents('li:first').attr("value");
-		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
-	}
-	this.setTierFilter = function(model, event){
-		self.toggleBootstrapMenu();
-		self.tierFilter($(event.target).parent().attr("value"));
-	}
-	this.setTypeFilter = function(model, event){
-		self.toggleBootstrapMenu();
-		self.typeFilter($(event.target).parent().attr("value"));
-	}
-	this.setProgressFilter = function(model, event){
-		self.toggleBootstrapMenu();
-		self.progressFilter($(event.target).parent().attr("value"));
-	}	
 	this.missingSets = ko.computed(function(){
 		var missingIds = [];
 		self.setFilter().concat(self.setFilterFix()).forEach(function(item){
@@ -727,6 +628,26 @@ var app = new (function() {
 		});
 		return missingIds;
 	})
+	
+	this.activeView = ko.observable(0);
+	this.setView = function(model, event){
+		self.activeView($(event.target).parent().attr("value"));
+	}	
+	this.setDmgFilter = function(model, event){
+		var dmgType = $(event.target).parent().attr("value");
+		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
+		//not sure why this happens
+		self.dmgFilter.remove(undefined);
+	}
+	this.setTierFilter = function(model, event){
+		self.tierFilter($(event.target).parent().attr("value"));
+	}
+	this.setTypeFilter = function(model, event){
+		self.typeFilter($(event.target).parent().attr("value"));
+	}
+	this.setProgressFilter = function(model, event){
+		self.progressFilter($(event.target).parent().attr("value"));
+	}
 						
 	var processItem = function(profile){	
 		return function(item){
@@ -751,384 +672,237 @@ var app = new (function() {
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete
 			};
-			/*if ( itemObject.description.indexOf("Engram") > -1 ){
-				console.log(itemObject);
-				console.log(info);
-				console.log(itemObject.typeName + " " + info.classType);
-			}*/
 			if (item.primaryStat){
 				itemObject.primaryStat = item.primaryStat.value;
 			}	
 			if (item.progression){
 				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 			}
-			if (item.location == 4)
-				itemObject.bucketType = "Post Master";
-
-			if (info.bucketTypeHash in DestinyBucketTypes){
-			
-				/* both weapon engrams and weapons fit under this condition*/
-				if (itemObject.bucketType in DestinyWeaponPieces){
-					/*console.log(itemObject);
-					console.log(info);
-					console.log(itemObject.typeName + " " + info.classType);*/
-					/* only actual weapons fit under this condition */
-					if ( info.itemType == 3 ){
-						itemObject.perks = item.perks.map(function(perk){
-							if (perk.perkHash in window._perkDefs){
-								var p = window._perkDefs[perk.perkHash];
-								return {
-									iconPath: app.bungie.getUrl() + perk.iconPath,
-									name: p.displayName,
-									description: p.displayDescription
-								}
-							}
-							else {
-								return perk;
-							}					
-						});
-						if (info.talentGridHash in window._talentGridDefs){					
-							itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
+			if (info.itemType == 3){
+				itemObject.perks = item.perks.map(function(perk){
+					if (perk.perkHash in window._perkDefs){
+						var p = window._perkDefs[perk.perkHash];
+						return {
+							iconPath: app.bungie.getUrl() + perk.iconPath,
+							name: p.displayName,
+							description: p.displayDescription
 						}
-						else {
-							itemObject.isUnique = false;
-						}				
-					}				
+					}
+					else {
+						return perk;
+					}					
+				});
+				if (info.talentGridHash in window._talentGridDefs){					
+					itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
 				}
-			
+				else {
+					itemObject.isUnique = false;
+				}
+				profile.weapons.push( new Item(itemObject,profile,'weapons') );
+			}
+			else if (info.itemType == 2 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
+				itemObject.stats = {};
+				_.each(item.stats, function(stat){
+					if (stat.statHash in window._statDefs){
+						var p = window._statDefs[stat.statHash];
+						itemObject.stats[p.statName] = stat.value;
+					}
+				});
+				profile.armor.push( new Item(itemObject,profile,'armor') );
+			}
+			else if (info.bucketTypeHash in DestinyBucketTypes){
 				if (itemObject.typeName && itemObject.typeName == "Emblem"){
 					itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
 				}
 				if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables"){
 					itemObject.primaryStat = item.stackSize;
 				}
-				if ( info.itemType == 2 ){
-					itemObject.stats = {};
-					_.each(item.stats, function(stat){
-						if (stat.statHash in window._statDefs){
-							var p = window._statDefs[stat.statHash];
-							itemObject.stats[p.statName] = stat.value;
-						}
-					});
-				}
-				profile.items.push( new Item(itemObject,profile) );
+				profile.items.push( new Item(itemObject,profile,'items') );
 			}
-			
 		}
 	}
 	
 	this.addWeaponTypes = function(weapons){
 		weapons.forEach(function(item){
-			if (item.type > 0 && _.where(self.weaponTypes(), { type: item.type }).length == 0){
+			if (_.where(self.weaponTypes(), { type: item.type}).length == 0)
 				self.weaponTypes.push({ name: item.typeName, type: item.type });
-			}
 		});
 	}
 	
 	this.makeBackgroundUrl = function(path, excludeDomain){
 		return "url(" + (excludeDomain ? "" : self.bungie.getUrl()) + path + ")";
 	}
-	
-	this.hasBothAccounts = function(){
-		return !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
-	}
-	
-	this.useXboxAccount = function(){
-		self.activeUser().activeSystem("XBL");
-		self.characters.removeAll();
+		
+	this.loadData = function(){
+		//console.log("refreshing w " + self.bungie_cookies);
 		self.loadingUser(true);
-		self.search();
-	}
-	
-	this.usePlaystationAccount = function(){
-		self.activeUser().activeSystem("PSN");
+		self.bungie = new bungie(self.bungie_cookies); 
 		self.characters.removeAll();
-		self.loadingUser(true);
-		self.search();
-	}	
-	
-	this.search = function(){
-		var total = 0, count = 0;
-		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
-		function done(){
-			count++;
-			if (count == total){
-				//console.log("finished loading");
-				self.shareUrl(new report().de());
-				self.loadingUser(false);
-				setTimeout(self.bucketSizeHandler, 500);
-			}
-		}	
-		self.bungie.search(self.activeUser().activeSystem(),function(e){
-			if (e.error){
-				/* if the first account fails retry the next one*/
-				if (self.hasBothAccounts()){
-					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );
-					self.search();
-				}
-				else {
-					BootstrapDialog.alert("Account has no data");
-				}				
+		self.bungie.user(function(user){
+			console.log("user finished");
+			//console.log(user);
+			
+			self.activeUser(user);
+			/*if (user.code && user.code == 99){
+				console.log("received a code 99 revalidating cookie");
+				setTimeout(function(){ self.revalidateBungieCookie(); self.retryCount(self.retryCount()++) }, 2000);
+			}*/
+			if (user.error){
 				self.loadingUser(false);
 				return
 			}
-			var avatars = e.data.characters;
-			total = avatars.length + 1;
-			self.bungie.vault(function(results){
-				var buckets = results.data.buckets;
-				var profile = new Profile({ 
-					race: "", 
-					order: 0, 
-					gender: "Tower",
-					classType: "Vault", 
-					id: "Vault", 
-					level: "",
-					imgIcon: "assets/vault_icon.jpg",
-					icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
-					background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
-				});
-				
-				buckets.forEach(function(bucket){
-					bucket.items.forEach(processItem(profile));
-				});
-				self.addWeaponTypes(profile.weapons());
-				self.characters.push(profile);
-				done()
-			});
-			avatars.forEach(function(character, index){
-				self.bungie.inventory(character.characterBase.characterId, function(response) {
-					var profile = new Profile({
-						order: index+1,
-						gender: DestinyGender[character.characterBase.genderType],
-						classType: DestinyClass[character.characterBase.classType],
-						id: character.characterBase.characterId,
-						imgIcon: self.bungie.getUrl() + character.emblemPath,
-						icon: self.makeBackgroundUrl(character.emblemPath),
-						background: self.makeBackgroundUrl(character.backgroundPath),
-						level: character.characterLevel,
-						race: window._raceDefs[character.characterBase.raceHash].raceName
+			self.bungie.search(function(e){
+				var avatars = e.data.characters;
+				self.bungie.vault(function(results){
+					self.loadingUser(false);
+					var buckets = results.data.buckets;
+					var profile = new Profile({ 
+						race: "", 
+						order: 0, 
+						gender: "Tower",
+						classType: "Vault", 
+						id: "Vault", 
+						level: "",
+						imgIcon: "assets/vault_icon.jpg",
+						icon: self.makeBackgroundUrl("assets/vault_icon.jpg",true), 
+						background: self.makeBackgroundUrl("assets/vault_emblem.jpg",true) 
 					});
-					var items = [];						
 					
-					Object.keys(response.data.buckets).forEach(function(bucket){
-						response.data.buckets[bucket].forEach(function(obj){
-							obj.items.forEach(function(item){
-								items.push(item);
+					buckets.forEach(function(bucket){
+						bucket.items.forEach(processItem(profile));
+					});
+					self.addWeaponTypes(profile.weapons());
+					self.characters.push(profile);
+				});
+
+				avatars.forEach(function(character, index){
+					self.bungie.inventory(character.characterBase.characterId, function(response) {
+						var profile = new Profile({
+							order: index+1,
+							gender: DestinyGender[character.characterBase.genderType],
+							classType: DestinyClass[character.characterBase.classType],
+							id: character.characterBase.characterId,
+							imgIcon: self.bungie.getUrl() + character.emblemPath,
+							icon: self.makeBackgroundUrl(character.emblemPath),
+							background: self.makeBackgroundUrl(character.backgroundPath),
+							level: character.characterLevel,
+							race: window._raceDefs[character.characterBase.raceHash].raceName
+						});
+						var items = [];						
+						
+						Object.keys(response.data.buckets).forEach(function(bucket){
+							response.data.buckets[bucket].forEach(function(obj){
+								obj.items.forEach(function(item){
+									items.push(item);
+								});
 							});
 						});
+						
+						items.forEach(processItem(profile));
+						self.addWeaponTypes(profile.weapons());
+						self.characters.push(profile);
+						if (avatars.length == (index + 1)){
+							self.shareUrl(new report().de());
+						}
 					});
-					
-					//simulate me having the 4th horseman 
-					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-					
-					items.forEach(processItem(profile));
-					self.addWeaponTypes(profile.items());
-					self.characters.push(profile);
-					done();
 				});
-			});
-		});		
-	}
-	
-	this.loadData = function(ref, loop){
-		if (self.loadingUser() == false){
-			self.loadingUser(true);
-			self.bungie = new bungie(self.bungie_cookies); 
-			self.characters.removeAll();
-			self.bungie.user(function(user){
-				self.activeUser(new User(user));
-				if (user.error){
-					self.loadingUser(false);
-					return
-				}
-				if (ref && loop){
-					ref.close();
-					clearInterval(loop);
-				}
-				self.loadLoadouts();
-				self.search();
 			});			
-		}
-	}
-	
-	this.toggleBootstrapMenu = function(){
-		if ($(".navbar-toggle").is(":visible")) 
-			$(".navbar-toggle").click();
-	}
-	
-	this.refreshButton = function(){
-		self.toggleBootstrapMenu();
-		self.loadData();
+		});
 	}
 	
 	this.refreshHandler = function(){
 		clearInterval(self.refreshInterval);
-		if (self.loadoutMode() == true){
-			self.toggleBootstrapMenu();
-			$("body").css("padding-bottom","260px");
-		}
-		else {
-			$("body").css("padding-bottom","80px");
-		}
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
-			self.refreshInterval = setInterval(function(){ self.loadData() }, self.refreshSeconds() * 1000);
+			self.refreshInterval = setInterval(self.loadData, self.refreshSeconds() * 1000);
 		}
 	}
 	
-	this.bucketSizeHandler = function(){
-		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
-		var maxHeight = $(".itemImage:eq(0)").height() * 3;
-		buckets.css("min-height", maxHeight);	
-	}
 	
-	this.donate = function(){
-		window.open("http://bit.ly/1Jmb4wQ","_blank");
-	}
-	
-	this.readBungieCookie = function(ref, loop){
-		ref.executeScript({
-			code: 'document.cookie'
-		}, function(result) {
-			if ((result || "").toString().indexOf("bungled") > -1){
-				self.bungie_cookies = result;
-				window.localStorage.setItem("bungie_cookies", result);
-				self.loadData(ref, loop);
-			}
-		});	
+	this.revalidateBungieCookie = function(){
+		console.log("creating hidden window");
+		var loop, ref = window.open('https://www.bungie.net', '_blank', 'location=no');
+		ref.addEventListener('loadstop', function(event) {
+			console.log("window finished loading");
+			setTimeout(function(){
+				clearInterval(loop);
+				loop = setInterval(function() {
+					ref.executeScript({
+						code: 'document.cookie'
+					}, function(result) {
+						if (result != ""){
+							clearInterval(loop);
+							console.log("got a new cookie " + result);
+							ref.close();		
+							self.bungie_cookies = result.toString();
+							window.localStorage.setItem("bungie_cookies", result.toString());
+							self.loadData();
+						}
+					});
+				}, 10);
+			}, 10000);			
+		});
 	}
 	
 	this.openBungieWindow = function(type){
 		return function(){
-			var loop;
+			var loop, newCookie;
 			//overwrite the same reference to avoid crashing?
-			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');			
-			if (isMobile){
-				ref.addEventListener('loadstop', function(event) {
+			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');
+			ref.addEventListener('loadstop', function(event) {
+				if (self.listenerEnabled() == true){
 					clearInterval(loop);
-					ref.executeScript({
-						code: 'document.location.href'
-					}, function(result) {
-						/* only load cookie reader on homepage */		
-						if (result.toString() == self.bungie.getUrl()){
-							loop = setInterval(function() {
-								self.readBungieCookie(ref, loop);							
-							}, 500);
-						}
-					});
-					
-				});
-				ref.addEventListener('loadstart', function(event) {
-					clearInterval(loop);
-				});
-				ref.addEventListener('exit', function() {
-					if (self.loadingUser() == false){
-						clearInterval(loop);
-						if (_.isEmpty(self.bungie_cookies)){
-							loop = setInterval(function() {
-								self.readBungieCookie(ref, loop);
-							}, 500);
-						}
-						else {
-							self.loadData();
-						}
-					}
-				});
-			}
-			else {
+					loop = setInterval(function() {
+						ref.executeScript({
+							code: 'document.cookie'
+						}, function(result) {
+							console.log("found result in loadstop " + result);
+							if ((result || "").toString().indexOf("bungled") > -1){											
+								self.bungie_cookies = result;
+								window.localStorage.setItem("bungie_cookies", result);
+								self.loadData();	
+								clearInterval(loop);
+							}
+						});
+					}, 500);				
+				}
+			});
+			ref.addEventListener('loadstart', function(event) {
 				clearInterval(loop);
-				loop = setInterval(function(){
-					if (window.ref.closed){
-						clearInterval(loop);
-						self.loadData();
+			});
+			ref.addEventListener('exit', function() {
+				if (self.characters().length == 0){
+					clearInterval(loop);
+					if (_.isEmpty(self.bungie_cookies)){
+						loop = setInterval(function() {
+							ref.executeScript({
+								code: 'document.cookie'
+							}, function(result) {
+								console.log("found result in exit " + result);
+								if ((result || "").toString().indexOf("bungled") > -1){											
+									self.bungie_cookies = result;
+									window.localStorage.setItem("bungie_cookies", result);
+									self.loadData();		
+									clearInterval(loop);
+								}
+							});
+						}, 500); 						
 					}
-				}, 100);
-			}
-		}
-	}
-	
-	this.shiftArrayLeft = function(){
-		self.characters.unshift( self.characters.splice(self.characters().length-1,1)[0] );
-	}
-	this.shiftArrayRight = function(){
-		self.characters(self.characters().concat( self.characters.splice(0,1) ));
-	}
-	
-	this.yqlRequest = function(params, callback){
-		var request = window.encodeURIComponent("http://www.towerghostfordestiny.com/api.cfm?" + $.param(params))
-		var requestURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%3D%22" + request + "%22&format=json&callback=";
-		$.ajax({
-			url: requestURL,
-			success: function(response){
-				callback(response.query.results);
-			}
-		});
-	}
-	
-	this.saveLoadouts = function(includeMessage){
-		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-		if (supportsCloudSaves == true){
-			var params = {
-				action: "save",
-				membershipId: parseFloat(app.activeUser().user.membershipId),
-				loadouts: JSON.stringify(self.loadouts())
-			}
-			self.yqlRequest(params, function(results){
-				if (_includeMessage == true){
-					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-					else BootstrapDialog.alert("Error has occurred saving loadouts");
-				}
-			});
-		}
-		else {
-			var loadouts = ko.toJSON(self.loadouts());
-			window.localStorage.setItem("loadouts", loadouts);
-		}
-	}
-
-	this.loadLoadouts = function(){
-		var _loadouts = window.localStorage.getItem("loadouts");
-		if (!_.isEmpty(_loadouts)){
-			_loadouts = _.map(JSON.parse(_loadouts), function(loadout){
-				return new Loadout(loadout);
-			})
-		}
-		else {
-			_loadouts = [];
-		}		
-		if (supportsCloudSaves == true){
-			self.yqlRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
-				var _results = [];
-				if (results && results.json && results.json.loadouts){
-				    _results = _.isArray(results.json.loadouts) ? results.json.loadouts : [results.json.loadouts];
-					_results = _.map(_results, function(loadout){
-						loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-						loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-						loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-						return new Loadout(loadout);
-					});
-				}
-				/* one time migrate joins the two arrays and clears the local one */
-				if(_loadouts.length > 0){
-					_results = _loadouts.concat(_results);
-					window.localStorage.setItem("loadouts", "");
+					else {
+						self.loadData();
+					}				
 				}	
-				self.loadouts(_results);
-				/* one time migrate saves the new joined array to the cloud */
-				if(_loadouts.length > 0){
-					self.saveLoadouts(false);
-				}
-			});
+			});		
 		}
-		else if (_loadouts.length > 0){
-			self.loadouts(_loadouts);
-		}
+
 	}
+	
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
+		var _loadouts = window.localStorage.getItem("loadouts");
 		(function() {
 		  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
 		    var msViewportStyle = document.createElement("style");
@@ -1138,42 +912,31 @@ var app = new (function() {
 		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
 		  }
 		})();
-		/* breaks on Windows Phone
-		if (isMobile){
-			Hammer(document.getElementById('charactersContainer'))
-				.on("swipeleft", self.shiftArrayLeft)
-				.on("swiperight", self.shiftArrayRight);
-		}*/
-
-		if (isMobile) {
-		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-				StatusBar.overlaysWebView(false);
-		    }
-			if (typeof StatusBar !== "undefined"){		
-			    StatusBar.styleLightContent();
-			    StatusBar.backgroundColorByHexString("#000");
-			}
-		}
-
+		if (!_.isEmpty(_loadouts)){
+			self.loadouts(
+				_.map(JSON.parse(_loadouts), function(loadout){
+					return new Loadout(loadout);
+				})
+			);
+		}		
+		
 		if (isMobile && isEmptyCookie){
-			self.bungie = new bungie();
-			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
+			console.log("code 99");
+			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
 		}	
 		else {
-			setTimeout(function(){ self.loadData() }, isChrome || isMobile ? 1 : 5000);		
+			console.log("loadData");
+			setTimeout(self.loadData, isChrome ? 1 : 5000);		
 		}
 		$("form").bind("submit", false);
-		$("html").click(function(e){
-			if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+		$(window).click(function(e){
+			if (e.target.className !== "itemImage") {
 				$("#move-popup").hide();
 			}
 		});
-		/* this fixes issue #16 */
-		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
-		
 		ko.applyBindings(self);
 	}
-}); 
+});
 
 window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: app.renderCallback, isEnabled: app.tooltipsEnabled() };
 

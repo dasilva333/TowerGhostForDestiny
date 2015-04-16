@@ -170,8 +170,7 @@ try {
 	      }
 	    });
 	  }
-	  this.search = function(activeSystem, callback) {
-	  	this.setsystem(activeSystem);
+	  this.search = function(callback) {
 	    _request({
 	      route: '/Destiny/SearchDestinyPlayer/' + active.type + '/' + active.id + '/',
 	      method: 'GET',
