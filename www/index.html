@@ -264,7 +264,7 @@
 								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
 								</div>								
 							  </div>
-							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
+							  <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
 								<div class="title"><strong>Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
 								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }">
 								</div>								

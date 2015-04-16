@@ -34,7 +34,7 @@ var DestinyBucketTypes = {
 	"1585787867": "Class Items",
 	"12345": "Post Master"
 }
-var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
+var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 var DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 var DestinyDamageTypeColors = {
 	"None": "#BBB",
