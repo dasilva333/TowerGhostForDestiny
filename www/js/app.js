@@ -918,6 +918,9 @@ var app = new (function() {
 						});
 					});
 					
+					//simulate me having the 4th horseman 
+					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
+					
 					items.forEach(processItem(profile));
 					self.addWeaponTypes(profile.items());
 					self.characters.push(profile);

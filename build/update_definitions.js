@@ -40,11 +40,18 @@ if ( fs.existsSync(dbPath) ){
 		db.all("SELECT * FROM " + set.table, function(err, rows) {
 			if (err) return; 
 			var filename = set.name + ".js";
+			var patchFile = set.name + ".patch";
 			var obj = {};
 	        rows.forEach(function (row) {  
 				var entry = JSON.parse(row.json);
 	            obj[entry[set.key]] = set.reduce(entry);
 	        });
+			if (fs.existsSync(patchFile)){
+				console.log("found patch file " + patchFile);
+				var patchData = JSON.parse(fs.readFileSync(patchFile));
+				console.log(patchData);
+				_.extend(obj, patchData);
+			}
 			fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 	    });
 	});	
