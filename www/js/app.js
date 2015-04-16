@@ -855,7 +855,7 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
-				setTimeout(self.bucketSizeHandler, 500);
+				setTimeout(self.bucketSizeHandler, 1000);
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
