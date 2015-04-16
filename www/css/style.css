@@ -1,0 +1,186 @@
+@-ms-viewport {
+  width: device-width;
+}
+body {
+	font-size: 1em;
+    margin: 0 auto;
+    padding-top: 55px;
+    background: radial-gradient(transparent,70%,#000) fixed,rgb(105, 125, 123);
+    background: radial-gradient(transparent,70%,#000) fixed,url(https://www.bungie.net/img/theme/destiny/bgs/gradient_green.jpg) fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #fff;
+    font-family: HelveticaNeue-Light,'Helvetica Neue Light','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+@media screen and (min-width: 1024px) and (max-width: 1124px) {
+    body { padding-top: 100px; }
+}
+.loadout-button {
+    position: relative;
+    display: inline-block;
+    width: 37px;
+    height: 37px;
+    background-color: #5b6e6c;
+    border: 2px solid rgba(245,245,245,.6);
+    border-bottom: 4px solid rgba(245,245,245,.6);
+    color: rgba(245,245,245,.6);
+    vertical-align: top;
+    text-align: center;
+    margin: 5px 0;
+    line-height: 39px;
+    padding: 0;
+    cursor: pointer;
+}
+.loadout-button .active { background-color: #628e89 }
+#loadout-popup {
+    display: none;
+    background-color: #5b6e6c;
+    border-bottom: 2px solid rgba(245,245,245,.6);
+    color: rgba(245,245,245,.6);
+    margin-bottom: 10px;
+    width: 260px;
+    position: absolute;
+    left: -220px;
+    z-index: 2;
+    cursor: pointer;
+}
+.move-popup .item-name {
+    color: #000;
+	background-color: white;
+    margin: 1px;
+    padding: 1px;
+    padding-left: 3px;
+}
+.move-popup .attkIcon div { background-color: white; text-transform: uppercase; padding:2px; width:4em; } 
+.col-centered { float:none; margin:0 auto; }
+.locations img { max-width: 97%; }
+#loadout-create {
+    position: fixed;
+    width: 100%;
+    z-index: 3;
+    bottom: 0;
+    background: rgba(195,188,180,.9);
+    color: #1a1e24;
+    box-shadow: 0 -1px 30px 2px #000;
+}
+#loadout-options { margin: 5px }
+#loadout-options input { width: 150px }
+#loadout-options span, #loadout-contents span {
+    display: inline-block;
+    width: 65px;
+    border-radius: 3px;
+    background-color: #5b6e6c;
+    border: 1px solid rgba(245,245,245,.6);
+    border-bottom: 2px solid rgba(245,245,245,.6);
+    cursor: pointer;
+    color: rgba(245,245,245,.6);
+    text-align: center;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+#loadout-options p {
+  display: inline;
+  padding-left: 10px;
+}
+#loadout-list .loadout-set:hover,
+#loadout-new:hover,
+#loadout-options span:hover { background-color: #628e89 }
+.loadout-set .button-name {
+  display: inline-block;
+  width: 150px;
+}
+.loadout-set .button-edit, .loadout-set .button-delete {
+    background-color: rgba(195,188,180,.9);
+    color: #1a1e24;
+    float: right;
+    width: 50px;
+    border-right: 1px solid rgba(195,188,180,.7);
+    border-left: 1px solid rgba(195,188,180,.9);
+}
+.loadout-set .button-delete:hover, .loadout-set .button-edit:hover {
+    background-color: rgba(195,188,180,.6);
+}
+.attkIcon { 
+	position: relative; 
+}
+.attkIcon > div { 
+	position: absolute; 
+	bottom: 0px; 
+	left: 0px; 
+	color: #333;
+	font-weight: bold;
+	font-size: 0.9em; 
+	width: 2em;
+}
+.list-group-item .itemImage {
+	width: 48px;
+}
+.itemImage {
+	max-width: 97%;
+	border:1px solid white;
+}
+.itemBucket {
+	border:1px solid white;
+}
+.icon { width: 24px; }
+.title {
+    text-transform: uppercase;
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid rgba(245,245,245,.6);
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(245,245,245,.6);
+}
+.complete .itemImage { border-color: #f5dc56; }
+
+.character-box {
+    position: relative;
+    display: inline-block;
+    height: 43px;
+    padding: 0 0 0 50px;
+    margin: 5px 0;
+    opacity: 1;
+    background: rgba(30,36,43,.5);
+    color: #f5f5f5;
+    text-decoration: none;
+    background-size: cover;
+}
+.character-box .emblem {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 39px;
+    height: 39px;
+    background-color: rgba(0,0,0,.2);
+    background-size: cover;
+}
+.character-box .class {
+    text-transform: capitalize;
+    position: relative;
+    display: block;
+    top: 9px;
+    font-size: 24px;
+    font-weight: 400;
+}
+.character-box .level {
+    position: absolute;
+	color: rgb(245, 220, 86);
+    top: 8px;
+    right: 7px;
+    font-weight: 200;
+    font-size: 22px;
+}
+.character-box .level:before {
+    content: "\2726";
+    display: inline-block;
+    vertical-align: 18%;
+    font-size: 50%;
+}
+.no-gutter [class*='col-'] {
+    padding-right:0;
+    padding-left:0;
+}
