@@ -231,10 +231,7 @@ var Item = function(model, profile){
 		}
 	}
 	this.equip = function(targetCharacterId, callback){
-		//console.log("equip called");
-		var sourceCharacterId = self.characterId;
-		if (targetCharacterId == sourceCharacterId){
-			//console.log("item is already in the character");
+		var done = function(){
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
 					self.isEquipped(true);
@@ -253,7 +250,32 @@ var Item = function(model, profile){
 					if (callback) callback(false);
 					else BootstrapDialog.alert(result.Message);
 				}
-			});
+			});		
+		}
+		//console.log("equip called");
+		var sourceCharacterId = self.characterId;
+		//console.log("item is already in the character");
+		if (targetCharacterId == sourceCharacterId){
+			/* if item is exotic */
+			if ( self.tierType == 6 ){
+				var otherBucketTypes = _.clone(DestinyWeaponPieces), otherExoticFound = false;
+				otherBucketTypes.splice(DestinyWeaponPieces.indexOf(self.bucketType),1);				
+				_.each(otherBucketTypes, function(bucketType){
+					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
+						return item.isEquipped();
+					});
+					if ( otherExotic.length > 0 ){
+						otherExoticFound = true;
+						otherExotic[0].unequip(done);
+					}					
+				});
+				if (otherExoticFound == false){
+					done();
+				}
+			}
+			else {
+				done()
+			}			
 		}
 		else {
 			//console.log("item is NOT already in the character");
@@ -564,11 +586,6 @@ var app = new (function() {
 	
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
-	this.orderedCharacters = ko.computed(function(){
-		return self.characters().sort(function(a,b){
-			return a.order - b.order;
-		});
-	});
 	
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
@@ -842,6 +859,9 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
+				self.characters().sort(function(a,b){
+					return a.order - b.order;
+				});
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -1016,6 +1036,13 @@ var app = new (function() {
 		}
 	}
 	
+	this.shiftArrayLeft = function(){
+		self.characters.unshift( self.characters.splice(self.characters().length-1,1)[0] );
+	}
+	this.shiftArrayRight = function(){
+		self.characters(self.characters().concat( self.characters.splice(0,1) ));
+	}
+	
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
@@ -1039,7 +1066,11 @@ var app = new (function() {
 				})
 			);
 		}		
-		
+		if (isMobile){
+			Hammer(document.getElementById('charactersContainer'))
+				.on("swipeleft", self.shiftArrayLeft)
+				.on("swiperight", self.shiftArrayRight);
+		}		
 		if (isMobile && isEmptyCookie){
 			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
@@ -1053,6 +1084,8 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
+		
+		
 		ko.applyBindings(self);
 	}
 }); 
