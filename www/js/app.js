@@ -55,7 +55,10 @@ var moveItemPositionHandler = function(element, item){
 			else {
 				activeElement = element;
 				if (window.isMobile){
-					$movePopup.show();
+					$("body").css("padding-bottom","80px");
+					setTimeout(function(){
+						$movePopup.show();
+					},500);					
 				}
 				else {
 					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -96,27 +99,33 @@ var Profile = function(model){
 	
 	this.icon = ko.observable(self.icon);	
 	this.background = ko.observable(self.background);
-	this.weapons = ko.observableArray([]);
-	this.armor = ko.observableArray([]);
 	this.items = ko.observableArray([]);
+	this.weapons = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (DestinyWeaponPieces.indexOf(item.bucketType) > -1 )
+				return item;
+		});
+	});	
+	this.armor = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (DestinyArmorPieces.indexOf(item.bucketType) > -1 )
+				return item;
+		});
+	});	
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-	this.get = function(list, type){
-		if (type)
-			return self[list]().filter(filterItemByType(type, false));
-		else
-			return self[list]();
+	this.get = function(type){
+		return self.items().filter(filterItemByType(type, false));
 	}
-	this.itemEquipped = function(list, type){
-		return ko.utils.arrayFirst(self[list](), filterItemByType(type, true));
+	this.itemEquipped = function(type){
+		return ko.utils.arrayFirst(self.items(), filterItemByType(type, true));
 	}
 }
 
-var Item = function(model, profile, list){
+var Item = function(model, profile){
 	var self = this;
 	_.each(model, function(value, key){
 		self[key] = value;
 	});
-	this.list = list;
 	this.character = profile;
 	this.href = "https://destinydb.com/items/" + self.id;
 	this.isEquipped = ko.observable(self.isEquipped);
@@ -157,6 +166,12 @@ var Item = function(model, profile, list){
 			return false;
 		}
 	}
+	this.isEquippable = function(avatarId){
+		return ko.computed(function(){
+			 return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1) || 
+			 	(self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1);
+		});
+	}
 	this.isVisible = ko.computed(function(){
 		var $parent = app;
 		var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) || 
@@ -187,7 +202,7 @@ var Item = function(model, profile, list){
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
-			var otherItems = _.where( self.character[self.list](), { bucketType: self.bucketType });
+			var otherItems = _.where( self.character.items(), { bucketType: self.bucketType });
 			var tryNextItem = function(){			
 				var item = otherItems[++itemIndex];
 				//console.log(item.description);
@@ -216,17 +231,19 @@ var Item = function(model, profile, list){
 		}
 	}
 	this.equip = function(targetCharacterId, callback){
+		//console.log("equip called");
 		var sourceCharacterId = self.characterId;
 		if (targetCharacterId == sourceCharacterId){
+			//console.log("item is already in the character");
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
 					self.isEquipped(true);
-					self.character[self.list]().forEach(function(item){
+					self.character.items().forEach(function(item){
 						if (item != self && item.bucketType == self.bucketType){
 							item.isEquipped(false);							
 						}
 					});
-					if (self.list == "items" && self.bucketType == "Emblem"){
+					if (self.bucketType == "Emblem"){
 						self.character.icon(app.makeBackgroundUrl(self.icon, true));
 						self.character.background(self.backgroundPath);
 					}
@@ -239,10 +256,12 @@ var Item = function(model, profile, list){
 			});
 		}
 		else {
+			//console.log("item is NOT already in the character");
 			self.store(targetCharacterId, function(newProfile){
+				//console.log("item is now in the target destination");
 				self.character = newProfile;
 				self.characterId = newProfile.id;
-				self.equip(targetCharacterId);
+				self.equip(targetCharacterId, callback);
 			});
 		}
 	}
@@ -271,32 +290,32 @@ var Item = function(model, profile, list){
 						//console.log("need to split reference of self and push it into x and y");
 						var remainder = self.primaryStat - amount;
 						/* at this point we can either add the item to the inventory or merge it with existing items there */
-						var existingItem = _.findWhere( y[self.list](), { description: self.description });
+						var existingItem = _.findWhere( y.items(), { description: self.description });
 						if (existingItem){
-							y[self.list].remove(existingItem);
+							y.items.remove(existingItem);
 							existingItem.primaryStat = existingItem.primaryStat + amount;
-							y[self.list].push(existingItem);
+							y.items.push(existingItem);
 						}
 						else {
 							self.characterId = targetCharacterId
 							self.character = y;
 							self.primaryStat = amount;
-							y[self.list].push(self);
+							y.items.push(self);
 						}
 						/* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
-						x[self.list].remove(self);
+						x.items.remove(self);
 						if (remainder > 0){
 							self.characterId = sourceCharacterId
 							self.character = x;
 							self.primaryStat = remainder;
-							x[self.list].push(self);
+							x.items.push(self);
 						}
 					}
 					else {
 						self.characterId = targetCharacterId
 						self.character = y;
-						y[self.list].push(self);
-						x[self.list].remove(self);
+						y.items.push(self);
+						x.items.remove(self);
 					}
 					if (cb) cb(y,x);
 				}
@@ -404,6 +423,7 @@ var DestinyBucketTypes = {
 	"12345": "Post Master"
 }
 var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
+var DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 var DestinyDamageTypeColors = {
 	"None": "#BBB",
 	"Kinetic": "#BBB",
@@ -462,6 +482,15 @@ var perksTemplate = _.template('<div class="destt-talent">' +
 	'<% }) %>' +
 '</div>');
 
+var User = function(model){
+	var self = this;
+	_.each(model, function(value, key){
+		self[key] = value;
+	});	
+	//try loading the Playstation account first
+	this.activeSystem = ko.observable(self.psnId ? "PSN" : "XBL" );
+}
+
 var app = new (function() {
 	var self = this;
 
@@ -478,8 +507,7 @@ var app = new (function() {
 		shareUrl: "",
 		showMissing: false,
 		showUniques: false,
-		tooltipsEnabled: isMobile ? false : true,
-		listenerEnabled: true //ive had to turn it off for iPhone and Android it's buggy
+		tooltipsEnabled: isMobile ? false : true
 	};
 	var getValue = function(key){
 		var saved = window.localStorage.getItem(key);
@@ -518,7 +546,6 @@ var app = new (function() {
 		}
 	});
 
-	this.listenerEnabled = ko.observable(defaults.listenerEnabled);
 	this.refreshSeconds = ko.observable(defaults.refreshSeconds);
 	this.tierFilter = ko.observable(defaults.tierFilter);
 	this.typeFilter = ko.observable(defaults.typeFilter);
@@ -532,8 +559,9 @@ var app = new (function() {
 	this.showUniques =  ko.observable(defaults.showUniques);
 	
 	this.activeItem = ko.observable();
-	this.activeUser = ko.observable();
-
+	this.activeUser = ko.observable(new User());
+	this.activeView = ko.observable(0);
+	
 	this.weaponTypes = ko.observableArray();
 	this.characters = ko.observableArray();
 	this.orderedCharacters = ko.computed(function(){
@@ -565,10 +593,10 @@ var app = new (function() {
 		self.refreshSeconds(defaults.refreshSeconds);
 		self.tierFilter(defaults.tierFilter);
 		self.typeFilter(defaults.typeFilter);
-		self.dmgFilter(defaults.dmgFilter);
+		self.dmgFilter.removeAll();
 		self.progressFilter(defaults.progressFilter);
-		self.setFilter(defaults.setFilter);
-		self.setFilterFix(defaults.setFilter);
+		self.setFilter.removeAll()
+		self.setFilterFix.removeAll()
 		self.shareView(defaults.shareView);
 		self.shareUrl (defaults.shareUrl);
 		self.showMissing(defaults.showMissing);
@@ -621,33 +649,58 @@ var app = new (function() {
 		var width = $(window).width();
 		//this fixes issue #35 makes destinydb tooltips fit on a mobile screen
 		if (width < 340){
-			$content.find(".fhtt.des").css("width", width + "px");
+			$content.find(".fhtt.des").css("width", (width-15) + "px");
+			$content.find(".stat-bar-empty").css("width", "125px");
 		}
 		callback($content.html());
 	}
-	this.toggleListener = function(){
-		self.listenerEnabled(!self.listenerEnabled());
-	}
 	this.toggleRefresh = function(){
+		self.toggleBootstrapMenu();
 		self.doRefresh(!self.doRefresh());
 	}	
 	this.toggleDestinyTooltips = function(){
+		self.toggleBootstrapMenu();
 		self.tooltipsEnabled(!self.tooltipsEnabled());		
 	}
 	this.toggleShareView = function(){
+		self.toggleBootstrapMenu();
 		self.shareView(!self.shareView());
 	}
 	this.toggleShowUniques = function(){
+		self.toggleBootstrapMenu();
 		self.showUniques(!self.showUniques());
 	}
 	this.toggleShowMissing = function(){
+		self.toggleBootstrapMenu();
 		self.showMissing(!self.showMissing());
 	}
 	this.setSetFilter = function(model, event){
+		self.toggleBootstrapMenu();
 		var collection = $(event.target).parent().attr("value");
 		self.setFilter(collection == "All" ? [] : _collections[collection]);
 		self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
 	}
+	this.setView = function(model, event){
+		self.toggleBootstrapMenu();
+		self.activeView($(event.target).parent().attr("value"));
+	}	
+	this.setDmgFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		var dmgType = $(event.target).parents('li:first').attr("value");
+		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
+	}
+	this.setTierFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		self.tierFilter($(event.target).parent().attr("value"));
+	}
+	this.setTypeFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		self.typeFilter($(event.target).parent().attr("value"));
+	}
+	this.setProgressFilter = function(model, event){
+		self.toggleBootstrapMenu();
+		self.progressFilter($(event.target).parent().attr("value"));
+	}	
 	this.missingSets = ko.computed(function(){
 		var missingIds = [];
 		self.setFilter().concat(self.setFilterFix()).forEach(function(item){
@@ -661,26 +714,6 @@ var app = new (function() {
 		});
 		return missingIds;
 	})
-	
-	this.activeView = ko.observable(0);
-	this.setView = function(model, event){
-		self.activeView($(event.target).parent().attr("value"));
-	}	
-	this.setDmgFilter = function(model, event){
-		var dmgType = $(event.target).parents('li:first').attr("value");
-		self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
-		//not sure why this happens
-		self.dmgFilter.remove(undefined);
-	}
-	this.setTierFilter = function(model, event){
-		self.tierFilter($(event.target).parent().attr("value"));
-	}
-	this.setTypeFilter = function(model, event){
-		self.typeFilter($(event.target).parent().attr("value"));
-	}
-	this.setProgressFilter = function(model, event){
-		self.progressFilter($(event.target).parent().attr("value"));
-	}
 						
 	var processItem = function(profile){	
 		return function(item){
@@ -705,6 +738,11 @@ var app = new (function() {
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete
 			};
+			/*if ( itemObject.description.indexOf("Engram") > -1 ){
+				console.log(itemObject);
+				console.log(info);
+				console.log(itemObject.typeName + " " + info.classType);
+			}*/
 			if (item.primaryStat){
 				itemObject.primaryStat = item.primaryStat.value;
 			}	
@@ -712,49 +750,57 @@ var app = new (function() {
 				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 			}
 			if (item.location == 4)
-					itemObject.bucketType = "Post Master";
-					
-			if (info.itemType == 3 && item.location !== 4){
-				itemObject.perks = item.perks.map(function(perk){
-					if (perk.perkHash in window._perkDefs){
-						var p = window._perkDefs[perk.perkHash];
-						return {
-							iconPath: app.bungie.getUrl() + perk.iconPath,
-							name: p.displayName,
-							description: p.displayDescription
+				itemObject.bucketType = "Post Master";
+
+			if (info.bucketTypeHash in DestinyBucketTypes){
+			
+				/* both weapon engrams and weapons fit under this condition*/
+				if (itemObject.bucketType in DestinyWeaponPieces){
+					/*console.log(itemObject);
+					console.log(info);
+					console.log(itemObject.typeName + " " + info.classType);*/
+					/* only actual weapons fit under this condition */
+					if ( info.itemType == 3 ){
+						itemObject.perks = item.perks.map(function(perk){
+							if (perk.perkHash in window._perkDefs){
+								var p = window._perkDefs[perk.perkHash];
+								return {
+									iconPath: app.bungie.getUrl() + perk.iconPath,
+									name: p.displayName,
+									description: p.displayDescription
+								}
+							}
+							else {
+								return perk;
+							}					
+						});
+						if (info.talentGridHash in window._talentGridDefs){					
+							itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
 						}
-					}
-					else {
-						return perk;
-					}					
-				});
-				if (info.talentGridHash in window._talentGridDefs){					
-					itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
+						else {
+							itemObject.isUnique = false;
+						}				
+					}				
 				}
-				else {
-					itemObject.isUnique = false;
-				}
-				profile.weapons.push( new Item(itemObject,profile,'weapons') );
-			}
-			else if (info.itemType == 2 && item.location !== 4 && DestinyArmorPieces.indexOf(itemObject.bucketType) > -1){				
-				itemObject.stats = {};
-				_.each(item.stats, function(stat){
-					if (stat.statHash in window._statDefs){
-						var p = window._statDefs[stat.statHash];
-						itemObject.stats[p.statName] = stat.value;
-					}
-				});
-				profile.armor.push( new Item(itemObject,profile,'armor') );
-			}
-			else if (info.bucketTypeHash in DestinyBucketTypes){
+			
 				if (itemObject.typeName && itemObject.typeName == "Emblem"){
 					itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
 				}
 				if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables"){
 					itemObject.primaryStat = item.stackSize;
 				}
-				profile.items.push( new Item(itemObject,profile,'items') );
+				if ( info.itemType == 2 ){
+					itemObject.stats = {};
+					_.each(item.stats, function(stat){
+						if (stat.statHash in window._statDefs){
+							var p = window._statDefs[stat.statHash];
+							itemObject.stats[p.statName] = stat.value;
+						}
+					});
+				}
+				profile.items.push( new Item(itemObject,profile) );
 			}
+			
 		}
 	}
 	
@@ -770,16 +816,8 @@ var app = new (function() {
 	}
 	
 	this.hasBothAccounts = function(){
-		return self.activeUser() && !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
+		return !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
 	}
-	
-	this.hasXboxAccount = ko.computed(function(){
-		return self.activeUser() && !_.isEmpty(self.activeUser().gamerTag) && self.hasBothAccounts();
-	})
-	
-	this.hasPsnAccount = ko.computed(function(){
-		return self.activeUser() && !_.isEmpty(self.activeUser().psnId) && self.hasBothAccounts();
-	})
 	
 	this.useXboxAccount = function(){
 		self.activeUser().activeSystem("XBL");
@@ -801,7 +839,7 @@ var app = new (function() {
 		function done(){
 			count++;
 			if (count == total){
-				console.log("finished loading");
+				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
 			}
@@ -866,7 +904,7 @@ var app = new (function() {
 					});
 					
 					items.forEach(processItem(profile));
-					self.addWeaponTypes(profile.weapons());
+					self.addWeaponTypes(profile.items());
 					self.characters.push(profile);
 					done();
 				});
@@ -874,111 +912,90 @@ var app = new (function() {
 		});		
 	}
 	
-	this.loadData = function(){
+	this.loadData = function(ref, loop){
 		if (self.loadingUser() == false){
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
 			self.characters.removeAll();
 			self.bungie.user(function(user){
-				//try loading the Playstation account first
-				user.activeSystem = ko.observable(user.psnId ? "PSN" : "XBL" );			
-				self.activeUser(user);
+				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
 					return
-				}				
+				}
+				if (ref && loop){
+					ref.close();
+					clearInterval(loop);
+				}
 				self.search();			
-			});		
+			});			
 		}
+	}
+	
+	this.toggleBootstrapMenu = function(){
+		if ($(".navbar-toggle").is(":visible")) 
+			$(".navbar-toggle").click();
 	}
 	
 	this.refreshHandler = function(){
 		clearInterval(self.refreshInterval);
 		if (self.loadoutMode() == true){
+			self.toggleBootstrapMenu();
 			$("body").css("padding-bottom","260px");
 		}
 		else {
 			$("body").css("padding-bottom","0");
 		}
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
-			self.refreshInterval = setInterval(self.loadData, self.refreshSeconds() * 1000);
+			self.refreshInterval = setInterval(function(){ self.loadData() }, self.refreshSeconds() * 1000);
 		}
-	}
-	
-	
-	this.revalidateBungieCookie = function(){
-		console.log("creating hidden window");
-		var loop, ref = window.open('https://www.bungie.net', '_blank', 'location=no');
-		ref.addEventListener('loadstop', function(event) {
-			console.log("window finished loading");
-			setTimeout(function(){
-				clearInterval(loop);
-				loop = setInterval(function() {
-					ref.executeScript({
-						code: 'document.cookie'
-					}, function(result) {
-						if (result != ""){
-							clearInterval(loop);
-							console.log("got a new cookie " + result);
-							ref.close();		
-							self.bungie_cookies = result.toString();
-							window.localStorage.setItem("bungie_cookies", result.toString());
-							self.loadData();
-						}
-					});
-				}, 10);
-			}, 10000);			
-		});
 	}
 	
 	this.donate = function(){
 		window.open("http://bit.ly/1Jmb4wQ","_blank");
 	}
 	
+	this.readBungieCookie = function(ref, loop){
+		ref.executeScript({
+			code: 'document.cookie'
+		}, function(result) {
+			if ((result || "").toString().indexOf("bungled") > -1){
+				self.bungie_cookies = result;
+				window.localStorage.setItem("bungie_cookies", result);
+				self.loadData(ref, loop);
+			}
+		});	
+	}
+	
 	this.openBungieWindow = function(type){
 		return function(){
-			var loop, newCookie;
+			var loop;
 			//overwrite the same reference to avoid crashing?
 			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');			
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
-					if (self.listenerEnabled() == true){
-						clearInterval(loop);
-						loop = setInterval(function() {
-							ref.executeScript({
-								code: 'document.cookie'
-							}, function(result) {
-								console.log("found result in loadstop " + result);
-								if ((result || "").toString().indexOf("bungled") > -1){
-									self.bungie_cookies = result;
-									window.localStorage.setItem("bungie_cookies", result);
-									self.loadData();
-									ref.close();
-									clearInterval(loop);
-								}
-							});
-						}, 500);				
-					}
+					clearInterval(loop);
+					ref.executeScript({
+						code: 'document.location.href'
+					}, function(result) {
+						/* only load cookie reader on homepage */		
+						if (result.toString() == self.bungie.getUrl()){
+							loop = setInterval(function() {
+								self.readBungieCookie(ref, loop);							
+							}, 500);
+						}
+					});
+					
 				});
 				ref.addEventListener('loadstart', function(event) {
 					clearInterval(loop);
 				});
 				ref.addEventListener('exit', function() {
-					if (self.characters().length == 0){
+					if (self.loadingUser() == false){
 						clearInterval(loop);
 						if (_.isEmpty(self.bungie_cookies)){
 							loop = setInterval(function() {
-								ref.executeScript({
-									code: 'document.cookie'
-								}, function(result) {
-									console.log("found result in exit " + result);
-									if ((result || "").toString().indexOf("bungled") > -1){
-										self.bungie_cookies = result;
-										window.localStorage.setItem("bungie_cookies", result);
-										self.loadData();		
-										clearInterval(loop);
-									}
-								});
+								self.readBungieCookie(ref, loop);
 							}, 500);
 						}
 						else {
@@ -1024,12 +1041,11 @@ var app = new (function() {
 		}		
 		
 		if (isMobile && isEmptyCookie){
-			console.log("code 99");
-			self.activeUser({"code": 99, "error": "Please sign-in to continue."});
+			self.bungie = new bungie();
+			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
 		}	
 		else {
-			console.log("loadData");
-			setTimeout(self.loadData, isChrome ? 1 : 5000);		
+			setTimeout(function(){ self.loadData() }, isChrome || isMobile ? 1 : 5000);		
 		}
 		$("form").bind("submit", false);
 		$("html").click(function(e){
@@ -1039,7 +1055,7 @@ var app = new (function() {
 		});
 		ko.applyBindings(self);
 	}
-});
+}); 
 
 window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: app.renderCallback, isEnabled: app.tooltipsEnabled() };
 
