@@ -855,7 +855,7 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
-				setTimeout(self.bucketSizeHandler, 1000);
+				setTimeout(self.bucketSizeHandler, 500);
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -973,10 +973,8 @@ var app = new (function() {
 	
 	this.bucketSizeHandler = function(){
 		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
-		var maxHeight = Math.max.apply(null, buckets.map(function(){
-		return $(this).height()
-		}));
-		buckets.css("height", maxHeight);	
+		var maxHeight = $(".itemImage:eq(0)").height() * 3;
+		buckets.css("min-height", maxHeight);	
 	}
 	
 	this.donate = function(){
