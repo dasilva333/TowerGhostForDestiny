@@ -6,14 +6,13 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<meta name="viewport" id="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-	<script language="JavaScript" type="text/javascript" src="data/itemDefs.json"></script>
-	<script language="JavaScript" type="text/javascript" src="data/statDefs.json"></script>
-	<script language="JavaScript" type="text/javascript" src="data/perkDefs.json"></script>
-	<script language="JavaScript" type="text/javascript" src="data/talentGridDefs.json"></script>
-	<script language="JavaScript" type="text/javascript" src="data/raceDefs.json"></script>	
-	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/itemDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/statDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/perkDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/talentGridDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/raceDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/destinyDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/lzstring.min.js"></script>
-	<script language="JavaScript" type="text/javascript" src="scripts/bungie.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/hammer.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/jquery.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/jquery-ui.js"></script>
@@ -21,6 +20,9 @@
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/bootstrap-dialog.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/knockout.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/underscore-min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="js/dependencies/fastclick.js"></script>
+	<script language="JavaScript" type="text/javascript" src="scripts/bungie.js"></script>
+	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/loadouts.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/app.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/tooltips.min.js"></script>	
@@ -73,7 +75,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 1.7.7</a>
+		      <a class="navbar-brand" href="#">TGD 1.8.0</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -82,22 +84,22 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/cog.png"> <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-		            	<li><a href="#" data-bind="click: showAbout">About</a></li>
-						<li><a href="#" data-bind="click: showHelp">Help</a></li>
-						<li class="active"><a href="#" data-bind="click: donate">Donate</a></li>
+		            	<li><a href="#" data-bind="fastclick: showAbout">About</a></li>
+						<li><a href="#" data-bind="fastclick: showHelp">Help</a></li>
+						<li class="active"><a href="#" data-bind="fastclick: donate">Donate</a></li>
 						<li class="divider"></li>						
-						<li><a href="#" data-bind="click: openBungieWindow('Psnid')">PSN Login</a></li>
-						<li><a href="#" data-bind="click: openBungieWindow('Wlid')">Live Login</a></li>
-						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="click: useXboxAccount">Use Xbox Account</a></li>
-						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="click: usePlaystationAccount">Use Playstation Account</a></li>
+						<li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
+						<li><a href="#" data-bind="fastclick: openBungieWindow('Wlid')">Live Login</a></li>
+						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
+						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount">Use Playstation Account</a></li>
 						<li class="divider"></li>
-						<li><a href="#" data-bind="click: toggleShareView">Share URL</a></li>
-						<li><a href="#" data-bind="click: clearFilters">Clear Filters</a></li>
-						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
-						<li data-bind="click: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
+						<li><a href="#" data-bind="fastclick: toggleShareView">Share URL</a></li>
+						<li><a href="#" data-bind="fastclick: clearFilters">Clear Filters</a></li>
+						<li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
+						<li data-bind="fastclick: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 		          </ul>
 		        </li>
-				<li class="dropdown"><a data-bind="click: function(){ loadData() }" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
+				<li class="dropdown"><a data-bind="fastclick: function(){ loadData() }" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
 				</li>
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">View <span class="caret"></span></a>
@@ -148,11 +150,11 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Loadouts <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-		            <li data-bind="click: createLoadout"><a href="#">Create</a></li>
-					<li data-bind="click: cancelLoadout"><a href="#">Cancel</a></li>
+		            <li data-bind="fastclick: createLoadout"><a href="#">Create</a></li>
+					<li data-bind="fastclick: cancelLoadout"><a href="#">Cancel</a></li>
 					<li class="divider"></li>
 					<!-- ko foreach: { data: loadouts, as: 'loadout' } -->
-						<li data-bind="click: setActive"><a data-bind="text: loadout.name" href="#"></a></li>
+						<li data-bind="fastclick: setActive"><a data-bind="text: loadout.name" href="#"></a></li>
 		  			<!--/ko  -->
 		          </ul>
 		        </li>
@@ -196,7 +198,7 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="click:$root.openBungieWindow('Wlid')" target="_blank">Windows Live ID</a> </li>
+						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="fastclick:$root.openBungieWindow('Wlid')" target="_blank">Windows Live ID</a> </li>
 						<li>Sign in with your credentials</li>
 						<li>Wait until homepage completely finishes loading</li>
 						<li>The Bungie.net window will auto close and items should be loaded</li>
@@ -231,7 +233,7 @@
 			</div>
 		</nav>
 		<div class="container">
-			<div class="container-fluid" style="">
+			<div class="container-fluid" id="charactersContainer">
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
 					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<div class="character clearfix">
@@ -279,10 +281,10 @@
 			<div class="content" data-bind="with: activeLoadout">
 				<div id="loadout-options">
 					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
-					<span id="loadout-save" data-bind="click: save">Save</span>
-					<span id="loadout-save" data-bind="click: remove">Delete</span>
-					<span id="loadout-save" data-bind="click: $root.cancelLoadout">Close</span>
-					<!-- ko foreach: { data: $root.characters, as: 'character' } -->
+					<span id="loadout-save" data-bind="fastclick: save">Save</span>
+					<span id="loadout-save" data-bind="fastclick: remove">Delete</span>
+					<span id="loadout-save" data-bind="fastclick: $root.cancelLoadout">Close</span>
+					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
 					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, check to equip.</p>
@@ -362,5 +364,5 @@
 				<li><strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds.</li>
 			</ul>			
 		</div>
-  </body>
+	</body>
 </html>
