@@ -104,7 +104,7 @@ var Loadout = function(model){
 							self.findReference(pair.swapItem).store(owner, transferNextItem);
 						}	
 						else { transferNextItem(); }
-					}, true);
+					});
 				}
 				else { transferNextItem(); }
 			}
@@ -179,21 +179,10 @@ var Loadout = function(model){
 					else {
 						/* do a clean move by returning a swap object without a swapItem */
 						var swapArray = _.map(sourceBucket, function(item){
-							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
-								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-								if ( _.where(self.equipIds(), { _id: item._id }).length > 0 ){
-									return {
-										targetItem: item,
-										description: item.description + " will be just be equipped."
-									}
+								return {
+									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
 								}
-								/* then return an object indicating to do nothing */
-								else {
-									return {
-										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
-									}
-								}								
 							}
 							else {							
 								return {

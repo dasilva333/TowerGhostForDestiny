@@ -73,13 +73,6 @@ var moveItemPositionHandler = function(element, item){
 	}
 }
 
-window.ko.bindingHandlers.fastclick = {
-	init: function(element, valueAccessor) {
-		FastClick.attach(element);
-		return ko.bindingHandlers.click.init.apply(this, arguments);
-	}
-};
-
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 		Hammer(element)
@@ -209,48 +202,41 @@ var Item = function(model, profile){
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
-			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6;
-			});
-			if ( otherItems.length > 0){
-				var tryNextItem = function(){			
-					var item = otherItems[++itemIndex];
-					//console.log(item.description);
-					/* still haven't found a match */
-					if (otherEquipped == false){
-						if (item != self){
-							//console.log("trying to equip " + item.description);
-							item.equip(self.characterId, function(isEquipped){
-								//console.log( item.description + " result was " + isEquipped);
-								if (isEquipped == true){ otherEquipped = true; callback(); }
-								else { tryNextItem(); /*console.log("tryNextItem")*/ }
-							});				
-						}
-						else {
-							tryNextItem()
-							//console.log("tryNextItem")
-						}
+			var otherItems = _.where( self.character.items(), { bucketType: self.bucketType });
+			var tryNextItem = function(){			
+				var item = otherItems[++itemIndex];
+				//console.log(item.description);
+				/* still haven't found a match */
+				if (otherEquipped == false){
+					if (item != self){
+						//console.log("trying to equip " + item.description);
+						item.equip(self.characterId, function(isEquipped){
+							//console.log("result was " + isEquipped);
+							if (isEquipped == true){ otherEquipped = true; callback(); }
+							else { tryNextItem(); /*console.log("tryNextItem")*/ }
+						});				
+					}
+					else {
+						tryNextItem()
+						//console.log("tryNextItem")
 					}
 				}
-				//console.log("tryNextItem")
-				tryNextItem();			
 			}
-			else {
-				callback(false);
-			}
+			tryNextItem();		
+			//console.log("tryNextItem")
 		}
 		else {
 			//console.log("but not equipped");
 			callback();
 		}
 	}
-	this.equip = function(targetCharacterId, callback, allowReplacement){
-		var done = function(){
-			//console.log("making bungie call to equip " + self.description);
+	this.equip = function(targetCharacterId, callback){
+		//console.log("equip called");
+		var sourceCharacterId = self.characterId;
+		if (targetCharacterId == sourceCharacterId){
+			//console.log("item is already in the character");
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
 				if (result.Message == "Ok"){
-					//console.log("result was OKed");
-					//console.log(result);
 					self.isEquipped(true);
 					self.character.items().forEach(function(item){
 						if (item != self && item.bucketType == self.bucketType){
@@ -264,43 +250,10 @@ var Item = function(model, profile){
 					if (callback) callback(true);
 				}
 				else {
-					//console.log("result failed");
-					/* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
 					if (callback) callback(false);
 					else BootstrapDialog.alert(result.Message);
 				}
-			});		
-		}
-		//console.log("equip called");
-		var sourceCharacterId = self.characterId;		
-		if (targetCharacterId == sourceCharacterId){
-			//console.log("item is already in the character");
-			/* if item is exotic */
-			if ( self.tierType == 6 && allowReplacement){
-				//console.log("item is exotic");
-				var otherExoticFound = false,
-					otherBucketTypes = DestinyWeaponPieces.indexOf(self.bucketType) > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
-				otherBucketTypes.splice(DestinyWeaponPieces.indexOf(self.bucketType),1);
-				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));	
-				_.each(otherBucketTypes, function(bucketType){
-					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
-						return item.isEquipped();
-					});
-					//console.log( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
-					if ( otherExotic.length > 0 ){
-						//console.log("found another exotic equipped " + otherExotic[0].description);
-						otherExoticFound = true;
-						otherExotic[0].unequip(done);
-					}					
-				});
-				if (otherExoticFound == false){
-					done();
-				}
-			}
-			else {
-				//console.log("item is not exotic");
-				done()
-			}			
+			});
 		}
 		else {
 			//console.log("item is NOT already in the character");
@@ -433,6 +386,62 @@ var Item = function(model, profile){
 	}
 }
 
+var DestinyGender = {
+	"0": "Male",
+	"1": "Female",
+	"2": "Unknown"
+};
+var DestinyClass = {
+    "0": "Titan",
+    "1": "Hunter",
+    "2": "Warlock",
+    "3": "Unknown"
+};
+var DestinyDamageTypes = {
+    "0": "None",
+    "1": "Kinetic",
+    "2": "Arc",
+    "3": "Solar",
+    "4": "Void",
+    "5": "Raid"
+};
+var DestinyBucketTypes = {
+	"1498876634": "Primary",
+	"2465295065": "Special",
+	"953998645": "Heavy",
+	"3448274439": "Helmet",
+	"3551918588": "Gauntlet",
+	"14239492": "Chest",
+	"20886954": "Boots",
+	"2973005342": "Shader",
+	"4274335291": "Emblem",
+	"2025709351": "Sparrow",
+	"284967655": "Ship",
+	"3865314626": "Materials",
+	"1469714392": "Consumables",
+	"1585787867": "Class Items",
+	"12345": "Post Master"
+}
+var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots" ];
+var DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
+var DestinyDamageTypeColors = {
+	"None": "#BBB",
+	"Kinetic": "#BBB",
+	"Arc": "#85C5EC",
+	"Solar": "#C48A01",
+	"Void": "#B184C5"
+}
+var _collectionsFix = {
+	"exoticWeapons": [],
+	"vaultWeapons": [],
+	"crotaWeapons": [],
+	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,337037804,1487387187], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
+	"exoticArmor": [],
+	"vaultArmor": [],
+	"crotaArmor": [],
+	"ironArmor": []
+}
+
 /*
 targetItem: item,
 swapItem: swapItem,
@@ -559,7 +568,8 @@ var app = new (function() {
 		return self.characters().sort(function(a,b){
 			return a.order - b.order;
 		});
-	});		
+	});
+	
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
@@ -832,9 +842,6 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
-				self.characters().sort(function(a,b){
-					return a.order - b.order;
-				});
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -1009,13 +1016,6 @@ var app = new (function() {
 		}
 	}
 	
-	this.shiftArrayLeft = function(){
-		self.characters.unshift( self.characters.splice(self.characters().length-1,1)[0] );
-	}
-	this.shiftArrayRight = function(){
-		self.characters(self.characters().concat( self.characters.splice(0,1) ));
-	}
-	
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
@@ -1039,12 +1039,7 @@ var app = new (function() {
 				})
 			);
 		}		
-		/* breaks on Windows Phone
-		if (isMobile){
-			Hammer(document.getElementById('charactersContainer'))
-				.on("swipeleft", self.shiftArrayLeft)
-				.on("swiperight", self.shiftArrayRight);
-		}*/
+		
 		if (isMobile && isEmptyCookie){
 			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
@@ -1058,8 +1053,6 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
-		
-		
 		ko.applyBindings(self);
 	}
 }); 
