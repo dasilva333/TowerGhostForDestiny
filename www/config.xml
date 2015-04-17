@@ -11,9 +11,10 @@
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
-    <preference name="webviewbounce" value="false" />
+    <preference name="webviewbounce" value="true" />
     <preference name="prerendered-icon" value="true" />
     <preference name="stay-in-webview" value="false" />
+    <preference name="StatusBarStyle" value="lightcontent" />
     <preference name="detect-data-types" value="true" />
     <preference name="exit-on-suspend" value="false" />
     <preference name="show-splash-screen-spinner" value="true" />
@@ -22,17 +23,9 @@
     <preference name="android-minSdkVersion" value="7" />
     <preference name="android-installLocation" value="auto" />
     <gap:plugin name="org.apache.cordova.globalization" />
-    <gap:plugin name="org.apache.cordova.inappbrowser" version="0.6.0" source="plugins.cordova.io" />
-    <gap:plugin name="org.apache.cordova.statusbar" version="0.1.10" source="plugins.cordova.io" />
-    <gap:plugin name="org.apache.cordova.device" version="0.2.12" />
-
-    <feature name="StatusBar">
-	<param name="ios-package" value="CDVStatusBar" onload="true" />
-    </feature>
-
-    <preference name="StatusBarOverlaysWebView" value="false"/>
-    <preference name="StatusBarBackgroundColor" value="#000000"/>
-    <preference name="StatusBarStyle" value="lightcontent" />
+    <gap:plugin name="org.apache.cordova.inappbrowser" />
+    <gap:plugin name="org.apache.cordova.statusbar" />
+    <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
