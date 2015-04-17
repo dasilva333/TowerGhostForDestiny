@@ -1,5 +1,6 @@
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
+window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
 	var self = this;
@@ -56,16 +57,25 @@ var moveItemPositionHandler = function(element, item){
 				activeElement = element;
 				if (window.isMobile){
 					$("body").css("padding-bottom","80px");
-					setTimeout(function(){
-						$movePopup.show();
-					},500);					
+					/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
+					$movePopup.show();
 				}
 				else {
 					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
 						my: "left bottom",
 						at: "left top",
-						collision: "none fit",
-						of: element
+						collision: "none",
+						of: element,
+						using: function(pos, ui){
+							var obj = $(this);
+							setTimeout(function(){
+								var box = $(ui.element.element).find(".move-popup").width();
+								if (box + pos.left > ui.element.width){
+									pos.left = pos.left - box;
+								}
+								obj.css(pos);	
+							},10);
+						}	
 					});
 				}
 			}
@@ -118,7 +128,19 @@ var Profile = function(model){
 			if (DestinyArmorPieces.indexOf(item.bucketType) > -1 )
 				return item;
 		});
-	});	
+	});
+	this.general = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (DestinyArmorPieces.indexOf(item.bucketType) == -1 && DestinyWeaponPieces.indexOf(item.bucketType) == -1)
+				return item;
+		});
+	});
+	this.postmaster = ko.computed(function(){
+		return _.filter(self.items(), function(item){
+			if (item.bucketType == "Post Master")
+				return item;
+		});
+	});
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
 	this.get = function(type){
 		return self.items().filter(filterItemByType(type, false));
@@ -308,7 +330,7 @@ var Item = function(model, profile){
 				//console.log("item is now in the target destination");
 				self.character = newProfile;
 				self.characterId = newProfile.id;
-				self.equip(targetCharacterId, callback);
+				self.equip(targetCharacterId, callback, allowReplacement);
 			});
 		}
 	}
@@ -560,6 +582,7 @@ var app = new (function() {
 			return a.order - b.order;
 		});
 	});		
+	
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
@@ -796,8 +819,9 @@ var app = new (function() {
 	
 	this.addWeaponTypes = function(weapons){
 		weapons.forEach(function(item){
-			if (_.where(self.weaponTypes(), { type: item.type}).length == 0)
+			if (item.type > 0 && _.where(self.weaponTypes(), { type: item.type }).length == 0){
 				self.weaponTypes.push({ name: item.typeName, type: item.type });
+			}
 		});
 	}
 	
@@ -832,9 +856,7 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
-				self.characters().sort(function(a,b){
-					return a.order - b.order;
-				});
+				setTimeout(self.bucketSizeHandler, 500);
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -896,6 +918,9 @@ var app = new (function() {
 						});
 					});
 					
+					//simulate me having the 4th horseman 
+					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
+					
 					items.forEach(processItem(profile));
 					self.addWeaponTypes(profile.items());
 					self.characters.push(profile);
@@ -920,7 +945,8 @@ var app = new (function() {
 					ref.close();
 					clearInterval(loop);
 				}
-				self.search();			
+				self.loadLoadouts();
+				self.search();
 			});			
 		}
 	}
@@ -930,6 +956,11 @@ var app = new (function() {
 			$(".navbar-toggle").click();
 	}
 	
+	this.refreshButton = function(){
+		self.toggleBootstrapMenu();
+		self.loadData();
+	}
+	
 	this.refreshHandler = function(){
 		clearInterval(self.refreshInterval);
 		if (self.loadoutMode() == true){
@@ -937,11 +968,17 @@ var app = new (function() {
 			$("body").css("padding-bottom","260px");
 		}
 		else {
-			$("body").css("padding-bottom","0");
+			$("body").css("padding-bottom","80px");
 		}
 		if (self.doRefresh() == 1 && self.loadoutMode() == false){
 			self.refreshInterval = setInterval(function(){ self.loadData() }, self.refreshSeconds() * 1000);
 		}
+	}
+	
+	this.bucketSizeHandler = function(){
+		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
+		var maxHeight = $(".itemImage:eq(0)").height() * 3;
+		buckets.css("min-height", maxHeight);	
 	}
 	
 	this.donate = function(){
@@ -1016,13 +1053,82 @@ var app = new (function() {
 		self.characters(self.characters().concat( self.characters.splice(0,1) ));
 	}
 	
+	this.yqlRequest = function(params, callback){
+		var request = window.encodeURIComponent("http://www.towerghostfordestiny.com/api.cfm?" + $.param(params))
+		var requestURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%3D%22" + request + "%22&format=json&callback=";
+		$.ajax({
+			url: requestURL,
+			success: function(response){
+				callback(response.query.results);
+			}
+		});
+	}
+	
+	this.saveLoadouts = function(includeMessage){
+		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
+		if (supportsCloudSaves == true){
+			var params = {
+				action: "save",
+				membershipId: parseFloat(app.activeUser().user.membershipId),
+				loadouts: JSON.stringify(self.loadouts())
+			}
+			self.yqlRequest(params, function(results){
+				if (_includeMessage == true){
+					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+					else BootstrapDialog.alert("Error has occurred saving loadouts");
+				}
+			});
+		}
+		else {
+			var loadouts = ko.toJSON(self.loadouts());
+			window.localStorage.setItem("loadouts", loadouts);
+		}
+	}
+
+	this.loadLoadouts = function(){
+		var _loadouts = window.localStorage.getItem("loadouts");
+		if (!_.isEmpty(_loadouts)){
+			_loadouts = _.map(JSON.parse(_loadouts), function(loadout){
+				return new Loadout(loadout);
+			})
+		}
+		else {
+			_loadouts = [];
+		}		
+		if (supportsCloudSaves == true){
+			self.yqlRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
+				var _results = [];
+				if (results && results.json && results.json.loadouts){
+				    _results = _.isArray(results.json.loadouts) ? results.json.loadouts : [results.json.loadouts];
+					_results = _.map(_results, function(loadout){
+						loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+						loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+						loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+						return new Loadout(loadout);
+					});
+				}
+				/* one time migrate joins the two arrays and clears the local one */
+				if(_loadouts.length > 0){
+					_results = _loadouts.concat(_results);
+					window.localStorage.setItem("loadouts", "");
+				}	
+				self.loadouts(_results);
+				/* one time migrate saves the new joined array to the cloud */
+				if(_loadouts.length > 0){
+					self.saveLoadouts(false);
+				}
+			});
+		}
+		else if (_loadouts.length > 0){
+			self.loadouts(_loadouts);
+		}
+	}
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);		
 		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		var _loadouts = window.localStorage.getItem("loadouts");
 		(function() {
 		  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
 		    var msViewportStyle = document.createElement("style");
@@ -1032,19 +1138,23 @@ var app = new (function() {
 		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
 		  }
 		})();
-		if (!_.isEmpty(_loadouts)){
-			self.loadouts(
-				_.map(JSON.parse(_loadouts), function(loadout){
-					return new Loadout(loadout);
-				})
-			);
-		}		
 		/* breaks on Windows Phone
 		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
 				.on("swipeleft", self.shiftArrayLeft)
 				.on("swiperight", self.shiftArrayRight);
 		}*/
+
+		if (isMobile) {
+		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+				StatusBar.overlaysWebView(false);
+		    }
+			if (typeof StatusBar !== "undefined"){		
+			    StatusBar.styleLightContent();
+			    StatusBar.backgroundColorByHexString("#000");
+			}
+		}
+
 		if (isMobile && isEmptyCookie){
 			self.bungie = new bungie();
 			self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
@@ -1058,7 +1168,8 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
-		
+		/* this fixes issue #16 */
+		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
 		
 		ko.applyBindings(self);
 	}

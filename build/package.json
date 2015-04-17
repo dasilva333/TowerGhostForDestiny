@@ -1,11 +1,12 @@
 {
   "name": "tower-ghost-builder",
-  "version": "1.8.0",
+  "version": "1.8.8",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {
     "node-zip": "~1.1.0",
-    "sqlite3": "~3.0.5"
+    "sqlite3": "~3.0.5",
+    "lodash": "^3.7.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -21,7 +22,7 @@
     "destiny",
     "item",
     "viewer",
-	"tower ghost"
+    "tower ghost"
   ],
   "author": "Richard Pinedo",
   "license": "BSD",

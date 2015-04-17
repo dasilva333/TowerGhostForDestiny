@@ -17,6 +17,16 @@ var neededFiles = [
 		delete obj.perkHashes;
 		delete obj.sourceHashes;
 		delete obj.equippingBlock;
+		delete obj.exclusive;
+		delete obj.maxStackSize;
+		delete obj.actionName;
+		delete obj.hasGeometry;
+		delete obj.rewardItemHash;
+		delete obj.primaryBaseStatHash;
+		delete obj.nonTransferrable;
+		delete obj.statGroupHash;
+		delete obj.qualityLevel;
+		delete obj.specialItemType;
 		return obj;
 	}},
 	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash", reduce: function(item){
@@ -40,11 +50,17 @@ if ( fs.existsSync(dbPath) ){
 		db.all("SELECT * FROM " + set.table, function(err, rows) {
 			if (err) return; 
 			var filename = set.name + ".js";
+			var patchFile = set.name + ".patch";
 			var obj = {};
 	        rows.forEach(function (row) {  
 				var entry = JSON.parse(row.json);
 	            obj[entry[set.key]] = set.reduce(entry);
 	        });
+			if (fs.existsSync(patchFile)){
+				console.log("found patch file " + patchFile);
+				var patchData = JSON.parse(fs.readFileSync(patchFile));
+				_.extend(obj, patchData);
+			}
 			fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 	    });
 	});	

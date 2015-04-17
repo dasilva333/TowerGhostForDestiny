@@ -1,3 +1,14 @@
+##Store Install Instructions
+
+[Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
+
+[Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
+
+[Tower Ghost in Amazon Store](http://www.amazon.com/gp/product/B00VQYLURG)
+
+[Tower Ghost in Google Play Store](https://play.google.com/store/apps/details?id=com.richardpinedo.towerghostfordestiny)
+
+[Tower Ghost in Windows Phone Store](http://www.windowsphone.com/en-us/store/app/destiny-item-viewer/f98e5060-3464-419c-b83d-14300714a676)
 
 
 ##Current Features Supported
@@ -69,16 +80,3 @@ https://github.com/dasilva333/TowerGhostForDestiny/tree/div-movile-dist/
 -    Find the button that says "Install addon from file"
 -    Point it to the tower_ghost.xpi (found in Downloads section) file
 
-##Store Install Instructions
-
-Visit this store Link:
-
-[Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
-
-[Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
-
-[Tower Ghost in Amazon Store](http://www.amazon.com/gp/product/B00VQYLURG)
-
-[Tower Ghost in Google Play Store](https://play.google.com/store/apps/details?id=com.richardpinedo.towerghostfordestiny)
-
-[Tower Ghost in Windows Phone Store](http://www.windowsphone.com/en-us/store/app/destiny-item-viewer/f98e5060-3464-419c-b83d-14300714a676)

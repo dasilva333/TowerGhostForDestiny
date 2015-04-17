@@ -50,8 +50,7 @@ var Loadout = function(model){
 			app.loadouts.splice(app.loadouts().indexOf(ref),1);
 		}
 		app.loadouts.push( self );
-		var loadouts = ko.toJSON(app.loadouts());
-		window.localStorage.setItem("loadouts", loadouts);
+		app.saveLoadouts();
 	}
 	this.items = ko.computed(function(){
 		var _items = _.map(self.ids(), function(instanceId){
@@ -211,7 +210,7 @@ var Loadout = function(model){
 				$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
 				(new dialog({buttons:[ 
 					{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
-						BootstrapDialog.alert("Item(s) transferred successfully");
+						BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_blank\">buy me a beer</a> ;)");
 						dialog.close()
 					}); }},
 					{label: "Cancel", action: function(dialog){ dialog.close() }}
