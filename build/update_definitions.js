@@ -39,7 +39,7 @@ if ( fs.existsSync(dbPath) ){
 	neededFiles.forEach(function(set){
 		db.all("SELECT * FROM " + set.table, function(err, rows) {
 			if (err) return; 
-			var filename = set.name + ".json";
+			var filename = set.name + ".js";
 			var obj = {};
 	        rows.forEach(function (row) {  
 				var entry = JSON.parse(row.json);
