@@ -73,7 +73,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 1.7.9</a>
+		      <a class="navbar-brand" href="#">TGD 1.8.0</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -213,7 +213,7 @@
 				  <div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				  	Move: <span data-bind="text: description"></span>
 				  </div>
-				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.characters, as: 'avatar' }">
+				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>vault</div></div>
@@ -232,7 +232,7 @@
 		</nav>
 		<div class="container">
 			<div class="container-fluid" id="charactersContainer">
-				<div class="row" data-bind="foreach: { data: characters, as: 'character' }">
+				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
 					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 						<div class="character clearfix">
 						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
@@ -282,7 +282,7 @@
 					<span id="loadout-save" data-bind="click: save">Save</span>
 					<span id="loadout-save" data-bind="click: remove">Delete</span>
 					<span id="loadout-save" data-bind="click: $root.cancelLoadout">Close</span>
-					<!-- ko foreach: { data: $root.characters, as: 'character' } -->
+					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
 					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, check to equip.</p>
