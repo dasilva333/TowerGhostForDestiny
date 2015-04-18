@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<meta name="viewport" id="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+	<script src="http://jsconsole.com/remote.js?71A437D1-A9F7-4AE7-B99C-D76DD53D96F8"></script>
 	<script language="JavaScript" type="text/javascript" src="data/itemDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="data/statDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="data/perkDefs.js"></script>
@@ -78,7 +79,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 1.8.9</a>
+		      <a class="navbar-brand" href="#">TGD 1.8.8</a>
 		    </div>
 		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -240,7 +241,7 @@
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
 					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile">
 						<div class="character clearfix">
-						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }">
+						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
 							<div class="class" data-bind="text: classType"></div>
 							<div class="level" data-bind="text: level"></div>
@@ -260,7 +261,7 @@
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
 								<div class="title"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
-								<!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
+								<!--- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 --->
 								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
 								</div>								
 							  </div>
