@@ -418,7 +418,10 @@ var moveItemPositionHandler = function(element, item){
 			if (app.activeLoadout().ids().indexOf( item._id )>-1)
 				app.activeLoadout().ids.remove(item._id);
 			else {
-				if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
+				if (item._id == 0){
+					BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
+				}
+				else if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
 					app.activeLoadout().ids.push(item._id);
 				}
 				else {
