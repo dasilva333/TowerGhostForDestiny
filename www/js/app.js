@@ -786,55 +786,60 @@
 			}
 		}
 		this.init = function(){
-			self.doRefresh.subscribe(self.refreshHandler);
-			self.refreshSeconds.subscribe(self.refreshHandler);
-			self.loadoutMode.subscribe(self.refreshHandler);		
-			self.bungie_cookies = "";
-			if (window.localStorage && window.localStorage.getItem){
-				self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-			}
-			var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-			(function() {
-			  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-			    var msViewportStyle = document.createElement("style");
-			    msViewportStyle.appendChild(
-			      document.createTextNode("@-ms-viewport{width:auto!important}")
-			    );
-			    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-			  }
-			})();
-			/* breaks on Windows Phone
-			if (isMobile){
-				Hammer(document.getElementById('charactersContainer'))
-					.on("swipeleft", self.shiftArrayLeft)
-					.on("swiperight", self.shiftArrayRight);
-			}*/
-	
-			if (isMobile) {
-			    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-					StatusBar.overlaysWebView(false);
-			    }
-				if (typeof StatusBar !== "undefined"){		
-				    StatusBar.styleLightContent();
-				    StatusBar.backgroundColorByHexString("#000");
+			try {
+				self.doRefresh.subscribe(self.refreshHandler);
+				self.refreshSeconds.subscribe(self.refreshHandler);
+				self.loadoutMode.subscribe(self.refreshHandler);		
+				self.bungie_cookies = "";
+				if (window.localStorage && window.localStorage.getItem){
+					self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 				}
-			}
-	
-			if (isMobile && isEmptyCookie){
-				self.bungie = new bungie();
-				self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
-			}	
-			else {
-				setTimeout(function(){ self.loadData() }, isChrome || isMobile ? 1 : 5000);		
-			}
-			$("form").bind("submit", false);
-			$("html").click(function(e){
-				if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
-					$("#move-popup").hide();
+				var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
+				(function() {
+				  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+				    var msViewportStyle = document.createElement("style");
+				    msViewportStyle.appendChild(
+				      document.createTextNode("@-ms-viewport{width:auto!important}")
+				    );
+				    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+				  }
+				})();
+				/* breaks on Windows Phone
+				if (isMobile){
+					Hammer(document.getElementById('charactersContainer'))
+						.on("swipeleft", self.shiftArrayLeft)
+						.on("swiperight", self.shiftArrayRight);
+				}*/
+		
+				if (isMobile) {
+				    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+						StatusBar.overlaysWebView(false);
+				    }
+					if (typeof StatusBar !== "undefined"){		
+					    StatusBar.styleLightContent();
+					    StatusBar.backgroundColorByHexString("#000");
+					}
 				}
-			});
-			/* this fixes issue #16 */
-			$(window).resize(_.throttle(self.bucketSizeHandler, 500));
+		
+				if (isMobile && isEmptyCookie){
+					self.bungie = new bungie();
+					self.activeUser(new User({"code": 99, "error": "Please sign-in to continue."}));
+				}	
+				else {
+					setTimeout(function(){ self.loadData() }, isChrome || isMobile ? 1 : 5000);		
+				}
+				$("form").bind("submit", false);
+				$("html").click(function(e){
+					if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+						$("#move-popup").hide();
+					}
+				});
+				/* this fixes issue #16 */
+				$(window).resize(_.throttle(self.bucketSizeHandler, 500));			
+			}catch(e){
+				console.log(e);
+				console.log(e.toString());
+			}
 			
 			ko.applyBindings(self);
 		}
