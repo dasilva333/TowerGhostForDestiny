@@ -1173,12 +1173,32 @@ var app = new (function() {
 		
 		ko.applyBindings(self);
 	}
+
+	this.scrollTop = function() {
+	    var target = $("body");
+
+	    //disable touch scroll
+	    target.css({
+		'-webkit-overflow-scrolling' : 'auto',
+		'overflow-y' : 'hidden'
+	    });
+
+	    //animate
+	    target.animate({ scrollTop: 0}, 300, "swing", function(){
+
+	    //re-enable touch scrolling
+	    target.css({
+		'-webkit-overflow-scrolling' : 'touch',
+		'overflow-y' : 'scroll'
+	    });
+	});}
 }); 
 
 window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: app.renderCallback, isEnabled: app.tooltipsEnabled() };
 
 if (isMobile){
 	document.addEventListener('deviceready', app.init, false);
+	window.addEventListener('statusTap', app.scrollTop, false);
 } else {
 	$(document).ready(app.init);
 }
