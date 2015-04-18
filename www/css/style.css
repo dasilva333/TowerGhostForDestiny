@@ -59,7 +59,7 @@ body {
     padding: 1px;
     padding-left: 3px;
 }
-.move-popup .attkIcon div { background-color: white; text-transform: uppercase; padding:1px; width:3em; } 
+.move-popup .attkIcon div { background-color: white; text-transform: uppercase; padding:1px; width:3em; }
 .col-centered { float:none; margin:0 auto; }
 .locations img { max-width: 97%; }
 #loadout-create {
@@ -108,29 +108,59 @@ body {
 .loadout-set .button-delete:hover, .loadout-set .button-edit:hover {
     background-color: rgba(195,188,180,.6);
 }
-.attkIcon { 
-	position: relative; 
+
+.bucket-item {
+    padding: 1px !important;
 }
-.attkIcon > div { 
-	position: absolute; 
-	bottom: 0px; 
-	left: 0px; 
+
+.attkIcon {
+	position: relative;
+}
+.attkIcon > div {
+	position: absolute;
+	bottom: 1px;
+	left: 1px;
 	color: #333;
 	font-weight: bold;
-	font-size: 0.9em; 
-	width: 2em;
+	font-size: 0.8em;
+    line-height: 1;
+    padding: 2px 3px;
 }
+
+.complete .attkIcon > div {
+    bottom: 2px;
+    left: 2px;
+}
+
+.bucket-item a {
+    display: block;
+    padding-top: 100%;
+    position: relative;
+}
+
+.itemImage {
+    position: absolute;
+    top:0;
+    right: 0;
+    bottom:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid white;
+}
+
 .list-group-item .itemImage {
 	width: 48px;
 }
+
 .itemImage {
-	max-width: 97%;
-	border:1px solid white;
 }
+
 .itemBucket {
   /* border: 1px solid white; */
   background: rgba(255,255,255,.1);
 }
+
 .icon { width: 24px; }
 .title {
     text-transform: uppercase;
@@ -206,7 +236,7 @@ body {
     margin: 6px;
     cursor: pointer;
 }
-#loadout-options .move-loadout { 
+#loadout-options .move-loadout {
 	float: none !important;
 	display: inline-block !important;
 }
