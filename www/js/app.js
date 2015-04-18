@@ -806,9 +806,10 @@ var app = new (function() {
 				tierType: info.tierType, //6 (Exotic) 5 (Legendary)
 				icon: self.bungie.getUrl() + info.icon,
 				isEquipped: item.isEquipped,
-				isGridComplete: item.isGridComplete
+				isGridComplete: item.isGridComplete,
+				locked: item.locked
 			};
-			/*if ( itemObject.description.indexOf("Engram") > -1 ){
+			/*if ( itemObject.description.indexOf("Painted") > -1 ){
 				console.log(itemObject);
 				console.log(info);
 				console.log(itemObject.typeName + " " + info.classType);

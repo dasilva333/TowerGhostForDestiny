@@ -30,6 +30,13 @@
   </head>
 
   <body>
+	  	<script type="text/html" id="items-template">
+			<div class="lockIcon" data-bind="visible: locked"><img src="assets/lock.png"></div>
+			<a data-bind="attr:{href:item.href, instanceId:item._id}">
+				<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
+			</a>
+			<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>    
+	    </script>
 		<script type="text/html" id="sections-template">
 			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
 				<div class="title" data-bind="visible: bucketType !== 'Subclasses'">
@@ -53,18 +60,14 @@
 					<div class="itemBucket" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9') + ' ' + bucketType">
 						<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
 							<span class="bucket-item" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
-								<a data-bind="attr:{href:item.href, instanceId:item._id}">
-									<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
-								</a>
-								<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
+								<span data-bind="template: { name: 'items-template', data: item }"></span>
 							</span>
 						</div>
 					</div>
 
 					<div style="padding-left: 4px;" class="bucket-item col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
 						<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-							<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: setActiveItem, moveItem: true"></a>
-							<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
+							<span data-bind="template: { name: 'items-template', data: $data, as: 'item' }"></span>
 						</span>
 					</div>
 				</div>
@@ -303,10 +306,7 @@
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
 					<span class="item" data-bind="css: isGridComplete ? 'complete' : ''">
-						<a data-bind="attr:{href:item.href, instanceId:item._id}, click:">
-							<img class="itemImage" data-bind="attr: { src: item.icon }, click: setActiveItem, moveItem: true">
-						</a>
-						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
+						<span data-bind="template: { name: 'items-template', data: item }"></span>
 					</span>
 					<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip" title="Enable to mark as the equip item">
 				</span>

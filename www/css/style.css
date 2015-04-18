@@ -84,7 +84,6 @@ body {
     color: rgba(245,245,245,.6);
     text-align: center;
     vertical-align: middle;
-    margin-left: 10px;
 }
 #loadout-options p {
   display: inline;
@@ -266,3 +265,5 @@ body {
 }
 li a { color: #3080CF }
 .Subclasses { min-height: 0px !important; }
+.lockIcon { position: relative; }
+.lockIcon img { position: absolute; }
