@@ -27,11 +27,17 @@ var dialog = (function(options){
 		self.modal.open();
 		return self;
 	}
+	
+	return self.modal;
 });
 
 var activeElement;
 var moveItemPositionHandler = function(element, item){
 	return function(){
+		if (app.destinyDbMode() == true){
+			window.open(item.href,"_blank");
+			return false;
+		}
 		if (app.loadoutMode() == true){
 			if (app.activeLoadout().ids().indexOf( item._id )>-1)
 				app.activeLoadout().ids.remove(item._id);
@@ -168,7 +174,8 @@ var app = new (function() {
 		shareUrl: "",
 		showMissing: false,
 		showUniques: false,
-		tooltipsEnabled: isMobile ? false : true
+		tooltipsEnabled: isMobile ? false : true,
+		autoTransferStacks: false
 	};
 	
 	var getValue = function(key){
@@ -196,11 +203,13 @@ var app = new (function() {
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
 	this.loadoutMode = ko.observable(false);
+	this.destinyDbMode = ko.observable(false);
 	this.activeLoadout = ko.observable(new Loadout());
 	this.loadouts = ko.observableArray();
 	this.searchKeyword = ko.observable(defaults.searchKeyword);
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
+	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
 	this.tierFilter = ko.computed(new StoreObj("tierFilter"));
@@ -313,10 +322,18 @@ var app = new (function() {
 	this.toggleRefresh = function(){
 		self.toggleBootstrapMenu();
 		self.doRefresh(!self.doRefresh());
-	}	
-	this.toggleDestinyTooltips = function(){
+	}
+	this.toggleTransferStacks = function(){
 		self.toggleBootstrapMenu();
-		self.tooltipsEnabled(!self.tooltipsEnabled());		
+		self.autoTransferStacks(!self.autoTransferStacks());	
+	}
+	this.toggleDestinyDbMode = function(){
+		self.toggleBootstrapMenu();
+		self.destinyDbMode(!self.destinyDbMode());	
+	}
+	this.toggleDestinyDbTooltips = function(){
+		self.toggleBootstrapMenu();
+		self.tooltipsEnabled(!self.tooltipsEnabled());
 	}
 	this.toggleShareView = function(){
 		self.toggleBootstrapMenu();
@@ -819,6 +836,7 @@ var app = new (function() {
 }); 
 
 window.zam_tooltips = { addIcons: false, colorLinks: false, renameLinks: false, renderCallback: app.renderCallback, isEnabled: app.tooltipsEnabled() };
+BootstrapDialog.defaultOptions.nl2br = false;
 
 if (isMobile){
 	window.addEventListener("statusTap", function() {

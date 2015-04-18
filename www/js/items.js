@@ -281,17 +281,19 @@ Item.prototype = {
 			if (self.primaryStat == 1){
 				done();
 			}
-			else {
-				(new dialog({
+			else if (app.autoTransferStacks() == true){
+				transferAmount = self.primaryStat; 
+				done();
+			}
+			else {				
+				var dialogItself = (new dialog({
 		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
 		            buttons: [
 						{
 		                	label: 'Transfer',
 							cssClass: 'btn-primary',
-							action: function(dialogItself){
-								transferAmount = parseInt($("input#materialsAmount").val());
-								if (!isNaN(transferAmount)){ done(); dialogItself.close(); }
-								else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
+							action: function(){
+								finishTransfer()
 							}
 		            	}, 
 						{
@@ -301,7 +303,13 @@ Item.prototype = {
 			                }
 		            	}
 		            ]
-		        })).title("Transfer Materials").show();			
+		        })).title("Transfer Materials").show(),
+				finishTransfer = function(){
+					transferAmount = parseInt($("input#materialsAmount").val());
+					if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
+					else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
+				}
+				setTimeout(function(){ $("#materialsAmount").focus().bind("keyup", function(e){ if(e.keyCode == 13) { finishTransfer() } }) }, 500);	
 			}
 		}
 		else {
