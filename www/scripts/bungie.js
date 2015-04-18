@@ -81,6 +81,7 @@ try {
 	    });
 	  }
 	
+	  var maxRetries = 3;
 	  function _request(opts) {
 	  	//This is for Mobile platform/Chrome
 		//console.log("received a _request");
@@ -102,7 +103,16 @@ try {
 		      }
 		    };
 		
-		    r.onerror = function() { opts.complete({error: 'connection error'}); };
+		    r.onerror = function() { 
+				if (opts && opts.tries && opts.tries == maxRetries){
+					opts.complete({error: 'connection error'}); 
+				}
+				else {
+					opts.tries = (opts.tries || 0);
+					opts.tries++;
+					_request(opts);
+				}
+			};
 		
 		    _getToken(function(token) {
 				//console.log("_getToken finished with " + token);
@@ -149,7 +159,7 @@ try {
 	      route: '/User/GetBungieNetUser/',
 	      method: 'GET',
 	      complete: function(res, response) {
-			if (response.ErrorCode && response.ErrorCode > 1){			
+			if (response && response.ErrorCode && response.ErrorCode > 1){			
 				callback({error: response.Message, code: response.ErrorCode});
 	         	return;
 			}

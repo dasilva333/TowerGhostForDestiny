@@ -676,15 +676,20 @@ var app = new (function() {
 	      });
 	   	});
 		if (activeItem){
-			/* Weapons */
+			/* Damage Colors */
 			if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1){
 				var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
 				$content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
 			}
-			if (activeItem.perks && $content.find(".destt-talent").length == 0){
+			/* Weapon Perks */
+			if ( (activeItem.perks && $content.find(".destt-talent").length == 0) ){
 				$content.find(".destt-info").prepend(perksTemplate({ perks: activeItem.perks }));
 			}
-			/* Armor */
+			/* Armor Perks */
+			else if (activeItem.perks && DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6){
+				$content.find(".destt-talent").html( perksTemplate({ perks: activeItem.perks }));
+			}
+			/* Armor Stats */
 			var stats = $content.find(".destt-stat");
 			if (activeItem.stats && stats.length > 0){
 				stats.html(
@@ -826,31 +831,25 @@ var app = new (function() {
 			if (info.bucketTypeHash in DestinyBucketTypes){
 			
 				/* both weapon engrams and weapons fit under this condition*/
-				if (itemObject.bucketType in DestinyWeaponPieces){
-					/*console.log(itemObject);
-					console.log(info);
-					console.log(itemObject.typeName + " " + info.classType);*/
-					/* only actual weapons fit under this condition */
-					if ( info.itemType == 3 ){
-						itemObject.perks = item.perks.map(function(perk){
-							if (perk.perkHash in window._perkDefs){
-								var p = window._perkDefs[perk.perkHash];
-								return {
-									iconPath: app.bungie.getUrl() + perk.iconPath,
-									name: p.displayName,
-									description: p.displayDescription
-								}
+				if ( (DestinyWeaponPieces.indexOf(itemObject.bucketType) > -1 || DestinyArmorPieces.indexOf(itemObject.bucketType) > -1) && item.perks.length > 0 ){
+					itemObject.perks = item.perks.map(function(perk){
+						if (perk.perkHash in window._perkDefs){
+							var p = window._perkDefs[perk.perkHash];
+							return {
+								iconPath: app.bungie.getUrl() + perk.iconPath,
+								name: p.displayName,
+								description: p.displayDescription
 							}
-							else {
-								return perk;
-							}					
-						});
-						if (info.talentGridHash in window._talentGridDefs){					
-							itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
 						}
 						else {
-							itemObject.isUnique = false;
-						}				
+							return perk;
+						}					
+					});
+					if (info.talentGridHash in window._talentGridDefs){					
+						itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
+					}
+					else {
+						itemObject.isUnique = false;
 					}				
 				}
 			
