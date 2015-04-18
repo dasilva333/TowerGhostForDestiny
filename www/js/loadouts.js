@@ -42,7 +42,6 @@ var Loadout = function(model){
 	this.remove = function(){
 		app.loadouts.remove(self);
 		app.createLoadout();
-		app.saveLoadouts();
 	}
 
 	this.save = function(){
@@ -60,15 +59,10 @@ var Loadout = function(model){
 				var match = _.findWhere(character.items() , { _id: instanceId });
 				if (match) itemFound = match;
 			});
-			try {
-				if(itemFound){
-					itemFound.doEquip = self.bindEquipIds(itemFound._id);
-					itemFound.markAsEquip = self.markAsEquip;
-				}			
-			}
-			catch(e){
-				console.log(e);
-			}
+			if(itemFound){
+				itemFound.doEquip = self.bindEquipIds(itemFound._id);
+				itemFound.markAsEquip = self.markAsEquip;
+			}				
 			return itemFound;
 		});	
 		return _items;
@@ -128,7 +122,7 @@ var Loadout = function(model){
 	/* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	/* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
 	this.transfer = function(targetCharacterId){
-		//try {
+		try {
 			var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
 			var getFirstItem = function(sourceBucketIds, itemFound){
 				return function(otherItem){
@@ -173,19 +167,10 @@ var Loadout = function(model){
 								var itemFound = false;
 								var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
 								swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
-								//console.log("found swap item " + swapItem.description);
-								if ( swapItem ){								
-									return {
-										targetItem: item,
-										swapItem: swapItem,
-										description: item.description + " will be swapped with " + swapItem.description
-									}
-								}	
-								else {								
-									return {
-										targetItem: item,
-										description: item.description + " will just be moved"
-									}	
+								return {
+									targetItem: item,
+									swapItem: swapItem,
+									description: item.description + "'s swap item is " + swapItem.description
 								}							
 							}
 						});						
@@ -212,7 +197,7 @@ var Loadout = function(model){
 							else {							
 								return {
 									targetItem: item,
-									description: item.description + " will be just be moved"
+									description: item.description + " will be added with no swaps"
 								}
 							}
 						});
@@ -232,9 +217,9 @@ var Loadout = function(model){
 				]})).title("Transfer Confirm").content($template).show();
 				
 			}		
-		//}catch(e){
-			//console.log(e.toString());
-		//}		
+		}catch(e){
+			console.log(e.toString());
+		}		
 	}
 }
 

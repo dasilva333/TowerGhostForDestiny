@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <title>Tower Ghost for Destiny</title>
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />	
+    <title>Tower Ghost for Destiny</title>    
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<meta name="viewport" id="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
-	<script src="http://jsconsole.com/remote.js?4C0D4FD4-BE56-4F07-889F-48EDEB27E96F"></script>
 	<script language="JavaScript" type="text/javascript" src="data/itemDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="data/statDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="data/perkDefs.js"></script>
@@ -26,9 +25,7 @@
 	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/loadouts.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/app.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/items.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/profiles.js"></script>
-	<script language="JavaScript" type="text/javascript" src="js/tooltips.min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="js/tooltips.min.js"></script>	
 	<script type="text/javascript" src="cordova.js"></script>
   </head>
 
@@ -36,7 +33,7 @@
 		<script type="text/html" id="sections-template">
 			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
 				<div class="title">
-					<span data-bind="text: bucketType"></span>
+					<span data-bind="text: bucketType"></span> 
 					<span data-bind="visible: character.id !== 'Vault'">
 						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
 							(<span data-bind="text: character.get(bucketType).length+1"></span>/10)
@@ -50,12 +47,12 @@
 					</span>
 					<span data-bind="visible: character.id == 'Vault'">
 						(<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
-					</span>
+					</span>				
 				</div>
 				<div class="row no-gutter" style="margin:auto;">
 					<div class="itemBucket" data-bind="css: (character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
 						<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
-							<span class="bucket-item" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
+							<span data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 								<a data-bind="attr:{href:item.href, instanceId:item._id}">
 									<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
 								</a>
@@ -63,8 +60,7 @@
 							</span>
 						</div>
 					</div>
-
-					<div style="padding-left: 4px;" class="bucket-item col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
+					<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
 						<span class="col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 							<a data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, click: setActiveItem, moveItem: true"></a>
 							<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
@@ -72,7 +68,7 @@
 					</div>
 				</div>
 			<!--/ko  -->
-		</script>
+		</script>		
 		<nav class="navbar navbar-default navbar-fixed-top">
 		  <div class="container-fluid">
 		    <div class="navbar-header">
@@ -82,19 +78,19 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 1.9.4</a>
+		      <a class="navbar-brand" href="#">TGD 1.8.9</a>
 		    </div>
-
+		
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		      <ul class="nav navbar-nav">
-
+				
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/cog.png"> <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
 		            	<li><a href="#" data-bind="fastclick: showAbout">About</a></li>
 						<li><a href="#" data-bind="fastclick: showHelp">Help</a></li>
 						<li class="active"><a href="#" data-bind="fastclick: donate">Donate</a></li>
-						<li class="divider"></li>
+						<li class="divider"></li>						
 						<li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
 						<li><a href="#" data-bind="fastclick: openBungieWindow('Wlid')">Live Login</a></li>
 						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
@@ -103,9 +99,7 @@
 						<li><a href="#" data-bind="fastclick: toggleShareView">Share URL</a></li>
 						<li><a href="#" data-bind="fastclick: clearFilters">Clear Filters</a></li>
 						<li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
-						<li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
-						<li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''"><a href="#">DestinyDB Mode</a></li>
-						<li data-bind="fastclick: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''"><a href="#">Auto Transfer Stacks</a></li>
+						<li data-bind="fastclick: toggleDestinyTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 		          </ul>
 		        </li>
 				<li class="dropdown"><a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
@@ -116,7 +110,7 @@
 				    <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="0"><a href="#">All</a></li>
 		            <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="1"><a href="#">Weapons</a></li>
 					<li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="2"><a href="#">Armor</a></li>
-		            <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="3"><a href="#">General</a></li>
+		            <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', click: setView" value="3"><a href="#">Other</a></li>
 		          </ul>
 		        </li>
 		        <li class="dropdown">
@@ -152,7 +146,7 @@
 		          <ul class="dropdown-menu" role="menu">
 		            <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', click: setProgressFilter" value="0"><a href="#">All</a></li>
 					<li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', click: setProgressFilter" value="1"><a href="#">Missing XP</a></li>
-		            <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', click: setProgressFilter" value="2"><a href="#">Full XP</a></li>
+		            <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', click: setProgressFilter" value="2"><a href="#">Full XP</a></li> 
 		            <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', click: setProgressFilter" value="3"><a href="#">Maxed</a></li>
 		          </ul>
 		        </li>
@@ -168,7 +162,7 @@
 		          </ul>
 		        </li>
 				<li class="dropdown">
-		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Damage <span class="caret"></span></a>
+		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Burn <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Kinetic"><a href="#"><img src="assets/kinetic.png" class="icon">Kinetic (None)</a></li>
 					<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', click: setDmgFilter" value="Solar"><a href="#"><img src="assets/solar.png" class="icon">Solar</a></li>
@@ -197,11 +191,11 @@
 			<strong>DestinyExotics.com</strong> Share URL: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
 		</div>
 		<div class="alert alert-success" data-bind="visible: showMissing" style="display:none; ">
-			<strong class="col-xs-12 col-md-12 col-md-1 col-lg-1">Missing Items</strong>
+			<strong class="col-xs-12 col-md-12 col-md-1 col-lg-1">Missing Items</strong> 
 			<span data-bind="foreach: { data: missingSets }">
 				<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, click: function(){ return false }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>
 			</span>
-		</div>
+		</div>		
 		<div data-bind="with: $root.activeUser()" style="">
 			<div class="alert alert-danger" data-bind="visible: typeof error !== 'undefined'" style="display:none;">
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
@@ -214,7 +208,7 @@
 					</ol>
 				</div>
 			</div>
-		</div>
+		</div>		
 		<div class="progress progress-striped active" style="display:none;" data-bind="visible: loadingUser">
 			<div class="progress-bar progress-bar-info" id="loadingBar" style="width: 100%"></div>
 		</div>
@@ -236,7 +230,7 @@
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>equip</div></div>
-					</div>
+					</div>								
 				  </div>
 				</div>
 			</div>
@@ -250,7 +244,7 @@
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
 							<div class="class" data-bind="text: classType"></div>
 							<div class="level" data-bind="text: level"></div>
-						  </div>
+						  </div>				
 						</div>
 						<div>
 							<div class="items" data-type="item">
@@ -268,13 +262,13 @@
 								<div class="title"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
 								<!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
 								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
-								</div>
+								</div>								
 							  </div>
 							  <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
 								<div class="title"><strong>Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
 								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }">
-								</div>
-							  </div>
+								</div>								
+							  </div>					  
 							</div>
 						</div>
 					</div>
@@ -307,63 +301,63 @@
 						<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>
 					</span>
 					<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip" title="Enable to mark as the equip item">
-				</span>
+				</span>	 	
 			</div>
-		</div>
+		</div>		
 		<div id="about" style="display:none">
-			<h2>Tower Ghost for Destiny<br>
-			 Manage your gear anywhere</h2>
+			<strong>Tower Ghost for Destiny: Manage your gear anywhere</strong>
+			
+			 This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie.<br>			 
+			 All information used on this site is the property of Bungie.<br>			
 
-			 This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie.
-			 All information used on this site is the property of Bungie.<br><br><br>
-
-			<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
+			Contact me on <a href="http://www.reddit.com/user/dasilva333/">Reddit</a> or <a href="https://github.com/dasilva333/">Github</a>. 
+			
+			<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 				<input type="hidden" name="cmd" value="_s-xclick">
 				<input type="hidden" name="hosted_button_id" value="5X265ELN4Y5FU">
 				<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!"> to keep this project alive.
 				<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
 			</form>
-
-			<h3>Current Features Supported</h3>
-
+					
+			<h5>Current Features Supported</h5>
+			
 			<ul>
-				<li><a href="http://destinydb.com" target="_blank">DestinyDB.com</a> tooltips option now display custom stats: perks, burn, level for armor and weapons</li>
-				<li><a href="http://DestinyExotics.com" target="_blank">DestinyExotics.com</a> integration find out what you're missing and share your url with friends</li>
-				<li>Loadouts sync across all devices via <a href="http://www.TowerGhostForDestiny.com">www.TowerGhostForDestiny.com</a></li>
-				<li>Multiple primaries, special, heavy per loadout</li>
-				<li>Option to equip an item per bucket in your loadout</li>
 				<li>Equipping items & transferring items across characters</li>
-				<li>Filter by Perk Name, Description, Gun Name</li>
-				<li>Filter by gun progress (Maxed (gold border), Full XP, Missing XP)</li>
-				<li>Filter by burn (Kinetic, Arc, Solar, Void)</li>
+				<li>Filter by Perk Name, Perk Description, and Item Name</li>
+				<li>Filter by item progress (Maxed (gold border), Full XP, Missing XP)</li>
+				<li>Filter by burn type (Kinetic, Arc, Solar, Void)</li>
 				<li>Filter by weapon type (Scout, Auto, Hand Cannon, etc...)</li>
 				<li>Filter by Tier (Exotic, Legendary, Rare, etc...)</li>
-				<li>Auto Refresh Toggle, Custom set seconds</li>
+				<li>Filter by Set (VOG, Crota, Iron Banner, Exotic)</li>
+				<li>Auto Refresh option, custom set seconds</li>
+				<li>DestinyDB tooltips option now display custom stats: perks, burn, level</li>
+				<li>Personal primary stats in transfer popup</li>
+				<li>DestinyExotics.com share url with friends and see what items you're missing with the Set filter.</li>
 				<li>Inline stat values on the item icons</li>
-				<li>Filter by Weapons, Armor or General items</li>
-				<li>Supports dual-linked accounts to Xbox and Playstation</li>
-				<li>Change emblem dynamically</li>
+				<li>Change Emblem dynamically</li>
 			</ul>
+			
+			<div data-bind="visible: isMobile">
+				<h5>Troubleshooting on Mobile</h5>
 
-			<h3>Support and New Issues</h3>
-
-			<a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_blank">Github.com</a> or<br>
-
-			Contact me on via email <a href="mailto:support@towerghostfordestiny.com">support@towerghostfordestiny.com</a>
+				<p>Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials.<br>
+					If you don't see that message then go to <strong>Settings</strong> then <strong> Log in XBL/PSN</strong> and close the pop up window after Bungie.net has completely finished loading.<br>		
+					After the window closes the items should load automatically give it a few seconds to load you should see a blue loading bar while its getting your information.<br>
+					If the page doesn't load after sign in then try <strong>Settings</strong> then <strong>Refresh Items</strong>. <br>
+					Good luck guys and remember this is still a beta build.
+				</p>
+			</div>
+			
+			<h5>Support and New Issues</h5>
+			
+			<a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_blank">https://github.com/dasilva333/TowerGhostForDestiny/</a>	
 		</div>
 		<div id="help" style="display:none">
 			<ul>
-				<li><strong>About</strong> Displays information about the app and the author.</li>
-				<li><strong>Donate</strong> Paypal link to support the cause and keep the project alive.</li>
-				<li><strong>Share URL</strong> Generates a <a href="http://DestinyExotics.com">DestinyExotics.com</a> URL you can share with your friends showing what weapons you have in your inventory.</li>
+				<li><strong>Share</strong> Generates a URL you can share with your friends showing what weapons you have in your inventory.</li>
 				<li><strong>Clear Filters</strong> Resets all the filters back to their default state.</li>
-				<li><strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds.</li>
 				<li><strong>Change Page</strong> Toggle between different views first page is Weapons, second page is Armor, third page is Styling/Misc</li>
-				<li><strong>DestinyDB Tooltips</strong> Allows for taps or hovers to enable the tooltip, if disabled double tap or double click enables the tooltip.</li>
-				<li><strong>DestinyDB Mode</strong> When enabled clicking on an item will open a new tab showing you the full stats of the item.</li>
-				<li><strong>Auto Transfer Stacks</strong> When enabled you will not be prompted and the entire stack will be transferred (consumables, materials).</li>
-				<li><strong>View</strong> Toggle between different views first page is Weapons, second page is Armor, third page is General</li>
-				<li><strong>Tier</strong> Filter by the rarity of the item (rare, legendary, exotic) <br></li>
+				<li><strong>Tier</strong> Filter by the rarity of the item <br></li>
 				<li><strong>Set</strong> Preset collections from various activiies in Destiny for an easy to filter list<br></li>
 				<li><strong>Progress</strong> <em>Missing XP:</em> Items that do not have their circles completely filled in with XP.<br></li>
 				<li><strong>Progress</strong> <em>Full XP:</em> Items that have been completely filled with XP but is missing the gold border.<br></li>
@@ -371,7 +365,8 @@
 				<li><strong>Damage</strong> Filter by burn type, kinetic is the default burn applied to all weapons if it's not arc, void or solar.<br></li>
 				<li><strong>Weapon</strong> Filter by type of weapon, this list will only show types you have in your inventory.<br></li>
 				<li><strong>Name or Perk</strong> Filter by the name of the item, or the name of the perk, or the description in the perk.<br></li>
-			</ul>
+				<li><strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds.</li>
+			</ul>			
 		</div>
 	</body>
 </html>
