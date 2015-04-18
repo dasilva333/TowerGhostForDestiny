@@ -179,7 +179,9 @@ var app = new (function() {
 	};
 	
 	var getValue = function(key){
-		var saved = window.localStorage.getItem(key);
+		var saved = "";
+		if (window.localStorage && window.localStorage.getItem)
+			saved = window.localStorage.getItem(key);
 		if (_.isEmpty(saved)){
 			return defaults[key];
 		}
@@ -787,7 +789,10 @@ var app = new (function() {
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);		
-		self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
+		self.bungie_cookies = "";
+		if (window.localStorage && window.localStorage.getItem){
+			self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
+		}
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
 		(function() {
 		  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {

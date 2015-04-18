@@ -1,4 +1,4 @@
-<sdasad!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
@@ -246,7 +246,7 @@
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
 					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile">
 						<div class="character clearfix">
-						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }"> <!-- the bg is 474 px base the design off that--->
+						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }">
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
 							<div class="class" data-bind="text: classType"></div>
 							<div class="level" data-bind="text: level"></div>
@@ -266,7 +266,7 @@
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
 								<div class="title"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
-								<!--- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 --->
+								<!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
 								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
 								</div>
 							  </div>
