@@ -1,5 +1,3 @@
-try {
-
 	window.isChrome = (typeof chrome !== "undefined");
 	window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
 	window.supportsCloudSaves = window.isChrome || window.isMobile;
@@ -858,7 +856,3 @@ try {
 	
 	ga('create', 'UA-61575166-1', 'auto');
 	ga('send', 'pageview');
-}catch(e){
-	console.log(e);
-	alert(e.toString());
-}
