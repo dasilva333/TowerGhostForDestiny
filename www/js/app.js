@@ -968,7 +968,7 @@ var app = new (function() {
 		});		
 	}
 	
-	this.loadData = function(ref, loop){
+	this.loadData = function(ref){
 		if (self.loadingUser() == false){
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
@@ -977,11 +977,13 @@ var app = new (function() {
 				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
+					if (ref && ref.close){
+						self.readBungieCookie(ref);
+					}
 					return
 				}
-				if (ref && loop){
+				if (ref && ref.close){
 					ref.close();
-					clearInterval(loop);
 				}
 				self.loadLoadouts();
 				self.search();
@@ -1038,33 +1040,22 @@ var app = new (function() {
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop;
-			//overwrite the same reference to avoid crashing?
 			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');			
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
-					clearInterval(loop);
 					ref.executeScript({
 						code: 'document.location.href'
 					}, function(result) {
 						/* only load cookie reader on homepage */		
 						if (result.toString() == self.bungie.getUrl()){
-							loop = setInterval(function() {
-								self.readBungieCookie(ref, loop);							
-							}, 500);
+							self.readBungieCookie(ref, loop);
 						}
-					});
-					
-				});
-				ref.addEventListener('loadstart', function(event) {
-					clearInterval(loop);
+					});					
 				});
 				ref.addEventListener('exit', function() {
 					if (self.loadingUser() == false){
-						clearInterval(loop);
 						if (_.isEmpty(self.bungie_cookies)){
-							loop = setInterval(function() {
-								self.readBungieCookie(ref, loop);
-							}, 500);
+							self.readBungieCookie(ref, loop);
 						}
 						else {
 							self.loadData();
