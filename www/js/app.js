@@ -846,25 +846,6 @@ try {
 	BootstrapDialog.defaultOptions.nl2br = false;
 	
 	if (isMobile){
-		window.addEventListener("statusTap", function() {
-		    var target = $("body");
-		 
-		    //disable touch scroll to kill existing inertial movement
-		    target.css({
-		        '-webkit-overflow-scrolling' : 'auto',
-		        'overflow-y' : 'hidden'
-		    });
-		 
-		    //animate
-		    target.animate({ scrollTop: 0}, 300, "swing", function(){
-		 
-		        //re-enable touch scrolling
-		        target.css({
-		            '-webkit-overflow-scrolling' : 'touch',
-		            'overflow-y' : 'scroll'
-		        });
-		    });
-		});
 		document.addEventListener('deviceready', app.init, false);
 	} else {
 		$(document).ready(app.init);
