@@ -148,9 +148,13 @@ var Loadout = function(model){
 				var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key){
 					var sourceBucket = sourceGroups[key];
 					var targetBucket = targetGroups[key];
+					var maxBucketSize = 10;									
+					if (targetCharacter.id == "Vault"){
+						maxBucketSize = ( DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
+					}
 					/* use the swap item strategy */
-					/* by finding a random item in the targetBucket that isnt part of sourceBucket */					
-					if (sourceBucket.length + targetBucket.length > 9){
+					/* by finding a random item in the targetBucket that isnt part of sourceBucket */
+					if (sourceBucket.length + targetBucket.length >= maxBucketSize){
 						var sourceBucketIds = _.pluck( sourceBucket, "_id");
 						var swapArray = _.map(sourceBucket, function(item){
 							/* if the item is already in the targetBucket */
