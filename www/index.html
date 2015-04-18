@@ -32,7 +32,7 @@
   <body>
 		<script type="text/html" id="sections-template">
 			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
-				<div class="title">
+				<div class="title" data-bind="visible: bucketType !== 'Subclasses'">
 					<span data-bind="text: bucketType"></span>
 					<span data-bind="visible: character.id !== 'Vault'">
 						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
@@ -50,7 +50,7 @@
 					</span>
 				</div>
 				<div class="row no-gutter" style="margin:auto;">
-					<div class="itemBucket" data-bind="css: (character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9'">
+					<div class="itemBucket" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12 col-sm-12 col-md-12 col-lg-12' : 'col-xs-9 col-sm-9 col-md-9 col-lg-9') + ' ' + bucketType">
 						<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
 							<span class="bucket-item" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3 col-sm-3 col-md-3 col-lg-3' : 'col-xs-4 col-sm-4 col-md-4 col-lg-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 								<a data-bind="attr:{href:item.href, instanceId:item._id}">
@@ -222,11 +222,11 @@
 				  	Move: <span data-bind="text: description"></span>
 				  </div>
 				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.characters, as: 'avatar' }">
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault'">
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>vault</div></div>
 					</div>
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.characterId != avatar.id && avatar.id !== 'Vault'">
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>store</div></div>
 					</div>
@@ -253,23 +253,28 @@
 							<div class="items" data-type="item">
 							  <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
 								<div class="title"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
-								<div class="item-Weapon sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }">
+								<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
 								<div class="title"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
-								<div class="item-Armor sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }">
+								<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }">
+								</div>
+							  </div>
+							  <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
+								<div class="title"><strong>Sub Classes</strong></div>
+								<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
 								<div class="title"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
 								<!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
-								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
+								<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }">
 								</div>
 							  </div>
 							  <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
 								<div class="title"><strong>Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
-								<div class="item-Materials sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }">
+								<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }">
 								</div>
 							  </div>
 							</div>

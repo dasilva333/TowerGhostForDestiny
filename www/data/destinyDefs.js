@@ -32,6 +32,7 @@ var DestinyBucketTypes = {
 	"3865314626": "Materials",
 	"1469714392": "Consumables",
 	"1585787867": "Class Items",
+	"3284755031": "Subclasses",
 	"12345": "Post Master"
 }
 var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];

@@ -213,7 +213,12 @@ var Loadout = function(model){
 									}
 								}								
 							}
-							else {							
+							else if ( item.bucketType == "Subclasses" ){							
+								return {
+									description: item.description + " will not be moved"
+								}
+							}
+							else {
 								return {
 									targetItem: item,
 									description: item.description + " will be just be moved"

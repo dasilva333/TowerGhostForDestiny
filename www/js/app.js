@@ -69,7 +69,7 @@ Profile.prototype = {
 	},
 	_general: function(){
 		return _.filter(this.items(), function(item){
-			if (DestinyArmorPieces.indexOf(item.bucketType) == -1 && DestinyWeaponPieces.indexOf(item.bucketType) == -1 && item.bucketType !== "Post Master")
+			if (DestinyArmorPieces.indexOf(item.bucketType) == -1 && DestinyWeaponPieces.indexOf(item.bucketType) == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Subclasses")
 				return item;
 		});
 	},
@@ -102,8 +102,18 @@ var Item = function(model, profile){
 	this.isVisible = ko.computed(this._isVisible, this);
 	this.isEquippable = function(avatarId){
 		return ko.computed(function(){
-			 return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1) || 
-			 	(self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1);
+				//rules for how subclasses can be equipped
+			  var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
+				//if it's in this character and it's equippable
+			 return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass) || 
+			 	//if it's in another character and it's equippable
+			 	(self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass);
+		});
+	}
+	this.isStoreable = function(avatarId){
+		return ko.computed(function(){
+			return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses') ||
+				(self.bucketType == 'Subclasses' && self.isEquipped() && self.character.id == avatarId);
 		});
 	}
 }
@@ -354,11 +364,17 @@ Item.prototype = {
 			else if (sourceCharacterId !== "Vault"){
 				//console.log("from character to vault to character");
 				self.unequip(function(){
-					//console.log("unquipped item");
-					self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
-						//console.log("xfered item to vault");
-						self.transfer("Vault", targetCharacterId, transferAmount, callback);
-					});
+					if ( self.bucketType == "Subclasses" ){
+						if (callback)
+							callback(self.character);
+					}
+					else {
+						//console.log("unquipped item");
+						self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
+							//console.log("xfered item to vault");
+							self.transfer("Vault", targetCharacterId, transferAmount, callback);
+						});
+					}					
 				});
 			}
 			else {
@@ -398,7 +414,7 @@ Item.prototype = {
 					if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
 					else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
 				}
-				setTimeout(function(){ $("#materialsAmount").focus().bind("keyup", function(e){ if(e.keyCode == 13) { finishTransfer() } }) }, 500);	
+				setTimeout(function(){ $("#materialsAmount").select().bind("keyup", function(e){ if(e.keyCode == 13) { finishTransfer() } }) }, 500);	
 			}
 		}
 		else {
@@ -854,7 +870,6 @@ var app = new (function() {
 				}
 				profile.items.push( new Item(itemObject,profile) );
 			}
-			
 		}
 	}
 	
@@ -1020,7 +1035,7 @@ var app = new (function() {
 	
 	this.bucketSizeHandler = function(){
 		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
-		var maxHeight = $(".itemImage:eq(0)").height() * 3;
+		var maxHeight = $(".itemImage:visible:eq(0)").height() * 3;
 		buckets.css("min-height", maxHeight);	
 	}
 	
