@@ -1,3 +1,5 @@
+try {
+
 	window.isChrome = (typeof chrome !== "undefined");
 	window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
 	window.supportsCloudSaves = window.isChrome || window.isMobile;
@@ -848,6 +850,10 @@
 	} else {
 		$(document).ready(app.init);
 	}
+}catch(e){
+	console.log(e);
+	alert(e.toString());
+}
 	
 	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
