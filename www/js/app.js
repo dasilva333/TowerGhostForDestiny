@@ -912,6 +912,7 @@ var app = new (function() {
 				//console.log("finished loading");
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
+				self.loadLoadouts();
 				setTimeout(self.bucketSizeHandler, 500);
 			}
 		}	
@@ -1002,9 +1003,12 @@ var app = new (function() {
 				}
 				if (ref && ref.close){
 					ref.close();
+					//fix for issue #3?
+					ref = null;
 				}
-				self.loadLoadouts();
-				self.search();
+				_.defer(function(){					
+					self.search();
+				});
 			});			
 		}
 	}
