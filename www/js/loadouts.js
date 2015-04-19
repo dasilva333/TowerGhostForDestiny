@@ -53,6 +53,11 @@ var Loadout = function(model){
 		app.loadouts.push( self );
 		app.saveLoadouts();
 	}
+	this.bindEquipIds = function(instanceId){
+		return ko.computed(function(){
+			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
+		});
+	}	
 	this.items = ko.computed(function(){
 		var _items = _.map(self.ids(), function(instanceId){
 			var itemFound;
@@ -60,14 +65,9 @@ var Loadout = function(model){
 				var match = _.findWhere(character.items() , { _id: instanceId });
 				if (match) itemFound = match;
 			});
-			try {
-				if(itemFound){
-					itemFound.doEquip = self.bindEquipIds(itemFound._id);
-					itemFound.markAsEquip = self.markAsEquip;
-				}			
-			}
-			catch(e){
-				console.log(e);
+			if(itemFound){
+				itemFound.doEquip = self.bindEquipIds(itemFound._id);
+				itemFound.markAsEquip = self.markAsEquip;
 			}
 			return itemFound;
 		});	
@@ -80,11 +80,6 @@ var Loadout = function(model){
 		}
 		self.equipIds.push({ bucketType: item.bucketType, _id: item._id });
 		return true;
-	}
-	this.bindEquipIds = function(instanceId){
-		return ko.computed(function(){
-			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
-		});
 	}
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	this.findReference = function(item){

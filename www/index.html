@@ -306,9 +306,9 @@
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
 					<span class="item" data-bind="css: isGridComplete ? 'complete' : ''">
+						<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip" title="Enable to mark as the equip item" style="position: absolute;">
 						<span data-bind="template: { name: 'items-template', data: item }"></span>
-					</span>
-					<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip" title="Enable to mark as the equip item">
+					</span>					
 				</span>
 			</div>
 		</div>
