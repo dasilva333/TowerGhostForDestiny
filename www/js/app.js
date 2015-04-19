@@ -687,7 +687,7 @@ var app = new (function() {
 			}
 			/* Armor Perks */
 			else if (activeItem.perks && DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6){
-				$content.find(".destt-talent").html( perksTemplate({ perks: activeItem.perks }));
+				$content.find(".destt-talent").replaceWith( perksTemplate({ perks: activeItem.perks }));
 			}
 			/* Armor Stats */
 			var stats = $content.find(".destt-stat");
@@ -1230,6 +1230,7 @@ BootstrapDialog.defaultOptions.nl2br = false;
 
 if (isMobile){
 	window.addEventListener("statusTap", function() {
+		alert("statusTap");
 	    var target = $("body");
 	 
 	    //disable touch scroll to kill existing inertial movement
