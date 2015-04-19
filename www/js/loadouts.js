@@ -93,7 +93,8 @@ var Loadout = function(model){
 		return x;
 	}
 	this.swapItems = function(swapArray, targetCharacterId, callback){
-		var itemIndex = -1;
+		var itemIndex = -1, increments = parseInt(90 / swapArray.length), progressValue = 10;
+		var loader = $(".bootstrap-dialog-message .progress").show().find(".progress-bar").width( progressValue + "%");
 		var transferNextItem = function(){
 			//console.log("transferNextItem");
 			var pair = swapArray[++itemIndex];
@@ -103,18 +104,34 @@ var Loadout = function(model){
 					var owner = pair.targetItem.character.id;					
 					var action = (_.where( self.equipIds(), { _id: pair.targetItem._id }).length == 0) ? "store" : "equip";
 					//console.log("going to " + action + " first item " + pair.targetItem.description);
+					progressValue = progressValue + (increments / 2);
+					loader.width( progressValue + "%" );
 					self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
 						if (typeof pair.swapItem !== "undefined"){
-							self.findReference(pair.swapItem).store(owner, transferNextItem);
+							self.findReference(pair.swapItem).store(owner, function(){
+								progressValue = progressValue + (increments / 2);
+								loader.width( progressValue + "%" );
+								transferNextItem();
+							});
 						}	
-						else { transferNextItem(); }
+						else { 
+							progressValue = progressValue + increments;
+							loader.width( progressValue + "%" );
+							transferNextItem();
+						}
 					}, true);
 				}
-				else { transferNextItem(); }
+				else { 
+					progressValue = progressValue + increments;
+					loader.width( progressValue + "%" );
+					transferNextItem(); 
+				}
 			}
 			else {
 				//console.log("pair is not defined, calling callback");
+				progressValue = progressValue + increments;
+				loader.width( progressValue + "%" );
 				if (callback)
 					callback();
 			}
@@ -232,6 +249,7 @@ var Loadout = function(model){
 			if (masterSwapArray.length > 0){
 				var $template = $(swapTemplate3({ swapArray: masterSwapArray }));
 				$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
+				$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
 				(new dialog({buttons:[ 
 					{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
 						BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_blank\">buy me a beer</a> ;)");
