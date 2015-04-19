@@ -78,8 +78,6 @@ body {
     width: 65px;
     border-radius: 3px;
     background-color: #5b6e6c;
-    border: 1px solid rgba(245,245,245,.6);
-    border-bottom: 2px solid rgba(245,245,245,.6);
     cursor: pointer;
     color: rgba(245,245,245,.6);
     text-align: center;
@@ -150,9 +148,19 @@ body {
 .itemImage {
     border: 2px solid white;
 }
+.doEquip {
+	border:2px solid blue !important;
+}
 
 #loadout-contents .itemImage {
 	max-width: 97%;
+}
+#loadout-contents .item {
+	position: relative;
+}
+#loadout-contents input {
+	position: absolute;
+	left: 5px;
 }
 
 .list-group-item .itemImage {

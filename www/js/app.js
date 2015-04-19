@@ -493,8 +493,12 @@ window.ko.bindingHandlers.fastclick = {
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-		Hammer(element)
+	
+		Hammer(element, { time: 5000 })
 			.on("tap", moveItemPositionHandler(element, viewModel))
+			.on("press",function(){
+				viewModel.markAsEquip( viewModel );
+			})
 			.on("doubletap", function() {
 				$ZamTooltips.lastElement = element;
 				$ZamTooltips.show("destinydb","items",viewModel.id, element);

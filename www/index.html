@@ -302,11 +302,11 @@
 					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
-					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, check to equip.</p>
+					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, <span data-bind="text: isMobile ? 'hold':'check'"></span> to equip.</p>
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
-					<span class="item" data-bind="css: isGridComplete ? 'complete' : ''">
-						<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip" title="Enable to mark as the equip item" style="position: absolute;">
+					<span class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
+						<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
 						<span data-bind="template: { name: 'items-template', data: item }"></span>
 					</span>					
 				</span>

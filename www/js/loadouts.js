@@ -57,6 +57,14 @@ var Loadout = function(model){
 		return ko.computed(function(){
 			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
 		});
+	}
+	this.markAsEquip = function(item){
+		var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
+		if ( existingItem.length > 0 ){
+			self.equipIds.remove(existingItem[0]);
+		}
+		self.equipIds.push({ bucketType: item.bucketType, _id: item._id });
+		return true;
 	}	
 	this.items = ko.computed(function(){
 		var _items = _.map(self.ids(), function(instanceId){
@@ -73,14 +81,7 @@ var Loadout = function(model){
 		});	
 		return _items;
 	});
-	this.markAsEquip = function(item, event){
-		var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
-		if ( existingItem.length > 0 ){
-			self.equipIds.remove(existingItem[0]);
-		}
-		self.equipIds.push({ bucketType: item.bucketType, _id: item._id });
-		return true;
-	}
+
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	this.findReference = function(item){
 		var c = _.findWhere(app.characters(),{ id: item.character.id });
