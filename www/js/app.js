@@ -1230,7 +1230,6 @@ BootstrapDialog.defaultOptions.nl2br = false;
 
 if (isMobile){
 	window.addEventListener("statusTap", function() {
-		alert("statusTap");
 	    var target = $("body");
 	 
 	    //disable touch scroll to kill existing inertial movement
