@@ -1066,7 +1066,7 @@ var app = new (function() {
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop;
-			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'location=yes');			
+			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');			
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
 					ref.executeScript({
