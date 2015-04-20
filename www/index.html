@@ -82,7 +82,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 2.0.0</a>
+		      <a class="navbar-brand" href="#">TGD 2.0.1</a>
 		    </div>
 
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -96,7 +96,7 @@
 						<li class="active"><a href="#" data-bind="fastclick: donate">Donate</a></li>
 						<li class="divider"></li>
 						<li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
-						<li><a href="#" data-bind="fastclick: openBungieWindow('Wlid')">Live Login</a></li>
+						<li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
 						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
 						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount">Use Playstation Account</a></li>
 						<li class="divider"></li>
@@ -207,7 +207,7 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="fastclick:$root.openBungieWindow('Wlid')" target="_blank">Windows Live ID</a> </li>
+						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="fastclick:$root.openBungieWindow('Xuid')" target="_blank">Windows Live ID</a> </li>
 						<li>Sign in with your credentials</li>
 						<li>Wait until homepage completely finishes loading</li>
 						<li>The Bungie.net window will auto close and items should be loaded</li>
