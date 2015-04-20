@@ -67,7 +67,8 @@ var Loadout = function(model){
 		return true;
 	}	
 	this.items = ko.computed(function(){
-		var _items = _.map(self.ids(), function(instanceId){
+		var _items = [];
+		_.each(self.ids(), function(instanceId){
 			var itemFound;
 			app.characters().forEach(function(character){
 				var match = _.findWhere(character.items() , { _id: instanceId });
@@ -76,8 +77,11 @@ var Loadout = function(model){
 			if(itemFound){
 				itemFound.doEquip = self.bindEquipIds(itemFound._id);
 				itemFound.markAsEquip = self.markAsEquip;
+				_items.push(itemFound);
 			}
-			return itemFound;
+			else {
+				self.ids.remove(instanceId);
+			}
 		});	
 		return _items;
 	});
