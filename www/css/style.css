@@ -275,7 +275,7 @@ li a { color: #3080CF }
 .Subclasses { min-height: 0px !important; }
 .lockIcon { position: relative; }
 .lockIcon img { position: absolute; }
-.quickScrollView { position: relative; top:5px; left:30px; display:none; }
+.quickScrollView { position: relative; top:5px; left:5px; display:none; }
 /* 960 px is the breakpoint for 4 columns */
 @media (max-width: 959px) { 
 	.quickScrollView { display: block }
