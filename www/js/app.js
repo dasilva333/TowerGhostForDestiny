@@ -496,6 +496,7 @@ window.ko.bindingHandlers.scrollToView = {
 				
 				BootstrapDialog.alert("This icon is " + viewModel.uniqueName);
 			});
+		app.quickIconHighlighter();
 	}
 };
 
@@ -1059,8 +1060,20 @@ var app = new (function() {
 	
 	this.bucketSizeHandler = function(){
 		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
+		//TODO: max height should include padding and borders
 		var maxHeight = $(".itemImage:visible:eq(0)").height() * 3;
 		buckets.css("min-height", maxHeight);	
+	}
+	
+	this.quickIconHighlighter = function(){
+		var scrollTop = $(window).scrollTop();
+		$(".profile").each(function(index, item){
+		   var $item = $(item);
+		   var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
+		   var top =  $item.position().top - 55;
+		   var bottom = top + $item.height();
+		   $quickIcon.css("border", (scrollTop >= top && scrollTop <= bottom) ? "3px solid yellow" : "none");
+		});
 	}
 	
 	this.donate = function(){
@@ -1241,7 +1254,8 @@ var app = new (function() {
 		});
 		/* this fixes issue #16 */
 		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
-		
+		$(window).resize(_.throttle(self.quickIconHighlighter, 500));
+		$(window).scroll(_.throttle(self.quickIconHighlighter, 500));
 		ko.applyBindings(self);
 	}
 }); 
