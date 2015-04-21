@@ -20,6 +20,7 @@
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/bootstrap-dialog.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/knockout.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/underscore-min.js"></script>
+	<script language="JavaScript" type="text/javascript" src="js/dependencies/fastclick.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/bungie.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/destinyexotics.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/loadouts.js"></script>
@@ -81,7 +82,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 2.0.5</a>
+		      <a class="navbar-brand" href="#">TGD 2.0.6</a>
 			  <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 				<div style="display:inline-block;">
 					<img data-bind="attr: { src : imgIcon, title: uniqueName }, scrollToView: false" style="width:35px; height:35px">
@@ -95,24 +96,24 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/cog.png"> <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-		            	<li><a href="#" data-bind="click: showAbout">About</a></li>
-						<li><a href="#" data-bind="click: showHelp">Help</a></li>
-						<li class="active"><a href="#" data-bind="click: donate">Donate</a></li>
+		            	<li><a href="#" data-bind="fastclick: showAbout">About</a></li>
+						<li><a href="#" data-bind="fastclick: showHelp">Help</a></li>
+						<li class="active"><a href="#" data-bind="fastclick: donate">Donate</a></li>
 						<li class="divider"></li>
-						<li><a href="#" data-bind="click: openBungieWindow('Psnid')">PSN Login</a></li>
-						<li><a href="#" data-bind="click: openBungieWindow('Xuid')">Live Login</a></li>
-						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="click: useXboxAccount">Use Xbox Account</a></li>
-						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="click: usePlaystationAccount">Use Playstation Account</a></li>
+						<li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
+						<li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
+						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
+						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount">Use Playstation Account</a></li>
 						<li class="divider"></li>
-						<li><a href="#" data-bind="click: toggleShareView">Share URL</a></li>
-						<li><a href="#" data-bind="click: clearFilters">Clear Filters</a></li>
-						<li data-bind="click: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
-						<li data-bind="click: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
-						<li data-bind="click: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''"><a href="#">DestinyDB Mode</a></li>
-						<li data-bind="click: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''"><a href="#">Auto Transfer Stacks</a></li>
+						<li><a href="#" data-bind="fastclick: toggleShareView">Share URL</a></li>
+						<li><a href="#" data-bind="fastclick: clearFilters">Clear Filters</a></li>
+						<li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
+						<li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
+						<li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''"><a href="#">DestinyDB Mode</a></li>
+						<li data-bind="fastclick: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''"><a href="#">Auto Transfer Stacks</a></li>
 		          </ul>
 		        </li>
-				<li class="dropdown"><a data-bind="click: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
+				<li class="dropdown"><a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
 				</li>
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">View <span class="caret"></span></a>
@@ -163,11 +164,11 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Loadouts <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
-		            <li data-bind="click: createLoadout"><a href="#">Create</a></li>
-					<li data-bind="click: cancelLoadout"><a href="#">Cancel</a></li>
+		            <li data-bind="fastclick: createLoadout"><a href="#">Create</a></li>
+					<li data-bind="fastclick: cancelLoadout"><a href="#">Cancel</a></li>
 					<li class="divider"></li>
 					<!-- ko foreach: { data: loadouts, as: 'loadout' } -->
-						<li data-bind="click: setActive"><a data-bind="text: loadout.name" href="#"></a></li>
+						<li data-bind="fastclick: setActive"><a data-bind="text: loadout.name" href="#"></a></li>
 		  			<!--/ko  -->
 		          </ul>
 		        </li>
@@ -211,7 +212,7 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="click:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="click:$root.openBungieWindow('Xuid')" target="_blank">Windows Live ID</a> </li>
+						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="fastclick:$root.openBungieWindow('Xuid')" target="_blank">Windows Live ID</a> </li>
 						<li>Sign in with your credentials</li>
 						<li>Wait until homepage completely finishes loading</li>
 						<li>The Bungie.net window will auto close and items should be loaded</li>
@@ -300,9 +301,9 @@
 			<div class="content" data-bind="with: activeLoadout">
 				<div id="loadout-options">
 					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
-					<span id="loadout-save" data-bind="click: save">Save</span>
-					<span id="loadout-save" data-bind="click: remove">Delete</span>
-					<span id="loadout-save" data-bind="click: $root.cancelLoadout">Close</span>
+					<span id="loadout-save" data-bind="fastclick: save">Save</span>
+					<span id="loadout-save" data-bind="fastclick: remove">Delete</span>
+					<span id="loadout-save" data-bind="fastclick: $root.cancelLoadout">Close</span>
 					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
 						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
 		  			<!--/ko  -->
