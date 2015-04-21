@@ -493,6 +493,7 @@ window.ko.bindingHandlers.scrollToView = {
 				$("body").animate({ scrollTop: $(".profile:eq(" + index + ")").position().top - 50 }, 300, "swing")
 			})
 			.on("press",function(){
+				
 				BootstrapDialog.alert("This icon is " + viewModel.uniqueName);
 			});
 	}
@@ -506,17 +507,19 @@ window.ko.bindingHandlers.fastclick = {
 };
 
 ko.bindingHandlers.moveItem = {
-    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-	
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {	
 		Hammer(element, { time: 2000 })
 			.on("tap", moveItemPositionHandler(element, viewModel))
+			/* press is actually hold */
 			.on("press",function(){
-				viewModel.markAsEquip( viewModel );
+				if (app.loadoutMode() == true){
+					viewModel.markAsEquip( viewModel );
+				}
+				else {
+					$ZamTooltips.lastElement = element;
+					$ZamTooltips.show("destinydb","items",viewModel.id, element);
+				}
 			})
-			.on("doubletap", function() {
-				$ZamTooltips.lastElement = element;
-				$ZamTooltips.show("destinydb","items",viewModel.id, element);
-			});
     }
 };
 
