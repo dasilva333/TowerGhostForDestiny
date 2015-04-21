@@ -495,7 +495,6 @@ window.ko.bindingHandlers.scrollToView = {
 			.on("press",function(){
 				BootstrapDialog.alert("This icon is " + viewModel.uniqueName);
 			});
-		});
 	}
 };
 
