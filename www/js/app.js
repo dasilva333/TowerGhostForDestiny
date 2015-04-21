@@ -1221,7 +1221,7 @@ var app = new (function() {
 				StatusBar.overlaysWebView(false);
 		    }
 			if (typeof StatusBar !== "undefined"){		
-			    StatusBar.styleLightContent();
+			    StatusBar.styleBlackOpaque();
 			    StatusBar.backgroundColorByHexString("#000");
 			}
 		}
