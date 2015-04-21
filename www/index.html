@@ -82,7 +82,12 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD 2.0.4</a>
+		      <a class="navbar-brand" href="#">TGD 2.0.5</a>
+			  <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
+				<div style="display:inline-block;">
+					<img data-bind="attr: { src : imgIcon, title: uniqueName }, scrollToView: false" style="width:40px; height:40px">
+				</div>
+			  </div>
 		    </div>
 
 		    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -224,7 +229,7 @@
 				  <div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				  	Move: <span data-bind="text: description"></span>
 				  </div>
-				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.characters, as: 'avatar' }">
+				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
 						<img data-bind="attr: { src : imgIcon }">
 						<div class="attkIcon"><div>vault</div></div>
@@ -244,7 +249,7 @@
 		<div class="container">
 			<div class="container-fluid" id="charactersContainer">
 				<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile">
+					<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile" data-bind="attr:{id: character.id}">
 						<div class="character clearfix">
 						  <div class="character-box col-xs-12 col-sm-12 col-md-12 col-lg-12" data-bind="style: { backgroundImage: background }">
 							<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>

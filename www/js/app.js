@@ -52,6 +52,7 @@ var Profile = function(model){
 	this.armor = ko.computed(this._armor, this);
 	this.general = ko.computed(this._general, this);
 	this.postmaster = ko.computed(this._postmaster, this);
+	this.container = ko.observable();
 }
 
 Profile.prototype = {
@@ -484,6 +485,16 @@ var moveItemPositionHandler = function(element, item){
 	}
 }
 
+window.ko.bindingHandlers.scrollToView = {
+	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+		$(element).bind("click", function(){
+			var index = $(".profile#" + viewModel.id).index(".profile");
+			console.log(viewModel.uniqueName + " init scrollToView " + index);
+			$("body").animate({ scrollTop: $(".profile:eq(" + index + ")").position().top - 50 }, 300, "swing")
+		});
+	}
+};
+
 window.ko.bindingHandlers.fastclick = {
 	init: function(element, valueAccessor) {
 		FastClick.attach(element);
@@ -633,8 +644,7 @@ var app = new (function() {
 		return self.characters().sort(function(a,b){
 			return a.order - b.order;
 		});
-	});		
-	
+	});
 	this.createLoadout = function(){
 		self.loadoutMode(true);		
 		self.activeLoadout(new Loadout());
