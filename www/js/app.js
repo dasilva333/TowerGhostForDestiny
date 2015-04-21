@@ -489,7 +489,6 @@ window.ko.bindingHandlers.scrollToView = {
 	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 		$(element).bind("click", function(){
 			var index = $(".profile#" + viewModel.id).index(".profile");
-			console.log(viewModel.uniqueName + " init scrollToView " + index);
 			$("body").animate({ scrollTop: $(".profile:eq(" + index + ")").position().top - 50 }, 300, "swing")
 		});
 	}
@@ -505,7 +504,7 @@ window.ko.bindingHandlers.fastclick = {
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 	
-		Hammer(element, { time: 5000 })
+		Hammer(element, { time: 2000 })
 			.on("tap", moveItemPositionHandler(element, viewModel))
 			.on("press",function(){
 				viewModel.markAsEquip( viewModel );
