@@ -1072,7 +1072,7 @@ var app = new (function() {
 		   var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
 		   var top =  $item.position().top - 55;
 		   var bottom = top + $item.height();
-		   $quickIcon.css("border", (scrollTop >= top && scrollTop <= bottom) ? "3px solid yellow" : "none");
+		   $quickIcon.css("border", (scrollTop >= top && scrollTop <= bottom) ? "3px solid white" : "none");
 		});
 	}
 	

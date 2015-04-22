@@ -93,7 +93,7 @@ var Loadout = function(model){
 		return x;
 	}
 	this.swapItems = function(swapArray, targetCharacterId, callback){
-		var itemIndex = -1, increments = parseInt(90 / swapArray.length), progressValue = 10;
+		var itemIndex = -1, increments = parseInt(Math.round(95 / (1.0 * swapArray.length))), progressValue = 5;
 		var loader = $(".bootstrap-dialog-message .progress").show().find(".progress-bar").width( progressValue + "%");
 		var transferNextItem = function(){
 			//console.log("transferNextItem");
@@ -104,13 +104,11 @@ var Loadout = function(model){
 					var owner = pair.targetItem.character.id;					
 					var action = (_.where( self.equipIds(), { _id: pair.targetItem._id }).length == 0) ? "store" : "equip";
 					//console.log("going to " + action + " first item " + pair.targetItem.description);
-					progressValue = progressValue + (increments / 2);
-					loader.width( progressValue + "%" );
 					self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
 						if (typeof pair.swapItem !== "undefined"){
 							self.findReference(pair.swapItem).store(owner, function(){
-								progressValue = progressValue + (increments / 2);
+								progressValue = progressValue + increments;
 								loader.width( progressValue + "%" );
 								transferNextItem();
 							});
