@@ -584,6 +584,7 @@ var User = function(model){
 var app = new (function() {
 	var self = this;
 
+	var dataDir = "data/";
 	var defaults = {
 		searchKeyword: "",
 		doRefresh: isMobile ? false : true,
@@ -837,7 +838,7 @@ var app = new (function() {
 				type: info.itemSubType, //12 (Sniper)
 				typeName: info.itemTypeName, //Sniper Rifle
 				tierType: info.tierType, //6 (Exotic) 5 (Legendary)
-				icon: self.bungie.getUrl() + info.icon,
+				icon: dataDir + info.icon,
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete,
 				locked: item.locked
