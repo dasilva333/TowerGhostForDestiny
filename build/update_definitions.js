@@ -1,4 +1,5 @@
-var fs = require("fs"),
+var http = require("http"),
+	fs = require("fs"),
 	_ = require("lodash");
 var bungieURL = "http://www.bungie.net";
 var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
@@ -43,6 +44,21 @@ var neededFiles = [
 		return item;
 	}}
 ];
+var queue = [];
+var cacheIcons = function(){
+	var icon = queue.pop();
+	http.get(bungieURL + icon, function(res) {
+		var data = []; // List of Buffer objects
+		res.on("data", function(chunk) {
+			data.push(chunk); // Append Buffer object
+		});
+		res.on("end", function() {
+			fs.writeFileSync(jsonPath + icon, Buffer.concat(data));
+			if (queue.length > 0)
+				cacheIcons();
+		});
+	});	
+}
 if ( fs.existsSync(dbPath) ){
 	var sqlite3 = require('sqlite3').verbose();  
 	var db = new sqlite3.Database(dbPath);
@@ -64,11 +80,15 @@ if ( fs.existsSync(dbPath) ){
 			fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 	    });
 	});	
-	db.close(); 
+	db.close();
+	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
+	_.each(contents, function(item){
+		queue.push(item.icon);
+	});
+	cacheIcons();
 }
 else {
-	var http = require("http"),
-		zip = require('node-zip');
+	var zip = require('node-zip');
 	http.get(manifestURL, function(res) {
 		console.log("querying manifest");
 		var data = []; // List of Buffer objects
