@@ -114,19 +114,18 @@ body {
 	position: relative;
 }
 .attkIcon > div {
+	pointer-events: none;
 	position: absolute;
-	bottom: 1px;
-	left: 1px;
+	bottom: 2px;
+	right: 2px;
 	color: #333;
 	font-weight: bold;
 	font-size: 0.8em;
     line-height: 1;
-    padding: 2px 3px;
-}
-
-.complete .attkIcon > div {
-    bottom: 2px;
-    left: 2px;
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-right: 1px;
+    padding-bottom: 1px;
 }
 
 .bucket-item a {
