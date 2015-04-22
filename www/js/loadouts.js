@@ -58,12 +58,23 @@ var Loadout = function(model){
 			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
 		});
 	}
-	this.markAsEquip = function(item){
-		var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
-		if ( existingItem.length > 0 ){
-			self.equipIds.remove(existingItem[0]);
+	this.markAsEquip = function(item, event){
+		//console.log(event.target.checked);
+		if ( event.target.checked ){
+			//console.log("checked");
+			var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
+			//console.log("is " + item.description + " the only equipped: " + item.bucketType);
+			if ( existingItem.length > 0 ){
+				//console.log( "removing " + JSON.stringify(existingItem) );
+				self.equipIds.removeAll(existingItem);
+			}
+			//console.log("equipping " + item.description);
+			self.equipIds.push({ bucketType: item.bucketType, _id: item._id });		
 		}
-		self.equipIds.push({ bucketType: item.bucketType, _id: item._id });
+		else {
+			//console.log("not checked");
+			self.equipIds.remove(item);
+		}
 		return true;
 	}	
 	this.items = ko.computed(function(){
