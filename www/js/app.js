@@ -1,5 +1,6 @@
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
+window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
@@ -489,8 +490,14 @@ window.ko.bindingHandlers.scrollToView = {
 	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 		Hammer(element, { time: 2000 })
 			.on("tap", function(){
-				var index = $(".profile#" + viewModel.id).index(".profile");
-				$("body").animate({ scrollTop: $(".profile:eq(" + index + ")").position().top - 50 }, 300, "swing")
+				var index = $(".profile#" + viewModel.id).index(".profile"),
+					distance = $(".profile:eq(" + index + ")").position().top - 50;
+				if ( isWindowsPhone ){
+					$('html,body').scrollTop(distance);
+				}
+				else {
+					$("body").animate({ scrollTop: distance }, 300, "swing");
+				}
 			})
 			.on("press",function(){
 				
