@@ -230,7 +230,8 @@ var Loadout = function(model){
 									}
 								}								
 							}
-							else if ( item.bucketType == "Subclasses" ){							
+							else if ( item.bucketType == "Subclasses"
+							    || ( DestinyArmorPieces.indexOf(item.bucketType) != -1 && item.character.classType != targetCharacter.classType )) {
 								return {
 									description: item.description + " will not be moved"
 								}
