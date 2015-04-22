@@ -231,16 +231,25 @@
 				  </div>
 				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
-						<img data-bind="attr: { src : imgIcon }">
-						<div class="attkIcon"><div>vault</div></div>
+						<div class="attkIcon">
+							<div class="icon-banner">vault</div>
+							<img data-bind="attr: { src : imgIcon }">
+							<div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
 					</div>
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
-						<img data-bind="attr: { src : imgIcon }">
-						<div class="attkIcon"><div>store</div></div>
+						<div class="attkIcon">
+							<div class="icon-banner">store</div>
+							<img data-bind="attr: { src : imgIcon }">
+							<div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
 					</div>
 					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
-						<img data-bind="attr: { src : imgIcon }">
-						<div class="attkIcon"><div>equip</div></div>
+						<div class="attkIcon">
+							<div class="icon-banner">equip</div>
+							<img data-bind="attr: { src : imgIcon }">
+							<div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
 					</div>
 				  </div>
 				</div>
@@ -305,7 +314,9 @@
 					<span id="loadout-save" data-bind="fastclick: remove">Delete</span>
 					<span id="loadout-save" data-bind="fastclick: $root.cancelLoadout">Close</span>
 					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
-						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
+						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }">
+							<div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
 		  			<!--/ko  -->
 					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, <span data-bind="text: isMobile ? 'hold':'check'"></span> to equip.</p>
 				</div>

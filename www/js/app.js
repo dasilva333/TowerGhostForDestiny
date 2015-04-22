@@ -49,6 +49,7 @@ var Profile = function(model){
 	this.background = ko.observable(self.background);
 	this.items = ko.observableArray([]);
 	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
+	this.classLetter = self.classType[0].toUpperCase();
 	this.weapons = ko.computed(this._weapons, this);
 	this.armor = ko.computed(this._armor, this);
 	this.general = ko.computed(this._general, this);
