@@ -872,12 +872,13 @@ var app = new (function() {
 							return perk;
 						}					
 					});
-					if (info.talentGridHash in window._talentGridDefs){					
+					/*if (info.talentGridHash in window._talentGridDefs){					
 						itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
 					}
 					else {
 						itemObject.isUnique = false;
-					}				
+					}*/
+					itemObject.isUnique = false;
 				}
 			
 				if (itemObject.typeName && itemObject.typeName == "Emblem"){
@@ -886,7 +887,7 @@ var app = new (function() {
 				if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables"){
 					itemObject.primaryStat = item.stackSize;
 				}
-				if ( info.itemType == 2 ){
+				if ( info.itemType == 2 && itemObject.bucketType != "Class Items" ){					
 					itemObject.stats = {};
 					_.each(item.stats, function(stat){
 						if (stat.statHash in window._statDefs){
