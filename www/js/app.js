@@ -585,7 +585,7 @@ var User = function(model){
 var app = new (function() {
 	var self = this;
 
-	var dataDir = "data/";
+	var dataDir = "data";
 	var defaults = {
 		searchKeyword: "",
 		doRefresh: isMobile ? false : true,
@@ -866,7 +866,7 @@ var app = new (function() {
 						if (perk.perkHash in window._perkDefs){
 							var p = window._perkDefs[perk.perkHash];
 							return {
-								iconPath: app.bungie.getUrl() + perk.iconPath,
+								iconPath: self.bungie.getUrl() + perk.iconPath,
 								name: p.displayName,
 								description: p.displayDescription
 							}
