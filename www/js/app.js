@@ -895,6 +895,7 @@ var app = new (function() {
 						}
 					});
 				}
+				console.log("new item time " + (new Date()-t));
 				profile.items.push( new Item(itemObject,profile) );
 			}
 		}
@@ -984,6 +985,7 @@ var app = new (function() {
 			});
 			avatars.forEach(function(character, index){
 				self.bungie.inventory(character.characterBase.characterId, function(response) {
+					console.log("inventory time " + (new Date()-t));
 					var profile = new Profile({
 						order: index+1,
 						gender: DestinyGender[character.characterBase.genderType],
@@ -995,6 +997,7 @@ var app = new (function() {
 						level: character.characterLevel,
 						race: window._raceDefs[character.characterBase.raceHash].raceName
 					});
+					console.log("new Profile time " + (new Date()-t));
 					var items = [];						
 					
 					Object.keys(response.data.buckets).forEach(function(bucket){
@@ -1004,12 +1007,12 @@ var app = new (function() {
 							});
 						});
 					});
-					
+					console.log("normalize time " + (new Date()-t));
 					//simulate me having the 4th horseman 
 					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
 					
 					items.forEach(processItem(profile));
-					self.addWeaponTypes(profile.items());
+					//self.addWeaponTypes(profile.items());
 					self.characters.push(profile);
 					console.log("character time " + (new Date()-t));
 					done();
