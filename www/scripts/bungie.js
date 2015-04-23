@@ -183,18 +183,18 @@ try {
 	  this.search = function(activeSystem, callback) {
 	  	this.setsystem(activeSystem);
 	    _request({
-	      route: '/Destiny/SearchDestinyPlayer/' + active.type + '/' + active.id + '/',
+	      route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
 	      method: 'GET',
 	      complete: function(membership) {
-	        if(membership[0] === undefined) {
-	          //console.log('error finding bungie account!', membership)
+	        if(membership == 0) {
+	          console.log('error finding bungie account!', membership)
 	          callback({error: true})
 	          return;
 	        }
-	        membershipId = membership[0].membershipId;
+			membershipId = membership;
 	        _request({
 	          route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
-	                  '/Account/' + membershipId + '/',
+	                  '/Account/' + membership + '/',
 	          method: 'GET',
 	          complete: callback
 	        });

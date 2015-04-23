@@ -827,28 +827,17 @@ var app = new (function() {
 				console.log(item.itemHash);
 				return;
 			}
-			var info = window._itemDefs[item.itemHash];
 			var itemObject = { 
 				id: item.itemHash,
 				_id: item.itemInstanceId,
 				characterId: profile.id,
 				damageType: item.damageType,
 				damageTypeName: DestinyDamageTypes[item.damageType],
-				description: info.itemName, 
-				bucketType: DestinyBucketTypes[info.bucketTypeHash],
-				type: info.itemSubType, //12 (Sniper)
-				typeName: info.itemTypeName, //Sniper Rifle
-				tierType: info.tierType, //6 (Exotic) 5 (Legendary)
-				icon: dataDir + info.icon,
 				isEquipped: item.isEquipped,
 				isGridComplete: item.isGridComplete,
 				locked: item.locked
 			};
-			/*if ( itemObject.description.indexOf("Painted") > -1 ){
-				console.log(itemObject);
-				console.log(info);
-				console.log(itemObject.typeName + " " + info.classType);
-			}*/
+			
 			if (item.primaryStat){
 				itemObject.primaryStat = item.primaryStat.value;
 			}	
@@ -857,9 +846,17 @@ var app = new (function() {
 			}
 			if (item.location == 4)
 				itemObject.bucketType = "Post Master";
-
-			if (info.bucketTypeHash in DestinyBucketTypes){
 			
+			var info = window._itemDefs[item.itemHash];
+			if (info.bucketTypeHash in DestinyBucketTypes){
+				itemObject = _.extend(itemObject,{ 		
+					description: info.itemName, 
+					bucketType: DestinyBucketTypes[info.bucketTypeHash],
+					type: info.itemSubType, //12 (Sniper)
+					typeName: info.itemTypeName, //Sniper Rifle
+					tierType: info.tierType, //6 (Exotic) 5 (Legendary)
+					icon: dataDir + info.icon
+				});
 				/* both weapon engrams and weapons fit under this condition*/
 				if ( (DestinyWeaponPieces.indexOf(itemObject.bucketType) > -1 || DestinyArmorPieces.indexOf(itemObject.bucketType) > -1) && item.perks.length > 0 ){
 					itemObject.perks = item.perks.map(function(perk){
@@ -944,6 +941,7 @@ var app = new (function() {
 				self.loadingUser(false);
 				self.loadLoadouts();
 				setTimeout(self.bucketSizeHandler, 500);
+				console.log("total time " + (new Date()-t));
 			}
 		}	
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -959,6 +957,7 @@ var app = new (function() {
 				self.loadingUser(false);
 				return
 			}
+			console.log("search time " + (new Date()-t));
 			var avatars = e.data.characters;
 			total = avatars.length + 1;
 			self.bungie.vault(function(results){
@@ -980,6 +979,7 @@ var app = new (function() {
 				});
 				self.addWeaponTypes(profile.weapons());
 				self.characters.push(profile);
+				console.log("vault time " + (new Date()-t));
 				done()
 			});
 			avatars.forEach(function(character, index){
@@ -1011,6 +1011,7 @@ var app = new (function() {
 					items.forEach(processItem(profile));
 					self.addWeaponTypes(profile.items());
 					self.characters.push(profile);
+					console.log("character time " + (new Date()-t));
 					done();
 				});
 			});
@@ -1019,15 +1020,17 @@ var app = new (function() {
 	
 	this.loadData = function(ref){
 		if (self.loadingUser() == false){
+			window.t = (new Date());
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies); 
 			self.characters.removeAll();
 			self.bungie.user(function(user){
+				console.log("user time " + (new Date()-t));
 				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
 					if (ref && ref.close){
-						self.readBungieCookie(ref);
+						_.throttle( self.readBungieCookie(ref) , 500);
 					}
 					return
 				}
