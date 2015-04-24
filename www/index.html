@@ -322,7 +322,7 @@
 				</div>
 				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
 					<span class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
-						<input type="checkbox" value="true" data-bind="checked: doEquip, click: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
+						<input type="checkbox" data-bind="checked: doEquip, click: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
 						<span data-bind="template: { name: 'items-template', data: item }"></span>
 					</span>					
 				</span>

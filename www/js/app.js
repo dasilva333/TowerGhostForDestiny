@@ -434,14 +434,15 @@ var moveItemPositionHandler = function(element, item){
 			return false;
 		}
 		if (app.loadoutMode() == true){
-			if (app.activeLoadout().ids().indexOf( item._id )>-1)
-				app.activeLoadout().ids.remove(item._id);
+			var existingItem = _.findWhere( app.activeLoadout().ids(), { id: item._id } );
+			if ( existingItem )
+				app.activeLoadout().ids.remove(existingItem);
 			else {
 				if (item._id == 0){
 					BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
 				}
 				else if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
-					app.activeLoadout().ids.push(item._id);
+					app.activeLoadout().addItem({ id: item._id, bucketType: item.bucketType, doEquip: false });
 				}
 				else {
 					BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");

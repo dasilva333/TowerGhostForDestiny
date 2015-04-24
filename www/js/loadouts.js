@@ -26,6 +26,15 @@ var swapTemplate3 = _.template('<ul class="list-group">' +
 	'<% }) %>' +
 '</ul>');
 
+var LoadoutItem = function(model){
+	var self = this;
+	
+	_.each(model, function(value, key){
+		self[key] = value;
+	});
+	this.doEquip = ko.observable(self.doEquip || false);
+}
+
 var Loadout = function(model){
 	var self = this;
 	
@@ -33,18 +42,19 @@ var Loadout = function(model){
 		self[key] = value;
 	});	
 	this.name = self.name || "";
-	this.ids = ko.observableArray(self.ids || []);
-	this.equipIds = ko.observableArray(self.equipIds || []);
+	this.ids = ko.observableArray();
+	
 	this.setActive = function(){
 		app.loadoutMode(true);
 		app.activeLoadout(self);
 	}
+	
 	this.remove = function(){
 		app.loadouts.remove(self);
 		app.createLoadout();
 		app.saveLoadouts();
 	}
-
+	
 	this.save = function(){
 		var ref = _.findWhere( app.loadouts(), { name: self.name });
 		if ( ref ){
@@ -53,56 +63,62 @@ var Loadout = function(model){
 		app.loadouts.push( self );
 		app.saveLoadouts();
 	}
-	this.bindEquipIds = function(instanceId){
-		return ko.computed(function(){
-			return _.where( self.equipIds() , { _id: instanceId }).length > 0;
-		});
-	}
+	
 	this.markAsEquip = function(item, event){
-		//console.log(event.target.checked);
-		if ( event.target.checked ){
-			//console.log("checked");
-			var existingItem = _.where( self.equipIds(), { bucketType: item.bucketType });
-			//console.log("is " + item.description + " the only equipped: " + item.bucketType);
-			if ( existingItem.length > 0 ){
-				//console.log( "removing " + JSON.stringify(existingItem) );
-				self.equipIds.removeAll(existingItem);
-			}
-			//console.log("equipping " + item.description);
-			self.equipIds.push({ bucketType: item.bucketType, _id: item._id });		
+		var existingItems = _.where( self.ids(), { bucketType: item.bucketType }).filter(function(loadoutItem){
+			return item.doEquip() == true && item._id != loadoutItem.id;
+		});
+		if ( existingItems.length > 0 ){
+			_.each(existingItems, function(loadoutItem){
+				loadoutItem.doEquip(false);
+			});
 		}
-		else {
-			//console.log("not checked");
-			self.equipIds.remove(item);
+		if (event.target.checked){
+			_.findWhere( self.ids(), { id: item._id }).doEquip(true);
 		}
 		return true;
-	}	
+	}
+	
+	this.addItem = function(obj){
+		self.ids.push(new LoadoutItem(obj));
+	}
+	
 	this.items = ko.computed(function(){
 		var _items = [];
-		_.each(self.ids(), function(instanceId){
-			var itemFound;
-			app.characters().forEach(function(character){
-				var match = _.findWhere(character.items() , { _id: instanceId });
-				if (match) itemFound = match;
-			});
+		_.each(self.ids(), function(equip){
+			var itemFound = self.findItemById(equip.id);
 			if(itemFound){
-				itemFound.doEquip = self.bindEquipIds(itemFound._id);
+				itemFound.doEquip = equip.doEquip;
 				itemFound.markAsEquip = self.markAsEquip;
 				_items.push(itemFound);
 			}
 			else {
-				self.ids.remove(instanceId);
+				self.ids.remove(equip.id);
 			}
 		});	
 		return _items;
 	});
 
+	this.findItemById = function(id){
+		var itemFound;
+		app.characters().forEach(function(character){
+			var match = _.findWhere(character.items() , { _id: id });
+			if (match) itemFound = _.clone(match);
+		});
+		return itemFound;
+	}
+	
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	this.findReference = function(item){
 		var c = _.findWhere(app.characters(),{ id: item.character.id });
 		var x = _.findWhere(c.items(),{ _id: item._id });
 		return x;
 	}
+	
+	var onlyEquipped = function(item){
+		return item.doEquip() == true;
+	}
+	
 	this.swapItems = function(swapArray, targetCharacterId, callback){
 		var itemIndex = -1, increments = parseInt(Math.round(95 / (1.0 * swapArray.length))), progressValue = 5;
 		var loader = $(".bootstrap-dialog-message .progress").show().find(".progress-bar").width( progressValue + "%");
@@ -113,7 +129,7 @@ var Loadout = function(model){
 				/* at this point it doesn't matter who goes first but lets transfer the loadout first */				
 				if ( typeof pair.targetItem !== "undefined"){
 					var owner = pair.targetItem.character.id;					
-					var action = (_.where( self.equipIds(), { _id: pair.targetItem._id }).length == 0) ? "store" : "equip";
+					var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
 					//console.log("going to " + action + " first item " + pair.targetItem.description);
 					self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
@@ -186,7 +202,7 @@ var Loadout = function(model){
 							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
 								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-								if ( _.where(self.equipIds(), { _id: item._id }).length > 0 ){
+								if ( item.doEquip() == true ){
 									return {
 										targetItem: item,
 										description: item.description + " will be just be equipped."
@@ -197,7 +213,7 @@ var Loadout = function(model){
 									return {
 										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
 									}
-								}								
+								}
 							}
 							else {
 								var itemFound = false;
@@ -226,7 +242,7 @@ var Loadout = function(model){
 							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
 								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-								if ( _.where(self.equipIds(), { _id: item._id }).length > 0 ){
+								if ( item.doEquip() == true ){
 									return {
 										targetItem: item,
 										description: item.description + " will be just be equipped."
@@ -237,7 +253,7 @@ var Loadout = function(model){
 									return {
 										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
 									}
-								}								
+								}
 							}
 							else if ( item.bucketType == "Subclasses"
 							    || ( DestinyArmorPieces.indexOf(item.bucketType) != -1 && item.character.classType != targetCharacter.classType )) {
@@ -272,6 +288,28 @@ var Loadout = function(model){
 		//}catch(e){
 			//console.log(e.toString());
 		//}		
+	}
+	
+	/* loader/migrate code */
+	if (model && model.ids && model.ids.length > 0){
+		var firstItem = model.ids[0];
+		if (firstItem && _.isString(firstItem)){
+			//console.log("this model needs a migration " + JSON.stringify(model));
+			self.ids(_.map(model.ids, function(id){
+				var equipDef = _.findWhere( model.equipIds, { _id: id });
+				return new LoadoutItem({
+					id: id,
+					bucketType: equipDef ? equipDef.bucketType : self.findItemById(id).bucketType,
+					doEquip: equipDef ? true : false
+				});
+			}));
+		}
+		else {
+			//console.log("this model doesn't need a migration " + JSON.stringify(model));
+			self.ids(_.map(model.ids, function(obj){
+				return new LoadoutItem(obj);
+			}));
+		}
 	}
 }
 
