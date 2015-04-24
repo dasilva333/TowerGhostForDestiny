@@ -133,15 +133,13 @@ Loadout.prototype = {
 			if (match) itemFound = _.clone(match);
 		});
 		return itemFound;
-	},
-	
+	},	
 	/* the object with the .store function has to be the one in app.characters not this copy */
 	findReference: function(item){
 		var c = _.findWhere(app.characters(),{ id: item.character.id });
 		var x = _.findWhere(c.items(),{ _id: item._id });
 		return x;
-	},
-	
+	},	
 	swapItems: function(swapArray, targetCharacterId, callback){
 		var self = this;
 		var onlyEquipped = function(item){

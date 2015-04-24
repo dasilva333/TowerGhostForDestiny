@@ -602,7 +602,8 @@ var app = new (function() {
 		showMissing: false,
 		showUniques: false,
 		tooltipsEnabled: isMobile ? false : true,
-		autoTransferStacks: false
+		autoTransferStacks: false,
+		padBucketHeight: false
 	};
 	
 	var getValue = function(key){
@@ -639,6 +640,7 @@ var app = new (function() {
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
 	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
+	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
 	this.tierFilter = ko.computed(new StoreObj("tierFilter"));
@@ -755,6 +757,11 @@ var app = new (function() {
 	this.toggleRefresh = function(){
 		self.toggleBootstrapMenu();
 		self.doRefresh(!self.doRefresh());
+	}
+	this.togglePadBucketHeight = function(){
+		self.toggleBootstrapMenu();		
+		self.padBucketHeight(!self.padBucketHeight());
+		self.bucketSizeHandler();
 	}
 	this.toggleTransferStacks = function(){
 		self.toggleBootstrapMenu();
@@ -1075,9 +1082,10 @@ var app = new (function() {
 	
 	this.bucketSizeHandler = function(){
 		var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
-		//TODO: max height should include padding and borders
-		var maxHeight = $(".itemImage:visible:eq(0)").height() * 3;
-		buckets.css("min-height", maxHeight);	
+		if ( self.padBucketHeight() == true ){		
+			var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 2) * 3;
+			buckets.css("min-height", maxHeight);			
+		}
 	}
 	
 	this.quickIconHighlighter = function(){
