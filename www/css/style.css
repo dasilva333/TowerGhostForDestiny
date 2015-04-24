@@ -68,6 +68,22 @@ body {
     bottom: initial;
     left: 0px;
 }
+div.icon-banner {
+    background-color: rgba(255,255,255,.6);
+    padding: 1px;
+    color: #333;
+	
+    font-weight: bold;
+	font-size: 0.8em;
+    line-height: 1;
+    text-align: center;
+    top: 2px;
+    bottom: initial;
+    left: 2px;
+    right: 2px;
+    position: absolute;
+    /* float: left; */
+}
 .move-popup div.lower-left, .lower-left {
     position: absolute;
     background-color: rgba(255,255,255,0.8);

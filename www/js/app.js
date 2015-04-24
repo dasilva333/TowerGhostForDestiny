@@ -844,6 +844,33 @@ var app = new (function() {
 			if (item.progression){
 				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 			}
+			if ((item.progression) && (item.nodes)) {
+				itemObject.currentProgress = item.progression.currentProgress;
+				itemObject.talentGrid = window._talentGridDefs[item.talentGridHash];
+				itemObject.progressionDef = window._progressionDefs[item.progression.progressionHash];
+				var tg = window._talentGridDefs[item.talentGridHash];
+				var pg = window._progressionDefs[item.progression.progressionHash];
+				itemObject.nodes = item.nodes.map(function(node){
+					node.grid_node = _.find(tg.nodes,{'nodeHash':node.nodeHash});
+					node.grid_step = _.find(node.grid_node.steps,{'stepIndex':node.stepIndex});
+					node.autoUnlocks = node.grid_node.autoUnlocks;
+					if (node.grid_node.autoUnlocks == false) {
+						node.startsAt = node.grid_step.startProgressionBarAtProgress;
+					}
+					return node;
+				});
+				// I wanted to determine which of the progressionDef steps applied to each of the node steps
+				// But this seems quite tricky to reconstruct.
+				// Settled for highest startsProgressionBarAtProgress + final progressTotal
+				var unlockableNodes = _.filter(itemObject.nodes,{'autoUnlocks':false})
+				if (unlockableNodes.length > 0) {
+					var highestStartsAt = _.max(unlockableNodes,'startsAt').startsAt;
+					var count_of_highest = _.filter(unlockableNodes,{'startsAt':highestStartsAt}).length;
+					itemObject.maxProgress = highestStartsAt + pg.steps[pg.steps.length -1].progressTotal * count_of_highest;
+					itemObject.remainingProgress = _.max([itemObject.maxProgress - itemObject.currentProgress,0]);
+
+				}
+			}
 			if (item.location == 4)
 				itemObject.bucketType = "Post Master";
 			

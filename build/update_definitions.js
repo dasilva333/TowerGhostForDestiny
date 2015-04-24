@@ -31,6 +31,7 @@ var neededFiles = [
 		return obj;
 	}},
 	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash", reduce: function(item){
+		return item;
 		var obj = {};
 		obj.nodes = _.where( item.nodes, { column: 5 });
 		return obj;
@@ -42,7 +43,11 @@ var neededFiles = [
 		delete item.statDescription;
 		delete item.icon;
 		return item;
-	}}
+	}},
+	{ table: "DestinyProgressionDefinition", name: "progressionDefs", key: "progressionHash", reduce: function(item){
+		delete item.icon;
+		return item;
+	}},
 ];
 var queue = [];
 var cacheIcons = function(){
@@ -85,7 +90,7 @@ if ( fs.existsSync(dbPath) ){
 	_.each(contents, function(item){
 		queue.push(item.icon);
 	});
-	cacheIcons();
+	// cacheIcons();
 }
 else {
 	var zip = require('node-zip');
