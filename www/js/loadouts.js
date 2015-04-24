@@ -32,7 +32,7 @@ var LoadoutItem = function(model){
 	_.each(model, function(value, key){
 		self[key] = value;
 	});
-	this.doEquip = ko.observable(self.doEquip || false);
+	this.doEquip = ko.observable(self.doEquip.toString() == "true" || false);
 }
 
 var Loadout = function(model){
@@ -305,8 +305,9 @@ var Loadout = function(model){
 			}));
 		}
 		else {
-			//console.log("this model doesn't need a migration " + JSON.stringify(model));
+			console.log("this model doesn't need a migration " + JSON.stringify(model));
 			self.ids(_.map(model.ids, function(obj){
+				console.log(obj);
 				return new LoadoutItem(obj);
 			}));
 		}
