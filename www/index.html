@@ -33,7 +33,7 @@
 	  	<script type="text/html" id="items-template">
 			<div class="lockIcon" data-bind="visible: locked"><img src="assets/lock.png"></div>
 			<a data-bind="attr:{href:item.href, instanceId:item._id}">
-				<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
+				<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id, title: item.description }, click: setActiveItem, moveItem: true">
 			</a>
 			<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>    
 	    </script>

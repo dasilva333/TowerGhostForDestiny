@@ -844,14 +844,12 @@ var app = new (function() {
 			if (item.progression){
 				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 			}
-			if (item.location == 4)
-				itemObject.bucketType = "Post Master";
 			
 			var info = window._itemDefs[item.itemHash];
 			if (info.bucketTypeHash in DestinyBucketTypes){
 				itemObject = _.extend(itemObject,{ 		
 					description: info.itemName, 
-					bucketType: DestinyBucketTypes[info.bucketTypeHash],
+					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType, //12 (Sniper)
 					typeName: info.itemTypeName, //Sniper Rifle
 					tierType: info.tierType, //6 (Exotic) 5 (Legendary)
