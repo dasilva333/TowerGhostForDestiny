@@ -12,6 +12,7 @@
 	<script language="JavaScript" type="text/javascript" src="data/talentGridDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="data/raceDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="data/destinyDefs.js"></script>
+	<script language="JavaScript" type="text/javascript" src="data/progressionDefs.js"></script>
 	<script language="JavaScript" type="text/javascript" src="scripts/lzstring.min.js"></script>
 	<script language="JavaScript" type="text/javascript" src="js/dependencies/hammer.js"></script>
     <script language="JavaScript" type="text/javascript" src="js/dependencies/jquery.js"></script>
@@ -35,7 +36,12 @@
 			<a data-bind="attr:{href:item.href, instanceId:item._id}">
 				<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, click: setActiveItem, moveItem: true">
 			</a>
-			<div class="attkIcon"><div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div></div>    
+			<div class="attkIcon">
+				<div data-bind="text: primaryStat, style: { backgroundColor: DestinyDamageTypeColors[damageTypeName] }"></div>
+			</div>    
+			<!-- ko if: !(item.remainingProgress===undefined)  -->
+			<div class="icon-banner" data-bind="text: remainingProgress"></div>
+			<!--/ko -->
 	    </script>
 		<script type="text/html" id="sections-template">
 			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
