@@ -1,9 +1,9 @@
-var buttons = require('sdk/ui/button/action');
+var { ActionButton } = require("sdk/ui/button/action");
 var tabs = require("sdk/tabs");
 
-var button = buttons.ActionButton({
-  id: "div-link",
-  label: "Destiny Item Viewer",
+var button = ActionButton({
+  id: "tgd-link",
+  label: "Tower Ghost For Destiny",
   icon: {
     "16": "./assets/icon16.png",
     "32": "./assets/icon32.png",

@@ -56,9 +56,6 @@ Keyboard Disappears? Go to Settings and disable Loadstop Listener, log in, enabl
 Recent Information for each mobile platform found here:
 http://www.reddit.com/r/DestinyTheGame/comments/31p69l/tower_ghost_for_destiny_formerly_known_as_destiny/
 
-Install Guides for each platform is found here: 
-http://www.reddit.com/r/DestinyTheGame/comments/316hx4/discussion_destiny_item_viewer_for/
-
 ##Download Files
 
 You can find the latest download for each platform here:
