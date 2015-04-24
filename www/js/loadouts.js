@@ -305,9 +305,9 @@ var Loadout = function(model){
 			}));
 		}
 		else {
-			console.log("this model doesn't need a migration " + JSON.stringify(model));
+			//console.log("this model doesn't need a migration " + JSON.stringify(model));
 			self.ids(_.map(model.ids, function(obj){
-				console.log(obj);
+				//console.log(obj);
 				return new LoadoutItem(obj);
 			}));
 		}
