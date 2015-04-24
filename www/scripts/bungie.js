@@ -187,7 +187,7 @@ try {
 	      method: 'GET',
 	      complete: function(membership) {
 	        if(membership == 0) {
-	          console.log('error finding bungie account!', membership)
+	          //console.log('error finding bungie account!', membership)
 	          callback({error: true})
 	          return;
 	        }
