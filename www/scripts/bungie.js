@@ -126,7 +126,7 @@ try {
 					r.send();
 				}
 		      } else {
-		        opts.complete({error: 'cookie not found'});
+		        opts.complete({"code": 99, "error": "Please sign-in to continue."});
 		      }
 		    });	
 		}
