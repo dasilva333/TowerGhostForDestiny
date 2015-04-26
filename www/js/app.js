@@ -1,4 +1,3 @@
-try {
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
 window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
@@ -1320,6 +1319,3 @@ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 
 ga('create', 'UA-61575166-1', 'auto');
 ga('send', 'pageview');
-}catch(e){
-	console.log(e);
-}
