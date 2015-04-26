@@ -60,7 +60,12 @@ var Loadout = function(model){
 	});
 	
 	this.markAsEquip = function(item, event){
-		var existingItems = _.where( self.ids(), { bucketType: item.bucketType }).filter(function(loadoutItem){
+		var existingItems = _.where( self.ids(), { bucketType: item.bucketType } ).filter(function(loadoutItem){
+			var foundItem = _.find(self.items(), { _id: loadoutItem.id });
+
+			if(item.bucketType == "Subclasses" || DestinyArmorPieces.indexOf(foundItem.bucketType) != -1) {
+			    return item.doEquip() == true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
+			}
 			return item.doEquip() == true && item._id != loadoutItem.id;
 		});
 		if ( existingItems.length > 0 ){
