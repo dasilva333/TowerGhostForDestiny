@@ -64,7 +64,7 @@ var Loadout = function(model){
 				return DestinyWeaponPieces.indexOf(a.bucketType)-DestinyWeaponPieces.indexOf(b.bucketType)
 			}
 			else {
-				return 0;
+				return -1;
 			}			
 		});
 	});
