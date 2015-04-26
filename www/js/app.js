@@ -430,7 +430,7 @@ var activeElement;
 var moveItemPositionHandler = function(element, item){
 	return function(){
 		if (app.destinyDbMode() == true){
-			window.open(item.href,"_blank");
+			window.open(item.href,"_system");
 			return false;
 		}
 		if (app.loadoutMode() == true){
@@ -1101,7 +1101,7 @@ var app = new (function() {
 	}
 
 	this.donate = function(){
-		window.open("http://bit.ly/1Jmb4wQ","_blank");
+		window.open("http://bit.ly/1Jmb4wQ","_system");
 	}
 
 	this.readBungieCookie = function(ref, loop){

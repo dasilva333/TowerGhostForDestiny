@@ -323,7 +323,7 @@ Loadout.prototype = {
 			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
 			(new dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
-					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_blank\">buy me a beer</a> ;)");
+					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a> ;)");
 					dialog.close()
 				}); }},
 				{label: "Cancel", action: function(dialog){ dialog.close() }}
