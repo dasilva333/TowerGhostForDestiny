@@ -862,7 +862,7 @@ var app = new (function() {
 					type: info.itemSubType, //12 (Sniper)
 					typeName: info.itemTypeName, //Sniper Rifle
 					tierType: info.tierType, //6 (Exotic) 5 (Legendary)
-					icon: dataDir + info.icon
+					icon: self.bungie.getUrl() + info.icon
 				});
 				/* both weapon engrams and weapons fit under this condition*/
 				if ( (DestinyWeaponPieces.indexOf(itemObject.bucketType) > -1 || DestinyArmorPieces.indexOf(itemObject.bucketType) > -1) && item.perks.length > 0 ){
