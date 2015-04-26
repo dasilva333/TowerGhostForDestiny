@@ -250,12 +250,17 @@ Loadout.prototype = {
 							var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
 							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
 							//console.log("found swap item " + swapItem.description);
-							if ( swapItem ){								
+							if ( swapItem ) {
+							    if(DestinyArmorPieces.indexOf(swapItem.bucketType) != -1 && item.character.classType != targetCharacter.classType) {
 								return {
-									targetItem: item,
-									swapItem: swapItem,
-									description: item.description + " will be swapped with " + swapItem.description
+								    description: item.description + " will not be moved"
 								}
+							    }
+							    return {
+								    targetItem: item,
+								    swapItem: swapItem,
+								    description: item.description + " will be swapped with " + swapItem.description
+							    }
 							}	
 							else {								
 								return {
