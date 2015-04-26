@@ -56,7 +56,17 @@ var Loadout = function(model){
 				self.ids.remove(equip.id);
 			}
 		});	
-		return _items;
+		return _items.sort(function(a,b){
+			if (DestinyArmorPieces.indexOf(a.bucketType) > -1){
+				return DestinyArmorPieces.indexOf(a.bucketType)-DestinyArmorPieces.indexOf(b.bucketType)
+			}
+			else if (DestinyWeaponPieces.indexOf(a.bucketType) > -1){
+				return DestinyWeaponPieces.indexOf(a.bucketType)-DestinyWeaponPieces.indexOf(b.bucketType)
+			}
+			else {
+				return 0;
+			}			
+		});
 	});
 	
 	this.markAsEquip = function(item, event){
