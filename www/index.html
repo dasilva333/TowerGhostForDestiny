@@ -30,12 +30,6 @@
   </head>
 
   <body>
-	  	<script type="text/html" id="items-template">
-			<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-				<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-			</a>
-			<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-	    </script>
 		<script type="text/html" id="sections-template">
 			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
 				<div class="title" data-bind="visible: bucketType !== 'Subclasses'">
@@ -324,10 +318,13 @@
 		  			<!--/ko  -->
 					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, <span data-bind="text: isMobile ? 'hold':'check'"></span> to equip.</p>
 				</div>
-				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }">
+				<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
 					<span class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
 						<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
-						<span data-bind="template: { name: 'items-template', data: item }"></span>
+						<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+							<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+						</a>
+						<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
 					</span>					
 				</span>
 			</div>

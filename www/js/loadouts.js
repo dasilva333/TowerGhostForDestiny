@@ -83,7 +83,7 @@ var Loadout = function(model){
 				loadoutItem.doEquip(false);
 			});
 		}
-		if (event.target.checked){
+		if ( item.doEquip() ){
 			_.findWhere( self.ids(), { id: item._id }).doEquip(true);
 		}
 		return true;
