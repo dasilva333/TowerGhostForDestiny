@@ -318,7 +318,9 @@
 					<span id="loadout-save" data-bind="fastclick: remove">Delete</span>
 					<span id="loadout-save" data-bind="fastclick: $root.cancelLoadout">Close</span>
 					<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
-						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, fastclick: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }, text: classType"></div>
+						<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }">
+							<div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
 		  			<!--/ko  -->
 					<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, <span data-bind="text: isMobile ? 'hold':'check'"></span> to equip.</p>
 				</div>
