@@ -4,7 +4,7 @@ targetItem: item,
 swapItem: swapItem,
 description: item.description + "'s swap item is " + swapItem.description
 */
-var swapTemplate3 = _.template('<ul class="list-group">' +	
+var swapTemplate = _.template('<ul class="list-group">' +	
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
@@ -318,7 +318,7 @@ Loadout.prototype = {
 			}));
 		}
 		if (masterSwapArray.length > 0){
-			var $template = $(swapTemplate3({ swapArray: masterSwapArray }));
+			var $template = $(swapTemplate({ swapArray: masterSwapArray }));
 			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
 			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
 			(new dialog({buttons:[ 
