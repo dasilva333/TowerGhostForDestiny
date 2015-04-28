@@ -539,7 +539,6 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {
 					var item = ko.contextFor(target).$data;
 					if (app.loadoutMode() == true){
-						console.log( item );
 						item.markAsEquip( item );
 					}
 					else {
