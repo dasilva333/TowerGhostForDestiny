@@ -539,7 +539,8 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {
 					var item = ko.contextFor(target).$data;
 					if (app.loadoutMode() == true){
-						item.markAsEquip( item );
+						item.doEquip(!item.doEquip());
+						item.markAsEquip( item , { target: target });
 					}
 					else {
 						$ZamTooltips.lastElement = element;
