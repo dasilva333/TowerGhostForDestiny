@@ -57,11 +57,11 @@ var Loadout = function(model){
 			}
 		});	
 		return _items.sort(function(a,b){
-			if (DestinyArmorPieces.indexOf(a.bucketType) > -1){
-				return DestinyArmorPieces.indexOf(a.bucketType)-DestinyArmorPieces.indexOf(b.bucketType)
+			if (a.armorIndex > -1){
+				return a.armorIndex-b.armorIndex;
 			}
-			else if (DestinyWeaponPieces.indexOf(a.bucketType) > -1){
-				return DestinyWeaponPieces.indexOf(a.bucketType)-DestinyWeaponPieces.indexOf(b.bucketType)
+			else if (a.weaponIndex > -1){
+				return a.weaponIndex - b.weaponIndex;
 			}
 			else {
 				return -1;
@@ -73,7 +73,7 @@ var Loadout = function(model){
 		var existingItems = _.where( self.ids(), { bucketType: item.bucketType } ).filter(function(loadoutItem){
 			var foundItem = _.find(self.items(), { _id: loadoutItem.id });
 
-			if(item.bucketType == "Subclasses" || DestinyArmorPieces.indexOf(foundItem.bucketType) != -1) {
+			if(item.bucketType == "Subclasses" || foundItem.armorIndex != -1) {
 			    return item.doEquip() == true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
 			}
 			return item.doEquip() == true && item._id != loadoutItem.id;
@@ -94,14 +94,17 @@ var Loadout = function(model){
 		var firstItem = model.ids[0];
 		if (firstItem && _.isString(firstItem)){
 			//console.log("this model needs a migration " + JSON.stringify(model));
-			self.ids(_.map(model.ids, function(id){
+			var _ids = _.each(model.ids, function(id){
 				var equipDef = _.findWhere( model.equipIds, { _id: id });
-				return new LoadoutItem({
+				var item = self.findItemById(id);
+				if ( item )
+				_ids.push(new LoadoutItem({
 					id: id,
-					bucketType: equipDef ? equipDef.bucketType : self.findItemById(id).bucketType,
+					bucketType: equipDef ? equipDef.bucketType : item.bucketType,
 					doEquip: equipDef ? true : false
-				});
-			}));
+				}));
+			});
+			self.ids(_ids);
 		}
 		else {
 			//console.log("this model doesn't need a migration " + JSON.stringify(model));
@@ -261,10 +264,10 @@ Loadout.prototype = {
 							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
 							//console.log("found swap item " + swapItem.description);
 							if ( swapItem ) {
-							    if(DestinyArmorPieces.indexOf(swapItem.bucketType) != -1 && item.character.classType != targetCharacter.classType) {
-								return {
-								    description: item.description + " will not be moved"
-								}
+							    if(swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+									return {
+										description: item.description + " will not be moved"
+									}
 							    }
 							    return {
 								    targetItem: item,
@@ -300,8 +303,7 @@ Loadout.prototype = {
 								}
 							}
 						}
-						else if ( item.bucketType == "Subclasses"
-							|| ( DestinyArmorPieces.indexOf(item.bucketType) != -1 && item.character.classType != targetCharacter.classType )) {
+						else if ( item.bucketType == "Subclasses" || ( item.armorIndex != -1 && item.character.classType != targetCharacter.classType )) {
 							return {
 								description: item.description + " will not be moved"
 							}
