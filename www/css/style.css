@@ -159,10 +159,6 @@ body {
 .attkIcon .Void {
 	background-color: #B184C5;
 }
-.complete .attkIcon > div {
-    bottom: 2px;
-    left: 2px;
-}
 
 .bucket-item a {
     display: block;
