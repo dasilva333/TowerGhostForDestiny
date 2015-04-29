@@ -31,8 +31,8 @@
 
   <body>
 		<script type="text/html" id="sections-template">
-			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
-				<div class="title" data-bind="visible: bucketType !== 'Subclasses'">
+			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
+				<div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master'">
 					<span data-bind="text: bucketType"></span>
 					<!-- ko if: ( character.id !== 'Vault' ) -->
 						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
