@@ -393,6 +393,9 @@ Item.prototype = {
 				transferAmount = self.primaryStat;
 				done();
 			}
+			else if (app.equalizeStacksMode() == true){
+				// todo
+			}
 			else {
 				var dialogItself = (new dialog({
 		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
@@ -604,7 +607,8 @@ var app = new (function() {
 		showUniques: false,
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
-		padBucketHeight: false
+		padBucketHeight: false,
+		equalizeStacksMode: false
 	};
 
 	var getValue = function(key){
@@ -641,6 +645,7 @@ var app = new (function() {
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
 	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
+	this.equalizeStacksMode = ko.computed(new StoreObj("equalizeStacksMode", "true"));
 	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
@@ -771,6 +776,10 @@ var app = new (function() {
 	this.toggleDestinyDbMode = function(){
 		self.toggleBootstrapMenu();
 		self.destinyDbMode(!self.destinyDbMode());
+	}
+	this.toggleEqualizeStacks = function(){
+		self.toggleBootstrapMenu();
+		self.equalizeStacksMode(!self.equalizeStacksMode());
 	}
 	this.toggleDestinyDbTooltips = function(){
 		self.toggleBootstrapMenu();
