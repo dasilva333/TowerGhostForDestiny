@@ -1154,7 +1154,7 @@ var app = new (function() {
 	
 	this.shiftViewLeft = function(){
 		var newIndex = app.activeView() - 1;
-		if (newIndex == 0) newIndex = 3;
+		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
