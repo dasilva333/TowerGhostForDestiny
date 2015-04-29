@@ -86,11 +86,13 @@ try {
 	  	//This is for Mobile platform/Chrome
 		//console.log("received a _request");
 	  	if (isChrome || isMobile){
+			//console.time("XMLHttpRequest"); 
 			var r = new XMLHttpRequest();
 		    r.open(opts.method, url + "Platform" + opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
 		    r.onload = function() {
 			  var response = this.response;
+			  //console.timeEnd("XMLHttpRequest"); 
 			  try {
 			  	response = JSON.parse(this.response);
 			  }catch(e){}		  

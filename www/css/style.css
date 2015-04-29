@@ -144,6 +144,21 @@ body {
     padding-right: 1px;
     padding-bottom: 1px;
 }
+.attkIcon .None {
+	background-color: #BBB;
+}
+.attkIcon .Kinetic {
+	background-color: #BBB;
+}
+.attkIcon .Arc {
+	background-color: #85C5EC;
+}
+.attkIcon .Solar {
+	background-color: #C48A01;
+}
+.attkIcon .Void {
+	background-color: #B184C5;
+}
 
 .bucket-item a {
     display: block;

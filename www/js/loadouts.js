@@ -4,7 +4,7 @@ targetItem: item,
 swapItem: swapItem,
 description: item.description + "'s swap item is " + swapItem.description
 */
-var swapTemplate3 = _.template('<ul class="list-group">' +	
+var swapTemplate = _.template('<ul class="list-group">' +	
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
@@ -56,14 +56,24 @@ var Loadout = function(model){
 				self.ids.remove(equip.id);
 			}
 		});	
-		return _items;
+		return _items.sort(function(a,b){
+			if (a.armorIndex > -1){
+				return a.armorIndex-b.armorIndex;
+			}
+			else if (a.weaponIndex > -1){
+				return a.weaponIndex - b.weaponIndex;
+			}
+			else {
+				return -1;
+			}			
+		});
 	});
 	
 	this.markAsEquip = function(item, event){
 		var existingItems = _.where( self.ids(), { bucketType: item.bucketType } ).filter(function(loadoutItem){
 			var foundItem = _.find(self.items(), { _id: loadoutItem.id });
 
-			if(item.bucketType == "Subclasses" || DestinyArmorPieces.indexOf(foundItem.bucketType) != -1) {
+			if(item.bucketType == "Subclasses" || foundItem.armorIndex != -1) {
 			    return item.doEquip() == true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
 			}
 			return item.doEquip() == true && item._id != loadoutItem.id;
@@ -73,7 +83,7 @@ var Loadout = function(model){
 				loadoutItem.doEquip(false);
 			});
 		}
-		if (event.target.checked){
+		if ( item.doEquip() ){
 			_.findWhere( self.ids(), { id: item._id }).doEquip(true);
 		}
 		return true;
@@ -84,14 +94,18 @@ var Loadout = function(model){
 		var firstItem = model.ids[0];
 		if (firstItem && _.isString(firstItem)){
 			//console.log("this model needs a migration " + JSON.stringify(model));
-			self.ids(_.map(model.ids, function(id){
+			var _ids = [];
+			_.each(model.ids, function(id){
 				var equipDef = _.findWhere( model.equipIds, { _id: id });
-				return new LoadoutItem({
+				var item = self.findItemById(id);
+				if ( item )
+				_ids.push(new LoadoutItem({
 					id: id,
-					bucketType: equipDef ? equipDef.bucketType : self.findItemById(id).bucketType,
+					bucketType: equipDef ? equipDef.bucketType : item.bucketType,
 					doEquip: equipDef ? true : false
-				});
-			}));
+				}));
+			});
+			self.ids(_ids);
 		}
 		else {
 			//console.log("this model doesn't need a migration " + JSON.stringify(model));
@@ -250,12 +264,17 @@ Loadout.prototype = {
 							var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
 							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
 							//console.log("found swap item " + swapItem.description);
-							if ( swapItem ){								
-								return {
-									targetItem: item,
-									swapItem: swapItem,
-									description: item.description + " will be swapped with " + swapItem.description
-								}
+							if ( swapItem ) {
+							    if(swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+									return {
+										description: item.description + " will not be moved"
+									}
+							    }
+							    return {
+								    targetItem: item,
+								    swapItem: swapItem,
+								    description: item.description + " will be swapped with " + swapItem.description
+							    }
 							}	
 							else {								
 								return {
@@ -285,8 +304,7 @@ Loadout.prototype = {
 								}
 							}
 						}
-						else if ( item.bucketType == "Subclasses"
-							|| ( DestinyArmorPieces.indexOf(item.bucketType) != -1 && item.character.classType != targetCharacter.classType )) {
+						else if ( item.bucketType == "Subclasses" || ( item.armorIndex != -1 && item.character.classType != targetCharacter.classType )) {
 							return {
 								description: item.description + " will not be moved"
 							}
@@ -303,12 +321,12 @@ Loadout.prototype = {
 			}));
 		}
 		if (masterSwapArray.length > 0){
-			var $template = $(swapTemplate3({ swapArray: masterSwapArray }));
+			var $template = $(swapTemplate({ swapArray: masterSwapArray }));
 			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
 			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
 			(new dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
-					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_blank\">buy me a beer</a> ;)");
+					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a> ;)");
 					dialog.close()
 				}); }},
 				{label: "Cancel", action: function(dialog){ dialog.close() }}

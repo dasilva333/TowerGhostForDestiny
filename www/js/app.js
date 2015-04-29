@@ -32,13 +32,6 @@ var dialog = (function(options){
 	return self.modal;
 });
 
-var filterItemByType = function(type, isEquipped){
-	return function(weapon){
-		if (weapon.bucketType == type && weapon.isEquipped() == isEquipped)
-			return weapon;
-	}
-}
-
 var Profile = function(model){
 	var self = this;
 	_.each(model, function(value, key){
@@ -60,19 +53,19 @@ var Profile = function(model){
 Profile.prototype = {
 	_weapons: function(){
 		return _.filter(this.items(), function(item){
-			if (DestinyWeaponPieces.indexOf(item.bucketType) > -1 )
+			if (item.weaponIndex > -1 )
 				return item;
 		});
 	},
 	_armor: function(){
 		return _.filter(this.items(), function(item){
-			if (DestinyArmorPieces.indexOf(item.bucketType) > -1 )
+			if (item.armorIndex > -1 )
 				return item;
 		});
 	},
 	_general: function(){
 		return _.filter(this.items(), function(item){
-			if (DestinyArmorPieces.indexOf(item.bucketType) == -1 && DestinyWeaponPieces.indexOf(item.bucketType) == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Subclasses")
+			if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Subclasses")
 				return item;
 		});
 	},
@@ -82,11 +75,16 @@ Profile.prototype = {
 				return item;
 		});
 	},
+	filterItemByType: function(type, isEquipped){
+		return function(item){
+			return (item.bucketType == type && item.isEquipped() == isEquipped);
+		}
+	},
 	get: function(type){
-		return this.items().filter(filterItemByType(type, false));
+		return this.items().filter(this.filterItemByType(type, false));
 	},
 	itemEquipped: function(type){
-		return ko.utils.arrayFirst(this.items(), filterItemByType(type, true));
+		return ko.utils.arrayFirst(this.items(), this.filterItemByType(type, true));
 	}
 }
 
@@ -98,9 +96,6 @@ var Item = function(model, profile){
 	this.character = profile;
 	this.href = "https://destinydb.com/items/" + self.id;
 	this.isEquipped = ko.observable(self.isEquipped);
-	this.setActiveItem = function(){
-		app.activeItem(self);
-	}
 	this.primaryStat = self.primaryStat || "";
 	this.isVisible = ko.computed(this._isVisible, this);
 	this.isEquippable = function(avatarId){
@@ -165,7 +160,6 @@ Item.prototype = {
 		var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
 		var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
 		var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
-		var uniqueFilter = $parent.showUniques() == false || ($parent.showUniques() == true && self.isUnique);
 		/*console.log( "searchFilter: " + searchFilter);
 		console.log( "dmgFilter: " + dmgFilter);
 		console.log( "setFilter: " + setFilter);
@@ -178,7 +172,7 @@ Item.prototype = {
 		console.log("perks are " + JSON.stringify(self.perks));
 		console.log("description is " + self.description);
 		console.log("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (uniqueFilter);
+		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter);
 	},
 	/* helper function that unequips the current item in favor of anything else */
 	unequip: function(callback){
@@ -258,8 +252,8 @@ Item.prototype = {
 			if ( self.tierType == 6 && allowReplacement){
 				//console.log("item is exotic");
 				var otherExoticFound = false,
-					otherBucketTypes = DestinyWeaponPieces.indexOf(self.bucketType) > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
-				otherBucketTypes.splice(DestinyWeaponPieces.indexOf(self.bucketType),1);
+					otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+				otherBucketTypes.splice(self.weaponIndex,1);
 				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));
 				_.each(otherBucketTypes, function(bucketType){
 					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
@@ -428,62 +422,61 @@ Item.prototype = {
 
 var activeElement;
 var moveItemPositionHandler = function(element, item){
-	return function(){
-		if (app.destinyDbMode() == true){
-			window.open(item.href,"_blank");
-			return false;
-		}
-		if (app.loadoutMode() == true){
-			var existingItem = _.findWhere( app.activeLoadout().ids(), { id: item._id } );
-			if ( existingItem )
-				app.activeLoadout().ids.remove(existingItem);
-			else {
-				if (item._id == 0){
-					BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
-				}
-				else if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
-					app.activeLoadout().addItem({ id: item._id, bucketType: item.bucketType, doEquip: false });
-				}
-				else {
-					BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
-				}
+	app.activeItem(item);
+	if (app.destinyDbMode() == true){
+		window.open(item.href,"_system");
+		return false;
+	}
+	if (app.loadoutMode() == true){
+		var existingItem = _.findWhere( app.activeLoadout().ids(), { id: item._id } );
+		if ( existingItem )
+			app.activeLoadout().ids.remove(existingItem);
+		else {
+			if (item._id == 0){
+				BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
 			}
+			else if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
+				app.activeLoadout().addItem({ id: item._id, bucketType: item.bucketType, doEquip: false });
+			}
+			else {
+				BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
+			}
+		}
+	}
+	else {
+		var $movePopup = $( "#move-popup" );
+		if (item.bucketType == "Post Master"){
+			return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
+		}
+		if (element	== activeElement){
+			$movePopup.hide();
+			activeElement = null;
 		}
 		else {
-			var $movePopup = $( "#move-popup" );
-			if (item.bucketType == "Post Master"){
-				return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
-			}
-			if (element	== activeElement){
-				$movePopup.hide();
-				activeElement = null;
+			activeElement = element;
+			$ZamTooltips.hide();
+			if (window.isMobile){
+				$("body").css("padding-bottom","80px");
+				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
+				$movePopup.show();
 			}
 			else {
-				activeElement = element;
-				$ZamTooltips.hide();
-				if (window.isMobile){
-					$("body").css("padding-bottom","80px");
-					/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
-					$movePopup.show();
-				}
-				else {
-					$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
-						my: "left bottom",
-						at: "left top",
-						collision: "none",
-						of: element,
-						using: function(pos, ui){
-							var obj = $(this);
-							setTimeout(function(){
-								var box = $(ui.element.element).find(".move-popup").width();
-								if (box + pos.left > ui.element.width){
-									pos.left = pos.left - box;
-								}
-								obj.css(pos);
-							},10);
-						}
-					});
-				}
+				$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
+					my: "left bottom",
+					at: "left top",
+					collision: "none",
+					of: element,
+					using: function(pos, ui){
+						var obj = $(this);
+						setTimeout(function(){
+							var box = $(ui.element.element).find(".move-popup").width();
+							if (box + pos.left > ui.element.width){
+								pos.left = pos.left - box;
+							}
+							obj.css(pos);
+						},10);
+					}
+				});
 			}
 		}
 	}
@@ -517,50 +510,46 @@ window.ko.bindingHandlers.fastclick = {
 	}
 };
 
+getEventDelegate = function (target, selector) {
+ var delegate;
+ while (target && target != this.el) {
+	delegate = $(target).filter(selector)[0];
+	if (delegate) {
+	   return delegate;
+	}
+	target = target.parentNode;
+ }
+ return undefined;
+}
+
+
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-		Hammer(element, { time: 2000 })
-			.on("tap", moveItemPositionHandler(element, viewModel))
-			/* press is actually hold */
-			.on("press",function(){
-				if (app.loadoutMode() == true){
-					viewModel.markAsEquip( viewModel );
-				}
-				else {
-					$ZamTooltips.lastElement = element;
-					$ZamTooltips.show("destinydb","items",viewModel.id, element);
-				}
+		Hammer(element, { time: 2000 })		
+			.on("tap", function(ev){
+				var target = getEventDelegate(ev.target, ".itemLink");
+			    if (target) {
+					var item = ko.contextFor(target).$data;
+				    moveItemPositionHandler(target, item);
+			    }
 			})
+			// press is actually hold 
+			.on("press", function(ev){
+				var target = getEventDelegate(ev.target, ".itemLink");
+			    if (target) {
+					var item = ko.contextFor(target).$data;
+					if (app.loadoutMode() == true){
+						item.doEquip(!item.doEquip());
+						item.markAsEquip( item , { target: target });
+					}
+					else {
+						$ZamTooltips.lastElement = element;
+						$ZamTooltips.show("destinydb","items",item.id, element);
+					}
+			    }
+			});
     }
 };
-
-
-/*
-targetItem: item,
-swapItem: swapItem,
-description: item.description + "'s swap item is " + swapItem.description
-*/
-var swapTemplate = _.template('<ul class="list-group">' +
-	'<% swapArray.forEach(function(pair){ %>' +
-		'<li class="list-group-item">' +
-			'<div class="row">' +
-				'<div class="col-lg-6">' +
-					'<%= pair.description %>' +
-				'</div>' +
-				'<div class="col-lg-3">' +
-					'<a class="item" href="<%= pair.targetItem.href %>" id="<%= pair.targetItem._id %>">' +
-						'<img class="itemImage" src="<%= pair.targetItem.icon %>">' +
-					'</a>' +
-				'</div>' +
-				'<div class="col-lg-3">' +
-					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' +
-						'<img class="itemImage" src="<%= pair.swapItem && pair.swapItem.icon %>">' +
-					'</a>' +
-				'</div>' +
-			'</div>' +
-		'</li>' +
-	'<% }) %>' +
-'</ul>');
 
 var perksTemplate = _.template('<div class="destt-talent">' +
 	'<% perks.forEach(function(perk){ %>' +
@@ -601,7 +590,6 @@ var app = new (function() {
 		shareView: false,
 		shareUrl: "",
 		showMissing: false,
-		showUniques: false,
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
 		padBucketHeight: false
@@ -653,7 +641,6 @@ var app = new (function() {
 	this.shareView =  ko.observable(defaults.shareView);
 	this.shareUrl  = ko.observable(defaults.shareUrl);
 	this.showMissing =  ko.observable(defaults.showMissing);
-	this.showUniques =  ko.observable(defaults.showUniques);
 
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
@@ -665,6 +652,7 @@ var app = new (function() {
 			return a.order - b.order;
 		});
 	});
+	
 	this.createLoadout = function(){
 		self.loadoutMode(true);
 		self.activeLoadout(new Loadout());
@@ -696,7 +684,6 @@ var app = new (function() {
 		self.shareView(defaults.shareView);
 		self.shareUrl (defaults.shareUrl);
 		self.showMissing(defaults.showMissing);
-		self.showUniques(defaults.showUniques);
 		$(element.target).removeClass("active");
 		return false;
 	}
@@ -780,10 +767,6 @@ var app = new (function() {
 		self.toggleBootstrapMenu();
 		self.shareView(!self.shareView());
 	}
-	this.toggleShowUniques = function(){
-		self.toggleBootstrapMenu();
-		self.showUniques(!self.showUniques());
-	}
 	this.toggleShowMissing = function(){
 		self.toggleBootstrapMenu();
 		self.showMissing(!self.showMissing());
@@ -836,36 +819,36 @@ var app = new (function() {
 				console.log(item.itemHash);
 				return;
 			}
-			var itemObject = {
-				id: item.itemHash,
-				_id: item.itemInstanceId,
-				characterId: profile.id,
-				damageType: item.damageType,
-				damageTypeName: DestinyDamageTypes[item.damageType],
-				isEquipped: item.isEquipped,
-				isGridComplete: item.isGridComplete,
-				locked: item.locked
-			};
-
-			if (item.primaryStat){
-				itemObject.primaryStat = item.primaryStat.value;
-			}
-			if (item.progression){
-				itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
-			}
-
 			var info = window._itemDefs[item.itemHash];
 			if (info.bucketTypeHash in DestinyBucketTypes){
-				itemObject = _.extend(itemObject,{
+				var itemObject = {
+					id: item.itemHash,
+					_id: item.itemInstanceId,
+					characterId: profile.id,
+					damageType: item.damageType,
+					damageTypeName: DestinyDamageTypes[item.damageType],
+					isEquipped: item.isEquipped,
+					isGridComplete: item.isGridComplete,
+					locked: item.locked,
 					description: info.itemName,
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
-					type: info.itemSubType, //12 (Sniper)
-					typeName: info.itemTypeName, //Sniper Rifle
-					tierType: info.tierType, //6 (Exotic) 5 (Legendary)
-					icon: self.bungie.getUrl() + info.icon
-				});
+					type: info.itemSubType,
+					typeName: info.itemTypeName,
+					tierType: info.tierType,
+					icon: dataDir + info.icon
+				};
+	
+				if (item.primaryStat){
+					itemObject.primaryStat = item.primaryStat.value;
+				}
+				if (item.progression){
+					itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
+				}
+				
+				itemObject.weaponIndex = DestinyWeaponPieces.indexOf(itemObject.bucketType);
+				itemObject.armorIndex = DestinyArmorPieces.indexOf(itemObject.bucketType);
 				/* both weapon engrams and weapons fit under this condition*/
-				if ( (DestinyWeaponPieces.indexOf(itemObject.bucketType) > -1 || DestinyArmorPieces.indexOf(itemObject.bucketType) > -1) && item.perks.length > 0 ){
+				if ( (itemObject.weaponIndex > -1 || itemObject.armorIndex > -1) && item.perks.length > 0 ){
 					itemObject.perks = item.perks.map(function(perk){
 						if (perk.perkHash in window._perkDefs){
 							var p = window._perkDefs[perk.perkHash];
@@ -879,12 +862,6 @@ var app = new (function() {
 							return perk;
 						}
 					});
-					/*if (info.talentGridHash in window._talentGridDefs){
-						itemObject.isUnique = info.tierType != 6 && (_.pluck(_.where(window._talentGridDefs[info.talentGridHash].nodes,{column:5}),'isRandom').indexOf(true) > -1);
-					}
-					else {
-						itemObject.isUnique = false;
-					}*/
 					itemObject.isUnique = false;
 				}
 
@@ -940,17 +917,18 @@ var app = new (function() {
 	}
 
 	this.search = function(){
-		var total = 0, count = 0;
+		var total = 0, count = 0, profiles = [];
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
-		function done(){
+		function done(profile){			
+			//profiles.push(profile);
 			count++;
 			if (count == total){
-				//console.log("finished loading");
+				//self.characters(profiles); 
 				self.shareUrl(new report().de());
 				self.loadingUser(false);
 				self.loadLoadouts();
 				setTimeout(self.bucketSizeHandler, 500);
-				//console.log("total time " + (new Date()-t));
+				//console.timeEnd("avatars.forEach");
 			}
 		}
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
@@ -966,9 +944,9 @@ var app = new (function() {
 				self.loadingUser(false);
 				return
 			}
-			//console.log("search time " + (new Date()-t));
 			var avatars = e.data.characters;
 			total = avatars.length + 1;
+			//console.time("self.bungie.vault");
 			self.bungie.vault(function(results){
 				var buckets = results.data.buckets;
 				var profile = new Profile({
@@ -988,12 +966,13 @@ var app = new (function() {
 				});
 				self.addWeaponTypes(profile.weapons());
 				self.characters.push(profile);
-				//console.log("vault time " + (new Date()-t));
-				done()
+				//console.timeEnd("self.bungie.vault");
+				done(profile)
 			});
+			//console.time("avatars.forEach");			
 			avatars.forEach(function(character, index){
 				self.bungie.inventory(character.characterBase.characterId, function(response) {
-					//console.log("inventory time " + (new Date()-t));
+					//console.time("new Profile"); 					
 					var profile = new Profile({
 						order: index+1,
 						gender: DestinyGender[character.characterBase.genderType],
@@ -1004,10 +983,10 @@ var app = new (function() {
 						background: self.makeBackgroundUrl(character.backgroundPath),
 						level: character.characterLevel,
 						race: window._raceDefs[character.characterBase.raceHash].raceName
-					});
-					//console.log("new Profile time " + (new Date()-t));
+					}); 
 					var items = [];
 
+					 
 					Object.keys(response.data.buckets).forEach(function(bucket){
 						response.data.buckets[bucket].forEach(function(obj){
 							obj.items.forEach(function(item){
@@ -1015,15 +994,15 @@ var app = new (function() {
 							});
 						});
 					});
-
 					//simulate me having the 4th horseman
 					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-
-					items.forEach(processItem(profile));
-					self.addWeaponTypes(profile.items());
+					//console.time("processItems");
+					items.forEach(processItem(profile));					
+					//console.timeEnd("processItems");
+					self.addWeaponTypes(profile.items());					
+					//console.timeEnd("new Profile");
 					self.characters.push(profile);
-					//console.log("character time " + (new Date()-t));
-					done();
+					done(profile);
 				});
 			});
 		});
@@ -1031,12 +1010,13 @@ var app = new (function() {
 
 	this.loadData = function(ref){
 		if (self.loadingUser() == false){
-			window.t = (new Date());
+			//window.t = (new Date());
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies);
 			self.characters.removeAll();
+			//console.time("self.bungie.user");
 			self.bungie.user(function(user){
-				//console.log("user time " + (new Date()-t));
+				//console.timeEnd("self.bungie.user");
 				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
@@ -1064,7 +1044,9 @@ var app = new (function() {
 
 	this.refreshButton = function(){
 		self.toggleBootstrapMenu();
-		self.loadData();
+		self.loadingUser(true);
+		self.characters.removeAll();
+		self.search();
 	}
 
 	this.refreshHandler = function(){
@@ -1101,7 +1083,7 @@ var app = new (function() {
 	}
 
 	this.donate = function(){
-		window.open("http://bit.ly/1Jmb4wQ","_blank");
+		window.open("http://bit.ly/1Jmb4wQ","_system");
 	}
 
 	this.readBungieCookie = function(ref, loop){
@@ -1119,7 +1101,15 @@ var app = new (function() {
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop;
-			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+			if (isChrome || isMobile){
+				window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+			}
+			else {
+				var w = window.open('about:blank'); 
+					w.opener = null; 
+					w.open('https://www.bungie.net/en/User/SignIn/' + type); 
+				return false;
+			}	
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
 					ref.executeScript({
