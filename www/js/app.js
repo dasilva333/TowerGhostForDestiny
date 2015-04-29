@@ -387,9 +387,6 @@ Item.prototype = {
 				transferAmount = self.primaryStat;
 				done();
 			}
-			else if (app.equalizeStacksMode() == true){
-				// todo
-			}
 			else {
 				var dialogItself = (new dialog({
 		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
@@ -445,6 +442,31 @@ var moveItemPositionHandler = function(element, item){
 				BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
 			}
 		}
+	}
+	if ((app.equalizeStacksMode() == true) && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
+		var itemTotal = 0;
+		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		
+		/* association of character, amounts to increment/decrement, and ultimately status of the transfer(s) */
+		var characterStatus = _.map(onlyCharacters, function(c){
+			var characterTotal = _.reduce(
+				_.filter(c.items(), { description: item.description}),
+				function(memo, i){ return memo + i.primaryStat; },
+				0);
+			itemTotal = itemTotal + characterTotal;
+			return {character: c, current: characterTotal, needed: 0, status: false};
+		});
+		
+		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
+		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
+		//console.log("Each character needs " + itemSplit + " " + item.description);
+		
+		/* calculate how much to increment/decrement each character */
+		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
+		//console.log(characterStatus);
+		
+		/* do the transfers */
+		//todo
 	}
 	else {
 		var $movePopup = $( "#move-popup" );
