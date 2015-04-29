@@ -94,7 +94,8 @@ var Loadout = function(model){
 		var firstItem = model.ids[0];
 		if (firstItem && _.isString(firstItem)){
 			//console.log("this model needs a migration " + JSON.stringify(model));
-			var _ids = _.each(model.ids, function(id){
+			var _ids = [];
+			_.each(model.ids, function(id){
 				var equipDef = _.findWhere( model.equipIds, { _id: id });
 				var item = self.findItemById(id);
 				if ( item )

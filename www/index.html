@@ -31,8 +31,8 @@
 
   <body>
 		<script type="text/html" id="sections-template">
-			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault' && bucketType !== 'Post Master') -->
-				<div class="title" data-bind="visible: bucketType !== 'Subclasses'">
+			<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
+				<div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master'">
 					<span data-bind="text: bucketType"></span>
 					<!-- ko if: ( character.id !== 'Vault' ) -->
 						<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
@@ -80,7 +80,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="#">TGD <span class="version" data-bind="visible: !isMobile">2.1.8</span></a>
+		      <a class="navbar-brand" href="#">TGD <span data-bind="visible: !isMobile"><span class="version">2.1.9</span></a>
 			  <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 				<div style="display:inline-block;">
 					<img data-bind="attr: { src : imgIcon, title: uniqueName, class: id }, scrollToView: false" style="width:35px; height:35px">
@@ -210,7 +210,8 @@
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
 				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
 					<ol>
-						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or <a data-bind="fastclick:$root.openBungieWindow('Xuid')" target="_blank">Windows Live ID</a> </li>
+						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or
+						 <a data-bind="fastclick:$root.openBungieWindow('Xuid')" target="_blank">Windows Live ID</a> </li>
 						<li>Sign in with your credentials</li>
 						<li>Wait until homepage completely finishes loading</li>
 						<li>The Bungie.net window will auto close and items should be loaded</li>
@@ -333,7 +334,7 @@
 			<h2>Tower Ghost for Destiny<br>
 			 Manage your gear anywhere</h2>
 
-			 <strong>Version: <span class="version">2.1.8</span></strong><br>
+			 <strong>Version: <span class="version">2.1.9</span></strong><br>
 			 
 			 This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie.
 			 All information used on this site is the property of Bungie.<br><br><br>
