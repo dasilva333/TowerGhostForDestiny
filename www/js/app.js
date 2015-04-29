@@ -1141,11 +1141,15 @@ var app = new (function() {
 		}
 	}
 
-	this.shiftArrayLeft = function(){
-		self.characters.unshift( self.characters.splice(self.characters().length-1,1)[0] );
+	this.shiftViewLeft = function(){
+		var newIndex = app.activeView() - 1;
+		if (newIndex == -1) newIndex = 3;
+		app.activeView(newIndex);
 	}
-	this.shiftArrayRight = function(){
-		self.characters(self.characters().concat( self.characters.splice(0,1) ));
+	this.shiftViewRight = function(){
+		var newIndex = app.activeView() + 1;
+		if (newIndex == 4) newIndex = 0;
+		app.activeView(newIndex);
 	}
 
 	this.yqlRequest = function(params, callback){
@@ -1236,12 +1240,12 @@ var app = new (function() {
 		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
 		  }
 		})();
-		/* breaks on Windows Phone
+
 		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
-				.on("swipeleft", self.shiftArrayLeft)
-				.on("swiperight", self.shiftArrayRight);
-		}*/
+				.on("swipeleft", self.shiftViewLeft)
+				.on("swiperight", self.shiftViewRight);
+		}
 
 		if (isMobile) {
 		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
