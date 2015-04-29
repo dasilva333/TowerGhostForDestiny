@@ -488,12 +488,7 @@ window.ko.bindingHandlers.scrollToView = {
 			.on("tap", function(){
 				var index = $(".profile#" + viewModel.id).index(".profile"),
 					distance = $(".profile:eq(" + index + ")").position().top - 50;
-				if ( isWindowsPhone ){
-					$('html,body').scrollTop(distance);
-				}
-				else {
-					$("body").animate({ scrollTop: distance }, 300, "swing");
-				}
+				app.scrollTo( distance );
 			})
 			.on("press",function(){
 
@@ -1141,15 +1136,34 @@ var app = new (function() {
 		}
 	}
 
+	this.scrollTo = function(distance){
+		if ( isWindowsPhone ){
+			$('html,body').scrollTop(distance);
+		}
+		else {
+			$("body").animate({ scrollTop: distance }, 300, "swing");
+		}
+	}
+	
+	this.scrollToActiveIndex = function(){
+		var index = $(".quickScrollView img").filter(function(){
+		return $(this).css("border-width") == "3px"
+		}).index(".quickScrollView img");
+		self.scrollTo( $(".profile:eq("+index+")").position().top );
+	}
+	
 	this.shiftViewLeft = function(){
 		var newIndex = app.activeView() - 1;
 		if (newIndex == -1) newIndex = 3;
-		app.activeView(newIndex);
+		self.activeView(newIndex);
+		self.scrollToActiveIndex();
 	}
+	
 	this.shiftViewRight = function(){
 		var newIndex = app.activeView() + 1;
 		if (newIndex == 4) newIndex = 0;
-		app.activeView(newIndex);
+		self.activeView(newIndex);
+		self.scrollToActiveIndex();
 	}
 
 	this.yqlRequest = function(params, callback){
