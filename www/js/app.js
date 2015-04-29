@@ -539,7 +539,8 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {
 					var item = ko.contextFor(target).$data;
 					if (app.loadoutMode() == true){
-						item.markAsEquip( item );
+						item.doEquip(!item.doEquip());
+						item.markAsEquip( item , { target: target });
 					}
 					else {
 						$ZamTooltips.lastElement = element;
@@ -1009,7 +1010,7 @@ var app = new (function() {
 
 	this.loadData = function(ref){
 		if (self.loadingUser() == false){
-			window.t = (new Date());
+			//window.t = (new Date());
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies);
 			self.characters.removeAll();
@@ -1043,7 +1044,9 @@ var app = new (function() {
 
 	this.refreshButton = function(){
 		self.toggleBootstrapMenu();
-		self.loadData();
+		self.loadingUser(true);
+		self.characters.removeAll();
+		self.search();
 	}
 
 	this.refreshHandler = function(){
@@ -1098,7 +1101,15 @@ var app = new (function() {
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop;
-			window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+			if (isChrome || isMobile){
+				window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+			}
+			else {
+				var w = window.open('about:blank'); 
+					w.opener = null; 
+					w.open('https://www.bungie.net/en/User/SignIn/' + type); 
+				return false;
+			}	
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
 					ref.executeScript({
