@@ -830,7 +830,7 @@ var app = new (function() {
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
-					description: info.itemName,
+					description: decodeURIComponent(escape(info.itemName)),
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
