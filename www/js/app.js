@@ -1147,21 +1147,21 @@ var app = new (function() {
 	
 	this.scrollToActiveIndex = function(){
 		var index = $(".quickScrollView img").filter(function(){
-		return $(this).css("border-width") == "3px"
+			return $(this).css("border-width") == "3px"
 		}).index(".quickScrollView img");
-		self.scrollTo( $(".profile:eq("+index+")").position().top );
+		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
 	}
 	
 	this.shiftViewLeft = function(){
 		var newIndex = app.activeView() - 1;
-		if (newIndex == -1) newIndex = 3;
+		if (newIndex == 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
 		var newIndex = app.activeView() + 1;
-		if (newIndex == 4) newIndex = 0;
+		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
