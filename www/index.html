@@ -208,7 +208,7 @@
 		<div data-bind="with: $root.activeUser()" style="">
 			<div class="alert alert-danger" data-bind="visible: typeof error !== 'undefined'" style="display:none;">
 				<strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
-				<div data-bind="visible: typeof code !== 'undefined' && code == 99">
+				<div data-bind="visible: typeof code !== 'undefined' && (code == 99 || code = 520)">
 					<ol>
 						<li>Visit <a data-bind="fastclick:$root.openBungieWindow('Psnid')" target="_blank">Playstation Network</a> or
 						 <a data-bind="fastclick:$root.openBungieWindow('Wlid')" target="_blank">Windows Live ID</a> </li>
