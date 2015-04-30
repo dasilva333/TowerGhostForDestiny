@@ -1072,6 +1072,16 @@ var app = new (function() {
 				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
+					if (user.error == 'network error:502'){
+						try {						
+							window.cookies.clear(function() {
+							    BootstrapDialog.alert('Cookies cleared!');
+							});
+						}catch(e){
+							window.ref = window.open('https://www.bungie.net/', '_blank', 'location=yes,clearsessioncache=yes');
+							BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
+						}
+					}
 					if (ref && ref.close){
 						_.throttle( self.readBungieCookie(ref) , 500);
 					}
@@ -1134,6 +1144,10 @@ var app = new (function() {
 		});
 	}
 
+	this.showVersion = function(){
+		BootstrapDialog.alert("Current version is " + $(".version:first").text());
+	}
+	
 	this.donate = function(){
 		window.open("http://bit.ly/1Jmb4wQ","_system");
 	}
@@ -1211,7 +1225,7 @@ var app = new (function() {
 	
 	this.shiftViewLeft = function(){
 		var newIndex = app.activeView() - 1;
-		if (newIndex == 0) newIndex = 3;
+		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
