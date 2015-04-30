@@ -1087,6 +1087,10 @@ var app = new (function() {
 		});
 	}
 
+	this.showVersion = function(){
+		BootstrapDialog.alert("Current version is " + $(".version:first").text());
+	}
+	
 	this.donate = function(){
 		window.open("http://bit.ly/1Jmb4wQ","_system");
 	}
