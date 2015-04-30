@@ -1097,7 +1097,7 @@ var app = new (function() {
 		return function(){
 			var loop;
 			if (isChrome || isMobile){
-				window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+				window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes,clearsessioncache=yes');
 			}
 			else {
 				var w = window.open('about:blank'); 
