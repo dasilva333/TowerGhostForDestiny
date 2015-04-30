@@ -463,10 +463,12 @@ var moveItemPositionHandler = function(element, item){
 		
 		/* calculate how much to increment/decrement each character */
 		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
-		//console.log(characterStatus);
+		//console.log(characterStatus);		
 		
-		/* do the transfers */
-		//todo
+		//todo: show a dialog showing what will happen if approved and allow tweaks to the transfers.
+		//todo: I'm envisioning something like the move-popup where you see each character left to right w/
+		//todo:  a "+" or "-" number on above or below each, maybe with up/down arrows to tweak things
+		//todo:  slightly? who knows.
 		/*
 		var dialogItself = (new dialog({
 			message: "<div>Some text?</div>",
@@ -493,6 +495,60 @@ var moveItemPositionHandler = function(element, item){
 		}
 		setTimeout(function(){ $("#materialsAmount").select().bind("keyup", function(e){ if(e.keyCode == 13) { finishEqualize() } }) }, 500);
 		*/
+		
+		/* do the transfers */
+		
+		var loopBreak = true;
+		var surplusCharacters = _.filter(characterStatus, function(c){ return c.needed < 0; });
+		for (i = 0; i < surplusCharacters.length; i++){
+			var surplusCharacter = surplusCharacters[i];
+			//console.log("---------------------------------------------");
+			//console.log("Surplus character: "); console.log(surplusCharacter.character);
+			
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacters[i].character.items(), { description: item.description});
+			//console.log("Surplus Characters' Items: "); _.each(surplusItems, function(s){ console.log(s); });
+			
+			/* get the first shortage character */
+			var shortageCharacter = _.find(characterStatus, function(d){ return d.needed > 0; });
+			//console.log("Shortage character:"); console.log(shortageCharacter.character);
+			if (shortageCharacter == undefined){ return BootstrapDialog.alert("Error: no shortage character to transfer items to!?"); }
+			if (shortageCharacter.character.id == surplusCharacter.character.id){ return BootstrapDialog.alert("Error: shortage character is surplus character!?"); }
+			
+			/* transfer, potentially needing to chunkify */
+			for (j = 0; j < surplusItems.length; j++){
+				var surplusItem = surplusItems[j];
+				console.log("Surplus item:"); console.log(surplusItem);
+				
+				if (surplusItem.primaryStat >= shortageCharacter.needed){ // can fit everything in one transfer
+					var amountToTransfer = Math.min((surplusCharacter.needed * -1), shortageCharacter.needed);
+					console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
+								surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+								shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+					
+					surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+						surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+							shortageCharacter.needed = shortageCharacter.needed - amountToTransfer;
+							shortageCharacter.current = shortageCharacter.current + amountToTransfer;
+							console.log("[Shortage] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+						
+							surplusCharacter.current = surplusCharacter.current - amountToTransfer;
+							surplusCharacter.needed = surplusCharacter.needed + amountToTransfer;
+							console.log("[Surplus] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+						});
+					});
+				}
+				else { // chunkify transfer
+					return BootstrapDialog.alert("No chunkify transfer logic yet.");
+				}
+				
+				//todo: only wanting one iteration for testing currently
+				break;
+			}
+			
+			//todo: only wanting one iteration for testing currently
+			break;
+		}
 	}
 	else {
 		var $movePopup = $( "#move-popup" );
