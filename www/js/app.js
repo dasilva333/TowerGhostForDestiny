@@ -488,12 +488,7 @@ window.ko.bindingHandlers.scrollToView = {
 			.on("tap", function(){
 				var index = $(".profile#" + viewModel.id).index(".profile"),
 					distance = $(".profile:eq(" + index + ")").position().top - 50;
-				if ( isWindowsPhone ){
-					$('html,body').scrollTop(distance);
-				}
-				else {
-					$("body").animate({ scrollTop: distance }, 300, "swing");
-				}
+				app.scrollTo( distance );
 			})
 			.on("press",function(){
 
@@ -830,7 +825,7 @@ var app = new (function() {
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
-					description: info.itemName,
+					description: decodeURIComponent(escape(info.itemName)),
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
@@ -1020,6 +1015,16 @@ var app = new (function() {
 				self.activeUser(new User(user));
 				if (user.error){
 					self.loadingUser(false);
+					if (user.error == 'network error:502'){
+						try {						
+							window.cookies.clear(function() {
+							    BootstrapDialog.alert('Cookies cleared!');
+							});
+						}catch(e){
+							window.ref = window.open('https://www.bungie.net/', '_blank', 'location=yes,clearsessioncache=yes');
+							BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
+						}
+					}
 					if (ref && ref.close){
 						_.throttle( self.readBungieCookie(ref) , 500);
 					}
@@ -1141,11 +1146,34 @@ var app = new (function() {
 		}
 	}
 
-	this.shiftArrayLeft = function(){
-		self.characters.unshift( self.characters.splice(self.characters().length-1,1)[0] );
+	this.scrollTo = function(distance){
+		if ( isWindowsPhone ){
+			$('html,body').scrollTop(distance);
+		}
+		else {
+			$("body").animate({ scrollTop: distance }, 300, "swing");
+		}
 	}
-	this.shiftArrayRight = function(){
-		self.characters(self.characters().concat( self.characters.splice(0,1) ));
+	
+	this.scrollToActiveIndex = function(){
+		var index = $(".quickScrollView img").filter(function(){
+			return $(this).css("border-width") == "3px"
+		}).index(".quickScrollView img");
+		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
+	}
+	
+	this.shiftViewLeft = function(){
+		var newIndex = app.activeView() - 1;
+		if (newIndex <= 0) newIndex = 3;
+		self.activeView(newIndex);
+		self.scrollToActiveIndex();
+	}
+	
+	this.shiftViewRight = function(){
+		var newIndex = app.activeView() + 1;
+		if (newIndex == 4) newIndex = 1;
+		self.activeView(newIndex);
+		self.scrollToActiveIndex();
 	}
 
 	this.yqlRequest = function(params, callback){
@@ -1236,12 +1264,12 @@ var app = new (function() {
 		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
 		  }
 		})();
-		/* breaks on Windows Phone
+
 		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
-				.on("swipeleft", self.shiftArrayLeft)
-				.on("swiperight", self.shiftArrayRight);
-		}*/
+				.on("swipeleft", self.shiftViewLeft)
+				.on("swiperight", self.shiftViewRight);
+		}
 
 		if (isMobile) {
 		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
