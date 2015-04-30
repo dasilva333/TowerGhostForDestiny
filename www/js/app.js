@@ -467,6 +467,32 @@ var moveItemPositionHandler = function(element, item){
 		
 		/* do the transfers */
 		//todo
+		/*
+		var dialogItself = (new dialog({
+			message: "<div>Some text?</div>",
+			buttons: [
+				{
+					label: 'Equalize',
+					cssClass: 'btn-primary',
+					action: function(){
+						finishEqualize()
+					}
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){
+						dialogItself.close();
+					}
+				}
+			]
+		})).title("Equalize Stacks").show(),
+		finishEqualize = function(){
+			//transferAmount = parseInt($("input#materialsAmount").val());
+			//if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
+			//else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
+		}
+		setTimeout(function(){ $("#materialsAmount").select().bind("keyup", function(e){ if(e.keyCode == 13) { finishEqualize() } }) }, 500);
+		*/
 	}
 	else {
 		var $movePopup = $( "#move-popup" );
