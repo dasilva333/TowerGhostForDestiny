@@ -533,11 +533,9 @@ var moveItemPositionHandler = function(element, item){
 				return;
 			}
 			
-			// all the surplus characters' items that match the description. might be multiple stacks.
-			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});
-			
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
 			var surplusItem = surplusItems[0];
-			// todo: need to support cases when amount exceeds stack size by iterating through surplusItems[...] ... somehow.
 			
 			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");			
 			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), surplusCharacter.needed (" + (surplusCharacter.needed * -1) + ")");
