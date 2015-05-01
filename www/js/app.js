@@ -463,11 +463,11 @@ var moveItemPositionHandler = function(element, item){
 		
 		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
 		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
-		//console.log("Each character needs " + itemSplit + " " + item.description);
+		console.log("Each character needs " + itemSplit + " " + item.description);
 		
 		/* calculate how much to increment/decrement each character */
 		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
-		//console.log(characterStatus);		
+		console.log(characterStatus);		
 		
 		//todo: show a dialog showing what will happen if approved and allow tweaks to the transfers.
 		//todo: I'm envisioning something like the move-popup where you see each character left to right w/
@@ -510,12 +510,22 @@ var moveItemPositionHandler = function(element, item){
 			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
 		})();
 		
+		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
+			surplusCharacter.current = surplusCharacter.current - amountTransferred;
+			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
+			console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+
+			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
+			shortageCharacter.current = shortageCharacter.current + amountTransferred;
+			console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+		};
+		
 		var nextTransfer = function(){
 			var surplusCharacter = getNextSurplusCharacter();
 			var shortageCharacter = getNextShortageCharacter();
 			
 			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				console.log("surplusCharacter or shortageCharacter is undefined. Might be no work, or transfers might've finished.");
+				console.log("surplusCharacter or shortageCharacter is undefined. Might be no work left to do (all transfers finished) or no work to do in the first place.");
 				return;
 			}
 			if (surplusCharacter.character.id == shortageCharacter.character.id){
@@ -524,9 +534,12 @@ var moveItemPositionHandler = function(element, item){
 			}
 			
 			// all the surplus characters' items that match the description. might be multiple stacks.
-			var surplusItems = _.filter(shortageCharacter.character.items(), { description: item.description});
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});
 			
 			var surplusItem = surplusItems[0];
+			// todo: need to support cases when amount exceeds stack size by iterating through surplusItems[...] ... somehow.
+			
+			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");
 			
 			if (surplusItem.primaryStat >= shortageCharacter.needed){ // can fit everything in one transfer
 				var amountToTransfer = Math.min((surplusCharacter.needed * -1), shortageCharacter.needed);
@@ -536,14 +549,7 @@ var moveItemPositionHandler = function(element, item){
 
 				surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
 					surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
-						surplusCharacter.current = surplusCharacter.current - amountToTransfer;
-						surplusCharacter.needed = surplusCharacter.needed + amountToTransfer;
-						console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
-
-						shortageCharacter.needed = shortageCharacter.needed - amountToTransfer;
-						shortageCharacter.current = shortageCharacter.current + amountToTransfer;
-						console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
-						
+						adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
 						nextTransfer();
 					});
 				});
