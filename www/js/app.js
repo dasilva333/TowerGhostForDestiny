@@ -26,6 +26,10 @@ var dialog = (function(options){
 
 	this.show = function(cb){
 		self.modal.open();
+		var mdl = self.modal.getModal();
+		mdl.on("hide.bs.modal", cb).bind("click", function(){
+			self.modal.close();
+		});
 		return self;
 	}
 
@@ -825,7 +829,7 @@ var app = new (function() {
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
-					description: decodeURIComponent(escape(info.itemName)),
+					description: info.itemName,
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
@@ -1087,6 +1091,10 @@ var app = new (function() {
 		});
 	}
 
+	this.showVersion = function(){
+		BootstrapDialog.alert("Current version is " + $(".version:first").text());
+	}
+	
 	this.donate = function(){
 		window.open("http://bit.ly/1Jmb4wQ","_system");
 	}
@@ -1246,6 +1254,18 @@ var app = new (function() {
 			self.loadouts(_loadouts);
 		}
 	}
+	this.whatsNew = function(){
+		if ( $("#showwhatsnew").text() == "true" ){
+			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
+			var cookie = window.localStorage.getItem("whatsnew");
+			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
+				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(function(){
+					window.localStorage.setItem("whatsnew", version.toString());
+				})
+			}
+		}			
+	}
+	
 	this.init = function(){
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
@@ -1298,6 +1318,7 @@ var app = new (function() {
 		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
 		$(window).resize(_.throttle(self.quickIconHighlighter, 500));
 		$(window).scroll(_.throttle(self.quickIconHighlighter, 500));
+		self.whatsNew();
 		ko.applyBindings(self);
 	}
 });
