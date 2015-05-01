@@ -451,14 +451,14 @@ var moveItemPositionHandler = function(element, item){
 		var itemTotal = 0;
 		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
 		
-		/* association of character, amounts to increment/decrement, and ultimately status of the transfer(s) */
+		/* association of character, amounts to increment/decrement */
 		var characterStatus = _.map(onlyCharacters, function(c){
 			var characterTotal = _.reduce(
 				_.filter(c.items(), { description: item.description}),
 				function(memo, i){ return memo + i.primaryStat; },
 				0);
 			itemTotal = itemTotal + characterTotal;
-			return {character: c, current: characterTotal, needed: 0, status: false};
+			return {character: c, current: characterTotal, needed: 0};
 		});
 		
 		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
