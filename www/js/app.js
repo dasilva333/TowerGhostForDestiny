@@ -1184,10 +1184,36 @@ var app = new (function() {
 		self.scrollToActiveIndex();
 	}
 
+	this.yqlRequest = function(params, callback){
+		var request = window.encodeURIComponent("http://www.towerghostfordestiny.com/api.cfm?" + $.param(params))
+		var requestURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%3D%22" + request + "%22&format=json&callback=";
+		$.ajax({
+			url: requestURL,
+			success: function(response){
+				callback(response.query.results);
+			}
+		});
+	}
+
 	this.saveLoadouts = function(includeMessage){
 		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-		var loadouts = ko.toJSON(self.loadouts());
-		window.localStorage.setItem("loadouts", loadouts);
+		if (supportsCloudSaves == true){
+			var params = {
+				action: "save",
+				membershipId: parseFloat(app.activeUser().user.membershipId),
+				loadouts: JSON.stringify(self.loadouts())
+			}
+			self.yqlRequest(params, function(results){
+				if (_includeMessage == true){
+					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+					else BootstrapDialog.alert("Error has occurred saving loadouts");
+				}
+			});
+		}
+		else {
+			var loadouts = ko.toJSON(self.loadouts());
+			window.localStorage.setItem("loadouts", loadouts);
+		}
 	}
 
 	this.loadLoadouts = function(){
