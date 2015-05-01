@@ -1258,7 +1258,7 @@ var app = new (function() {
 		if ( $("#showwhatsnew").text() == "true" ){
 			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
-			if ( parseInt(cookie) < version ){
+			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
 				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(function(){
 					window.localStorage.setItem("whatsnew", version.toString());
 				})
