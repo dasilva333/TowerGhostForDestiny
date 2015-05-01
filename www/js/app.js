@@ -539,24 +539,25 @@ var moveItemPositionHandler = function(element, item){
 			var surplusItem = surplusItems[0];
 			// todo: need to support cases when amount exceeds stack size by iterating through surplusItems[...] ... somehow.
 			
-			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");
+			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");			
+			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), surplusCharacter.needed (" + (surplusCharacter.needed * -1) + ")");
 			
-			if (surplusItem.primaryStat >= shortageCharacter.needed){ // can fit everything in one transfer
-				var amountToTransfer = Math.min((surplusCharacter.needed * -1), shortageCharacter.needed);
-				console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
-							surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
-							shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
+			console.log("maxWeCanWorkWith: " + maxWeCanWorkWith);
+			
+			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
+			console.log("amountToTransfer: " + amountToTransfer);
+			
+			console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
+						surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
-				surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
-					surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
-						adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
-						nextTransfer();
-					});
+			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+					nextTransfer();
 				});
-			}
-			else { // chunkify transfer
-				return BootstrapDialog.alert("No chunkify transfer logic yet.");
-			}
+			});
 		}
 		
 		console.log("calling nextTransfer");
