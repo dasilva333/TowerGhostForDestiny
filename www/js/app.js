@@ -447,7 +447,7 @@ var moveItemPositionHandler = function(element, item){
 			}
 		}
 	}
-	if ((app.equalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
+	if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
 		var itemTotal = 0;
 		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
 		
@@ -469,15 +469,18 @@ var moveItemPositionHandler = function(element, item){
 		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
 		//console.log(characterStatus);	
 		
-		/* do the transfers */
-		
 		var getNextSurplusCharacter = (function(){
 			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
 		})();
 		
 		var getNextShortageCharacter = (function(){
 			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
-		})();
+		})();		
+		
+		/* bail early conditions */
+		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
+			return BootstrapDialog.alert(item.description + " already normalized as best as possible.");
+		}
 		
 		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
 			surplusCharacter.current = surplusCharacter.current - amountTransferred;
@@ -506,14 +509,8 @@ var moveItemPositionHandler = function(element, item){
 			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
 			var surplusItem = surplusItems[0];
 			
-			//console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");			
-			//console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), surplusCharacter.needed (" + (surplusCharacter.needed * -1) + ")");
-			
-			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
-			//console.log("maxWeCanWorkWith: " + maxWeCanWorkWith);
-			
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
 			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
-			//console.log("amountToTransfer: " + amountToTransfer);
 			
 			//console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
 						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
@@ -527,8 +524,28 @@ var moveItemPositionHandler = function(element, item){
 			});
 		}
 		
-		//console.log("calling nextTransfer");
-		nextTransfer();
+		var messageStr = "<div><div>Normalize " + item.description + "</div>";
+		for (i = 0; i < characterStatus.length; i++){
+			messageStr = messageStr.concat("<div> * " + characterStatus[i].character.classType + ": " +
+											(characterStatus[i].needed > 0 ? "+" : "") +
+											characterStatus[i].needed + "</div>");
+		}		
+		messageStr = messageStr.concat("</div>");
+		
+		var dialogItself = (new dialog({
+			message: messageStr,			
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){	nextTransfer() }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Normalize Materials/Consumables").show();
 	}
 	else {
 		var $movePopup = $( "#move-popup" );
@@ -675,7 +692,7 @@ var app = new (function() {
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
 		padBucketHeight: false,
-		equalizeStacksMode: false
+		normalizeStacksMode: false
 	};
 
 	var getValue = function(key){
@@ -712,7 +729,7 @@ var app = new (function() {
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
 	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
-	this.equalizeStacksMode = ko.computed(new StoreObj("equalizeStacksMode", "true"));
+	this.normalizeStacksMode = ko.computed(new StoreObj("normalizeStacksMode", "true"));
 	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
@@ -843,9 +860,9 @@ var app = new (function() {
 		self.toggleBootstrapMenu();
 		self.destinyDbMode(!self.destinyDbMode());
 	}
-	this.toggleEqualizeStacks = function(){
+	this.toggleNormalizeStacks = function(){
 		self.toggleBootstrapMenu();
-		self.equalizeStacksMode(!self.equalizeStacksMode());
+		self.normalizeStacksMode(!self.normalizeStacksMode());
 	}
 	this.toggleDestinyDbTooltips = function(){
 		self.toggleBootstrapMenu();
