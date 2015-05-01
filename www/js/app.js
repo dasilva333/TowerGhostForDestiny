@@ -463,42 +463,11 @@ var moveItemPositionHandler = function(element, item){
 		
 		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
 		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
-		console.log("Each character needs " + itemSplit + " " + item.description);
+		//console.log("Each character needs " + itemSplit + " " + item.description);
 		
 		/* calculate how much to increment/decrement each character */
 		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
-		console.log(characterStatus);		
-		
-		//todo: show a dialog showing what will happen if approved and allow tweaks to the transfers.
-		//todo: I'm envisioning something like the move-popup where you see each character left to right w/
-		//todo:  a "+" or "-" number on above or below each, maybe with up/down arrows to tweak things
-		//todo:  slightly? who knows.
-		/*
-		var dialogItself = (new dialog({
-			message: "<div>Some text?</div>",
-			buttons: [
-				{
-					label: 'Equalize',
-					cssClass: 'btn-primary',
-					action: function(){
-						finishEqualize()
-					}
-				},
-				{
-					label: 'Close',
-					action: function(dialogItself){
-						dialogItself.close();
-					}
-				}
-			]
-		})).title("Equalize Stacks").show(),
-		finishEqualize = function(){
-			//transferAmount = parseInt($("input#materialsAmount").val());
-			//if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
-			//else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
-		}
-		setTimeout(function(){ $("#materialsAmount").select().bind("keyup", function(e){ if(e.keyCode == 13) { finishEqualize() } }) }, 500);
-		*/
+		//console.log(characterStatus);	
 		
 		/* do the transfers */
 		
@@ -513,11 +482,11 @@ var moveItemPositionHandler = function(element, item){
 		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
 			surplusCharacter.current = surplusCharacter.current - amountTransferred;
 			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
-			console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
 
 			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
 			shortageCharacter.current = shortageCharacter.current + amountTransferred;
-			console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
 		};
 		
 		var nextTransfer = function(){
@@ -525,11 +494,11 @@ var moveItemPositionHandler = function(element, item){
 			var shortageCharacter = getNextShortageCharacter();
 			
 			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				console.log("surplusCharacter or shortageCharacter is undefined. Might be no work left to do (all transfers finished) or no work to do in the first place.");
+				//console.log("surplusCharacter or shortageCharacter is undefined. Might be no work left to do (all transfers finished) or no work to do in the first place.");
 				return;
 			}
 			if (surplusCharacter.character.id == shortageCharacter.character.id){
-				console.log("surplusCharacter is shortageCharacter!?");
+				//console.log("surplusCharacter is shortageCharacter!?");
 				return;
 			}
 			
@@ -537,18 +506,18 @@ var moveItemPositionHandler = function(element, item){
 			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
 			var surplusItem = surplusItems[0];
 			
-			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");			
-			console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), surplusCharacter.needed (" + (surplusCharacter.needed * -1) + ")");
+			//console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), shortageCharacter.needed (" + shortageCharacter.needed + ")");			
+			//console.log("surplusItem.primaryStat (" + surplusItem.primaryStat + "), surplusCharacter.needed (" + (surplusCharacter.needed * -1) + ")");
 			
 			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
-			console.log("maxWeCanWorkWith: " + maxWeCanWorkWith);
+			//console.log("maxWeCanWorkWith: " + maxWeCanWorkWith);
 			
 			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
-			console.log("amountToTransfer: " + amountToTransfer);
+			//console.log("amountToTransfer: " + amountToTransfer);
 			
-			console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
-						surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
-						shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+			//console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
+						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
 			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
 				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
@@ -558,7 +527,7 @@ var moveItemPositionHandler = function(element, item){
 			});
 		}
 		
-		console.log("calling nextTransfer");
+		//console.log("calling nextTransfer");
 		nextTransfer();
 	}
 	else {
