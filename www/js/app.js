@@ -453,7 +453,7 @@ var moveItemPositionHandler = function(element, item){
 		window.open(item.href,"_system");
 		return false;
 	}
-	if (app.loadoutMode() == true){
+	else if (app.loadoutMode() == true){
 		var existingItem = _.findWhere( app.activeLoadout().ids(), { id: item._id } );
 		if ( existingItem )
 			app.activeLoadout().ids.remove(existingItem);
@@ -469,7 +469,7 @@ var moveItemPositionHandler = function(element, item){
 			}
 		}
 	}
-	if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
+	else if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
 		var itemTotal = 0;
 		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
 		
