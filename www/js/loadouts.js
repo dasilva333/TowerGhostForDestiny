@@ -249,7 +249,7 @@ Loadout.prototype = {
 							if ( item.doEquip() == true ){
 								return {
 									targetItem: item,
-									description: item.description + " will be just be equipped."
+									description: item.description + " will be equipped."
 								}
 							}
 							/* then return an object indicating to do nothing */
@@ -279,7 +279,7 @@ Loadout.prototype = {
 							else {								
 								return {
 									targetItem: item,
-									description: item.description + " will just be moved"
+									description: item.description + " will be moved"
 								}	
 							}							
 						}
@@ -294,7 +294,7 @@ Loadout.prototype = {
 							if ( item.doEquip() == true ){
 								return {
 									targetItem: item,
-									description: item.description + " will be just be equipped."
+									description: item.description + " will be equipped."
 								}
 							}
 							/* then return an object indicating to do nothing */
@@ -312,7 +312,7 @@ Loadout.prototype = {
 						else {
 							return {
 								targetItem: item,
-								description: item.description + " will be just be moved"
+								description: item.description + " will be moved"
 							}
 						}
 					});
@@ -330,7 +330,7 @@ Loadout.prototype = {
 					dialog.close()
 				}); }},
 				{label: "Cancel", action: function(dialog){ dialog.close() }}
-			]})).title("Transfer Confirm").content($template).show();
+			]})).title("Transfer Confirm").content($template).show(true);
 		}
 	}
 }
