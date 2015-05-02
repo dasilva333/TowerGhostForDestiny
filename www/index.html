@@ -80,7 +80,7 @@
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-				<a class="navbar-brand" href="#" data-bind="click: showVersion">TGD <span data-bind="visible: !isMobile"><span class="version">2.2.6</span></a>
+				<a class="navbar-brand" href="#" data-bind="click: showVersion">TGD <span data-bind="visible: !isMobile"><span class="version">2.2.7</span></a>
 			  <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
 				<div style="display:inline-block;">
 					<img data-bind="attr: { src : imgIcon, title: uniqueName, class: id }, scrollToView: false" style="width:35px; height:35px">
@@ -94,6 +94,7 @@
 				<li class="dropdown">
 		          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/cog.png"> <span class="caret"></span></a>
 		          <ul class="dropdown-menu" role="menu">
+				  		<li><a href="#" data-bind="fastclick: clearFilters">Clear Filters</a></li>
 		            	<li><a href="#" data-bind="fastclick: showAbout">About</a></li>
 						<li><a href="#" data-bind="fastclick: showHelp">Help</a></li>
 						<li class="active"><a href="#" data-bind="fastclick: donate">Donate</a></li>
@@ -103,8 +104,7 @@
 						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
 						<li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount">Use Playstation Account</a></li>
 						<li class="divider"></li>
-						<li><a href="#" data-bind="fastclick: toggleShareView">Share URL</a></li>
-						<li><a href="#" data-bind="fastclick: clearFilters">Clear Filters</a></li>
+						<li><a href="#" data-bind="fastclick: toggleShareView">DestinyExotics Share URL</a></li>						
 						<li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''"><a href="#">Auto Refresh</a></li>
 						<li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 						<li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''"><a href="#">DestinyDB Mode</a></li>
@@ -335,7 +335,7 @@
 			<h2>Tower Ghost for Destiny<br>
 			 Manage your gear anywhere</h2>
 
-			 <strong>Version: <span class="version">2.2.6</span></strong><br>
+			 <strong>Version: <span class="version">2.2.7</span></strong><br>
 			 
 			 This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie.
 			 All information used on this site is the property of Bungie.<br><br><br>
@@ -384,6 +384,7 @@
 				<li><strong>Change Page</strong> Toggle between different views first page is Weapons, second page is Armor, third page is Styling/Misc</li>
 				<li><strong>DestinyDB Tooltips</strong> Allows for taps or hovers to enable the tooltip, if disabled double tap or double click enables the tooltip.</li>
 				<li><strong>DestinyDB Mode</strong> When enabled clicking on an item will open a new tab showing you the full stats of the item.</li>
+				<li><strong>Normalize Stack Mode</strong> When enabled clicking on an item will distribute the amount of items evenly among all your profiles.</li>
 				<li><strong>Auto Transfer Stacks</strong> When enabled you will not be prompted and the entire stack will be transferred (consumables, materials).</li>
 				<li><strong>View</strong> Toggle between different views first page is Weapons, second page is Armor, third page is General</li>
 				<li><strong>Tier</strong> Filter by the rarity of the item (rare, legendary, exotic) <br></li>
@@ -399,6 +400,6 @@
 			</ul>
 		</div>
 		<div id="showwhatsnew" style="display:none;">true</div>
-		<div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%5Ct%3Cli%3EThis%20pop%20up%20will%20show%20whenever%20there%20are%20new%20changes%2C%20once%20you%20dismiss%20it%20you%20won%27t%20see%20it%20until%20there%20are%20more%20updates.%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EYou%20can%20now%20click/tap%20to%20dismiss%20the%20pop%20ups%20including%20About%2C%20Help%20and%20any%20other%20popup%20dialog%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EChanged%20Windows%20Live%20sign%20in%20URL%20again%2C%20thanks%20Bungie.%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Ch5%3EKnown%20Issues%3C/h5%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%5Ct%3Cli%3ENetwork%20error%20502%20requires%20a%20reinstall%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3ELoadouts%20do%20not%20work%20sometimes%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EProblems%20moving%20some%20items%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
+		<div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%5Ct%3Cli%3ETransferring%20materials%20and%20loadouts%20now%20works%20properly.%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EFirefox%20sign%20in%20opens%20in%20a%20new%20window%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EImproved%20cloud%20saves%20can%20now%20hold%20more%20data%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3ENormalize%20Stack%20Mode%20-%20Thanks%20to%20@Mulchman%20%28more%20details%20under%20Help%29%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
 	</body>
 </html>
