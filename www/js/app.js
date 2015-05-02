@@ -519,14 +519,14 @@ var moveItemPositionHandler = function(element, item){
 			var shortageCharacter = getNextShortageCharacter();
 			
 			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				//console.log("surplusCharacter or shortageCharacter is undefined. Might be no work left to do (all transfers finished) or no work to do in the first place.");
+				app.refreshButton()
+				BootstrapDialog.alert("All items normalized as best as possible");
 				return;
 			}
 			if (surplusCharacter.character.id == shortageCharacter.character.id){
 				//console.log("surplusCharacter is shortageCharacter!?");
 				return;
 			}
-			
 			/* all the surplus characters' items that match the description. might be multiple stacks. */
 			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
 			var surplusItem = surplusItems[0];
