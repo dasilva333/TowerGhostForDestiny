@@ -962,7 +962,7 @@ var app = new (function() {
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
 					tierType: info.tierType,
-					icon: dataDir + info.icon
+					icon: self.bungie.getUrl() + info.icon
 				};
 	
 				if (item.primaryStat){
