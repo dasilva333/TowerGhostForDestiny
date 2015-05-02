@@ -24,12 +24,15 @@ var dialog = (function(options){
 		return self;
 	}
 
-	this.show = function(cb){
+	this.show = function(excludeClick, cb){
 		self.modal.open();
 		var mdl = self.modal.getModal();
-		mdl.on("hide.bs.modal", cb).bind("click", function(){
-			self.modal.close();
-		});
+		if (!excludeClick){
+			mdl.bind("click", function(){
+				self.modal.close();
+			});
+		}
+		mdl.on("hide.bs.modal", cb);
 		return self;
 	}
 
@@ -179,15 +182,16 @@ Item.prototype = {
 		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter);
 	},
 	/* helper function that unequips the current item in favor of anything else */
-	unequip: function(callback){
+	unequip: function(callback, allowReplacement){
 		var self = this;
 		//console.log('trying to unequip too!');
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
 			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6;
+				return item.tierType != 6 && item._id !== self._id;
 			});
+			//console.log("other items " + otherItems.length);
 			if ( otherItems.length > 0){
 				var tryNextItem = function(){
 					var item = otherItems[++itemIndex];
@@ -211,7 +215,25 @@ Item.prototype = {
 				//console.log("tryNextItem")
 				tryNextItem();
 			}
+			else if (allowReplacement){
+				//console.log("unequip allows replacement");
+				var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
+					return item._id !== self._id;
+				});
+				if (otherItems.length > 0){
+					//console.log('found an item an item to equip instead ' + otherItems[0].description);
+					otherItems[0].equip(self.character.id, function(){
+						console.log("finished equipping other item");
+						callback();
+					}, true);
+				}
+				else {
+					console.log("no item to replace it");
+					callback(false);
+				}
+			}
 			else {
+				//console.log("refused to unequip");
 				callback(false);
 			}
 		}
@@ -248,8 +270,8 @@ Item.prototype = {
 				}
 			});
 		}
-		//console.log("equip called");
 		var sourceCharacterId = self.characterId;
+		//console.log("equip called from " + sourceCharacterId + " to " + targetCharacterId);
 		if (targetCharacterId == sourceCharacterId){
 			//console.log("item is already in the character");
 			/* if item is exotic */
@@ -267,7 +289,7 @@ Item.prototype = {
 					if ( otherExotic.length > 0 ){
 						//console.log("found another exotic equipped " + otherExotic[0].description);
 						otherExoticFound = true;
-						otherExotic[0].unequip(done);
+						otherExotic[0].unequip(done,allowReplacement);
 					}
 				});
 				if (otherExoticFound == false){
@@ -275,7 +297,7 @@ Item.prototype = {
 				}
 			}
 			else {
-				//console.log("item is not exotic");
+				//console.log("request is not part of a loadout");
 				done()
 			}
 		}
@@ -286,7 +308,7 @@ Item.prototype = {
 				self.character = newProfile;
 				self.characterId = newProfile.id;
 				self.equip(targetCharacterId, callback, allowReplacement);
-			});
+			}, allowReplacement);
 		}
 	},
 	transfer: function(sourceCharacterId, targetCharacterId, amount, cb){
@@ -349,34 +371,34 @@ Item.prototype = {
 			});
 		//}, 1000);
 	},
-	store: function(targetCharacterId, callback){
+	store: function(targetCharacterId, callback, allowReplacement){
 		//console.log("item.store");
 		//console.log(arguments);
 		var self = this;
 		var sourceCharacterId = self.characterId, transferAmount = 1;
 		var done = function(){
 			if (targetCharacterId == "Vault"){
-				//console.log("from character to vault");
+				//console.log("from character to vault " + self.description);
 				self.unequip(function(){
 					//console.log("calling transfer from character to vault");
 					self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
-				});
+				}, allowReplacement);
 			}
 			else if (sourceCharacterId !== "Vault"){
-				//console.log("from character to vault to character");
+				//console.log("from character to vault to character " + self.description);
 				self.unequip(function(){
 					if ( self.bucketType == "Subclasses" ){
 						if (callback)
 							callback(self.character);
 					}
 					else {
-						//console.log("unquipped item");
+						//console.log("xfering item to Vault " + self.description);
 						self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
-							//console.log("xfered item to vault");
+							//console.log("xfered item to vault and now to " + targetCharacterId);
 							self.transfer("Vault", targetCharacterId, transferAmount, callback);
 						});
 					}
-				});
+				}, allowReplacement);
 			}
 			else {
 				//console.log("from vault to character");
@@ -409,7 +431,7 @@ Item.prototype = {
 			                }
 		            	}
 		            ]
-		        })).title("Transfer Materials").show(),
+		        })).title("Transfer Materials").show(true),
 				finishTransfer = function(){
 					transferAmount = parseInt($("input#materialsAmount").val());
 					if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
@@ -446,6 +468,106 @@ var moveItemPositionHandler = function(element, item){
 				BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
 			}
 		}
+	}
+	if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
+		var itemTotal = 0;
+		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		
+		/* association of character, amounts to increment/decrement */
+		var characterStatus = _.map(onlyCharacters, function(c){
+			var characterTotal = _.reduce(
+				_.filter(c.items(), { description: item.description}),
+				function(memo, i){ return memo + i.primaryStat; },
+				0);
+			itemTotal = itemTotal + characterTotal;
+			return {character: c, current: characterTotal, needed: 0};
+		});
+		
+		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
+		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
+		//console.log("Each character needs " + itemSplit + " " + item.description);
+		
+		/* calculate how much to increment/decrement each character */
+		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
+		//console.log(characterStatus);	
+		
+		var getNextSurplusCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
+		})();
+		
+		var getNextShortageCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
+		})();		
+		
+		/* bail early conditions */
+		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
+			return BootstrapDialog.alert(item.description + " already normalized as best as possible.");
+		}
+		
+		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
+			surplusCharacter.current = surplusCharacter.current - amountTransferred;
+			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
+			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+
+			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
+			shortageCharacter.current = shortageCharacter.current + amountTransferred;
+			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+		};
+		
+		var nextTransfer = function(){
+			var surplusCharacter = getNextSurplusCharacter();
+			var shortageCharacter = getNextShortageCharacter();
+			
+			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
+				app.refreshButton()
+				BootstrapDialog.alert("All items normalized as best as possible");
+				return;
+			}
+			if (surplusCharacter.character.id == shortageCharacter.character.id){
+				//console.log("surplusCharacter is shortageCharacter!?");
+				return;
+			}
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
+			var surplusItem = surplusItems[0];
+			
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
+			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
+			
+			//console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
+						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+
+			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+					nextTransfer();
+				});
+			});
+		}
+		
+		var messageStr = "<div><div>Normalize " + item.description + "</div>";
+		for (i = 0; i < characterStatus.length; i++){
+			messageStr = messageStr.concat("<div> * " + characterStatus[i].character.classType + ": " +
+											(characterStatus[i].needed > 0 ? "+" : "") +
+											characterStatus[i].needed + "</div>");
+		}		
+		messageStr = messageStr.concat("</div>");
+		
+		var dialogItself = (new dialog({
+			message: messageStr,			
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){	nextTransfer() }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Normalize Materials/Consumables").show();
 	}
 	else {
 		var $movePopup = $( "#move-popup" );
@@ -591,7 +713,8 @@ var app = new (function() {
 		showMissing: false,
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
-		padBucketHeight: false
+		padBucketHeight: false,
+		normalizeStacksMode: false
 	};
 
 	var getValue = function(key){
@@ -628,6 +751,7 @@ var app = new (function() {
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
 	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
+	this.normalizeStacksMode = ko.computed(new StoreObj("normalizeStacksMode", "true"));
 	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
@@ -757,6 +881,10 @@ var app = new (function() {
 	this.toggleDestinyDbMode = function(){
 		self.toggleBootstrapMenu();
 		self.destinyDbMode(!self.destinyDbMode());
+	}
+	this.toggleNormalizeStacks = function(){
+		self.toggleBootstrapMenu();
+		self.normalizeStacksMode(!self.normalizeStacksMode());
 	}
 	this.toggleDestinyDbTooltips = function(){
 		self.toggleBootstrapMenu();
@@ -1118,10 +1246,9 @@ var app = new (function() {
 				window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
 			}
 			else {
-				var w = window.open('about:blank'); 
-					w.opener = null; 
-					w.open('https://www.bungie.net/en/User/SignIn/' + type); 
-				return false;
+				window.ref = window.open('about:blank'); 
+				window.ref.opener = null; 
+				window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0'); 
 			}	
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
@@ -1184,15 +1311,33 @@ var app = new (function() {
 		self.scrollToActiveIndex();
 	}
 
-	this.yqlRequest = function(params, callback){
-		var request = window.encodeURIComponent("http://www.towerghostfordestiny.com/api.cfm?" + $.param(params))
-		var requestURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%3D%22" + request + "%22&format=json&callback=";
-		$.ajax({
-			url: requestURL,
-			success: function(response){
-				callback(response.query.results);
+	this.requests = {};
+	var id = -1;
+	this.apiRequest = function(params, callback){
+		var apiURL = "https://www.towerghostfordestiny.com/api.cfm";
+		if ( isChrome || isMobile ){
+			$.ajax({
+				url: apiURL,
+				data: params,
+				type: "POST",
+				dataType: "json",
+				success: function(response){
+					callback(response);
+				}
+			});
+		}
+		else {
+			var event = document.createEvent('CustomEvent');
+			var opts = {
+				route: apiURL,
+				payload: params,
+				method: "POST",
+				complete: callback
 			}
-		});
+			event.initCustomEvent("api-request-message", true, true, { id: ++id, opts: opts });
+			self.requests[id] = opts;
+			document.documentElement.dispatchEvent(event);	
+		}
 	}
 
 	this.saveLoadouts = function(includeMessage){
@@ -1203,7 +1348,7 @@ var app = new (function() {
 				membershipId: parseFloat(app.activeUser().user.membershipId),
 				loadouts: JSON.stringify(self.loadouts())
 			}
-			self.yqlRequest(params, function(results){
+			self.apiRequest(params, function(results){
 				if (_includeMessage == true){
 					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
 					else BootstrapDialog.alert("Error has occurred saving loadouts");
@@ -1227,10 +1372,10 @@ var app = new (function() {
 			_loadouts = [];
 		}
 		if (supportsCloudSaves == true){
-			self.yqlRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
+			self.apiRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
 				var _results = [];
-				if (results && results.json && results.json.loadouts){
-				    _results = _.isArray(results.json.loadouts) ? results.json.loadouts : [results.json.loadouts];
+				if (results && results.loadouts){
+				    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
 					_results = _.map(_results, function(loadout){
 						loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
 						loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
@@ -1259,7 +1404,7 @@ var app = new (function() {
 			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
 			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
-				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(function(){
+				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
 					window.localStorage.setItem("whatsnew", version.toString());
 				})
 			}
