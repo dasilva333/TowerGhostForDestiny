@@ -24,12 +24,13 @@ var dialog = (function(options){
 		return self;
 	}
 
-	this.show = function(cb){
+	this.show = function(excludeClick){
 		self.modal.open();
 		var mdl = self.modal.getModal();
-		mdl.on("hide.bs.modal", cb).bind("click", function(){
-			self.modal.close();
-		});
+		if (!excludeClick)
+			mdl.bind("click", function(){
+				self.modal.close();
+			});
 		return self;
 	}
 
@@ -179,15 +180,16 @@ Item.prototype = {
 		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter);
 	},
 	/* helper function that unequips the current item in favor of anything else */
-	unequip: function(callback){
+	unequip: function(callback, allowReplacement){
 		var self = this;
 		//console.log('trying to unequip too!');
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
 			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6;
+				return item.tierType != 6 && item._id !== self._id;
 			});
+			//console.log("other items " + otherItems.length);
 			if ( otherItems.length > 0){
 				var tryNextItem = function(){
 					var item = otherItems[++itemIndex];
@@ -211,7 +213,25 @@ Item.prototype = {
 				//console.log("tryNextItem")
 				tryNextItem();
 			}
+			else if (allowReplacement){
+				//console.log("unequip allows replacement");
+				var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
+					return item._id !== self._id;
+				});
+				if (otherItems.length > 0){
+					//console.log('found an item an item to equip instead ' + otherItems[0].description);
+					otherItems[0].equip(self.character.id, function(){
+						console.log("finished equipping other item");
+						callback();
+					}, true);
+				}
+				else {
+					console.log("no item to replace it");
+					callback(false);
+				}
+			}
 			else {
+				//console.log("refused to unequip");
 				callback(false);
 			}
 		}
@@ -248,8 +268,8 @@ Item.prototype = {
 				}
 			});
 		}
-		//console.log("equip called");
 		var sourceCharacterId = self.characterId;
+		//console.log("equip called from " + sourceCharacterId + " to " + targetCharacterId);
 		if (targetCharacterId == sourceCharacterId){
 			//console.log("item is already in the character");
 			/* if item is exotic */
@@ -267,7 +287,7 @@ Item.prototype = {
 					if ( otherExotic.length > 0 ){
 						//console.log("found another exotic equipped " + otherExotic[0].description);
 						otherExoticFound = true;
-						otherExotic[0].unequip(done);
+						otherExotic[0].unequip(done,allowReplacement);
 					}
 				});
 				if (otherExoticFound == false){
@@ -275,7 +295,7 @@ Item.prototype = {
 				}
 			}
 			else {
-				//console.log("item is not exotic");
+				//console.log("request is not part of a loadout");
 				done()
 			}
 		}
@@ -286,7 +306,7 @@ Item.prototype = {
 				self.character = newProfile;
 				self.characterId = newProfile.id;
 				self.equip(targetCharacterId, callback, allowReplacement);
-			});
+			}, allowReplacement);
 		}
 	},
 	transfer: function(sourceCharacterId, targetCharacterId, amount, cb){
@@ -349,34 +369,34 @@ Item.prototype = {
 			});
 		//}, 1000);
 	},
-	store: function(targetCharacterId, callback){
+	store: function(targetCharacterId, callback, allowReplacement){
 		//console.log("item.store");
 		//console.log(arguments);
 		var self = this;
 		var sourceCharacterId = self.characterId, transferAmount = 1;
 		var done = function(){
 			if (targetCharacterId == "Vault"){
-				//console.log("from character to vault");
+				//console.log("from character to vault " + self.description);
 				self.unequip(function(){
 					//console.log("calling transfer from character to vault");
 					self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
-				});
+				}, allowReplacement);
 			}
 			else if (sourceCharacterId !== "Vault"){
-				//console.log("from character to vault to character");
+				//console.log("from character to vault to character " + self.description);
 				self.unequip(function(){
 					if ( self.bucketType == "Subclasses" ){
 						if (callback)
 							callback(self.character);
 					}
 					else {
-						//console.log("unquipped item");
+						//console.log("xfering item to Vault " + self.description);
 						self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
-							//console.log("xfered item to vault");
+							//console.log("xfered item to vault and now to " + targetCharacterId);
 							self.transfer("Vault", targetCharacterId, transferAmount, callback);
 						});
 					}
-				});
+				}, allowReplacement);
 			}
 			else {
 				//console.log("from vault to character");
@@ -409,7 +429,7 @@ Item.prototype = {
 			                }
 		            	}
 		            ]
-		        })).title("Transfer Materials").show(),
+		        })).title("Transfer Materials").show(true),
 				finishTransfer = function(){
 					transferAmount = parseInt($("input#materialsAmount").val());
 					if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
