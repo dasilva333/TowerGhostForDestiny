@@ -469,6 +469,106 @@ var moveItemPositionHandler = function(element, item){
 			}
 		}
 	}
+	if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
+		var itemTotal = 0;
+		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		
+		/* association of character, amounts to increment/decrement */
+		var characterStatus = _.map(onlyCharacters, function(c){
+			var characterTotal = _.reduce(
+				_.filter(c.items(), { description: item.description}),
+				function(memo, i){ return memo + i.primaryStat; },
+				0);
+			itemTotal = itemTotal + characterTotal;
+			return {character: c, current: characterTotal, needed: 0};
+		});
+		
+		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
+		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
+		//console.log("Each character needs " + itemSplit + " " + item.description);
+		
+		/* calculate how much to increment/decrement each character */
+		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
+		//console.log(characterStatus);	
+		
+		var getNextSurplusCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
+		})();
+		
+		var getNextShortageCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
+		})();		
+		
+		/* bail early conditions */
+		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
+			return BootstrapDialog.alert(item.description + " already normalized as best as possible.");
+		}
+		
+		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
+			surplusCharacter.current = surplusCharacter.current - amountTransferred;
+			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
+			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+
+			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
+			shortageCharacter.current = shortageCharacter.current + amountTransferred;
+			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+		};
+		
+		var nextTransfer = function(){
+			var surplusCharacter = getNextSurplusCharacter();
+			var shortageCharacter = getNextShortageCharacter();
+			
+			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
+				//console.log("surplusCharacter or shortageCharacter is undefined. Might be no work left to do (all transfers finished) or no work to do in the first place.");
+				return;
+			}
+			if (surplusCharacter.character.id == shortageCharacter.character.id){
+				//console.log("surplusCharacter is shortageCharacter!?");
+				return;
+			}
+			
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
+			var surplusItem = surplusItems[0];
+			
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
+			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
+			
+			//console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
+						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+
+			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+					nextTransfer();
+				});
+			});
+		}
+		
+		var messageStr = "<div><div>Normalize " + item.description + "</div>";
+		for (i = 0; i < characterStatus.length; i++){
+			messageStr = messageStr.concat("<div> * " + characterStatus[i].character.classType + ": " +
+											(characterStatus[i].needed > 0 ? "+" : "") +
+											characterStatus[i].needed + "</div>");
+		}		
+		messageStr = messageStr.concat("</div>");
+		
+		var dialogItself = (new dialog({
+			message: messageStr,			
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){	nextTransfer() }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Normalize Materials/Consumables").show();
+	}
 	else {
 		var $movePopup = $( "#move-popup" );
 		if (item.bucketType == "Post Master"){
@@ -613,7 +713,8 @@ var app = new (function() {
 		showMissing: false,
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
-		padBucketHeight: false
+		padBucketHeight: false,
+		normalizeStacksMode: false
 	};
 
 	var getValue = function(key){
@@ -650,6 +751,7 @@ var app = new (function() {
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
 	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
+	this.normalizeStacksMode = ko.computed(new StoreObj("normalizeStacksMode", "true"));
 	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
@@ -779,6 +881,10 @@ var app = new (function() {
 	this.toggleDestinyDbMode = function(){
 		self.toggleBootstrapMenu();
 		self.destinyDbMode(!self.destinyDbMode());
+	}
+	this.toggleNormalizeStacks = function(){
+		self.toggleBootstrapMenu();
+		self.normalizeStacksMode(!self.normalizeStacksMode());
 	}
 	this.toggleDestinyDbTooltips = function(){
 		self.toggleBootstrapMenu();
