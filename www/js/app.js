@@ -1,7 +1,6 @@
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
 window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
-window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
 	var self = this;
@@ -24,13 +23,16 @@ var dialog = (function(options){
 		return self;
 	}
 
-	this.show = function(excludeClick){
+	this.show = function(excludeClick, cb){
 		self.modal.open();
 		var mdl = self.modal.getModal();
-		if (!excludeClick)
+		if (!excludeClick){
+			console.log("binding clicking handler to popup");
 			mdl.bind("click", function(){
 				self.modal.close();
 			});
+		}
+		mdl.on("hide.bs.modal", cb);
 		return self;
 	}
 
@@ -1138,10 +1140,9 @@ var app = new (function() {
 				window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
 			}
 			else {
-				var w = window.open('about:blank'); 
-					w.opener = null; 
-					w.open('https://www.bungie.net/en/User/SignIn/' + type); 
-				return false;
+				window.ref = window.open('about:blank'); 
+				window.ref.opener = null; 
+				window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0'); 
 			}	
 			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
@@ -1163,9 +1164,11 @@ var app = new (function() {
 				});
 			}
 			else {
+				console.log("checking for window close");
 				clearInterval(loop);
 				loop = setInterval(function(){
 					if (window.ref.closed){
+						console.log("window just closed");
 						clearInterval(loop);
 						self.loadData();
 					}
@@ -1204,36 +1207,47 @@ var app = new (function() {
 		self.scrollToActiveIndex();
 	}
 
-	this.yqlRequest = function(params, callback){
-		var request = window.encodeURIComponent("http://www.towerghostfordestiny.com/api.cfm?" + $.param(params))
-		var requestURL = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20json%20where%20url%3D%22" + request + "%22&format=json&callback=";
-		$.ajax({
-			url: requestURL,
-			success: function(response){
-				callback(response.query.results);
-			}
-		});
-	}
-
-	this.saveLoadouts = function(includeMessage){
-		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-		if (supportsCloudSaves == true){
-			var params = {
-				action: "save",
-				membershipId: parseFloat(app.activeUser().user.membershipId),
-				loadouts: JSON.stringify(self.loadouts())
-			}
-			self.yqlRequest(params, function(results){
-				if (_includeMessage == true){
-					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-					else BootstrapDialog.alert("Error has occurred saving loadouts");
+	this.requests = {};
+	var id = -1;
+	this.apiRequest = function(params, callback){
+		var apiURL = "https://www.towerghostfordestiny.com/api.cfm";
+		if ( isChrome || isMobile ){
+			$.ajax({
+				url: apiURL,
+				data: params,
+				dataType: "json",
+				success: function(response){
+					callback(response);
 				}
 			});
 		}
 		else {
-			var loadouts = ko.toJSON(self.loadouts());
-			window.localStorage.setItem("loadouts", loadouts);
+			var event = document.createEvent('CustomEvent');
+			var opts = {
+				route: apiURL,
+				payload: params,
+				method: "POST",
+				complete: callback
+			}
+			event.initCustomEvent("api-request-message", true, true, { id: ++id, opts: opts });
+			self.requests[id] = opts;
+			document.documentElement.dispatchEvent(event);	
 		}
+	}
+
+	this.saveLoadouts = function(includeMessage){
+		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
+		var params = {
+			action: "save",
+			membershipId: parseFloat(app.activeUser().user.membershipId),
+			loadouts: JSON.stringify(self.loadouts())
+		}
+		self.apiRequest(params, function(results){
+			if (_includeMessage == true){
+				if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+				else BootstrapDialog.alert("Error has occurred saving loadouts");
+			}
+		});
 	}
 
 	this.loadLoadouts = function(){
@@ -1246,40 +1260,35 @@ var app = new (function() {
 		else {
 			_loadouts = [];
 		}
-		if (supportsCloudSaves == true){
-			self.yqlRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
-				var _results = [];
-				if (results && results.json && results.json.loadouts){
-				    _results = _.isArray(results.json.loadouts) ? results.json.loadouts : [results.json.loadouts];
-					_results = _.map(_results, function(loadout){
-						loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-						loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-						loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-						return new Loadout(loadout);
-					});
-				}
-				/* one time migrate joins the two arrays and clears the local one */
-				if(_loadouts.length > 0){
-					_results = _loadouts.concat(_results);
-					window.localStorage.setItem("loadouts", "");
-				}
-				self.loadouts(_results);
-				/* one time migrate saves the new joined array to the cloud */
-				if(_loadouts.length > 0){
-					self.saveLoadouts(false);
-				}
-			});
-		}
-		else if (_loadouts.length > 0){
-			self.loadouts(_loadouts);
-		}
+		self.apiRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
+			var _results = [];
+			if (results && results.loadouts){
+			    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
+				_results = _.map(_results, function(loadout){
+					loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+					loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+					loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+					return new Loadout(loadout);
+				});
+			}
+			/* one time migrate joins the two arrays and clears the local one */
+			if(_loadouts.length > 0){
+				_results = _loadouts.concat(_results);
+				window.localStorage.setItem("loadouts", "");
+			}
+			self.loadouts(_results);
+			/* one time migrate saves the new joined array to the cloud */
+			if(_loadouts.length > 0){
+				self.saveLoadouts(false);
+			}
+		});
 	}
 	this.whatsNew = function(){
 		if ( $("#showwhatsnew").text() == "true" ){
 			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
 			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
-				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(function(){
+				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
 					window.localStorage.setItem("whatsnew", version.toString());
 				})
 			}
@@ -1334,6 +1343,22 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
+		if (!isMobile && !isMobile){
+			window.addEventListener("message", function(event) {
+				console.log("received a firefox response");
+				try {
+					var reply = event.data;
+					console.log(reply);
+					if (reply.type == "api"){
+						var response = JSON.parse(reply.response);
+						var opts = requests[reply.id];			
+						 opts.complete(response.Response, response);					
+					}	
+				}catch(e){
+					console.log(e);
+				}		
+			}, false);  
+		}
 		/* this fixes issue #16 */
 		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
 		$(window).resize(_.throttle(self.quickIconHighlighter, 500));
