@@ -17,21 +17,18 @@ try {
 		var _token, id = 0;
 		window.requests = {};  
 		window.addEventListener("message", function(event) {
-			console.log("received a firefox response");
+			//console.log("received a firefox response");
 			try {
 				var reply = event.data;
-				console.log(reply.type);
-				/* if reply is for a bungie request */
-				if (reply.type == "bungie"){
-					var response = JSON.parse(reply.response);
-					var opts = requests[reply.id];			
-					if(response.ErrorCode === 36){ 
-						//console.log("throttle retrying"); 
-						opts.route = opts.route.replace(url + "Platform",''); 
-						setTimeout(function () { requests[id+1] = opts; _request(opts); }, 1000); 
-					}
-			        else { opts.complete(response.Response, response); }						
-				}	
+				//console.log(reply);
+				var response = JSON.parse(reply.response);
+				var opts = requests[reply.id];			
+				if(response.ErrorCode === 36){ 
+					//console.log("throttle retrying"); 
+					opts.route = opts.route.replace(url + "Platform",''); 
+					setTimeout(function () { requests[id+1] = opts; _request(opts); }, 1000); 
+				}
+		        else { opts.complete(response.Response, response); }			
 			}catch(e){
 				console.log(e);
 			}		
@@ -137,7 +134,7 @@ try {
 		}
 		//This piece is for Firefox
 		else {
-			console.log("sending firefox request");
+			//console.log("sending firefox request");
 			var event = document.createEvent('CustomEvent');
 			opts.route = url + "Platform" + opts.route;
 			event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });

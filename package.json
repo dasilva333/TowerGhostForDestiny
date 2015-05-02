@@ -8,8 +8,7 @@
   "version": "2.2.6",
   "permissions": {
     "cross-domain-content": [
-      "https://www.bungie.net",
-	  "https://www.towerghostfordestiny.com"
+      "https://www.bungie.net"
     ]
   }
 }

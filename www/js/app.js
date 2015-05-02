@@ -1,6 +1,7 @@
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
 window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
+window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
 	var self = this;
@@ -27,7 +28,6 @@ var dialog = (function(options){
 		self.modal.open();
 		var mdl = self.modal.getModal();
 		if (!excludeClick){
-			console.log("binding clicking handler to popup");
 			mdl.bind("click", function(){
 				self.modal.close();
 			});
@@ -1164,11 +1164,9 @@ var app = new (function() {
 				});
 			}
 			else {
-				console.log("checking for window close");
 				clearInterval(loop);
 				loop = setInterval(function(){
 					if (window.ref.closed){
-						console.log("window just closed");
 						clearInterval(loop);
 						self.loadData();
 					}
@@ -1215,6 +1213,7 @@ var app = new (function() {
 			$.ajax({
 				url: apiURL,
 				data: params,
+				type: "POST",
 				dataType: "json",
 				success: function(response){
 					callback(response);
@@ -1237,17 +1236,23 @@ var app = new (function() {
 
 	this.saveLoadouts = function(includeMessage){
 		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-		var params = {
-			action: "save",
-			membershipId: parseFloat(app.activeUser().user.membershipId),
-			loadouts: JSON.stringify(self.loadouts())
-		}
-		self.apiRequest(params, function(results){
-			if (_includeMessage == true){
-				if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-				else BootstrapDialog.alert("Error has occurred saving loadouts");
+		if (supportsCloudSaves == true){
+			var params = {
+				action: "save",
+				membershipId: parseFloat(app.activeUser().user.membershipId),
+				loadouts: JSON.stringify(self.loadouts())
 			}
-		});
+			self.apiRequest(params, function(results){
+				if (_includeMessage == true){
+					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+					else BootstrapDialog.alert("Error has occurred saving loadouts");
+				}
+			});
+		}
+		else {
+			var loadouts = ko.toJSON(self.loadouts());
+			window.localStorage.setItem("loadouts", loadouts);
+		}
 	}
 
 	this.loadLoadouts = function(){
@@ -1260,28 +1265,33 @@ var app = new (function() {
 		else {
 			_loadouts = [];
 		}
-		self.apiRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
-			var _results = [];
-			if (results && results.loadouts){
-			    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
-				_results = _.map(_results, function(loadout){
-					loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-					loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-					loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-					return new Loadout(loadout);
-				});
-			}
-			/* one time migrate joins the two arrays and clears the local one */
-			if(_loadouts.length > 0){
-				_results = _loadouts.concat(_results);
-				window.localStorage.setItem("loadouts", "");
-			}
-			self.loadouts(_results);
-			/* one time migrate saves the new joined array to the cloud */
-			if(_loadouts.length > 0){
-				self.saveLoadouts(false);
-			}
-		});
+		if (supportsCloudSaves == true){
+			self.apiRequest({ action: "load", membershipId: parseFloat(self.activeUser().user.membershipId) }, function(results){
+				var _results = [];
+				if (results && results.loadouts){
+				    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
+					_results = _.map(_results, function(loadout){
+						loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+						loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+						loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+						return new Loadout(loadout);
+					});
+				}
+				/* one time migrate joins the two arrays and clears the local one */
+				if(_loadouts.length > 0){
+					_results = _loadouts.concat(_results);
+					window.localStorage.setItem("loadouts", "");
+				}
+				self.loadouts(_results);
+				/* one time migrate saves the new joined array to the cloud */
+				if(_loadouts.length > 0){
+					self.saveLoadouts(false);
+				}
+			});
+		}
+		else if (_loadouts.length > 0){
+			self.loadouts(_loadouts);
+		}
 	}
 	this.whatsNew = function(){
 		if ( $("#showwhatsnew").text() == "true" ){
@@ -1343,22 +1353,6 @@ var app = new (function() {
 				$("#move-popup").hide();
 			}
 		});
-		if (!isMobile && !isMobile){
-			window.addEventListener("message", function(event) {
-				console.log("received a firefox response");
-				try {
-					var reply = event.data;
-					console.log(reply);
-					if (reply.type == "api"){
-						var response = JSON.parse(reply.response);
-						var opts = requests[reply.id];			
-						 opts.complete(response.Response, response);					
-					}	
-				}catch(e){
-					console.log(e);
-				}		
-			}, false);  
-		}
 		/* this fixes issue #16 */
 		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
 		$(window).resize(_.throttle(self.quickIconHighlighter, 500));
