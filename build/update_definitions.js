@@ -53,17 +53,24 @@ var neededFiles = [
 var queue = [];
 var cacheIcons = function(){
 	var icon = queue.pop();
-	http.get(bungieURL + icon, function(res) {
-		var data = []; // List of Buffer objects
-		res.on("data", function(chunk) {
-			data.push(chunk); // Append Buffer object
+	if ( !fs.existsSync(jsonPath + icon) ){
+		console.log("downloading icon");
+		http.get(bungieURL + icon, function(res) {
+			var data = []; // List of Buffer objects
+			res.on("data", function(chunk) {
+				data.push(chunk); // Append Buffer object
+			});
+			res.on("end", function() {
+				fs.writeFileSync(jsonPath + icon, Buffer.concat(data));
+				if (queue.length > 0)
+					cacheIcons();
+			});
 		});
-		res.on("end", function() {
-			fs.writeFileSync(jsonPath + icon, Buffer.concat(data));
-			if (queue.length > 0)
-				cacheIcons();
-		});
-	});	
+	}
+	else {
+		if (queue.length > 0)
+			cacheIcons();
+	}
 }
 if ( fs.existsSync(dbPath) ){
 	var sqlite3 = require('sqlite3').verbose();  
@@ -88,11 +95,11 @@ if ( fs.existsSync(dbPath) ){
 	    });
 	});	
 	db.close();
-	/*var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
+	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.icon);
 	});
-	cacheIcons();*/
+	cacheIcons();
 }
 else {
 	var zip = require('node-zip');
