@@ -1234,7 +1234,7 @@ var app = new (function() {
 		   var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
 		   var top =  $item.position().top - 55;
 		   var bottom = top + $item.height();
-		   $quickIcon.css("border", (scrollTop >= top && scrollTop <= bottom) ? "3px solid white" : "none");
+		   $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
 		});
 	}
 
@@ -1316,7 +1316,7 @@ var app = new (function() {
 	
 	this.scrollToActiveIndex = function(){
 		var index = $(".quickScrollView img").filter(function(){
-			return $(this).css("border-width") == "3px"
+			return $(this).attr("class").indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
 		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
 	}
