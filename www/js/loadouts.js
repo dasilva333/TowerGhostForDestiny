@@ -260,6 +260,11 @@ Loadout.prototype = {
 							}
 						}
 						else {
+							if ( sourceBucket.length == 1 ){
+								return {
+									description: item.description + " will not be moved. There is no item to replace it."
+								}
+							}
 							var itemFound = false;
 							var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
 							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
