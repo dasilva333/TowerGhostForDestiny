@@ -1,14 +1,15 @@
-window.DestinyGender = {
+var DestinyGender = {
 	"0": "Male",
-	"1": "Female"
+	"1": "Female",
+	"2": "Unknown"
 };
-window.DestinyClass = {
+var DestinyClass = {
     "0": "Titan",
     "1": "Hunter",
     "2": "Warlock",
     "3": "Unknown"
 };
-window.DestinyDamageTypes = {
+var DestinyDamageTypes = {
     "0": "None",
     "1": "Kinetic",
     "2": "Arc",
@@ -16,7 +17,7 @@ window.DestinyDamageTypes = {
     "4": "Void",
     "5": "Raid"
 };
-window.DestinyBucketTypes = {
+var DestinyBucketTypes = {
 	"1498876634": "Primary",
 	"2465295065": "Special",
 	"953998645": "Heavy",
@@ -34,9 +35,16 @@ window.DestinyBucketTypes = {
 	"3284755031": "Subclasses",
 	"12345": "Post Master"
 }
-window.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
-window.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
-window._collectionsFix = {
+var DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
+var DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
+var DestinyDamageTypeColors = {
+	"None": "#BBB",
+	"Kinetic": "#BBB",
+	"Arc": "#85C5EC",
+	"Solar": "#C48A01",
+	"Void": "#B184C5"
+}
+var _collectionsFix = {
 	"exoticWeapons": [],
 	"vaultWeapons": [],
 	"crotaWeapons": [],
@@ -45,4 +53,4 @@ window._collectionsFix = {
 	"vaultArmor": [],
 	"crotaArmor": [],
 	"ironArmor": []
-};
+}
