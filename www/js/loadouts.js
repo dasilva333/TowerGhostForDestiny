@@ -346,7 +346,7 @@ Loadout.prototype = {
 			var $template = $(swapTemplate({ swapArray: masterSwapArray }));
 			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
 			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
-			(new tgd.dialog({buttons:[ 
+			(new dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
 					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a> ;)");
 					dialog.close()
