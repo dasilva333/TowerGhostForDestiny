@@ -1,3 +1,7 @@
+window.tgd = {
+	duplicates: {}
+};
+
 window.ua = navigator.userAgent;
 window.isChrome = (typeof chrome !== "undefined");
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
@@ -5,7 +9,7 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 
-var dialog = (function(options){
+tgd.dialog = (function(options){
 	var self = this;
 
 	this.modal;
@@ -169,6 +173,7 @@ Item.prototype = {
 		var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
 		var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
 		var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
+		var showDuplicate = $parent.showDuplicate() == false ||  ($parent.showDuplicate() == true && tgd.duplicates[self.id] > 1);
 		/*console.log( "searchFilter: " + searchFilter);
 		console.log( "dmgFilter: " + dmgFilter);
 		console.log( "setFilter: " + setFilter);
@@ -181,7 +186,7 @@ Item.prototype = {
 		console.log("perks are " + JSON.stringify(self.perks));
 		console.log("description is " + self.description);
 		console.log("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter);
+		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
 	},
 	/* helper function that unequips the current item in favor of anything else */
 	unequip: function(callback, allowReplacement){
@@ -416,7 +421,7 @@ Item.prototype = {
 				done();
 			}
 			else {
-				var dialogItself = (new dialog({
+				var dialogItself = (new tgd.dialog({
 		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
 		            buttons: [
 						{
@@ -556,7 +561,7 @@ var moveItemPositionHandler = function(element, item){
 		}		
 		messageStr = messageStr.concat("</div>");
 		
-		var dialogItself = (new dialog({
+		var dialogItself = (new tgd.dialog({
 			message: messageStr,			
 			buttons: [
 				{
@@ -709,6 +714,7 @@ var app = new (function() {
 		dmgFilter: [],
 		activeView: 0,
 		progressFilter: 0,
+		showDuplicate: false,
 		setFilter: [],
 		shareView: false,
 		shareUrl: "",
@@ -766,6 +772,7 @@ var app = new (function() {
 	this.shareView =  ko.observable(defaults.shareView);
 	this.shareUrl  = ko.observable(defaults.shareUrl);
 	this.showMissing =  ko.observable(defaults.showMissing);
+	this.showDuplicate = ko.observable(defaults.showDuplicate);
 
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
@@ -788,11 +795,11 @@ var app = new (function() {
 	}
 
 	this.showHelp = function(){
-		(new dialog).title("Help").content($("#help").html()).show();
+		(new tgd.dialog).title("Help").content($("#help").html()).show();
 	}
 
 	this.showAbout = function(){
-		(new dialog).title("About").content($("#about").html()).show();
+		(new tgd.dialog).title("About").content($("#about").html()).show();
 	}
 
 	this.clearFilters = function(model, element){
@@ -803,12 +810,13 @@ var app = new (function() {
 		self.tierFilter(defaults.tierFilter);
 		self.typeFilter(defaults.typeFilter);
 		self.dmgFilter.removeAll();
-		self.progressFilter(defaults.progressFilter);
+		self.progressFilter(defaults.progressFilter);		
 		self.setFilter.removeAll()
 		self.setFilterFix.removeAll()
 		self.shareView(defaults.shareView);
 		self.shareUrl (defaults.shareUrl);
 		self.showMissing(defaults.showMissing);
+		self.showDuplicate(defaults.showDuplicate);
 		$(element.target).removeClass("active");
 		return false;
 	}
@@ -896,6 +904,10 @@ var app = new (function() {
 		self.toggleBootstrapMenu();
 		self.shareView(!self.shareView());
 	}
+	this.toggleDuplicates = function(model, event){
+		self.toggleBootstrapMenu();
+		self.showDuplicate(!self.showDuplicate());
+	}
 	this.toggleShowMissing = function(){
 		self.toggleBootstrapMenu();
 		self.showMissing(!self.showMissing());
@@ -922,7 +934,7 @@ var app = new (function() {
 	this.setTypeFilter = function(model, event){
 		self.toggleBootstrapMenu();
 		self.typeFilter($(event.target).parent().attr("value"));
-	}
+	}	
 	this.setProgressFilter = function(model, event){
 		self.toggleBootstrapMenu();
 		self.progressFilter($(event.target).parent().attr("value"));
@@ -968,7 +980,10 @@ var app = new (function() {
 					tierType: info.tierType,
 					icon: dataDir + info.icon
 				};
-	
+				if ( !(item.itemHash in tgd.duplicates) ){
+					tgd.duplicates[item.itemHash] = 0;
+				}
+				tgd.duplicates[item.itemHash]++;
 				if (item.primaryStat){
 					itemObject.primaryStat = item.primaryStat.value;
 				}
@@ -1219,7 +1234,7 @@ var app = new (function() {
 		   var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
 		   var top =  $item.position().top - 55;
 		   var bottom = top + $item.height();
-		   $quickIcon.css("border", (scrollTop >= top && scrollTop <= bottom) ? "3px solid white" : "none");
+		   $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
 		});
 	}
 
@@ -1301,7 +1316,7 @@ var app = new (function() {
 	
 	this.scrollToActiveIndex = function(){
 		var index = $(".quickScrollView img").filter(function(){
-			return $(this).css("border-width") == "3px"
+			return $(this).attr("class").indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
 		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
 	}
@@ -1413,7 +1428,7 @@ var app = new (function() {
 			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
 			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
-				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
+				(new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
 					window.localStorage.setItem("whatsnew", version.toString());
 				})
 			}
