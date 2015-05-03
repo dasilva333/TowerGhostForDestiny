@@ -948,6 +948,8 @@ var app = new (function() {
 			}
 			var info = window._itemDefs[item.itemHash];
 			if (info.bucketTypeHash in DestinyBucketTypes){
+				var description = info.itemName;
+				try{ description = decodeURIComponent(info.itemName); }catch(e){ description = info.itemName; }
 				var itemObject = {
 					id: item.itemHash,
 					_id: item.itemInstanceId,
@@ -957,7 +959,7 @@ var app = new (function() {
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
-					description: info.itemName,
+					description: description,
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,

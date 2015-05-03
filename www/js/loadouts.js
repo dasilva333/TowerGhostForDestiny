@@ -234,7 +234,7 @@ Loadout.prototype = {
 			var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key){
 				var sourceBucket = sourceGroups[key];
 				var targetBucket = targetGroups[key];
-				var maxBucketSize = 10;									
+				var maxBucketSize = 10;
 				if (targetCharacter.id == "Vault"){
 					maxBucketSize = ( DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
 				}
@@ -243,6 +243,12 @@ Loadout.prototype = {
 				if (sourceBucket.length + targetBucket.length >= maxBucketSize){
 					var sourceBucketIds = _.pluck( sourceBucket, "_id");
 					var swapArray = _.map(sourceBucket, function(item){
+						var ownerBucket = _.where( item.character.items(), { bucketType: key });
+						if ( ownerBucket.length == 1 ){
+							return {
+								description: item.description + " will not be moved. There is no item to replace it."
+							}
+						}
 						/* if the item is already in the targetBucket */
 						if ( _.findWhere( targetBucket, { _id: item._id }) ){
 							/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
@@ -260,11 +266,6 @@ Loadout.prototype = {
 							}
 						}
 						else {
-							if ( sourceBucket.length == 1 ){
-								return {
-									description: item.description + " will not be moved. There is no item to replace it."
-								}
-							}
 							var itemFound = false;
 							var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
 							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
@@ -281,7 +282,7 @@ Loadout.prototype = {
 								    description: item.description + " will be swapped with " + swapItem.description
 							    }
 							}	
-							else {								
+							else {				
 								return {
 									targetItem: item,
 									description: item.description + " will be moved"
@@ -291,8 +292,14 @@ Loadout.prototype = {
 					});						
 				}
 				else {
-					/* do a clean move by returning a swap object without a swapItem */
+					/* do a clean move by returning a swap object without a swapItem */					
 					var swapArray = _.map(sourceBucket, function(item){
+						var ownerBucket = _.where( item.character.items(), { bucketType: key });
+						if ( ownerBucket.length == 1 ){
+							return {
+								description: item.description + " will not be moved. There is no item to replace it."
+							}
+						}
 						/* if the item is already in the targetBucket */
 						if ( _.findWhere( targetBucket, { _id: item._id }) ){
 							/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */

@@ -11,6 +11,12 @@ var neededFiles = [
 	}},
 	{ table: "DestinyInventoryItemDefinition", name: "itemDefs", key: "itemHash", reduce: function(item){
 		var obj = item;
+		try {
+			obj.itemName = encodeURIComponent(obj.itemName);
+		}catch(e){
+			console.log(e);
+			console.log(obj.itemName);
+		}		
 		delete obj.stats;
 		delete obj.values;
 		delete obj.sources;
@@ -77,15 +83,16 @@ if ( fs.existsSync(dbPath) ){
 				var patchData = JSON.parse(fs.readFileSync(patchFile));
 				_.extend(obj, patchData);
 			}
+			console.log('writing file: ' + filename);
 			fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 	    });
 	});	
 	db.close();
-	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
+	/*var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.icon);
 	});
-	cacheIcons();
+	cacheIcons();*/
 }
 else {
 	var zip = require('node-zip');
