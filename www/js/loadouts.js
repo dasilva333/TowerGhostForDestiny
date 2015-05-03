@@ -260,7 +260,6 @@ Loadout.prototype = {
 							}
 						}
 						else {
-							console.log("trying to equip when " + sourceBucket.length);
 							if ( sourceBucket.length == 1 ){
 								return {
 									description: item.description + " will not be moved. There is no item to replace it."
