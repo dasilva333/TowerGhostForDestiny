@@ -1,8 +1,6 @@
-window.ua = navigator.userAgent;
 window.isChrome = (typeof chrome !== "undefined");
-window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
-window.isWindowsPhone = (/iemobile/i.test(ua));
-window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
+window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
+window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
@@ -950,8 +948,6 @@ var app = new (function() {
 			}
 			var info = window._itemDefs[item.itemHash];
 			if (info.bucketTypeHash in DestinyBucketTypes){
-				var description = info.itemName;
-				try{ description = decodeURIComponent(info.itemName); }catch(e){ description = info.itemName; }
 				var itemObject = {
 					id: item.itemHash,
 					_id: item.itemInstanceId,
@@ -961,7 +957,7 @@ var app = new (function() {
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
-					description: description,
+					description: info.itemName,
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
@@ -1254,7 +1250,7 @@ var app = new (function() {
 				window.ref.opener = null; 
 				window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0'); 
 			}	
-			if (isMobile && !isKindle){
+			if (isMobile){
 				ref.addEventListener('loadstop', function(event) {
 					ref.executeScript({
 						code: 'document.location.href'
@@ -1278,12 +1274,7 @@ var app = new (function() {
 				loop = setInterval(function(){
 					if (window.ref.closed){
 						clearInterval(loop);
-						if (isKindle){
-							self.readBungieCookie(ref, loop);
-						}
-						else {
-							self.loadData();
-						}
+						self.loadData();
 					}
 				}, 100);
 			}
