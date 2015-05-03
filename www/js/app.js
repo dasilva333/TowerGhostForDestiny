@@ -1,6 +1,8 @@
+window.ua = navigator.userAgent;
 window.isChrome = (typeof chrome !== "undefined");
-window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
-window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
+window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
+window.isWindowsPhone = (/iemobile/i.test(ua));
+window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 
 var dialog = (function(options){
@@ -1252,7 +1254,7 @@ var app = new (function() {
 				window.ref.opener = null; 
 				window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0'); 
 			}	
-			if (isMobile){
+			if (isMobile && !isKindle){
 				ref.addEventListener('loadstop', function(event) {
 					ref.executeScript({
 						code: 'document.location.href'
@@ -1276,7 +1278,12 @@ var app = new (function() {
 				loop = setInterval(function(){
 					if (window.ref.closed){
 						clearInterval(loop);
-						self.loadData();
+						if (isKindle){
+							self.readBungieCookie(ref, loop);
+						}
+						else {
+							self.loadData();
+						}
 					}
 				}, 100);
 			}

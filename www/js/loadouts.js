@@ -209,11 +209,21 @@ Loadout.prototype = {
 		app.loadoutMode(false);
 		transferNextItem();
 	},
+	transfer: function(targetCharacterId){
+		var self = this;		
+		var subscription = app.loadingUser.subscribe(function(newValue){
+			if (newValue == false){
+				self.move( targetCharacterId );
+				subscription.dispose();
+			}
+		});
+		app.refreshButton();
+	},
 	/* before starting the transfer we need to decide what strategy we are going to use */
 	/* strategy one involves simply moving the items across assuming enough space to fit in both without having to move other things */
 	/* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	/* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
-	transfer: function(targetCharacterId){
+	move: function(targetCharacterId){
 		var self = this;
 		var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
 		var getFirstItem = function(sourceBucketIds, itemFound){
