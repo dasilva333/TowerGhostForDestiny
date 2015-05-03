@@ -209,11 +209,21 @@ Loadout.prototype = {
 		app.loadoutMode(false);
 		transferNextItem();
 	},
+	transfer: function(targetCharacterId){
+		var self = this;		
+		var subscription = app.loadingUser.subscribe(function(newValue){
+			if (newValue == false){
+				self.move( targetCharacterId );
+				subscription.dispose();
+			}
+		});
+		app.refreshButton();
+	},
 	/* before starting the transfer we need to decide what strategy we are going to use */
 	/* strategy one involves simply moving the items across assuming enough space to fit in both without having to move other things */
 	/* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	/* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
-	transfer: function(targetCharacterId){
+	move: function(targetCharacterId){
 		var self = this;
 		var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
 		var getFirstItem = function(sourceBucketIds, itemFound){
@@ -234,7 +244,7 @@ Loadout.prototype = {
 			var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key){
 				var sourceBucket = sourceGroups[key];
 				var targetBucket = targetGroups[key];
-				var maxBucketSize = 10;									
+				var maxBucketSize = 10;
 				if (targetCharacter.id == "Vault"){
 					maxBucketSize = ( DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
 				}
@@ -243,6 +253,12 @@ Loadout.prototype = {
 				if (sourceBucket.length + targetBucket.length >= maxBucketSize){
 					var sourceBucketIds = _.pluck( sourceBucket, "_id");
 					var swapArray = _.map(sourceBucket, function(item){
+						var ownerBucket = _.where( item.character.items(), { bucketType: key });
+						if ( ownerBucket.length == 1 ){
+							return {
+								description: item.description + " will not be moved. There is no item to replace it."
+							}
+						}
 						/* if the item is already in the targetBucket */
 						if ( _.findWhere( targetBucket, { _id: item._id }) ){
 							/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
@@ -260,11 +276,6 @@ Loadout.prototype = {
 							}
 						}
 						else {
-							if ( sourceBucket.length == 1 ){
-								return {
-									description: item.description + " will not be moved. There is no item to replace it."
-								}
-							}
 							var itemFound = false;
 							var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
 							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
@@ -281,7 +292,7 @@ Loadout.prototype = {
 								    description: item.description + " will be swapped with " + swapItem.description
 							    }
 							}	
-							else {								
+							else {				
 								return {
 									targetItem: item,
 									description: item.description + " will be moved"
@@ -291,8 +302,14 @@ Loadout.prototype = {
 					});						
 				}
 				else {
-					/* do a clean move by returning a swap object without a swapItem */
+					/* do a clean move by returning a swap object without a swapItem */					
 					var swapArray = _.map(sourceBucket, function(item){
+						var ownerBucket = _.where( item.character.items(), { bucketType: key });
+						if ( ownerBucket.length == 1 ){
+							return {
+								description: item.description + " will not be moved. There is no item to replace it."
+							}
+						}
 						/* if the item is already in the targetBucket */
 						if ( _.findWhere( targetBucket, { _id: item._id }) ){
 							/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
@@ -329,7 +346,7 @@ Loadout.prototype = {
 			var $template = $(swapTemplate({ swapArray: masterSwapArray }));
 			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
 			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
-			(new dialog({buttons:[ 
+			(new tgd.dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
 					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a> ;)");
 					dialog.close()
