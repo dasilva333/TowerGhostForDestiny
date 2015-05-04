@@ -5,6 +5,8 @@ copy index.html ..\build\branch\
 copy config.xml ..\build\branch\
 mkdir ..\build\branch\scripts\
 copy scripts\ ..\build\branch\scripts\
+mkdir ..\build\branch\assets\
+copy assets\ ..\build\branch\assets\
 mkdir ..\build\branch\js\
 copy js\ ..\build\branch\js\
 mkdir ..\build\branch\data\
