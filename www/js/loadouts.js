@@ -13,12 +13,12 @@ var swapTemplate = _.template('<ul class="list-group">' +
 				'</div>' +
 				'<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">' +
 					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' + 
-						'<img class="itemImage" src="<%= pair.targetItem && pair.targetItem.icon %>">' +
+						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
 					'</a>' +
 				'</div>' +
 				'<div class="col-xs-6 col-sm-6 col-md-6 col-lg-3">' +
 					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' + 
-						'<img class="itemImage" src="<%= pair.swapItem && pair.swapItem.icon %>">' +
+						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +
 				'</div>' +
 			'</div>' +
@@ -256,7 +256,9 @@ Loadout.prototype = {
 						var ownerBucket = _.where( item.character.items(), { bucketType: key });
 						if ( ownerBucket.length == 1 ){
 							return {
-								description: item.description + " will not be moved. There is no item to replace it."
+								description: item.description + " will not be moved. There is no item to replace it.",
+								targetIcon: item.icon,
+								swapIcon: "assets/cant-transfer.png"
 							}
 						}
 						/* if the item is already in the targetBucket */
@@ -265,13 +267,16 @@ Loadout.prototype = {
 							if ( item.doEquip() == true ){
 								return {
 									targetItem: item,
-									description: item.description + " will be equipped."
+									description: item.description + " will be equipped.",
+									swapIcon: "assets/to-equip.png"
 								}
 							}
 							/* then return an object indicating to do nothing */
 							else {
 								return {
-									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
+									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
+									targetIcon: item.icon,
+									swapIcon: "assets/no-transfer.png"
 								}
 							}
 						}
@@ -283,7 +288,9 @@ Loadout.prototype = {
 							if ( swapItem ) {
 							    if(swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
 									return {
-										description: item.description + " will not be moved"
+										description: item.description + " will not be moved",
+										targetIcon: item.icon,
+										swapIcon: "assets/no-transfer.png"
 									}
 							    }
 							    return {
@@ -295,7 +302,8 @@ Loadout.prototype = {
 							else {				
 								return {
 									targetItem: item,
-									description: item.description + " will be moved"
+									description: item.description + " will be moved",
+									swapIcon: "assets/to-transfer.png"
 								}	
 							}							
 						}
@@ -307,7 +315,9 @@ Loadout.prototype = {
 						var ownerBucket = _.where( item.character.items(), { bucketType: key });
 						if ( ownerBucket.length == 1 ){
 							return {
-								description: item.description + " will not be moved. There is no item to replace it."
+								description: item.description + " will not be moved. There is no item to replace it.",
+								targetIcon: item.icon,
+								swapIcon: "assets/cant-transfer.png"
 							}
 						}
 						/* if the item is already in the targetBucket */
@@ -316,25 +326,32 @@ Loadout.prototype = {
 							if ( item.doEquip() == true ){
 								return {
 									targetItem: item,
-									description: item.description + " will be equipped."
+									description: item.description + " will be equipped.",
+									swapIcon: "assets/to-equip.png"
+									
 								}
 							}
 							/* then return an object indicating to do nothing */
 							else {
 								return {
-									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType
+									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
+									targetIcon: item.icon,
+									swapIcon: "assets/no-transfer.png"
 								}
 							}
 						}
 						else if ( item.bucketType == "Subclasses" || ( item.armorIndex != -1 && item.character.classType != targetCharacter.classType )) {
 							return {
-								description: item.description + " will not be moved"
+								description: item.description + " will not be moved",
+								targetIcon: item.icon,
+								swapIcon: "assets/no-transfer.png"
 							}
 						}
 						else {
 							return {
 								targetItem: item,
-								description: item.description + " will be moved"
+								description: item.description + " will be moved",
+								swapIcon: "assets/to-transfer.png"
 							}
 						}
 					});
@@ -344,7 +361,7 @@ Loadout.prototype = {
 		}
 		if (masterSwapArray.length > 0){
 			var $template = $(swapTemplate({ swapArray: masterSwapArray }));
-			$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
+			//$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
 			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
 			(new tgd.dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
