@@ -348,10 +348,20 @@ Loadout.prototype = {
 							}
 						}
 						else {
-							return {
-								targetItem: item,
-								description: item.description + " will be moved",
-								swapIcon: "assets/to-transfer.png"
+							if ( item.doEquip() == true ){
+								return {
+									targetItem: item,
+									description: item.description + " will be moved and equipped.",
+									swapIcon: "assets/to-equip.png"
+									
+								}
+							}
+							else {							
+								return {
+									targetItem: item,
+									description: item.description + " will be moved",
+									swapIcon: "assets/to-transfer.png"
+								}
 							}
 						}
 					});
