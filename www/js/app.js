@@ -189,17 +189,19 @@ Item.prototype = {
 		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
 	},
 	/* helper function that unequips the current item in favor of anything else */
-	unequip: function(callback, allowReplacement){
+	unequip: function(callback, allowReplacement, excludeExotic){
 		var self = this;
 		//console.log('trying to unequip too!');
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
 			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6 && item._id !== self._id;
+				return item.type > 0 && item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
 			});
 			//console.log("other items " + otherItems.length);
 			if ( otherItems.length > 0){
+				/* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
+				var minTier = _.min(_.pluck( otherItems, 'tierType' ));				
 				var tryNextItem = function(){
 					var item = otherItems[++itemIndex];
 					//console.log(item.description);
@@ -220,7 +222,27 @@ Item.prototype = {
 					}
 				}
 				//console.log("tryNextItem")
-				tryNextItem();
+				//console.log("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+				if (minTier == 6){
+					var otherItemUnequipped = false;
+					var otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+					otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
+					_.each(otherBucketTypes, function(bucketType){
+						var itemEquipped = self.character.itemEquipped(bucketType);
+						if ( itemEquipped.tierType == 6 ){
+							//console.log("going to unequip " + itemEquipped.description);
+							itemEquipped.unequip(tryNextItem, false, true);
+							otherItemUnequipped = true;
+						}
+					});
+					if (!otherItemUnequipped){
+						//console.log("no other exotic equipped, safe to equip");
+						tryNextItem();
+					}
+				}
+				else {
+					tryNextItem();
+				}
 			}
 			else if (allowReplacement){
 				//console.log("unequip allows replacement");
@@ -286,7 +308,7 @@ Item.prototype = {
 				//console.log("item is exotic");
 				var otherExoticFound = false,
 					otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
-				otherBucketTypes.splice(self.weaponIndex,1);
+				otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
 				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));
 				_.each(otherBucketTypes, function(bucketType){
 					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
