@@ -124,7 +124,7 @@ var Item = function(model, profile){
 	this.isStoreable = function(avatarId){
 		return ko.computed(function(){
 			return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses') ||
-				(self.bucketType == 'Subclasses' && self.isEquipped() && self.character.id == avatarId);
+				(self.isEquipped() && self.character.id == avatarId);
 		});
 	}
 }
@@ -211,7 +211,7 @@ Item.prototype = {
 							//console.log("trying to equip " + item.description);
 							item.equip(self.characterId, function(isEquipped){
 								//console.log( item.description + " result was " + isEquipped);
-								if (isEquipped == true){ otherEquipped = true; callback(); }
+								if (isEquipped == true){ otherEquipped = true; callback(true); }
 								else { tryNextItem(); /*console.log("tryNextItem")*/ }
 							});
 						}
@@ -231,7 +231,15 @@ Item.prototype = {
 						var itemEquipped = self.character.itemEquipped(bucketType);
 						if ( itemEquipped.tierType == 6 ){
 							//console.log("going to unequip " + itemEquipped.description);
-							itemEquipped.unequip(tryNextItem, false, true);
+							itemEquipped.unequip(function(result){
+								//unequip was successful
+								if ( result ){ tryNextItem(); }
+								//unequip failed
+								else { 
+									BootstrapDialog.alert("Unable to unequip " + itemEquipped.description); 
+									callback(false); 
+								}
+							}, false, true);
 							otherItemUnequipped = true;
 						}
 					});
@@ -253,7 +261,7 @@ Item.prototype = {
 					//console.log('found an item an item to equip instead ' + otherItems[0].description);
 					otherItems[0].equip(self.character.id, function(){
 						console.log("finished equipping other item");
-						callback();
+						callback(true);
 					}, true);
 				}
 				else {
@@ -268,7 +276,7 @@ Item.prototype = {
 		}
 		else {
 			//console.log("but not equipped");
-			callback();
+			callback(true);
 		}
 	},
 	equip: function(targetCharacterId, callback, allowReplacement){
@@ -408,25 +416,32 @@ Item.prototype = {
 		var done = function(){
 			if (targetCharacterId == "Vault"){
 				//console.log("from character to vault " + self.description);
-				self.unequip(function(){
+				self.unequip(function(result){
 					//console.log("calling transfer from character to vault");
-					self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result)
+						self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result == false && callback)
+						callback(self.character);
 				}, allowReplacement);
 			}
 			else if (sourceCharacterId !== "Vault"){
 				//console.log("from character to vault to character " + self.description);
-				self.unequip(function(){
-					if ( self.bucketType == "Subclasses" ){
-						if (callback)
-							callback(self.character);
+				self.unequip(function(result){
+					if (result){
+						if ( self.bucketType == "Subclasses" ){
+							if (callback)
+								callback(self.character);
+						}
+						else {
+							//console.log("xfering item to Vault " + self.description);
+							self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
+								//console.log("xfered item to vault and now to " + targetCharacterId);
+								self.transfer("Vault", targetCharacterId, transferAmount, callback);
+							});
+						}
 					}
-					else {
-						//console.log("xfering item to Vault " + self.description);
-						self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
-							//console.log("xfered item to vault and now to " + targetCharacterId);
-							self.transfer("Vault", targetCharacterId, transferAmount, callback);
-						});
-					}
+					if (result == false && callback)
+						callback(self.character);
 				}, allowReplacement);
 			}
 			else {
