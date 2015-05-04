@@ -15,3 +15,4 @@ mkdir ..\build\branch\css\
 copy css\ ..\build\branch\css\
 cd ..\build
 xcopy branch ..\..\branches\%1\www\ /E /Y
+rmdir branch
