@@ -1359,14 +1359,14 @@ var app = new (function() {
 	}
 	
 	this.shiftViewLeft = function(){
-		var newIndex = app.activeView() - 1;
+		var newIndex = parseInt(app.activeView()) - 1;
 		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
-		var newIndex = app.activeView() + 1;
+		var newIndex = parseInt(app.activeView()) + 1;
 		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
