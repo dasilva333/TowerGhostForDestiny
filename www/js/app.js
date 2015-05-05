@@ -9,6 +9,10 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 
+console.log("detected as mobile " + isMobile);
+console.log("detected as Kindle " + isKindle);
+
+
 tgd.dialog = (function(options){
 	var self = this;
 
@@ -1332,6 +1336,7 @@ var app = new (function() {
 			else {
 				clearInterval(loop);
 				loop = setInterval(function(){
+					console.log("checking for window close " + window.ref.closed);
 					if (window.ref.closed){
 						clearInterval(loop);
 						if (isKindle){
@@ -1342,6 +1347,11 @@ var app = new (function() {
 						}
 					}
 				}, 100);
+				if (isKindle){
+					loop = setInterval(function(){
+						self.readBungieCookie(ref, loop);
+					}, 1000 * 30);
+				}
 			}
 		}
 	}
