@@ -75,7 +75,9 @@ var Loadout = function(model){
 	this.markAsEquip = function(item, event){
 		var existingItems = _.where( self.ids(), { bucketType: item.bucketType } ).filter(function(loadoutItem){
 			var foundItem = _.find(self.items(), { _id: loadoutItem.id });
-
+			//sometimes an item is not found due to it being deleted or reforged, at this point filter it out of the list, issue #135
+			if (!foundItem) return false;
+			
 			if(item.bucketType == "Subclasses" || foundItem.armorIndex != -1) {
 			    return item.doEquip() == true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
 			}
