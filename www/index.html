@@ -109,8 +109,7 @@
 						<li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''"><a href="#">DestinyDB Tooltips</a></li>
 						<li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''"><a href="#">DestinyDB Mode</a></li>
 						<li data-bind="fastclick: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''"><a href="#">Auto Transfer Stacks</a></li>
-						<li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''"><a href="#">Auto Pad Height</a></li>						
-						<li data-bind="fastclick: toggleNormalizeStacks, css: normalizeStacksMode() == true ? 'active' : ''"><a href="#">Normalize Stack Mode</a></li>
+						<li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''"><a href="#">Auto Pad Height</a></li>
 		          </ul>
 		        </li>
 				<li class="dropdown"><a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><img src="assets/arrow_refresh.png"></a>
@@ -230,27 +229,35 @@
 				  <div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				  	Move: <span data-bind="text: description"></span>
 				  </div>
-				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
+				  <div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">
+				    <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">					
+					  <div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
 						<div class="attkIcon">
-							<div class="icon-banner">vault</div>
-							<img data-bind="attr: { src : imgIcon }">
-							<div class="lower-left" data-bind="text: classLetter"></div>
+						  <div class="icon-banner">vault</div>
+						  <img data-bind="attr: { src : imgIcon }">
+						  <div class="lower-left" data-bind="text: classLetter"></div>
 						</div>
+					  </div>
+					  <div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
+						<div class="attkIcon">
+						  <div class="icon-banner">store</div>
+						  <img data-bind="attr: { src : imgIcon }">
+						  <div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
+					  </div>
+					  <div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
+						<div class="attkIcon">
+						  <div class="icon-banner">equip</div>
+						  <img data-bind="attr: { src : imgIcon }">
+						  <div class="lower-left" data-bind="text: classLetter"></div>
+						</div>
+					  </div>
 					</div>
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
-						<div class="attkIcon">
-							<div class="icon-banner">store</div>
-							<img data-bind="attr: { src : imgIcon }">
-							<div class="lower-left" data-bind="text: classLetter"></div>
-						</div>
-					</div>
-					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
-						<div class="attkIcon">
-							<div class="icon-banner">equip</div>
-							<img data-bind="attr: { src : imgIcon }">
-							<div class="lower-left" data-bind="text: classLetter"></div>
-						</div>
+					<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (character.id !== 'Vault') && (bucketType == 'Materials' || bucketType == 'Consumables')">
+					  <div class="attkIcon">
+						<div class="icon-banner">extras</div>
+						<img src="assets/icon128.png">
+					  </div>
 					</div>
 				  </div>
 				</div>
@@ -384,8 +391,7 @@
 				<li><strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds.</li>
 				<li><strong>Change Page</strong> Toggle between different views first page is Weapons, second page is Armor, third page is Styling/Misc</li>
 				<li><strong>DestinyDB Tooltips</strong> Allows for taps or hovers to enable the tooltip, if disabled double tap or double click enables the tooltip.</li>
-				<li><strong>DestinyDB Mode</strong> When enabled clicking on an item will open a new tab showing you the full stats of the item.</li>
-				<li><strong>Normalize Stack Mode</strong> When enabled clicking on an item will distribute the amount of items evenly among all your profiles.</li>
+				<li><strong>DestinyDB Mode</strong> When enabled clicking on an item will open a new tab showing you the full stats of the item.</li>				
 				<li><strong>Auto Transfer Stacks</strong> When enabled you will not be prompted and the entire stack will be transferred (consumables, materials).</li>
 				<li><strong>View</strong> Toggle between different views first page is Weapons, second page is Armor, third page is General</li>
 				<li><strong>Tier</strong> Filter by the rarity of the item (rare, legendary, exotic) <br></li>

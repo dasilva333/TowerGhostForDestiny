@@ -487,40 +487,17 @@ Item.prototype = {
 		else {
 			done();
 		}
-	}
-}
-
-var activeElement;
-var moveItemPositionHandler = function(element, item){
-	app.activeItem(item);
-	if (app.destinyDbMode() == true){
-		window.open(item.href,"_system");
-		return false;
-	}
-	else if (app.loadoutMode() == true){
-		var existingItem = _.findWhere( app.activeLoadout().ids(), { id: item._id } );
-		if ( existingItem )
-			app.activeLoadout().ids.remove(existingItem);
-		else {
-			if (item._id == 0){
-				BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
-			}
-			else if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
-				app.activeLoadout().addItem({ id: item._id, bucketType: item.bucketType, doEquip: false });
-			}
-			else {
-				BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
-			}
-		}
-	}
-	else if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
+	},
+	normalize: function(){
+		var self = this;
+		
 		var itemTotal = 0;
 		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
 		
 		/* association of character, amounts to increment/decrement */
 		var characterStatus = _.map(onlyCharacters, function(c){
 			var characterTotal = _.reduce(
-				_.filter(c.items(), { description: item.description}),
+				_.filter(c.items(), { description: self.description}),
 				function(memo, i){ return memo + i.primaryStat; },
 				0);
 			itemTotal = itemTotal + characterTotal;
@@ -528,8 +505,8 @@ var moveItemPositionHandler = function(element, item){
 		});
 		
 		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
-		//console.log("Each character needs " + itemSplit + " " + item.description);
+		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + self.description + "\" between " + characterStatus.length + " characters."); }
+		//console.log("Each character needs " + itemSplit + " " + self.description);
 		
 		/* calculate how much to increment/decrement each character */
 		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
@@ -545,7 +522,7 @@ var moveItemPositionHandler = function(element, item){
 		
 		/* bail early conditions */
 		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
-			return BootstrapDialog.alert(item.description + " already normalized as best as possible.");
+			return BootstrapDialog.alert(self.description + " already normalized as best as possible.");
 		}
 		
 		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
@@ -572,13 +549,13 @@ var moveItemPositionHandler = function(element, item){
 				return;
 			}
 			/* all the surplus characters' items that match the description. might be multiple stacks. */
-			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: self.description});			
 			var surplusItem = surplusItems[0];
 			
 			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
 			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 			
-			//console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
+			//console.log("Attempting to transfer " + self.description + " (" + amountToTransfer + ") from " +
 						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
 						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
@@ -590,13 +567,13 @@ var moveItemPositionHandler = function(element, item){
 			});
 		}
 		
-		var messageStr = "<div><div>Normalize " + item.description + "</div>";
+		var messageStr = "<div><div>Normalize " + self.description + "</div><ul>";
 		for (i = 0; i < characterStatus.length; i++){
-			messageStr = messageStr.concat("<div> * " + characterStatus[i].character.classType + ": " +
+			messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
 											(characterStatus[i].needed > 0 ? "+" : "") +
-											characterStatus[i].needed + "</div>");
+											characterStatus[i].needed + "</li>");
 		}		
-		messageStr = messageStr.concat("</div>");
+		messageStr = messageStr.concat("</ul></div>");
 		
 		var dialogItself = (new tgd.dialog({
 			message: messageStr,			
@@ -612,6 +589,54 @@ var moveItemPositionHandler = function(element, item){
 				}
 			]
 		})).title("Normalize Materials/Consumables").show();
+	},
+	extrasGlue: function(){
+		var self = this;
+		
+		var extrasStr = "<div><ul>";
+			extrasStr = extrasStr.concat("<li>Normalize - equally distribute item across your characters</li>");
+			// any future stuff here
+			extrasStr = extrasStr.concat("</ul></div>");
+		
+		var dialogItself = (new tgd.dialog({
+			message: extrasStr,
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){ self.normalize(); }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Extras for " + self.description).show();
+	}
+}
+
+var activeElement;
+var moveItemPositionHandler = function(element, item){
+	app.activeItem(item);
+	if (app.destinyDbMode() == true){
+		window.open(item.href,"_system");
+		return false;
+	}
+	else if (app.loadoutMode() == true){
+		var existingItem = _.findWhere( app.activeLoadout().ids(), { id: item._id } );
+		if ( existingItem )
+			app.activeLoadout().ids.remove(existingItem);
+		else {
+			if (item._id == 0){
+				BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
+			}
+			else if ( _.where( app.activeLoadout().items(), { bucketType: item.bucketType }).length < 9){
+				app.activeLoadout().addItem({ id: item._id, bucketType: item.bucketType, doEquip: false });
+			}
+			else {
+				BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
+			}
+		}
 	}
 	else {
 		var $movePopup = $( "#move-popup" );
@@ -758,8 +783,7 @@ var app = new (function() {
 		showMissing: false,
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
-		padBucketHeight: false,
-		normalizeStacksMode: false
+		padBucketHeight: false
 	};
 
 	var getValue = function(key){
@@ -795,8 +819,7 @@ var app = new (function() {
 	this.searchKeyword = ko.observable(defaults.searchKeyword);
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
-	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
-	this.normalizeStacksMode = ko.computed(new StoreObj("normalizeStacksMode", "true"));
+	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));	
 	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
@@ -928,10 +951,6 @@ var app = new (function() {
 	this.toggleDestinyDbMode = function(){
 		self.toggleBootstrapMenu();
 		self.destinyDbMode(!self.destinyDbMode());
-	}
-	this.toggleNormalizeStacks = function(){
-		self.toggleBootstrapMenu();
-		self.normalizeStacksMode(!self.normalizeStacksMode());
 	}
 	this.toggleDestinyDbTooltips = function(){
 		self.toggleBootstrapMenu();
