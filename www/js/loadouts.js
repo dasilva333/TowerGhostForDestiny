@@ -174,6 +174,15 @@ Loadout.prototype = {
 		var transferNextItem = function(){
 			//console.log("transferNextItem");
 			var pair = swapArray[++itemIndex];
+			var transferTargetItem = function(){
+				var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
+				//console.log("going to " + action + " first item " + pair.targetItem.description);
+				self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
+					progressValue = progressValue + increments;
+					loader.width( progressValue + "%" );
+					transferNextItem();
+				});
+			}
 			if (pair){
 				/* swap item has to be moved first in case the swap bucket is full, then move the target item in after */
 				if ( typeof pair.swapItem !== "undefined"){
@@ -181,13 +190,7 @@ Loadout.prototype = {
 					self.findReference(pair.swapItem).store(owner, function(){
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
 						if (typeof pair.targetItem !== "undefined"){
-							var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
-							//console.log("going to " + action + " first item " + pair.targetItem.description);
-							self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
-								progressValue = progressValue + increments;
-								loader.width( progressValue + "%" );
-								transferNextItem();
-							});
+							transferTargetItem();
 						}	
 						else { 
 							progressValue = progressValue + increments;
@@ -195,6 +198,9 @@ Loadout.prototype = {
 							transferNextItem();
 						}
 					}, true);
+				}
+				else if (typeof pair.targetItem !== "undefined"){
+					transferTargetItem();
 				}
 				else { 
 					progressValue = progressValue + increments;
