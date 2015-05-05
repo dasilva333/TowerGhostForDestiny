@@ -124,7 +124,7 @@ var Item = function(model, profile){
 	this.isStoreable = function(avatarId){
 		return ko.computed(function(){
 			return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses') ||
-				(self.bucketType == 'Subclasses' && self.isEquipped() && self.character.id == avatarId);
+				(self.isEquipped() && self.character.id == avatarId);
 		});
 	}
 }
@@ -189,17 +189,19 @@ Item.prototype = {
 		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
 	},
 	/* helper function that unequips the current item in favor of anything else */
-	unequip: function(callback, allowReplacement){
+	unequip: function(callback, allowReplacement, excludeExotic){
 		var self = this;
 		//console.log('trying to unequip too!');
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
 			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6 && item._id !== self._id;
+				return item.type > 0 && item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
 			});
 			//console.log("other items " + otherItems.length);
 			if ( otherItems.length > 0){
+				/* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
+				var minTier = _.min(_.pluck( otherItems, 'tierType' ));				
 				var tryNextItem = function(){
 					var item = otherItems[++itemIndex];
 					//console.log(item.description);
@@ -209,7 +211,7 @@ Item.prototype = {
 							//console.log("trying to equip " + item.description);
 							item.equip(self.characterId, function(isEquipped){
 								//console.log( item.description + " result was " + isEquipped);
-								if (isEquipped == true){ otherEquipped = true; callback(); }
+								if (isEquipped == true){ otherEquipped = true; callback(true); }
 								else { tryNextItem(); /*console.log("tryNextItem")*/ }
 							});
 						}
@@ -220,7 +222,35 @@ Item.prototype = {
 					}
 				}
 				//console.log("tryNextItem")
-				tryNextItem();
+				//console.log("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+				if (minTier == 6){
+					var otherItemUnequipped = false;
+					var otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+					otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
+					_.each(otherBucketTypes, function(bucketType){
+						var itemEquipped = self.character.itemEquipped(bucketType);
+						if ( itemEquipped.tierType == 6 ){
+							//console.log("going to unequip " + itemEquipped.description);
+							itemEquipped.unequip(function(result){
+								//unequip was successful
+								if ( result ){ tryNextItem(); }
+								//unequip failed
+								else { 
+									BootstrapDialog.alert("Unable to unequip " + itemEquipped.description); 
+									callback(false); 
+								}
+							}, false, true);
+							otherItemUnequipped = true;
+						}
+					});
+					if (!otherItemUnequipped){
+						//console.log("no other exotic equipped, safe to equip");
+						tryNextItem();
+					}
+				}
+				else {
+					tryNextItem();
+				}
 			}
 			else if (allowReplacement){
 				//console.log("unequip allows replacement");
@@ -231,7 +261,7 @@ Item.prototype = {
 					//console.log('found an item an item to equip instead ' + otherItems[0].description);
 					otherItems[0].equip(self.character.id, function(){
 						console.log("finished equipping other item");
-						callback();
+						callback(true);
 					}, true);
 				}
 				else {
@@ -246,7 +276,7 @@ Item.prototype = {
 		}
 		else {
 			//console.log("but not equipped");
-			callback();
+			callback(true);
 		}
 	},
 	equip: function(targetCharacterId, callback, allowReplacement){
@@ -286,7 +316,7 @@ Item.prototype = {
 				//console.log("item is exotic");
 				var otherExoticFound = false,
 					otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
-				otherBucketTypes.splice(self.weaponIndex,1);
+				otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
 				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));
 				_.each(otherBucketTypes, function(bucketType){
 					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
@@ -386,25 +416,32 @@ Item.prototype = {
 		var done = function(){
 			if (targetCharacterId == "Vault"){
 				//console.log("from character to vault " + self.description);
-				self.unequip(function(){
+				self.unequip(function(result){
 					//console.log("calling transfer from character to vault");
-					self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result)
+						self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result == false && callback)
+						callback(self.character);
 				}, allowReplacement);
 			}
 			else if (sourceCharacterId !== "Vault"){
 				//console.log("from character to vault to character " + self.description);
-				self.unequip(function(){
-					if ( self.bucketType == "Subclasses" ){
-						if (callback)
-							callback(self.character);
+				self.unequip(function(result){
+					if (result){
+						if ( self.bucketType == "Subclasses" ){
+							if (callback)
+								callback(self.character);
+						}
+						else {
+							//console.log("xfering item to Vault " + self.description);
+							self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
+								//console.log("xfered item to vault and now to " + targetCharacterId);
+								self.transfer("Vault", targetCharacterId, transferAmount, callback);
+							});
+						}
 					}
-					else {
-						//console.log("xfering item to Vault " + self.description);
-						self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
-							//console.log("xfered item to vault and now to " + targetCharacterId);
-							self.transfer("Vault", targetCharacterId, transferAmount, callback);
-						});
-					}
+					if (result == false && callback)
+						callback(self.character);
 				}, allowReplacement);
 			}
 			else {
@@ -1200,6 +1237,10 @@ var app = new (function() {
 
 	this.refreshButton = function(){
 		self.toggleBootstrapMenu();
+		self.refresh();
+	}
+	
+	this.refresh = function(){
 		self.loadingUser(true);
 		self.characters.removeAll();
 		self.search();
@@ -1322,14 +1363,14 @@ var app = new (function() {
 	}
 	
 	this.shiftViewLeft = function(){
-		var newIndex = app.activeView() - 1;
+		var newIndex = parseInt(self.activeView()) - 1;
 		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
-		var newIndex = app.activeView() + 1;
+		var newIndex = parseInt(self.activeView()) + 1;
 		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
