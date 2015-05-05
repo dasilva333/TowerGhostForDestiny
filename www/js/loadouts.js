@@ -75,7 +75,9 @@ var Loadout = function(model){
 	this.markAsEquip = function(item, event){
 		var existingItems = _.where( self.ids(), { bucketType: item.bucketType } ).filter(function(loadoutItem){
 			var foundItem = _.find(self.items(), { _id: loadoutItem.id });
-
+			//sometimes an item is not found due to it being deleted or reforged, at this point filter it out of the list, issue #135
+			if (!foundItem) return false;
+			
 			if(item.bucketType == "Subclasses" || foundItem.armorIndex != -1) {
 			    return item.doEquip() == true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
 			}
@@ -173,15 +175,15 @@ Loadout.prototype = {
 			//console.log("transferNextItem");
 			var pair = swapArray[++itemIndex];
 			if (pair){
-				/* at this point it doesn't matter who goes first but lets transfer the loadout first */				
-				if ( typeof pair.targetItem !== "undefined"){
-					var owner = pair.targetItem.character.id;					
-					var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
-					//console.log("going to " + action + " first item " + pair.targetItem.description);
-					self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
+				/* swap item has to be moved first in case the swap bucket is full, then move the target item in after */
+				if ( typeof pair.swapItem !== "undefined"){
+					var owner = pair.targetItem.character.id;
+					self.findReference(pair.swapItem).store(owner, function(){
 						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
-						if (typeof pair.swapItem !== "undefined"){
-							self.findReference(pair.swapItem).store(owner, function(){
+						if (typeof pair.targetItem !== "undefined"){
+							var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
+							//console.log("going to " + action + " first item " + pair.targetItem.description);
+							self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
 								progressValue = progressValue + increments;
 								loader.width( progressValue + "%" );
 								transferNextItem();
