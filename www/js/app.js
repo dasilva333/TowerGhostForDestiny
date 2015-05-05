@@ -1237,6 +1237,10 @@ var app = new (function() {
 
 	this.refreshButton = function(){
 		self.toggleBootstrapMenu();
+		self.refresh();
+	}
+	
+	this.refresh = function(){
 		self.loadingUser(true);
 		self.characters.removeAll();
 		self.search();
@@ -1359,14 +1363,14 @@ var app = new (function() {
 	}
 	
 	this.shiftViewLeft = function(){
-		var newIndex = parseInt(app.activeView()) - 1;
+		var newIndex = parseInt(self.activeView()) - 1;
 		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
-		var newIndex = parseInt(app.activeView()) + 1;
+		var newIndex = parseInt(self.activeView()) + 1;
 		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
