@@ -626,7 +626,7 @@ var moveItemPositionHandler = function(element, item){
 			activeElement = element;
 			$ZamTooltips.hide();
 			if (window.isMobile){
-				$("body").css("padding-bottom","80px");
+				$("body").css("padding-bottom", $movePopup.height() + "px");
 				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
 				$movePopup.show();
 			}
@@ -1100,6 +1100,7 @@ var app = new (function() {
 	}
 
 	this.search = function(){
+		tgd.duplicates = {};
 		var total = 0, count = 0, profiles = [];
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
 		function done(profile){			
