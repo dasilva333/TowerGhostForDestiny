@@ -626,7 +626,7 @@ var moveItemPositionHandler = function(element, item){
 			activeElement = element;
 			$ZamTooltips.hide();
 			if (window.isMobile){
-				$("body").css("padding-bottom","80px");
+				$("body").css("padding-bottom", $movePopup.height() + "px");
 				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
 				$movePopup.show();
 			}
