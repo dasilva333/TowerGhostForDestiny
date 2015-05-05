@@ -8,18 +8,18 @@ var swapTemplate = _.template('<ul class="list-group">' +
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
-				'<div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
+				'<div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
 					'<%= pair.description %>' +
 				'</div>' +
-				'<div class="col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
 					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' + 
 						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
 					'</a>' +
 				'</div>' +
-				'<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
+				'<div class="text-center col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
 					'<img src="<%= pair.actionIcon %>">' +
 				'</div>' +
-				'<div class="col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
 					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' + 
 						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +
@@ -220,7 +220,7 @@ Loadout.prototype = {
 				subscription.dispose();
 			}
 		});
-		app.refreshButton();
+		app.refresh();
 	},
 	/* before starting the transfer we need to decide what strategy we are going to use */
 	/* strategy one involves simply moving the items across assuming enough space to fit in both without having to move other things */
