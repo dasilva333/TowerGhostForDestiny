@@ -309,7 +309,6 @@ li a { color: #3080CF }
 .lockIcon { position: relative; }
 .lockIcon img { position: absolute; }
 .quickScrollView { position: relative; top:5px; left:5px; display:none; }
-.activeProfile { border:3px solid white; }
 /* 960 px is the breakpoint for 4 columns */
 @media (max-width: 959px) { 
 	.quickScrollView { display: inline }

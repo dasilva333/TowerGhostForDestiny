@@ -1,13 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" version="2.3.7" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" version="2.2.8" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
-		Formerly known as DIV. This app allows you to transfer items between profiles, with various filters.
+		This app allows you to transfer items between profiles, with various filters.
     </description>
-    <author email="dasilva333@github.com" href="https://github.com/dasilva333/TowerGhostForDestiny/">
+    <author email="dasilva333@github.com" href="https://github.com/dasilva333/DIM/">
         Richard Pinedo
     </author>
-
     <content src="index.html" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
@@ -22,14 +21,12 @@
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
     <preference name="android-minSdkVersion" value="7" />
-	<preference name="android-targetSdkVersion" value="19" />
     <preference name="android-installLocation" value="auto" />
     <gap:plugin name="org.apache.cordova.globalization" />
     <gap:plugin name="org.apache.cordova.inappbrowser" />
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
-	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
-	
+
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
     <icon gap:platform="android" gap:qualifier="mdpi" src="res/icon/android/icon-48-mdpi.png" />
