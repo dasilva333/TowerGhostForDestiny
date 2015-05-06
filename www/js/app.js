@@ -1384,15 +1384,17 @@ var app = new (function() {
 	
 	this.shiftViewLeft = function(){
 		var newIndex = parseInt(self.activeView()) - 1;
-		if (newIndex <= 0) newIndex = 3;
+		if (newIndex < 0) newIndex = 3;
 		self.activeView(newIndex);
+		$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
 		var newIndex = parseInt(self.activeView()) + 1;
-		if (newIndex == 4) newIndex = 1;
+		if (newIndex == 4) newIndex = 0;
 		self.activeView(newIndex);
+		$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
 		self.scrollToActiveIndex();
 	}
 
@@ -1515,11 +1517,11 @@ var app = new (function() {
 		  }
 		})();
 
-		if (isMobile){
+		//if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
 				.on("swipeleft", self.shiftViewLeft)
 				.on("swiperight", self.shiftViewRight);
-		}
+		//}
 
 		if (isMobile) {
 		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
