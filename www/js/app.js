@@ -1366,36 +1366,38 @@ var app = new (function() {
 		}
 	}
 
-	this.scrollTo = function(distance){
+	this.scrollTo = function(distance, callback){
 		if ( isWindowsPhone ){
 			$('html,body').scrollTop(distance);
+			if (callback) callback();
 		}
 		else {
-			$("body").animate({ scrollTop: distance }, 300, "swing");
+			$("body").animate({ scrollTop: distance }, 300, "swing", callback);
 		}
 	}
 	
-	this.scrollToActiveIndex = function(){
+	this.scrollToActiveIndex = function(newIndex){
 		var index = $(".quickScrollView img").filter(function(){
 			return $(this).attr("class").indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
-		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
+		self.scrollTo( $(".profile:eq("+index+")").position().top - 50, function(){
+			$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
+		});
+		
 	}
 	
 	this.shiftViewLeft = function(){
 		var newIndex = parseInt(self.activeView()) - 1;
 		if (newIndex < 0) newIndex = 3;
-		self.activeView(newIndex);
-		$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
-		self.scrollToActiveIndex();
+		self.activeView(newIndex);		
+		self.scrollToActiveIndex(newIndex);
 	}
 	
 	this.shiftViewRight = function(){
 		var newIndex = parseInt(self.activeView()) + 1;
 		if (newIndex == 4) newIndex = 0;
 		self.activeView(newIndex);
-		$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
-		self.scrollToActiveIndex();
+		self.scrollToActiveIndex(newIndex);
 	}
 
 	this.requests = {};
