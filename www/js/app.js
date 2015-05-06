@@ -540,7 +540,7 @@ Item.prototype = {
 			var shortageCharacter = getNextShortageCharacter();
 			
 			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				app.refreshButton()
+				app.refresh()
 				BootstrapDialog.alert("All items normalized as best as possible");
 				return;
 			}
