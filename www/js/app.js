@@ -1,9 +1,15 @@
+window.tgd = {
+	duplicates: {}
+};
+
+window.ua = navigator.userAgent;
 window.isChrome = (typeof chrome !== "undefined");
-window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(navigator.userAgent));
-window.isWindowsPhone = (/iemobile/i.test(navigator.userAgent));
+window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
+window.isWindowsPhone = (/iemobile/i.test(ua));
+window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 
-var dialog = (function(options){
+tgd.dialog = (function(options){
 	var self = this;
 
 	this.modal;
@@ -118,7 +124,7 @@ var Item = function(model, profile){
 	this.isStoreable = function(avatarId){
 		return ko.computed(function(){
 			return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses') ||
-				(self.bucketType == 'Subclasses' && self.isEquipped() && self.character.id == avatarId);
+				(self.isEquipped() && self.character.id == avatarId);
 		});
 	}
 }
@@ -167,6 +173,7 @@ Item.prototype = {
 		var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
 		var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
 		var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
+		var showDuplicate = $parent.showDuplicate() == false ||  ($parent.showDuplicate() == true && tgd.duplicates[self.id] > 1);
 		/*console.log( "searchFilter: " + searchFilter);
 		console.log( "dmgFilter: " + dmgFilter);
 		console.log( "setFilter: " + setFilter);
@@ -179,20 +186,22 @@ Item.prototype = {
 		console.log("perks are " + JSON.stringify(self.perks));
 		console.log("description is " + self.description);
 		console.log("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter);
+		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
 	},
 	/* helper function that unequips the current item in favor of anything else */
-	unequip: function(callback, allowReplacement){
+	unequip: function(callback, allowReplacement, excludeExotic){
 		var self = this;
 		//console.log('trying to unequip too!');
 		if (self.isEquipped() == true){
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
 			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.tierType != 6 && item._id !== self._id;
+				return item.type > 0 && item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
 			});
 			//console.log("other items " + otherItems.length);
 			if ( otherItems.length > 0){
+				/* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
+				var minTier = _.min(_.pluck( otherItems, 'tierType' ));				
 				var tryNextItem = function(){
 					var item = otherItems[++itemIndex];
 					//console.log(item.description);
@@ -202,7 +211,7 @@ Item.prototype = {
 							//console.log("trying to equip " + item.description);
 							item.equip(self.characterId, function(isEquipped){
 								//console.log( item.description + " result was " + isEquipped);
-								if (isEquipped == true){ otherEquipped = true; callback(); }
+								if (isEquipped == true){ otherEquipped = true; callback(true); }
 								else { tryNextItem(); /*console.log("tryNextItem")*/ }
 							});
 						}
@@ -213,7 +222,35 @@ Item.prototype = {
 					}
 				}
 				//console.log("tryNextItem")
-				tryNextItem();
+				//console.log("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+				if (minTier == 6){
+					var otherItemUnequipped = false;
+					var otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+					otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
+					_.each(otherBucketTypes, function(bucketType){
+						var itemEquipped = self.character.itemEquipped(bucketType);
+						if ( itemEquipped.tierType == 6 ){
+							//console.log("going to unequip " + itemEquipped.description);
+							itemEquipped.unequip(function(result){
+								//unequip was successful
+								if ( result ){ tryNextItem(); }
+								//unequip failed
+								else { 
+									BootstrapDialog.alert("Unable to unequip " + itemEquipped.description); 
+									callback(false); 
+								}
+							}, false, true);
+							otherItemUnequipped = true;
+						}
+					});
+					if (!otherItemUnequipped){
+						//console.log("no other exotic equipped, safe to equip");
+						tryNextItem();
+					}
+				}
+				else {
+					tryNextItem();
+				}
 			}
 			else if (allowReplacement){
 				//console.log("unequip allows replacement");
@@ -224,7 +261,7 @@ Item.prototype = {
 					//console.log('found an item an item to equip instead ' + otherItems[0].description);
 					otherItems[0].equip(self.character.id, function(){
 						console.log("finished equipping other item");
-						callback();
+						callback(true);
 					}, true);
 				}
 				else {
@@ -239,7 +276,7 @@ Item.prototype = {
 		}
 		else {
 			//console.log("but not equipped");
-			callback();
+			callback(true);
 		}
 	},
 	equip: function(targetCharacterId, callback, allowReplacement){
@@ -279,7 +316,7 @@ Item.prototype = {
 				//console.log("item is exotic");
 				var otherExoticFound = false,
 					otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
-				otherBucketTypes.splice(self.weaponIndex,1);
+				otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
 				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));
 				_.each(otherBucketTypes, function(bucketType){
 					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
@@ -379,25 +416,32 @@ Item.prototype = {
 		var done = function(){
 			if (targetCharacterId == "Vault"){
 				//console.log("from character to vault " + self.description);
-				self.unequip(function(){
+				self.unequip(function(result){
 					//console.log("calling transfer from character to vault");
-					self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result)
+						self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result == false && callback)
+						callback(self.character);
 				}, allowReplacement);
 			}
 			else if (sourceCharacterId !== "Vault"){
 				//console.log("from character to vault to character " + self.description);
-				self.unequip(function(){
-					if ( self.bucketType == "Subclasses" ){
-						if (callback)
-							callback(self.character);
+				self.unequip(function(result){
+					if (result){
+						if ( self.bucketType == "Subclasses" ){
+							if (callback)
+								callback(self.character);
+						}
+						else {
+							//console.log("xfering item to Vault " + self.description);
+							self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
+								//console.log("xfered item to vault and now to " + targetCharacterId);
+								self.transfer("Vault", targetCharacterId, transferAmount, callback);
+							});
+						}
 					}
-					else {
-						//console.log("xfering item to Vault " + self.description);
-						self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
-							//console.log("xfered item to vault and now to " + targetCharacterId);
-							self.transfer("Vault", targetCharacterId, transferAmount, callback);
-						});
-					}
+					if (result == false && callback)
+						callback(self.character);
 				}, allowReplacement);
 			}
 			else {
@@ -414,7 +458,7 @@ Item.prototype = {
 				done();
 			}
 			else {
-				var dialogItself = (new dialog({
+				var dialogItself = (new tgd.dialog({
 		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
 		            buttons: [
 						{
@@ -443,6 +487,131 @@ Item.prototype = {
 		else {
 			done();
 		}
+	},
+	normalize: function(){
+		var self = this;
+		
+		var itemTotal = 0;
+		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		
+		/* association of character, amounts to increment/decrement */
+		var characterStatus = _.map(onlyCharacters, function(c){
+			var characterTotal = _.reduce(
+				_.filter(c.items(), { description: self.description}),
+				function(memo, i){ return memo + i.primaryStat; },
+				0);
+			itemTotal = itemTotal + characterTotal;
+			return {character: c, current: characterTotal, needed: 0};
+		});
+		
+		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
+		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + self.description + "\" between " + characterStatus.length + " characters."); }
+		//console.log("Each character needs " + itemSplit + " " + self.description);
+		
+		/* calculate how much to increment/decrement each character */
+		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
+		//console.log(characterStatus);	
+		
+		var getNextSurplusCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
+		})();
+		
+		var getNextShortageCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
+		})();		
+		
+		/* bail early conditions */
+		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
+			return BootstrapDialog.alert(self.description + " already normalized as best as possible.");
+		}
+		
+		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
+			surplusCharacter.current = surplusCharacter.current - amountTransferred;
+			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
+			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+
+			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
+			shortageCharacter.current = shortageCharacter.current + amountTransferred;
+			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+		};
+		
+		var nextTransfer = function(){
+			var surplusCharacter = getNextSurplusCharacter();
+			var shortageCharacter = getNextShortageCharacter();
+			
+			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
+				app.refresh()
+				BootstrapDialog.alert("All items normalized as best as possible");
+				return;
+			}
+			if (surplusCharacter.character.id == shortageCharacter.character.id){
+				//console.log("surplusCharacter is shortageCharacter!?");
+				return;
+			}
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: self.description});			
+			var surplusItem = surplusItems[0];
+			
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
+			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
+			
+			//console.log("Attempting to transfer " + self.description + " (" + amountToTransfer + ") from " +
+						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+
+			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+					nextTransfer();
+				});
+			});
+		}
+		
+		var messageStr = "<div><div>Normalize " + self.description + "</div><ul>";
+		for (i = 0; i < characterStatus.length; i++){
+			messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
+											(characterStatus[i].needed > 0 ? "+" : "") +
+											characterStatus[i].needed + "</li>");
+		}		
+		messageStr = messageStr.concat("</ul></div>");
+		
+		var dialogItself = (new tgd.dialog({
+			message: messageStr,			
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){	nextTransfer() }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Normalize Materials/Consumables").show();
+	},
+	extrasGlue: function(){
+		var self = this;
+		
+		var extrasStr = "<div><ul>";
+			extrasStr = extrasStr.concat("<li>Normalize - equally distribute item across your characters</li>");
+			// any future stuff here
+			extrasStr = extrasStr.concat("</ul></div>");
+		
+		var dialogItself = (new tgd.dialog({
+			message: extrasStr,
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){ self.normalize(); }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Extras for " + self.description).show();
 	}
 }
 
@@ -469,106 +638,6 @@ var moveItemPositionHandler = function(element, item){
 			}
 		}
 	}
-	else if ((app.normalizeStacksMode() == true) && (item.character.id !== "Vault") && (item.bucketType == "Materials" || item.bucketType == "Consumables")){
-		var itemTotal = 0;
-		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
-		
-		/* association of character, amounts to increment/decrement */
-		var characterStatus = _.map(onlyCharacters, function(c){
-			var characterTotal = _.reduce(
-				_.filter(c.items(), { description: item.description}),
-				function(memo, i){ return memo + i.primaryStat; },
-				0);
-			itemTotal = itemTotal + characterTotal;
-			return {character: c, current: characterTotal, needed: 0};
-		});
-		
-		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + item.description + "\" between " + characterStatus.length + " characters."); }
-		//console.log("Each character needs " + itemSplit + " " + item.description);
-		
-		/* calculate how much to increment/decrement each character */
-		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
-		//console.log(characterStatus);	
-		
-		var getNextSurplusCharacter = (function(){
-			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
-		})();
-		
-		var getNextShortageCharacter = (function(){
-			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
-		})();		
-		
-		/* bail early conditions */
-		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
-			return BootstrapDialog.alert(item.description + " already normalized as best as possible.");
-		}
-		
-		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
-			surplusCharacter.current = surplusCharacter.current - amountTransferred;
-			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
-			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
-
-			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
-			shortageCharacter.current = shortageCharacter.current + amountTransferred;
-			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
-		};
-		
-		var nextTransfer = function(){
-			var surplusCharacter = getNextSurplusCharacter();
-			var shortageCharacter = getNextShortageCharacter();
-			
-			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				app.refreshButton()
-				BootstrapDialog.alert("All items normalized as best as possible");
-				return;
-			}
-			if (surplusCharacter.character.id == shortageCharacter.character.id){
-				//console.log("surplusCharacter is shortageCharacter!?");
-				return;
-			}
-			/* all the surplus characters' items that match the description. might be multiple stacks. */
-			var surplusItems = _.filter(surplusCharacter.character.items(), { description: item.description});			
-			var surplusItem = surplusItems[0];
-			
-			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
-			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
-			
-			//console.log("Attempting to transfer " + item.description + " (" + amountToTransfer + ") from " +
-						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
-						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
-
-			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
-				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
-					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
-					nextTransfer();
-				});
-			});
-		}
-		
-		var messageStr = "<div><div>Normalize " + item.description + "</div>";
-		for (i = 0; i < characterStatus.length; i++){
-			messageStr = messageStr.concat("<div> * " + characterStatus[i].character.classType + ": " +
-											(characterStatus[i].needed > 0 ? "+" : "") +
-											characterStatus[i].needed + "</div>");
-		}		
-		messageStr = messageStr.concat("</div>");
-		
-		var dialogItself = (new dialog({
-			message: messageStr,			
-			buttons: [
-				{
-					label: 'Normalize',
-					cssClass: 'btn-primary',
-					action: function(){	nextTransfer() }
-				},
-				{
-					label: 'Close',
-					action: function(dialogItself){ dialogItself.close(); }
-				}
-			]
-		})).title("Normalize Materials/Consumables").show();
-	}
 	else {
 		var $movePopup = $( "#move-popup" );
 		if (item.bucketType == "Post Master"){
@@ -582,7 +651,7 @@ var moveItemPositionHandler = function(element, item){
 			activeElement = element;
 			$ZamTooltips.hide();
 			if (window.isMobile){
-				$("body").css("padding-bottom","80px");
+				$("body").css("padding-bottom", $movePopup.height() + "px");
 				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
 				$movePopup.show();
 			}
@@ -707,14 +776,14 @@ var app = new (function() {
 		dmgFilter: [],
 		activeView: 0,
 		progressFilter: 0,
+		showDuplicate: false,
 		setFilter: [],
 		shareView: false,
 		shareUrl: "",
 		showMissing: false,
 		tooltipsEnabled: isMobile ? false : true,
 		autoTransferStacks: false,
-		padBucketHeight: false,
-		normalizeStacksMode: false
+		padBucketHeight: false
 	};
 
 	var getValue = function(key){
@@ -750,8 +819,7 @@ var app = new (function() {
 	this.searchKeyword = ko.observable(defaults.searchKeyword);
 	this.activeView = ko.computed(new StoreObj("activeView"));
 	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
-	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));
-	this.normalizeStacksMode = ko.computed(new StoreObj("normalizeStacksMode", "true"));
+	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));	
 	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
 	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
 	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
@@ -764,6 +832,7 @@ var app = new (function() {
 	this.shareView =  ko.observable(defaults.shareView);
 	this.shareUrl  = ko.observable(defaults.shareUrl);
 	this.showMissing =  ko.observable(defaults.showMissing);
+	this.showDuplicate = ko.observable(defaults.showDuplicate);
 
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
@@ -786,11 +855,11 @@ var app = new (function() {
 	}
 
 	this.showHelp = function(){
-		(new dialog).title("Help").content($("#help").html()).show();
+		(new tgd.dialog).title("Help").content($("#help").html()).show();
 	}
 
 	this.showAbout = function(){
-		(new dialog).title("About").content($("#about").html()).show();
+		(new tgd.dialog).title("About").content($("#about").html()).show();
 	}
 
 	this.clearFilters = function(model, element){
@@ -801,12 +870,13 @@ var app = new (function() {
 		self.tierFilter(defaults.tierFilter);
 		self.typeFilter(defaults.typeFilter);
 		self.dmgFilter.removeAll();
-		self.progressFilter(defaults.progressFilter);
+		self.progressFilter(defaults.progressFilter);		
 		self.setFilter.removeAll()
 		self.setFilterFix.removeAll()
 		self.shareView(defaults.shareView);
 		self.shareUrl (defaults.shareUrl);
 		self.showMissing(defaults.showMissing);
+		self.showDuplicate(defaults.showDuplicate);
 		$(element.target).removeClass("active");
 		return false;
 	}
@@ -882,10 +952,6 @@ var app = new (function() {
 		self.toggleBootstrapMenu();
 		self.destinyDbMode(!self.destinyDbMode());
 	}
-	this.toggleNormalizeStacks = function(){
-		self.toggleBootstrapMenu();
-		self.normalizeStacksMode(!self.normalizeStacksMode());
-	}
 	this.toggleDestinyDbTooltips = function(){
 		self.toggleBootstrapMenu();
 		self.tooltipsEnabled(!self.tooltipsEnabled());
@@ -893,6 +959,10 @@ var app = new (function() {
 	this.toggleShareView = function(){
 		self.toggleBootstrapMenu();
 		self.shareView(!self.shareView());
+	}
+	this.toggleDuplicates = function(model, event){
+		self.toggleBootstrapMenu();
+		self.showDuplicate(!self.showDuplicate());
 	}
 	this.toggleShowMissing = function(){
 		self.toggleBootstrapMenu();
@@ -920,7 +990,7 @@ var app = new (function() {
 	this.setTypeFilter = function(model, event){
 		self.toggleBootstrapMenu();
 		self.typeFilter($(event.target).parent().attr("value"));
-	}
+	}	
 	this.setProgressFilter = function(model, event){
 		self.toggleBootstrapMenu();
 		self.progressFilter($(event.target).parent().attr("value"));
@@ -948,6 +1018,8 @@ var app = new (function() {
 			}
 			var info = window._itemDefs[item.itemHash];
 			if (info.bucketTypeHash in DestinyBucketTypes){
+				var description = info.itemName;
+				try{ description = decodeURIComponent(info.itemName); }catch(e){ description = info.itemName; }
 				var itemObject = {
 					id: item.itemHash,
 					_id: item.itemInstanceId,
@@ -957,14 +1029,17 @@ var app = new (function() {
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
-					description: info.itemName,
+					description: description,
 					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
 					tierType: info.tierType,
-					icon: self.bungie.getUrl() + info.icon
+					icon: dataDir + info.icon
 				};
-	
+				if ( !(item.itemHash in tgd.duplicates) ){
+					tgd.duplicates[item.itemHash] = 0;
+				}
+				tgd.duplicates[item.itemHash]++;
 				if (item.primaryStat){
 					itemObject.primaryStat = item.primaryStat.value;
 				}
@@ -1044,6 +1119,7 @@ var app = new (function() {
 	}
 
 	this.search = function(){
+		tgd.duplicates = {};
 		var total = 0, count = 0, profiles = [];
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
 		function done(profile){			
@@ -1181,6 +1257,10 @@ var app = new (function() {
 
 	this.refreshButton = function(){
 		self.toggleBootstrapMenu();
+		self.refresh();
+	}
+	
+	this.refresh = function(){
 		self.loadingUser(true);
 		self.characters.removeAll();
 		self.search();
@@ -1215,7 +1295,7 @@ var app = new (function() {
 		   var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
 		   var top =  $item.position().top - 55;
 		   var bottom = top + $item.height();
-		   $quickIcon.css("border", (scrollTop >= top && scrollTop <= bottom) ? "3px solid white" : "none");
+		   $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
 		});
 	}
 
@@ -1250,7 +1330,7 @@ var app = new (function() {
 				window.ref.opener = null; 
 				window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0'); 
 			}	
-			if (isMobile){
+			if (isMobile && !isKindle){
 				ref.addEventListener('loadstop', function(event) {
 					ref.executeScript({
 						code: 'document.location.href'
@@ -1274,7 +1354,12 @@ var app = new (function() {
 				loop = setInterval(function(){
 					if (window.ref.closed){
 						clearInterval(loop);
-						self.loadData();
+						if (isKindle){
+							self.readBungieCookie(ref, loop);
+						}
+						else {
+							self.loadData();
+						}
 					}
 				}, 100);
 			}
@@ -1292,20 +1377,20 @@ var app = new (function() {
 	
 	this.scrollToActiveIndex = function(){
 		var index = $(".quickScrollView img").filter(function(){
-			return $(this).css("border-width") == "3px"
+			return $(this).attr("class").indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
 		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
 	}
 	
 	this.shiftViewLeft = function(){
-		var newIndex = app.activeView() - 1;
+		var newIndex = parseInt(self.activeView()) - 1;
 		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
-		var newIndex = app.activeView() + 1;
+		var newIndex = parseInt(self.activeView()) + 1;
 		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
 		self.scrollToActiveIndex();
@@ -1404,7 +1489,7 @@ var app = new (function() {
 			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
 			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
-				(new dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
+				(new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
 					window.localStorage.setItem("whatsnew", version.toString());
 				})
 			}
