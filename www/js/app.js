@@ -1550,7 +1550,7 @@ var app = new (function() {
 		    }
 			if (typeof StatusBar !== "undefined"){
 			    StatusBar.styleBlackOpaque();
-			    StatusBar.backgroundColorByHexString("#000");
+			    StatusBar.backgroundColorByHexString("#272B30");
 			}
 		}
 
