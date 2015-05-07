@@ -1143,7 +1143,7 @@ var app = new (function() {
 					self.search();
 				}
 				else {
-					BootstrapDialog.alert("Account has no data");
+					BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
 				}
 				self.loadingUser(false);
 				return
@@ -1252,6 +1252,7 @@ var app = new (function() {
 					self.hiddenWindowOpen(false);
 					ref = null;
 				}
+				self.loadingUser(false);
 				_.defer(function(){
 					self.search();
 				});
@@ -1405,17 +1406,15 @@ var app = new (function() {
 	
 	this.shiftViewLeft = function(){
 		var newIndex = parseInt(self.activeView()) - 1;
-		if (newIndex < 0) newIndex = 3;
+		if (newIndex <= 0) newIndex = 3;
 		self.activeView(newIndex);
-		$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
 		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
 		var newIndex = parseInt(self.activeView()) + 1;
-		if (newIndex == 4) newIndex = 0;
+		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
-		$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
 		self.scrollToActiveIndex();
 	}
 
@@ -1538,11 +1537,11 @@ var app = new (function() {
 		  }
 		})();
 
-		//if (isMobile){
+		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
 				.on("swipeleft", self.shiftViewLeft)
 				.on("swiperight", self.shiftViewRight);
-		//}
+		}
 
 		if (isMobile) {
 		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
