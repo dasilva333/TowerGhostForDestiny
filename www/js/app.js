@@ -1252,6 +1252,7 @@ var app = new (function() {
 					self.hiddenWindowOpen(false);
 					ref = null;
 				}
+				self.loadingUser(false);
 				_.defer(function(){
 					self.search();
 				});
