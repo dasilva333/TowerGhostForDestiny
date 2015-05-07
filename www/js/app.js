@@ -1366,38 +1366,34 @@ var app = new (function() {
 		}
 	}
 
-	this.scrollTo = function(distance, callback){
+	this.scrollTo = function(distance){
 		if ( isWindowsPhone ){
 			$('html,body').scrollTop(distance);
-			if (callback) callback();
 		}
 		else {
-			$("body").animate({ scrollTop: distance }, 300, "swing", callback);
+			$("body").animate({ scrollTop: distance }, 300, "swing");
 		}
 	}
 	
-	this.scrollToActiveIndex = function(newIndex){
+	this.scrollToActiveIndex = function(){
 		var index = $(".quickScrollView img").filter(function(){
 			return $(this).attr("class").indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
-		self.scrollTo( $(".profile:eq("+index+")").position().top - 50, function(){
-			$.toaster({ priority : 'info', title : 'View Changed', message : 'Set to ' + DestinyViews[newIndex] });
-		});
-		
+		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
 	}
 	
 	this.shiftViewLeft = function(){
 		var newIndex = parseInt(self.activeView()) - 1;
-		if (newIndex < 0) newIndex = 3;
-		self.activeView(newIndex);		
-		self.scrollToActiveIndex(newIndex);
+		if (newIndex <= 0) newIndex = 3;
+		self.activeView(newIndex);
+		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
 		var newIndex = parseInt(self.activeView()) + 1;
-		if (newIndex == 4) newIndex = 0;
+		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
-		self.scrollToActiveIndex(newIndex);
+		self.scrollToActiveIndex();
 	}
 
 	this.requests = {};
@@ -1519,11 +1515,11 @@ var app = new (function() {
 		  }
 		})();
 
-		//if (isMobile){
+		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
 				.on("swipeleft", self.shiftViewLeft)
 				.on("swiperight", self.shiftViewRight);
-		//}
+		}
 
 		if (isMobile) {
 		    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
