@@ -1210,7 +1210,8 @@ var app = new (function() {
 			});
 		});
 	}
-
+    
+	var retries = 0;
 	this.loadData = function(ref){
 		if (self.loadingUser() == false){
 			//window.t = (new Date());
@@ -1235,6 +1236,12 @@ var app = new (function() {
 					}
 					if (ref && ref.close){
 						_.throttle( self.readBungieCookie(ref) , 500);
+					}
+					else if (isMobile){
+						retries++;
+						console.log("retries " + retries);
+						if (retries < 2)
+							self.openHiddenBungieWindow();
 					}
 					return
 				}
@@ -1304,21 +1311,37 @@ var app = new (function() {
 	}
 	
 	this.donate = function(){
-		window.open("http://bit.ly/1Jmb4wQ","_system");
+		window.open("http://bit.ly/1Jmb4wQ","_system"); 
 	}
 
 	this.readBungieCookie = function(ref, loop){
-		ref.executeScript({
-			code: 'document.cookie'
-		}, function(result) {
-			if ((result || "").toString().indexOf("bungled") > -1){
-				self.bungie_cookies = result;
-				window.localStorage.setItem("bungie_cookies", result);
-				self.loadData(ref, loop);
-			}
-		});
+		//console.log( typeof ref.executeScript );
+		//console.log( Object.keys(ref) ); 
+		try {
+			ref.executeScript({
+				code: 'document.cookie'
+			}, function(result) {
+				console.log("result " + result);
+				if ((result || "").toString().indexOf("bungled") > -1){
+					self.bungie_cookies = result;
+					window.localStorage.setItem("bungie_cookies", result);
+					self.loadData(ref, loop);
+				}
+			});
+		}catch(e){
+			console.log(e);
+		}
+		
 	}
 
+	this.openHiddenBungieWindow = function(){
+		 window.ref = window.open("https://www.bungie.net/en/User/Profile", '_blank', 'location=no,hidden=yes');
+		 ref.addEventListener('loadstop', function(event) {
+			console.log("loadstop hidden");
+			self.readBungieCookie(ref, 1);
+		});
+	}
+	
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop;
@@ -1332,11 +1355,7 @@ var app = new (function() {
 			}	
 			if (isMobile && !isKindle){
 				ref.addEventListener('loadstop', function(event) {
-					ref.executeScript({
-						code: 'document.location.href'
-					}, function(result) {
-						self.readBungieCookie(ref, loop);
-					});
+					self.readBungieCookie(ref, loop);
 				});
 				ref.addEventListener('exit', function() {
 					if (self.loadingUser() == false){
