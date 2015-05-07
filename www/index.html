@@ -221,8 +221,21 @@
 				</div>
 			</div>
 		</div>
-		<div class="progress progress-striped active" style="display:none;" data-bind="visible: loadingUser">
-			<div class="progress-bar progress-bar-info" style="width: 100%"></div>
+		<div style="display:none;" data-bind="visible: loadingUser() == true && hiddenWindowOpen() == false">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<h4>Loading user data...</h4>
+				<div class="progress progress-striped active">
+					<div class="progress-bar progress-bar-info" style="width: 100%"></div>
+				</div>
+			</div>
+		</div>
+		<div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+				<h4>Please wait your inventory is loading...</h4>
+				<div class="progress progress-striped active">
+					<div class="progress-bar progress-bar-info" style="width: 100%"></div>
+				</div>
+			</div>
 		</div>
 		<nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
 			<div class="container-fluid">

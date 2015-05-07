@@ -812,6 +812,7 @@ var app = new (function() {
 
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
+	this.hiddenWindowOpen = ko.observable(false);
 	this.loadoutMode = ko.observable(false);
 	this.destinyDbMode = ko.observable(false);
 	this.activeLoadout = ko.observable(new Loadout());
@@ -1211,9 +1212,8 @@ var app = new (function() {
 		});
 	}
     
-	var retries = 0;
 	this.loadData = function(ref){
-		if (self.loadingUser() == false){
+		if (self.loadingUser() == false || self.hiddenWindowOpen() == true){
 			//window.t = (new Date());
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies);
@@ -1221,9 +1221,7 @@ var app = new (function() {
 			//console.time("self.bungie.user");
 			self.bungie.user(function(user){
 				//console.timeEnd("self.bungie.user");
-				self.activeUser(new User(user));
 				if (user.error){
-					self.loadingUser(false);
 					if (user.error == 'network error:502'){
 						try {						
 							window.cookies.clear(function() {
@@ -1234,20 +1232,24 @@ var app = new (function() {
 							BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
 						}
 					}
-					if (ref && ref.close){
-						_.throttle( self.readBungieCookie(ref) , 500);
-					}
-					else if (isMobile){
-						retries++;
-						console.log("retries " + retries);
-						if (retries < 2)
+					if (isMobile){ 
+						if ( self.hiddenWindowOpen() == false ){
+							self.hiddenWindowOpen(true);
 							self.openHiddenBungieWindow();
+						}
+						else {
+							self.loadData(ref); 
+						}
+					}
+					else {
+						self.activeUser(new User(user));
+						self.loadingUser(false);
 					}
 					return
 				}
 				if (ref && ref.close){
 					ref.close();
-					//fix for issue #3?
+					self.hiddenWindowOpen(false);
 					ref = null;
 				}
 				_.defer(function(){
@@ -1337,7 +1339,7 @@ var app = new (function() {
 	this.openHiddenBungieWindow = function(){
 		 window.ref = window.open("https://www.bungie.net/en/User/Profile", '_blank', 'location=no,hidden=yes');
 		 ref.addEventListener('loadstop', function(event) {
-			console.log("loadstop hidden");
+			//BootstrapDialog.alert("loadstop hidden");
 			self.readBungieCookie(ref, 1);
 		});
 	}
