@@ -1,5 +1,5 @@
 window.tgd = {
-	duplicates: {}
+	duplicates: ko.observableArray()
 };
 
 window.ua = navigator.userAgent;
@@ -173,7 +173,8 @@ Item.prototype = {
 		var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
 		var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
 		var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
-		var showDuplicate = $parent.showDuplicate() == false ||  ($parent.showDuplicate() == true && tgd.duplicates[self.id] > 1);
+		var dupes = _.filter( tgd.duplicates(), function(id){  return id == self.id } ).length;
+		var showDuplicate = $parent.showDuplicate() == false ||  ($parent.showDuplicate() == true && dupes > 1);
 		/*console.log( "searchFilter: " + searchFilter);
 		console.log( "dmgFilter: " + dmgFilter);
 		console.log( "setFilter: " + setFilter);
@@ -1037,10 +1038,7 @@ var app = new (function() {
 					tierType: info.tierType,
 					icon: dataDir + info.icon
 				};
-				if ( !(item.itemHash in tgd.duplicates) ){
-					tgd.duplicates[item.itemHash] = 0;
-				}
-				tgd.duplicates[item.itemHash]++;
+				tgd.duplicates.push(item.itemHash);
 				if (item.primaryStat){
 					itemObject.primaryStat = item.primaryStat.value;
 				}
@@ -1120,7 +1118,7 @@ var app = new (function() {
 	}
 
 	this.search = function(){
-		tgd.duplicates = {};
+		tgd.duplicates.removeAll();
 		var total = 0, count = 0, profiles = [];
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
 		function done(profile){			
@@ -1550,7 +1548,7 @@ var app = new (function() {
 		    }
 			if (typeof StatusBar !== "undefined"){
 			    StatusBar.styleBlackOpaque();
-			    StatusBar.backgroundColorByHexString("#000");
+			    StatusBar.backgroundColorByHexString("#272B30");
 			}
 		}
 
