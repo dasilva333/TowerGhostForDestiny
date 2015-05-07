@@ -1,3 +1,9 @@
+window.DestinyViews = {
+	"0": "All",
+	"1": "Weapons",
+	"2": "Armor",
+	"3": "General"
+};
 window.DestinyGender = {
 	"0": "Male",
 	"1": "Female"
