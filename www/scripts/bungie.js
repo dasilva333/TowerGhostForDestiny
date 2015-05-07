@@ -88,10 +88,12 @@ try {
 	  	if (isChrome || isMobile){
 			//console.time("XMLHttpRequest"); 
 			var r = new XMLHttpRequest();
+			console.log(opts);
 		    r.open(opts.method, url + "Platform" + opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
 		    r.onload = function() {
 			  var response = this.response;
+			  console.log(response);
 			  //console.timeEnd("XMLHttpRequest"); 
 			  try {
 			  	response = JSON.parse(this.response);
@@ -117,7 +119,7 @@ try {
 			};
 		
 		    _getToken(function(token) {
-				//console.log("_getToken finished with " + token);
+			  console.log("_getToken finished with " + token);
 		      if(token != null) {
 		        r.withCredentials = true;
 		        r.setRequestHeader('x-csrf', token);
