@@ -812,6 +812,7 @@ var app = new (function() {
 
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
+	this.hiddenWindowOpen = ko.observable(false);
 	this.loadoutMode = ko.observable(false);
 	this.destinyDbMode = ko.observable(false);
 	this.activeLoadout = ko.observable(new Loadout());
@@ -1142,7 +1143,7 @@ var app = new (function() {
 					self.search();
 				}
 				else {
-					BootstrapDialog.alert("Account has no data");
+					BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
 				}
 				self.loadingUser(false);
 				return
@@ -1210,9 +1211,9 @@ var app = new (function() {
 			});
 		});
 	}
-
+    
 	this.loadData = function(ref){
-		if (self.loadingUser() == false){
+		if (self.loadingUser() == false || self.hiddenWindowOpen() == true){
 			//window.t = (new Date());
 			self.loadingUser(true);
 			self.bungie = new bungie(self.bungie_cookies);
@@ -1220,9 +1221,7 @@ var app = new (function() {
 			//console.time("self.bungie.user");
 			self.bungie.user(function(user){
 				//console.timeEnd("self.bungie.user");
-				self.activeUser(new User(user));
 				if (user.error){
-					self.loadingUser(false);
 					if (user.error == 'network error:502'){
 						try {						
 							window.cookies.clear(function() {
@@ -1233,16 +1232,27 @@ var app = new (function() {
 							BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
 						}
 					}
-					if (ref && ref.close){
-						_.throttle( self.readBungieCookie(ref) , 500);
+					if (isMobile){ 
+						if ( self.hiddenWindowOpen() == false ){
+							self.hiddenWindowOpen(true);
+							self.openHiddenBungieWindow();
+						}
+						else {
+							self.loadData(ref); 
+						}
+					}
+					else {
+						self.activeUser(new User(user));
+						self.loadingUser(false);
 					}
 					return
 				}
 				if (ref && ref.close){
 					ref.close();
-					//fix for issue #3?
+					self.hiddenWindowOpen(false);
 					ref = null;
 				}
+				self.loadingUser(false);
 				_.defer(function(){
 					self.search();
 				});
@@ -1304,21 +1314,37 @@ var app = new (function() {
 	}
 	
 	this.donate = function(){
-		window.open("http://bit.ly/1Jmb4wQ","_system");
+		window.open("http://bit.ly/1Jmb4wQ","_system"); 
 	}
 
 	this.readBungieCookie = function(ref, loop){
-		ref.executeScript({
-			code: 'document.cookie'
-		}, function(result) {
-			if ((result || "").toString().indexOf("bungled") > -1){
-				self.bungie_cookies = result;
-				window.localStorage.setItem("bungie_cookies", result);
-				self.loadData(ref, loop);
-			}
-		});
+		//console.log( typeof ref.executeScript );
+		//console.log( Object.keys(ref) ); 
+		try {
+			ref.executeScript({
+				code: 'document.cookie'
+			}, function(result) {
+				console.log("result " + result);
+				if ((result || "").toString().indexOf("bungled") > -1){
+					self.bungie_cookies = result;
+					window.localStorage.setItem("bungie_cookies", result);
+					self.loadData(ref, loop);
+				}
+			});
+		}catch(e){
+			console.log(e);
+		}
+		
 	}
 
+	this.openHiddenBungieWindow = function(){
+		 window.ref = window.open("https://www.bungie.net/en/User/Profile", '_blank', 'location=no,hidden=yes');
+		 ref.addEventListener('loadstop', function(event) {
+			//BootstrapDialog.alert("loadstop hidden");
+			self.readBungieCookie(ref, 1);
+		});
+	}
+	
 	this.openBungieWindow = function(type){
 		return function(){
 			var loop;
@@ -1332,11 +1358,7 @@ var app = new (function() {
 			}	
 			if (isMobile && !isKindle){
 				ref.addEventListener('loadstop', function(event) {
-					ref.executeScript({
-						code: 'document.location.href'
-					}, function(result) {
-						self.readBungieCookie(ref, loop);
-					});
+					self.readBungieCookie(ref, loop);
 				});
 				ref.addEventListener('exit', function() {
 					if (self.loadingUser() == false){
