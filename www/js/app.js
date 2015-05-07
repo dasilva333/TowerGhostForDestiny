@@ -1143,7 +1143,7 @@ var app = new (function() {
 					self.search();
 				}
 				else {
-					BootstrapDialog.alert("Account has no data");
+					BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
 				}
 				self.loadingUser(false);
 				return
