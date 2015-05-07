@@ -1238,7 +1238,7 @@ var app = new (function() {
 							self.openHiddenBungieWindow();
 						}
 						else {
-							self.loadData(ref); 
+							setTimeout(function(){ self.loadData(ref); },1000);
 						}
 					}
 					else {
@@ -1252,6 +1252,7 @@ var app = new (function() {
 					self.hiddenWindowOpen(false);
 					ref = null;
 				}
+				self.activeUser(new User(user));
 				self.loadingUser(false);
 				_.defer(function(){
 					self.search();
