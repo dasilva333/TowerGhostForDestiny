@@ -489,108 +489,7 @@ Item.prototype = {
 			done();
 		}
 	},
-	normalize: function(){
-		var self = this;
-		
-		var itemTotal = 0;
-		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
-		
-		/* association of character, amounts to increment/decrement */
-		var characterStatus = _.map(onlyCharacters, function(c){
-			var characterTotal = _.reduce(
-				_.filter(c.items(), { description: self.description}),
-				function(memo, i){ return memo + i.primaryStat; },
-				0);
-			itemTotal = itemTotal + characterTotal;
-			return {character: c, current: characterTotal, needed: 0};
-		});
-		
-		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + self.description + "\" between " + characterStatus.length + " characters."); }
-		//console.log("Each character needs " + itemSplit + " " + self.description);
-		
-		/* calculate how much to increment/decrement each character */
-		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
-		//console.log(characterStatus);	
-		
-		var getNextSurplusCharacter = (function(){
-			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
-		})();
-		
-		var getNextShortageCharacter = (function(){
-			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
-		})();		
-		
-		/* bail early conditions */
-		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
-			return BootstrapDialog.alert(self.description + " already normalized as best as possible.");
-		}
-		
-		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
-			surplusCharacter.current = surplusCharacter.current - amountTransferred;
-			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
-			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
-
-			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
-			shortageCharacter.current = shortageCharacter.current + amountTransferred;
-			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
-		};
-		
-		var nextTransfer = function(){
-			var surplusCharacter = getNextSurplusCharacter();
-			var shortageCharacter = getNextShortageCharacter();
-			
-			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				app.refresh()
-				BootstrapDialog.alert("All items normalized as best as possible");
-				return;
-			}
-			if (surplusCharacter.character.id == shortageCharacter.character.id){
-				//console.log("surplusCharacter is shortageCharacter!?");
-				return;
-			}
-			/* all the surplus characters' items that match the description. might be multiple stacks. */
-			var surplusItems = _.filter(surplusCharacter.character.items(), { description: self.description});			
-			var surplusItem = surplusItems[0];
-			
-			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
-			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
-			
-			//console.log("Attempting to transfer " + self.description + " (" + amountToTransfer + ") from " +
-						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
-						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
-
-			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
-				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
-					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
-					nextTransfer();
-				});
-			});
-		}
-		
-		var messageStr = "<div><div>Normalize " + self.description + "</div><ul>";
-		for (i = 0; i < characterStatus.length; i++){
-			messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
-											(characterStatus[i].needed > 0 ? "+" : "") +
-											characterStatus[i].needed + "</li>");
-		}		
-		messageStr = messageStr.concat("</ul></div>");
-		
-		var dialogItself = (new tgd.dialog({
-			message: messageStr,			
-			buttons: [
-				{
-					label: 'Normalize',
-					cssClass: 'btn-primary',
-					action: function(){	nextTransfer() }
-				},
-				{
-					label: 'Close',
-					action: function(dialogItself){ dialogItself.close(); }
-				}
-			]
-		})).title("Normalize Materials/Consumables").show();
-	},
+	normalize: function(){ app.normalizeSingle(this.description, false, false, undefined); },
 	extrasGlue: function(){
 		var self = this;
 		
@@ -1515,6 +1414,168 @@ var app = new (function() {
 				})
 			}
 		}			
+	}
+	
+	this.normalizeSingle = function(description, useVault, usingbatchMode, callback){	
+		if (useVault){
+			if (usingbatchMode == false){ BootstrapDialog.alert("'useVault' flag not tested; aborting!"); }
+			if (callback !== undefined){ callback(); }
+			return;
+		}
+	
+		var itemTotal = 0;
+		var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		
+		/* association of character, amounts to increment/decrement */
+		var characterStatus = _.map(onlyCharacters, function(c){
+			var characterTotal = _.reduce(
+				_.filter(c.items(), { description: description}),
+				function(memo, i){ return memo + i.primaryStat; },
+				0);
+			itemTotal = itemTotal + characterTotal;
+			return {character: c, current: characterTotal, needed: 0};
+		});
+		
+		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
+		if (itemSplit < 3){
+			if (usingbatchMode == false){ BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + description + "\" between " + characterStatus.length + " characters."); }
+			if (callback !== undefined){ callback(); }
+			return;
+		}
+		//console.log("Each character needs " + itemSplit + " " + description);
+		
+		/* calculate how much to increment/decrement each character */
+		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
+		//console.log(characterStatus);
+		
+		var getNextSurplusCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
+		})();
+		
+		var getNextShortageCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
+		})();		
+		
+		/* bail early conditions */
+		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
+			//console.log("all items normalized as best as possible");
+			if (usingbatchMode == false){ BootstrapDialog.alert(description + " already normalized as best as possible."); }
+			if (callback !== undefined){ callback(); }
+			return;
+		}
+		
+		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
+			surplusCharacter.current = surplusCharacter.current - amountTransferred;
+			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
+			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+
+			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
+			shortageCharacter.current = shortageCharacter.current + amountTransferred;
+			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+		};
+		
+		var nextTransfer = function(callback){
+			var surplusCharacter = getNextSurplusCharacter();
+			var shortageCharacter = getNextShortageCharacter();
+			
+			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
+				//console.log("all items normalized as best as possible");
+				if (usingbatchMode == false){ self.refresh(); BootstrapDialog.alert("All items normalized as best as possible"); }
+				if (callback !== undefined){ callback(); }
+				return;
+			}
+			if (surplusCharacter.character.id == shortageCharacter.character.id){
+				//console.log("surplusCharacter is shortageCharacter!?");
+				if (callback !== undefined){ callback(); }
+				return;
+			}
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: description});			
+			var surplusItem = surplusItems[0];
+			
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
+			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
+			
+			//console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
+						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+
+			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+					nextTransfer(callback);
+				});
+			});
+		}
+		
+		var messageStr = "<div><div>Normalize " + description + "</div><ul>";
+		for (i = 0; i < characterStatus.length; i++){
+			messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
+										   (characterStatus[i].needed > 0 ? "+" : "") +
+											characterStatus[i].needed + "</li>");
+		}		
+		messageStr = messageStr.concat("</ul></div>");
+		
+		if (usingbatchMode == false){
+			var dialogItself = (new tgd.dialog({
+				message: messageStr,			
+				buttons: [
+					{
+						label: 'Normalize',
+						cssClass: 'btn-primary',
+						action: function(){	nextTransfer(callback); }
+					},
+					{
+						label: 'Close',
+						action: function(dialogItself){ dialogItself.close(); }
+					}
+				]
+			})).title("Normalize Materials/Consumables").show();
+		}
+		else{ nextTransfer(callback); }
+	}
+	
+	this.normalizeAll = function(model, event, useVault){
+		if (useVault){ return BootstrapDialog.alert("'useVault' flag not tested; aborting!"); }
+		
+		var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		var selector = function(i){ return i.bucketType == "Consumables" || i.bucketType == "Materials" };
+		
+		/* gather all consumable and material descriptions from all characters */
+		var descriptions = _.union(
+			(onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""),
+			(onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""),
+			(onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""),
+			(onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
+		//console.log(descriptions);
+		
+		var getNextDescription = (function(){
+			var i = 0;
+			return function(){ return i < descriptions.length ? descriptions[i++] : undefined; };
+		})();
+		
+		var nextNormalize = function(){
+			var description = getNextDescription();
+			
+			while (description !== undefined){
+				if ((description !== "Hadronic Essence") &&
+					(description !== "Sapphire Wire") &&
+					(description !== "Plasteel Plating")){
+					break;
+				}
+				else{ description = getNextDescription(); }
+			}
+			
+			if (description == undefined){
+				self.refresh();
+				return;
+			}
+			
+			//console.log(description);
+			self.normalizeSingle(description, false, true, nextNormalize);
+		}
+		
+		nextNormalize();
 	}
 	
 	this.init = function(){
