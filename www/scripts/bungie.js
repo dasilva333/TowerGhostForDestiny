@@ -117,7 +117,7 @@ try {
 			};
 		
 		    _getToken(function(token) {
-				//console.log("_getToken finished with " + token);
+			  //console.log("_getToken finished with " + token);
 		      if(token != null) {
 		        r.withCredentials = true;
 		        r.setRequestHeader('x-csrf', token);
