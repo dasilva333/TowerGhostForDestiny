@@ -207,7 +207,7 @@ body {
 }
 
 .icon { width: 24px; }
-.container .title {
+.title {
     text-transform: uppercase;
     position: relative;
     margin-top: 8px;
