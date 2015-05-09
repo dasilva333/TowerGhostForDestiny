@@ -143,7 +143,7 @@ _collectionsFix = {
 	"exoticWeapons": [],
 	"vaultWeapons": [],
 	"crotaWeapons": [],
-	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,337037804,1487387187], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
+	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,3547540843,2135112796,2266591883], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
 	"exoticArmor": [],
 	"vaultArmor": [],
 	"crotaArmor": [],
