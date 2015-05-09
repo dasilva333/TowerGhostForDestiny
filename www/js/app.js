@@ -71,8 +71,8 @@ tgd.moveItemPositionHandler = function(element, item){
 			$ZamTooltips.hide();
 			if (window.isMobile){
 				$("body").css("padding-bottom", $movePopup.height() + "px");
-				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
-				$movePopup.show();
+				/* bringing back the delay it's sitll a problem in issue #128 */
+				setTimeout(function(){ $movePopup.show(); }, 50);
 			}
 			else {
 				$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
