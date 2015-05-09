@@ -8,7 +8,9 @@ copy scripts\ ..\build\branch\scripts\
 mkdir ..\build\branch\assets\
 copy assets\ ..\build\branch\assets\
 mkdir ..\build\branch\js\
+mkdir ..\build\branch\js\dependencies
 copy js\ ..\build\branch\js\
+copy js\dependencies ..\build\branch\js\dependencies
 mkdir ..\build\branch\data\
 copy data\*.js ..\build\branch\data\
 mkdir ..\build\branch\css\
