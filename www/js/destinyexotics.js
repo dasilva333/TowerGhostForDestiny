@@ -50,13 +50,13 @@ var _collections={
     "ironWeapons": [
         2775854838,
         1998842327,
-        1487387187,
-        337037804,
         367695658,
         160095218,
         1221909933,
         2853794413,
-        805224273
+        805224273,
+        2135112796,
+        2266591883
     ],
     "exoticArmor": [
         144553854,
@@ -143,7 +143,7 @@ _collectionsFix = {
 	"exoticWeapons": [],
 	"vaultWeapons": [],
 	"crotaWeapons": [],
-	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,337037804,1487387187], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
+	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,337037804,1487387187,3547540843], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
 	"exoticArmor": [],
 	"vaultArmor": [],
 	"crotaArmor": [],
