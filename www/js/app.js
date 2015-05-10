@@ -132,15 +132,28 @@ ko.bindingHandlers.moveItem = {
 			// press is actually hold 
 			.on("press", function(ev){
 				var target = tgd.getEventDelegate(ev.target, ".itemLink");
-			    if (target) {
-					var item = ko.contextFor(target).$data;
-					if (app.loadoutMode() == true){
-						item.doEquip(!item.doEquip());
-						item.markAsEquip( item , { target: target });
+			    if (target) {					
+					if ("$data" in ko.contextFor(target)){
+						var item = ko.contextFor(target).$data;
+						if (app.loadoutMode() == true){
+							item.doEquip(!item.doEquip());
+							item.markAsEquip( item , { target: target });
+						}
+						else {
+							$ZamTooltips.lastElement = element;
+							$ZamTooltips.show("destinydb","items",item.id, element);
+						}	
 					}
 					else {
-						$ZamTooltips.lastElement = element;
-						$ZamTooltips.show("destinydb","items",item.id, element);
+						ga('send', 'exception', {
+					      'exDescription': "$data missing in ko.contextFor",
+					      'exFatal': false,
+					      'appName': JSON.stringify(target),
+					      'appVersion': tgd.version,
+						  'hitCallback' : function () {
+						      console.log("crash reported");
+						   }
+					    });
 					}
 			    }
 			});
@@ -503,6 +516,9 @@ var app = new (function() {
 	}
 
 	this.search = function(){
+		if ( !("user" in self.activeUser()) ){
+			return BootstrapDialog.alert("Please sign in before attempting to refresh");
+		}
 		tgd.duplicates.removeAll();
 		var total = 0, count = 0, profiles = [];
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
@@ -519,7 +535,7 @@ var app = new (function() {
 			}
 		}
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
-			if (e.error){
+			if (typeof e.error != "undefined"){
 				/* if the first account fails retry the next one*/
 				if (self.hasBothAccounts()){
 					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );
@@ -559,37 +575,62 @@ var app = new (function() {
 			//console.time("avatars.forEach");			
 			avatars.forEach(function(character, index){
 				self.bungie.inventory(character.characterBase.characterId, function(response) {
-					//console.time("new Profile"); 					
-					var profile = new Profile({
-						order: index+1,
-						gender: tgd.DestinyGender[character.characterBase.genderType],
-						classType: tgd.DestinyClass[character.characterBase.classType],
-						id: character.characterBase.characterId,
-						imgIcon: self.bungie.getUrl() + character.emblemPath,
-						icon: self.makeBackgroundUrl(character.emblemPath),
-						background: self.makeBackgroundUrl(character.backgroundPath),
-						level: character.characterLevel,
-						race: window._raceDefs[character.characterBase.raceHash].raceName
-					}); 
-					var items = [];
-
-					 
-					Object.keys(response.data.buckets).forEach(function(bucket){
-						response.data.buckets[bucket].forEach(function(obj){
-							obj.items.forEach(function(item){
-								items.push(item);
+					if (typeof response.data == "undefined"){
+						ga('send', 'exception', {
+					      'exDescription': "$data missing in ko.contextFor",
+					      'exFatal': false,
+					      'appName': JSON.stringify(target),
+					      'appVersion': tgd.version,
+						  'hitCallback' : function () {
+						      console.log("crash reported");
+						   }
+					    });
+						return BootstrapDialog.alert("Error loading inventory");
+					}
+					if (response.data){
+						//console.time("new Profile"); 					
+						var profile = new Profile({
+							order: index+1,
+							gender: tgd.DestinyGender[character.characterBase.genderType],
+							classType: tgd.DestinyClass[character.characterBase.classType],
+							id: character.characterBase.characterId,
+							imgIcon: self.bungie.getUrl() + character.emblemPath,
+							icon: self.makeBackgroundUrl(character.emblemPath),
+							background: self.makeBackgroundUrl(character.backgroundPath),
+							level: character.characterLevel,
+							race: window._raceDefs[character.characterBase.raceHash].raceName
+						}); 
+						var items = [];
+	
+						 
+						Object.keys(response.data.buckets).forEach(function(bucket){
+							response.data.buckets[bucket].forEach(function(obj){
+								obj.items.forEach(function(item){
+									items.push(item);
+								});
 							});
 						});
-					});
-					//simulate me having the 4th horseman
-					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-					//console.time("processItems");
-					items.forEach(processItem(profile));					
-					//console.timeEnd("processItems");
-					self.addWeaponTypes(profile.items());					
-					//console.timeEnd("new Profile");
-					self.characters.push(profile);
-					done(profile);
+						//simulate me having the 4th horseman
+						//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
+						//console.time("processItems");
+						items.forEach(processItem(profile));					
+						//console.timeEnd("processItems");
+						self.addWeaponTypes(profile.items());					
+						//console.timeEnd("new Profile");
+						self.characters.push(profile);
+						done(profile);
+					}
+					else {
+						ga('send', 'exception', {
+					      'exDescription': JSON.stringify(response),
+					      'exFatal': true,
+					      'appName': "error while loading character",
+					      'appVersion': tgd.version,
+						  'hitCallback' : function () {
+						      console.log("crash reported");
+						   }
+					    });
+					}
 				});
 			});
 		});
