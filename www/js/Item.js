@@ -94,7 +94,7 @@ Item.prototype = {
 			//console.log("and its actually equipped");
 			var otherEquipped = false, itemIndex = -1;
 			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
-				return item.type > 0 && item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
+				return item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
 			});
 			//console.log("other items " + otherItems.length);
 			if ( otherItems.length > 0){
@@ -182,7 +182,7 @@ Item.prototype = {
 		var done = function(){
 			//console.log("making bungie call to equip " + self.description);
 			app.bungie.equip(targetCharacterId, self._id, function(e, result){
-				if (result.Message == "Ok"){
+				if (result && result.Message && result.Message == "Ok"){
 					//console.log("result was OKed");
 					//console.log(result);
 					self.isEquipped(true);
