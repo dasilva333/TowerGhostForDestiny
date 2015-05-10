@@ -140,8 +140,8 @@ ko.bindingHandlers.moveItem = {
 							item.markAsEquip( item , { target: target });
 						}
 						else {
-							$ZamTooltips.lastElement = element;
-							$ZamTooltips.show("destinydb","items",item.id, element);
+							$ZamTooltips.lastElement = target;
+							$ZamTooltips.show("destinydb","items",item.id, target);
 						}				
 					}
 					else {
