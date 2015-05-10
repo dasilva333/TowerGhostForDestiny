@@ -535,7 +535,7 @@ var app = new (function() {
 			}
 		}
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
-			if (!_.isUndefined(e.error)){
+			if (e && e.error || !e){
 				/* if the first account fails retry the next one*/
 				if (self.hasBothAccounts()){
 					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );

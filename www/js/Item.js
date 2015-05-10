@@ -105,7 +105,7 @@ Item.prototype = {
 					//console.log(item.description);
 					/* still haven't found a match */
 					if (otherEquipped == false){
-						if (item != self){
+						if (item != self && item.equip){
 							//console.log("trying to equip " + item.description);
 							item.equip(self.characterId, function(isEquipped){
 								//console.log( item.description + " result was " + isEquipped);
