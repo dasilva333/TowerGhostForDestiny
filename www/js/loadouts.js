@@ -177,11 +177,26 @@ Loadout.prototype = {
 			var transferTargetItem = function(){
 				var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
 				//console.log("going to " + action + " first item " + pair.targetItem.description);
-				self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
-					progressValue = progressValue + increments;
-					loader.width( progressValue + "%" );
-					transferNextItem();
-				});
+				var targetItem = self.findReference(pair.targetItem);
+				if (targetItem){
+					targetItem[action](targetCharacterId, function(){			
+						progressValue = progressValue + increments;
+						loader.width( progressValue + "%" );
+						transferNextItem();
+					});
+				}
+				else {
+					return BootstrapDialog.alert("Error transferring your loadouts, please report this issue to my Github page. Thank you!");
+					ga('send', 'exception', {
+				      'exDescription': "targetItem undefined",
+				      'exFatal': true,
+				      'appName': (typeof pair.targetItem) + " " + (typeof targetItem),
+				      'appVersion': tgd.version,
+					  'hitCallback' : function () {
+					      console.log("crash reported");
+					   }
+				    });
+				}
 			}
 			if (pair){
 				/* swap item has to be moved first in case the swap bucket is full, then move the target item in after */
