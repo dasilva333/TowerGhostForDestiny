@@ -135,14 +135,27 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {					
 					if ("$data" in ko.contextFor(target)){
 						var item = ko.contextFor(target).$data;
-						if (app.loadoutMode() == true){
-							item.doEquip(!item.doEquip());
-							item.markAsEquip( item , { target: target });
+						if (item && item.doEquip){
+							if (app.loadoutMode() == true){
+								item.doEquip(!item.doEquip());
+								item.markAsEquip( item , { target: target });
+							}
+							else {
+								$ZamTooltips.lastElement = element;
+								$ZamTooltips.show("destinydb","items",item.id, element);
+							}	
 						}
 						else {
-							$ZamTooltips.lastElement = element;
-							$ZamTooltips.show("destinydb","items",item.id, element);
-						}	
+							ga('send', 'exception', {
+						      'exDescription': "item.doEquip is missing in item",
+						      'exFatal': false,
+						      'appName': JSON.stringify(item),
+						      'appVersion': tgd.version,
+							  'hitCallback' : function () {
+							      console.log("crash reported");
+							   }
+						    });
+						}						
 					}
 					else {
 						ga('send', 'exception', {
@@ -535,7 +548,7 @@ var app = new (function() {
 			}
 		}
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
-			if (typeof e.error != "undefined"){
+			if (!_.isUndefined(e.error)){
 				/* if the first account fails retry the next one*/
 				if (self.hasBothAccounts()){
 					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );
@@ -579,7 +592,7 @@ var app = new (function() {
 						ga('send', 'exception', {
 					      'exDescription': "$data missing in ko.contextFor",
 					      'exFatal': false,
-					      'appName': JSON.stringify(target),
+					      'appName': JSON.stringify(response),
 					      'appVersion': tgd.version,
 						  'hitCallback' : function () {
 						      console.log("crash reported");
@@ -825,7 +838,9 @@ var app = new (function() {
 	
 	this.scrollToActiveIndex = function(newIndex){
 		var index = $(".quickScrollView img").filter(function(){
-			return $(this).attr("class").indexOf("activeProfile") > -1
+			var className = $(this).attr("class"),
+				className = _.isUndefined(className) ? "" : className;
+			return className.indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
 		self.scrollTo( $(".profile:eq("+index+")").position().top - 50, function(){
 			$.toaster({ priority : 'info', title : 'View:', message : tgd.DestinyViews[newIndex] });
@@ -1112,6 +1127,9 @@ var app = new (function() {
 	this.init = function(){
 		tgd.version = $(".version:first").text();
 		tracking.init();
+		if (_.isUndefined(window._itemDefs)){
+			return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
+		}		
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
 		tgd.duplicates = ko.observableArray();
 		self.doRefresh.subscribe(self.refreshHandler);
