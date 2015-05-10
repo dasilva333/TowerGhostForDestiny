@@ -1,3 +1,14 @@
+window.tgd = {
+	duplicates: ko.observableArray()
+};
+
+window.ua = navigator.userAgent;
+window.isChrome = (typeof chrome !== "undefined");
+window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
+window.isWindowsPhone = (/iemobile/i.test(ua));
+window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
+window.supportsCloudSaves = window.isChrome || window.isMobile;
+
 tgd.dialog = (function(options){
 	var self = this;
 
@@ -34,8 +45,579 @@ tgd.dialog = (function(options){
 	return self.modal;
 });
 
+var Profile = function(model){
+	var self = this;
+	_.each(model, function(value, key){
+		self[key] = value;
+	});
+
+	this.icon = ko.observable(self.icon);
+	this.background = ko.observable(self.background);
+	this.items = ko.observableArray([]);
+	this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
+	this.classLetter = self.classType[0].toUpperCase();
+	this.weapons = ko.computed(this._weapons, this);
+	this.armor = ko.computed(this._armor, this);
+	this.general = ko.computed(this._general, this);
+	this.postmaster = ko.computed(this._postmaster, this);
+	this.container = ko.observable();
+}
+
+Profile.prototype = {
+	_weapons: function(){
+		return _.filter(this.items(), function(item){
+			if (item.weaponIndex > -1 )
+				return item;
+		});
+	},
+	_armor: function(){
+		return _.filter(this.items(), function(item){
+			if (item.armorIndex > -1 )
+				return item;
+		});
+	},
+	_general: function(){
+		return _.filter(this.items(), function(item){
+			if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Subclasses")
+				return item;
+		});
+	},
+	_postmaster: function(){
+		return _.filter(this.items(), function(item){
+			if (item.bucketType == "Post Master")
+				return item;
+		});
+	},
+	filterItemByType: function(type, isEquipped){
+		return function(item){
+			return (item.bucketType == type && item.isEquipped() == isEquipped);
+		}
+	},
+	get: function(type){
+		return this.items().filter(this.filterItemByType(type, false));
+	},
+	itemEquipped: function(type){
+		return ko.utils.arrayFirst(this.items(), this.filterItemByType(type, true));
+	}
+}
+
+var Item = function(model, profile){
+	var self = this;
+	_.each(model, function(value, key){
+		self[key] = value;
+	});
+	this.character = profile;
+	this.href = "https://destinydb.com/items/" + self.id;
+	this.isEquipped = ko.observable(self.isEquipped);
+	this.primaryStat = self.primaryStat || "";
+	this.isVisible = ko.computed(this._isVisible, this);
+	this.isEquippable = function(avatarId){
+		return ko.computed(function(){
+				//rules for how subclasses can be equipped
+			  var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
+				//if it's in this character and it's equippable
+			 return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass) ||
+			 	//if it's in another character and it's equippable
+			 	(self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass);
+		});
+	}
+	this.isStoreable = function(avatarId){
+		return ko.computed(function(){
+			return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses') ||
+				(self.isEquipped() && self.character.id == avatarId);
+		});
+	}
+}
+
+Item.prototype = {
+	hasPerkSearch: function(search){
+		var foundPerk = false, self = this;
+		if (self.perks){
+			var vSearch = search.toLowerCase();
+			self.perks.forEach(function(perk){
+				if (perk.name.toLowerCase().indexOf(vSearch) > -1 || perk.description.toLowerCase().indexOf(vSearch) > -1)
+					foundPerk = true;
+			});
+		}
+		return foundPerk;
+	},
+	hashProgress: function(state){
+		var self = this;
+		if (typeof self.progression !== "undefined"){
+			/* Missing XP */
+			if (state == 1 && self.progression == false){
+				return true;
+			}
+			/* Full XP  but not maxed out */
+			else if (state == 2 && self.progression == true && self.isGridComplete == false){
+				return true
+			}
+			/* Maxed weapons (Gold Borders only) */
+			else if (state == 3 && self.progression == true && self.isGridComplete == true){
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return false;
+		}
+	},
+	_isVisible: function(){
+		var $parent = app, self = this;
+		var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
+			($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1);
+		var dmgFilter = $parent.dmgFilter().length ==0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+		var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1 || $parent.setFilterFix().indexOf(self.id) > -1;
+		var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
+		var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
+		var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
+		var dupes = _.filter( tgd.duplicates(), function(id){  return id == self.id } ).length;
+		var showDuplicate = $parent.showDuplicate() == false ||  ($parent.showDuplicate() == true && dupes > 1);
+		/*console.log( "searchFilter: " + searchFilter);
+		console.log( "dmgFilter: " + dmgFilter);
+		console.log( "setFilter: " + setFilter);
+		console.log( "tierFilter: " + tierFilter);
+		console.log( "progressFilter: " + progressFilter);
+		console.log( "typeFilter: " + typeFilter);
+		console.log("keyword is: " + $parent.searchKeyword());
+		console.log("keyword is empty " + ($parent.searchKeyword() == ''));
+		console.log("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
+		console.log("perks are " + JSON.stringify(self.perks));
+		console.log("description is " + self.description);
+		console.log("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
+		return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
+	},
+	/* helper function that unequips the current item in favor of anything else */
+	unequip: function(callback, allowReplacement, excludeExotic){
+		var self = this;
+		//console.log('trying to unequip too!');
+		if (self.isEquipped() == true){
+			//console.log("and its actually equipped");
+			var otherEquipped = false, itemIndex = -1;
+			var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
+				return item.type > 0 && item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
+			});
+			//console.log("other items " + otherItems.length);
+			if ( otherItems.length > 0){
+				/* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
+				var minTier = _.min(_.pluck( otherItems, 'tierType' ));				
+				var tryNextItem = function(){
+					var item = otherItems[++itemIndex];
+					//console.log(item.description);
+					/* still haven't found a match */
+					if (otherEquipped == false){
+						if (item != self){
+							//console.log("trying to equip " + item.description);
+							item.equip(self.characterId, function(isEquipped){
+								//console.log( item.description + " result was " + isEquipped);
+								if (isEquipped == true){ otherEquipped = true; callback(true); }
+								else { tryNextItem(); /*console.log("tryNextItem")*/ }
+							});
+						}
+						else {
+							tryNextItem()
+							//console.log("tryNextItem")
+						}
+					}
+				}
+				//console.log("tryNextItem")
+				//console.log("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+				if (minTier == 6){
+					var otherItemUnequipped = false;
+					var otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+					otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
+					_.each(otherBucketTypes, function(bucketType){
+						var itemEquipped = self.character.itemEquipped(bucketType);
+						if ( itemEquipped.tierType == 6 ){
+							//console.log("going to unequip " + itemEquipped.description);
+							itemEquipped.unequip(function(result){
+								//unequip was successful
+								if ( result ){ tryNextItem(); }
+								//unequip failed
+								else { 
+									BootstrapDialog.alert("Unable to unequip " + itemEquipped.description); 
+									callback(false); 
+								}
+							}, false, true);
+							otherItemUnequipped = true;
+						}
+					});
+					if (!otherItemUnequipped){
+						//console.log("no other exotic equipped, safe to equip");
+						tryNextItem();
+					}
+				}
+				else {
+					tryNextItem();
+				}
+			}
+			else if (allowReplacement){
+				//console.log("unequip allows replacement");
+				var otherItems = _.filter(_.where( self.character.items(), { bucketType: self.bucketType }), function(item){
+					return item._id !== self._id;
+				});
+				if (otherItems.length > 0){
+					//console.log('found an item an item to equip instead ' + otherItems[0].description);
+					otherItems[0].equip(self.character.id, function(){
+						console.log("finished equipping other item");
+						callback(true);
+					}, true);
+				}
+				else {
+					console.log("no item to replace it");
+					callback(false);
+				}
+			}
+			else {
+				//console.log("refused to unequip");
+				callback(false);
+			}
+		}
+		else {
+			//console.log("but not equipped");
+			callback(true);
+		}
+	},
+	equip: function(targetCharacterId, callback, allowReplacement){
+		var self = this;
+		var done = function(){
+			//console.log("making bungie call to equip " + self.description);
+			app.bungie.equip(targetCharacterId, self._id, function(e, result){
+				if (result.Message == "Ok"){
+					//console.log("result was OKed");
+					//console.log(result);
+					self.isEquipped(true);
+					self.character.items().forEach(function(item){
+						if (item != self && item.bucketType == self.bucketType){
+							item.isEquipped(false);
+						}
+					});
+					if (self.bucketType == "Emblem"){
+						self.character.icon(app.makeBackgroundUrl(self.icon, true));
+						self.character.background(self.backgroundPath);
+					}
+					if (callback) callback(true);
+				}
+				else {
+					//console.log("result failed");
+					/* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
+					if (callback) callback(false);
+					else BootstrapDialog.alert(result.Message);
+				}
+			});
+		}
+		var sourceCharacterId = self.characterId;
+		//console.log("equip called from " + sourceCharacterId + " to " + targetCharacterId);
+		if (targetCharacterId == sourceCharacterId){
+			//console.log("item is already in the character");
+			/* if item is exotic */
+			if ( self.tierType == 6 && allowReplacement){
+				//console.log("item is exotic");
+				var otherExoticFound = false,
+					otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+				otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
+				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));
+				_.each(otherBucketTypes, function(bucketType){
+					var otherExotic = _.filter(_.where( self.character.items(), { bucketType: bucketType, tierType: 6 }), function(item){
+						return item.isEquipped();
+					});
+					//console.log( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
+					if ( otherExotic.length > 0 ){
+						//console.log("found another exotic equipped " + otherExotic[0].description);
+						otherExoticFound = true;
+						otherExotic[0].unequip(done,allowReplacement);
+					}
+				});
+				if (otherExoticFound == false){
+					done();
+				}
+			}
+			else {
+				//console.log("request is not part of a loadout");
+				done()
+			}
+		}
+		else {
+			//console.log("item is NOT already in the character");
+			self.store(targetCharacterId, function(newProfile){
+				//console.log("item is now in the target destination");
+				self.character = newProfile;
+				self.characterId = newProfile.id;
+				self.equip(targetCharacterId, callback, allowReplacement);
+			}, allowReplacement);
+		}
+	},
+	transfer: function(sourceCharacterId, targetCharacterId, amount, cb){
+		//console.log("Item.transfer");
+		//console.log(arguments);
+		//setTimeout(function(){
+		var self = this;
+			var isVault = targetCharacterId == "Vault";
+			app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result){
+				//console.log("app.bungie.transfer after");
+				//console.log(arguments);
+				if (result.Message == "Ok"){
+					var x,y;
+					_.each(app.characters(), function(character){
+						if (character.id == sourceCharacterId){
+							//console.log("removing reference of myself ( " + self.description + " ) in " + character.classType + " from the list of " + self.list);
+							x = character;
+						}
+						else if (character.id == targetCharacterId){
+							//console.log("adding a reference of myself ( " + self.description + " ) to this guy " + character.classType);
+							y = character;
+						}
+					});
+					if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
+						//console.log("need to split reference of self and push it into x and y");
+						var remainder = self.primaryStat - amount;
+						/* at this point we can either add the item to the inventory or merge it with existing items there */
+						var existingItem = _.findWhere( y.items(), { description: self.description });
+						if (existingItem){
+							y.items.remove(existingItem);
+							existingItem.primaryStat = existingItem.primaryStat + amount;
+							y.items.push(existingItem);
+						}
+						else {
+							self.characterId = targetCharacterId
+							self.character = y;
+							self.primaryStat = amount;
+							y.items.push(self);
+						}
+						/* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
+						x.items.remove(self);
+						if (remainder > 0){
+							self.characterId = sourceCharacterId
+							self.character = x;
+							self.primaryStat = remainder;
+							x.items.push(self);
+						}
+					}
+					else {
+						self.characterId = targetCharacterId
+						self.character = y;
+						y.items.push(self);
+						x.items.remove(self);
+					}
+					if (cb) cb(y,x);
+				}
+				else {
+					BootstrapDialog.alert(result.Message);
+				}
+			});
+		//}, 1000);
+	},
+	store: function(targetCharacterId, callback, allowReplacement){
+		//console.log("item.store");
+		//console.log(arguments);
+		var self = this;
+		var sourceCharacterId = self.characterId, transferAmount = 1;
+		var done = function(){
+			if (targetCharacterId == "Vault"){
+				//console.log("from character to vault " + self.description);
+				self.unequip(function(result){
+					//console.log("calling transfer from character to vault");
+					if (result)
+						self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
+					if (result == false && callback)
+						callback(self.character);
+				}, allowReplacement);
+			}
+			else if (sourceCharacterId !== "Vault"){
+				//console.log("from character to vault to character " + self.description);
+				self.unequip(function(result){
+					if (result){
+						if ( self.bucketType == "Subclasses" ){
+							if (callback)
+								callback(self.character);
+						}
+						else {
+							//console.log("xfering item to Vault " + self.description);
+							self.transfer(sourceCharacterId, "Vault", transferAmount, function(){
+								//console.log("xfered item to vault and now to " + targetCharacterId);
+								self.transfer("Vault", targetCharacterId, transferAmount, callback);
+							});
+						}
+					}
+					if (result == false && callback)
+						callback(self.character);
+				}, allowReplacement);
+			}
+			else {
+				//console.log("from vault to character");
+				self.transfer("Vault", targetCharacterId, transferAmount, callback);
+			}
+		}
+		if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
+			if (self.primaryStat == 1){
+				done();
+			}
+			else if (app.autoTransferStacks() == true){
+				transferAmount = self.primaryStat;
+				done();
+			}
+			else {
+				var dialogItself = (new tgd.dialog({
+		            message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
+		            buttons: [
+						{
+		                	label: 'Transfer',
+							cssClass: 'btn-primary',
+							action: function(){
+								finishTransfer()
+							}
+		            	},
+						{
+			                label: 'Close',
+			                action: function(dialogItself){
+			                    dialogItself.close();
+			                }
+		            	}
+		            ]
+		        })).title("Transfer Materials").show(true),
+				finishTransfer = function(){
+					transferAmount = parseInt($("input#materialsAmount").val());
+					if (!isNaN(transferAmount)){ done(); dialogItself.modal.close(); }
+					else { BootstrapDialog.alert("Invalid amount entered: " + transferAmount); }
+				}
+				setTimeout(function(){ $("#materialsAmount").select().bind("keyup", function(e){ if(e.keyCode == 13) { finishTransfer() } }) }, 500);
+			}
+		}
+		else {
+			done();
+		}
+	},
+	normalize: function(){
+		var self = this;
+		
+		var itemTotal = 0;
+		var onlyCharacters = _.reject(app.characters(), function(c){ return c.id == "Vault" });
+		
+		/* association of character, amounts to increment/decrement */
+		var characterStatus = _.map(onlyCharacters, function(c){
+			var characterTotal = _.reduce(
+				_.filter(c.items(), { description: self.description}),
+				function(memo, i){ return memo + i.primaryStat; },
+				0);
+			itemTotal = itemTotal + characterTotal;
+			return {character: c, current: characterTotal, needed: 0};
+		});
+		
+		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
+		if (itemSplit < 3){ return BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + self.description + "\" between " + characterStatus.length + " characters."); }
+		//console.log("Each character needs " + itemSplit + " " + self.description);
+		
+		/* calculate how much to increment/decrement each character */
+		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
+		//console.log(characterStatus);	
+		
+		var getNextSurplusCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
+		})();
+		
+		var getNextShortageCharacter = (function(){
+			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
+		})();		
+		
+		/* bail early conditions */
+		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
+			return BootstrapDialog.alert(self.description + " already normalized as best as possible.");
+		}
+		
+		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
+			surplusCharacter.current = surplusCharacter.current - amountTransferred;
+			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
+			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+
+			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
+			shortageCharacter.current = shortageCharacter.current + amountTransferred;
+			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+		};
+		
+		var nextTransfer = function(){
+			var surplusCharacter = getNextSurplusCharacter();
+			var shortageCharacter = getNextShortageCharacter();
+			
+			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
+				app.refresh()
+				BootstrapDialog.alert("All items normalized as best as possible");
+				return;
+			}
+			if (surplusCharacter.character.id == shortageCharacter.character.id){
+				//console.log("surplusCharacter is shortageCharacter!?");
+				return;
+			}
+			/* all the surplus characters' items that match the description. might be multiple stacks. */
+			var surplusItems = _.filter(surplusCharacter.character.items(), { description: self.description});			
+			var surplusItem = surplusItems[0];
+			
+			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
+			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
+			
+			//console.log("Attempting to transfer " + self.description + " (" + amountToTransfer + ") from " +
+						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
+						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
+
+			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
+				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
+					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+					nextTransfer();
+				});
+			});
+		}
+		
+		var messageStr = "<div><div>Normalize " + self.description + "</div><ul>";
+		for (i = 0; i < characterStatus.length; i++){
+			messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
+											(characterStatus[i].needed > 0 ? "+" : "") +
+											characterStatus[i].needed + "</li>");
+		}		
+		messageStr = messageStr.concat("</ul></div>");
+		
+		var dialogItself = (new tgd.dialog({
+			message: messageStr,			
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){	nextTransfer() }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Normalize Materials/Consumables").show();
+	},
+	extrasGlue: function(){
+		var self = this;
+		
+		var extrasStr = "<div><ul>";
+			extrasStr = extrasStr.concat("<li>Normalize - equally distribute item across your characters</li>");
+			// any future stuff here
+			extrasStr = extrasStr.concat("</ul></div>");
+		
+		var dialogItself = (new tgd.dialog({
+			message: extrasStr,
+			buttons: [
+				{
+					label: 'Normalize',
+					cssClass: 'btn-primary',
+					action: function(){ self.normalize(); }
+				},
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Extras for " + self.description).show();
+	}
+}
+
 var activeElement;
-tgd.moveItemPositionHandler = function(element, item){
+var moveItemPositionHandler = function(element, item){
 	app.activeItem(item);
 	if (app.destinyDbMode() == true){
 		window.open(item.href,"_system");
@@ -71,8 +653,8 @@ tgd.moveItemPositionHandler = function(element, item){
 			$ZamTooltips.hide();
 			if (window.isMobile){
 				$("body").css("padding-bottom", $movePopup.height() + "px");
-				/* bringing back the delay it's sitll a problem in issue #128 */
-				setTimeout(function(){ $movePopup.show(); }, 50);
+				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
+				$movePopup.show();
 			}
 			else {
 				$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -119,71 +701,59 @@ window.ko.bindingHandlers.fastclick = {
 	}
 };
 
+getEventDelegate = function (target, selector) {
+ var delegate;
+ while (target && target != this.el) {
+	delegate = $(target).filter(selector)[0];
+	if (delegate) {
+	   return delegate;
+	}
+	target = target.parentNode;
+ }
+ return undefined;
+}
+
+
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
 		Hammer(element, { time: 2000 })		
 			.on("tap", function(ev){
-				var target = tgd.getEventDelegate(ev.target, ".itemLink");
+				var target = getEventDelegate(ev.target, ".itemLink");
 			    if (target) {
 					var item = ko.contextFor(target).$data;
-				    tgd.moveItemPositionHandler(target, item);
+				    moveItemPositionHandler(target, item);
 			    }
 			})
 			// press is actually hold 
 			.on("press", function(ev){
-				var target = tgd.getEventDelegate(ev.target, ".itemLink");
-			    if (target) {					
-					if ("$data" in ko.contextFor(target)){
-						var item = ko.contextFor(target).$data;
-						if (item && item.doEquip){
-							if (app.loadoutMode() == true){
-								item.doEquip(!item.doEquip());
-								item.markAsEquip( item , { target: target });
-							}
-							else {
-								$ZamTooltips.lastElement = element;
-								$ZamTooltips.show("destinydb","items",item.id, element);
-							}	
-						}
-						else {
-							ga('send', 'exception', {
-						      'exDescription': "item.doEquip is missing in item",
-						      'exFatal': false,
-						      'appName': JSON.stringify(item),
-						      'appVersion': tgd.version,
-							  'hitCallback' : function () {
-							      console.log("crash reported");
-							   }
-						    });
-						}						
+				var target = getEventDelegate(ev.target, ".itemLink");
+			    if (target) {
+					var item = ko.contextFor(target).$data;
+					if (app.loadoutMode() == true){
+						item.doEquip(!item.doEquip());
+						item.markAsEquip( item , { target: target });
 					}
 					else {
-						ga('send', 'exception', {
-					      'exDescription': "$data missing in ko.contextFor",
-					      'exFatal': false,
-					      'appName': JSON.stringify(target),
-					      'appVersion': tgd.version,
-						  'hitCallback' : function () {
-						      console.log("crash reported");
-						   }
-					    });
+						$ZamTooltips.lastElement = element;
+						$ZamTooltips.show("destinydb","items",item.id, element);
 					}
 			    }
 			});
     }
 };
 
-tgd.getEventDelegate = function (target, selector) {
-	var delegate;
-	while (target && target != this.el) {
-		delegate = $(target).filter(selector)[0];
-		if (delegate) {
-			return delegate;
-		}
-		target = target.parentNode;
-	}
-	return undefined;
-}
+var perksTemplate = _.template('<div class="destt-talent">' +
+	'<% perks.forEach(function(perk){ %>' +
+		'<div class="destt-talent-wrapper">' +
+			'<div class="destt-talent-icon">' +
+				'<img src="<%= perk.iconPath %>" width="36">' +
+			'</div>' +
+			'<div class="destt-talent-description">' +
+				'<%= perk.description %>' +
+			'</div>' +
+		'</div>' +
+	'<% }) %>' +
+'</div>');
 
 var User = function(model){
 	var self = this;
@@ -194,33 +764,52 @@ var User = function(model){
 	this.activeSystem = ko.observable(self.psnId ? "PSN" : "XBL" );
 }
 
-tgd.getStoredValue = function(key){
-	var saved = "";
-	if (window.localStorage && window.localStorage.getItem)
-		saved = window.localStorage.getItem(key);
-	if (_.isEmpty(saved)){
-		return tgd.defaults[key];
-	}
-	else {
-		return saved
-	}
-}
-
-tgd.StoreObj = function(key, compare, writeCallback){
-	var value = ko.observable(compare ? tgd.getStoredValue(key) == compare : tgd.getStoredValue(key));
-	this.read = function(){
-		return value();
-	}
-	this.write = function(newValue){
-		window.localStorage.setItem(key, newValue);
-		value(newValue);
-		if (writeCallback) writeCallback(newValue);
-	}
-}
-
 var app = new (function() {
 	var self = this;
+
 	var dataDir = "data";
+	var defaults = {
+		searchKeyword: "",
+		doRefresh: isMobile ? false : true,
+		refreshSeconds: 300,
+		tierFilter: 0,
+		typeFilter: 0,
+		dmgFilter: [],
+		activeView: 0,
+		progressFilter: 0,
+		showDuplicate: false,
+		setFilter: [],
+		shareView: false,
+		shareUrl: "",
+		showMissing: false,
+		tooltipsEnabled: isMobile ? false : true,
+		autoTransferStacks: false,
+		padBucketHeight: false
+	};
+
+	var getValue = function(key){
+		var saved = "";
+		if (window.localStorage && window.localStorage.getItem)
+			saved = window.localStorage.getItem(key);
+		if (_.isEmpty(saved)){
+			return defaults[key];
+		}
+		else {
+			return saved
+		}
+	}
+
+	var StoreObj = function(key, compare, writeCallback){
+		var value = ko.observable(compare ? getValue(key) == compare : getValue(key));
+		this.read = function(){
+			return value();
+		}
+		this.write = function(newValue){
+			window.localStorage.setItem(key, newValue);
+			value(newValue);
+			if (writeCallback) writeCallback(newValue);
+		}
+	}
 
 	this.retryCount = ko.observable(0);
 	this.loadingUser = ko.observable(false);
@@ -229,23 +818,23 @@ var app = new (function() {
 	this.destinyDbMode = ko.observable(false);
 	this.activeLoadout = ko.observable(new Loadout());
 	this.loadouts = ko.observableArray();
-	this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-	this.activeView = ko.computed(new tgd.StoreObj("activeView"));
-	this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
-	this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));	
-	this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
-	this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
-	this.refreshSeconds = ko.computed(new tgd.StoreObj("refreshSeconds"));
-	this.tierFilter = ko.computed(new tgd.StoreObj("tierFilter"));
-	this.typeFilter = ko.observable(tgd.defaults.typeFilter);
-	this.dmgFilter =  ko.observableArray(tgd.defaults.dmgFilter);
-	this.progressFilter =  ko.observable(tgd.defaults.progressFilter);
-	this.setFilter = ko.observableArray(tgd.defaults.setFilter);
-	this.setFilterFix = ko.observableArray(tgd.defaults.setFilter);
-	this.shareView =  ko.observable(tgd.defaults.shareView);
-	this.shareUrl  = ko.observable(tgd.defaults.shareUrl);
-	this.showMissing =  ko.observable(tgd.defaults.showMissing);
-	this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
+	this.searchKeyword = ko.observable(defaults.searchKeyword);
+	this.activeView = ko.computed(new StoreObj("activeView"));
+	this.doRefresh = ko.computed(new StoreObj("doRefresh", "true"));
+	this.autoTransferStacks = ko.computed(new StoreObj("autoTransferStacks", "true"));	
+	this.padBucketHeight = ko.computed(new StoreObj("padBucketHeight", "true"));
+	this.tooltipsEnabled = ko.computed(new StoreObj("tooltipsEnabled", "true", function(newValue){ $ZamTooltips.isEnabled = newValue; }));
+	this.refreshSeconds = ko.computed(new StoreObj("refreshSeconds"));
+	this.tierFilter = ko.computed(new StoreObj("tierFilter"));
+	this.typeFilter = ko.observable(defaults.typeFilter);
+	this.dmgFilter =  ko.observableArray(defaults.dmgFilter);
+	this.progressFilter =  ko.observable(defaults.progressFilter);
+	this.setFilter = ko.observableArray(defaults.setFilter);
+	this.setFilterFix = ko.observableArray(defaults.setFilter);
+	this.shareView =  ko.observable(defaults.shareView);
+	this.shareUrl  = ko.observable(defaults.shareUrl);
+	this.showMissing =  ko.observable(defaults.showMissing);
+	this.showDuplicate = ko.observable(defaults.showDuplicate);
 
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
@@ -276,20 +865,20 @@ var app = new (function() {
 	}
 
 	this.clearFilters = function(model, element){
-		self.activeView(tgd.defaults.activeView);
-		self.searchKeyword(tgd.defaults.searchKeyword);
-		self.doRefresh(tgd.defaults.doRefresh);
-		self.refreshSeconds(tgd.defaults.refreshSeconds);
-		self.tierFilter(tgd.defaults.tierFilter);
-		self.typeFilter(tgd.defaults.typeFilter);
-		self.dmgFilter([]);
-		self.progressFilter(tgd.defaults.progressFilter);		
-		self.setFilter([]);
-		self.setFilterFix([]);
-		self.shareView(tgd.defaults.shareView);
-		self.shareUrl (tgd.defaults.shareUrl);
-		self.showMissing(tgd.defaults.showMissing);
-		self.showDuplicate(tgd.defaults.showDuplicate);
+		self.activeView(defaults.activeView);
+		self.searchKeyword(defaults.searchKeyword);
+		self.doRefresh(defaults.doRefresh);
+		self.refreshSeconds(defaults.refreshSeconds);
+		self.tierFilter(defaults.tierFilter);
+		self.typeFilter(defaults.typeFilter);
+		self.dmgFilter.removeAll();
+		self.progressFilter(defaults.progressFilter);		
+		self.setFilter.removeAll()
+		self.setFilterFix.removeAll()
+		self.shareView(defaults.shareView);
+		self.shareUrl (defaults.shareUrl);
+		self.showMissing(defaults.showMissing);
+		self.showDuplicate(defaults.showDuplicate);
 		$(element.target).removeClass("active");
 		return false;
 	}
@@ -310,11 +899,11 @@ var app = new (function() {
 			}
 			/* Weapon Perks */
 			if ( (activeItem.perks && $content.find(".destt-talent").length == 0) ){
-				$content.find(".destt-info").prepend(tgd.perksTemplate({ perks: activeItem.perks }));
+				$content.find(".destt-info").prepend(perksTemplate({ perks: activeItem.perks }));
 			}
 			/* Armor Perks */
-			else if (activeItem.perks && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6){
-				$content.find(".destt-talent").replaceWith( tgd.perksTemplate({ perks: activeItem.perks }));
+			else if (activeItem.perks && DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6){
+				$content.find(".destt-talent").replaceWith( perksTemplate({ perks: activeItem.perks }));
 			}
 			/* Armor Stats */
 			var stats = $content.find(".destt-stat");
@@ -430,7 +1019,7 @@ var app = new (function() {
 				return;
 			}
 			var info = window._itemDefs[item.itemHash];
-			if (info.bucketTypeHash in tgd.DestinyBucketTypes){
+			if (info.bucketTypeHash in DestinyBucketTypes){
 				var description = info.itemName;
 				try{ description = decodeURIComponent(info.itemName); }catch(e){ description = info.itemName; }
 				var itemObject = {
@@ -438,12 +1027,12 @@ var app = new (function() {
 					_id: item.itemInstanceId,
 					characterId: profile.id,
 					damageType: item.damageType,
-					damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+					damageTypeName: DestinyDamageTypes[item.damageType],
 					isEquipped: item.isEquipped,
 					isGridComplete: item.isGridComplete,
 					locked: item.locked,
 					description: description,
-					bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
+					bucketType: (item.location == 4) ? "Post Master" : DestinyBucketTypes[info.bucketTypeHash],
 					type: info.itemSubType,
 					typeName: info.itemTypeName,
 					tierType: info.tierType,
@@ -457,8 +1046,8 @@ var app = new (function() {
 					itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
 				}
 				
-				itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
-				itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
+				itemObject.weaponIndex = DestinyWeaponPieces.indexOf(itemObject.bucketType);
+				itemObject.armorIndex = DestinyArmorPieces.indexOf(itemObject.bucketType);
 				/* both weapon engrams and weapons fit under this condition*/
 				if ( (itemObject.weaponIndex > -1 || itemObject.armorIndex > -1) && item.perks.length > 0 ){
 					itemObject.perks = item.perks.map(function(perk){
@@ -529,9 +1118,6 @@ var app = new (function() {
 	}
 
 	this.search = function(){
-		if ( !("user" in self.activeUser()) ){
-			return BootstrapDialog.alert("Please sign in before attempting to refresh");
-		}
 		tgd.duplicates.removeAll();
 		var total = 0, count = 0, profiles = [];
 		/* TODO: implement a better loading bar by using the counts and this: #loadingBar */
@@ -548,7 +1134,7 @@ var app = new (function() {
 			}
 		}
 		self.bungie.search(self.activeUser().activeSystem(),function(e){
-			if (!_.isUndefined(e.error)){
+			if (e.error){
 				/* if the first account fails retry the next one*/
 				if (self.hasBothAccounts()){
 					self.activeUser().activeSystem( self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN" );
@@ -588,62 +1174,37 @@ var app = new (function() {
 			//console.time("avatars.forEach");			
 			avatars.forEach(function(character, index){
 				self.bungie.inventory(character.characterBase.characterId, function(response) {
-					if (typeof response.data == "undefined"){
-						ga('send', 'exception', {
-					      'exDescription': "$data missing in ko.contextFor",
-					      'exFatal': false,
-					      'appName': JSON.stringify(response),
-					      'appVersion': tgd.version,
-						  'hitCallback' : function () {
-						      console.log("crash reported");
-						   }
-					    });
-						return BootstrapDialog.alert("Error loading inventory");
-					}
-					if (response.data){
-						//console.time("new Profile"); 					
-						var profile = new Profile({
-							order: index+1,
-							gender: tgd.DestinyGender[character.characterBase.genderType],
-							classType: tgd.DestinyClass[character.characterBase.classType],
-							id: character.characterBase.characterId,
-							imgIcon: self.bungie.getUrl() + character.emblemPath,
-							icon: self.makeBackgroundUrl(character.emblemPath),
-							background: self.makeBackgroundUrl(character.backgroundPath),
-							level: character.characterLevel,
-							race: window._raceDefs[character.characterBase.raceHash].raceName
-						}); 
-						var items = [];
-	
-						 
-						Object.keys(response.data.buckets).forEach(function(bucket){
-							response.data.buckets[bucket].forEach(function(obj){
-								obj.items.forEach(function(item){
-									items.push(item);
-								});
+					//console.time("new Profile"); 					
+					var profile = new Profile({
+						order: index+1,
+						gender: DestinyGender[character.characterBase.genderType],
+						classType: DestinyClass[character.characterBase.classType],
+						id: character.characterBase.characterId,
+						imgIcon: self.bungie.getUrl() + character.emblemPath,
+						icon: self.makeBackgroundUrl(character.emblemPath),
+						background: self.makeBackgroundUrl(character.backgroundPath),
+						level: character.characterLevel,
+						race: window._raceDefs[character.characterBase.raceHash].raceName
+					}); 
+					var items = [];
+
+					 
+					Object.keys(response.data.buckets).forEach(function(bucket){
+						response.data.buckets[bucket].forEach(function(obj){
+							obj.items.forEach(function(item){
+								items.push(item);
 							});
 						});
-						//simulate me having the 4th horseman
-						//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-						//console.time("processItems");
-						items.forEach(processItem(profile));					
-						//console.timeEnd("processItems");
-						self.addWeaponTypes(profile.items());					
-						//console.timeEnd("new Profile");
-						self.characters.push(profile);
-						done(profile);
-					}
-					else {
-						ga('send', 'exception', {
-					      'exDescription': JSON.stringify(response),
-					      'exFatal': true,
-					      'appName': "error while loading character",
-					      'appVersion': tgd.version,
-						  'hitCallback' : function () {
-						      console.log("crash reported");
-						   }
-					    });
-					}
+					});
+					//simulate me having the 4th horseman
+					//items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
+					//console.time("processItems");
+					items.forEach(processItem(profile));					
+					//console.timeEnd("processItems");
+					self.addWeaponTypes(profile.items());					
+					//console.timeEnd("new Profile");
+					self.characters.push(profile);
+					done(profile);
 				});
 			});
 		});
@@ -748,7 +1309,7 @@ var app = new (function() {
 	}
 
 	this.showVersion = function(){
-		BootstrapDialog.alert("Current version is " + tgd.version);
+		BootstrapDialog.alert("Current version is " + $(".version:first").text());
 	}
 	
 	this.donate = function(){
@@ -826,40 +1387,34 @@ var app = new (function() {
 		}
 	}
 
-	this.scrollTo = function(distance, callback){
+	this.scrollTo = function(distance){
 		if ( isWindowsPhone ){
 			$('html,body').scrollTop(distance);
-			if (callback) callback();
 		}
 		else {
-			$("body").animate({ scrollTop: distance }, 300, "swing", callback);
+			$("body").animate({ scrollTop: distance }, 300, "swing");
 		}
 	}
 	
-	this.scrollToActiveIndex = function(newIndex){
+	this.scrollToActiveIndex = function(){
 		var index = $(".quickScrollView img").filter(function(){
-			var className = $(this).attr("class"),
-				className = _.isUndefined(className) ? "" : className;
-			return className.indexOf("activeProfile") > -1
+			return $(this).attr("class").indexOf("activeProfile") > -1
 		}).index(".quickScrollView img");
-		self.scrollTo( $(".profile:eq("+index+")").position().top - 50, function(){
-			$.toaster({ priority : 'info', title : 'View:', message : tgd.DestinyViews[newIndex] });
-		});
-		
+		self.scrollTo( $(".profile:eq("+index+")").position().top - 50 );
 	}
 	
 	this.shiftViewLeft = function(){
 		var newIndex = parseInt(self.activeView()) - 1;
-		if (newIndex < 0) newIndex = 3;
-		self.activeView(newIndex);		
-		self.scrollToActiveIndex(newIndex);
+		if (newIndex <= 0) newIndex = 3;
+		self.activeView(newIndex);
+		self.scrollToActiveIndex();
 	}
 	
 	this.shiftViewRight = function(){
 		var newIndex = parseInt(self.activeView()) + 1;
-		if (newIndex == 4) newIndex = 0;
+		if (newIndex == 4) newIndex = 1;
 		self.activeView(newIndex);
-		self.scrollToActiveIndex(newIndex);
+		self.scrollToActiveIndex();
 	}
 
 	this.requests = {};
@@ -952,7 +1507,7 @@ var app = new (function() {
 	}
 	this.whatsNew = function(){
 		if ( $("#showwhatsnew").text() == "true" ){
-			var version = parseInt(tgd.version.replace(/\./g,'')); 
+			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
 			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
 				(new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
@@ -962,176 +1517,7 @@ var app = new (function() {
 		}			
 	}
 	
-	this.normalizeSingle = function(description, useVault, usingbatchMode, callback){	
-		if (useVault){
-			if (usingbatchMode == false){ BootstrapDialog.alert("'useVault' flag not tested; aborting!"); }
-			if (callback !== undefined){ callback(); }
-			return;
-		}
-	
-		var itemTotal = 0;
-		var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c){ return c.id == "Vault" });
-		
-		/* association of character, amounts to increment/decrement */
-		var characterStatus = _.map(onlyCharacters, function(c){
-			var characterTotal = _.reduce(
-				_.filter(c.items(), { description: description}),
-				function(memo, i){ return memo + i.primaryStat; },
-				0);
-			itemTotal = itemTotal + characterTotal;
-			return {character: c, current: characterTotal, needed: 0};
-		});
-		
-		var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-		if (itemSplit < 3){
-			if (usingbatchMode == false){ BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + description + "\" between " + characterStatus.length + " characters."); }
-			if (callback !== undefined){ callback(); }
-			return;
-		}
-		//console.log("Each character needs " + itemSplit + " " + description);
-		
-		/* calculate how much to increment/decrement each character */
-		_.each(characterStatus, function(c){ c.needed = itemSplit - c.current; });
-		//console.log(characterStatus);
-		
-		var getNextSurplusCharacter = (function(){
-			return function(){ return _.filter(characterStatus, function(c){ return c.needed < 0; })[0] };
-		})();
-		
-		var getNextShortageCharacter = (function(){
-			return function(){ return _.filter(characterStatus, function(c){ return c.needed > 0; })[0]; };
-		})();		
-		
-		/* bail early conditions */
-		if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)){
-			//console.log("all items normalized as best as possible");
-			if (usingbatchMode == false){ BootstrapDialog.alert(description + " already normalized as best as possible."); }
-			if (callback !== undefined){ callback(); }
-			return;
-		}
-		
-		var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred){
-			surplusCharacter.current = surplusCharacter.current - amountTransferred;
-			surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
-			//console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
-
-			shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
-			shortageCharacter.current = shortageCharacter.current + amountTransferred;
-			//console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
-		};
-		
-		var nextTransfer = function(callback){
-			var surplusCharacter = getNextSurplusCharacter();
-			var shortageCharacter = getNextShortageCharacter();
-			
-			if ((surplusCharacter == undefined) || (shortageCharacter == undefined)){
-				//console.log("all items normalized as best as possible");
-				if (usingbatchMode == false){ self.refresh(); BootstrapDialog.alert("All items normalized as best as possible"); }
-				if (callback !== undefined){ callback(); }
-				return;
-			}
-			if (surplusCharacter.character.id == shortageCharacter.character.id){
-				//console.log("surplusCharacter is shortageCharacter!?");
-				if (callback !== undefined){ callback(); }
-				return;
-			}
-			/* all the surplus characters' items that match the description. might be multiple stacks. */
-			var surplusItems = _.filter(surplusCharacter.character.items(), { description: description});			
-			var surplusItem = surplusItems[0];
-			
-			var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));			
-			var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
-			
-			//console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
-						//surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
-						//shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
-
-			surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function(){
-				surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function(){
-					adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
-					nextTransfer(callback);
-				});
-			});
-		}
-		
-		var messageStr = "<div><div>Normalize " + description + "</div><ul>";
-		for (i = 0; i < characterStatus.length; i++){
-			messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
-										   (characterStatus[i].needed > 0 ? "+" : "") +
-											characterStatus[i].needed + "</li>");
-		}		
-		messageStr = messageStr.concat("</ul></div>");
-		
-		if (usingbatchMode == false){
-			var dialogItself = (new tgd.dialog({
-				message: messageStr,			
-				buttons: [
-					{
-						label: 'Normalize',
-						cssClass: 'btn-primary',
-						action: function(){	nextTransfer(callback); }
-					},
-					{
-						label: 'Close',
-						action: function(dialogItself){ dialogItself.close(); }
-					}
-				]
-			})).title("Normalize Materials/Consumables").show();
-		}
-		else{ nextTransfer(callback); }
-	}
-	
-	this.normalizeAll = function(model, event, useVault){
-		if (useVault){ return BootstrapDialog.alert("'useVault' flag not tested; aborting!"); }
-		
-		var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c){ return c.id == "Vault" });
-		var selector = function(i){ return i.bucketType == "Consumables" || i.bucketType == "Materials" };
-		
-		/* gather all consumable and material descriptions from all characters */
-		var descriptions = _.union(
-			(onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""),
-			(onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""),
-			(onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""),
-			(onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
-		//console.log(descriptions);
-		
-		var getNextDescription = (function(){
-			var i = 0;
-			return function(){ return i < descriptions.length ? descriptions[i++] : undefined; };
-		})();
-		
-		var nextNormalize = function(){
-			var description = getNextDescription();
-			
-			while (description !== undefined){
-				if ((description !== "Hadronic Essence") &&
-					(description !== "Sapphire Wire") &&
-					(description !== "Plasteel Plating")){
-					break;
-				}
-				else{ description = getNextDescription(); }
-			}
-			
-			if (description == undefined){
-				self.refresh();
-				return;
-			}
-			
-			//console.log(description);
-			self.normalizeSingle(description, false, true, nextNormalize);
-		}
-		
-		nextNormalize();
-	}
-	
 	this.init = function(){
-		tgd.version = $(".version:first").text();
-		tracking.init();
-		if (_.isUndefined(window._itemDefs)){
-			return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
-		}		
-		tgd.perksTemplate = _.template(tgd.perksTemplate);
-		tgd.duplicates = ko.observableArray();
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);
@@ -1140,11 +1526,15 @@ var app = new (function() {
 			self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
 		}
 		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		if (isWindowsPhone) {
-			var msViewportStyle = document.createElement("style");
-			msViewportStyle.appendChild( document.createTextNode("@-ms-viewport{width:auto!important}") );
-			document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-		}
+		(function() {
+		  if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+		    var msViewportStyle = document.createElement("style");
+		    msViewportStyle.appendChild(
+		      document.createTextNode("@-ms-viewport{width:auto!important}")
+		    );
+		    document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+		  }
+		})();
 
 		if (isMobile){
 			Hammer(document.getElementById('charactersContainer'))
@@ -1211,3 +1601,11 @@ if (isMobile){
 } else {
 	$(document).ready(app.init);
 }
+
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://ssl.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-61575166-1', 'auto');
+ga('send', 'pageview');

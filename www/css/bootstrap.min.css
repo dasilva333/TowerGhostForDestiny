@@ -1766,41 +1766,7 @@ pre code {
 .col-xs-offset-0 {
   margin-left: 0%;
 }
-/*
-Devices that should have two columns:
-Note 2 = 720x1280:
-	landscape: actually 853x455 ratio of 1.5 (two columns)
-	portrait: actually 480x828 ratio of 1.5 (one column)
-Note 3, Galaxy S5 = 
-	portrait: 1920x1080 actually 432x743 ratio of 2.5
-iPhone 6+ =
-	portrait: 1920x1080 actually 414x736 ratio of 3
-iPhone 6 = 
-	landscape: ?? actually 667x667 ratio of 2	
-iPhone 5 =
-	landscape: ?? actually 568x568 ratio of 2	
-iPhone 4
-	portrait: ?? actually 320x480 ratio of 2
-	landscape: ?? actually 480x480 ratio of 2
-HTC M8 (not sure if feels or looks right with two columns, need feedback)
-	portrait: 1920x1080 actually 360x515  ratio of 3
-Lumia 930
-	portrait =  1920x1080 actually 441x722 @ 2.44 pixel ratio
-Lumia 925
-	portrait = ?? actually 383x623 @ 1.8 pixel ratio
-	landscape = ?? actually 681x326 @ 1.8 pixel ratio
-Lumia 520
-	landscape = ?? actually 563x287 @ 1.4 pixel ratio
-*/
-@media (min-width: 420px) and (-webkit-device-pixel-ratio: 0.75), 
-	(min-width: 470px) and (-webkit-device-pixel-ratio: 1), 
-	(min-width: 560px) and (-webkit-min-device-pixel-ratio: 1.4),
-    (min-width: 640px) and (-webkit-min-device-pixel-ratio: 1.5),
-	(min-width: 380px) and (-webkit-min-device-pixel-ratio: 1.8),
-	(min-width: 480px) and (-webkit-min-device-pixel-ratio: 2), 
-	(min-width: 440px) and (-webkit-min-device-pixel-ratio: 2.3), 
-	(min-width: 430px) and (-webkit-min-device-pixel-ratio: 2.5),
-	(min-width: 360px) and (-webkit-min-device-pixel-ratio: 3) {
+@media (min-width: 480px), (min-width: 360px) and (-webkit-min-device-pixel-ratio: 2)  {
   .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
     float: left;
   }
@@ -1958,19 +1924,7 @@ Lumia 520
     margin-left: 0%;
   }
 }
-/* 
-
-These are the rules for 3 column devices
-
-iPhone 6 should be 1/2
-iPhone 6+ should be 2/3 
-Lumia 925 should be 2/3
-
-*/
-@media (min-width: 720px),
-	(min-width: 680px) and (-webkit-min-device-pixel-ratio: 1.8),
-	(min-width: 480px) and (-webkit-min-device-pixel-ratio: 2.5),
-	(min-width: 730px) and (-webkit-min-device-pixel-ratio: 3) {
+@media (min-width: 720px, (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2) ) {
   .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
     float: left;
   }
