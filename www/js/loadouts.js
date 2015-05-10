@@ -177,11 +177,26 @@ Loadout.prototype = {
 			var transferTargetItem = function(){
 				var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
 				//console.log("going to " + action + " first item " + pair.targetItem.description);
-				self.findReference(pair.targetItem)[action](targetCharacterId, function(){			
-					progressValue = progressValue + increments;
-					loader.width( progressValue + "%" );
-					transferNextItem();
-				});
+				var targetItem = self.findReference(pair.targetItem);
+				if (targetItem){
+					targetItem[action](targetCharacterId, function(){			
+						progressValue = progressValue + increments;
+						loader.width( progressValue + "%" );
+						transferNextItem();
+					});
+				}
+				else {
+					return BootstrapDialog.alert("Error transferring your loadouts, please report this issue to my Github page. Thank you!");
+					ga('send', 'exception', {
+				      'exDescription': "targetItem undefined",
+				      'exFatal': true,
+				      'appName': (typeof pair.targetItem) + " " + (typeof targetItem),
+				      'appVersion': tgd.version,
+					  'hitCallback' : function () {
+					      console.log("crash reported");
+					   }
+				    });
+				}
 			}
 			if (pair){
 				/* swap item has to be moved first in case the swap bucket is full, then move the target item in after */
@@ -220,6 +235,7 @@ Loadout.prototype = {
 		app.loadoutMode(false);
 		transferNextItem();
 	},
+	/* Going to undo these changes until I can cleanup the loading code so it doesn't blip during a reload
 	transfer: function(targetCharacterId){
 		var self = this;		
 		var subscription = app.loadingUser.subscribe(function(newValue){
@@ -229,12 +245,12 @@ Loadout.prototype = {
 			}
 		});
 		app.refresh();
-	},
+	},*/
 	/* before starting the transfer we need to decide what strategy we are going to use */
 	/* strategy one involves simply moving the items across assuming enough space to fit in both without having to move other things */
 	/* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	/* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
-	move: function(targetCharacterId){
+	transfer: function(targetCharacterId){
 		var self = this;
 		var targetCharacter = _.findWhere( app.characters(), { id: targetCharacterId });
 		var targetCharacterIcon = targetCharacter.icon().replace("url(",'').replace(')','');
@@ -258,7 +274,7 @@ Loadout.prototype = {
 				var targetBucket = targetGroups[key];
 				var maxBucketSize = 10;
 				if (targetCharacter.id == "Vault"){
-					maxBucketSize = ( DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
+					maxBucketSize = ( tgd.DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
 				}
 				/* use the swap item strategy */
 				/* by finding a random item in the targetBucket that isnt part of sourceBucket */
@@ -396,10 +412,10 @@ Loadout.prototype = {
 		if (masterSwapArray.length > 0){
 			var $template = $(swapTemplate({ swapArray: masterSwapArray }));
 			//$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
-			$template = $template.append($(".progress").clone().wrap('<div>').parent().show().html());
+			$template = $template.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
 			(new tgd.dialog({buttons:[ 
 				{label: "Transfer", action: function(dialog){ self.swapItems(masterSwapArray, targetCharacterId, function(){
-					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:green; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a> ;)");
+					BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a>");
 					dialog.close()
 				}); }},
 				{label: "Cancel", action: function(dialog){ dialog.close() }}
