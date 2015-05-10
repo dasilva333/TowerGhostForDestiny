@@ -123,7 +123,7 @@ Item.prototype = {
 				//console.log("trying to unequip item, the min tier of the items I can equip is: " + minTier);
 				if (minTier == 6){
 					var otherItemUnequipped = false;
-					var otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+					var otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) :  _.clone(tgd.DestinyArmorPieces);
 					otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
 					_.each(otherBucketTypes, function(bucketType){
 						var itemEquipped = self.character.itemEquipped(bucketType);
@@ -213,7 +213,7 @@ Item.prototype = {
 			if ( self.tierType == 6 && allowReplacement){
 				//console.log("item is exotic");
 				var otherExoticFound = false,
-					otherBucketTypes = self.weaponIndex > -1 ? _.clone(DestinyWeaponPieces) :  _.clone(DestinyArmorPieces);
+					otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) :  _.clone(tgd.DestinyArmorPieces);
 				otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex,1);
 				//console.log("the other bucket types are " + JSON.stringify(otherBucketTypes));
 				_.each(otherBucketTypes, function(bucketType){
