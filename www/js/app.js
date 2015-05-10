@@ -71,8 +71,8 @@ tgd.moveItemPositionHandler = function(element, item){
 			$ZamTooltips.hide();
 			if (window.isMobile){
 				$("body").css("padding-bottom", $movePopup.height() + "px");
-				/* removing the delay and adding padding-bottom need to retest issue #12 (bottom row item) */
-				$movePopup.show();
+				/* bringing back the delay it's sitll a problem in issue #128 */
+				setTimeout(function(){ $movePopup.show(); }, 50);
 			}
 			else {
 				$movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -256,10 +256,10 @@ var app = new (function() {
 		self.refreshSeconds(tgd.defaults.refreshSeconds);
 		self.tierFilter(tgd.defaults.tierFilter);
 		self.typeFilter(tgd.defaults.typeFilter);
-		self.dmgFilter.removeAll();
+		self.dmgFilter([]);
 		self.progressFilter(tgd.defaults.progressFilter);		
-		self.setFilter.removeAll()
-		self.setFilterFix.removeAll()
+		self.setFilter([]);
+		self.setFilterFix([]);
 		self.shareView(tgd.defaults.shareView);
 		self.shareUrl (tgd.defaults.shareUrl);
 		self.showMissing(tgd.defaults.showMissing);
@@ -288,7 +288,7 @@ var app = new (function() {
 			}
 			/* Armor Perks */
 			else if (activeItem.perks && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6){
-				$content.find(".destt-talent").replaceWith( perksTemplate({ perks: activeItem.perks }));
+				$content.find(".destt-talent").replaceWith( tgd.perksTemplate({ perks: activeItem.perks }));
 			}
 			/* Armor Stats */
 			var stats = $content.find(".destt-stat");
@@ -694,7 +694,7 @@ var app = new (function() {
 	}
 
 	this.showVersion = function(){
-		BootstrapDialog.alert("Current version is " + $(".version:first").text());
+		BootstrapDialog.alert("Current version is " + tgd.version);
 	}
 	
 	this.donate = function(){
@@ -896,7 +896,7 @@ var app = new (function() {
 	}
 	this.whatsNew = function(){
 		if ( $("#showwhatsnew").text() == "true" ){
-			var version = parseInt($(".version:first").text().replace(/\./g,'')); 
+			var version = parseInt(tgd.version.replace(/\./g,'')); 
 			var cookie = window.localStorage.getItem("whatsnew");
 			if ( _.isEmpty(cookie) || parseInt(cookie) < version ){
 				(new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
@@ -1069,6 +1069,8 @@ var app = new (function() {
 	}
 	
 	this.init = function(){
+		tgd.version = $(".version:first").text();
+		tracking.init();
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
 		tgd.duplicates = ko.observableArray();
 		self.doRefresh.subscribe(self.refreshHandler);
@@ -1150,11 +1152,3 @@ if (isMobile){
 } else {
 	$(document).ready(app.init);
 }
-
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://ssl.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-61575166-1', 'auto');
-ga('send', 'pageview');
