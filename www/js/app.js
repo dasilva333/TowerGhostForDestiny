@@ -135,27 +135,14 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {					
 					if ("$data" in ko.contextFor(target)){
 						var item = ko.contextFor(target).$data;
-						if (item && item.doEquip){
-							if (app.loadoutMode() == true){
-								item.doEquip(!item.doEquip());
-								item.markAsEquip( item , { target: target });
-							}
-							else {
-								$ZamTooltips.lastElement = element;
-								$ZamTooltips.show("destinydb","items",item.id, element);
-							}	
+						if (item && item.doEquip && self.loadoutMode() == true){
+							item.doEquip(!item.doEquip());
+							item.markAsEquip( item , { target: target });
 						}
 						else {
-							ga('send', 'exception', {
-						      'exDescription': "item.doEquip is missing in item",
-						      'exFatal': false,
-						      'appName': JSON.stringify(item),
-						      'appVersion': tgd.version,
-							  'hitCallback' : function () {
-							      console.log("crash reported");
-							   }
-						    });
-						}						
+							$ZamTooltips.lastElement = element;
+							$ZamTooltips.show("destinydb","items",item.id, element);
+						}				
 					}
 					else {
 						ga('send', 'exception', {
