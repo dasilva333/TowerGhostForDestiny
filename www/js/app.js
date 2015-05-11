@@ -234,6 +234,12 @@ var app = new (function() {
 	this.showMissing =  ko.observable(tgd.defaults.showMissing);
 	this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
 
+	this.sortedLoadouts = ko.computed(function() {
+	   return self.loadouts().sort(function (left, right) {
+	       console.log(left);
+		return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
+	});});
+
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
 
