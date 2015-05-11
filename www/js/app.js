@@ -1118,7 +1118,7 @@ var app = new (function() {
 			return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
 		}		
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
-		tgd.duplicates = ko.observableArray();
+		tgd.duplicates = ko.observableArray().extend({ rateLimit: { timeout: 5000, method: "notifyWhenChangesStop" } });
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);
