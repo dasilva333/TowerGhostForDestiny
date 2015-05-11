@@ -272,140 +272,143 @@ Loadout.prototype = {
 			var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key){
 				var sourceBucket = sourceGroups[key];
 				var targetBucket = targetGroups[key];
-				var maxBucketSize = 10;
-				if (targetCharacter.id == "Vault"){
-					maxBucketSize = ( tgd.DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
-				}
-				/* use the swap item strategy */
-				/* by finding a random item in the targetBucket that isnt part of sourceBucket */
-				if (sourceBucket.length + targetBucket.length >= maxBucketSize){
-					var sourceBucketIds = _.pluck( sourceBucket, "_id");
-					var swapArray = _.map(sourceBucket, function(item){
-						var ownerBucket = _.where( item.character.items(), { bucketType: key });
-						var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
-						if ( ownerBucket.length == 1 ){
-							return {
-								description: item.description + " will not be moved. There is no item to replace it.",
-								targetIcon: item.icon,
-								actionIcon: "assets/cant-transfer.png",
-								swapIcon: targetCharacterIcon
-							}
-						}
-						/* if the item is already in the targetBucket */
-						if ( _.findWhere( targetBucket, { _id: item._id }) ){
-							/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-							if ( item.doEquip() == true ){
+				var swapArray = [];
+				if (sourceBucket && targetBucket){
+					var maxBucketSize = 10;
+					if (targetCharacter.id == "Vault"){
+						maxBucketSize = ( tgd.DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
+					}
+					/* use the swap item strategy */
+					/* by finding a random item in the targetBucket that isnt part of sourceBucket */
+					if (sourceBucket.length + targetBucket.length >= maxBucketSize){
+						var sourceBucketIds = _.pluck( sourceBucket, "_id");
+						swapArray = _.map(sourceBucket, function(item){
+							var ownerBucket = _.where( item.character.items(), { bucketType: key });
+							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
+							if ( ownerBucket.length == 1 ){
 								return {
-									targetItem: item,
-									description: item.description + " will be equipped.",									
-									actionIcon: "assets/to-equip.png",
+									description: item.description + " will not be moved. There is no item to replace it.",
+									targetIcon: item.icon,
+									actionIcon: "assets/cant-transfer.png",
 									swapIcon: targetCharacterIcon
 								}
 							}
-							/* then return an object indicating to do nothing */
-							else {
-								return {
-									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
-									targetIcon: item.icon,
-									actionIcon: "assets/no-transfer.png",
-									swapIcon: ownerIcon
-								}
-							}
-						}
-						else {
-							var itemFound = false;
-							var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
-							swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
-							//console.log("found swap item " + swapItem.description);
-							if ( swapItem ) {
-							    if(swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+							/* if the item is already in the targetBucket */
+							if ( _.findWhere( targetBucket, { _id: item._id }) ){
+								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+								if ( item.doEquip() == true ){
 									return {
-										description: item.description + " will not be moved",
+										targetItem: item,
+										description: item.description + " will be equipped.",									
+										actionIcon: "assets/to-equip.png",
+										swapIcon: targetCharacterIcon
+									}
+								}
+								/* then return an object indicating to do nothing */
+								else {
+									return {
+										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
 										targetIcon: item.icon,
 										actionIcon: "assets/no-transfer.png",
 										swapIcon: ownerIcon
 									}
-							    }
-							    return {
-								    targetItem: item,
-								    swapItem: swapItem,
-								    description: item.description + " will be swapped with " + swapItem.description,
-									actionIcon: "assets/swap.png"
-							    }
-							}
-							else {
-								return {
-									targetItem: item,
-									description: item.description + " will be moved",
-									swapIcon: ownerIcon,
-									actionIcon: "assets/to-transfer.png"
 								}
 							}
-						}
-					});
-				}
-				else {
-					/* do a clean move by returning a swap object without a swapItem */
-					var swapArray = _.map(sourceBucket, function(item){
-						var ownerBucket = _.where( item.character.items(), { bucketType: key });
-						var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
-						if ( ownerBucket.length == 1 ){
-							return {
-								description: item.description + " will not be moved. There is no item to replace it.",
-								targetIcon: item.icon,
-								actionIcon: "assets/cant-transfer.png",
-								swapIcon: ownerIcon
-							}
-						}
-						/* if the item is already in the targetBucket */
-						if ( _.findWhere( targetBucket, { _id: item._id }) ){
-							/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-							if ( item.doEquip() == true ){
-								return {
-									targetItem: item,
-									description: item.description + " will be equipped.",
-									actionIcon: "assets/to-equip.png",
-									swapIcon: targetCharacterIcon
+							else {
+								var itemFound = false;
+								var swapItem = _.filter(_.where(targetBucket, { type: item.type }), getFirstItem(sourceBucketIds, itemFound));
+								swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
+								//console.log("found swap item " + swapItem.description);
+								if ( swapItem ) {
+								    if(swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+										return {
+											description: item.description + " will not be moved",
+											targetIcon: item.icon,
+											actionIcon: "assets/no-transfer.png",
+											swapIcon: ownerIcon
+										}
+								    }
+								    return {
+									    targetItem: item,
+									    swapItem: swapItem,
+									    description: item.description + " will be swapped with " + swapItem.description,
+										actionIcon: "assets/swap.png"
+								    }
+								}
+								else {
+									return {
+										targetItem: item,
+										description: item.description + " will be moved",
+										swapIcon: ownerIcon,
+										actionIcon: "assets/to-transfer.png"
+									}
 								}
 							}
-							/* then return an object indicating to do nothing */
-							else {
+						});
+					}
+					else {
+						/* do a clean move by returning a swap object without a swapItem */
+						swapArray = _.map(sourceBucket, function(item){
+							var ownerBucket = _.where( item.character.items(), { bucketType: key });
+							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
+							if ( ownerBucket.length == 1 ){
 								return {
-									description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
+									description: item.description + " will not be moved. There is no item to replace it.",
+									targetIcon: item.icon,
+									actionIcon: "assets/cant-transfer.png",
+									swapIcon: ownerIcon
+								}
+							}
+							/* if the item is already in the targetBucket */
+							if ( _.findWhere( targetBucket, { _id: item._id }) ){
+								/* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+								if ( item.doEquip() == true ){
+									return {
+										targetItem: item,
+										description: item.description + " will be equipped.",
+										actionIcon: "assets/to-equip.png",
+										swapIcon: targetCharacterIcon
+									}
+								}
+								/* then return an object indicating to do nothing */
+								else {
+									return {
+										description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
+										targetIcon: item.icon,
+										actionIcon: "assets/no-transfer.png",
+										swapIcon: ownerIcon
+									}
+								}
+							}
+							else if ( item.bucketType == "Subclasses" || ( item.armorIndex != -1 && item.character.classType != targetCharacter.classType )) {
+								return {
+									description: item.description + " will not be moved",
 									targetIcon: item.icon,
 									actionIcon: "assets/no-transfer.png",
 									swapIcon: ownerIcon
 								}
 							}
-						}
-						else if ( item.bucketType == "Subclasses" || ( item.armorIndex != -1 && item.character.classType != targetCharacter.classType )) {
-							return {
-								description: item.description + " will not be moved",
-								targetIcon: item.icon,
-								actionIcon: "assets/no-transfer.png",
-								swapIcon: ownerIcon
-							}
-						}
-						else {
-							if ( item.doEquip() == true ){
-								return {
-									targetItem: item,
-									description: item.description + " will be moved and equipped.",
-									actionIcon: "assets/to-equip.png",
-									swapIcon: targetCharacterIcon
+							else {
+								if ( item.doEquip() == true ){
+									return {
+										targetItem: item,
+										description: item.description + " will be moved and equipped.",
+										actionIcon: "assets/to-equip.png",
+										swapIcon: targetCharacterIcon
+									}
+								}
+								else {							
+									return {
+										targetItem: item,
+										description: item.description + " will be moved",
+										actionIcon: "assets/to-transfer.png",
+										swapIcon: targetCharacterIcon
+									}
 								}
 							}
-							else {							
-								return {
-									targetItem: item,
-									description: item.description + " will be moved",
-									actionIcon: "assets/to-transfer.png",
-									swapIcon: targetCharacterIcon
-								}
-							}
-						}
-					});
-				}
+						});
+					}
+				}				
 				return swapArray;
 			}));
 		}
