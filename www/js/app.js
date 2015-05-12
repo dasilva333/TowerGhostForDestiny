@@ -135,7 +135,7 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {					
 					if ("$data" in ko.contextFor(target)){
 						var item = ko.contextFor(target).$data;
-						if (item && item.doEquip && self.loadoutMode() == true){
+						if (item && item.doEquip && app.loadoutMode() == true){
 							item.doEquip(!item.doEquip());
 							item.markAsEquip( item , { target: target });
 						}
@@ -881,17 +881,22 @@ var app = new (function() {
 	this.saveLoadouts = function(includeMessage){
 		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
 		if (supportsCloudSaves == true){
-			var params = {
-				action: "save",
-				membershipId: parseFloat(app.activeUser().user.membershipId),
-				loadouts: JSON.stringify(self.loadouts())
-			}
-			self.apiRequest(params, function(results){
-				if (_includeMessage == true){
-					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-					else BootstrapDialog.alert("Error has occurred saving loadouts");
+			if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId){
+				var params = {
+					action: "save",
+					membershipId: parseFloat(app.activeUser().user.membershipId),
+					loadouts: JSON.stringify(self.loadouts())
 				}
-			});
+				self.apiRequest(params, function(results){
+					if (_includeMessage == true){
+						if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+						else BootstrapDialog.alert("Error has occurred saving loadouts");
+					}
+				});
+			}
+			else {
+				BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
+			}
 		}
 		else {
 			var loadouts = ko.toJSON(self.loadouts());

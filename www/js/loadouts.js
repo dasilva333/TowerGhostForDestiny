@@ -282,16 +282,11 @@ Loadout.prototype = {
 					/* by finding a random item in the targetBucket that isnt part of sourceBucket */
 					if (sourceBucket.length + targetBucket.length >= maxBucketSize){
 						var sourceBucketIds = _.pluck( sourceBucket, "_id");
-						swapArray = _.map(sourceBucket, function(item){
-							var ownerBucket = _.where( item.character.items(), { bucketType: key });
+						swapArray = _.map(sourceBucket, function(item){							
+							var cantMove = self.cantMove(item);
 							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
-							if ( ownerBucket.length == 1 ){
-								return {
-									description: item.description + " will not be moved. There is no item to replace it.",
-									targetIcon: item.icon,
-									actionIcon: "assets/cant-transfer.png",
-									swapIcon: targetCharacterIcon
-								}
+							if ( cantMove ){
+								return cantMove;
 							}
 							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
@@ -349,15 +344,10 @@ Loadout.prototype = {
 					else {
 						/* do a clean move by returning a swap object without a swapItem */
 						swapArray = _.map(sourceBucket, function(item){
-							var ownerBucket = _.where( item.character.items(), { bucketType: key });
 							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
-							if ( ownerBucket.length == 1 ){
-								return {
-									description: item.description + " will not be moved. There is no item to replace it.",
-									targetIcon: item.icon,
-									actionIcon: "assets/cant-transfer.png",
-									swapIcon: ownerIcon
-								}
+							var cantMove = self.cantMove(item);
+							if ( cantMove ){
+								return cantMove;
 							}
 							/* if the item is already in the targetBucket */
 							if ( _.findWhere( targetBucket, { _id: item._id }) ){
@@ -424,5 +414,41 @@ Loadout.prototype = {
 				{label: "Cancel", action: function(dialog){ dialog.close() }}
 			]})).title("Transfer Confirm").content($template).show(true);
 		}
+	},
+	/* hold on there cowboy can't make a promise we can't keep 
+		this pieces needs to have all the /existing logic/ that comprises that sum of Item.store/transfer/equip/unquip
+		The first absolute no go siutation (cant xfer wo going outside of character) is 
+		1. only one weapon equipped no subsitute available
+		2. weapon being moved is non-exotic and there is an exotic equipped with no other weapons
+		3. weapon being moved is non-exotic and there is an exotic equipped with only other exotics
+	*/
+	cantMove: function(item){
+		var ownerBucket = item.character.get(key);
+		var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) :  _.clone(tgd.DestinyArmorPieces);
+		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);
+		var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
+		var cantMoveEquipped = _.reduce(otherBucketTypes, function(bucketType){
+			var bucketItems = item.character.get(bucketType), onlyExotics = _.where(bucketItems,{tierType:6}).length == bucketItems.length;
+			if ( item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics) ){
+				return {
+					description: item.description + " will not be moved. Blame it on this bucket: " + bucketType,
+					targetIcon: item.icon,
+					actionIcon: "assets/cant-transfer.png",
+					swapIcon: ownerIcon
+				}							
+			}
+		});
+		if ( cantMoveEquipped ){
+			return cantMoveEquipped;
+		}							
+		if ( ownerBucket.length == 0 ){
+			return {
+				description: item.description + " will not be moved. There is no item to replace it.",
+				targetIcon: item.icon,
+				actionIcon: "assets/cant-transfer.png",
+				swapIcon: ownerIcon
+			}
+		}	
 	}
+
 }
