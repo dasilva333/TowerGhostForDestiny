@@ -548,9 +548,8 @@ var app = new (function() {
 			self.bungie.vault(function(results, error){
 				if (_.isUndefined(results.data)){
 					ga('send', 'exception', {
-				      'exDescription': "data missing in bungie.vault",
+				      'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
 				      'exFatal': false,
-				      'appName': JSON.stringify(error),
 				      'appVersion': tgd.version,
 					  'hitCallback' : function () {
 					      console.log("crash reported");
