@@ -236,7 +236,6 @@ var app = new (function() {
 
 	this.sortedLoadouts = ko.computed(function() {
 	   return self.loadouts().sort(function (left, right) {
-	       console.log(left);
 		return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
 	});});
 
