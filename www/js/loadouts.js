@@ -283,7 +283,7 @@ Loadout.prototype = {
 					if (sourceBucket.length + targetBucket.length >= maxBucketSize){
 						var sourceBucketIds = _.pluck( sourceBucket, "_id");
 						swapArray = _.map(sourceBucket, function(item){							
-							var cantMove = self.cantMove(item);
+							var cantMove = self.cantMove(item, key);
 							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
 							if ( cantMove ){
 								return cantMove;
@@ -345,7 +345,7 @@ Loadout.prototype = {
 						/* do a clean move by returning a swap object without a swapItem */
 						swapArray = _.map(sourceBucket, function(item){
 							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
-							var cantMove = self.cantMove(item);
+							var cantMove = self.cantMove(item, key);
 							if ( cantMove ){
 								return cantMove;
 							}
@@ -422,7 +422,7 @@ Loadout.prototype = {
 		2. weapon being moved is non-exotic and there is an exotic equipped with no other weapons
 		3. weapon being moved is non-exotic and there is an exotic equipped with only other exotics
 	*/
-	cantMove: function(item){
+	cantMove: function(item, key){
 		var ownerBucket = item.character.get(key);
 		var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) :  _.clone(tgd.DestinyArmorPieces);
 		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);
