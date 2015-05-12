@@ -251,60 +251,60 @@ Item.prototype = {
 		//console.log(arguments);
 		//setTimeout(function(){
 		var self = this;
-			var isVault = targetCharacterId == "Vault";
-			app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result){
-				//console.log("app.bungie.transfer after");
-				//console.log(arguments);
-				if (result.Message == "Ok"){
-					var x,y;
-					_.each(app.characters(), function(character){
-						if (character.id == sourceCharacterId){
-							//console.log("removing reference of myself ( " + self.description + " ) in " + character.classType + " from the list of " + self.list);
-							x = character;
-						}
-						else if (character.id == targetCharacterId){
-							//console.log("adding a reference of myself ( " + self.description + " ) to this guy " + character.classType);
-							y = character;
-						}
-					});
-					if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
-						//console.log("need to split reference of self and push it into x and y");
-						var remainder = self.primaryStat - amount;
-						/* at this point we can either add the item to the inventory or merge it with existing items there */
-						var existingItem = _.findWhere( y.items(), { description: self.description });
-						if (existingItem){
-							y.items.remove(existingItem);
-							existingItem.primaryStat = existingItem.primaryStat + amount;
-							y.items.push(existingItem);
-						}
-						else {
-							self.characterId = targetCharacterId
-							self.character = y;
-							self.primaryStat = amount;
-							y.items.push(self);
-						}
-						/* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
-						x.items.remove(self);
-						if (remainder > 0){
-							self.characterId = sourceCharacterId
-							self.character = x;
-							self.primaryStat = remainder;
-							x.items.push(self);
-						}
+		var isVault = targetCharacterId == "Vault";
+		console.log( self.description );
+		app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result){
+			console.log("app.bungie.transfer after");
+			console.log(arguments);
+			if (result.Message == "Ok"){
+				var x,y;
+				_.each(app.characters(), function(character){
+					if (character.id == sourceCharacterId){
+						//console.log("removing reference of myself ( " + self.description + " ) in " + character.classType + " from the list of " + self.list);
+						x = character;
+					}
+					else if (character.id == targetCharacterId){
+						//console.log("adding a reference of myself ( " + self.description + " ) to this guy " + character.classType);
+						y = character;
+					}
+				});
+				if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
+					//console.log("need to split reference of self and push it into x and y");
+					var remainder = self.primaryStat - amount;
+					/* at this point we can either add the item to the inventory or merge it with existing items there */
+					var existingItem = _.findWhere( y.items(), { description: self.description });
+					if (existingItem){
+						y.items.remove(existingItem);
+						existingItem.primaryStat = existingItem.primaryStat + amount;
+						y.items.push(existingItem);
 					}
 					else {
 						self.characterId = targetCharacterId
 						self.character = y;
+						self.primaryStat = amount;
 						y.items.push(self);
-						x.items.remove(self);
 					}
-					if (cb) cb(y,x);
+					/* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
+					x.items.remove(self);
+					if (remainder > 0){
+						self.characterId = sourceCharacterId
+						self.character = x;
+						self.primaryStat = remainder;
+						x.items.push(self);
+					}
 				}
 				else {
-					BootstrapDialog.alert(result.Message);
+					self.characterId = targetCharacterId
+					self.character = y;
+					y.items.push(self);
+					x.items.remove(self);
 				}
-			});
-		//}, 1000);
+				if (cb) cb(y,x);
+			}
+			else {
+				BootstrapDialog.alert(result.Message);
+			}
+		});
 	},
 	store: function(targetCharacterId, callback, allowReplacement){
 		//console.log("item.store");
