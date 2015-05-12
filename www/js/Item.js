@@ -253,24 +253,34 @@ Item.prototype = {
 		//console.log("Item.transfer");
 		//console.log(arguments);
 		//setTimeout(function(){
-		var self = this;
+		var self = this, x,y;
 		var isVault = targetCharacterId == "Vault";
+		_.each(app.characters(), function(character){
+			if (character.id == sourceCharacterId){
+				//console.log("removing reference of myself ( " + self.description + " ) in " + character.classType + " from the list of " + self.list);
+				x = character;
+			}
+			else if (character.id == targetCharacterId){
+				//console.log("adding a reference of myself ( " + self.description + " ) to this guy " + character.classType);
+				y = character;
+			}
+		});
+		if (_.isUndefined(y)){
+			ga('send', 'exception', {
+			  'exDescription': "Target character not found> " + targetCharacterId,
+			  'exFatal': false,
+			  'appVersion': tgd.version,
+			  'hitCallback' : function () {
+				  console.log("crash reported");
+			   }
+			});
+			return BootstrapDialog.alert("Target character not found " + targetCharacterId);
+		}		
 		//console.log( self.description );
 		app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result){
 			//console.log("app.bungie.transfer after");
 			//console.log(arguments);
 			if (result && result.Message && result.Message == "Ok"){
-				var x,y;
-				_.each(app.characters(), function(character){
-					if (character.id == sourceCharacterId){
-						//console.log("removing reference of myself ( " + self.description + " ) in " + character.classType + " from the list of " + self.list);
-						x = character;
-					}
-					else if (character.id == targetCharacterId){
-						//console.log("adding a reference of myself ( " + self.description + " ) to this guy " + character.classType);
-						y = character;
-					}
-				});
 				if (self.bucketType == "Materials" || self.bucketType == "Consumables"){
 					//console.log("need to split reference of self and push it into x and y");
 					var remainder = self.primaryStat - amount;
