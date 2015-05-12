@@ -1,16 +1,17 @@
 {
   "name": "tower-ghost-builder",
-  "version": "2.5.3",
+  "version": "2.5.4",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {
-    "node-zip": "~1.1.0",
-    "sqlite3": "~3.0.5",
-    "lodash": "3.7.0",
-    "grunt-contrib-watch": "~0.6.1",
+    "express": "~4.7.2",
     "grunt": "~0.4.5",
     "grunt-contrib-sass": "~0.7.3",
-    "express": "~4.7.2"
+    "grunt-contrib-watch": "~0.6.1",
+    "js-beautify": "^1.5.5",
+    "lodash": "3.7.0",
+    "node-zip": "~1.1.0",
+    "sqlite3": "~3.0.5"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

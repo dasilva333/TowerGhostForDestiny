@@ -1,4 +1,4 @@
-var _collections={
+var _collections = {
     "exoticWeapons": [
         135862170,
         119482464,
@@ -140,73 +140,81 @@ var _collections={
     ]
 };
 _collectionsFix = {
-	"exoticWeapons": [],
-	"vaultWeapons": [],
-	"crotaWeapons": [],
-	"ironWeapons": [1488311144,1244530683,1451703869,3244859508,996787434,3800763760,3547540843,2135112796,2266591883], /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
-	"exoticArmor": [],
-	"vaultArmor": [],
-	"crotaArmor": [],
-	"ironArmor": [2239662500,3161248318,1312172923,1063666590,2020019240,391890851,1846030074,1556318809,2898884242,2369983328,2902070748,2020019241,541785999,3451716861,2559980950,2898884243,3470167972,3275079860,3034481789,3477470986,1571566214,2902070749,3470167973,1448055470,3034481788,2413349890,1571566215]
+    "exoticWeapons": [],
+    "vaultWeapons": [],
+    "crotaWeapons": [],
+    "ironWeapons": [1488311144, 1244530683, 1451703869, 3244859508, 996787434, 3800763760, 3547540843, 2135112796, 2266591883],
+    /* 300 ATK: Fusion,Sniper,Shotgun,LMG,Rocket,Scout,Hand Cannon,Pulse */
+    "exoticArmor": [],
+    "vaultArmor": [],
+    "crotaArmor": [],
+    "ironArmor": [2239662500, 3161248318, 1312172923, 1063666590, 2020019240, 391890851, 1846030074, 1556318809, 2898884242, 2369983328, 2902070748, 2020019241, 541785999, 3451716861, 2559980950, 2898884243, 3470167972, 3275079860, 3034481789, 3477470986, 1571566214, 2902070749, 3470167973, 1448055470, 3034481788, 2413349890, 1571566215]
 };
+
 function report() {
 
-	function completeFilter(item){ return item.isGridComplete; }
-	
-	var _completed = [],
-		_collected = [];
-	app.characters().forEach(function(character){
-	  ['weapons','armor'].forEach(function(list){
-	  		var items = character[list]();			
-	      	_collected = _collected.concat( _.pluck( items, 'id') );
-			_completed = _completed.concat( _.pluck( _.filter(items, completeFilter), 'id') );
-	  })
-	});
+    function completeFilter(item) {
+        return item.isGridComplete;
+    }
 
-	var collection = [];
-	var hashArray = [];
+    var _completed = [],
+        _collected = [];
+    app.characters().forEach(function(character) {
+        ['weapons', 'armor'].forEach(function(list) {
+            var items = character[list]();
+            _collected = _collected.concat(_.pluck(items, 'id'));
+            _completed = _completed.concat(_.pluck(_.filter(items, completeFilter), 'id'));
+        })
+    });
 
-	for(var c in _collections) {
-		collection[c] = {completed:[], collected:[], missing:[]};
-		for(var i in _collections[c]) {
-			i = _collections[c][i];
-			if(_completed.indexOf(i) != -1) {
-				hashArray.push(2);
-				collection[c].completed.push(i);
-			} else if(_collected.indexOf(i) != -1) {
-				hashArray.push(1);
-				collection[c].collected.push(i);
-			} else {
-				hashArray.push(0);
-				collection[c].missing.push(i);
-			}
-		}
-	}
+    var collection = [];
+    var hashArray = [];
 
-  this.de = function() {
-    return 'http://destinyexotics.com/?share=' + LZString.compressToBase64(hashArray.join(''));
-  }
+    for (var c in _collections) {
+        collection[c] = {
+            completed: [],
+            collected: [],
+            missing: []
+        };
+        for (var i in _collections[c]) {
+            i = _collections[c][i];
+            if (_completed.indexOf(i) != -1) {
+                hashArray.push(2);
+                collection[c].completed.push(i);
+            } else if (_collected.indexOf(i) != -1) {
+                hashArray.push(1);
+                collection[c].collected.push(i);
+            } else {
+                hashArray.push(0);
+                collection[c].missing.push(i);
+            }
+        }
+    }
 
-	this.buildHTML = function() {
-		var e, has, missing;
-		for(var c in collection) {
-			e = document.getElementById(c);
-			done = e.querySelector('.done');
-			has = e.querySelector('.has');
-			missing = e.querySelector('.missing');
-			done.innerHTML = '';
-			has.innerHTML = '';
-			missing.innerHTML = '';
+    this.de = function() {
+        return 'http://destinyexotics.com/?share=' + LZString.compressToBase64(hashArray.join(''));
+    }
 
-			for(var h in collection[c].completed) {
-				done.innerHTML += ('<p>' + _itemDefs[collection[c].completed[h]].name + '</p>');
-			}
-			for(var h in collection[c].collected) {
-				has.innerHTML += ('<p>' + _itemDefs[collection[c].collected[h]].name + '</p>');
-			}
-			for(var h in collection[c].missing) {
-				missing.innerHTML += ('<p>' + _itemDefs[collection[c].missing[h]].name + '</p>');
-			}
-		}
-	}
+    this.buildHTML = function() {
+        var e, has, missing;
+        for (var c in collection) {
+            e = document.getElementById(c);
+            done = e.querySelector('.done');
+            has = e.querySelector('.has');
+            missing = e.querySelector('.missing');
+            done.innerHTML = '';
+            has.innerHTML = '';
+            missing.innerHTML = '';
+
+            for (var h in collection[c].completed) {
+                done.innerHTML += ('<p>' + _itemDefs[collection[c].completed[h]].name + '</p>');
+            }
+            for (var h in collection[c].collected) {
+                has.innerHTML += ('<p>' + _itemDefs[collection[c].collected[h]].name + '</p>');
+            }
+            for (var h in collection[c].missing) {
+                missing.innerHTML += ('<p>' + _itemDefs[collection[c].missing[h]].name + '</p>');
+            }
+        }
+    }
 }
