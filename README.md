@@ -14,10 +14,12 @@ To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
 - [Download Files](#download-files)
 - [Manual Chrome Install Instructions](#manual-chrome-install-instructions)
 - [Manual Firefox Install Instructions](#manual-firefox-install-instructions)
+- [Editing CSS](#editing-css)
 - [Contributing](#contributing)
 - [Project Powered](#project-powered-by)
 
 ##Store Install Instructions
+
 - [Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
 - [Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
 - [Tower Ghost in Amazon Store](http://www.amazon.com/gp/product/B00VQYLURG)
@@ -46,6 +48,7 @@ To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
 - [Transfer Popup](http://i.imgur.com/odUJb7s.png)
 
 ##Features Incoming
+
 - Drag & Drop Items
 - Cloud based Loadouts
 
@@ -58,6 +61,7 @@ To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
 - Keyboard hides away for some users
 
 ##Troubleshooting 
+
 Xbox & PSN Support now available, the app should prompt you to log in with Bungie.net using XBL or PSN credentials [Screenshot](http://i.imgur.com/xzrpKxV.png) if you don't see that message then go to Settings > Log in XBL/PSN and click Done when complete. After clicking Done the items should load automatically give it a few seconds to load, if the page doesn't load after sign in then try Settings > Refresh Items. Good luck guys and remember this is still a beta build.
 Keyboard Disappears? Go to Settings and disable Loadstop Listener, log in, enable it back in, and log in again.
 
@@ -87,8 +91,20 @@ https://github.com/dasilva333/TowerGhostForDestiny/tree/div-movile-dist/
 - Find the button that says "Install addon from file"
 - Point it to the tower_ghost.xpi (found in Downloads section) file
 
+##Editing CSS
+
+- Go to the build directory of the project (`cd build`)
+- First you need to make sure you have Node.js
+	- Run `npm install -g grunt-cli`
+	- Run `npm install -g grunt-init`
+- Run `npm install`
+- Run `bower install`
+- Run `grunt` to watch the `/www/scss` folder to build the scss changes
+
 ##Contributing
+
 Please read through our [contributing guidelines](CONTRIBUTING.md).
 
 ##Project Powered By
+
 <img src="http://towerghostfordestiny.com/browserstack.png">
