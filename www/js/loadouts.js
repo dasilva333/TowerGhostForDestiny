@@ -443,11 +443,12 @@ Loadout.prototype = {
 		}
 		var ownerBucket = item.character.get(key);
 		var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) :  _.clone(tgd.DestinyArmorPieces);
-		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);		
-		var cantMoveEquipped = _.reduce(otherBucketTypes, function(bucketType){
-			var bucketItems = item.character.get(bucketType), onlyExotics = _.where(bucketItems,{tierType:6}).length == bucketItems.length;
+		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);
+		var cantMoveEquipped; 
+		_.each(otherBucketTypes, function(bucketType){
+			var bucketItems = item.character.get(bucketType), onlyExotics = _.where(bucketItems,{tierType:6}).length == bucketItems.length;		
 			if ( item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics) ){
-				return {
+				cantMoveEquipped = {
 					description: item.description + " will not be moved. Blame it on this bucket: " + bucketType,
 					targetIcon: item.icon,
 					actionIcon: "assets/cant-transfer.png",

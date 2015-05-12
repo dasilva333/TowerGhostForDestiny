@@ -132,8 +132,9 @@ ko.bindingHandlers.moveItem = {
 			// press is actually hold 
 			.on("press", function(ev){
 				var target = tgd.getEventDelegate(ev.target, ".itemLink");
-			    if (target) {					
-					if ("$data" in ko.contextFor(target)){
+			    if (target) {
+					var context = ko.contextFor(target);	
+					if (context && "$data" in context){
 						var item = ko.contextFor(target).$data;
 						if (item && item.doEquip && app.loadoutMode() == true){
 							item.doEquip(!item.doEquip());
@@ -143,17 +144,6 @@ ko.bindingHandlers.moveItem = {
 							$ZamTooltips.lastElement = target;
 							$ZamTooltips.show("destinydb","items",item.id, target);
 						}				
-					}
-					else {
-						ga('send', 'exception', {
-					      'exDescription': "$data missing in ko.contextFor",
-					      'exFatal': false,
-					      'appName': JSON.stringify(target),
-					      'appVersion': tgd.version,
-						  'hitCallback' : function () {
-						      console.log("crash reported");
-						   }
-					    });
 					}
 			    }
 			});
@@ -555,7 +545,18 @@ var app = new (function() {
 			var avatars = e.data.characters;
 			total = avatars.length + 1;
 			//console.time("self.bungie.vault");
-			self.bungie.vault(function(results){
+			self.bungie.vault(function(results, error){
+				if (_.isUndefined(results.data)){
+					ga('send', 'exception', {
+				      'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
+				      'exFatal': false,
+				      'appVersion': tgd.version,
+					  'hitCallback' : function () {
+					      console.log("crash reported");
+					   }
+				    });
+					return BootstrapDialog.alert("Please report this error to my Github: Error loading vault " + error);
+				}
 				var buckets = results.data.buckets;
 				var profile = new Profile({
 					race: "",
