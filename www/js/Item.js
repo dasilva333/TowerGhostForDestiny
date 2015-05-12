@@ -102,6 +102,9 @@ Item.prototype = {
 				var minTier = _.min(_.pluck( otherItems, 'tierType' ));				
 				var tryNextItem = function(){
 					var item = otherItems[++itemIndex];
+					if ( _.isUndefined(item) ){
+						return BootstrapDialog.alert("No more items to try to unequip the " + self.description);
+					}
 					//console.log(item.description);
 					/* still haven't found a match */
 					if (otherEquipped == false){
@@ -252,11 +255,11 @@ Item.prototype = {
 		//setTimeout(function(){
 		var self = this;
 		var isVault = targetCharacterId == "Vault";
-		console.log( self.description );
+		//console.log( self.description );
 		app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result){
-			console.log("app.bungie.transfer after");
-			console.log(arguments);
-			if (result.Message == "Ok"){
+			//console.log("app.bungie.transfer after");
+			//console.log(arguments);
+			if (result && result.Message && result.Message == "Ok"){
 				var x,y;
 				_.each(app.characters(), function(character){
 					if (character.id == sourceCharacterId){
