@@ -197,6 +197,32 @@ body {
 .list-group-item .itemImage {
 	width: 48px;
 }
+.list-group-item .item-name {
+    #color: #000;
+	#background-color: white;
+    margin: 1px;
+    padding: 1px;
+    padding-left: 3px;
+}
+.list-group-item .attkIcon div.icon-banner {
+    background-color: rgba(255,255,255,.6);
+    padding: 1px;
+    width: 97%;
+    text-align: center;
+    top: 0px;
+    bottom: initial;
+    left: 0px;
+}
+.list-group-item div.lower-left, .lower-left {
+    position: absolute;
+    background-color: rgba(255,255,255,0.8);
+    bottom: 0px;
+    right: initial;
+    padding: 2px;
+    padding-top: 3px;
+    left: 0px;
+    opacity: 0.9;
+}
 
 .itemImage {
 }

@@ -1077,9 +1077,8 @@ var app = new (function() {
 			})).title("Normalize Materials/Consumables").show();
 		}
 		else{ nextTransfer(callback); }
-	}
-	
-	this.normalizeAll = function(model, event, useVault){
+	}	
+	this.normalizeAll = function(useVault){
 		if (useVault){ return BootstrapDialog.alert("'useVault' flag not tested; aborting!"); }
 		
 		var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c){ return c.id == "Vault" });
@@ -1121,13 +1120,38 @@ var app = new (function() {
 		
 		nextNormalize();
 	}
-	
+	this.utilNormConsMatsRunner = function(bucketTypes){
+		var selector = function(item){ return _.contains(bucketTypes, item.bucketType); };
+		var chars = self.orderedCharacters();
+
+		var subItems = [chars.length];
+		for (i = 0; i < chars.length; i++){
+			subItems[i] = _.uniq(_.filter(chars[i].items(), selector), false, function(item){ return item.description; });
+			console.log(subItems[i]);
+		}
+		var uniqueItems = _.uniq(_.flatten(subItems), false, function(item){ return item.description; });
+		
+		var $template = $(tgd.normalizeTemplate({ characters: chars, items: uniqueItems }));
+		
+		var dialogItself = (new tgd.dialog({			
+			buttons: [
+				{
+					label: 'Close',
+					action: function(dialogItself){ dialogItself.close(); }
+				}
+			]
+		})).title("Distribute/Split").content($template).show(true);
+	}
+	this.utilNormCons = function(){ self.utilNormConsMatsRunner(["Consumables"]); }
+	this.utilNormMats = function(){ self.utilNormConsMatsRunner(["Materials"]); }
+	this.utilNormConsMats = function(){ self.utilNormConsMatsRunner(["Consumables", "Materials"]); }
+
 	this.init = function(){
 		tgd.version = $(".version:first").text();
-		tracking.init();
+		//tracking.init();
 		if (_.isUndefined(window._itemDefs)){
 			return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
-		}		
+		}
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
 		tgd.duplicates = ko.observableArray().extend({ rateLimit: { timeout: 5000, method: "notifyWhenChangesStop" } });
 		self.doRefresh.subscribe(self.refreshHandler);
