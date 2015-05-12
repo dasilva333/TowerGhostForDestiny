@@ -135,7 +135,7 @@ ko.bindingHandlers.moveItem = {
 			    if (target) {					
 					if ("$data" in ko.contextFor(target)){
 						var item = ko.contextFor(target).$data;
-						if (item && item.doEquip && self.loadoutMode() == true){
+						if (item && item.doEquip && app.loadoutMode() == true){
 							item.doEquip(!item.doEquip());
 							item.markAsEquip( item , { target: target });
 						}
@@ -233,6 +233,11 @@ var app = new (function() {
 	this.shareUrl  = ko.observable(tgd.defaults.shareUrl);
 	this.showMissing =  ko.observable(tgd.defaults.showMissing);
 	this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
+
+	this.sortedLoadouts = ko.computed(function() {
+	   return self.loadouts().sort(function (left, right) {
+		return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
+	});});
 
 	this.activeItem = ko.observable();
 	this.activeUser = ko.observable(new User());
@@ -881,17 +886,22 @@ var app = new (function() {
 	this.saveLoadouts = function(includeMessage){
 		var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
 		if (supportsCloudSaves == true){
-			var params = {
-				action: "save",
-				membershipId: parseFloat(app.activeUser().user.membershipId),
-				loadouts: JSON.stringify(self.loadouts())
-			}
-			self.apiRequest(params, function(results){
-				if (_includeMessage == true){
-					if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-					else BootstrapDialog.alert("Error has occurred saving loadouts");
+			if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId){
+				var params = {
+					action: "save",
+					membershipId: parseFloat(app.activeUser().user.membershipId),
+					loadouts: JSON.stringify(self.loadouts())
 				}
-			});
+				self.apiRequest(params, function(results){
+					if (_includeMessage == true){
+						if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
+						else BootstrapDialog.alert("Error has occurred saving loadouts");
+					}
+				});
+			}
+			else {
+				BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
+			}
 		}
 		else {
 			var loadouts = ko.toJSON(self.loadouts());
@@ -1118,7 +1128,7 @@ var app = new (function() {
 			return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
 		}		
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
-		tgd.duplicates = ko.observableArray();
+		tgd.duplicates = ko.observableArray().extend({ rateLimit: { timeout: 5000, method: "notifyWhenChangesStop" } });
 		self.doRefresh.subscribe(self.refreshHandler);
 		self.refreshSeconds.subscribe(self.refreshHandler);
 		self.loadoutMode.subscribe(self.refreshHandler);
