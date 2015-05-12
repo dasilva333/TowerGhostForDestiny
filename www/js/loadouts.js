@@ -424,6 +424,7 @@ Loadout.prototype = {
 	/* hold on there cowboy can't make a promise we can't keep 
 		this pieces needs to have all the /existing logic/ that comprises that sum of Item.store/transfer/equip/unquip
 		The first absolute no go siutation (cant xfer wo going outside of character) is 
+		(rules #1-3 only apply to actual characters not the vault)
 		1. only one weapon equipped no subsitute available
 		2. weapon being moved is non-exotic and there is an exotic equipped with no other weapons
 		3. weapon being moved is non-exotic and there is an exotic equipped with only other exotics
@@ -446,8 +447,8 @@ Loadout.prototype = {
 		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);
 		var cantMoveEquipped; 
 		_.each(otherBucketTypes, function(bucketType){
-			var bucketItems = item.character.get(bucketType), onlyExotics = _.where(bucketItems,{tierType:6}).length == bucketItems.length;		
-			if ( item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics) ){
+			var bucketItems = item.character.get(bucketType), onlyExotics = _.where(bucketItems,{tierType:6}).length == bucketItems.length;
+			if ( item.character.id !== "Vault" && item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics) ){
 				cantMoveEquipped = {
 					description: item.description + " will not be moved. Blame it on this bucket: " + bucketType,
 					targetIcon: item.icon,
