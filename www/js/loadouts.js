@@ -176,7 +176,8 @@ Loadout.prototype = {
 			var pair = swapArray[++itemIndex];
 			var transferTargetItem = function(){
 				var action = (_.where( self.ids(), { id: pair.targetItem._id }).filter(onlyEquipped).length == 0) ? "store" : "equip";
-				//console.log("going to " + action + " first item " + pair.targetItem.description);
+				//if (pair.targetItem.description && pair.targetItem.description)
+				//	console.log("going to " + action + " first item " + pair.targetItem.description);
 				var targetItem = self.findReference(pair.targetItem);
 				if (targetItem){
 					targetItem[action](targetCharacterId, function(){			
@@ -202,9 +203,11 @@ Loadout.prototype = {
 				/* swap item has to be moved first in case the swap bucket is full, then move the target item in after */
 				if ( typeof pair.swapItem !== "undefined"){
 					var owner = pair.targetItem.character.id;
+					//if (pair.swapItem && pair.swapItem.description)
+					//	console.log("transferring swap item first  " + pair.swapItem.description);
 					self.findReference(pair.swapItem).store(owner, function(){
-						//console.log("xfered it, now to transfer next item " + pair.swapItem.description);
 						if (typeof pair.targetItem !== "undefined"){
+							//console.log("finished xfering swap item now onto the TARGET item");
 							transferTargetItem();
 						}	
 						else { 
@@ -215,6 +218,7 @@ Loadout.prototype = {
 					}, true);
 				}
 				else if (typeof pair.targetItem !== "undefined"){
+					//console.log("no swap item now onto the TARGET item");
 					transferTargetItem();
 				}
 				else { 
@@ -278,12 +282,14 @@ Loadout.prototype = {
 					if (targetCharacter.id == "Vault"){
 						maxBucketSize = ( tgd.DestinyWeaponPieces.indexOf(key) > -1 ) ? 36 : 24;
 					}
+					var targetMaxed = (targetBucket.length == maxBucketSize);
+					//console.log(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
 					/* use the swap item strategy */
 					/* by finding a random item in the targetBucket that isnt part of sourceBucket */
 					if (sourceBucket.length + targetBucket.length >= maxBucketSize){
 						var sourceBucketIds = _.pluck( sourceBucket, "_id");
 						swapArray = _.map(sourceBucket, function(item){							
-							var cantMove = self.cantMove(item, key);
+							var cantMove = self.cantMove(item, key, targetMaxed);
 							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
 							if ( cantMove ){
 								return cantMove;
@@ -345,7 +351,7 @@ Loadout.prototype = {
 						/* do a clean move by returning a swap object without a swapItem */
 						swapArray = _.map(sourceBucket, function(item){
 							var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
-							var cantMove = self.cantMove(item, key);
+							var cantMove = self.cantMove(item, key, targetMaxed);
 							if ( cantMove ){
 								return cantMove;
 							}
@@ -421,12 +427,23 @@ Loadout.prototype = {
 		1. only one weapon equipped no subsitute available
 		2. weapon being moved is non-exotic and there is an exotic equipped with no other weapons
 		3. weapon being moved is non-exotic and there is an exotic equipped with only other exotics
+		4. the target bucket has the max number of weapons so the transfer of that one item cant completely finished on its own
 	*/
-	cantMove: function(item, key){
+	cantMove: function(item, key, maxBucketSize){
+		//fix to exclude subclasses
+		if (item.armorIndex == -1 && item.weaponIndex == -1) return;
+		var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
+		if (maxBucketSize){
+			return {
+				description: item.description + " will not be moved, there is no space in " + key,
+				targetIcon: item.icon,
+				actionIcon: "assets/no-transfer.png",
+				swapIcon: ownerIcon
+			}
+		}
 		var ownerBucket = item.character.get(key);
 		var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) :  _.clone(tgd.DestinyArmorPieces);
-		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);
-		var ownerIcon = item.character.icon().replace("url(",'').replace(')','');
+		otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex,1);		
 		var cantMoveEquipped = _.reduce(otherBucketTypes, function(bucketType){
 			var bucketItems = item.character.get(bucketType), onlyExotics = _.where(bucketItems,{tierType:6}).length == bucketItems.length;
 			if ( item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics) ){
