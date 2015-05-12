@@ -86,7 +86,16 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 tgd.normalizeTemplate = '<div class="list-group">' +
 	'<div class="list-group-item row no-gutter">' +
 		'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' +	
-			'Select the characters whose items will be equally distributed/split amongst each other:' +
+			'Here you can evenly distribute items across characters/vault or move large quantities of items ' +
+			'to a single character/vault. \'SOURCE\' characters are the characters you wish to transfer FROM ' +
+			'and \'TARGET\' characters are the characters you with to transfer the items TO. Selecting multiple ' +
+			'TARGET characters indicates a distribution operation will occur. Selecting a single TARGET character ' +
+			'indicates a bulk transfer will occur.' +
+		'</div>' +
+	'</div>' +
+	'<div class="list-group-item row no-gutter">' +
+		'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' +	
+			'Select the SOURCE characters:' +
 		'</div>' +
 		'<div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">' +
 			'<% characters.forEach(function(character){ %>' +
@@ -102,7 +111,23 @@ tgd.normalizeTemplate = '<div class="list-group">' +
 	'</div>' +
 	'<div class="list-group-item row no-gutter">' +
 		'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' +	
-			'Select the items that will be equally distributed/split:' +
+			'Select the TARGET characters:' +
+		'</div>' +
+		'<div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">' +
+			'<% characters.forEach(function(character){ %>' +
+				'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
+					'<div class="attkIcon">' +
+						'<div class="icon-banner"><%= character.classType %></div>' +
+						'<img src="<%= character.imgIcon %>">' +
+						'<div class="lower-left"><%= character.classLetter %></div>' +
+					'</div>' +
+				'</div>' +
+			'<% }) %>' +
+		'</div>' +
+	'</div>' +
+	'<div class="list-group-item row no-gutter">' +
+		'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' +	
+			'Select the items that will be distributed/transferred:' +
 		'</div>' +
 		'<div class="locations col-xs-12 col-sm-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">' +			
 			'<% for (i = 0; i < items.length; i++){ %>' +			
