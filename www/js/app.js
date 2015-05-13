@@ -383,15 +383,14 @@ var app = new(function() {
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).parent().attr("value");
-		if (collection in _collections){
-			self.setFilter(collection == "All" ? [] : _collections[collection]);
-			self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
-		}
-		else {
-			self.setFilter([]);
-			self.setFilterFix([]);
-			BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
-		}
+        if (collection in _collections) {
+            self.setFilter(collection == "All" ? [] : _collections[collection]);
+            self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+        } else {
+            self.setFilter([]);
+            self.setFilterFix([]);
+            BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
+        }
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
@@ -579,9 +578,9 @@ var app = new(function() {
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
-				//TODO: fix this bug
-				//TypeError: undefined is not an object (evaluating 'results.data')
-				//not sure how to catch the error and how ot prevent it
+                //TODO: fix this bug
+                //TypeError: undefined is not an object (evaluating 'results.data')
+                //not sure how to catch the error and how ot prevent it
                 if (_.isUndefined(results) && _.isUndefined(results.data)) {
                     ga('send', 'exception', {
                         'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),

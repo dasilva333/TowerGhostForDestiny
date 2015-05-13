@@ -260,8 +260,8 @@ Item.prototype = {
         //console.log("Item.transfer");
         //console.log(arguments);
         //setTimeout(function(){
-		if ( app.characters().length == 0 ){
-			ga('send', 'exception', {
+        if (app.characters().length == 0) {
+            ga('send', 'exception', {
                 'exDescription': "No characters found to transfer with " + self.description,
                 'exFatal': false,
                 'appVersion': tgd.version,
@@ -269,8 +269,8 @@ Item.prototype = {
                     console.log("crash reported");
                 }
             });
-			return BootstrapDialog.alert("Attempted a transfer with no characters loaded, how is that possible? Please report this issue to my Github.");			
-		}
+            return BootstrapDialog.alert("Attempted a transfer with no characters loaded, how is that possible? Please report this issue to my Github.");
+        }
         var self = this,
             x, y;
         var isVault = targetCharacterId == "Vault";
