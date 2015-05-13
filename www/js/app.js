@@ -1120,7 +1120,7 @@ var app = new (function() {
 		
 		nextNormalize();
 	}
-	this.utilDistOrBulkRunner = function(bucketTypes){
+	this.utilNormConsMatsRunner = function(bucketTypes){
 		var selector = function(item){ return _.contains(bucketTypes, item.bucketType); };
 		var chars = self.orderedCharacters();
 
@@ -1136,18 +1136,15 @@ var app = new (function() {
 		var dialogItself = (new tgd.dialog({			
 			buttons: [
 				{
-					label: 'Proceed',
-					cssClass: 'btn-primary',
-					action: function(dialogItself){ dialogItself.close(); }
-				},
-				{
 					label: 'Close',
 					action: function(dialogItself){ dialogItself.close(); }
 				}
 			]
-		})).title("Evenly Distribute or Bulk Transfer Consumables/Materials").content($template).show(true);
+		})).title("Distribute/Split").content($template).show(true);
 	}
-	this.utilDistOrBulk = function(){ self.utilDistOrBulkRunner(["Consumables", "Materials"]); }
+	this.utilNormCons = function(){ self.utilNormConsMatsRunner(["Consumables"]); }
+	this.utilNormMats = function(){ self.utilNormConsMatsRunner(["Materials"]); }
+	this.utilNormConsMats = function(){ self.utilNormConsMatsRunner(["Consumables", "Materials"]); }
 
 	this.init = function(){
 		tgd.version = $(".version:first").text();
