@@ -34,3 +34,5 @@ indexContent = indexContent.replace(/<div id=\"whatsnew\" style=\"display:none;\
 indexContent = indexContent.replace(/<div id=\"showwhatsnew\" style=\"display:none;\">(.*)<\/div>/g,'<div id=\"showwhatsnew\" style=\"display:none;\">' + whatsNew.doShow + '</div>');
 
 fs.writeFileSync(indexHomePage, indexContent);
+
+require("./code_format");
