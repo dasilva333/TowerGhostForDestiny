@@ -383,8 +383,14 @@ var app = new(function() {
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).parent().attr("value");
-        self.setFilter(collection == "All" ? [] : _collections[collection]);
-        self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+        if (collection in _collections) {
+            self.setFilter(collection == "All" ? [] : _collections[collection]);
+            self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+        } else {
+            self.setFilter([]);
+            self.setFilterFix([]);
+            BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
+        }
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
@@ -572,6 +578,9 @@ var app = new(function() {
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
+                //TODO: fix this bug
+                //TypeError: undefined is not an object (evaluating 'results.data')
+                //not sure how to catch the error and how ot prevent it
                 if (_.isUndefined(results) && _.isUndefined(results.data)) {
                     ga('send', 'exception', {
                         'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
@@ -607,7 +616,7 @@ var app = new(function() {
             //console.time("avatars.forEach");			
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (typeof response.data == "undefined") {
+                    if (response && typeof response.data == "undefined") {
                         ga('send', 'exception', {
                             'exDescription': "$data missing in ko.contextFor",
                             'exFatal': false,
@@ -619,7 +628,7 @@ var app = new(function() {
                         });
                         return BootstrapDialog.alert("Error loading inventory " + (response && response.error) ? response.error : "");
                     }
-                    if (response.data) {
+                    if (response && response.data) {
                         //console.time("new Profile"); 					
                         var profile = new Profile({
                             order: index + 1,
