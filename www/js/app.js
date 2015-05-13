@@ -383,8 +383,15 @@ var app = new(function() {
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).parent().attr("value");
-        self.setFilter(collection == "All" ? [] : _collections[collection]);
-        self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+		if (collection in _collections){
+			self.setFilter(collection == "All" ? [] : _collections[collection]);
+			self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+		}
+		else {
+			self.setFilter([]);
+			self.setFilterFix([]);
+			BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
+		}
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
