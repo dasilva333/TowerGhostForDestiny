@@ -378,17 +378,26 @@ var app = new(function() {
     }
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
-        self.showMissing(!self.showMissing());
+		if (self.setFilter().length == 0){
+			BootstrapDialog.alert("Please pick a Set before selecting this option");
+		}
+		else {
+			self.showMissing(!self.showMissing());
+		}
     }
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).parent().attr("value");
-        if (collection in _collections) {
+        if (collection in _collections || collection == "All") {
             self.setFilter(collection == "All" ? [] : _collections[collection]);
             self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+			if (collection == "All"){
+				self.showMissing(false);
+			}
         } else {
             self.setFilter([]);
             self.setFilterFix([]);
+			self.showMissing(false);
             BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
         }
     }
