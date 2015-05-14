@@ -13,6 +13,9 @@ $blue-dark: rgb(30, 36, 43);
 $level_yellow: rgb(245, 220, 86);
 
 // Globals
+html:not(.touch) {
+	body { overflow-y: scroll; }
+}
 body {
 	font-size: 1em;
 	margin: 0 auto;
