@@ -378,20 +378,28 @@ var app = new(function() {
     }
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
-        self.showMissing(!self.showMissing());
+		if (self.setFilter().length == 0){
+			BootstrapDialog.alert("Please pick a Set before selecting this option");
+		}
+		else {
+			self.showMissing(!self.showMissing());
+		}
     }
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).parent().attr("value");
-		if (collection in _collections){
-			self.setFilter(collection == "All" ? [] : _collections[collection]);
-			self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
-		}
-		else {
-			self.setFilter([]);
-			self.setFilterFix([]);
-			BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
-		}
+        if (collection in _collections || collection == "All") {
+            self.setFilter(collection == "All" ? [] : _collections[collection]);
+            self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+			if (collection == "All"){
+				self.showMissing(false);
+			}
+        } else {
+            self.setFilter([]);
+            self.setFilterFix([]);
+			self.showMissing(false);
+            BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
+        }
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
@@ -575,11 +583,22 @@ var app = new(function() {
                 self.loadingUser(false);
                 return
             }
+			else if (typeof e.data == "undefined"){
+				ga('send', 'exception', {
+                     'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
+                     'exFatal': false,
+                     'appVersion': tgd.version,
+                     'hitCallback': function() {
+                         console.log("crash reported");
+                     }
+                 });
+				return BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
+			}
             var avatars = e.data.characters;
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
-                if (_.isUndefined(results) && _.isUndefined(results.data)) {
+                if (typeof results.data == "undefined") {
                     ga('send', 'exception', {
                         'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
                         'exFatal': false,
@@ -614,19 +633,11 @@ var app = new(function() {
             //console.time("avatars.forEach");			
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (typeof response.data == "undefined") {
-                        ga('send', 'exception', {
-                            'exDescription': "$data missing in ko.contextFor",
-                            'exFatal': false,
-                            'appName': JSON.stringify(response),
-                            'appVersion': tgd.version,
-                            'hitCallback': function() {
-                                console.log("crash reported");
-                            }
-                        });
+					/* these mostly always happen because of network errors */
+                    if (response && typeof response.data == "undefined") {
                         return BootstrapDialog.alert("Error loading inventory " + (response && response.error) ? response.error : "");
                     }
-                    if (response.data) {
+                    if (response && response.data) {
                         //console.time("new Profile"); 					
                         var profile = new Profile({
                             order: index + 1,
