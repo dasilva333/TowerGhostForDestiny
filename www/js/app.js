@@ -578,10 +578,7 @@ var app = new(function() {
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
-                //TODO: fix this bug
-                //TypeError: undefined is not an object (evaluating 'results.data')
-                //not sure how to catch the error and how ot prevent it
-                if (_.isUndefined(results) && _.isUndefined(results.data)) {
+                if (typeof results.data == "undefined") {
                     ga('send', 'exception', {
                         'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
                         'exFatal': false,
