@@ -39,8 +39,8 @@ tracking = {
         // Track basic JavaScript errors
         window.addEventListener('error', function(e) {
             /* This is a problem I keep seeing in the exception logs let's see where it comes from */
-			if (e.message.indexOf("Maximum call") > -1){
-				ga('send', 'exception', {
+            if (e.message.indexOf("Maximum call") > -1) {
+                ga('send', 'exception', {
                     'exDescription': e.error.stack,
                     'exFatal': true,
                     'appName': e.message,
@@ -49,8 +49,8 @@ tracking = {
                         console.log("crash reported");
                     }
                 });
-			}
-			/* don't log known issue with InAppBrowser using 0.6.0 supposedly fixed since 0.5.4*/
+            }
+            /* don't log known issue with InAppBrowser using 0.6.0 supposedly fixed since 0.5.4*/
             if (e.message.indexOf("event.type") == -1) {
                 ga('send', 'exception', {
                     'exDescription': e.message,
