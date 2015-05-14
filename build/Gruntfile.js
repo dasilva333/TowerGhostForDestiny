@@ -21,6 +21,16 @@ module.exports = function(grunt) {
 				files: {
 					'<%= project.app %>/css/style_new.css':'<%= project.css %>'
 				}
+			},
+			prod: {
+				options: {
+					style: 'compressed',
+					compass: false,
+					sourcemap: 'none'
+				},
+				files: {
+					'<%= project.app %>/css/style_new.css':'<%= project.css %>'
+				}
 			}
 		},
 
@@ -39,6 +49,14 @@ module.exports = function(grunt) {
 				},
 				src: '../www/css/style_new.css',
 				dest: '../www/css/style_new.css'
+			},
+			prod: {
+				options: {
+					map: false,
+					browsers: ['> 5%', 'last 20 versions', 'Firefox ESR', 'Opera 12.1', 'ie 9', 'ie 10', 'ie 7']
+				},
+				src: '../www/css/style_new.css',
+				dest: '../www/css/style_new.css'
 			}
 		}
 
@@ -48,8 +66,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-autoprefixer');
 
-	grunt.registerTask('default', [
-		'watch'
-	]);
+	// Just output some sort of documentation menu
+	grunt.registerTask('default','Output a basic help menu', function() {
+		grunt.log.writeln('Grunt Build Process');
+		grunt.log.writeln('* grunt prod: Builds everything needed for production');
+		grunt.log.writeln('* grunt dev: Creates a watch on a majority of the scss files (use for developing)');
+	});
+
+	grunt.registerTask('prod', ['sass:prod', 'autoprefixer:prod']);
+	grunt.registerTask('dev', ['watch']);
 
 };
