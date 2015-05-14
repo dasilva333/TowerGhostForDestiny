@@ -223,6 +223,16 @@ try {
 	      complete: callback
 	    });
 	  }
+	  this.item_instance = function(characterId, instanceId, callback) {
+	    _request({
+	      route: '/Destiny/' + active.type +
+	              '/Account/' + membershipId +
+	              '/Character/' + characterId +
+	              '/Inventory/' + instanceId,
+	      method: 'GET',
+	      complete: callback
+	    });
+	  }
 	  this.transfer = function(characterId, itemId, itemHash, amount, toVault, callback) {
 	    _request({
 	      route: '/Destiny/TransferItem/',
