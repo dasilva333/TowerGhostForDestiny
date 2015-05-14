@@ -574,6 +574,17 @@ var app = new(function() {
                 self.loadingUser(false);
                 return
             }
+			else if (typeof e.data == "undefined"){
+				ga('send', 'exception', {
+                     'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
+                     'exFatal': false,
+                     'appVersion': tgd.version,
+                     'hitCallback': function() {
+                         console.log("crash reported");
+                     }
+                 });
+				return BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
+			}
             var avatars = e.data.characters;
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
@@ -613,16 +624,8 @@ var app = new(function() {
             //console.time("avatars.forEach");			
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
+					/* these mostly always happen because of network errors */
                     if (response && typeof response.data == "undefined") {
-                        ga('send', 'exception', {
-                            'exDescription': "$data missing in ko.contextFor",
-                            'exFatal': false,
-                            'appName': JSON.stringify(response),
-                            'appVersion': tgd.version,
-                            'hitCallback': function() {
-                                console.log("crash reported");
-                            }
-                        });
                         return BootstrapDialog.alert("Error loading inventory " + (response && response.error) ? response.error : "");
                     }
                     if (response && response.data) {
