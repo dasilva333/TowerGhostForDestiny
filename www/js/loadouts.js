@@ -1,8 +1,8 @@
 	/*
-						targetItem: item,
-						swapItem: swapItem,
-						description: item.description + "'s swap item is " + swapItem.description
-						*/
+			targetItem: item,
+			swapItem: swapItem,
+			description: item.description + "'s swap item is " + swapItem.description
+			*/
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
 	    '<li class="list-group-item">' +
@@ -475,7 +475,7 @@
 	                onlyExotics = _.where(bucketItems, {
 	                    tierType: 6
 	                }).length == bucketItems.length;
-				//TODO: TypeError: null is not an object (evaluating 'item.character.itemEquipped(bucketType).tierType')
+	            //TODO: TypeError: null is not an object (evaluating 'item.character.itemEquipped(bucketType).tierType')
 	            if (item.character.id !== "Vault" && item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics)) {
 	                cantMoveEquipped = {
 	                    description: item.description + " will not be moved. Blame it on this bucket: " + bucketType,
