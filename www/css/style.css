@@ -2,20 +2,6 @@
     width: device-width;
 }
 
-body {
-    font-size: 1em;
-    margin: 0 auto;
-    padding-top: 55px;
-    background: radial-gradient(transparent, 70%, #000) fixed, rgb(105, 125, 123);
-    background: radial-gradient(transparent, 70%, #000) fixed, url('../assets/gradient_green.jpg') fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    color: #fff;
-    font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
 .loadout-button {
     position: relative;
     display: inline-block;
@@ -50,53 +36,9 @@ body {
     cursor: pointer;
 }
 
-.desktop .move-popup {
-    position: absolute;
-    z-index: 2;
-    top: -75px;
-    width: 380px;
-    height: 75px;
-    background-color: rgba(21, 13, 13, 1);
-    cursor: default;
-}
-
-.move-popup .item-name {
-    color: #000;
-    background-color: white;
-    margin: 1px;
-    padding: 1px;
-    padding-left: 3px;
-}
-
-.move-popup .attkIcon div.icon-banner {
-    background-color: rgba(255, 255, 255, .6);
-    padding: 1px;
-    width: 97%;
-    text-align: center;
-    top: 0px;
-    bottom: initial;
-    left: 0px;
-}
-
-.move-popup div.lower-left,
-.lower-left {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.8);
-    bottom: 0px;
-    right: initial;
-    padding: 2px;
-    padding-top: 3px;
-    left: 0px;
-    opacity: 0.9;
-}
-
 .col-centered {
     float: none;
     margin: 0 auto;
-}
-
-.locations img {
-    max-width: 97%;
 }
 
 #loadout-create {
@@ -160,69 +102,6 @@ body {
     background-color: rgba(195, 188, 180, .6);
 }
 
-.bucket-item {
-    padding: 1px !important;
-}
-
-.attkIcon {
-    position: relative;
-}
-
-.attkIcon > div {
-    pointer-events: none;
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    color: #333;
-    font-weight: bold;
-    font-size: 0.8em;
-    line-height: 1;
-    padding-top: 2px;
-    padding-left: 2px;
-    padding-right: 1px;
-    padding-bottom: 1px;
-}
-
-.attkIcon .None {
-    background-color: #BBB;
-}
-
-.attkIcon .Kinetic {
-    background-color: #BBB;
-}
-
-.attkIcon .Arc {
-    background-color: #85C5EC;
-}
-
-.attkIcon .Solar {
-    background-color: #C48A01;
-}
-
-.attkIcon .Void {
-    background-color: #B184C5;
-}
-
-.bucket-item a {
-    display: block;
-    padding-top: 100%;
-    position: relative;
-}
-
-.sections .itemImage {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.itemImage {
-    border: 2px solid white;
-}
-
 .doEquip {
     border: 2px solid blue !important;
 }
@@ -246,12 +125,6 @@ body {
 
 .itemImage {}
 
-.itemBucket {
-    /* border: 1px solid white; */
-    
-    background: rgba(255, 255, 255, .1);
-}
-
 .icon {
     width: 24px;
 }
@@ -270,69 +143,8 @@ body {
     padding-left: 5px;
 }
 
-.complete .itemImage {
-    border-color: #f5dc56;
-}
-
-.navbar-brand {
-    font-size: 0.8em
-}
-
 .nav > li > a {
     padding: 10px;
-}
-
-.character-box {
-    position: relative;
-    display: inline-block;
-    height: 43px;
-    padding: 0 0 0 50px;
-    margin: 5px 0;
-    opacity: 1;
-    background: rgba(30, 36, 43, .5);
-    color: #f5f5f5;
-    text-decoration: none;
-    background-size: cover;
-}
-
-.character-box .emblem {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 39px;
-    height: 39px;
-    background-color: rgba(0, 0, 0, .2);
-    background-size: cover;
-}
-
-.character-box .class {
-    text-transform: capitalize;
-    position: relative;
-    display: block;
-    top: 9px;
-    font-size: 24px;
-    font-weight: 400;
-}
-
-.character-box .level {
-    position: absolute;
-    color: rgb(245, 220, 86);
-    top: 8px;
-    right: 7px;
-    font-weight: 200;
-    font-size: 22px;
-}
-
-.character-box .level:before {
-    content: "\2726";
-    display: inline-block;
-    vertical-align: 18%;
-    font-size: 50%;
-}
-
-.no-gutter [class*='col-'] {
-    padding-right: 0;
-    padding-left: 0;
 }
 
 #loadout-options .move-button {
@@ -372,13 +184,6 @@ body {
     white-space: normal;
 }
 
-.alert {
-    padding: 10px;
-    margin-bottom: 20px;
-    margin-left: 15px;
-    margin-right: 15px;
-}
-
 li a {
     color: #3080CF
 }
@@ -394,21 +199,4 @@ li a {
 .lockIcon img {
     position: absolute;
 }
-
-.quickScrollView {
-    position: relative;
-    top: 5px;
-    left: 5px;
-    display: none;
-}
-
-.activeProfile {
-    border: 3px solid white;
-}
 /* 960 px is the breakpoint for 4 columns */
-
-@media (max-width: 959px) {
-    .quickScrollView {
-        display: inline
-    }
-}

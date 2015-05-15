@@ -85,14 +85,13 @@ tgd.moveItemPositionHandler = function(element, item) {
                     collision: "none",
                     of: element,
                     using: function(pos, ui) {
-                        var obj = $(this);
-                        setTimeout(function() {
-                            var box = $(ui.element.element).find(".move-popup").width();
-                            if (box + pos.left > ui.element.width) {
-                                pos.left = pos.left - box;
-                            }
-                            obj.css(pos);
-                        }, 10);
+                        var obj = $(this),
+                            box = $(ui.element.element).find(".move-popup").width();
+                        obj.removeAttr('style');
+                        if (box + pos.left > $(window).width()) {
+                            pos.left = pos.left - box;
+                        }
+                        obj.css(pos).width(box);
                     }
                 });
             }
@@ -268,6 +267,14 @@ var app = new(function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
+    this.incrementSeconds = function() {
+        self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
+    }
+
+    this.decrementSeconds = function() {
+        self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
+    }
+
     this.clearFilters = function(model, element) {
         self.activeView(tgd.defaults.activeView);
         self.searchKeyword(tgd.defaults.searchKeyword);
@@ -378,40 +385,48 @@ var app = new(function() {
     }
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
-        self.showMissing(!self.showMissing());
+        if (self.setFilter().length == 0) {
+            BootstrapDialog.alert("Please pick a Set before selecting this option");
+        } else {
+            self.showMissing(!self.showMissing());
+        }
     }
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        var collection = $(event.target).parent().attr("value");
-        if (collection in _collections) {
+        var collection = $(event.target).closest('li').attr("value");
+        if (collection in _collections || collection == "All") {
             self.setFilter(collection == "All" ? [] : _collections[collection]);
             self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
+            if (collection == "All") {
+                self.showMissing(false);
+            }
         } else {
             self.setFilter([]);
             self.setFilterFix([]);
+            self.showMissing(false);
             BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
         }
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
-        self.activeView($(event.target).parent().attr("value"));
+        self.activeView($(event.target).closest('li').attr("value"));
     }
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        var dmgType = $(event.target).parents('li:first').attr("value");
+        var dmgType = $(event.target).closest('li').attr("value");
         self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
     }
     this.setTierFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        self.tierFilter($(event.target).parent().attr("value"));
+        self.tierFilter($(event.target).closest('li').attr("value"));
     }
     this.setTypeFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        self.typeFilter($(event.target).parent().attr("value"));
+        self.typeFilter($(event.target).closest('li').attr("value"));
     }
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        self.progressFilter($(event.target).parent().attr("value"));
+        self.progressFilter($(event.target).closest('li').attr("value"));
     }
     this.missingSets = ko.computed(function() {
         var missingIds = [];
@@ -542,8 +557,9 @@ var app = new(function() {
     }
 
     this.search = function() {
+        //TODO: Need to investigate why this executes twice during the initial sign in phase for IOS
         if (!("user" in self.activeUser())) {
-            return BootstrapDialog.alert("Please sign in before attempting to refresh");
+            return;
         }
         tgd.duplicates.removeAll();
         var total = 0,
@@ -558,7 +574,7 @@ var app = new(function() {
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
-                setTimeout(self.bucketSizeHandler, 500);
+                setTimeout(self.bucketSizeHandler, 400);
                 //console.timeEnd("avatars.forEach");
             }
         }
@@ -573,6 +589,16 @@ var app = new(function() {
                 }
                 self.loadingUser(false);
                 return
+            } else if (typeof e.data == "undefined") {
+                ga('send', 'exception', {
+                    'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
+                    'exFatal': false,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        console.log("crash reported");
+                    }
+                });
+                return BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -610,23 +636,15 @@ var app = new(function() {
                 //console.timeEnd("self.bungie.vault");
                 done(profile)
             });
-            //console.time("avatars.forEach");			
+            //console.time("avatars.forEach");          
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
+                    /* these mostly always happen because of network errors */
                     if (response && typeof response.data == "undefined") {
-                        ga('send', 'exception', {
-                            'exDescription': "$data missing in ko.contextFor",
-                            'exFatal': false,
-                            'appName': JSON.stringify(response),
-                            'appVersion': tgd.version,
-                            'hitCallback': function() {
-                                console.log("crash reported");
-                            }
-                        });
                         return BootstrapDialog.alert("Error loading inventory " + (response && response.error) ? response.error : "");
                     }
                     if (response && response.data) {
-                        //console.time("new Profile"); 					
+                        //console.time("new Profile");                  
                         var profile = new Profile({
                             order: index + 1,
                             gender: tgd.DestinyGender[character.characterBase.genderType],
@@ -756,7 +774,7 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
         if (self.padBucketHeight() == true) {
-            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 2) * 3;
+            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 10) * 3;
             buckets.css("min-height", maxHeight);
         }
     }
@@ -764,10 +782,10 @@ var app = new(function() {
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
-            var $item = $(item);
-            var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
-            var top = $item.position().top - 55;
-            var bottom = top + $item.height();
+            var $item = $(item),
+                $quickIcon = $(".quickScrollView ." + $item.attr('id')),
+                top = $item.position().top - 55,
+                bottom = top + $item.height();
             $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
         });
     }
@@ -1266,9 +1284,9 @@ var app = new(function() {
             }
         });
         /* this fixes issue #16 */
-        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
-        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
-        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
+        $(window).resize(_.throttle(self.bucketSizeHandler, 400));
+        $(window).resize(_.throttle(self.quickIconHighlighter, 400));
+        $(window).scroll(_.throttle(self.quickIconHighlighter, 400));
         self.whatsNew();
         ko.applyBindings(self);
     }
