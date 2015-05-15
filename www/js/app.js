@@ -266,11 +266,11 @@ var app = new(function() {
     this.showAbout = function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
-    
+
     this.incrementSeconds = function() {
         self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
     }
-    
+
     this.decrementSeconds = function() {
         self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
     }
@@ -385,10 +385,9 @@ var app = new(function() {
     }
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
-        if (self.setFilter().length == 0){
+        if (self.setFilter().length == 0) {
             BootstrapDialog.alert("Please pick a Set before selecting this option");
-        }
-        else {
+        } else {
             self.showMissing(!self.showMissing());
         }
     }
@@ -398,7 +397,7 @@ var app = new(function() {
         if (collection in _collections || collection == "All") {
             self.setFilter(collection == "All" ? [] : _collections[collection]);
             self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
-            if (collection == "All"){
+            if (collection == "All") {
                 self.showMissing(false);
             }
         } else {
@@ -558,8 +557,9 @@ var app = new(function() {
     }
 
     this.search = function() {
+        //TODO: Need to investigate why this executes twice during the initial sign in phase for IOS
         if (!("user" in self.activeUser())) {
-            return BootstrapDialog.alert("Please sign in before attempting to refresh");
+            return;
         }
         tgd.duplicates.removeAll();
         var total = 0,
@@ -589,16 +589,15 @@ var app = new(function() {
                 }
                 self.loadingUser(false);
                 return
-            }
-            else if (typeof e.data == "undefined"){
+            } else if (typeof e.data == "undefined") {
                 ga('send', 'exception', {
-                     'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
-                     'exFatal': false,
-                     'appVersion': tgd.version,
-                     'hitCallback': function() {
-                         console.log("crash reported");
-                     }
-                 });
+                    'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
+                    'exFatal': false,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        console.log("crash reported");
+                    }
+                });
                 return BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
             }
             var avatars = e.data.characters;
