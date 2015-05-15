@@ -284,7 +284,7 @@ Item.prototype = {
         });
         if (_.isUndefined(y)) {
             ga('send', 'exception', {
-                'exDescription': "Target character not found> " + targetCharacterId + " " + app.characters().length,
+                'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
                 'exFatal': false,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
