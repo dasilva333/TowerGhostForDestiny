@@ -604,7 +604,7 @@ var app = new(function() {
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
-                if (typeof results.data == "undefined") {
+                if (results && (typeof results.data == "undefined")){
                     ga('send', 'exception', {
                         'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
                         'exFatal': false,
