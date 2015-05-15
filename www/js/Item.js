@@ -447,5 +447,29 @@ Item.prototype = {
                 }
             }]
         })).title("Extras for " + self.description).show();
+    },
+    instance_info: function(callback) {
+        var self = this;
+        app.bungie.item_instance(self.characterId, self._id, callback);
+    },
+    upgrade_materials: function() {
+        var self = this;
+        self.instance_info(function(result, reponse) {
+            var ready_nodes = _.sortBy(_.filter(result.data.talentNodes, function(n) {
+                return (n.isActivated == false && n.progressPercent == 100 && n.stateId != 'MustSwap')
+            }), function(n) {
+                return n.activationGridLevel
+            });
+            // Annotate material with name
+            _.forEach(ready_nodes, function(node) {
+                _.forEach(node.materialsToUpgrade, function(material) {
+                    material.itemName = _itemDefs[material.itemHash].itemName;
+                });
+            });
+            // print result
+            _.forEach(ready_nodes, function(n) {
+                console.log(JSON.stringify(n))
+            });
+        })
     }
 }
