@@ -381,7 +381,41 @@ Item.prototype = {
                 done();
             } else {
                 var dialogItself = (new tgd.dialog({
-                        message: "<div>Transfer Amount: <input type='text' id='materialsAmount' value='" + self.primaryStat + "'></div>",
+                        message: function(){
+							var $content = $(
+								'<div class="controls controls-row">Transfer Amount: ' +
+								'<button type="button" class="btn-default" id="dec">  -  </button>' +
+								' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
+								'<button type="button" class="btn-default" id="inc">  +  </button>' +
+								'<button type="button" class="btn-default pull-right" id="all"> All (' + self.primaryStat + ') </button>' +
+								'<button type="button" class="btn-default pull-right" id="one"> One </button>' +
+								'</div>');
+							$content.find('#dec').click(function(){
+								var num = parseInt($("input#materialsAmount").val());
+								if (!isNaN(num)){
+									$("input#materialsAmount").val(Math.max(num - 1, 1));
+								}
+							});
+							$content.find('#inc').click(function(){
+								var num = parseInt($("input#materialsAmount").val());
+								if (!isNaN(num)){
+									$("input#materialsAmount").val(Math.min(num + 1, self.primaryStat));
+								}
+							});
+							$content.find('#one').click(function(){
+								var num = parseInt($("input#materialsAmount").val());
+								if (!isNaN(num)){
+									$("input#materialsAmount").val(1);
+								}
+							});
+							$content.find('#all').click(function(){
+								var num = parseInt($("input#materialsAmount").val());
+								if (!isNaN(num)){
+									$("input#materialsAmount").val(self.primaryStat);
+								}
+							});
+							return $content;
+						},
                         buttons: [{
                             label: 'Transfer',
                             cssClass: 'btn-primary',
