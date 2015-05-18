@@ -32,7 +32,7 @@ function onOutputError(err) {
 };
 
 function getOutputType(outfile) {
-    if (outfile && /\.(js|html)$/.test(outfile)) {
+    if (outfile && /\.(js|css|html)$/.test(outfile)) {
         return outfile.split('.').pop();
     }
 };
@@ -51,7 +51,8 @@ function process_directory(directory) {
 
 var directories = [
     '../www',
-    '../www/js'
+    '../www/js',
+    '../www/css'
 ];
 
 directories.forEach(function(value) {

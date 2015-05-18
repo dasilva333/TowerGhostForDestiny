@@ -260,8 +260,8 @@ Item.prototype = {
         //console.log("Item.transfer");
         //console.log(arguments);
         var self = this,
-            x, y;
-        if (app.characters().length == 0) {
+            x, y, characters = app.characters();
+        if (characters.length == 0) {
             ga('send', 'exception', {
                 'exDescription': "No characters found to transfer with " + self.description,
                 'exFatal': false,
@@ -272,16 +272,11 @@ Item.prototype = {
             });
             return BootstrapDialog.alert("Attempted a transfer with no characters loaded, how is that possible? Please report this issue to my Github.");
         }
+
         var isVault = targetCharacterId == "Vault";
-        _.each(app.characters(), function(character) {
-            if (character.id == sourceCharacterId) {
-                //console.log("removing reference of myself ( " + self.description + " ) in " + character.classType + " from the list of " + self.list);
-                x = character;
-            } else if (character.id == targetCharacterId) {
-                //console.log("adding a reference of myself ( " + self.description + " ) to this guy " + character.classType);
-                y = character;
-            }
-        });
+        var ids = _.pluck(characters, 'id');
+        x = characters[ids.indexOf(sourceCharacterId)];
+        y = characters[ids.indexOf(targetCharacterId)];
         if (_.isUndefined(y)) {
             ga('send', 'exception', {
                 'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
@@ -356,7 +351,7 @@ Item.prototype = {
                         callback(self.character);
                 }, allowReplacement);
             } else if (sourceCharacterId !== "Vault") {
-                //console.log("from character to vault to character " + self.description);
+                //console.log("from character to vault to character " + self.description);				
                 self.unequip(function(result) {
                     if (result) {
                         if (self.bucketType == "Subclasses") {
