@@ -99,9 +99,7 @@ https://github.com/dasilva333/TowerGhostForDestiny/tree/div-movile-dist/
 	- Run `npm install -g grunt-init`
 - Run `npm install`
 - Run `bower install`
-- Run `grunt dev` to watch the `/www/scss` folder to build the scss changes
-
-**NOTE!** If you make changes to the SCSS, you need to run `grunt prod` before you put in your PR, so it has a production build of the SCSS (aka, no source maps)
+- Run `grunt` to watch the `/www/scss` folder to build the scss changes
 
 ##Contributing
 

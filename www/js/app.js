@@ -267,14 +267,6 @@ var app = new(function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
-    this.incrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
-    }
-
-    this.decrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
-    }
-
     this.clearFilters = function(model, element) {
         self.activeView(tgd.defaults.activeView);
         self.searchKeyword(tgd.defaults.searchKeyword);
@@ -557,7 +549,6 @@ var app = new(function() {
     }
 
     this.search = function() {
-        //TODO: Need to investigate why this executes twice during the initial sign in phase for IOS
         if (!("user" in self.activeUser())) {
             return;
         }
@@ -574,7 +565,7 @@ var app = new(function() {
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
-                setTimeout(self.bucketSizeHandler, 400);
+                setTimeout(self.bucketSizeHandler, 500);
                 //console.timeEnd("avatars.forEach");
             }
         }
@@ -604,16 +595,8 @@ var app = new(function() {
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
-                if (results && (typeof results.data == "undefined")){
-                    ga('send', 'exception', {
-                        'exDescription': "data missing in bungie.vault> " + JSON.stringify(error),
-                        'exFatal': false,
-                        'appVersion': tgd.version,
-                        'hitCallback': function() {
-                            console.log("crash reported");
-                        }
-                    });
-                    return BootstrapDialog.alert("Please report this error to my Github: Error loading vault " + error);
+                if (results && (typeof results.data == "undefined")) {
+                    return BootstrapDialog.alert("Error loading Vault " + error);
                 }
                 var buckets = results.data.buckets;
                 var profile = new Profile({
@@ -636,7 +619,7 @@ var app = new(function() {
                 //console.timeEnd("self.bungie.vault");
                 done(profile)
             });
-            //console.time("avatars.forEach");          
+            //console.time("avatars.forEach");			
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     /* these mostly always happen because of network errors */
@@ -644,7 +627,7 @@ var app = new(function() {
                         return BootstrapDialog.alert("Error loading inventory " + (response && response.error) ? response.error : "");
                     }
                     if (response && response.data) {
-                        //console.time("new Profile");                  
+                        //console.time("new Profile"); 					
                         var profile = new Profile({
                             order: index + 1,
                             gender: tgd.DestinyGender[character.characterBase.genderType],
@@ -774,7 +757,7 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
         if (self.padBucketHeight() == true) {
-            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 10) * 3;
+            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 2) * 3;
             buckets.css("min-height", maxHeight);
         }
     }
@@ -782,10 +765,10 @@ var app = new(function() {
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
-            var $item = $(item),
-                $quickIcon = $(".quickScrollView ." + $item.attr('id')),
-                top = $item.position().top - 55,
-                bottom = top + $item.height();
+            var $item = $(item);
+            var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
+            var top = $item.position().top - 55;
+            var bottom = top + $item.height();
             $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
         });
     }
@@ -1284,9 +1267,9 @@ var app = new(function() {
             }
         });
         /* this fixes issue #16 */
-        $(window).resize(_.throttle(self.bucketSizeHandler, 400));
-        $(window).resize(_.throttle(self.quickIconHighlighter, 400));
-        $(window).scroll(_.throttle(self.quickIconHighlighter, 400));
+        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
+        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
+        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
         ko.applyBindings(self);
     }
