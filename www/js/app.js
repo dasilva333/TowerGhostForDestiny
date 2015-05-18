@@ -85,13 +85,14 @@ tgd.moveItemPositionHandler = function(element, item) {
                     collision: "none",
                     of: element,
                     using: function(pos, ui) {
-                        var obj = $(this),
-                            box = $(ui.element.element).find(".move-popup").width();
-                        obj.removeAttr('style');
-                        if (box + pos.left > $(window).width()) {
-                            pos.left = pos.left - box;
-                        }
-                        obj.css(pos).width(box);
+                        var obj = $(this);
+                        setTimeout(function() {
+                            var box = $(ui.element.element).find(".move-popup").width();
+                            if (box + pos.left > ui.element.width) {
+                                pos.left = pos.left - box;
+                            }
+                            obj.css(pos);
+                        }, 10);
                     }
                 });
             }
