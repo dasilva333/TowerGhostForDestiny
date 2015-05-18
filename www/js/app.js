@@ -85,14 +85,13 @@ tgd.moveItemPositionHandler = function(element, item) {
                     collision: "none",
                     of: element,
                     using: function(pos, ui) {
-                        var obj = $(this);
-                        setTimeout(function() {
-                            var box = $(ui.element.element).find(".move-popup").width();
-                            if (box + pos.left > ui.element.width) {
-                                pos.left = pos.left - box;
-                            }
-                            obj.css(pos);
-                        }, 10);
+                        var obj = $(this),
+                            box = $(ui.element.element).find(".move-popup").width();
+                        obj.removeAttr('style');
+                        if (box + pos.left > $(window).width()) {
+                            pos.left = pos.left - box;
+                        }
+                        obj.css(pos).width(box);
                     }
                 });
             }
@@ -266,6 +265,14 @@ var app = new(function() {
 
     this.showAbout = function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
+    }
+    
+    this.incrementSeconds = function() {
+        self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
+    }
+    
+    this.decrementSeconds = function() {
+        self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
     }
 
     this.clearFilters = function(model, element) {
@@ -636,11 +643,11 @@ var app = new(function() {
                     return BootstrapDialog.alert("Trying to refresh, error loading Vault " + JSON.stringify(response));
                 }
             });
-            //console.time("avatars.forEach");			
+            //console.time("avatars.forEach");          
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
-                        //console.time("new Profile"); 					
+                        //console.time("new Profile");                  
                         var profile = new Profile({
                             order: index + 1,
                             gender: tgd.DestinyGender[character.characterBase.genderType],
@@ -764,7 +771,7 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
         if (self.padBucketHeight() == true) {
-            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 2) * 3;
+            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 30) * 3;
             buckets.css("min-height", maxHeight);
         }
     }
@@ -816,13 +823,13 @@ var app = new(function() {
         });
     }
 
-	this.clearCookies = function(){
-		window.cookies.clear(function(){
-			window.localStorage.setItem("bungie_cookies", "");
-			console.log("Cookies cleared");
-		});
-	}
-	
+    this.clearCookies = function(){
+        window.cookies.clear(function(){
+            window.localStorage.setItem("bungie_cookies", "");
+            console.log("Cookies cleared");
+        });
+    }
+    
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
