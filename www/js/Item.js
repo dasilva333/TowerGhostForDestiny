@@ -384,11 +384,11 @@ Item.prototype = {
                         message: function(){
 							var $content = $(
 								'<div class="controls controls-row">Transfer Amount: ' +
-								'<button type="button" class="btn-default" id="dec">  -  </button>' +
+								'<button type="button" class="btn btn-default" id="dec">  -  </button>' +
 								' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
-								'<button type="button" class="btn-default" id="inc">  +  </button>' +
-								'<button type="button" class="btn-default pull-right" id="all"> All (' + self.primaryStat + ') </button>' +
-								'<button type="button" class="btn-default pull-right" id="one"> One </button>' +
+								'<button type="button" class="btn btn-default" id="inc">  +  </button>' +
+								'<button type="button" class="btn btn-default pull-right" id="all"> All (' + self.primaryStat + ') </button>' +
+								'<button type="button" class="btn btn-default pull-right" id="one"> One </button>' +
 								'</div>');
 							$content.find('#dec').click(function(){
 								var num = parseInt($("input#materialsAmount").val());
