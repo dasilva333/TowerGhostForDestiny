@@ -549,15 +549,15 @@ var app = new(function() {
         self.search();
     }
 
-	var loadingData = false;
+    var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
             return;
         }
-		if (loadingData == true){
-			return;
-		}
-		loadingData = true;
+        if (loadingData == true) {
+            return;
+        }
+        loadingData = true;
         tgd.duplicates.removeAll();
         var total = 0,
             count = 0,
@@ -567,20 +567,20 @@ var app = new(function() {
             profiles.push(profile);
             count++;
             if (count == total) {
-                self.characters(profiles); 
+                self.characters(profiles);
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
                 setTimeout(self.bucketSizeHandler, 500);
-				loadingData = false;
+                loadingData = false;
                 //console.timeEnd("avatars.forEach");
             }
         }
         self.bungie.search(self.activeUser().activeSystem(), function(e) {
             if (e && e.error || !e) {
-				loadingData = false;
+                loadingData = false;
                 self.loadingUser(false);
-				/* if the first account fails retry the next one*/
+                /* if the first account fails retry the next one*/
                 if (self.hasBothAccounts()) {
                     self.activeUser().activeSystem(self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN");
                     self.search();
@@ -625,8 +625,8 @@ var app = new(function() {
                     //console.timeEnd("self.bungie.vault");
                     done(profile)
                 } else {
-					loadingData = false;
-					self.refresh();
+                    loadingData = false;
+                    self.refresh();
                     return BootstrapDialog.alert("Trying to refresh, error loading Vault " + JSON.stringify(response));
                 }
             });
@@ -666,9 +666,9 @@ var app = new(function() {
                         //self.characters.push(profile);
                         done(profile);
                     } else {
-						loadingData = false;
-						self.refresh();
-                        return BootstrapDialog.alert("Trying to refresh, error loading character " + JSON.stringify(response) );
+                        loadingData = false;
+                        self.refresh();
+                        return BootstrapDialog.alert("Trying to refresh, error loading character " + JSON.stringify(response));
                     }
                 });
             });

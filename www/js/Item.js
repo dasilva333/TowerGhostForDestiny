@@ -279,7 +279,7 @@ Item.prototype = {
                     console.log("crash reported");
                 }
             });*/
-			app.refresh();
+            app.refresh();
             return BootstrapDialog.alert("Attempted a transfer with no characters loaded, how is that possible? Please report this issue to my Github.");
         }
 
@@ -297,7 +297,7 @@ Item.prototype = {
                     console.log("crash reported");
                 }
             });*/
-			app.refresh();
+            app.refresh();
             return BootstrapDialog.alert("Error has occured, please report this issue to my Github. Target character not found " + targetCharacterId);
         }
         //console.log( self.description );
