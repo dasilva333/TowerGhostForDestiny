@@ -597,7 +597,7 @@ var app = new(function() {
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
                 if (results && (typeof results.data == "undefined")) {
-                    return BootstrapDialog.alert("Error loading Vault " + error);
+                    return BootstrapDialog.alert("Try using the refresh, error loading Vault " + error);
                 }
                 var buckets = results.data.buckets;
                 var profile = new Profile({
