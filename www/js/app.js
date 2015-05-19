@@ -597,30 +597,29 @@ var app = new(function() {
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
-					var buckets = results.data.buckets;
-	                var profile = new Profile({
-	                    race: "",
-	                    order: 0,
-	                    gender: "Tower",
-	                    classType: "Vault",
-	                    id: "Vault",
-	                    level: "",
-	                    imgIcon: "assets/vault_icon.jpg",
-	                    icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
-	                    background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
-	                });
-	
-	                buckets.forEach(function(bucket) {
-	                    bucket.items.forEach(processItem(profile));
-	                });
-	                self.addWeaponTypes(profile.weapons());
-	                self.characters.push(profile);
-	                //console.timeEnd("self.bungie.vault");
-	                done(profile)
-				}
-				else {
+                    var buckets = results.data.buckets;
+                    var profile = new Profile({
+                        race: "",
+                        order: 0,
+                        gender: "Tower",
+                        classType: "Vault",
+                        id: "Vault",
+                        level: "",
+                        imgIcon: "assets/vault_icon.jpg",
+                        icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
+                        background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
+                    });
+
+                    buckets.forEach(function(bucket) {
+                        bucket.items.forEach(processItem(profile));
+                    });
+                    self.addWeaponTypes(profile.weapons());
+                    self.characters.push(profile);
+                    //console.timeEnd("self.bungie.vault");
+                    done(profile)
+                } else {
                     return BootstrapDialog.alert("Try using the refresh, error loading Vault " + (response && response.error) ? response.error : "");
-                }                
+                }
             });
             //console.time("avatars.forEach");			
             avatars.forEach(function(character, index) {
@@ -657,8 +656,7 @@ var app = new(function() {
                         //console.timeEnd("new Profile");
                         self.characters.push(profile);
                         done(profile);
-                    } 
-					else {
+                    } else {
                         return BootstrapDialog.alert("Try using refresh, error loading character " + (response && response.error) ? response.error : "");
                     }
                 });

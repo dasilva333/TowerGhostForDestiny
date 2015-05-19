@@ -96,15 +96,15 @@ Item.prototype = {
             //console.log("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
-				//TODO: I think this is causing issues for some
-				bucketItems = _.where(self.character.items(), {
-                	bucketType: self.bucketType
-            	}),
-				otherItems = _.filter(_.filter(bucketItems, function(item) {
-	                return item._id !== self._id;
-	            }), function(item) {
-	                return (!excludeExotic || excludeExotic && item.tierType !== 6);
-	            });
+                //TODO: I think this is causing issues for some
+                bucketItems = _.where(self.character.items(), {
+                    bucketType: self.bucketType
+                }),
+                otherItems = _.filter(_.filter(bucketItems, function(item) {
+                    return item._id !== self._id;
+                }), function(item) {
+                    return (!excludeExotic || excludeExotic && item.tierType !== 6);
+                });
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
@@ -213,9 +213,13 @@ Item.prototype = {
                     //console.log("result failed");
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false);
-                    else if (result.Message) { BootstrapDialog.alert(result.Message); }
-					//TODO perhaps log this condition and determine the cause
-					else { BootstrapDialog.alert("Unknown error trying to equip " + (result && result.error) ? result.error : "");
+                    else if (result.Message) {
+                        BootstrapDialog.alert(result.Message);
+                    }
+                    //TODO perhaps log this condition and determine the cause
+                    else {
+                        BootstrapDialog.alert("Unknown error trying to equip " + (result && result.error) ? result.error : "");
+                    }
                 }
             });
         }
