@@ -96,12 +96,13 @@ Item.prototype = {
             //console.log("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1;
-            var otherItems = _.filter(_.where(self.character.items(), {
+            var otherItems = _.filter(_.filter(_.where(self.character.items(), {
                 bucketType: self.bucketType
             }), function(item) {
-                return item._id !== self._id && (!excludeExotic || excludeExotic && item.tierType !== 6);
-            });
-            //console.log("other items " + otherItems.length);
+                return item._id !== self._id;
+            }), function(item) {
+				return (!excludeExotic || excludeExotic && item.tierType !== 6);
+			});
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
@@ -273,10 +274,11 @@ Item.prototype = {
             return BootstrapDialog.alert("Attempted a transfer with no characters loaded, how is that possible? Please report this issue to my Github.");
         }
 
-        var isVault = targetCharacterId == "Vault";
+        var isVault = (targetCharacterId == "Vault");
         var ids = _.pluck(characters, 'id');
         x = characters[ids.indexOf(sourceCharacterId)];
         y = characters[ids.indexOf(targetCharacterId)];
+		//TODO: This only seems to be happening now for people whose Vault profile didnt load
         if (_.isUndefined(y)) {
             ga('send', 'exception', {
                 'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),

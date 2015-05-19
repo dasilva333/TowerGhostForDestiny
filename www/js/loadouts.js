@@ -485,7 +485,16 @@
 	                        swapIcon: ownerIcon
 	                    }
 	                }
-	            } catch (e) {}
+	            } catch (e) {
+					ga('send', 'exception', {
+	                    'exDescription': "tierType is missing > " + JSON.stringify(e) + " " + JSON.stringify(item),
+	                    'exFatal': false,
+	                    'appVersion': tgd.version,
+	                    'hitCallback': function() {
+	                        console.log("crash reported");
+	                    }
+	                });				
+				}
 	        });
 	        if (cantMoveEquipped) {
 	            return cantMoveEquipped;
