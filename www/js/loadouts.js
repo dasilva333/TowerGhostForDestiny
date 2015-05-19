@@ -1,8 +1,8 @@
 	/*
-							targetItem: item,
-							swapItem: swapItem,
-							description: item.description + "'s swap item is " + swapItem.description
-							*/
+								targetItem: item,
+								swapItem: swapItem,
+								description: item.description + "'s swap item is " + swapItem.description
+								*/
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
 	    '<li class="list-group-item">' +
@@ -485,7 +485,16 @@
 	                        swapIcon: ownerIcon
 	                    }
 	                }
-	            } catch (e) {}
+	            } catch (e) {
+	                ga('send', 'exception', {
+	                    'exDescription': "tierType is missing > " + JSON.stringify(e) + " " + JSON.stringify(item),
+	                    'exFatal': false,
+	                    'appVersion': tgd.version,
+	                    'hitCallback': function() {
+	                        console.log("crash reported");
+	                    }
+	                });
+	            }
 	        });
 	        if (cantMoveEquipped) {
 	            return cantMoveEquipped;
