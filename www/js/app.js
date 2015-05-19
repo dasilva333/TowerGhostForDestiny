@@ -595,39 +595,36 @@ var app = new(function() {
             var avatars = e.data.characters;
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
-            self.bungie.vault(function(results, error) {
-                if (results && (typeof results.data == "undefined")) {
-                    return BootstrapDialog.alert("Try using the refresh, error loading Vault " + error);
-                }
-                var buckets = results.data.buckets;
-                var profile = new Profile({
-                    race: "",
-                    order: 0,
-                    gender: "Tower",
-                    classType: "Vault",
-                    id: "Vault",
-                    level: "",
-                    imgIcon: "assets/vault_icon.jpg",
-                    icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
-                    background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
-                });
+            self.bungie.vault(function(results, response) {
+                if (results && results.data && results.data.buckets) {
+                    var buckets = results.data.buckets;
+                    var profile = new Profile({
+                        race: "",
+                        order: 0,
+                        gender: "Tower",
+                        classType: "Vault",
+                        id: "Vault",
+                        level: "",
+                        imgIcon: "assets/vault_icon.jpg",
+                        icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
+                        background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
+                    });
 
-                buckets.forEach(function(bucket) {
-                    bucket.items.forEach(processItem(profile));
-                });
-                self.addWeaponTypes(profile.weapons());
-                self.characters.push(profile);
-                //console.timeEnd("self.bungie.vault");
-                done(profile)
+                    buckets.forEach(function(bucket) {
+                        bucket.items.forEach(processItem(profile));
+                    });
+                    self.addWeaponTypes(profile.weapons());
+                    self.characters.push(profile);
+                    //console.timeEnd("self.bungie.vault");
+                    done(profile)
+                } else {
+                    return BootstrapDialog.alert("Try using the refresh, error loading Vault " + (response && response.error) ? response.error : "");
+                }
             });
             //console.time("avatars.forEach");			
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    /* these mostly always happen because of network errors */
-                    if (response && typeof response.data == "undefined") {
-                        return BootstrapDialog.alert("Error loading inventory " + (response && response.error) ? response.error : "");
-                    }
-                    if (response && response.data) {
+                    if (response && response.data && response.data.buckets) {
                         //console.time("new Profile"); 					
                         var profile = new Profile({
                             order: index + 1,
@@ -660,15 +657,7 @@ var app = new(function() {
                         self.characters.push(profile);
                         done(profile);
                     } else {
-                        ga('send', 'exception', {
-                            'exDescription': JSON.stringify(response),
-                            'exFatal': true,
-                            'appName': "error while loading character",
-                            'appVersion': tgd.version,
-                            'hitCallback': function() {
-                                console.log("crash reported");
-                            }
-                        });
+                        return BootstrapDialog.alert("Try using refresh, error loading character " + (response && response.error) ? response.error : "");
                     }
                 });
             });
