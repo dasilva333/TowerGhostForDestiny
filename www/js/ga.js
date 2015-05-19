@@ -51,7 +51,7 @@ tracking = {
                 });
             }
             /* don't log known issue with InAppBrowser using 0.6.0 supposedly fixed since 0.5.4*/
-            if (e.message.indexOf("event.type") == -1) {
+            if (e.filename.toLowerCase().indexOf("inappbrowser") == -1) {
                 ga('send', 'exception', {
                     'exDescription': e.message,
                     'exFatal': true,

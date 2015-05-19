@@ -111,6 +111,7 @@ else {
 		});
 		res.on("end", function() {
 			var payload = JSON.parse(Buffer.concat(data));
+			//TODO: Improve code by recursing through every locale key and saving the rest to a separate file to be put on the server
 			var mobileWorldContentPath = bungieURL + payload.Response.mobileWorldContentPaths.en;
 			console.log("downloading mwcp");
 			http.get(mobileWorldContentPath, function(res) {

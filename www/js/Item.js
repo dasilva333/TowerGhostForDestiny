@@ -264,7 +264,7 @@ Item.prototype = {
             x, y, characters = app.characters();
         if (characters.length == 0) {
             ga('send', 'exception', {
-                'exDescription': "No characters found to transfer with " + self.description,
+                'exDescription': "No characters found to transfer with " + JSON.stringify(app.activeUser()),
                 'exFatal': false,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
