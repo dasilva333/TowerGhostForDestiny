@@ -271,14 +271,15 @@ Item.prototype = {
         var self = this,
             x, y, characters = app.characters();
         if (characters.length == 0) {
-            ga('send', 'exception', {
+            /*ga('send', 'exception', {
                 'exDescription': "No characters found to transfer with " + JSON.stringify(app.activeUser()),
                 'exFatal': false,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
                     console.log("crash reported");
                 }
-            });
+            });*/
+			app.refresh();
             return BootstrapDialog.alert("Attempted a transfer with no characters loaded, how is that possible? Please report this issue to my Github.");
         }
 
@@ -288,14 +289,15 @@ Item.prototype = {
         y = characters[ids.indexOf(targetCharacterId)];
         //TODO: This only seems to be happening now for people whose Vault profile didnt load
         if (_.isUndefined(y)) {
-            ga('send', 'exception', {
+            /*ga('send', 'exception', {
                 'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
                 'exFatal': false,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
                     console.log("crash reported");
                 }
-            });
+            });*/
+			app.refresh();
             return BootstrapDialog.alert("Error has occured, please report this issue to my Github. Target character not found " + targetCharacterId);
         }
         //console.log( self.description );

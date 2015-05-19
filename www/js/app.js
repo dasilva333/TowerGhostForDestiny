@@ -549,37 +549,44 @@ var app = new(function() {
         self.search();
     }
 
+	var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
             return;
         }
+		if (loadingData == true){
+			return;
+		}
+		loadingData = true;
         tgd.duplicates.removeAll();
         var total = 0,
             count = 0,
             profiles = [];
         /* TODO: implement a better loading bar by using the counts and this: #loadingBar */
         function done(profile) {
-            //profiles.push(profile);
+            profiles.push(profile);
             count++;
             if (count == total) {
-                //self.characters(profiles); 
+                self.characters(profiles); 
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
                 setTimeout(self.bucketSizeHandler, 500);
+				loadingData = false;
                 //console.timeEnd("avatars.forEach");
             }
         }
         self.bungie.search(self.activeUser().activeSystem(), function(e) {
             if (e && e.error || !e) {
-                /* if the first account fails retry the next one*/
+				loadingData = false;
+                self.loadingUser(false);
+				/* if the first account fails retry the next one*/
                 if (self.hasBothAccounts()) {
                     self.activeUser().activeSystem(self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN");
                     self.search();
                 } else {
                     BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
                 }
-                self.loadingUser(false);
                 return
             } else if (typeof e.data == "undefined") {
                 ga('send', 'exception', {
@@ -614,11 +621,13 @@ var app = new(function() {
                         bucket.items.forEach(processItem(profile));
                     });
                     self.addWeaponTypes(profile.weapons());
-                    self.characters.push(profile);
+                    //self.characters.push(profile);
                     //console.timeEnd("self.bungie.vault");
                     done(profile)
                 } else {
-                    return BootstrapDialog.alert("Try using the refresh, error loading Vault " + (response && response.error) ? response.error : "");
+					loadingData = false;
+					self.refresh();
+                    return BootstrapDialog.alert("Trying to refresh, error loading Vault " + JSON.stringify(response));
                 }
             });
             //console.time("avatars.forEach");			
@@ -654,10 +663,12 @@ var app = new(function() {
                         //console.timeEnd("processItems");
                         self.addWeaponTypes(profile.items());
                         //console.timeEnd("new Profile");
-                        self.characters.push(profile);
+                        //self.characters.push(profile);
                         done(profile);
                     } else {
-                        return BootstrapDialog.alert("Try using refresh, error loading character " + (response && response.error) ? response.error : "");
+						loadingData = false;
+						self.refresh();
+                        return BootstrapDialog.alert("Trying to refresh, error loading character " + JSON.stringify(response) );
                     }
                 });
             });
