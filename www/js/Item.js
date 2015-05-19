@@ -101,8 +101,8 @@ Item.prototype = {
             }), function(item) {
                 return item._id !== self._id;
             }), function(item) {
-				return (!excludeExotic || excludeExotic && item.tierType !== 6);
-			});
+                return (!excludeExotic || excludeExotic && item.tierType !== 6);
+            });
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
@@ -278,7 +278,7 @@ Item.prototype = {
         var ids = _.pluck(characters, 'id');
         x = characters[ids.indexOf(sourceCharacterId)];
         y = characters[ids.indexOf(targetCharacterId)];
-		//TODO: This only seems to be happening now for people whose Vault profile didnt load
+        //TODO: This only seems to be happening now for people whose Vault profile didnt load
         if (_.isUndefined(y)) {
             ga('send', 'exception', {
                 'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
@@ -383,41 +383,41 @@ Item.prototype = {
                 done();
             } else {
                 var dialogItself = (new tgd.dialog({
-                        message: function(){
-							var $content = $(
-								'<div class="controls controls-row">Transfer Amount: ' +
-								'<button type="button" class="btn btn-default" id="dec">  -  </button>' +
-								' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
-								'<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-								'<button type="button" class="btn btn-default pull-right" id="all"> All (' + self.primaryStat + ') </button>' +
-								'<button type="button" class="btn btn-default pull-right" id="one"> One </button>' +
-								'</div>');
-							$content.find('#dec').click(function(){
-								var num = parseInt($("input#materialsAmount").val());
-								if (!isNaN(num)){
-									$("input#materialsAmount").val(Math.max(num - 1, 1));
-								}
-							});
-							$content.find('#inc').click(function(){
-								var num = parseInt($("input#materialsAmount").val());
-								if (!isNaN(num)){
-									$("input#materialsAmount").val(Math.min(num + 1, self.primaryStat));
-								}
-							});
-							$content.find('#one').click(function(){
-								var num = parseInt($("input#materialsAmount").val());
-								if (!isNaN(num)){
-									$("input#materialsAmount").val(1);
-								}
-							});
-							$content.find('#all').click(function(){
-								var num = parseInt($("input#materialsAmount").val());
-								if (!isNaN(num)){
-									$("input#materialsAmount").val(self.primaryStat);
-								}
-							});
-							return $content;
-						},
+                        message: function() {
+                            var $content = $(
+                                '<div class="controls controls-row">Transfer Amount: ' +
+                                '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
+                                ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
+                                '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> All (' + self.primaryStat + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="one"> One </button>' +
+                                '</div>');
+                            $content.find('#dec').click(function() {
+                                var num = parseInt($("input#materialsAmount").val());
+                                if (!isNaN(num)) {
+                                    $("input#materialsAmount").val(Math.max(num - 1, 1));
+                                }
+                            });
+                            $content.find('#inc').click(function() {
+                                var num = parseInt($("input#materialsAmount").val());
+                                if (!isNaN(num)) {
+                                    $("input#materialsAmount").val(Math.min(num + 1, self.primaryStat));
+                                }
+                            });
+                            $content.find('#one').click(function() {
+                                var num = parseInt($("input#materialsAmount").val());
+                                if (!isNaN(num)) {
+                                    $("input#materialsAmount").val(1);
+                                }
+                            });
+                            $content.find('#all').click(function() {
+                                var num = parseInt($("input#materialsAmount").val());
+                                if (!isNaN(num)) {
+                                    $("input#materialsAmount").val(self.primaryStat);
+                                }
+                            });
+                            return $content;
+                        },
                         buttons: [{
                             label: 'Transfer',
                             cssClass: 'btn-primary',

@@ -596,7 +596,7 @@ var app = new(function() {
             total = avatars.length + 1;
             //console.time("self.bungie.vault");
             self.bungie.vault(function(results, error) {
-                if (results && (typeof results.data == "undefined")) {					
+                if (results && (typeof results.data == "undefined")) {
                     return BootstrapDialog.alert("Try using the refresh, error loading Vault " + error);
                 }
                 var buckets = results.data.buckets;
