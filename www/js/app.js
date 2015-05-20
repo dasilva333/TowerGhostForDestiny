@@ -304,18 +304,18 @@ var app = new(function() {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
-			/* Weapon Perks (Pre-HoW) */
-            if ( activeItem.perks && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+            /* Weapon Perks (Pre-HoW) */
+            if (activeItem.perks && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
-			/* Weapon Perks (Post-HoW) */
-			else if ( activeItem.perks && $content.find(".destt-talent").length == 0){
-				$content.find(".destt-info").prepend(tgd.perksTemplate({
-					perks: activeItem.perks
+            /* Weapon Perks (Post-HoW) */
+            else if (activeItem.perks && $content.find(".destt-talent").length == 0) {
+                $content.find(".destt-info").prepend(tgd.perksTemplate({
+                    perks: activeItem.perks
                 }));
-			}
+            }
             /* Armor Perks */
             else if (activeItem.perks && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
@@ -1214,8 +1214,6 @@ var app = new(function() {
     }
 
     this.init = function() {
-        tgd.version = $(".version:first").text();
-        tracking.init();
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
         }
