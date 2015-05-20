@@ -96,15 +96,15 @@ Item.prototype = {
             //console.log("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
-                //TODO: I think this is causing issues for some
-                bucketItems = _.where(self.character.items(), {
-                    bucketType: self.bucketType
-                }),
-                otherItems = _.filter(_.filter(bucketItems, function(item) {
-                    return item._id !== self._id;
-                }), function(item) {
-                    return (!excludeExotic || excludeExotic && item.tierType !== 6);
-                });
+				otherItems = [];
+			self.character.items().forEach(function(item) {
+				if (item != self && item.bucketType == self.bucketType) {
+					otherItems.push(item);
+				}
+			});
+			otherItems = _.filter(otherItems, function(item) {
+				return (!excludeExotic || excludeExotic && item.tierType !== 6);
+			});
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
