@@ -213,7 +213,7 @@ Item.prototype = {
                     //console.log("result failed");
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false);
-                    else if (result.Message) {
+                    else if (result && result.Message) {
                         BootstrapDialog.alert(result.Message);
                     }
                     //TODO perhaps log this condition and determine the cause
