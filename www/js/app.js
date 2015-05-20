@@ -305,8 +305,8 @@ var app = new(function() {
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
             /* Weapon Perks */
-            if ((activeItem.perks && $content.find(".destt-talent").length == 0)) {
-                $content.find(".destt-info").prepend(tgd.perksTemplate({
+            if (activeItem.perks && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+                $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
@@ -471,7 +471,7 @@ var app = new(function() {
                     itemObject.primaryStat = item.primaryStat.value;
                 }
                 if (item.progression) {
-                    itemObject.progression = (item.progression.progressToNextLevel == 0 && item.progression.currentProgress > 0);
+                    itemObject.progression = (item.progression.progressToNextLevel == 1000 && item.progression.currentProgress > 0);
                 }
 
                 itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
