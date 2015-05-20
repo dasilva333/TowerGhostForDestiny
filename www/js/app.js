@@ -298,8 +298,6 @@ var app = new(function() {
                 if (item) activeItem = item;
             });
         });
-		window.c = $content;
-		console.log( $content );
         if (activeItem) {
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
@@ -479,7 +477,7 @@ var app = new(function() {
                     itemObject.primaryStat = item.primaryStat.value;
                 }
                 if (item.progression) {
-                    itemObject.progression = (item.progression.progressToNextLevel == 1000 && item.progression.currentProgress > 0);
+                    itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
                 }
 
                 itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
