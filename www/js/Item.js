@@ -75,17 +75,17 @@ Item.prototype = {
         }).length;
         var showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
         /*console.log( "searchFilter: " + searchFilter);
-		console.log( "dmgFilter: " + dmgFilter);
-		console.log( "setFilter: " + setFilter);
-		console.log( "tierFilter: " + tierFilter);
-		console.log( "progressFilter: " + progressFilter);
-		console.log( "typeFilter: " + typeFilter);
-		console.log("keyword is: " + $parent.searchKeyword());
-		console.log("keyword is empty " + ($parent.searchKeyword() == ''));
-		console.log("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
-		console.log("perks are " + JSON.stringify(self.perks));
-		console.log("description is " + self.description);
-		console.log("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
+        console.log( "dmgFilter: " + dmgFilter);
+        console.log( "setFilter: " + setFilter);
+        console.log( "tierFilter: " + tierFilter);
+        console.log( "progressFilter: " + progressFilter);
+        console.log( "typeFilter: " + typeFilter);
+        console.log("keyword is: " + $parent.searchKeyword());
+        console.log("keyword is empty " + ($parent.searchKeyword() == ''));
+        console.log("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
+        console.log("perks are " + JSON.stringify(self.perks));
+        console.log("description is " + self.description);
+        console.log("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
         return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
     },
     /* helper function that unequips the current item in favor of anything else */
@@ -363,7 +363,7 @@ Item.prototype = {
                         callback(self.character);
                 }, allowReplacement);
             } else if (sourceCharacterId !== "Vault") {
-                //console.log("from character to vault to character " + self.description);				
+                //console.log("from character to vault to character " + self.description);              
                 self.unequip(function(result) {
                     if (result) {
                         if (self.bucketType == "Subclasses") {
