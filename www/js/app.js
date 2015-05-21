@@ -534,7 +534,7 @@ var app = new(function() {
     }
 
     this.makeBackgroundUrl = function(path, excludeDomain) {
-        return "url(" + (excludeDomain ? "" : self.bungie.getUrl()) + path + ")";
+        return 'url("' + (excludeDomain ? "" : self.bungie.getUrl()) + path + '")';
     }
 
     this.hasBothAccounts = function() {
