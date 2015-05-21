@@ -47,7 +47,7 @@ Profile.prototype = {
         }
     },
     get: function(type) {
-        return this.items().filter(this.filterItemByType(type, false));
+		return _.sortBy(_.sortBy(this.items().filter(this.filterItemByType(type, false)), function(item){ return item.description; }), function(item){ return item.tierType * -1; });
     },
     itemEquipped: function(type) {
         return ko.utils.arrayFirst(this.items(), this.filterItemByType(type, true));
