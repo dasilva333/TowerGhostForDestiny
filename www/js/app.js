@@ -816,6 +816,13 @@ var app = new(function() {
         });
     }
 
+	this.clearCookies = function(){
+		window.cookies.clear(function(){
+			window.localStorage.setItem("bungie_cookies", "");
+			console.log("Cookies cleared");
+		});
+	}
+	
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
@@ -830,7 +837,7 @@ var app = new(function() {
                 ref.addEventListener('loadstop', function(event) {
                     self.readBungieCookie(ref, loop);
                 });
-                ref.addEventListener('exit', function() {
+                /*ref.addEventListener('exit', function() {
                     if (self.loadingUser() == false) {
                         if (_.isEmpty(self.bungie_cookies)) {
                             self.readBungieCookie(ref, loop);
@@ -838,7 +845,7 @@ var app = new(function() {
                             self.loadData();
                         }
                     }
-                });
+                });*/
             } else {
                 clearInterval(loop);
                 loop = setInterval(function() {
