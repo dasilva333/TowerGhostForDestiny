@@ -399,6 +399,12 @@ var app = new(function() {
             if (collection == "All") {
                 self.showMissing(false);
             }
+			else if (collection.indexOf("Weapons") > -1){
+				self.activeView(1);
+			}
+			else if (collection.indexOf("Armor") > -1){
+				self.activeView(2);
+			}
         } else {
             self.setFilter([]);
             self.setFilterFix([]);
