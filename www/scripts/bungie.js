@@ -82,6 +82,18 @@ try {
 	  }
 	
 	  var maxRetries = 3;
+		function retryRequest(opts){
+			//console.log("retrying request");
+			if (opts && opts.tries && opts.tries == maxRetries){
+				opts.complete({error: 'connection error'}); 
+			}
+			else {
+				opts.tries = (opts.tries || 0);
+				opts.tries++;
+				_request(opts);
+			}
+		}
+			
 	  function _request(opts) {
 	  	//This is for Mobile platform/Chrome
 		//console.log("received a _request");
@@ -105,16 +117,9 @@ try {
 		      }
 		    };
 		
-		    r.onerror = function() { 
-				if (opts && opts.tries && opts.tries == maxRetries){
-					opts.complete({error: 'connection error'}); 
-				}
-				else {
-					opts.tries = (opts.tries || 0);
-					opts.tries++;
-					_request(opts);
-				}
-			};
+			r.timeout = (30 * 1000);
+			r.ontimeout = function(){ retryRequest(opts) };
+		    r.onerror = function(){ retryRequest(opts) };
 		
 		    _getToken(function(token) {
 			  //console.log("_getToken finished with " + token);
@@ -183,6 +188,9 @@ try {
 	    });
 	  }
 	  this.search = function(activeSystem, callback) {
+		if ( _.isUndefined(active.type) ){
+			return BootstrapDialog.alert("Please sign in before attempting to refresh");
+		}	  
 	  	this.setsystem(activeSystem);
 	    _request({
 	      route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
