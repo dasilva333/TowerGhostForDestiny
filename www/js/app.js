@@ -266,11 +266,11 @@ var app = new(function() {
     this.showAbout = function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
-    
+
     this.incrementSeconds = function() {
         self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
     }
-    
+
     this.decrementSeconds = function() {
         self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
     }
@@ -405,13 +405,11 @@ var app = new(function() {
             self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
             if (collection == "All") {
                 self.showMissing(false);
+            } else if (collection.indexOf("Weapons") > -1) {
+                self.activeView(1);
+            } else if (collection.indexOf("Armor") > -1) {
+                self.activeView(2);
             }
-			else if (collection.indexOf("Weapons") > -1){
-				self.activeView(1);
-			}
-			else if (collection.indexOf("Armor") > -1){
-				self.activeView(2);
-			}
         } else {
             self.setFilter([]);
             self.setFilterFix([]);
@@ -829,13 +827,13 @@ var app = new(function() {
         });
     }
 
-    this.clearCookies = function(){
-        window.cookies.clear(function(){
+    this.clearCookies = function() {
+        window.cookies.clear(function() {
             window.localStorage.setItem("bungie_cookies", "");
             console.log("Cookies cleared");
         });
     }
-    
+
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
