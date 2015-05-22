@@ -66,7 +66,7 @@ Item.prototype = {
         var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
             ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
-        var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1 || $parent.setFilterFix().indexOf(self.id) > -1;
+        var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1 || ($parent.setFilterFix() && $parent.setFilterFix().indexOf(self.id) > -1);
         var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
         var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
         var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
