@@ -791,10 +791,6 @@ var app = new(function() {
         });
     }
 
-    this.showVersion = function() {
-        BootstrapDialog.alert("Current version is " + tgd.version);
-    }
-
     this.donate = function() {
         window.open("http://bit.ly/1Jmb4wQ", "_system");
     }
@@ -1008,14 +1004,21 @@ var app = new(function() {
             self.loadouts(_loadouts);
         }
     }
+	
+	this.showWhatsNew = function(callback){
+		(new tgd.dialog).title("Tower Ghost for Destiny (version: " + tgd.version + ")").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
+			if (_.isFunction(callback)) callback();
+		});
+	}
+	
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
             var cookie = window.localStorage.getItem("whatsnew");
             if (_.isEmpty(cookie) || parseInt(cookie) < version) {
-                (new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
-                    window.localStorage.setItem("whatsnew", version.toString());
-                })
+                self.showWhatsNew(function(){
+					window.localStorage.setItem("whatsnew", version.toString());
+				});
             }
         }
     }
