@@ -1,7 +1,6 @@
-window.ga_debug = {
+/*window.ga_debug = {
     trace: true
-};
-
+};*/
 
 _ga = new (function(){
 	var self = this;
@@ -51,7 +50,7 @@ _ga = new (function(){
 		    a.async = 1;
 		    a.src = g;
 		    m.parentNode.insertBefore(a, m)
-		})(window, document, 'script', 'https://ssl.google-analytics.com/analytics_debug.js', 'ga'); //analytics_debug.js to debug
+		})(window, document, 'script', 'https://ssl.google-analytics.com/analytics.js', 'ga'); //analytics_debug.js to debug
 
 	}
 	
