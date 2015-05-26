@@ -15,7 +15,18 @@ window.ga_debug = {
     m.parentNode.insertBefore(a, m)
 })(window, document, 'script', 'https://ssl.google-analytics.com/analytics_debug.js', 'ga'); //analytics_debug.js to debug
 
-ga('create', 'UA-61575166-1', 'auto');
+ga_options = {
+    'cookieDomain': 'none'
+};
+
+if (isMobile){
+	ga_options = {
+		'storage': 'none',
+		'clientId':device.uuid
+	}
+}
+
+ga('create', 'UA-61575166-1', ga_options);
 //Allow tracking in extensions, mobile devices etc
 ga('set', 'checkProtocolTask', function() { /* nothing */ });
 ga('set', 'appVersion', tgd.version);
