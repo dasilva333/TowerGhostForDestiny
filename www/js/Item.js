@@ -440,7 +440,7 @@ Item.prototype = {
                                 dialogItself.close();
                             }
                         }]
-                    })).title("Transfer Materials - " + self.description).show(true),
+                    })).title("Transfer Materials").show(true),
                     finishTransfer = function() {
                         transferAmount = parseInt($("input#materialsAmount").val());
                         if (!isNaN(transferAmount)) {
