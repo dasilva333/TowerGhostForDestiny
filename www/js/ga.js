@@ -1,4 +1,6 @@
-//window.ga_debug = {trace: true};
+window.ga_debug = {
+    trace: true
+};
 
 //Tracking for Universal Analytics
 (function(i, s, o, g, r, a, m) {
@@ -11,7 +13,7 @@
     a.async = 1;
     a.src = g;
     m.parentNode.insertBefore(a, m)
-})(window, document, 'script', 'https://ssl.google-analytics.com/analytics.js', 'ga'); //analytics_debug.js to debug
+})(window, document, 'script', 'https://ssl.google-analytics.com/analytics_debug.js', 'ga'); //analytics_debug.js to debug
 
 ga('create', 'UA-61575166-1', {
     'cookieDomain': 'none'
