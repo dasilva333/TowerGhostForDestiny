@@ -1,9 +1,9 @@
 tgd.dialog = (function(options) {
-    var self = this;
+    var self = this; 
 
     this.modal;
 
-    this.title = function(title) {
+    this.title = function(title) { 
         self.modal = new BootstrapDialog(options);
         self.modal.setTitle(title);
         return self;
@@ -214,6 +214,11 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+	
+	this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
+	this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
+	this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
+	this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
@@ -246,7 +251,7 @@ var app = new(function() {
     this.characters = ko.observableArray();
     this.orderedCharacters = ko.computed(function() {
         return self.characters().sort(function(a, b) {
-            return a.order - b.order;
+            return a.order() - b.order();
         });
     });
 
@@ -791,6 +796,10 @@ var app = new(function() {
         });
     }
 
+    this.showVersion = function() {
+        BootstrapDialog.alert("Current version is " + tgd.version);
+    }
+
     this.donate = function() {
         window.open("http://bit.ly/1Jmb4wQ", "_system");
     }
@@ -1004,21 +1013,14 @@ var app = new(function() {
             self.loadouts(_loadouts);
         }
     }
-	
-	this.showWhatsNew = function(callback){
-		(new tgd.dialog).title("Tower Ghost for Destiny (version: " + tgd.version + ")").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function(){
-			if (_.isFunction(callback)) callback();
-		});
-	}
-	
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
             var cookie = window.localStorage.getItem("whatsnew");
             if (_.isEmpty(cookie) || parseInt(cookie) < version) {
-                self.showWhatsNew(function(){
-					window.localStorage.setItem("whatsnew", version.toString());
-				});
+                (new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+                    window.localStorage.setItem("whatsnew", version.toString());
+                })
             }
         }
     }
@@ -1233,7 +1235,55 @@ var app = new(function() {
 
         nextNormalize();
     }
-
+	
+	this.setVaultTo = function(pos){
+		return function(){
+			var vault = _.findWhere( self.characters(), { id: "Vault" });
+			if (vault)
+				vault.order(pos);
+			else
+				return false;	
+		}
+	}
+	
+	this.isVaultAt = function(pos){
+		return ko.computed(function(){
+			var vault = _.findWhere( self.characters(), { id: "Vault" });
+			if (vault){
+				result=(vault.order() == pos);
+			}	
+			else {
+				result=false;
+			}	
+			return result;
+		}).extend({
+            rateLimit: {
+                timeout: 1000,
+                method: "notifyWhenChangesStop"
+            }
+        });
+	}
+	
+	this.columnMode = ko.computed(function(){
+		return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
+	});
+	
+	this.setColumns = function(type, input){
+		return function(){
+			self[type + "Column"](12 / input.value);
+		}
+	}
+	
+	this.btnActive = function(type, input){
+		return ko.computed(function(){		
+			return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
+		});
+	};
+	
+	this.viewOptions = function(){	    
+		$("#viewOptions").toggle();
+	}
+	
     this.init = function() {
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");

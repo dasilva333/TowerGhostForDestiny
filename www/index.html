@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 
 <head>
     <meta charset="utf-8" />
@@ -86,174 +86,25 @@
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						</span>
                 </div>
             </div>
             <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
                 <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							<img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					</span>
             </div>
         </div>
         <!--/ko  -->
     </script>
+
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -263,7 +114,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.6.4</span></a>
+                <a class="navbar-brand" href="#" data-bind="click: showVersion">TGD <span data-bind="visible: !isMobile"><span class="version">2.6.4</span></a>
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
                         <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false">
@@ -351,6 +202,8 @@
                             <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="3">
                                 <a href="#"><i class="fa" data-bind="css: activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>General</a>
                             </li>
+							<li class="divider"></li>
+							<li><a href="#" data-bind="fastclick: viewOptions">View Options</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -480,43 +333,74 @@
             </div>
         </div>
     </nav>
+	<div class="container well bs-component" style="display:none;" id="viewOptions">
+		<div class="container-fluid">
+			<form class="form-horizontal">
+			  <fieldset>
+				    <legend>View Options</legend>
+					<div class="form-group">
+				      <label class="col-xs-3 control-label"># of Columns</label>
+				      <div class="col-xs-9">
+				        <div class="row">
+							<div class="col-xs-1">XS</div>
+							<div class="btn-group col-xs-11">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-1">SM</div>
+							<div class="btn-group col-xs-11">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-1">MD</div>
+							<div class="btn-group col-xs-11">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-1">LG</div>
+							<div class="btn-group col-xs-11">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+							</div>
+						</div>
+				      </div>
+				    </div>
+					<div class="form-group">
+						<label class="col-xs-3 control-label">Vault Position</label>
+						<div class="col-xs-9">
+							<label>
+								<input type="Checkbox" data-bind="checked: isVaultAt(0), click: setVaultTo(0)"> First/Left
+							</label>
+							<label>
+								<input type="Checkbox" data-bind="checked: isVaultAt($root.characters().length), click: setVaultTo($root.characters().length)"> Last/Right
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
     <div class="alert alert-info" data-bind="visible: shareView" style="display:none;">
         <strong>DestinyExotics.com</strong> Share URL: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
     </div>
     <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
         <strong>Missing Items</strong>
         <span data-bind="foreach: { data: missingSets }">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		</span>
     </div>
     <div data-bind="with: $root.activeUser()" style="">
@@ -606,7 +490,7 @@
     <div class="container">
         <div class="container-fluid" id="charactersContainer">
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 profile" data-bind="attr:{id: character.id}">
+                <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
                     <div class="character">
                         <div class="character-box" data-bind="style: { backgroundImage: background }">
                             <div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
@@ -664,117 +548,12 @@
                 <p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, <span data-bind="text: isMobile ? 'hold':'check'"></span> to equip.</p>
             </div>
             <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 				<span class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 				</span>
             </span>
         </div>
