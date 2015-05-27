@@ -99,12 +99,12 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 					fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 				}
 				else {
-					var dataPath = "./data/" + locale + "/";
+					var dataPath = "./locale/" + locale + "/";
 					console.log('saving file: ' + filename);
 					if (!fs.existsSync(dataPath)){
 						fs.mkdirSync(dataPath);
 					}
-					fs.writeFileSync(dataPath + filename, "_" + set.name + "="+JSON.stringify(obj));
+					fs.writeFileSync(dataPath + filename, JSON.stringify(obj));
 				}
 			});
 		});	

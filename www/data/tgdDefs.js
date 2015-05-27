@@ -72,7 +72,9 @@ tgd.defaults = {
 	smColumn: 6,
 	mdColumn: 4,
 	lgColumn: 3,
-	locale: "en"
+	locale: "en",
+	defsLocale: "en",
+	itemDefs: ""
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +

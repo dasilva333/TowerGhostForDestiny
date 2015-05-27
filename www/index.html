@@ -226,7 +226,7 @@
 								</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: viewOptions, text: tgd.localText.menu_view_options">View Options</a></li>
+                            <li><a href="#" data-bind="fastclick: toggleViewOptions, text: tgd.localText.menu_view_options">View Options</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -394,10 +394,10 @@
         <div class="container-fluid">
             <form class="form-horizontal">
                 <fieldset>
-                    <legend>View Options</legend>
+                    <legend data-bind="text: tgd.localText.menu_view_options">View Options</legend>
                     <div class="form-group">
-                        <label class="col-xs-3 control-label"># of Columns</label>
-                        <div class="col-xs-9">
+                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: tgd.localText.vo_number_of_columns"># of Columns</label>
+                        <div class="col-xs-12 col-sm-9">
                             <div class="row">
                                 <div class="col-xs-1">XS</div>
                                 <div class="btn-group col-xs-11">
@@ -437,13 +437,15 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-3 control-label">Vault Position</label>
-                        <div class="col-xs-9">
+                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: tgd.localText.vault_position">Vault Position</label>
+                        <div class="col-xs-12 col-sm-9">
                             <label>
-                                <input type="Checkbox" data-bind="checked: isVaultAt(0), click: setVaultTo(0)"> First/Left
+                                <input type="Checkbox" data-bind="checked: isVaultAt(0), click: setVaultTo(0)"> 
+								<span data-bind="text: tgd.localText.vo_vault_first">First/Left</span>
                             </label>
                             <label>
-                                <input type="Checkbox" data-bind="checked: isVaultAt($root.characters().length), click: setVaultTo($root.characters().length)"> Last/Right
+                                <input type="Checkbox" data-bind="checked: isVaultAt($root.characters().length), click: setVaultTo($root.characters().length)"> 
+								<span data-bind="text: tgd.localText.vo_vault_last">Last/Right</span>
                             </label>
                         </div>
                     </div>
@@ -452,14 +454,12 @@
         </div>
     </div>
     <div class="alert alert-info" data-bind="visible: shareView" style="display:none;">
-        <strong>DestinyExotics.com</strong> Share URL: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
+        <span data-bind="text: tgd.localText.menu_shareurl"></span>: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
     </div>
     <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
-        <strong>Missing Items</strong>
+        <strong data-bind="text: tgd.localText.missing_items">Missing Items</strong>
         <span data-bind="foreach: { data: missingSets }">
-
 			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>
-
 		</span>
     </div>
     <div data-bind="with: $root.activeUser()" style="">
@@ -471,10 +471,10 @@
                 <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-lg-4 col-lg-offset-4 text-center">
                     <div class="panel panel-success" id="loginForm">
                         <div class="panel-heading">
-                            <h2 class="panel-title">Welcome to Tower Ghost for Destiny!</h2>
+                            <h2 class="panel-title" data-bind="text: tgd.localText.login_title">Welcome to Tower Ghost for Destiny!</h2>
                         </div>
                         <div class="panel-body">
-                            <p>To get started you'll need to log in to your Bungie.net account via:</p>
+                            <p data-bind="text: tgd.localText.login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
                             <div class="btn-padding">
                                 <div class="form-group">
                                     <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
@@ -483,7 +483,7 @@
                                     <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
                                 </div>
                             </div>
-                            <p>Please wait for the login window to auto close as TGD prepares your information.</p>
+                            <p data-bind="text: tgd.localText.login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
                         </div>
                     </div>
                 </div>
@@ -492,7 +492,7 @@
     </div>
     <div style="display:none;" data-bind="visible: loadingUser() == true && hiddenWindowOpen() == false">
         <div class="col-xs-12">
-            <h4>Please wait, loading arsenal from Bungie</h4>
+            <h4 data-bind="text: tgd.localText.login_loading_inventory">Please wait, loading arsenal from Bungie</h4>
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-success" style="width: 100%"></div>
             </div>
@@ -500,7 +500,7 @@
     </div>
     <div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
         <div class="col-xs-12">
-            <h4>Please be patient, logging into Bungie</h4>
+            <h4 data-bind="text: tgd.localText.login_authenticating">Please be patient, logging into Bungie</h4>
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
             </div>
@@ -510,27 +510,27 @@
         <div class="container-fluid">
             <div class="move-popup row no-gutter">
                 <div class="item-name col-xs-12">
-                    Move: <span data-bind="text: description"></span>
+                    <span data-bind="text: tgd.localText.movepopup_move"></span>: <span data-bind="text: description"></span>
                 </div>
                 <div class="locations col-xs-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">
                     <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
                             <div class="attkIcon">
-                                <div class="icon-banner">vault</div>
+                                <div class="icon-banner" data-bind="text: tgd.localText.movepopup_vault"></div>
                                 <img data-bind="attr: { src : imgIcon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
                             <div class="attkIcon">
-                                <div class="icon-banner">store</div>
+                                <div class="icon-banner" data-bind="text: tgd.localText.movepopup_store"></div>
                                 <img data-bind="attr: { src : imgIcon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
                             <div class="attkIcon">
-                                <div class="icon-banner">equip</div>
+                                <div class="icon-banner" data-bind="text: tgd.localText.movepopup_equip"></div>
                                 <img data-bind="attr: { src : imgIcon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
@@ -538,7 +538,7 @@
                     </div>
                     <div class="move-button col-xs-2" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (character.id !== 'Vault') && (bucketType == 'Materials' || bucketType == 'Consumables')">
                         <div class="attkIcon">
-                            <div class="icon-banner">extras</div>
+                            <div class="icon-banner" data-bind="text: tgd.localText.movepopup_extras">extras</div>
                             <img src="assets/icon128.png">
                         </div>
                     </div>
@@ -560,24 +560,24 @@
                     <div class="inventory">
                         <div class="items" data-type="item">
                             <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong>Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
+                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: tgd.localText.inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong>Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
+                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: tgd.localText.inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong>Sub Classes</strong></div>
+                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: tgd.localText.inventory_subclasses">Sub Classes</strong></div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong>General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
+                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: tgd.localText.inventory_general">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
                                 <!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong>Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
+                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: tgd.localText.inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }"></div>
                             </div>
                         </div>
@@ -596,30 +596,27 @@
         <div class="content" data-bind="with: activeLoadout">
             <div id="loadout-options">
                 <input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
-                <span id="loadout-save" data-bind="fastclick: save">Save</span>
-                <span id="loadout-save" data-bind="fastclick: remove">Delete</span>
-                <span id="loadout-save" data-bind="fastclick: $root.cancelLoadout">Close</span>
+                <span id="loadout-save" data-bind="fastclick: save, text: tgd.localText.loadouts_save">Save</span>
+                <span id="loadout-save" data-bind="fastclick: remove, text: tgd.localText.loadouts_delete">Delete</span>
+                <span id="loadout-save" data-bind="fastclick: $root.cancelLoadout, text: tgd.localText.loadouts_close">Close</span>
                 <!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
                 <div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }">
                     <div class="lower-left" data-bind="text: classLetter"></div>
                 </div>
                 <!--/ko  -->
-                <p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">No items in loadout, click items to add, <span data-bind="text: isMobile ? 'hold':'check'"></span> to equip.</p>
+                <p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">
+					<span data-bind="text: tgd.localText.loadouts_instructions">No items in loadout, click items to add, </span>
+					<span data-bind="text: isMobile ? tgd.localText.loadouts_mobile:tgd.localText.loadouts_desktop"></span> 
+					<span data-bind="text: tgd.localText.loadouts_instructions_contd">to equip.</span>					
+				</p>
             </div>
             <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
-
 				<span class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
-
 					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
-
 					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-
 						<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-
 					</a>
-
 					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-
 				</span>
             </span>
         </div>
@@ -627,7 +624,7 @@
     <div id="about" style="display:none">
         <h2 style="margin-top:0;">Tower Ghost for Destiny<br>Manage your gear anywhere</h2>
         <p><strong>Version: <span class="version">2.6.5</span></strong></p>
-        <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this site is the property of Bungie.</p>
+        <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
             <input type="hidden" name="cmd" value="_s-xclick">
             <input type="hidden" name="hosted_button_id" value="5X265ELN4Y5FU">

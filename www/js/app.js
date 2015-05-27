@@ -214,6 +214,8 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+	this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
+	this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
 	this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
@@ -371,6 +373,11 @@ var app = new(function() {
             $content.find(".stat-bar-empty").css("width", "125px");
         }
         callback($content.html());
+    }
+	
+    this.toggleViewOptions = function() {
+		self.toggleBootstrapMenu();
+        $("#viewOptions").toggle();
     }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
@@ -748,6 +755,17 @@ var app = new(function() {
                 self.activeUser(new User(user));
 				self.locale( self.activeUser().user.locale );
 				tgd.localText = tgd.locale[self.locale()];
+				if ( self.locale() != "en" && self.defsLocale() != self.locale() ){
+					$.ajax({
+						url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
+						success: function(data){
+							BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
+							self.itemDefs(data);
+							self.defsLocale(self.locale());
+							self.initItemDefs();
+						}
+					});
+				}
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -1022,7 +1040,7 @@ var app = new(function() {
 	
 	this.showWhatsNew = function(callback){
 		(new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
-			if (callback) callback(); 
+			if (_.isFunction(callback)) callback(); 
 		})
 	}
     this.whatsNew = function() {
@@ -1297,15 +1315,19 @@ var app = new(function() {
         });
     };
 
-    this.viewOptions = function() {
-        $("#viewOptions").toggle();
-    }
-
+	this.initItemDefs = function(){
+		var itemDefs = self.itemDefs();
+		if (!_.isEmpty(itemDefs)){
+			window._itemDefs = JSON.parse(itemDefs);
+		}
+	}
+	
     this.init = function() {
 		tgd.localText = tgd.locale[self.locale()];
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
-        }		
+        }
+		self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
