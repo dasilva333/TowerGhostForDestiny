@@ -48,7 +48,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             app.activeLoadout().ids.remove(existingItem);
         else {
             if (item._id == 0) {
-                BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
+                BootstrapDialog.alert(tgd.localText.unable_create_loadout_for_type);
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
                 }).length < 9) {
@@ -58,13 +58,13 @@ tgd.moveItemPositionHandler = function(element, item) {
                     doEquip: false
                 });
             } else {
-                BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
+                BootstrapDialog.alert(tgd.localText.unable_to_create_loadout_for_bucket + item.bucketType);
             }
         }
     } else {
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master") {
-            return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
+            return BootstrapDialog.alert(tgd.localText.unable_to_move_postmaster);
         }
         if (element == activeElement) {
             $movePopup.hide();
@@ -111,7 +111,7 @@ window.ko.bindingHandlers.scrollToView = {
             })
             .on("press", function() {
 
-                BootstrapDialog.alert("This icon is " + viewModel.uniqueName);
+                BootstrapDialog.alert(tgd.localText.this_icon + viewModel.uniqueName);
             });
         app.quickIconHighlighter();
     }
@@ -214,6 +214,7 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+	this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
     this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
@@ -311,6 +312,12 @@ var app = new(function() {
             });
         });
         if (activeItem) {
+			/* Title using locale */
+			$content.find("h2.destt-has-icon").text( activeItem.description );
+			/* Type using locale */
+			$content.find("h3.destt-has-icon").text( activeItem.typeName );
+			/* Description using locale */
+			$content.find(".destt-desc").text( activeItem.itemDescription );
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
@@ -397,7 +404,7 @@ var app = new(function() {
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length == 0) {
-            BootstrapDialog.alert("Please pick a Set before selecting this option");
+            BootstrapDialog.alert(tgd.localText.pick_a_set);
         } else {
             self.showMissing(!self.showMissing());
         }
@@ -415,11 +422,11 @@ var app = new(function() {
             } else if (collection.indexOf("Armor") > -1) {
                 self.activeView(2);
             }
-        } else {
+        } 
+		else {
             self.setFilter([]);
             self.setFilterFix([]);
             self.showMissing(false);
-            BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
         }
     }
     this.setView = function(model, event) {
@@ -482,6 +489,7 @@ var app = new(function() {
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
+					itemDescription: info.itemDescription,
                     bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
                     typeName: info.itemTypeName,
@@ -607,7 +615,7 @@ var app = new(function() {
                     self.activeUser().activeSystem(self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN");
                     self.search();
                 } else {
-                    BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
+                    BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
                 }
                 return
             } else if (typeof e.data == "undefined") {
@@ -619,7 +627,7 @@ var app = new(function() {
                         console.log("crash reported");
                     }
                 });
-                return BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
+                return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -649,7 +657,7 @@ var app = new(function() {
                 } else {
                     loadingData = false;
                     self.refresh();
-                    return BootstrapDialog.alert("Trying to refresh, error loading Vault " + JSON.stringify(response));
+                    return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(response));
                 }
             });
             //console.time("avatars.forEach");          
@@ -690,7 +698,7 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert("Trying to refresh, error loading character " + JSON.stringify(response));
+                        return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(response));
                     }
                 });
             });
@@ -738,6 +746,8 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(new User(user));
+				self.locale( self.activeUser().user.locale );
+				tgd.localText = tgd.locale[self.locale()];
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -794,10 +804,6 @@ var app = new(function() {
             var bottom = top + $item.height();
             $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
         });
-    }
-
-    this.showVersion = function() {
-        BootstrapDialog.alert("Current version is " + tgd.version);
     }
 
     this.donate = function() {
@@ -1013,14 +1019,20 @@ var app = new(function() {
             self.loadouts(_loadouts);
         }
     }
+	
+	this.showWhatsNew = function(callback){
+		(new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+			if (callback) callback(); 
+		})
+	}
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
             var cookie = window.localStorage.getItem("whatsnew");
             if (_.isEmpty(cookie) || parseInt(cookie) < version) {
-                (new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
-                    window.localStorage.setItem("whatsnew", version.toString());
-                })
+                self.showWhatsNew(function(){
+					window.localStorage.setItem("whatsnew", version.toString());
+				});
             }
         }
     }
@@ -1290,9 +1302,10 @@ var app = new(function() {
     }
 
     this.init = function() {
+		tgd.localText = tgd.locale[self.locale()];
         if (_.isUndefined(window._itemDefs)) {
-            return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
-        }
+            return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
+        }		
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {

@@ -39,6 +39,7 @@
     <script type="text/javascript" src="data/talentGridDefs.js"></script>
     <script type="text/javascript" src="data/raceDefs.js"></script>
     <script type="text/javascript" src="data/tgdDefs.js"></script>
+	<script type="text/javascript" src="js/locale.js"></script>
     <script type="text/javascript" src="js/version.js"></script>
     <script type="text/javascript" src="scripts/lzstring.min.js"></script>
     <script type="text/javascript" src="js/dependencies/modernizr.custom.js"></script>
@@ -124,7 +125,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#" data-bind="click: showVersion">TGD <span data-bind="visible: !isMobile"><span class="version">2.6.5</span></a>
+                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.6.5</span></a>
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
                         <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false">
@@ -134,47 +135,47 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li class="dropdown">
-                        <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text">Clear Filters</span></a>
+                        <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: tgd.localText.menu_clear">Clear Filters</span></a>
                     </li>
                     <li class="dropdown">
-                        <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text">Refresh</span></a>
+                        <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text" data-bind="text: tgd.localText.menu_refresh">Refresh</span></a>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text">Settings</span> <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i>Clear Filters</a></li>
-                            <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i>About</a></li>
-                            <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i>Help</a></li>
-                            <li><a href="#" data-bind="fastclick: donate"><i class="fa fa-credit-card"></i>Donate</a></li>
+                            <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i><span data-bind="text: tgd.localText.menu_clear">Clear Filters</span></a></li>
+                            <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: tgd.localText.menu_about">About</span></a></li>
+                            <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: tgd.localText.menu_help">Help</span></a></li>
+                            <li><a href="#" data-bind="fastclick: donate"><i class="fa fa-credit-card"></i><span data-bind="text: tgd.localText.menu_donate">Donate</span></a></li>
                             <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i>DestinyExotics Share URL</a></li>
+                            <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: tgd.localText.menu_shareurl">DestinyExotics Share URL</span></a></li>
                             <li class="divider"></li>
                             <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i>Auto Refresh</a>
+                                <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_autorefresh">Auto Refresh</span></a>
                             </li>
                             <li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: tooltipsEnabled() == true ? 'fa-check-square' : 'fa-square'"></i>DestinyDB Tooltips</a>
+                                <a href="#"><i class="fa" data-bind="css: tooltipsEnabled() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_destinydbtooltips">DestinyDB Tooltips</span></a>
                             </li>
                             <li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: destinyDbMode() == true ? 'fa-check-square' : 'fa-square'"></i>DestinyDB Mode</a>
+                                <a href="#"><i class="fa" data-bind="css: destinyDbMode() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_destinydbmode">DestinyDB Mode</span></a>
                             </li>
                             <li data-bind="fastclick: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: autoTransferStacks() == true ? 'fa-check-square' : 'fa-square'"></i>Auto Transfer Stacks</a>
+                                <a href="#"><i class="fa" data-bind="css: autoTransferStacks() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_autotransfer">Auto Transfer Stacks</span></a>
                             </li>
                             <li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i>Auto Pad Height</a>
+                                <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_padheight">Auto Pad Height</span></a>
                             </li>
                             <li class="divider"></li>
                             <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
                             <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
-                            <li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount">Use Xbox Account</a></li>
-                            <li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount">Use Playstation Account</a></li>
+                            <li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: tgd.localText.menu_usexbox">Use Xbox Account</a></li>
+                            <li data-bind="visible: hasBothAccounts(), css: activeUser() && activeUser().activeSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: tgd.localText.menu_useps">Use Playstation Account</a></li>
                         </ul>
                     </li>
                 </ul>
                 <form class="navbar-form navbar-right">
                     <div class="input-group spinner">
-                        <span class="input-group-addon">Refresh (secs)</span>
+                        <span class="input-group-addon" data-bind="text: tgd.localText.menu_refresh">Refresh (secs)</span>
                         <input type="text" class="form-control" placeholder="Refresh (in seconds)" title="Refresh Automatically (in seconds)" data-bind="value: refreshSeconds">
                         <div class="input-group-btn-vertical">
                             <button class="btn btn-default" type="button" data-bind="click: incrementSeconds"><i class="fa fa-caret-up"></i></button>
@@ -185,7 +186,7 @@
                 </form>
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Loadouts <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span data-bind="text: tgd.localText.menu_loadouts">Loadouts</span> <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
                             <!-- ko foreach: { data: sortedLoadouts, as: 'loadout' } -->
                             <li data-bind="fastclick: setActive">
@@ -193,34 +194,51 @@
                             </li>
                             <!--/ko  -->
                             <li class="divider"></li>
-                            <li data-bind="fastclick: createLoadout"><a href="#"><i class="fa fa-plus"></i>Create</a></li>
-                            <li data-bind="fastclick: cancelLoadout"><a href="#"><i class="fa fa-times"></i>Cancel</a></li>
+                            <li data-bind="fastclick: createLoadout"><a href="#"><i class="fa fa-plus"></i>
+								<span data-bind="text: tgd.localText.menu_loadouts_create">Create</span>
+							</a></li>
+                            <li data-bind="fastclick: cancelLoadout"><a href="#"><i class="fa fa-times"></i>
+								<span data-bind="text: tgd.localText.menu_loadouts_cancel">Cancel</span>
+							</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">View <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span data-bind="text: tgd.localText.menu_view">View</span> <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
                             <li class="menu-opt" data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="0">
-                                <a href="#"><i class="fa" data-bind="css: activeView() == 0 ? 'fa-check-square' : 'fa-square'"></i>All</a>
+                                <a href="#"><i class="fa" data-bind="css: activeView() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_all">All</span>
+								</a>
                             </li>
                             <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="1">
-                                <a href="#"><i class="fa" data-bind="css: activeView() == 1 ? 'fa-check-square' : 'fa-square'"></i>Weapons</a>
+                                <a href="#"><i class="fa" data-bind="css: activeView() == 1 ? 'fa-check-square' : 'fa-square'"></i>									
+									<span data-bind="text: tgd.localText.menu_view_weapons">Weapons</span>
+								</a>
                             </li>
                             <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="2">
-                                <a href="#"><i class="fa" data-bind="css: activeView() == 2 ? 'fa-check-square' : 'fa-square'"></i>Armor</a>
+                                <a href="#"><i class="fa" data-bind="css: activeView() == 2 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_view_armor">Armor</span>
+								</a>
                             </li>
                             <li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="3">
-                                <a href="#"><i class="fa" data-bind="css: activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>General</a>
+                                <a href="#"><i class="fa" data-bind="css: activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_view_general">General</span>
+								</a>
                             </li>
                             <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: viewOptions">View Options</a></li>
+                            <li><a href="#" data-bind="fastclick: viewOptions, text: tgd.localText.menu_view_options">View Options</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Set <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<span data-bind="text: tgd.localText.menu_set">Set</span>
+							<span class="caret"></span>
+						</a>
                         <ul class="dropdown-menu" role="menu">
                             <li data-bind="css: setFilter().length == 0 ? 'active' : '', fastclick: setSetFilter" value="All">
-                                <a href="#"><i class="fa" data-bind="css: setFilter().length == 0 ? 'fa-check-square' : 'fa-square'"></i>All</a>
+                                <a href="#"><i class="fa" data-bind="css: setFilter().length == 0 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_all">All</span>
+								</a>
                             </li>
                             <li data-bind="css: setFilter() == _collections.vaultWeapons ? 'active' : '', fastclick: setSetFilter" value="vaultWeapons">
                                 <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultWeapons ? 'fa-check-square' : 'fa-square'"></i>VoG Weapons</a>
@@ -263,17 +281,27 @@
                             </li>
                             <li class="divider"></li>
                             <li data-bind="css: showMissing() ? 'active' : '', fastclick: toggleShowMissing">
-                                <a href="#"><i class="fa" data-bind="css: showMissing() ? 'fa-check-square' : 'fa-square'"></i>Show Missing Items</a></li>
+                                <a href="#"><i class="fa" data-bind="css: showMissing() ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_set_showmissing">Show Missing Items</span>
+								</a>
+							</li>
                             <li data-bind="css: showDuplicate() ? 'active' : '', fastclick: toggleDuplicates">
-                                <a href="#"><i class="fa" data-bind="css: showDuplicate() ? 'fa-check-square' : 'fa-square'"></i>Show Duplicate Items</a>
+                                <a href="#"><i class="fa" data-bind="css: showDuplicate() ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_set_showduplicates">Show Duplicate Items</span>
+								</a>
                             </li>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tier <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<span data-bind="text: tgd.localText.menu_tier">Tier</span>
+							<span class="caret"></span>
+						</a>
                         <ul class="dropdown-menu" role="menu">
                             <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="0">
-                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>All</a>
+                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_all">All</span>
+								</a>
                             </li>
                             <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="2">
                                 <a href="#"><i class="fa" data-bind="css: tierFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>Common</a>
@@ -293,24 +321,38 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Progress <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<span data-bind="text: tgd.localText.menu_progress">Progress</span>
+							<span class="caret"></span>
+						</a>
                         <ul class="dropdown-menu" role="menu">
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="0">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>All</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_all">All</span>
+								</a>
                             </li>
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="1">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 1 ? 'fa-check-square' : 'fa-square'"></i>Missing XP</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 1 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_progress_1">Missing XP</span>
+								</a>
                             </li>
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="2">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>Full XP</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_progress_2">Full XP</span>
+								</a>
                             </li>
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="3">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>Maxed</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_progress_3">Maxed</span>
+								</a>
                             </li>
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Damage <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<span data-bind="text: tgd.localText.menu_damage">Damage</span>
+							<span class="caret"></span>
+						</a>
                         <ul class="dropdown-menu" role="menu">
                             <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Kinetic">
                                 <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Kinetic') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/kinetic.png" class="icon">Kinetic (None)</a>
@@ -327,10 +369,15 @@
                         </ul>
                     </li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Weapons <span class="caret"></span></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+							<span data-bind="text: tgd.localText.menu_weapons">Damage</span>
+							<span class="caret"></span>
+						</a>
                         <ul class="dropdown-menu" role="menu">
                             <li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter" value="0">
-                                <a href="#"><i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>All</a>
+                                <a href="#"><i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: tgd.localText.menu_all">All</span>
+								</a>
                             </li>
                             <!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
                             <li data-bind="css: $parent.typeFilter() == weaponType.type ? 'active' : '', fastclick: $parent.setTypeFilter, value: weaponType.type" value="0">
