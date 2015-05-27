@@ -1,4 +1,5 @@
 build\addon-sdk-1.17
+build/addon-sdk-1.17
 build\node-modules
 build\mobileWorldContent.db
 node_modules
@@ -8,3 +9,5 @@ tags*
 bower_components
 node_modules
 .sass-cache
+*.map
+build/addon-sdk-1.17/test/test-window-utils2.js
