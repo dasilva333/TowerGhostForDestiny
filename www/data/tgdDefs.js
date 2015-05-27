@@ -67,7 +67,11 @@ tgd.defaults = {
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : true,
 	autoTransferStacks: false,
-	padBucketHeight: false
+	padBucketHeight: false,
+	xsColumn: 12,
+	smColumn: 6,
+	mdColumn: 4,
+	lgColumn: 3
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
