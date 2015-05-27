@@ -1,9 +1,9 @@
 tgd.dialog = (function(options) {
-    var self = this; 
+    var self = this;
 
     this.modal;
 
-    this.title = function(title) { 
+    this.title = function(title) {
         self.modal = new BootstrapDialog(options);
         self.modal.setTitle(title);
         return self;
@@ -214,11 +214,11 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-	
-	this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
-	this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
-	this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
-	this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
+    this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
+    this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
+    this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
+    this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
+    this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
@@ -629,7 +629,7 @@ var app = new(function() {
                     var buckets = results.data.buckets;
                     var profile = new Profile({
                         race: "",
-                        order: 0,
+                        order: self.vaultPos(),
                         gender: "Tower",
                         classType: "Vault",
                         id: "Vault",
@@ -1235,55 +1235,60 @@ var app = new(function() {
 
         nextNormalize();
     }
-	
-	this.setVaultTo = function(pos){
-		return function(){
-			var vault = _.findWhere( self.characters(), { id: "Vault" });
-			if (vault)
-				vault.order(pos);
-			else
-				return false;	
-		}
-	}
-	
-	this.isVaultAt = function(pos){
-		return ko.computed(function(){
-			var vault = _.findWhere( self.characters(), { id: "Vault" });
-			if (vault){
-				result=(vault.order() == pos);
-			}	
-			else {
-				result=false;
-			}	
-			return result;
-		}).extend({
+
+    this.setVaultTo = function(pos) {
+        return function() {
+            var vault = _.findWhere(self.characters(), {
+                id: "Vault"
+            });
+            if (vault) {
+                self.vaultPos(pos);
+                vault.order(pos);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    this.isVaultAt = function(pos) {
+        return ko.computed(function() {
+            var vault = _.findWhere(self.characters(), {
+                id: "Vault"
+            });
+            if (vault) {
+                result = (vault.order() == pos);
+            } else {
+                result = false;
+            }
+            return result;
+        }).extend({
             rateLimit: {
                 timeout: 1000,
                 method: "notifyWhenChangesStop"
             }
         });
-	}
-	
-	this.columnMode = ko.computed(function(){
-		return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
-	});
-	
-	this.setColumns = function(type, input){
-		return function(){
-			self[type + "Column"](12 / input.value);
-		}
-	}
-	
-	this.btnActive = function(type, input){
-		return ko.computed(function(){		
-			return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
-		});
-	};
-	
-	this.viewOptions = function(){	    
-		$("#viewOptions").toggle();
-	}
-	
+    }
+
+    this.columnMode = ko.computed(function() {
+        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
+    });
+
+    this.setColumns = function(type, input) {
+        return function() {
+            self[type + "Column"](12 / input.value);
+        }
+    }
+
+    this.btnActive = function(type, input) {
+        return ko.computed(function() {
+            return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
+        });
+    };
+
+    this.viewOptions = function() {
+        $("#viewOptions").toggle();
+    }
+
     this.init = function() {
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");

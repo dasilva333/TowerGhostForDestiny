@@ -4,7 +4,7 @@ var Profile = function(model) {
         self[key] = value;
     });
 
-	this.order = ko.observable(self.order);
+    this.order = ko.observable(self.order);
     this.icon = ko.observable(self.icon);
     this.background = ko.observable(self.background);
     this.items = ko.observableArray([]);
