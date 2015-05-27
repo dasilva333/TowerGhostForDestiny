@@ -399,8 +399,8 @@ Item.prototype = {
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
                                 ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + tgd.localText.all + ' (' + self.primaryStat + ') </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="one"> ' + tgd.localText.one + ' </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + tgd.localText.transfer_all + ' (' + self.primaryStat + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="one"> ' + tgd.localText.transfer_one + ' </button>' +
                                 '</div>');
                             $content.find('#dec').click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
