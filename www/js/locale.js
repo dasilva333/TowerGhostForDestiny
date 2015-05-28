@@ -25,7 +25,7 @@ tgd.locale = {
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Create",
         menu_view: "View",
-        menu_all: "Todo",
+        menu_all: "All",
         menu_view_weapons: "Weapons",
         menu_view_armor: "Armor",
         menu_view_general: "General",
