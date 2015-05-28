@@ -111,7 +111,7 @@ Item.prototype = {
                 var tryNextItem = function() {
                         var item = otherItems[++itemIndex];
                         if (_.isUndefined(item)) {
-                            return BootstrapDialog.alert("No more items to try to unequip the " + self.description);
+                            return BootstrapDialog.alert(tgd.localText.cannot_unequip + self.description);
                         }
                         //console.log(item.description);
                         /* still haven't found a match */
@@ -150,7 +150,7 @@ Item.prototype = {
                                 }
                                 //unequip failed
                                 else {
-                                    BootstrapDialog.alert("Unable to unequip " + itemEquipped.description);
+                                    BootstrapDialog.alert(tgd.localText.unable_unequip + itemEquipped.description);
                                     callback(false);
                                 }
                             }, false, true);
@@ -218,7 +218,7 @@ Item.prototype = {
                     }
                     //TODO perhaps log this condition and determine the cause
                     else {
-                        BootstrapDialog.alert("Unknown error trying to equip " + (result && result.error) ? result.error : "");
+                        BootstrapDialog.alert(tgd.localText.cannot_equip + (result && result.error) ? result.error : "");
                     }
                 }
             });
@@ -395,12 +395,12 @@ Item.prototype = {
                 var dialogItself = (new tgd.dialog({
                         message: function() {
                             var $content = $(
-                                '<div class="controls controls-row">Transfer Amount: ' +
+                                '<div class="controls controls-row">' + tgd.localText.transfer_amount + ': ' +
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
                                 ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> All (' + self.primaryStat + ') </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="one"> One </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + tgd.localText.transfer_all + ' (' + self.primaryStat + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="one"> ' + tgd.localText.transfer_one + ' </button>' +
                                 '</div>');
                             $content.find('#dec').click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
@@ -447,7 +447,7 @@ Item.prototype = {
                             done();
                             dialogItself.modal.close();
                         } else {
-                            BootstrapDialog.alert("Invalid amount entered: " + transferAmount);
+                            BootstrapDialog.alert(tgd.localText.invalid_transfer_amount + transferAmount);
                         }
                     }
                 setTimeout(function() {
@@ -469,7 +469,7 @@ Item.prototype = {
         var self = this;
 
         var extrasStr = "<div><ul>";
-        extrasStr = extrasStr.concat("<li>Normalize - equally distribute item across your characters</li>");
+        extrasStr = extrasStr.concat("<li>" + tgd.localText.normalize_title + "</li>");
         // any future stuff here
         extrasStr = extrasStr.concat("</ul></div>");
 
