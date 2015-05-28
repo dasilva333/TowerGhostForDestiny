@@ -489,7 +489,7 @@
 	                }
 	            } catch (e) {
 	                ga('send', 'exception', {
-	                    'exDescription': "tierType is missing > " + e.toString() + " " + JSON.stringify(item),
+	                    'exDescription': "tierType is missing > " + e.toString() + " " + bucketType,
 	                    'exFatal': false,
 	                    'appVersion': tgd.version,
 	                    'hitCallback': function() {
