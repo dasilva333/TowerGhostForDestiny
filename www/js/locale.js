@@ -88,7 +88,13 @@ tgd.locale = {
 		loadouts_swap: " will be swapped with ",
 		loadouts_to_moveequip: " will be moved and equipped.",
 		loadouts_to_equip: " will be equipped.",
-		loadouts_transfer_confirm: "Transfer Confirm"
+		loadouts_transfer_confirm: "Transfer Confirm",
+		tier_uncommon: "Uncommon",
+		tier_common: "Common",
+		tier_rare: "Rare",
+		tier_legendary: "Legendary",
+		tier_exotic: "Exotic",
+		paypal_code: "EN"
 	},
 	es: {
 		unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
@@ -104,12 +110,12 @@ tgd.locale = {
 		transfer_amount: "Transferencia monto",
 		transfer_all: "Todos",
 		transfer_one: "Uno",
-		cancel: "Cancel",
+		cancel: "Cancelar",
 		cannot_unequip: "No más elementos para tratar de unequip la ",
 		unable_unequip: "Incapaz de inequippar ",
 		cannot_equip: "Error desconocido tratando de equipar ",
 		menu_clear: "Aclaro Filtro",
-		menu_refresh: "Refrescar (segundos)",
+		menu_refresh: "Refrescar (seg.)",
 		menu_about: "Acerca De",
 		menu_help: "Ayuda",
 		menu_donate: "Donar",
@@ -137,7 +143,7 @@ tgd.locale = {
 		menu_progress_1: "Falta XP",
 		menu_progress_2: "Completo XP",
 		menu_progress_3: "Al Maxmimo",
-		menu_damage: "Daño",
+		menu_damage: "Da\xF1o",
 		menu_weapons: "Armas",
 		language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
 		number_of_columns: "# de Columnas",
@@ -179,7 +185,13 @@ tgd.locale = {
 		loadouts_swap: " será intercambiado con ",
 		loadouts_to_moveequip: " será trasladado y equipado.",
 		loadouts_to_equip: " será equipado.",
-		loadouts_transfer_confirm: "Confirmar Transferencia"
+		loadouts_transfer_confirm: "Confirmar Transferencia",
+		tier_uncommon: "Poco com\xFAn",
+		tier_common: "Com\xFAn",
+		tier_rare: "Raro",
+		tier_legendary: "Legendario",
+		tier_exotic: "Ex\xF3tico",
+		paypal_code: "ES"
 	},
 	fr: {
 		unable_create_loadout_for_type: "Actuellement incapable de créer loadouts avec ce type d'article",
@@ -270,7 +282,13 @@ tgd.locale = {
 		loadouts_swap: " will be swapped with ",
 		loadouts_to_moveequip: " will be moved and equipped.",
 		loadouts_to_equip: " will be equipped.",
-		loadouts_transfer_confirm: "Transfer Confirm"
+		loadouts_transfer_confirm: "Transfer Confirm",
+		tier_uncommon: "Uncommon",
+		tier_common: "Common",
+		tier_rare: "Rare",
+		tier_legendary: "Legendary",
+		tier_exotic: "Exotic",
+		paypal_code: "FR"
 	},
 	it: {
 		unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -361,7 +379,13 @@ tgd.locale = {
 		loadouts_swap: " will be swapped with ",
 		loadouts_to_moveequip: " will be moved and equipped.",
 		loadouts_to_equip: " will be equipped.",
-		loadouts_transfer_confirm: "Transfer Confirm"
+		loadouts_transfer_confirm: "Transfer Confirm",
+		tier_uncommon: "Uncommon",
+		tier_common: "Common",
+		tier_rare: "Rare",
+		tier_legendary: "Legendary",
+		tier_exotic: "Exotic",
+		paypal_code: "IT"
 	},
 	de: {
 		unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -452,7 +476,13 @@ tgd.locale = {
 		loadouts_swap: " will be swapped with ",
 		loadouts_to_moveequip: " will be moved and equipped.",
 		loadouts_to_equip: " will be equipped.",
-		loadouts_transfer_confirm: "Transfer Confirm"
+		loadouts_transfer_confirm: "Transfer Confirm",
+		tier_uncommon: "Uncommon",
+		tier_common: "Common",
+		tier_rare: "Rare",
+		tier_legendary: "Legendary",
+		tier_exotic: "Exotic",
+		paypal_code: "DE"
 	},
 	"pt-br": {
 		unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -543,7 +573,13 @@ tgd.locale = {
 		loadouts_swap: " will be swapped with ",
 		loadouts_to_moveequip: " will be moved and equipped.",
 		loadouts_to_equip: " will be equipped.",
-		loadouts_transfer_confirm: "Transfer Confirm"
+		loadouts_transfer_confirm: "Transfer Confirm",
+		tier_uncommon: "Uncommon",
+		tier_common: "Common",
+		tier_rare: "Rare",
+		tier_legendary: "Legendary",
+		tier_exotic: "Exotic",
+		paypal_code: "pt_BR"
 	},
 	ja: {
 		unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -634,6 +670,12 @@ tgd.locale = {
 		loadouts_swap: " will be swapped with ",
 		loadouts_to_moveequip: " will be moved and equipped.",
 		loadouts_to_equip: " will be equipped.",
-		loadouts_transfer_confirm: "Transfer Confirm"
+		loadouts_transfer_confirm: "Transfer Confirm",
+		tier_uncommon: "Uncommon",
+		tier_common: "Common",
+		tier_rare: "Rare",
+		tier_legendary: "Legendary",
+		tier_exotic: "Exotic",
+		paypal_code: "ja_JP"
 	}
 }

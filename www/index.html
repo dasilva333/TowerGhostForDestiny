@@ -39,7 +39,7 @@
     <script type="text/javascript" src="data/talentGridDefs.js"></script>
     <script type="text/javascript" src="data/raceDefs.js"></script>
     <script type="text/javascript" src="data/tgdDefs.js"></script>
-	<script type="text/javascript" src="js/locale.js"></script>
+	<script charset="utf-8" type="text/javascript" src="js/locale.js"></script>
     <script type="text/javascript" src="js/version.js"></script>
     <script type="text/javascript" src="scripts/lzstring.min.js"></script>
     <script type="text/javascript" src="js/dependencies/modernizr.custom.js"></script>
@@ -298,26 +298,16 @@
 							<span class="caret"></span>
 						</a>
                         <ul class="dropdown-menu" role="menu">
-                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="0">
+                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: function(){ $root.setTierFilter({ tier: 0 }) }" value="0">
                                 <a href="#"><i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
 									<span data-bind="text: tgd.localText.menu_all">All</span>
 								</a>
                             </li>
-                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="2">
-                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>Common</a>
-                            </li>
-                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="3">
-                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>Uncommon</a>
-                            </li>
-                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="4">
-                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 4 ? 'fa-check-square' : 'fa-square'"></i>Rare</a>
-                            </li>
-                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="5">
-                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 5 ? 'fa-check-square' : 'fa-square'"></i>Legendary</a>
-                            </li>
-                            <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTierFilter" value="6">
-                                <a href="#"><i class="fa" data-bind="css: tierFilter() == 6 ? 'fa-check-square' : 'fa-square'"></i>Exotic</a>
-                            </li>
+							<!-- ko foreach: { data: tierTypes, as: 'tierType' } -->
+	                            <li data-bind="css: $parent.tierFilter() == tierType.tier ? 'active' : '', fastclick: $parent.setTierFilter, value: tierType.tier" value="0">
+	                                <a href="#"><i class="fa" data-bind="css: $parent.tierFilter() == tierType.tier ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tierType.name"></span></a>
+	                            </li>
+                            <!--/ko  -->
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -350,7 +340,7 @@
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-							<span data-bind="text: tgd.localText.menu_damage">Damage</span>
+							<span data-bind="html: tgd.localText.menu_damage">Damage</span>
 							<span class="caret"></span>
 						</a>
                         <ul class="dropdown-menu" role="menu">

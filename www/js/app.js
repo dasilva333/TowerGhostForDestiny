@@ -250,6 +250,7 @@ var app = new(function() {
     this.activeItem = ko.observable();
     this.activeUser = ko.observable(new User());
 
+	this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray();
     this.orderedCharacters = ko.computed(function() {
@@ -447,7 +448,7 @@ var app = new(function() {
     }
     this.setTierFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        self.tierFilter($(event.target).closest('li').attr("value"));
+        self.tierFilter(model.tier);
     }
     this.setTypeFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -480,11 +481,17 @@ var app = new(function() {
             }
             var info = window._itemDefs[item.itemHash];
             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var description = info.itemName;
+                var description, tierTypeName, itemDescription, itemTypeName;
                 try {
                     description = decodeURIComponent(info.itemName);
+					tierTypeName = decodeURIComponent(info.tierTypeName);
+					itemDescription = decodeURIComponent(info.itemDescription);
+					itemTypeName = decodeURIComponent(info.itemTypeName);
                 } catch (e) {
                     description = info.itemName;
+					tierTypeName = info.tierTypeName;
+					itemDescription = info.itemDescription;
+					itemTypeName = info.itemTypeName;
                 }
                 var itemObject = {
                     id: item.itemHash,
@@ -496,11 +503,12 @@ var app = new(function() {
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
-					itemDescription: info.itemDescription,
+					itemDescription: itemDescription,
                     bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
-                    typeName: info.itemTypeName,
+                    typeName: itemTypeName,
                     tierType: info.tierType,
+					tierTypeName: tierTypeName,
                     icon: dataDir + info.icon
                 };
                 tgd.duplicates.push(item.itemHash);
@@ -563,6 +571,20 @@ var app = new(function() {
             }
         });
     }
+	
+	
+    this.addTierTypes = function(items) {
+        items.forEach(function(item) {
+            if (_.where(self.tierTypes(), {
+                    tier: item.tierType
+                }).length == 0) {
+                self.tierTypes.push({
+                    name: item.tierTypeName,
+                    tier: item.tierType
+                });
+            }
+        });
+    }
 
     this.makeBackgroundUrl = function(path, excludeDomain) {
         return 'url("' + (excludeDomain ? "" : self.bungie.getUrl()) + path + '")';
@@ -608,6 +630,7 @@ var app = new(function() {
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
+				self.tierTypes(self.tierTypes.sort(function(a,b){ return b.type - a.type }));
                 setTimeout(self.bucketSizeHandler, 500);
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
@@ -657,6 +680,7 @@ var app = new(function() {
                     buckets.forEach(function(bucket) {
                         bucket.items.forEach(processItem(profile));
                     });
+					self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
                     //self.characters.push(profile);
                     //console.timeEnd("self.bungie.vault");
@@ -825,7 +849,7 @@ var app = new(function() {
     }
 
     this.donate = function() {
-        window.open("http://bit.ly/1Jmb4wQ", "_system");
+        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + tgd.localText.paypal_code +  "&no_note=1&no_shipping=1&currency_code=USD", "_system");
     }
 
     this.readBungieCookie = function(ref, loop) {

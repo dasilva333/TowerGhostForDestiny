@@ -10,12 +10,10 @@ var neededFiles = [
 	}},
 	{ table: "DestinyInventoryItemDefinition", name: "itemDefs", key: "itemHash", reduce: function(item){
 		var obj = item;
-		try {
-			obj.itemName = encodeURIComponent(obj.itemName);
-		}catch(e){
-			console.log(e);
-			console.log(obj.itemName);
-		}		
+		obj.itemName = encodeURIComponent(obj.itemName);
+		obj.tierTypeName = encodeURIComponent(obj.tierTypeName);
+		obj.itemDescription = encodeURIComponent(obj.itemDescription);
+		obj.itemTypeName = encodeURIComponent(obj.itemTypeName);
 		delete obj.stats;
 		delete obj.values;
 		delete obj.sources;
