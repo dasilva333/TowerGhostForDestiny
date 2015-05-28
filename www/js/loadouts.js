@@ -1,9 +1,8 @@
 	/*
-		targetItem: item,
-		swapItem: swapItem,
-		description: item.description + "'s swap item is " + swapItem.description
-		*/
-
+																targetItem: item,
+																swapItem: swapItem,
+																description: item.description + "'s swap item is " + swapItem.description
+																*/
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
 	    '<li class="list-group-item">' +
@@ -271,7 +270,7 @@
 	        var targetCharacter = _.findWhere(app.characters(), {
 	            id: targetCharacterId
 	        });
-	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
+	        var targetCharacterIcon = targetCharacter.icon().replace("url(", '').replace(')', '');
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
 	            return function(otherItem) {
 	                /* if the otherItem is not part of the sourceBucket then it can go */
@@ -305,7 +304,7 @@
 	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                        swapArray = _.map(sourceBucket, function(item) {
 	                            var cantMove = self.cantMove(item, key, targetMaxed);
-	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                            var ownerIcon = item.character.icon().replace("url(", '').replace(')', '');
 	                            if (cantMove) {
 	                                return cantMove;
 	                            }
@@ -317,7 +316,7 @@
 	                                if (item.doEquip() == true) {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.loadouts_to_equip,
+	                                        description: item.description + " will be equipped.",
 	                                        actionIcon: "assets/to-equip.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
@@ -325,7 +324,7 @@
 	                                /* then return an object indicating to do nothing */
 	                                else {
 	                                    return {
-	                                        description: item.description + tgd.localText.loadouts_alreadythere_pt1 + targetCharacter.classType + tgd.localText.loadouts_alreadythere_pt2 + item.bucketType,
+	                                        description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
@@ -341,7 +340,7 @@
 	                                if (swapItem) {
 	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
 	                                        return {
-	                                            description: item.description + tgd.localText.no_transfer,
+	                                            description: item.description + " will not be moved",
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
@@ -350,13 +349,13 @@
 	                                    return {
 	                                        targetItem: item,
 	                                        swapItem: swapItem,
-	                                        description: item.description + tgd.localText.loadouts_swap + swapItem.description,
+	                                        description: item.description + " will be swapped with " + swapItem.description,
 	                                        actionIcon: "assets/swap.png"
 	                                    }
 	                                } else {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.to_transfer,
+	                                        description: item.description + " will be moved",
 	                                        swapIcon: ownerIcon,
 	                                        actionIcon: "assets/to-transfer.png"
 	                                    }
@@ -366,7 +365,7 @@
 	                    } else {
 	                        /* do a clean move by returning a swap object without a swapItem */
 	                        swapArray = _.map(sourceBucket, function(item) {
-	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                            var ownerIcon = item.character.icon().replace("url(", '').replace(')', '');
 	                            var cantMove = self.cantMove(item, key, targetMaxed);
 	                            if (cantMove) {
 	                                return cantMove;
@@ -379,7 +378,7 @@
 	                                if (item.doEquip() == true) {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.loadouts_to_equip,
+	                                        description: item.description + " will be equipped.",
 	                                        actionIcon: "assets/to-equip.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
@@ -387,7 +386,7 @@
 	                                /* then return an object indicating to do nothing */
 	                                else {
 	                                    return {
-	                                        description: item.description + tgd.localText.loadouts_alreadythere_pt1 + targetCharacter.classType + tgd.localText.loadouts_alreadythere_pt2 + item.bucketType,
+	                                        description: item.description + " is already in the " + targetCharacter.classType + "'s bucket of " + item.bucketType,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
@@ -395,7 +394,7 @@
 	                                }
 	                            } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
 	                                return {
-	                                    description: item.description + tgd.localText.loadouts_no_transfer,
+	                                    description: item.description + " will not be moved",
 	                                    targetIcon: item.icon,
 	                                    actionIcon: "assets/no-transfer.png",
 	                                    swapIcon: ownerIcon
@@ -404,14 +403,14 @@
 	                                if (item.doEquip() == true) {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.loadouts_to_moveequip,
+	                                        description: item.description + " will be moved and equipped.",
 	                                        actionIcon: "assets/to-equip.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
 	                                } else {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.to_transfer,
+	                                        description: item.description + " will be moved",
 	                                        actionIcon: "assets/to-transfer.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
@@ -431,20 +430,20 @@
 	            $template = $template.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
 	            (new tgd.dialog({
 	                buttons: [{
-	                    label: tgd.localText.loadouts_transfer,
+	                    label: "Transfer",
 	                    action: function(dialog) {
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            BootstrapDialog.alert(tgd.localText.loadouts_transferred);
+	                            BootstrapDialog.alert("Item(s) transferred successfully <br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" href=\"http://bit.ly/1Jmb4wQ\" target=\"_system\">buy me a beer</a>");
 	                            dialog.close()
 	                        });
 	                    }
 	                }, {
-	                    label: tgd.localText.cancel,
+	                    label: "Cancel",
 	                    action: function(dialog) {
 	                        dialog.close()
 	                    }
 	                }]
-	            })).title(tgd.localText.loadouts_transfer_confirm).content($template).show(true);
+	            })).title("Transfer Confirm").content($template).show(true);
 	        }
 	    },
 	    /* hold on there cowboy can't make a promise we can't keep 
@@ -459,10 +458,10 @@
 	    cantMove: function(item, key, maxBucketSize) {
 	        //fix to exclude subclasses
 	        if (item.armorIndex == -1 && item.weaponIndex == -1) return;
-	        var ownerIcon = item.character.icon().replace('url("', "").replace('")', '');
+	        var ownerIcon = item.character.icon().replace("url(", '').replace(')', '');
 	        if (maxBucketSize) {
 	            return {
-	                description: item.description + tgd.localText.loadouts_outofspace + key,
+	                description: item.description + " will not be moved, there is no space in " + key,
 	                targetIcon: item.icon,
 	                actionIcon: "assets/no-transfer.png",
 	                swapIcon: ownerIcon
@@ -481,7 +480,7 @@
 	            try {
 	                if (item.character.id !== "Vault" && item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics)) {
 	                    cantMoveEquipped = {
-	                        description: item.description + tgd.localText.loadouts_invalidbucket + bucketType,
+	                        description: item.description + " will not be moved. Blame it on this bucket: " + bucketType,
 	                        targetIcon: item.icon,
 	                        actionIcon: "assets/cant-transfer.png",
 	                        swapIcon: ownerIcon
@@ -503,7 +502,7 @@
 	        }
 	        if (ownerBucket.length == 0) {
 	            return {
-	                description: item.description + tgd.localText.loadouts_no_replacement,
+	                description: item.description + " will not be moved. There is no item to replace it.",
 	                targetIcon: item.icon,
 	                actionIcon: "assets/cant-transfer.png",
 	                swapIcon: ownerIcon

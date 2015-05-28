@@ -48,7 +48,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             app.activeLoadout().ids.remove(existingItem);
         else {
             if (item._id == 0) {
-                BootstrapDialog.alert(tgd.localText.unable_create_loadout_for_type);
+                BootstrapDialog.alert("Currently unable to create loadouts with this item type.");
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
                 }).length < 9) {
@@ -58,13 +58,13 @@ tgd.moveItemPositionHandler = function(element, item) {
                     doEquip: false
                 });
             } else {
-                BootstrapDialog.alert(tgd.localText.unable_to_create_loadout_for_bucket + item.bucketType);
+                BootstrapDialog.alert("You cannot create a loadout with more than 9 items in the " + item.bucketType + " slots");
             }
         }
     } else {
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master") {
-            return BootstrapDialog.alert(tgd.localText.unable_to_move_postmaster);
+            return BootstrapDialog.alert("Post Master items cannot be transferred with the API.");
         }
         if (element == activeElement) {
             $movePopup.hide();
@@ -111,7 +111,7 @@ window.ko.bindingHandlers.scrollToView = {
             })
             .on("press", function() {
 
-                BootstrapDialog.alert(tgd.localText.this_icon + viewModel.uniqueName);
+                BootstrapDialog.alert("This icon is " + viewModel.uniqueName);
             });
         app.quickIconHighlighter();
     }
@@ -214,14 +214,6 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-    this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
-    this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.locale = ko.computed(new tgd.StoreObj("locale"));
-    this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
-    this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
-    this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
-    this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
-    this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
@@ -250,12 +242,11 @@ var app = new(function() {
     this.activeItem = ko.observable();
     this.activeUser = ko.observable(new User());
 
-    this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray();
     this.orderedCharacters = ko.computed(function() {
         return self.characters().sort(function(a, b) {
-            return a.order() - b.order();
+            return a.order - b.order;
         });
     });
 
@@ -315,12 +306,6 @@ var app = new(function() {
             });
         });
         if (activeItem) {
-            /* Title using locale */
-            $content.find("h2.destt-has-icon").text(activeItem.description);
-            /* Type using locale */
-            $content.find("h3.destt-has-icon").text(activeItem.typeName);
-            /* Description using locale */
-            $content.find(".destt-desc").text(activeItem.itemDescription);
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
@@ -375,11 +360,6 @@ var app = new(function() {
         }
         callback($content.html());
     }
-
-    this.toggleViewOptions = function() {
-        self.toggleBootstrapMenu();
-        $("#viewOptions").toggle();
-    }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
         self.doRefresh(!self.doRefresh());
@@ -412,7 +392,7 @@ var app = new(function() {
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length == 0) {
-            BootstrapDialog.alert(tgd.localText.pick_a_set);
+            BootstrapDialog.alert("Please pick a Set before selecting this option");
         } else {
             self.showMissing(!self.showMissing());
         }
@@ -434,6 +414,7 @@ var app = new(function() {
             self.setFilter([]);
             self.setFilterFix([]);
             self.showMissing(false);
+            BootstrapDialog.alert("Please report this to my Github; Unknown collection value: " + collection);
         }
     }
     this.setView = function(model, event) {
@@ -447,7 +428,7 @@ var app = new(function() {
     }
     this.setTierFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        self.tierFilter(model.tier);
+        self.tierFilter($(event.target).closest('li').attr("value"));
     }
     this.setTypeFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -480,17 +461,11 @@ var app = new(function() {
             }
             var info = window._itemDefs[item.itemHash];
             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var description, tierTypeName, itemDescription, itemTypeName;
+                var description = info.itemName;
                 try {
                     description = decodeURIComponent(info.itemName);
-                    tierTypeName = decodeURIComponent(info.tierTypeName);
-                    itemDescription = decodeURIComponent(info.itemDescription);
-                    itemTypeName = decodeURIComponent(info.itemTypeName);
                 } catch (e) {
                     description = info.itemName;
-                    tierTypeName = info.tierTypeName;
-                    itemDescription = info.itemDescription;
-                    itemTypeName = info.itemTypeName;
                 }
                 var itemObject = {
                     id: item.itemHash,
@@ -502,12 +477,10 @@ var app = new(function() {
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
-                    itemDescription: itemDescription,
                     bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
-                    typeName: itemTypeName,
+                    typeName: info.itemTypeName,
                     tierType: info.tierType,
-                    tierTypeName: tierTypeName,
                     icon: dataDir + info.icon
                 };
                 tgd.duplicates.push(item.itemHash);
@@ -571,20 +544,6 @@ var app = new(function() {
         });
     }
 
-
-    this.addTierTypes = function(items) {
-        items.forEach(function(item) {
-            if (_.where(self.tierTypes(), {
-                    tier: item.tierType
-                }).length == 0) {
-                self.tierTypes.push({
-                    name: item.tierTypeName,
-                    tier: item.tierType
-                });
-            }
-        });
-    }
-
     this.makeBackgroundUrl = function(path, excludeDomain) {
         return 'url("' + (excludeDomain ? "" : self.bungie.getUrl()) + path + '")';
     }
@@ -629,9 +588,6 @@ var app = new(function() {
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
-                self.tierTypes(self.tierTypes.sort(function(a, b) {
-                    return b.type - a.type
-                }));
                 setTimeout(self.bucketSizeHandler, 500);
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
@@ -646,7 +602,7 @@ var app = new(function() {
                     self.activeUser().activeSystem(self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN");
                     self.search();
                 } else {
-                    BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
+                    BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
                 }
                 return
             } else if (typeof e.data == "undefined") {
@@ -658,7 +614,7 @@ var app = new(function() {
                         console.log("crash reported");
                     }
                 });
-                return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
+                return BootstrapDialog.alert("Error loading inventory " + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -668,7 +624,7 @@ var app = new(function() {
                     var buckets = results.data.buckets;
                     var profile = new Profile({
                         race: "",
-                        order: self.vaultPos(),
+                        order: 0,
                         gender: "Tower",
                         classType: "Vault",
                         id: "Vault",
@@ -681,7 +637,6 @@ var app = new(function() {
                     buckets.forEach(function(bucket) {
                         bucket.items.forEach(processItem(profile));
                     });
-                    self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
                     //self.characters.push(profile);
                     //console.timeEnd("self.bungie.vault");
@@ -689,7 +644,7 @@ var app = new(function() {
                 } else {
                     loadingData = false;
                     self.refresh();
-                    return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(response));
+                    return BootstrapDialog.alert("Trying to refresh, error loading Vault " + JSON.stringify(response));
                 }
             });
             //console.time("avatars.forEach");          
@@ -730,7 +685,7 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(response));
+                        return BootstrapDialog.alert("Trying to refresh, error loading character " + JSON.stringify(response));
                     }
                 });
             });
@@ -778,19 +733,6 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(new User(user));
-                self.locale(self.activeUser().user.locale);
-                tgd.localText = tgd.locale[self.locale()];
-                if (self.locale() != "en" && self.defsLocale() != self.locale()) {
-                    $.ajax({
-                        url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
-                        success: function(data) {
-                            BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
-                            self.itemDefs(data);
-                            self.defsLocale(self.locale());
-                            self.initItemDefs();
-                        }
-                    });
-                }
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -849,8 +791,12 @@ var app = new(function() {
         });
     }
 
+    this.showVersion = function() {
+        BootstrapDialog.alert("Current version is " + tgd.version);
+    }
+
     this.donate = function() {
-        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + tgd.localText.paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
+        window.open("http://bit.ly/1Jmb4wQ", "_system");
     }
 
     this.readBungieCookie = function(ref, loop) {
@@ -1062,20 +1008,14 @@ var app = new(function() {
             self.loadouts(_loadouts);
         }
     }
-
-    this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
-            if (_.isFunction(callback)) callback();
-        })
-    }
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
             var cookie = window.localStorage.getItem("whatsnew");
             if (_.isEmpty(cookie) || parseInt(cookie) < version) {
-                self.showWhatsNew(function() {
+                (new tgd.dialog).title("Tower Ghost for Destiny Updates").content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
                     window.localStorage.setItem("whatsnew", version.toString());
-                });
+                })
             }
         }
     }
@@ -1291,68 +1231,10 @@ var app = new(function() {
         nextNormalize();
     }
 
-    this.setVaultTo = function(pos) {
-        return function() {
-            var vault = _.findWhere(self.characters(), {
-                id: "Vault"
-            });
-            if (vault) {
-                self.vaultPos(pos);
-                vault.order(pos);
-            } else {
-                return false;
-            }
-        }
-    }
-
-    this.isVaultAt = function(pos) {
-        return ko.computed(function() {
-            var vault = _.findWhere(self.characters(), {
-                id: "Vault"
-            });
-            if (vault) {
-                result = (vault.order() == pos);
-            } else {
-                result = false;
-            }
-            return result;
-        }).extend({
-            rateLimit: {
-                timeout: 1000,
-                method: "notifyWhenChangesStop"
-            }
-        });
-    }
-
-    this.columnMode = ko.computed(function() {
-        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
-    });
-
-    this.setColumns = function(type, input) {
-        return function() {
-            self[type + "Column"](12 / input.value);
-        }
-    }
-
-    this.btnActive = function(type, input) {
-        return ko.computed(function() {
-            return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
-        });
-    };
-
-    this.initItemDefs = function() {
-        var itemDefs = self.itemDefs();
-        if (!_.isEmpty(itemDefs)) {
-            window._itemDefs = JSON.parse(itemDefs);
-        }
-    }
-
     this.init = function() {
-        tgd.localText = tgd.locale[self.locale()];
         if (_.isUndefined(window._itemDefs)) {
-            return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
+            return BootstrapDialog.alert("Could not load item definitions, please report the issue to my Github and make sure your font is set to English.");
         }
-        self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
