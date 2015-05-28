@@ -469,7 +469,7 @@ Item.prototype = {
         var self = this;
 
         var extrasStr = "<div><ul>";
-        extrasStr = extrasStr.concat("<li>" + tgd.localText.normalize_title +  "</li>");
+        extrasStr = extrasStr.concat("<li>" + tgd.localText.normalize_title + "</li>");
         // any future stuff here
         extrasStr = extrasStr.concat("</ul></div>");
 

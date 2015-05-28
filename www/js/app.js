@@ -214,9 +214,9 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-	this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
-	this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-	this.locale = ko.computed(new tgd.StoreObj("locale"));
+    this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
+    this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+    this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
     this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
@@ -250,7 +250,7 @@ var app = new(function() {
     this.activeItem = ko.observable();
     this.activeUser = ko.observable(new User());
 
-	this.tierTypes = ko.observableArray();
+    this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray();
     this.orderedCharacters = ko.computed(function() {
@@ -315,12 +315,12 @@ var app = new(function() {
             });
         });
         if (activeItem) {
-			/* Title using locale */
-			$content.find("h2.destt-has-icon").text( activeItem.description );
-			/* Type using locale */
-			$content.find("h3.destt-has-icon").text( activeItem.typeName );
-			/* Description using locale */
-			$content.find(".destt-desc").text( activeItem.itemDescription );
+            /* Title using locale */
+            $content.find("h2.destt-has-icon").text(activeItem.description);
+            /* Type using locale */
+            $content.find("h3.destt-has-icon").text(activeItem.typeName);
+            /* Description using locale */
+            $content.find(".destt-desc").text(activeItem.itemDescription);
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
@@ -375,9 +375,9 @@ var app = new(function() {
         }
         callback($content.html());
     }
-	
+
     this.toggleViewOptions = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         $("#viewOptions").toggle();
     }
     this.toggleRefresh = function() {
@@ -430,8 +430,7 @@ var app = new(function() {
             } else if (collection.indexOf("Armor") > -1) {
                 self.activeView(2);
             }
-        } 
-		else {
+        } else {
             self.setFilter([]);
             self.setFilterFix([]);
             self.showMissing(false);
@@ -484,14 +483,14 @@ var app = new(function() {
                 var description, tierTypeName, itemDescription, itemTypeName;
                 try {
                     description = decodeURIComponent(info.itemName);
-					tierTypeName = decodeURIComponent(info.tierTypeName);
-					itemDescription = decodeURIComponent(info.itemDescription);
-					itemTypeName = decodeURIComponent(info.itemTypeName);
+                    tierTypeName = decodeURIComponent(info.tierTypeName);
+                    itemDescription = decodeURIComponent(info.itemDescription);
+                    itemTypeName = decodeURIComponent(info.itemTypeName);
                 } catch (e) {
                     description = info.itemName;
-					tierTypeName = info.tierTypeName;
-					itemDescription = info.itemDescription;
-					itemTypeName = info.itemTypeName;
+                    tierTypeName = info.tierTypeName;
+                    itemDescription = info.itemDescription;
+                    itemTypeName = info.itemTypeName;
                 }
                 var itemObject = {
                     id: item.itemHash,
@@ -503,12 +502,12 @@ var app = new(function() {
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
-					itemDescription: itemDescription,
+                    itemDescription: itemDescription,
                     bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
                     typeName: itemTypeName,
                     tierType: info.tierType,
-					tierTypeName: tierTypeName,
+                    tierTypeName: tierTypeName,
                     icon: dataDir + info.icon
                 };
                 tgd.duplicates.push(item.itemHash);
@@ -571,8 +570,8 @@ var app = new(function() {
             }
         });
     }
-	
-	
+
+
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
             if (_.where(self.tierTypes(), {
@@ -630,7 +629,9 @@ var app = new(function() {
                 self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
-				self.tierTypes(self.tierTypes.sort(function(a,b){ return b.type - a.type }));
+                self.tierTypes(self.tierTypes.sort(function(a, b) {
+                    return b.type - a.type
+                }));
                 setTimeout(self.bucketSizeHandler, 500);
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
@@ -680,7 +681,7 @@ var app = new(function() {
                     buckets.forEach(function(bucket) {
                         bucket.items.forEach(processItem(profile));
                     });
-					self.addTierTypes(profile.items());
+                    self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
                     //self.characters.push(profile);
                     //console.timeEnd("self.bungie.vault");
@@ -777,19 +778,19 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(new User(user));
-				self.locale( self.activeUser().user.locale );
-				tgd.localText = tgd.locale[self.locale()];
-				if ( self.locale() != "en" && self.defsLocale() != self.locale() ){
-					$.ajax({
-						url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
-						success: function(data){
-							BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
-							self.itemDefs(data);
-							self.defsLocale(self.locale());
-							self.initItemDefs();
-						}
-					});
-				}
+                self.locale(self.activeUser().user.locale);
+                tgd.localText = tgd.locale[self.locale()];
+                if (self.locale() != "en" && self.defsLocale() != self.locale()) {
+                    $.ajax({
+                        url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
+                        success: function(data) {
+                            BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
+                            self.itemDefs(data);
+                            self.defsLocale(self.locale());
+                            self.initItemDefs();
+                        }
+                    });
+                }
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -849,7 +850,7 @@ var app = new(function() {
     }
 
     this.donate = function() {
-        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + tgd.localText.paypal_code +  "&no_note=1&no_shipping=1&currency_code=USD", "_system");
+        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + tgd.localText.paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
     }
 
     this.readBungieCookie = function(ref, loop) {
@@ -1061,20 +1062,20 @@ var app = new(function() {
             self.loadouts(_loadouts);
         }
     }
-	
-	this.showWhatsNew = function(callback){
-		(new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
-			if (_.isFunction(callback)) callback(); 
-		})
-	}
+
+    this.showWhatsNew = function(callback) {
+        (new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+            if (_.isFunction(callback)) callback();
+        })
+    }
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
             var cookie = window.localStorage.getItem("whatsnew");
             if (_.isEmpty(cookie) || parseInt(cookie) < version) {
-                self.showWhatsNew(function(){
-					window.localStorage.setItem("whatsnew", version.toString());
-				});
+                self.showWhatsNew(function() {
+                    window.localStorage.setItem("whatsnew", version.toString());
+                });
             }
         }
     }
@@ -1339,19 +1340,19 @@ var app = new(function() {
         });
     };
 
-	this.initItemDefs = function(){
-		var itemDefs = self.itemDefs();
-		if (!_.isEmpty(itemDefs)){
-			window._itemDefs = JSON.parse(itemDefs);
-		}
-	}
-	
+    this.initItemDefs = function() {
+        var itemDefs = self.itemDefs();
+        if (!_.isEmpty(itemDefs)) {
+            window._itemDefs = JSON.parse(itemDefs);
+        }
+    }
+
     this.init = function() {
-		tgd.localText = tgd.locale[self.locale()];
+        tgd.localText = tgd.locale[self.locale()];
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
         }
-		self.initItemDefs();
+        self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {

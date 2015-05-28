@@ -1,9 +1,9 @@
 	/*
-	targetItem: item,
-	swapItem: swapItem,
-	description: item.description + "'s swap item is " + swapItem.description
-	*/
-	
+		targetItem: item,
+		swapItem: swapItem,
+		description: item.description + "'s swap item is " + swapItem.description
+		*/
+
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
 	    '<li class="list-group-item">' +
