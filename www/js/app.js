@@ -772,12 +772,17 @@ var app = new(function() {
                 self.activeUser(user);
                 self.locale(self.activeUser().user.locale);
                 tgd.localText = tgd.locale[self.locale()];
-                if (self.locale() != "en" && self.defsLocale() != self.locale()) {
+                if (self.locale() != "en" && self.defsLocale() != self.locale() && !localStorage.getItem("quota_error")) {
                     $.ajax({
                         url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
                         success: function(data) {
                             BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
-                            self.itemDefs(data);
+							try {
+								self.itemDefs(data);
+							} catch(e){
+								localStorage.clear();
+								localStorage.setItem("quota_error", "1");
+							}
                             self.defsLocale(self.locale());
                             self.initItemDefs();
                         }
