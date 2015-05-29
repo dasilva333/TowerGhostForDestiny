@@ -170,15 +170,6 @@ tgd.getEventDelegate = function(target, selector) {
     return undefined;
 }
 
-var User = function(model) {
-    var self = this;
-    _.each(model, function(value, key) {
-        self[key] = value;
-    });
-    //try loading the Playstation account first
-    this.activeSystem = ko.observable(self.psnId ? "PSN" : "XBL");
-}
-
 tgd.getStoredValue = function(key) {
     var saved = "";
     if (window.localStorage && window.localStorage.getItem)
@@ -214,6 +205,7 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+    this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
@@ -248,7 +240,7 @@ var app = new(function() {
     });
 
     this.activeItem = ko.observable();
-    this.activeUser = ko.observable(new User());
+    this.activeUser = ko.observable({});
 
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -594,14 +586,14 @@ var app = new(function() {
     }
 
     this.useXboxAccount = function() {
-        self.activeUser().activeSystem("XBL");
+        self.preferredSystem("XBL");
         self.characters.removeAll();
         self.loadingUser(true);
         self.search();
     }
 
     this.usePlaystationAccount = function() {
-        self.activeUser().activeSystem("PSN");
+        self.preferredSystem("PSN");
         self.characters.removeAll();
         self.loadingUser(true);
         self.search();
@@ -637,13 +629,13 @@ var app = new(function() {
                 //console.timeEnd("avatars.forEach");
             }
         }
-        self.bungie.search(self.activeUser().activeSystem(), function(e) {
+        self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {
                 loadingData = false;
                 self.loadingUser(false);
                 /* if the first account fails retry the next one*/
                 if (self.hasBothAccounts()) {
-                    self.activeUser().activeSystem(self.activeUser().activeSystem() == "PSN" ? "XBL" : "PSN");
+                    self.preferredSystem(self.preferredSystem() == "PSN" ? "XBL" : "PSN");
                     self.search();
                 } else {
                     BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
@@ -767,7 +759,7 @@ var app = new(function() {
                             }, 1000);
                         }
                     } else {
-                        self.activeUser(new User(user));
+                        self.activeUser(user);
                         self.loadingUser(false);
                     }
                     return
@@ -777,15 +769,20 @@ var app = new(function() {
                     self.hiddenWindowOpen(false);
                     ref = null;
                 }
-                self.activeUser(new User(user));
+                self.activeUser(user);
                 self.locale(self.activeUser().user.locale);
                 tgd.localText = tgd.locale[self.locale()];
-                if (self.locale() != "en" && self.defsLocale() != self.locale()) {
+                if (self.locale() != "en" && self.defsLocale() != self.locale() && !localStorage.getItem("quota_error")) {
                     $.ajax({
                         url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
                         success: function(data) {
                             BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
-                            self.itemDefs(data);
+                            try {
+                                self.itemDefs(data);
+                            } catch (e) {
+                                localStorage.clear();
+                                localStorage.setItem("quota_error", "1");
+                            }
                             self.defsLocale(self.locale());
                             self.initItemDefs();
                         }
@@ -1392,10 +1389,10 @@ var app = new(function() {
 
         if (isMobile && isEmptyCookie) {
             self.bungie = new bungie();
-            self.activeUser(new User({
+            self.activeUser({
                 "code": 99,
                 "error": "Please sign-in to continue."
-            }));
+            });
         } else {
             setTimeout(function() {
                 self.loadData()
