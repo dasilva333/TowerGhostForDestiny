@@ -205,7 +205,7 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-	this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
+    this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
@@ -777,12 +777,12 @@ var app = new(function() {
                         url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
                         success: function(data) {
                             BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
-							try {
-								self.itemDefs(data);
-							} catch(e){
-								localStorage.clear();
-								localStorage.setItem("quota_error", "1");
-							}
+                            try {
+                                self.itemDefs(data);
+                            } catch (e) {
+                                localStorage.clear();
+                                localStorage.setItem("quota_error", "1");
+                            }
                             self.defsLocale(self.locale());
                             self.initItemDefs();
                         }

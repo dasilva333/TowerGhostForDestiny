@@ -1,6 +1,6 @@
 {
   "name": "tower-ghost-builder",
-  "version": "2.6.6",
+  "version": "2.6.7",
   "description": "",
   "main": "update_definitions.js",
   "dependencies": {
@@ -11,8 +11,7 @@
     "js-beautify": "^1.5.5",
     "lodash": "3.7.0",
     "node-zip": "~1.1.0",
-    "sqlite3": "~3.0.5",
-    "jag": "^1.0.7"
+    "sqlite3": "~3.0.5"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
