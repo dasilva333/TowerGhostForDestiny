@@ -634,12 +634,8 @@ var app = new(function() {
                 loadingData = false;
                 self.loadingUser(false);
                 /* if the first account fails retry the next one*/
-                if (self.hasBothAccounts()) {
-                    self.preferredSystem(self.preferredSystem() == "PSN" ? "XBL" : "PSN");
-                    self.search();
-                } else {
-                    BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
-                }
+                self.preferredSystem(self.preferredSystem() == "PSN" ? "XBL" : "PSN");
+                self.search();
                 return
             } else if (typeof e.data == "undefined") {
                 ga('send', 'exception', {
