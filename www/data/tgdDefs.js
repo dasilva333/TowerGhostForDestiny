@@ -74,7 +74,8 @@ tgd.defaults = {
 	lgColumn: 3,
 	locale: "en",
 	defsLocale: "en",
-	itemDefs: ""
+	itemDefs: "",
+	vaultPos: 0
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
