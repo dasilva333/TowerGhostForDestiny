@@ -70,44 +70,62 @@ var cacheIcons = function(){
 	}
 }
 if ( fs.existsSync("mobileWorldContent_en.db") ){
+	var jag = require("jag");
 	var sqlite3 = require('sqlite3').verbose();
 	var dbFiles = fs.readdirSync(".").filter(function(file){
 		return file.indexOf("mobileWorldContent") > -1;
 	});
-	_.each(dbFiles, function(file){
-		var locale = file.split("_")[1].split(".")[0];
-		var db = new sqlite3.Database(file);
-		neededFiles.forEach(function(set){
-			db.all("SELECT * FROM " + set.table, function(err, rows) {
-				if (err) return; 
-				var filename = set.name + ".js";
-				var patchFile = set.name + ".patch";
-				var obj = {};
-				rows.forEach(function (row) {  
-					var entry = JSON.parse(row.json);
-					obj[entry[set.key]] = set.reduce(entry);
-				});
-				if (fs.existsSync(patchFile)){
-					console.log("found patch file " + patchFile);
-					var patchData = JSON.parse(fs.readFileSync(patchFile));
-					_.extend(obj, patchData);
-				}
-				if (locale == "en"){
-					console.log('writing file: ' + filename);
-					fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
-				}
-				else {
-					var dataPath = "./locale/" + locale + "/";
-					console.log('saving file: ' + filename);
-					if (!fs.existsSync(dataPath)){
-						fs.mkdirSync(dataPath);
+	try {
+		_.each(dbFiles, function(file){
+			var locale = file.split("_")[1].split(".")[0];
+			var db = new sqlite3.Database(file);
+			neededFiles.forEach(function(set){
+				db.all("SELECT * FROM " + set.table, function(err, rows) {
+					if (err) return; 
+					var filename = set.name + ".js";
+					var patchFile = set.name + ".patch";
+					var obj = {};
+					rows.forEach(function (row) {  
+						var entry = JSON.parse(row.json);
+						obj[entry[set.key]] = set.reduce(entry);
+					});
+					if (fs.existsSync(patchFile)){
+						console.log("found patch file " + patchFile);
+						var patchData = JSON.parse(fs.readFileSync(patchFile));
+						_.extend(obj, patchData);
 					}
-					fs.writeFileSync(dataPath + filename, JSON.stringify(obj));
-				}
-			});
+					if (locale == "en"){
+						console.log(locale +' writing file: ' + filename);
+						fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
+					}
+					else {
+						var dataPath = "./locale/" + locale + "/";
+						console.log(locale + ' saving file: ' + filename);
+						if (!fs.existsSync(dataPath)){
+							console.log(fs.existsSync(dataPath) + " creating new path: " + dataPath);
+							fs.mkdirSync(dataPath);
+						}					
+						fs.writeFileSync(dataPath + filename, JSON.stringify(obj));
+						if (set.name == "itemDefs"){
+							console.log(fs.existsSync(dataPath + filename) + " creating gz for " + locale);
+							try {
+								jag.pack(dataPath + filename,dataPath + filename+".gz", function(){
+									console.log("compressed");
+								});
+							}catch(e){
+								console.log("compress error");
+							}
+							
+						}
+					}
+				});
+			});	
+			db.close();
 		});	
-		db.close();
-	});	
+	}catch(e){
+		console.log(e);
+	}
+	
 	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.icon);

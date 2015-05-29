@@ -74,8 +74,9 @@ tgd.defaults = {
 	lgColumn: 3,
 	locale: "en",
 	defsLocale: "en",
+	vaultPos: 0,
 	itemDefs: "",
-	vaultPos: 0
+	preferredSystem: "PSN"
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
