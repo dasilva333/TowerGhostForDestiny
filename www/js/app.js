@@ -1335,7 +1335,7 @@ var app = new(function() {
 
     this.initItemDefs = function() {
         var itemDefs = self.itemDefs();
-        if (!_.isEmpty(itemDefs)) {
+        if (!_.isEmpty(itemDefs) && self.locale() == self.defsLocale()) {
             window._itemDefs = JSON.parse(itemDefs);
         }
     }
