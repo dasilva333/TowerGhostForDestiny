@@ -188,10 +188,10 @@ try {
 	    });
 	  }
 	  this.search = function(activeSystem, callback) {
+		this.setsystem(activeSystem);
 		if ( _.isUndefined(active.type) ){
 			return BootstrapDialog.alert("Please sign in before attempting to refresh");
-		}	  
-	  	this.setsystem(activeSystem);
+		}
 	    _request({
 	      route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
 	      method: 'GET',
