@@ -356,7 +356,7 @@
 	                                } else {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.to_transfer,
+	                                        description: item.description + tgd.localtext.loadouts_to_transfer,
 	                                        swapIcon: ownerIcon,
 	                                        actionIcon: "assets/to-transfer.png"
 	                                    }
@@ -411,7 +411,7 @@
 	                                } else {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.to_transfer,
+	                                        description: item.description + tgd.localtext.loadouts_to_transfer,
 	                                        actionIcon: "assets/to-transfer.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }

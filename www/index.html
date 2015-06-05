@@ -439,6 +439,13 @@
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
             </div>
+			<div>
+				If the app does not load past this point, try to login to Bungie again using 
+				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block">Xbox Live</a>
+				or
+				<a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block">Playstation Network</a>
+				If the problem persists after logging in again, please try to reinstall the app. Thank you.
+			</div>
         </div>
     </div>
     <nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
