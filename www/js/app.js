@@ -1107,16 +1107,17 @@ var app = new(function() {
             };
         });
 
-        var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-        if (itemSplit < 3) {
+        if (itemTotal < characterStatus.length) {
             if (usingbatchMode == false) {
-                BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + description + "\" between " + characterStatus.length + " characters.");
+                BootstrapDialog.alert("Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.");
             }
             if (callback !== undefined) {
                 callback();
             }
             return;
         }
+
+        var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
         //console.log("Each character needs " + itemSplit + " " + description);
 
         /* calculate how much to increment/decrement each character */
