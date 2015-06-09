@@ -1073,24 +1073,11 @@ var app = new(function() {
         }
     }
 
-    this.normalizeSingle = function(description, useVault, usingbatchMode, callback) {
-        if (useVault) {
-            if (usingbatchMode == false) {
-                BootstrapDialog.alert("'useVault' flag not tested; aborting!");
-            }
-            if (callback !== undefined) {
-                callback();
-            }
-            return;
-        }
-
+    this.normalizeSingle = function(description, characters, usingbatchMode, callback) {
         var itemTotal = 0;
-        var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
-            return c.id == "Vault"
-        });
 
         /* association of character, amounts to increment/decrement */
-        var characterStatus = _.map(onlyCharacters, function(c) {
+        var characterStatus = _.map(characters, function(c) {
             var characterTotal = _.reduce(
                 _.filter(c.items(), {
                     description: description
@@ -1106,6 +1093,7 @@ var app = new(function() {
                 needed: 0
             };
         });
+        //console.log(characterStatus);
 
         if (itemTotal < characterStatus.length) {
             if (usingbatchMode == false) {
@@ -1199,12 +1187,26 @@ var app = new(function() {
             //surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
             //shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
-            surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
+            if (surplusCharacter.character.id == "Vault") {
+                //console.log("surplus is vault");
                 surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function() {
                     adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
                     nextTransfer(callback);
                 });
-            });
+            } else if (shortageCharacter.character.id == "Vault") {
+                //console.log("shortage is vault");
+                surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
+                    adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+                    nextTransfer(callback);
+                });
+            } else {
+                surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
+                    surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function() {
+                        adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+                        nextTransfer(callback);
+                    });
+                });
+            }
         }
 
         var messageStr = "<div><div>Normalize " + description + "</div><ul>";
@@ -1221,8 +1223,9 @@ var app = new(function() {
                 buttons: [{
                     label: 'Normalize',
                     cssClass: 'btn-primary',
-                    action: function() {
+                    action: function(dialogItself) {
                         nextTransfer(callback);
+                        dialogItself.close();
                     }
                 }, {
                     label: 'Close',
@@ -1230,7 +1233,7 @@ var app = new(function() {
                         dialogItself.close();
                     }
                 }]
-            })).title("Normalize Materials/Consumables").show();
+            })).title("Normalize Materials/Consumables").show(true);
         } else {
             nextTransfer(callback);
         }
@@ -1348,6 +1351,7 @@ var app = new(function() {
         }
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
