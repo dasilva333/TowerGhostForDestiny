@@ -478,7 +478,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="move-button col-xs-2" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (character.id !== 'Vault') && (bucketType == 'Materials' || bucketType == 'Consumables')">
+                    <div class="move-button col-xs-2" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (bucketType == 'Materials' || bucketType == 'Consumables')">
                         <div class="attkIcon">
                             <div class="icon-banner" data-bind="text: tgd.localText.movepopup_extras">extras</div>
                             <img src="assets/icon128.png">
