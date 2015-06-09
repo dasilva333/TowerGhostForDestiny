@@ -462,24 +462,74 @@ Item.prototype = {
             done();
         }
     },
-    normalize: function() {
-        app.normalizeSingle(this.description, false, false, undefined);
+    normalize: function(characters) {
+        app.normalizeSingle(this.description, characters, false, undefined);
     },
     extrasGlue: function() {
         var self = this;
 
-        var extrasStr = "<div><ul>";
-        extrasStr = extrasStr.concat("<li>" + tgd.localText.normalize_title + "</li>");
-        // any future stuff here
-        extrasStr = extrasStr.concat("</ul></div>");
+        var selectedStatus = [];
+        for (i = 0; i < app.orderedCharacters().length; i++) {
+            var id = app.orderedCharacters()[i].id;
+            selectedStatus[id] = (id !== "Vault");
+        }
 
         var dialogItself = (new tgd.dialog({
-            message: extrasStr,
+            message: function(dialogItself) {
+                var getTotalSelectedItemCount = function() {
+                    var c = 0;
+                    var totalSelectedItemCount = 0;
+                    for (i = 0; i < app.orderedCharacters().length; i++) {
+                        if (selectedStatus[(app.orderedCharacters()[i]).id] == true) {
+                            var ct = _.reduce(
+                                _.filter(app.orderedCharacters()[i].items(), {
+                                    description: self.description
+                                }),
+                                function(memo, i) {
+                                    return memo + i.primaryStat;
+                                },
+                                0);
+                            c = c + ct;
+                        }
+                    }
+                    return c;
+                };
+
+                var $content = $(tgd.normalizeTemplate({
+                    item: self,
+                    characters: app.orderedCharacters(),
+                    selected: selectedStatus,
+                    total: getTotalSelectedItemCount()
+                }));
+
+                var charButtonClicked = function(self, id) {
+                    selectedStatus[id] = !selectedStatus[id];
+                    $content.find('#total').text(getTotalSelectedItemCount());
+                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                };
+
+                $.each(app.orderedCharacters(), function(i, val) {
+                    var id = val.id;
+                    var sel = "#char" + i.toString();
+                    $content.find(sel).click(function() {
+                        charButtonClicked($(this), id);
+                    });
+                });
+                return $content;
+            },
             buttons: [{
                 label: 'Normalize',
                 cssClass: 'btn-primary',
-                action: function() {
-                    self.normalize();
+                action: function(dialogItself) {
+                    var characters = _.filter(app.orderedCharacters(), function(c) {
+                        return selectedStatus[c.id] == true;
+                    });
+                    if (characters.length <= 1) {
+                        BootstrapDialog.alert("Need to select two or more characters.");
+                        return;
+                    }
+                    self.normalize(characters);
+                    dialogItself.close();
                 }
             }, {
                 label: 'Close',
@@ -487,6 +537,6 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }]
-        })).title("Extras for " + self.description).show();
+        })).title("Extras for " + self.description).show(true);
     }
 }
