@@ -1057,7 +1057,7 @@ var app = new(function() {
     }
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        (new tgd.dialog).title(tgd.localText.whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
             if (_.isFunction(callback)) callback();
         })
     }
