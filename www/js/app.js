@@ -227,7 +227,6 @@ var app = new(function() {
     this.dmgFilter = ko.observableArray(tgd.defaults.dmgFilter);
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
-    this.setFilterFix = ko.observableArray(tgd.defaults.setFilter);
     this.shareView = ko.observable(tgd.defaults.shareView);
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
@@ -286,7 +285,6 @@ var app = new(function() {
         self.dmgFilter([]);
         self.progressFilter(tgd.defaults.progressFilter);
         self.setFilter([]);
-        self.setFilterFix([]);
         self.shareView(tgd.defaults.shareView);
         self.shareUrl(tgd.defaults.shareUrl);
         self.showMissing(tgd.defaults.showMissing);
@@ -409,12 +407,15 @@ var app = new(function() {
             self.showMissing(!self.showMissing());
         }
     }
+    this.openStatusReport = function() {
+        window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
+        return false;
+    }
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).closest('li').attr("value");
         if (collection in _collections || collection == "All") {
             self.setFilter(collection == "All" ? [] : _collections[collection]);
-            self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
             if (collection == "All") {
                 self.showMissing(false);
             } else if (collection.indexOf("Weapons") > -1) {
@@ -424,7 +425,6 @@ var app = new(function() {
             }
         } else {
             self.setFilter([]);
-            self.setFilterFix([]);
             self.showMissing(false);
         }
     }
@@ -451,7 +451,7 @@ var app = new(function() {
     }
     this.missingSets = ko.computed(function() {
         var missingIds = [];
-        self.setFilter().concat(self.setFilterFix()).forEach(function(item) {
+        self.setFilter().forEach(function(item) {
             var itemFound = false;
             self.characters().forEach(function(character) {
                 ['weapons', 'armor'].forEach(function(list) {
@@ -618,7 +618,6 @@ var app = new(function() {
             count++;
             if (count == total) {
                 self.characters(profiles);
-                self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
                 self.tierTypes(self.tierTypes.sort(function(a, b) {
@@ -1057,7 +1056,7 @@ var app = new(function() {
     }
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        (new tgd.dialog).title(tgd.localText.whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
             if (_.isFunction(callback)) callback();
         })
     }
@@ -1073,24 +1072,11 @@ var app = new(function() {
         }
     }
 
-    this.normalizeSingle = function(description, useVault, usingbatchMode, callback) {
-        if (useVault) {
-            if (usingbatchMode == false) {
-                BootstrapDialog.alert("'useVault' flag not tested; aborting!");
-            }
-            if (callback !== undefined) {
-                callback();
-            }
-            return;
-        }
-
+    this.normalizeSingle = function(description, characters, usingbatchMode, callback) {
         var itemTotal = 0;
-        var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
-            return c.id == "Vault"
-        });
 
         /* association of character, amounts to increment/decrement */
-        var characterStatus = _.map(onlyCharacters, function(c) {
+        var characterStatus = _.map(characters, function(c) {
             var characterTotal = _.reduce(
                 _.filter(c.items(), {
                     description: description
@@ -1106,17 +1092,19 @@ var app = new(function() {
                 needed: 0
             };
         });
+        //console.log(characterStatus);
 
-        var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-        if (itemSplit < 3) {
+        if (itemTotal < characterStatus.length) {
             if (usingbatchMode == false) {
-                BootstrapDialog.alert("Cannot distribute " + itemTotal + " \"" + description + "\" between " + characterStatus.length + " characters.");
+                BootstrapDialog.alert("Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.");
             }
             if (callback !== undefined) {
                 callback();
             }
             return;
         }
+
+        var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
         //console.log("Each character needs " + itemSplit + " " + description);
 
         /* calculate how much to increment/decrement each character */
@@ -1198,12 +1186,26 @@ var app = new(function() {
             //surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
             //shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
-            surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
+            if (surplusCharacter.character.id == "Vault") {
+                //console.log("surplus is vault");
                 surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function() {
                     adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
                     nextTransfer(callback);
                 });
-            });
+            } else if (shortageCharacter.character.id == "Vault") {
+                //console.log("shortage is vault");
+                surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
+                    adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+                    nextTransfer(callback);
+                });
+            } else {
+                surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
+                    surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function() {
+                        adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
+                        nextTransfer(callback);
+                    });
+                });
+            }
         }
 
         var messageStr = "<div><div>Normalize " + description + "</div><ul>";
@@ -1220,8 +1222,9 @@ var app = new(function() {
                 buttons: [{
                     label: 'Normalize',
                     cssClass: 'btn-primary',
-                    action: function() {
+                    action: function(dialogItself) {
                         nextTransfer(callback);
+                        dialogItself.close();
                     }
                 }, {
                     label: 'Close',
@@ -1229,7 +1232,7 @@ var app = new(function() {
                         dialogItself.close();
                     }
                 }]
-            })).title("Normalize Materials/Consumables").show();
+            })).title("Normalize Materials/Consumables").show(true);
         } else {
             nextTransfer(callback);
         }
@@ -1347,6 +1350,7 @@ var app = new(function() {
         }
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,

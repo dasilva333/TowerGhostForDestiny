@@ -30,7 +30,7 @@ tgd.locale = {
         menu_view_armor: "Armor",
         menu_view_general: "General",
         menu_view_options: "View Options",
-        menu_shareurl: "DestinyExotics Share URL",
+        menu_shareurl: "Share URL with friends",
         menu_autorefresh: "Auto Refresh",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
@@ -55,7 +55,9 @@ tgd.locale = {
         vo_vault_position: "Vault Position",
         missing_items: "Missing Items",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating: "Please be patient, logging into Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Welcome to Tower Ghost for Destiny!",
         login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
         login_help: "Please wait for the login window to auto close as TGD prepares your information.",
@@ -94,7 +96,8 @@ tgd.locale = {
         tier_rare: "Rare",
         tier_legendary: "Legendary",
         tier_exotic: "Exotic",
-        paypal_code: "EN"
+        paypal_code: "EN",
+        menu_destinystatus: "DestinyStatus Report"
     },
     es: {
         unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
@@ -152,7 +155,9 @@ tgd.locale = {
         vo_vault_position: "Position de Bodega",
         missing_items: "Articulos que faltan",
         login_loading_inventory: "Por favor espere, cargando arsenal de Bungie",
-        login_authenticating: "Por favor sea paciente, iniciando sesi�n en Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Bienvenido a Tower Ghost para Destiny!",
         login_instructions: "Para empezar tendr�s que acceder a su cuenta a trav�s de Bungie.net:",
         login_help: "Por favor, espere a que la ventana se cerra. TGD han preparado su informaci�n.",
@@ -191,7 +196,8 @@ tgd.locale = {
         tier_rare: "Raro",
         tier_legendary: "Legendario",
         tier_exotic: "Ex\xF3tico",
-        paypal_code: "ES"
+        paypal_code: "ES",
+        menu_destinystatus: "DestinyStatus Report"
     },
     fr: {
         unable_create_loadout_for_type: "Actuellement incapable de cr�er loadouts avec ce type d'article",
@@ -248,7 +254,9 @@ tgd.locale = {
         vo_vault_last: "Last/Right",
         missing_items: "Missing Items",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating: "Please be patient, logging into Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Welcome to Tower Ghost for Destiny!",
         login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
         login_help: "Please wait for the login window to auto close as TGD prepares your information.",
@@ -287,7 +295,8 @@ tgd.locale = {
         tier_rare: "Rare",
         tier_legendary: "Legendary",
         tier_exotic: "Exotic",
-        paypal_code: "FR"
+        paypal_code: "FR",
+        menu_destinystatus: "DestinyStatus Report"
     },
     it: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -320,7 +329,7 @@ tgd.locale = {
         menu_view_armor: "Armor",
         menu_view_general: "General",
         menu_view_options: "View Options",
-        menu_shareurl: "DestinyExotics Share URL",
+        menu_shareurl: "Share URL with friends",
         menu_autorefresh: "Auto Refresh",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
@@ -344,7 +353,9 @@ tgd.locale = {
         vo_vault_last: "Last/Right",
         missing_items: "Missing Items",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating: "Please be patient, logging into Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Welcome to Tower Ghost for Destiny!",
         login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
         login_help: "Please wait for the login window to auto close as TGD prepares your information.",
@@ -383,7 +394,8 @@ tgd.locale = {
         tier_rare: "Rare",
         tier_legendary: "Legendary",
         tier_exotic: "Exotic",
-        paypal_code: "IT"
+        paypal_code: "IT",
+        menu_destinystatus: "DestinyStatus Report"
     },
     de: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -416,7 +428,7 @@ tgd.locale = {
         menu_view_armor: "Armor",
         menu_view_general: "General",
         menu_view_options: "View Options",
-        menu_shareurl: "DestinyExotics Share URL",
+        menu_shareurl: "Share URL with friends",
         menu_autorefresh: "Auto Refresh",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
@@ -440,7 +452,9 @@ tgd.locale = {
         vo_vault_last: "Last/Right",
         missing_items: "Missing Items",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating: "Please be patient, logging into Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Welcome to Tower Ghost for Destiny!",
         login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
         login_help: "Please wait for the login window to auto close as TGD prepares your information.",
@@ -479,7 +493,8 @@ tgd.locale = {
         tier_rare: "Rare",
         tier_legendary: "Legendary",
         tier_exotic: "Exotic",
-        paypal_code: "DE"
+        paypal_code: "DE",
+        menu_destinystatus: "DestinyStatus Report"
     },
     "pt-br": {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -512,7 +527,7 @@ tgd.locale = {
         menu_view_armor: "Armor",
         menu_view_general: "General",
         menu_view_options: "View Options",
-        menu_shareurl: "DestinyExotics Share URL",
+        menu_shareurl: "Share URL with friends",
         menu_autorefresh: "Auto Refresh",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
@@ -536,7 +551,9 @@ tgd.locale = {
         vo_vault_last: "Last/Right",
         missing_items: "Missing Items",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating: "Please be patient, logging into Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Welcome to Tower Ghost for Destiny!",
         login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
         login_help: "Please wait for the login window to auto close as TGD prepares your information.",
@@ -575,7 +592,8 @@ tgd.locale = {
         tier_rare: "Rare",
         tier_legendary: "Legendary",
         tier_exotic: "Exotic",
-        paypal_code: "pt_BR"
+        paypal_code: "pt_BR",
+        menu_destinystatus: "DestinyStatus Report"
     },
     ja: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -608,7 +626,7 @@ tgd.locale = {
         menu_view_armor: "Armor",
         menu_view_general: "General",
         menu_view_options: "View Options",
-        menu_shareurl: "DestinyExotics Share URL",
+        menu_shareurl: "Share URL with friends",
         menu_autorefresh: "Auto Refresh",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
@@ -632,7 +650,9 @@ tgd.locale = {
         vo_vault_last: "Last/Right",
         missing_items: "Missing Items",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating: "Please be patient, logging into Bungie",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these link for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
         login_title: "Welcome to Tower Ghost for Destiny!",
         login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
         login_help: "Please wait for the login window to auto close as TGD prepares your information.",
@@ -671,6 +691,7 @@ tgd.locale = {
         tier_rare: "Rare",
         tier_legendary: "Legendary",
         tier_exotic: "Exotic",
-        paypal_code: "ja_JP"
+        paypal_code: "ja_JP",
+        menu_destinystatus: "DestinyStatus Report"
     }
 }
