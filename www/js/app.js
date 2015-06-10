@@ -1379,9 +1379,14 @@ var app = new(function() {
         }
 
         if (isMobile) {
-            Hammer(document.getElementById('charactersContainer'))
-                .on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight);
+            Hammer(document.getElementById('charactersContainer'), {
+				drag_min_distance: 1,
+				swipe_velocity: 0.1,
+				drag_horizontal: true,
+				drag_vertical: false,
+				prevent_default: true
+			}).on("swipeleft", self.shiftViewLeft)
+              .on("swiperight", self.shiftViewRight);
         }
 
         if (isMobile) {
