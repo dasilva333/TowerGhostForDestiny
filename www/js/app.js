@@ -1356,7 +1356,8 @@ var app = new(function() {
             window._itemDefs = JSON.parse(itemDefs);
         }
     }
-	this.initLocale = function(){
+	
+	this.initLocale = function(callback){
 		if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
 			console.log("getting device locale internally");
 			navigator.globalization.getPreferredLanguage(function(a) {
@@ -1365,86 +1366,90 @@ var app = new(function() {
 					if (tgd.supportLanguages.indexOf(value) > -1) {
 						console.log("internal locale is " + value);
 						self.locale(value);
-						tgd.localText = tgd.locale[self.locale()];
+						callback();
 					}
 				}
 				else {
-					tgd.localText = tgd.locale[self.locale()];
+					callback();
 				}
 			});
 		}
 		else {
-			tgd.localText = tgd.locale[self.locale()];
+			callback();
 		}
 	}
+	
     this.init = function() {
-		self.initLocale();
-        if (_.isUndefined(window._itemDefs)) {
-            return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
-        }
-        self.initItemDefs();
-        tgd.perksTemplate = _.template(tgd.perksTemplate);
-        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
-        tgd.duplicates = ko.observableArray().extend({
-            rateLimit: {
-                timeout: 5000,
-                method: "notifyWhenChangesStop"
-            }
-        });
-        self.doRefresh.subscribe(self.refreshHandler);
-        self.refreshSeconds.subscribe(self.refreshHandler);
-        self.loadoutMode.subscribe(self.refreshHandler);
-        self.bungie_cookies = "";
-        if (window.localStorage && window.localStorage.getItem) {
-            self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-        }
-        var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-        if (isWindowsPhone) {
-            var msViewportStyle = document.createElement("style");
-            msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
-            document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-        }
+		self.initLocale(function(){
+			
+			tgd.localText = tgd.locale[self.locale()];
+			if (_.isUndefined(window._itemDefs)) {
+				return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
+			}
+			self.initItemDefs();
+			tgd.perksTemplate = _.template(tgd.perksTemplate);
+			tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+			tgd.duplicates = ko.observableArray().extend({
+				rateLimit: {
+					timeout: 5000,
+					method: "notifyWhenChangesStop"
+				}
+			});
+			self.doRefresh.subscribe(self.refreshHandler);
+			self.refreshSeconds.subscribe(self.refreshHandler);
+			self.loadoutMode.subscribe(self.refreshHandler);
+			self.bungie_cookies = "";
+			if (window.localStorage && window.localStorage.getItem) {
+				self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
+			}
+			var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
+			if (isWindowsPhone) {
+				var msViewportStyle = document.createElement("style");
+				msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
+				document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+			}
 
-        if (isMobile) {
-            Hammer(document.getElementById('charactersContainer'), {
-				drag_min_distance: 1,
-				swipe_velocity: 0.1,
-				drag_horizontal: true,
-				drag_vertical: false
-			}).on("swipeleft", self.shiftViewLeft)
-              .on("swiperight", self.shiftViewRight)
-			  .on("tap", self.globalClickHandler);
-        }	
+			if (isMobile) {
+				Hammer(document.getElementById('charactersContainer'), {
+					drag_min_distance: 1,
+					swipe_velocity: 0.1,
+					drag_horizontal: true,
+					drag_vertical: false
+				}).on("swipeleft", self.shiftViewLeft)
+				  .on("swiperight", self.shiftViewRight)
+				  .on("tap", self.globalClickHandler);
+			}	
 
-        if (isMobile) {
-            if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                StatusBar.overlaysWebView(false);
-            }
-            if (typeof StatusBar !== "undefined") {
-                StatusBar.styleBlackOpaque();
-                StatusBar.backgroundColorByHexString("#272B30");
-            }
-        }
+			if (isMobile) {
+				if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+					StatusBar.overlaysWebView(false);
+				}
+				if (typeof StatusBar !== "undefined") {
+					StatusBar.styleBlackOpaque();
+					StatusBar.backgroundColorByHexString("#272B30");
+				}
+			}
 
-        if (isMobile && isEmptyCookie) {
-            self.bungie = new bungie();
-            self.activeUser({
-                "code": 99,
-                "error": "Please sign-in to continue."
-            });
-        } else {
-            setTimeout(function() {
-                self.loadData()
-            }, isChrome || isMobile ? 1 : 5000);
-        }
-        $("form").bind("submit", false);
-        $("html").click(self.globalClickHandler);
-        /* this fixes issue #16 */
-        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
-        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
-        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        self.whatsNew();
-        ko.applyBindings(self);
+			if (isMobile && isEmptyCookie) {
+				self.bungie = new bungie();
+				self.activeUser({
+					"code": 99,
+					"error": "Please sign-in to continue."
+				});
+			} else {
+				setTimeout(function() {
+					self.loadData()
+				}, isChrome || isMobile ? 1 : 5000);
+			}
+			$("form").bind("submit", false);
+			$("html").click(self.globalClickHandler);
+			/* this fixes issue #16 */
+			$(window).resize(_.throttle(self.bucketSizeHandler, 500));
+			$(window).resize(_.throttle(self.quickIconHighlighter, 500));
+			$(window).scroll(_.throttle(self.quickIconHighlighter, 500));
+			self.whatsNew();
+			ko.applyBindings(self);
+		});
     }
 });
 
