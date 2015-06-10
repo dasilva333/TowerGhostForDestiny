@@ -1,8 +1,8 @@
 	/*
-		targetItem: item,
-		swapItem: swapItem,
-		description: item.description + "'s swap item is " + swapItem.description
-		*/
+									targetItem: item,
+									swapItem: swapItem,
+									description: item.description + "'s swap item is " + swapItem.description
+									*/
 
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
@@ -489,7 +489,7 @@
 	                }
 	            } catch (e) {
 	                ga('send', 'exception', {
-	                    'exDescription': "tierType is missing > " + e.toString() + " " + JSON.stringify(item),
+	                    'exDescription': "tierType is missing > " + e.toString() + " " + bucketType,
 	                    'exFatal': false,
 	                    'appVersion': tgd.version,
 	                    'hitCallback': function() {
