@@ -51,19 +51,7 @@ tgd.DestinyBucketTypes = {
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.supportLanguages = ["en", "es", "it", "de", "ja", "pt", "fr"];
-tgd.device_locale = "en";
-if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
-	console.log("getting device locale internally");
-	navigator.globalization.getPreferredLanguage(function(a) {
-		if (a && a.value && a.value.indexOf("-") > -1) {
-			var value = a.value.split("-")[0];
-			if (tgd.supportLanguages.indexOf(value) > -1) {
-				console.log("internal locale is " + value);
-				tgd.device_locale = value;
-			}
-		}
-	})	
-}
+
 tgd.defaults = {
 	searchKeyword: "",
 	doRefresh: isMobile ? false : true,
@@ -85,8 +73,8 @@ tgd.defaults = {
 	smColumn: 6,
 	mdColumn: 4,
 	lgColumn: 3,
-	locale: tgd.device_locale,
-	defsLocale: tgd.device_locale,
+	locale: "en",
+	defsLocale: "en",
 	vaultPos: 0,
 	itemDefs: "",
 	preferredSystem: "PSN"

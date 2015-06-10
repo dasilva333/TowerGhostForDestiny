@@ -1356,9 +1356,29 @@ var app = new(function() {
             window._itemDefs = JSON.parse(itemDefs);
         }
     }
-
+	this.initLocale = function(){
+		if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
+			console.log("getting device locale internally");
+			navigator.globalization.getPreferredLanguage(function(a) {
+				if (a && a.value && a.value.indexOf("-") > -1) {
+					var value = a.value.split("-")[0];
+					if (tgd.supportLanguages.indexOf(value) > -1) {
+						console.log("internal locale is " + value);
+						self.locale(value);
+						tgd.localText = tgd.locale[self.locale()];
+					}
+				}
+				else {
+					tgd.localText = tgd.locale[self.locale()];
+				}
+			});
+		}
+		else {
+			tgd.localText = tgd.locale[self.locale()];
+		}
+	}
     this.init = function() {
-        tgd.localText = tgd.locale[self.locale()];
+		self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
         }
