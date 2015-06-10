@@ -111,7 +111,7 @@ Item.prototype = {
                 var tryNextItem = function() {
                         var item = otherItems[++itemIndex];
                         if (_.isUndefined(item)) {
-                            return BootstrapDialog.alert(tgd.localText.cannot_unequip + self.description);
+                            return BootstrapDialog.alert(app.activeText().cannot_unequip + self.description);
                         }
                         //console.log(item.description);
                         /* still haven't found a match */
@@ -150,7 +150,7 @@ Item.prototype = {
                                 }
                                 //unequip failed
                                 else {
-                                    BootstrapDialog.alert(tgd.localText.unable_unequip + itemEquipped.description);
+                                    BootstrapDialog.alert(app.activeText().unable_unequip + itemEquipped.description);
                                     callback(false);
                                 }
                             }, false, true);
@@ -218,7 +218,7 @@ Item.prototype = {
                     }
                     //TODO perhaps log this condition and determine the cause
                     else {
-                        BootstrapDialog.alert(tgd.localText.cannot_equip + (result && result.error) ? result.error : "");
+                        BootstrapDialog.alert(app.activeText().cannot_equip + (result && result.error) ? result.error : "");
                     }
                 }
             });
@@ -395,12 +395,12 @@ Item.prototype = {
                 var dialogItself = (new tgd.dialog({
                         message: function() {
                             var $content = $(
-                                '<div class="controls controls-row">' + tgd.localText.transfer_amount + ': ' +
+                                '<div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
                                 ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + tgd.localText.transfer_all + ' (' + self.primaryStat + ') </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="one"> ' + tgd.localText.transfer_one + ' </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + self.primaryStat + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="one"> ' + app.activeText().transfer_one + ' </button>' +
                                 '</div>');
                             $content.find('#dec').click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
@@ -447,7 +447,7 @@ Item.prototype = {
                             done();
                             dialogItself.modal.close();
                         } else {
-                            BootstrapDialog.alert(tgd.localText.invalid_transfer_amount + transferAmount);
+                            BootstrapDialog.alert(app.activeText().invalid_transfer_amount + transferAmount);
                         }
                     }
                 setTimeout(function() {
