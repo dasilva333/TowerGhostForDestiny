@@ -34,7 +34,7 @@ tgd.dialog = (function(options) {
     return self.modal;
 });
 
-var activeElement;
+tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
     app.activeItem(item);
     if (app.destinyDbMode() == true) {
@@ -66,11 +66,11 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (item.bucketType == "Post Master") {
             return BootstrapDialog.alert(tgd.localText.unable_to_move_postmaster);
         }
-        if (element == activeElement) {
+        if (element == tgd.activeElement) {
             $movePopup.hide();
-            activeElement = null;
+            tgd.activeElement = null;
         } else {
-            activeElement = element;
+            tgd.activeElement = element;
             $ZamTooltips.hide();
             if (window.isMobile) {
                 $("body").css("padding-bottom", $movePopup.height() + "px");
@@ -1409,7 +1409,7 @@ var app = new(function() {
         $("html").click(function(e) {
             if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
                 $("#move-popup").hide();
-				activeElement = null;
+				tgd.activeElement = null;
             }
         });
         /* this fixes issue #16 */
