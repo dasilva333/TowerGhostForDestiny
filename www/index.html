@@ -34,10 +34,10 @@
     <script type="text/javascript" src="data/perkDefs.js"></script>
     <script type="text/javascript" src="data/talentGridDefs.js"></script>
     <script type="text/javascript" src="data/raceDefs.js"></script>
-    <script type="text/javascript" src="data/tgdDefs.js"></script>
+    <script type="text/javascript" src="data/setDefs.js"></script>
+	<script type="text/javascript" src="data/tgdDefs.js"></script>
     <script charset="utf-8" type="text/javascript" src="js/locale.js"></script>
     <script type="text/javascript" src="js/version.js"></script>
-    <script type="text/javascript" src="scripts/lzstring.min.js"></script>
     <script type="text/javascript" src="js/dependencies/modernizr.custom.js"></script>
     <script type="text/javascript" src="js/dependencies/jquery.js"></script>
     <script type="text/javascript" src="js/dependencies/jquery-ui.js"></script>
@@ -123,7 +123,7 @@
                             <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: tgd.localText.menu_help">Help</span></a></li>
                             <li><a href="#" data-bind="fastclick: donate"><i class="fa fa-credit-card"></i><span data-bind="text: tgd.localText.menu_donate">Donate</span></a></li>
                             <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: tgd.localText.menu_shareurl">DestinyExotics Share URL</span></a></li>
+							<li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: tgd.localText.menu_destinystatus">DestinyStatus Report</span></a></li>
                             <li class="divider"></li>
                             <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
                                 <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_autorefresh">Auto Refresh</span></a>
@@ -435,10 +435,19 @@
     </div>
     <div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
         <div class="col-xs-12">
-            <h4 data-bind="text: tgd.localText.login_authenticating">Please be patient, logging into Bungie</h4>
+            <h4 data-bind="text: tgd.localText.login_authenticating_pt1">Logging into Bungie... Please be patient.</h4>
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
             </div>
+			<div>
+				<span data-bind="text: tgd.localText.login_authenticating_pt2">
+					If log in screen remains for 2+ minutes, use these link for
+				</span>
+				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank">Xbox Live</a>
+				or
+				<a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank">Playstation Network</a> 
+				<span data-bind="text: tgd.localText.login_authenticating_pt3">to retry login. If the problem persists, reinstall the app.</span>
+			</div>
         </div>
     </div>
     <nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
