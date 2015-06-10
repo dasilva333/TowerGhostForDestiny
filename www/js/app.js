@@ -227,7 +227,6 @@ var app = new(function() {
     this.dmgFilter = ko.observableArray(tgd.defaults.dmgFilter);
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
-    this.setFilterFix = ko.observableArray(tgd.defaults.setFilter);
     this.shareView = ko.observable(tgd.defaults.shareView);
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
@@ -286,7 +285,6 @@ var app = new(function() {
         self.dmgFilter([]);
         self.progressFilter(tgd.defaults.progressFilter);
         self.setFilter([]);
-        self.setFilterFix([]);
         self.shareView(tgd.defaults.shareView);
         self.shareUrl(tgd.defaults.shareUrl);
         self.showMissing(tgd.defaults.showMissing);
@@ -409,12 +407,15 @@ var app = new(function() {
             self.showMissing(!self.showMissing());
         }
     }
+    this.openStatusReport = function() {
+        window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
+        return false;
+    }
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).closest('li').attr("value");
         if (collection in _collections || collection == "All") {
             self.setFilter(collection == "All" ? [] : _collections[collection]);
-            self.setFilterFix(collection == "All" ? [] : _collectionsFix[collection]);
             if (collection == "All") {
                 self.showMissing(false);
             } else if (collection.indexOf("Weapons") > -1) {
@@ -424,7 +425,6 @@ var app = new(function() {
             }
         } else {
             self.setFilter([]);
-            self.setFilterFix([]);
             self.showMissing(false);
         }
     }
@@ -451,7 +451,7 @@ var app = new(function() {
     }
     this.missingSets = ko.computed(function() {
         var missingIds = [];
-        self.setFilter().concat(self.setFilterFix()).forEach(function(item) {
+        self.setFilter().forEach(function(item) {
             var itemFound = false;
             self.characters().forEach(function(character) {
                 ['weapons', 'armor'].forEach(function(list) {
@@ -618,7 +618,6 @@ var app = new(function() {
             count++;
             if (count == total) {
                 self.characters(profiles);
-                self.shareUrl(new report().de());
                 self.loadingUser(false);
                 self.loadLoadouts();
                 self.tierTypes(self.tierTypes.sort(function(a, b) {
@@ -1057,7 +1056,7 @@ var app = new(function() {
     }
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(tgd.localText.whats_new_title).content(JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        (new tgd.dialog).title(tgd.localText.whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
             if (_.isFunction(callback)) callback();
         })
     }

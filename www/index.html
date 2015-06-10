@@ -34,10 +34,10 @@
     <script type="text/javascript" src="data/perkDefs.js"></script>
     <script type="text/javascript" src="data/talentGridDefs.js"></script>
     <script type="text/javascript" src="data/raceDefs.js"></script>
+    <script type="text/javascript" src="data/setDefs.js"></script>
     <script type="text/javascript" src="data/tgdDefs.js"></script>
     <script charset="utf-8" type="text/javascript" src="js/locale.js"></script>
     <script type="text/javascript" src="js/version.js"></script>
-    <script type="text/javascript" src="scripts/lzstring.min.js"></script>
     <script type="text/javascript" src="js/dependencies/modernizr.custom.js"></script>
     <script type="text/javascript" src="js/dependencies/jquery.js"></script>
     <script type="text/javascript" src="js/dependencies/jquery-ui.js"></script>
@@ -100,7 +100,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.6.9</span></a>
+                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.7.0</span></a>
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
                         <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false">
@@ -123,7 +123,7 @@
                             <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: tgd.localText.menu_help">Help</span></a></li>
                             <li><a href="#" data-bind="fastclick: donate"><i class="fa fa-credit-card"></i><span data-bind="text: tgd.localText.menu_donate">Donate</span></a></li>
                             <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: tgd.localText.menu_shareurl">DestinyExotics Share URL</span></a></li>
+                            <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: tgd.localText.menu_destinystatus">DestinyStatus Report</span></a></li>
                             <li class="divider"></li>
                             <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
                                 <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tgd.localText.menu_autorefresh">Auto Refresh</span></a>
@@ -435,17 +435,20 @@
     </div>
     <div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
         <div class="col-xs-12">
-            <h4 data-bind="text: tgd.localText.login_authenticating">Please be patient, logging into Bungie</h4>
+            <h4 data-bind="text: tgd.localText.login_authenticating_pt1">Logging into Bungie... Please be patient.</h4>
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
             </div>
-			<div>
-				If the app does not load past this point, try to login to Bungie again using 
-				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block">Xbox Live</a>
-				or
-				<a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block">Playstation Network</a>
-				If the problem persists after logging in again, please try to reinstall the app. Thank you.
-			</div>
+            <div>
+                <span data-bind="text: tgd.localText.login_authenticating_pt2">
+
+					If log in screen remains for 2+ minutes, use these link for
+
+				</span>
+                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank">Xbox Live</a> or
+                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank">Playstation Network</a>
+                <span data-bind="text: tgd.localText.login_authenticating_pt3">to retry login. If the problem persists, reinstall the app.</span>
+            </div>
         </div>
     </div>
     <nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
@@ -558,7 +561,7 @@
     </div>
     <div id="about" style="display:none">
         <h2 style="margin-top:0;">Tower Ghost for Destiny<br>Manage your gear anywhere</h2>
-        <p><strong>Version: <span class="version">2.6.9</span></strong></p>
+        <p><strong>Version: <span class="version">2.7.0</span></strong></p>
         <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -612,8 +615,8 @@
             <li><strong>Name or Perk</strong> Filter by the name of the item, or the name of the perk, or the description in the perk.</li>
         </ul>
     </div>
-    <div id="showwhatsnew" style="display:none;">false</div>
-    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22false%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-account%20support%20for%20preferred%20systems%2C%20will%20now%20default%20to%20Xbox%20after%20refresh.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-language%20support%2C%20you%20can%20change%20your%20language%20in%20Bungie%27s%20site%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20see%20this%20message%20by%20clicking%20on%20TGD%20in%20the%20%3Cstrong%3Etop%20left%3C/strong%3E%20corner%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECustom%20columns%20and%20vault%20position%20options%20under%20%3Cstrong%3EView%3C/strong%3E%20menu%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENew%20colored%20loading%20bars%20to%20better%20understand%20loading%20issues%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EIntroducing%20a%20new%20menu%20bar%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Sets%20filter%20to%20support%20new%20House%20of%20Wolves%20sets%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20sign%20in%20process%20for%20first%20time%20users%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20sizing%20of%20icons%20and%20columns%20for%20various%20devices%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECategories%20are%20now%20sorted%20by%20tier%2C%20then%20description%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20view%20for%20consumables%20and%20materials%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThanks%20to%20@SchubyDoo%2C%20@bluetidepro%2C%20@Mulchman%2C%20@ssoriche%2C%20@rvvisse%20and%20everyone%20else%20for%20helping%20out.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
+    <div id="showwhatsnew" style="display:none;">true</div>
+    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDestinExotics%20Share%20URL%20removed%20from%20menu%2C%20will%20return%20in%20the%20future.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20visit%20DestinyStatus%20from%20the%20menu%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Extras%20menu%20for%20Consumables%20and%20Materials%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20help%20text%20to%20loading%20problem%20during%20loggin.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Sets%20filter%20to%20support%20new%20Trials%20of%20Osiris%20and%20Prison%20of%20Elders%20sets%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-account%20support%20for%20preferred%20systems%2C%20will%20now%20default%20to%20Xbox%20after%20refresh.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-language%20support%2C%20you%20can%20change%20your%20language%20in%20Bungie%27s%20site%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20see%20this%20message%20by%20clicking%20on%20TGD%20in%20the%20%3Cstrong%3Etop%20left%3C/strong%3E%20corner%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECustom%20columns%20and%20vault%20position%20options%20under%20%3Cstrong%3EView%3C/strong%3E%20menu%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EIntroducing%20a%20new%20menu%20bar%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20sign%20in%20process%20for%20first%20time%20users%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20sizing%20of%20icons%20and%20columns%20for%20various%20devices%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECategories%20are%20now%20sorted%20by%20tier%2C%20then%20description%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThanks%20to%20@SchubyDoo%2C%20@bluetidepro%2C%20@Mulchman%2C%20@ssoriche%2C%20@rvvisse%20and%20everyone%20else%20for%20helping%20out.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
 </body>
 
 </html>
