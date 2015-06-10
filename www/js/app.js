@@ -1383,8 +1383,7 @@ var app = new(function() {
 				drag_min_distance: 1,
 				swipe_velocity: 0.1,
 				drag_horizontal: true,
-				drag_vertical: false,
-				prevent_default: true
+				drag_vertical: false
 			}).on("swipeleft", self.shiftViewLeft)
               .on("swiperight", self.shiftViewRight);
         }
