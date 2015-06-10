@@ -1409,6 +1409,7 @@ var app = new(function() {
         $("html").click(function(e) {
             if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
                 $("#move-popup").hide();
+				activeElement = null;
             }
         });
         /* this fixes issue #16 */
