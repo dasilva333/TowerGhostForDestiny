@@ -834,6 +834,13 @@ var app = new(function() {
         }
     }
 
+	this.globalClickHandler = function(e) {
+		if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+			$("#move-popup").hide();
+			tgd.activeElement = null;
+		}
+	}
+	
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
@@ -1385,8 +1392,9 @@ var app = new(function() {
 				drag_horizontal: true,
 				drag_vertical: false
 			}).on("swipeleft", self.shiftViewLeft)
-              .on("swiperight", self.shiftViewRight);
-        }
+              .on("swiperight", self.shiftViewRight)
+			  .on("tap", self.globalClickHandler);
+        }	
 
         if (isMobile) {
             if (window.device && device.platform === "iOS" && device.version >= 7.0) {
@@ -1410,12 +1418,7 @@ var app = new(function() {
             }, isChrome || isMobile ? 1 : 5000);
         }
         $("form").bind("submit", false);
-        $("html").click(function(e) {
-            if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
-                $("#move-popup").hide();
-				tgd.activeElement = null;
-            }
-        });
+        $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
