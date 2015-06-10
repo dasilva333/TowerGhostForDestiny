@@ -141,7 +141,7 @@ Item.prototype = {
                     otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex, 1);
                     _.each(otherBucketTypes, function(bucketType) {
                         var itemEquipped = self.character.itemEquipped(bucketType);
-                        if (itemEquipped.tierType == 6) {
+                        if (itemEquipped && itemEquipped.tierType && itemEquipped.tierType == 6) {
                             //console.log("going to unequip " + itemEquipped.description);
                             itemEquipped.unequip(function(result) {
                                 //unequip was successful

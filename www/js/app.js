@@ -260,10 +260,12 @@ var app = new(function() {
     }
 
     this.showHelp = function() {
+		self.toggleBootstrapMenu();
         (new tgd.dialog).title("Help").content($("#help").html()).show();
     }
 
     this.showAbout = function() {
+		self.toggleBootstrapMenu();
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
@@ -276,6 +278,7 @@ var app = new(function() {
     }
 
     this.clearFilters = function(model, element) {
+		self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
@@ -408,6 +411,7 @@ var app = new(function() {
         }
     }
     this.openStatusReport = function() {
+		self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     }
@@ -1027,7 +1031,10 @@ var app = new(function() {
         if (supportsCloudSaves == true) {
             self.apiRequest({
                 action: "load",
-                membershipId: parseFloat(self.activeUser().user.membershipId)
+				//this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                membershipId: parseFloat(self.activeUser().user.membershipId),/*
+				this one applies only to your current profile
+				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
                 if (results && results.loadouts) {
