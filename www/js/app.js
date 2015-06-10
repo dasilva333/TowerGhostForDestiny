@@ -407,10 +407,10 @@ var app = new(function() {
             self.showMissing(!self.showMissing());
         }
     }
-	this.openStatusReport = function(){
-		window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
-		return false;
-	}
+    this.openStatusReport = function() {
+        window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
+        return false;
+    }
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).closest('li').attr("value");
