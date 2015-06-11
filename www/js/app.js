@@ -28,7 +28,7 @@ tgd.dialog = (function(options) {
             });
         }
         mdl.on("hide.bs.modal", onHide);
-		mdl.on("shown.bs.modal", onShown);
+        mdl.on("shown.bs.modal", onShown);
         return self;
     }
 
@@ -209,7 +209,7 @@ var app = new(function() {
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-	this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+    this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
@@ -251,16 +251,16 @@ var app = new(function() {
             return a.order() - b.order();
         });
     });
-	this.currentLocale = ko.computed(function(){
-		var locale = self.locale();
-		if (self.appLocale() != ""){
-			locale = self.appLocale();
-		}
-		return locale;
-	});
-	this.activeText = ko.computed(function(){		
-		return tgd.locale[self.currentLocale()];
-	});
+    this.currentLocale = ko.computed(function() {
+        var locale = self.locale();
+        if (self.appLocale() != "") {
+            locale = self.appLocale();
+        }
+        return locale;
+    });
+    this.activeText = ko.computed(function() {
+        return tgd.locale[self.currentLocale()];
+    });
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new Loadout());
@@ -271,24 +271,29 @@ var app = new(function() {
     }
 
     this.showHelp = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         (new tgd.dialog).title("Help").content($("#help").html()).show();
     }
-	
-	this.showLanguageSettings = function(){
-		self.toggleBootstrapMenu();
-		(new tgd.dialog({ message: tgd.languagesTemplate({ locale: self.currentLocale(), languages: tgd.languages }) })).title("Set Language").show(true, function(){}, function(){
-			console.log("showed modal");
-			$(".btn-setLanguage").on("click", function(){
-				self.appLocale(this.value);
-				$(".btn-setLanguage").removeClass("btn-primary");
-				$(this).addClass("btn-primary");
-			});
-		});
-	}
-	
+
+    this.showLanguageSettings = function() {
+        self.toggleBootstrapMenu();
+        (new tgd.dialog({
+            message: tgd.languagesTemplate({
+                locale: self.currentLocale(),
+                languages: tgd.languages
+            })
+        })).title("Set Language").show(true, function() {}, function() {
+            console.log("showed modal");
+            $(".btn-setLanguage").on("click", function() {
+                self.appLocale(this.value);
+                $(".btn-setLanguage").removeClass("btn-primary");
+                $(this).addClass("btn-primary");
+            });
+        });
+    }
+
     this.showAbout = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
@@ -301,7 +306,7 @@ var app = new(function() {
     }
 
     this.clearFilters = function(model, element) {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
@@ -434,7 +439,7 @@ var app = new(function() {
         }
     }
     this.openStatusReport = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     }
@@ -720,8 +725,8 @@ var app = new(function() {
                             icon: self.makeBackgroundUrl(character.emblemPath),
                             background: self.makeBackgroundUrl(character.backgroundPath),
                             level: character.characterLevel,
-							stats: character.characterBase.stats,
-							percentToNextLevel: character.percentToNextLevel,
+                            stats: character.characterBase.stats,
+                            percentToNextLevel: character.percentToNextLevel,
                             race: window._raceDefs[character.characterBase.raceHash].raceName
                         });
                         var items = [];
@@ -794,7 +799,7 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(user);
-                self.locale(self.activeUser().user.locale);                
+                self.locale(self.activeUser().user.locale);
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -837,31 +842,30 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
-			var bucketSizes = {};
-			buckets.each(function(){
-			   var bucketType = this.className.split(" ")[2];
-			   var bucketHeight = $(this).height();
-			   if (!(bucketType in bucketSizes)){
-				   bucketSizes[bucketType] = [ bucketHeight ];
-			   }
-			   else {
-				   bucketSizes[bucketType].push( bucketHeight );
-			   }
-			});
-			_.each(bucketSizes, function(sizes, type){
-			   var maxHeight = Math.max.apply(null, sizes);
-			   buckets.filter("." + type).css("min-height", maxHeight);
-			});
+            var bucketSizes = {};
+            buckets.each(function() {
+                var bucketType = this.className.split(" ")[2];
+                var bucketHeight = $(this).height();
+                if (!(bucketType in bucketSizes)) {
+                    bucketSizes[bucketType] = [bucketHeight];
+                } else {
+                    bucketSizes[bucketType].push(bucketHeight);
+                }
+            });
+            _.each(bucketSizes, function(sizes, type) {
+                var maxHeight = Math.max.apply(null, sizes);
+                buckets.filter("." + type).css("min-height", maxHeight);
+            });
         }
     }
 
-	this.globalClickHandler = function(e) {
-		if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
-			$("#move-popup").hide();
-			tgd.activeElement = null;
-		}
-	}
-	
+    this.globalClickHandler = function(e) {
+        if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+            $("#move-popup").hide();
+            tgd.activeElement = null;
+        }
+    }
+
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
@@ -928,8 +932,8 @@ var app = new(function() {
                 });
                 ref.addEventListener('exit', function() {
                     if (_.isEmpty(self.bungie_cookies)) {
-						self.readBungieCookie(ref, loop);
-					}
+                        self.readBungieCookie(ref, loop);
+                    }
                 });
             } else {
                 clearInterval(loop);
@@ -1051,10 +1055,11 @@ var app = new(function() {
         if (supportsCloudSaves == true) {
             self.apiRequest({
                 action: "load",
-				//this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),/*
-				this one applies only to your current profile
-				accountId: self.bungie.getMemberId()*/
+                //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                membershipId: parseFloat(self.activeUser().user.membershipId),
+                /*
+                				this one applies only to your current profile
+                				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
                 if (results && results.loadouts) {
@@ -1370,133 +1375,133 @@ var app = new(function() {
             window._itemDefs = JSON.parse(itemDefs);
         }
     }
-	
-	this.onLocaleChange = function(){
-		var locale = self.currentLocale();		
-		console.log("locale changed to " + locale);
-		if (locale == "en"){
-			self.defsLocale(locale);
-		}
-		if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
-			console.log("downloading language pack");
-			try {
-				$.ajax({
-			        url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
-			        success: function(data) {
-						console.log("ajax success " + data.length);
-						console.log(Object.keys(data).length);
-			            BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-			            try {
-			                self.itemDefs(JSON.stringify(data));
-			            } catch (e) {
-			                localStorage.clear();
-			                localStorage.setItem("quota_error", "1");
-							console.log("quota error");
-			            }
-			            self.defsLocale(locale);
-						window._itemDefs = data;
-			        }
-			    });
-			}catch(e){
-				console.log(e);
-				console.log("crash dl pack");
-			}
-		    
-		}
-	}
-	
-	this.initLocale = function(callback){
-		self.locale.subscribe(self.onLocaleChange);
-		self.appLocale.subscribe(self.onLocaleChange);
-		if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
-			console.log("getting device locale internally");
-			navigator.globalization.getPreferredLanguage(function(a) {
-				if (a && a.value && a.value.indexOf("-") > -1) {
-					var value = a.value.split("-")[0];
-					if (_.pluck(tgd.languages,'code').indexOf(value) > -1) {
-						console.log("internal locale is " + value);
-						if (value == "pt")
-							value = "pt-br";
-						self.locale(value);
-					}
-				}
-			});
-		}
-	}
-	
+
+    this.onLocaleChange = function() {
+        var locale = self.currentLocale();
+        console.log("locale changed to " + locale);
+        if (locale == "en") {
+            self.defsLocale(locale);
+        }
+        if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+            console.log("downloading language pack");
+            try {
+                $.ajax({
+                    url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+                    success: function(data) {
+                        console.log("ajax success " + data.length);
+                        console.log(Object.keys(data).length);
+                        BootstrapDialog.alert(self.activeText().language_pack_downloaded);
+                        try {
+                            self.itemDefs(JSON.stringify(data));
+                        } catch (e) {
+                            localStorage.clear();
+                            localStorage.setItem("quota_error", "1");
+                            console.log("quota error");
+                        }
+                        self.defsLocale(locale);
+                        window._itemDefs = data;
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                console.log("crash dl pack");
+            }
+
+        }
+    }
+
+    this.initLocale = function(callback) {
+        self.locale.subscribe(self.onLocaleChange);
+        self.appLocale.subscribe(self.onLocaleChange);
+        if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
+            console.log("getting device locale internally");
+            navigator.globalization.getPreferredLanguage(function(a) {
+                if (a && a.value && a.value.indexOf("-") > -1) {
+                    var value = a.value.split("-")[0];
+                    if (_.pluck(tgd.languages, 'code').indexOf(value) > -1) {
+                        console.log("internal locale is " + value);
+                        if (value == "pt")
+                            value = "pt-br";
+                        self.locale(value);
+                    }
+                }
+            });
+        }
+    }
+
     this.init = function() {
-		self.initLocale();
-		if (_.isUndefined(window._itemDefs)) {
-			return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
-		}
-		self.initItemDefs();
-		tgd.perksTemplate = _.template(tgd.perksTemplate);
-		tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
-		tgd.statsTemplate = _.template(tgd.statsTemplate);
-		tgd.languagesTemplate = _.template(app.activeText().language_text +tgd.languagesTemplate);
-		tgd.duplicates = ko.observableArray().extend({
-			rateLimit: {
-				timeout: 5000,
-				method: "notifyWhenChangesStop"
-			}
-		});
-		self.doRefresh.subscribe(self.refreshHandler);
-		self.refreshSeconds.subscribe(self.refreshHandler);
-		self.loadoutMode.subscribe(self.refreshHandler);
-		self.bungie_cookies = "";
-		if (window.localStorage && window.localStorage.getItem) {
-			self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-		}
-		var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-		if (isWindowsPhone) {
-			var msViewportStyle = document.createElement("style");
-			msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
-			document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-		}
+        self.initLocale();
+        if (_.isUndefined(window._itemDefs)) {
+            return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
+        }
+        self.initItemDefs();
+        tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.statsTemplate = _.template(tgd.statsTemplate);
+        tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
+        tgd.duplicates = ko.observableArray().extend({
+            rateLimit: {
+                timeout: 5000,
+                method: "notifyWhenChangesStop"
+            }
+        });
+        self.doRefresh.subscribe(self.refreshHandler);
+        self.refreshSeconds.subscribe(self.refreshHandler);
+        self.loadoutMode.subscribe(self.refreshHandler);
+        self.bungie_cookies = "";
+        if (window.localStorage && window.localStorage.getItem) {
+            self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
+        }
+        var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
+        if (isWindowsPhone) {
+            var msViewportStyle = document.createElement("style");
+            msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
+            document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+        }
 
-		if (isMobile) {
-			Hammer(document.getElementById('charactersContainer'), {
-				drag_min_distance: 1,
-				swipe_velocity: 0.1,
-				drag_horizontal: true,
-				drag_vertical: false
-			}).on("swipeleft", self.shiftViewLeft)
-			  .on("swiperight", self.shiftViewRight)
-			  .on("tap", self.globalClickHandler);
-		}	
+        if (isMobile) {
+            Hammer(document.getElementById('charactersContainer'), {
+                    drag_min_distance: 1,
+                    swipe_velocity: 0.1,
+                    drag_horizontal: true,
+                    drag_vertical: false
+                }).on("swipeleft", self.shiftViewLeft)
+                .on("swiperight", self.shiftViewRight)
+                .on("tap", self.globalClickHandler);
+        }
 
-		if (isMobile) {
-			if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-				StatusBar.overlaysWebView(false);
-			}
-			if (typeof StatusBar !== "undefined") {
-				StatusBar.styleBlackOpaque();
-				StatusBar.backgroundColorByHexString("#272B30");
-			}
-		}
+        if (isMobile) {
+            if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+                StatusBar.overlaysWebView(false);
+            }
+            if (typeof StatusBar !== "undefined") {
+                StatusBar.styleBlackOpaque();
+                StatusBar.backgroundColorByHexString("#272B30");
+            }
+        }
 
-		if (isMobile && isEmptyCookie) {
-			self.bungie = new bungie();
-			self.activeUser({
-				"code": 99,
-				"error": "Please sign-in to continue."
-			});
-		} else {
-			setTimeout(function() {
-				self.loadData()
-			}, isChrome || isMobile ? 1 : 5000);
-		}
-		$("form").bind("submit", false);
-		$("html").click(self.globalClickHandler);
-		/* this fixes issue #16 */
-		self.activeView.subscribe(function(){
-			setTimeout(self.bucketSizeHandler, 500);
-		});
-		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
-		$(window).resize(_.throttle(self.quickIconHighlighter, 500));
-		$(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-		self.whatsNew();
-		ko.applyBindings(self);
+        if (isMobile && isEmptyCookie) {
+            self.bungie = new bungie();
+            self.activeUser({
+                "code": 99,
+                "error": "Please sign-in to continue."
+            });
+        } else {
+            setTimeout(function() {
+                self.loadData()
+            }, isChrome || isMobile ? 1 : 5000);
+        }
+        $("form").bind("submit", false);
+        $("html").click(self.globalClickHandler);
+        /* this fixes issue #16 */
+        self.activeView.subscribe(function() {
+            setTimeout(self.bucketSizeHandler, 500);
+        });
+        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
+        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
+        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
+        self.whatsNew();
+        ko.applyBindings(self);
     }
 });
 

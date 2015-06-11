@@ -22,7 +22,7 @@ tgd.locale = {
         menu_about: "About",
         menu_help: "Help",
         menu_donate: "Donate",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Create",
         menu_view: "View",
@@ -99,7 +99,7 @@ tgd.locale = {
         tier_exotic: "Exotic",
         paypal_code: "EN",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     },
     es: {
         unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
@@ -124,7 +124,7 @@ tgd.locale = {
         menu_about: "Acerca De",
         menu_help: "Ayuda",
         menu_donate: "Donar",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Crear",
         menu_view: "Vista",
@@ -201,7 +201,7 @@ tgd.locale = {
         tier_exotic: "Ex\xF3tico",
         paypal_code: "ES",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     },
     fr: {
         unable_create_loadout_for_type: "Actuellement incapable de cr�er loadouts avec ce type d'article",
@@ -226,7 +226,7 @@ tgd.locale = {
         menu_about: "Propos",
         menu_help: "Aide",
         menu_donate: "Don",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Cr�er",
         menu_view: "Voir",
@@ -302,7 +302,7 @@ tgd.locale = {
         tier_exotic: "Exotic",
         paypal_code: "FR",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     },
     it: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -327,7 +327,7 @@ tgd.locale = {
         menu_about: "About",
         menu_help: "Help",
         menu_donate: "Donate",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Create",
         menu_view: "View",
@@ -403,7 +403,7 @@ tgd.locale = {
         tier_exotic: "Exotic",
         paypal_code: "IT",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     },
     de: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -428,7 +428,7 @@ tgd.locale = {
         menu_about: "About",
         menu_help: "Help",
         menu_donate: "Donate",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Create",
         menu_view: "View",
@@ -504,7 +504,7 @@ tgd.locale = {
         tier_exotic: "Exotic",
         paypal_code: "DE",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     },
     "pt-br": {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -529,7 +529,7 @@ tgd.locale = {
         menu_about: "About",
         menu_help: "Help",
         menu_donate: "Donate",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Create",
         menu_view: "View",
@@ -605,7 +605,7 @@ tgd.locale = {
         tier_exotic: "Exotic",
         paypal_code: "pt_BR",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     },
     ja: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -630,7 +630,7 @@ tgd.locale = {
         menu_about: "About",
         menu_help: "Help",
         menu_donate: "Donate",
-		menu_language: "Language",
+        menu_language: "Language",
         menu_loadouts: "Loadouts",
         menu_loadouts_create: "Create",
         menu_view: "View",
@@ -706,6 +706,6 @@ tgd.locale = {
         tier_exotic: "Exotic",
         paypal_code: "ja_JP",
         menu_destinystatus: "DestinyStatus Report",
-		language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future."
     }
 }
