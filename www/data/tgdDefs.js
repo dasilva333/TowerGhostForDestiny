@@ -107,7 +107,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
-		'<div class="col-xs-3 text-center">' +
+		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +
 			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.bungie_code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.bungie_code %>"><%= language.description %></button>' +
 		'</div>' +
 	'<% }) %>' +
