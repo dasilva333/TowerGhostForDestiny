@@ -277,7 +277,7 @@ var app = new(function() {
 	
 	this.showLanguageSettings = function(){
 		self.toggleBootstrapMenu();
-		(new tgd.dialog({ message: tgd.languagesTemplate({ locale: self.appLocale() == '' ? self.locale() : self.appLocale(), languages: tgd.languages }) })).title("Set Language").show(true, function(){}, function(){
+		(new tgd.dialog({ message: tgd.languagesTemplate({ locale: self.currentLocale(), languages: tgd.languages }) })).title("Set Language").show(true, function(){}, function(){
 			console.log("showed modal");
 			$(".btn-setLanguage").on("click", function(){
 				self.appLocale(this.value);
