@@ -19,7 +19,7 @@ tgd.dialog = (function(options) {
         return self;
     }
 
-    this.show = function(excludeClick, cb) {
+    this.show = function(excludeClick, onHide, onShown) {
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -27,7 +27,8 @@ tgd.dialog = (function(options) {
                 self.modal.close();
             });
         }
-        mdl.on("hide.bs.modal", cb);
+        mdl.on("hide.bs.modal", onHide);
+        mdl.on("shown.bs.modal", onShown);
         return self;
     }
 
@@ -48,7 +49,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             app.activeLoadout().ids.remove(existingItem);
         else {
             if (item._id == 0) {
-                BootstrapDialog.alert(tgd.localText.unable_create_loadout_for_type);
+                BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
                 }).length < 9) {
@@ -58,13 +59,13 @@ tgd.moveItemPositionHandler = function(element, item) {
                     doEquip: false
                 });
             } else {
-                BootstrapDialog.alert(tgd.localText.unable_to_create_loadout_for_bucket + item.bucketType);
+                BootstrapDialog.alert(app.activeText().unable_to_create_loadout_for_bucket + item.bucketType);
             }
         }
     } else {
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master") {
-            return BootstrapDialog.alert(tgd.localText.unable_to_move_postmaster);
+            return BootstrapDialog.alert(app.activeText().unable_to_move_postmaster);
         }
         if (element == tgd.activeElement) {
             $movePopup.hide();
@@ -111,7 +112,7 @@ window.ko.bindingHandlers.scrollToView = {
             })
             .on("press", function() {
 
-                BootstrapDialog.alert(tgd.localText.this_icon + viewModel.uniqueName);
+                BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
             });
         app.quickIconHighlighter();
     }
@@ -208,6 +209,7 @@ var app = new(function() {
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+    this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
@@ -249,7 +251,16 @@ var app = new(function() {
             return a.order() - b.order();
         });
     });
-
+    this.currentLocale = ko.computed(function() {
+        var locale = self.locale();
+        if (self.appLocale() != "") {
+            locale = self.appLocale();
+        }
+        return locale;
+    });
+    this.activeText = ko.computed(function() {
+        return tgd.locale[self.currentLocale()];
+    });
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new Loadout());
@@ -260,12 +271,29 @@ var app = new(function() {
     }
 
     this.showHelp = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         (new tgd.dialog).title("Help").content($("#help").html()).show();
     }
 
+    this.showLanguageSettings = function() {
+        self.toggleBootstrapMenu();
+        (new tgd.dialog({
+            message: tgd.languagesTemplate({
+                locale: self.currentLocale(),
+                languages: tgd.languages
+            })
+        })).title("Set Language").show(true, function() {}, function() {
+            console.log("showed modal");
+            $(".btn-setLanguage").on("click", function() {
+                self.appLocale(this.value);
+                $(".btn-setLanguage").removeClass("btn-primary");
+                $(this).addClass("btn-primary");
+            });
+        });
+    }
+
     this.showAbout = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
@@ -278,7 +306,7 @@ var app = new(function() {
     }
 
     this.clearFilters = function(model, element) {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
@@ -405,13 +433,13 @@ var app = new(function() {
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length == 0) {
-            BootstrapDialog.alert(tgd.localText.pick_a_set);
+            BootstrapDialog.alert(self.activeText().pick_a_set);
         } else {
             self.showMissing(!self.showMissing());
         }
     }
     this.openStatusReport = function() {
-		self.toggleBootstrapMenu();
+        self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     }
@@ -649,7 +677,7 @@ var app = new(function() {
                         console.log("crash reported");
                     }
                 });
-                return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(e));
+                return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -680,7 +708,7 @@ var app = new(function() {
                 } else {
                     loadingData = false;
                     self.refresh();
-                    return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(response));
+                    return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             });
             //console.time("avatars.forEach");          
@@ -697,6 +725,8 @@ var app = new(function() {
                             icon: self.makeBackgroundUrl(character.emblemPath),
                             background: self.makeBackgroundUrl(character.backgroundPath),
                             level: character.characterLevel,
+                            stats: character.characterBase.stats,
+                            percentToNextLevel: character.percentToNextLevel,
                             race: window._raceDefs[character.characterBase.raceHash].raceName
                         });
                         var items = [];
@@ -721,7 +751,7 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert(tgd.localText.error_loading_inventory + JSON.stringify(response));
+                        return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(response));
                     }
                 });
             });
@@ -770,23 +800,6 @@ var app = new(function() {
                 }
                 self.activeUser(user);
                 self.locale(self.activeUser().user.locale);
-                tgd.localText = tgd.locale[self.locale()];
-                if (self.locale() != "en" && self.defsLocale() != self.locale() && !localStorage.getItem("quota_error")) {
-                    $.ajax({
-                        url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
-                        success: function(data) {
-                            BootstrapDialog.alert(tgd.localText.language_pack_downloaded);
-                            try {
-                                self.itemDefs(data);
-                            } catch (e) {
-                                localStorage.clear();
-                                localStorage.setItem("quota_error", "1");
-                            }
-                            self.defsLocale(self.locale());
-                            self.initItemDefs();
-                        }
-                    });
-                }
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -827,10 +840,29 @@ var app = new(function() {
     }
 
     this.bucketSizeHandler = function() {
-        var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
+        var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
-            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 2) * 3;
-            buckets.css("min-height", maxHeight);
+            var bucketSizes = {};
+            buckets.each(function() {
+                var bucketType = this.className.split(" ")[2];
+                var bucketHeight = $(this).height();
+                if (!(bucketType in bucketSizes)) {
+                    bucketSizes[bucketType] = [bucketHeight];
+                } else {
+                    bucketSizes[bucketType].push(bucketHeight);
+                }
+            });
+            _.each(bucketSizes, function(sizes, type) {
+                var maxHeight = Math.max.apply(null, sizes);
+                buckets.filter("." + type).css("min-height", maxHeight);
+            });
+        }
+    }
+
+    this.globalClickHandler = function(e) {
+        if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+            $("#move-popup").hide();
+            tgd.activeElement = null;
         }
     }
 
@@ -846,7 +878,7 @@ var app = new(function() {
     }
 
     this.donate = function() {
-        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + tgd.localText.paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
+        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
     }
 
     this.readBungieCookie = function(ref, loop) {
@@ -894,29 +926,21 @@ var app = new(function() {
                 window.ref.opener = null;
                 window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
             }
-            if (isMobile && !isKindle) {
+            if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
                     self.readBungieCookie(ref, loop);
                 });
-                /*ref.addEventListener('exit', function() {
-                    if (self.loadingUser() == false) {
-                        if (_.isEmpty(self.bungie_cookies)) {
-                            self.readBungieCookie(ref, loop);
-                        } else {
-                            self.loadData();
-                        }
+                ref.addEventListener('exit', function() {
+                    if (_.isEmpty(self.bungie_cookies)) {
+                        self.readBungieCookie(ref, loop);
                     }
-                });*/
+                });
             } else {
                 clearInterval(loop);
                 loop = setInterval(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
-                        if (isKindle) {
-                            self.readBungieCookie(ref, loop);
-                        } else {
-                            self.loadData();
-                        }
+                        self.loadData();
                     }
                 }, 100);
             }
@@ -1031,10 +1055,11 @@ var app = new(function() {
         if (supportsCloudSaves == true) {
             self.apiRequest({
                 action: "load",
-				//this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),/*
-				this one applies only to your current profile
-				accountId: self.bungie.getMemberId()*/
+                //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                membershipId: parseFloat(self.activeUser().user.membershipId),
+                /*
+                				this one applies only to your current profile
+                				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
                 if (results && results.loadouts) {
@@ -1063,10 +1088,11 @@ var app = new(function() {
     }
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(tgd.localText.whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        (new tgd.dialog).title(self.activeText().whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
             if (_.isFunction(callback)) callback();
         })
     }
+
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
@@ -1345,19 +1371,74 @@ var app = new(function() {
 
     this.initItemDefs = function() {
         var itemDefs = self.itemDefs();
-        if (!_.isEmpty(itemDefs) && self.locale() == self.defsLocale()) {
+        if (self.currentLocale() != "en" && !_.isEmpty(itemDefs) && self.currentLocale() == self.defsLocale()) {
             window._itemDefs = JSON.parse(itemDefs);
         }
     }
 
+    this.onLocaleChange = function() {
+        var locale = self.currentLocale();
+        console.log("locale changed to " + locale);
+        if (locale == "en") {
+            self.defsLocale(locale);
+        }
+        if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+            console.log("downloading language pack");
+            try {
+                $.ajax({
+                    url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+                    success: function(data) {
+                        console.log("ajax success " + data.length);
+                        console.log(Object.keys(data).length);
+                        BootstrapDialog.alert(self.activeText().language_pack_downloaded);
+                        try {
+                            self.itemDefs(JSON.stringify(data));
+                        } catch (e) {
+                            localStorage.clear();
+                            localStorage.setItem("quota_error", "1");
+                            console.log("quota error");
+                        }
+                        self.defsLocale(locale);
+                        window._itemDefs = data;
+                    }
+                });
+            } catch (e) {
+                console.log(e);
+                console.log("crash dl pack");
+            }
+
+        }
+    }
+
+    this.initLocale = function(callback) {
+        self.locale.subscribe(self.onLocaleChange);
+        self.appLocale.subscribe(self.onLocaleChange);
+        if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
+            console.log("getting device locale internally");
+            navigator.globalization.getPreferredLanguage(function(a) {
+                if (a && a.value && a.value.indexOf("-") > -1) {
+                    var value = a.value.split("-")[0];
+                    if (_.pluck(tgd.languages, 'code').indexOf(value) > -1) {
+                        console.log("internal locale is " + value);
+                        if (value == "pt")
+                            value = "pt-br";
+                        self.locale(value);
+                    }
+                }
+            });
+        }
+    }
+
     this.init = function() {
-        tgd.localText = tgd.locale[self.locale()];
+        self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
-            return BootstrapDialog.alert(tgd.localText.itemDefs_undefined);
+            return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.statsTemplate = _.template(tgd.statsTemplate);
+        tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
@@ -1380,12 +1461,13 @@ var app = new(function() {
 
         if (isMobile) {
             Hammer(document.getElementById('charactersContainer'), {
-				drag_min_distance: 1,
-				swipe_velocity: 0.1,
-				drag_horizontal: true,
-				drag_vertical: false
-			}).on("swipeleft", self.shiftViewLeft)
-              .on("swiperight", self.shiftViewRight);
+                    drag_min_distance: 1,
+                    swipe_velocity: 0.1,
+                    drag_horizontal: true,
+                    drag_vertical: false
+                }).on("swipeleft", self.shiftViewLeft)
+                .on("swiperight", self.shiftViewRight)
+                .on("tap", self.globalClickHandler);
         }
 
         if (isMobile) {
@@ -1410,13 +1492,11 @@ var app = new(function() {
             }, isChrome || isMobile ? 1 : 5000);
         }
         $("form").bind("submit", false);
-        $("html").click(function(e) {
-            if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
-                $("#move-popup").hide();
-				tgd.activeElement = null;
-            }
-        });
+        $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
+        self.activeView.subscribe(function() {
+            setTimeout(self.bucketSizeHandler, 500);
+        });
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
