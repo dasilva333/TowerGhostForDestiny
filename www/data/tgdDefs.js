@@ -115,7 +115,7 @@ tgd.languagesTemplate = '<div class="row button-group">' +
 
 tgd.statsTemplate = '<div class="row">' +
 	'<% stats.forEach(function(stat){ %>' +
-		'<div class="col-xs-3">' +
+		'<div class="col-xs-4">' +
 			'<div class="col-xs-9 text-right">' +
 				'<strong><%= stat.name %></strong>' +
 			'</div>' +
