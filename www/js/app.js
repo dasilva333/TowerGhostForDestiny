@@ -833,10 +833,24 @@ var app = new(function() {
     }
 
     this.bucketSizeHandler = function() {
-        var buckets = $(".profile:gt(0) .itemBucket").css("height", "auto");
+        var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
-            var maxHeight = ($(".bucket-item:visible:eq(0)").height() + 2) * 3;
-            buckets.css("min-height", maxHeight);
+			console.log("creating bucket sizes");
+			window.bucketSizes = {};
+			buckets.each(function(){
+			   var bucketType = this.className.split(" ")[2];
+			   var bucketHeight = $(this).height();
+			   if (!(bucketType in bucketSizes)){
+				   bucketSizes[bucketType] = [ bucketHeight ];
+			   }
+			   else {
+				   bucketSizes[bucketType].push( bucketHeight );
+			   }
+			});
+			_.each(bucketSizes, function(sizes, type){
+			   var maxHeight = Math.max.apply(null, sizes);
+			   buckets.filter("." + type).css("min-height", maxHeight);
+			});
         }
     }
 
@@ -1480,6 +1494,9 @@ var app = new(function() {
 		$("form").bind("submit", false);
 		$("html").click(self.globalClickHandler);
 		/* this fixes issue #16 */
+		self.activeView.subscribe(function(){
+			setTimeout(self.bucketSizeHandler, 500);
+		});
 		$(window).resize(_.throttle(self.bucketSizeHandler, 500));
 		$(window).resize(_.throttle(self.quickIconHighlighter, 500));
 		$(window).scroll(_.throttle(self.quickIconHighlighter, 500));
