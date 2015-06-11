@@ -835,8 +835,7 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
-			console.log("creating bucket sizes");
-			window.bucketSizes = {};
+			var bucketSizes = {};
 			buckets.each(function(){
 			   var bucketType = this.className.split(" ")[2];
 			   var bucketHeight = $(this).height();
