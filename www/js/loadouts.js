@@ -1,8 +1,8 @@
 	/*
-									targetItem: item,
-									swapItem: swapItem,
-									description: item.description + "'s swap item is " + swapItem.description
-									*/
+												targetItem: item,
+												swapItem: swapItem,
+												description: item.description + "'s swap item is " + swapItem.description
+												*/
 
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
@@ -317,7 +317,7 @@
 	                                if (item.doEquip() == true) {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.loadouts_to_equip,
+	                                        description: item.description + app.activeText().loadouts_to_equip,
 	                                        actionIcon: "assets/to-equip.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
@@ -325,7 +325,7 @@
 	                                /* then return an object indicating to do nothing */
 	                                else {
 	                                    return {
-	                                        description: item.description + tgd.localText.loadouts_alreadythere_pt1 + targetCharacter.classType + tgd.localText.loadouts_alreadythere_pt2 + item.bucketType,
+	                                        description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
@@ -341,7 +341,7 @@
 	                                if (swapItem) {
 	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
 	                                        return {
-	                                            description: item.description + tgd.localText.no_transfer,
+	                                            description: item.description + app.activeText().no_transfer,
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
@@ -350,13 +350,13 @@
 	                                    return {
 	                                        targetItem: item,
 	                                        swapItem: swapItem,
-	                                        description: item.description + tgd.localText.loadouts_swap + swapItem.description,
+	                                        description: item.description + app.activeText().loadouts_swap + swapItem.description,
 	                                        actionIcon: "assets/swap.png"
 	                                    }
 	                                } else {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.to_transfer,
+	                                        description: item.description + app.activeText().loadouts_to_transfer,
 	                                        swapIcon: ownerIcon,
 	                                        actionIcon: "assets/to-transfer.png"
 	                                    }
@@ -379,7 +379,7 @@
 	                                if (item.doEquip() == true) {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.loadouts_to_equip,
+	                                        description: item.description + app.activeText().loadouts_to_equip,
 	                                        actionIcon: "assets/to-equip.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
@@ -387,7 +387,7 @@
 	                                /* then return an object indicating to do nothing */
 	                                else {
 	                                    return {
-	                                        description: item.description + tgd.localText.loadouts_alreadythere_pt1 + targetCharacter.classType + tgd.localText.loadouts_alreadythere_pt2 + item.bucketType,
+	                                        description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
@@ -395,7 +395,7 @@
 	                                }
 	                            } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
 	                                return {
-	                                    description: item.description + tgd.localText.loadouts_no_transfer,
+	                                    description: item.description + app.activeText().loadouts_no_transfer,
 	                                    targetIcon: item.icon,
 	                                    actionIcon: "assets/no-transfer.png",
 	                                    swapIcon: ownerIcon
@@ -404,14 +404,14 @@
 	                                if (item.doEquip() == true) {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.loadouts_to_moveequip,
+	                                        description: item.description + app.activeText().loadouts_to_moveequip,
 	                                        actionIcon: "assets/to-equip.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
 	                                } else {
 	                                    return {
 	                                        targetItem: item,
-	                                        description: item.description + tgd.localText.to_transfer,
+	                                        description: item.description + app.activeText().loadouts_to_transfer,
 	                                        actionIcon: "assets/to-transfer.png",
 	                                        swapIcon: targetCharacterIcon
 	                                    }
@@ -431,20 +431,20 @@
 	            $template = $template.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
 	            (new tgd.dialog({
 	                buttons: [{
-	                    label: tgd.localText.loadouts_transfer,
+	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            BootstrapDialog.alert(tgd.localText.loadouts_transferred);
+	                            BootstrapDialog.alert(app.activeText().loadouts_transferred);
 	                            dialog.close()
 	                        });
 	                    }
 	                }, {
-	                    label: tgd.localText.cancel,
+	                    label: app.activeText().cancel,
 	                    action: function(dialog) {
 	                        dialog.close()
 	                    }
 	                }]
-	            })).title(tgd.localText.loadouts_transfer_confirm).content($template).show(true);
+	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
 	        }
 	    },
 	    /* hold on there cowboy can't make a promise we can't keep 
@@ -462,7 +462,7 @@
 	        var ownerIcon = item.character.icon().replace('url("', "").replace('")', '');
 	        if (maxBucketSize) {
 	            return {
-	                description: item.description + tgd.localText.loadouts_outofspace + key,
+	                description: item.description + app.activeText().loadouts_outofspace + key,
 	                targetIcon: item.icon,
 	                actionIcon: "assets/no-transfer.png",
 	                swapIcon: ownerIcon
@@ -481,7 +481,7 @@
 	            try {
 	                if (item.character.id !== "Vault" && item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics)) {
 	                    cantMoveEquipped = {
-	                        description: item.description + tgd.localText.loadouts_invalidbucket + bucketType,
+	                        description: item.description + app.activeText().loadouts_invalidbucket + bucketType,
 	                        targetIcon: item.icon,
 	                        actionIcon: "assets/cant-transfer.png",
 	                        swapIcon: ownerIcon
@@ -503,7 +503,7 @@
 	        }
 	        if (ownerBucket.length == 0) {
 	            return {
-	                description: item.description + tgd.localText.loadouts_no_replacement,
+	                description: item.description + app.activeText().loadouts_no_replacement,
 	                targetIcon: item.icon,
 	                actionIcon: "assets/cant-transfer.png",
 	                swapIcon: ownerIcon

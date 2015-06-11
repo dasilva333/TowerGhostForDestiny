@@ -50,7 +50,16 @@ tgd.DestinyBucketTypes = {
 }
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
-	
+tgd.languages = [
+	{ code: "en", description: "English", bungie_code: "en" },
+	{ code: "es", description: "Spanish", bungie_code: "es" },
+	{ code: "it", description: "Italian", bungie_code: "it" },
+	{ code: "de", description: "German", bungie_code: "de" },
+	{ code: "ja", description: "Japanese", bungie_code: "ja" },
+	{ code: "pt", description: "Portuguese", bungie_code: "pt-br" },
+	{ code: "fr", description: "French", bungie_code: "fr" }	
+];
+
 tgd.defaults = {
 	searchKeyword: "",
 	doRefresh: isMobile ? false : true,
@@ -72,7 +81,11 @@ tgd.defaults = {
 	smColumn: 6,
 	mdColumn: 4,
 	lgColumn: 3,
+	//device and bungie locale
 	locale: "en",
+	//user interface set locale
+	appLocale: "",
+	//internally cached version of the itemDefs
 	defsLocale: "en",
 	vaultPos: 0,
 	itemDefs: "",
@@ -87,6 +100,27 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 			'</div>' +
 			'<div class="destt-talent-description">' +
 				'<%= perk.description %>' +
+			'</div>' +
+		'</div>' +
+	'<% }) %>' +
+'</div>';
+
+tgd.languagesTemplate = '<div class="row button-group">' +
+	'<% languages.forEach(function(language){ %>' +
+		'<div class="col-xs-3 text-center">' +
+			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.bungie_code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.bungie_code %>"><%= language.description %></button>' +
+		'</div>' +
+	'<% }) %>' +
+'</div>';
+
+tgd.statsTemplate = '<div class="row">' +
+	'<% stats.forEach(function(stat){ %>' +
+		'<div class="col-xs-3">' +
+			'<div class="col-xs-9 text-right">' +
+				'<strong><%= stat.name %></strong>' +
+			'</div>' +
+			'<div class="col-xs-3">' +
+				'<%= stat.value %>' +
 			'</div>' +
 		'</div>' +
 	'<% }) %>' +
