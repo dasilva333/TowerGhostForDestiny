@@ -19,7 +19,7 @@ tgd.dialog = (function(options) {
         return self;
     }
 
-    this.show = function(excludeClick, cb) {
+    this.show = function(excludeClick, onHide, onShown) {
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -27,7 +27,8 @@ tgd.dialog = (function(options) {
                 self.modal.close();
             });
         }
-        mdl.on("hide.bs.modal", cb);
+        mdl.on("hide.bs.modal", onHide);
+		mdl.on("shown.bs.modal", onShown);
         return self;
     }
 
@@ -208,6 +209,7 @@ var app = new(function() {
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+	this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
@@ -249,8 +251,15 @@ var app = new(function() {
             return a.order() - b.order();
         });
     });
-	this.activeText = ko.computed(function(){
-		return tgd.locale[self.locale()];
+	this.currentLocale = ko.computed(function(){
+		var locale = self.locale();
+		if (self.appLocale() != ""){
+			locale = self.appLocale();
+		}
+		return locale;
+	});
+	this.activeText = ko.computed(function(){		
+		return tgd.locale[self.currentLocale()];
 	});
     this.createLoadout = function() {
         self.loadoutMode(true);
@@ -265,10 +274,17 @@ var app = new(function() {
 		self.toggleBootstrapMenu();
         (new tgd.dialog).title("Help").content($("#help").html()).show();
     }
-
-	this.setLanguage = function(){
+	
+	this.showLanguageSettings = function(){
 		self.toggleBootstrapMenu();
-		(new tgd.dialog({ message: "" })).title("Set Language").show(true)
+		(new tgd.dialog({ message: tgd.languagesTemplate({ locale: self.appLocale() == '' ? self.locale() : self.appLocale(), languages: tgd.languages }) })).title("Set Language").show(true, function(){}, function(){
+			console.log("showed modal");
+			$(".btn-setLanguage").on("click", function(){
+				self.appLocale(this.value);
+				$(".btn-setLanguage").removeClass("btn-primary");
+				$(this).addClass("btn-primary");
+			});
+		});
 	}
 	
     this.showAbout = function() {
@@ -776,23 +792,7 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(user);
-                self.locale(self.activeUser().user.locale);
-                if (self.locale() != "en" && self.defsLocale() != self.locale() && !localStorage.getItem("quota_error")) {
-                    $.ajax({
-                        url: "https://towerghostfordestiny.com/locale.cfm?locale=" + self.locale(),
-                        success: function(data) {
-                            BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-                            try {
-                                self.itemDefs(data);
-                            } catch (e) {
-                                localStorage.clear();
-                                localStorage.setItem("quota_error", "1");
-                            }
-                            self.defsLocale(self.locale());
-                            self.initItemDefs();
-                        }
-                    });
-                }
+                self.locale(self.activeUser().user.locale);                
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
@@ -1358,18 +1358,54 @@ var app = new(function() {
 
     this.initItemDefs = function() {
         var itemDefs = self.itemDefs();
-        if (!_.isEmpty(itemDefs) && self.locale() == self.defsLocale()) {
+        if (self.currentLocale() != "en" && !_.isEmpty(itemDefs) && self.currentLocale() == self.defsLocale()) {
             window._itemDefs = JSON.parse(itemDefs);
         }
     }
 	
+	this.onLocaleChange = function(){
+		var locale = self.currentLocale();		
+		console.log("locale changed to " + locale);
+		if (locale == "en"){
+			self.defsLocale(locale);
+		}
+		if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+			console.log("downloading language pack");
+			try {
+				$.ajax({
+			        url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+			        success: function(data) {
+						console.log("ajax success " + data.length);
+						console.log(Object.keys(data).length);
+			            BootstrapDialog.alert(self.activeText().language_pack_downloaded);
+			            try {
+			                self.itemDefs(JSON.stringify(data));
+			            } catch (e) {
+			                localStorage.clear();
+			                localStorage.setItem("quota_error", "1");
+							console.log("quota error");
+			            }
+			            self.defsLocale(locale);
+						window._itemDefs = data;
+			        }
+			    });
+			}catch(e){
+				console.log(e);
+				console.log("crash dl pack");
+			}
+		    
+		}
+	}
+	
 	this.initLocale = function(callback){
+		self.locale.subscribe(self.onLocaleChange);
+		self.appLocale.subscribe(self.onLocaleChange);
 		if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
 			console.log("getting device locale internally");
 			navigator.globalization.getPreferredLanguage(function(a) {
 				if (a && a.value && a.value.indexOf("-") > -1) {
 					var value = a.value.split("-")[0];
-					if (tgd.supportLanguages.indexOf(value) > -1) {
+					if (_.pluck(tgd.languages,'code').indexOf(value) > -1) {
 						console.log("internal locale is " + value);
 						if (value == "pt")
 							value = "pt-br";
@@ -1388,6 +1424,7 @@ var app = new(function() {
 		self.initItemDefs();
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
 		tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+		tgd.languagesTemplate = _.template(app.activeText().language_text +tgd.languagesTemplate);
 		tgd.duplicates = ko.observableArray().extend({
 			rateLimit: {
 				timeout: 5000,
