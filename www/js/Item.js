@@ -394,37 +394,70 @@ Item.prototype = {
             } else {
                 var dialogItself = (new tgd.dialog({
                         message: function() {
+                            var itemTotal = 0;
+                            for (i = 0; i < app.orderedCharacters().length; i++) {
+                                var c = app.orderedCharacters()[i];
+                                var characterTotal = _.reduce(
+                                    _.filter(c.items(), {
+                                        description: self.description
+                                    }),
+                                    function(memo, j) {
+                                        return memo + j.primaryStat;
+                                    },
+                                    0);
+                                itemTotal = itemTotal + characterTotal;
+                            }
                             var $content = $(
-                                '<div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
+                                '<div><div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
                                 ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
                                 '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + self.primaryStat + ') </button>' +
                                 '<button type="button" class="btn btn-default pull-right" id="one"> ' + app.activeText().transfer_one + ' </button>' +
-                                '</div>');
-                            $content.find('#dec').click(function() {
+                                '</div>' +
+                                '<div><hr></div>' +
+                                '<div class="controls controls-row">' +
+                                '<input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))' +
+                                '</div></div>');
+                            var btnDec = $content.find('#dec');
+                            btnDec.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
                                     $("input#materialsAmount").val(Math.max(num - 1, 1));
                                 }
                             });
-                            $content.find('#inc').click(function() {
+                            var btnInc = $content.find('#inc');
+                            btnInc.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
                                     $("input#materialsAmount").val(Math.min(num + 1, self.primaryStat));
                                 }
                             });
-                            $content.find('#one').click(function() {
+                            var btnOne = $content.find('#one');
+                            btnOne.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
                                     $("input#materialsAmount").val(1);
                                 }
                             });
-                            $content.find('#all').click(function() {
+                            var btnAll = $content.find('#all');
+                            btnAll.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
                                     $("input#materialsAmount").val(self.primaryStat);
                                 }
+                            });
+                            var inputAmt = $content.find('#materialsAmount');
+                            var handleCheckChanged = function(checked) {
+                                btnDec.attr("disabled", checked);
+                                btnInc.attr("disabled", checked);
+                                btnOne.attr("disabled", checked);
+                                btnAll.attr("disabled", checked);
+                                inputAmt.attr("disabled", checked);
+                                inputAmt.attr("readOnly", checked);
+                            };
+                            $content.find('#consolidate').click(function() {
+                                handleCheckChanged(this.checked);
                             });
                             return $content;
                         },
@@ -432,7 +465,7 @@ Item.prototype = {
                             label: 'Transfer',
                             cssClass: 'btn-primary',
                             action: function() {
-                                finishTransfer()
+                                finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
                             label: 'Close',
@@ -440,20 +473,25 @@ Item.prototype = {
                                 dialogItself.close();
                             }
                         }]
-                    })).title("Transfer Materials").show(true),
-                    finishTransfer = function() {
-                        transferAmount = parseInt($("input#materialsAmount").val());
-                        if (!isNaN(transferAmount)) {
-                            done();
+                    })).title("Transfer " + self.description).show(true),
+                    finishTransfer = function(consolidate) {
+                        if (consolidate) {
+                            self.consolidate(targetCharacterId, self.description);
                             dialogItself.modal.close();
                         } else {
-                            BootstrapDialog.alert(app.activeText().invalid_transfer_amount + transferAmount);
+                            transferAmount = parseInt($("input#materialsAmount").val());
+                            if (!isNaN(transferAmount)) {
+                                done();
+                                dialogItself.modal.close();
+                            } else {
+                                BootstrapDialog.alert(app.activeText().invalid_transfer_amount + transferAmount);
+                            }
                         }
                     }
                 setTimeout(function() {
                     $("#materialsAmount").select().bind("keyup", function(e) {
                         if (e.keyCode == 13) {
-                            finishTransfer()
+                            finishTransfer(false);
                         }
                     })
                 }, 500);
@@ -464,6 +502,57 @@ Item.prototype = {
     },
     normalize: function(characters) {
         app.normalizeSingle(this.description, characters, false, undefined);
+    },
+    consolidate: function(targetCharacterId, description) {
+        //console.log(targetCharacterId);
+        //console.log(description);
+
+        var getNextStack = (function() {
+            var i = 0;
+            var chars = _.filter(app.orderedCharacters(), function(c) {
+                return c.id !== targetCharacterId;
+            });
+            var stacks = _.flatten(_.map(chars, function(c) {
+                return _.filter(c.items(), {
+                    description: description
+                });
+            }));
+            return function() {
+                return i >= stacks.length ? undefined : stacks[i++];
+            };
+        })();
+
+        var nextTransfer = function(callback) {
+            var theStack = getNextStack();
+            if (theStack == undefined) {
+                //console.log("all items consolidated");
+                if (callback !== undefined) {
+                    callback();
+                }
+                return;
+            }
+
+            //console.log("xfer " + theStack.primaryStat + " from: " + theStack.character.id + ", to: " + targetCharacterId);
+
+            if (targetCharacterId == "Vault") {
+                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat, function() {
+                    nextTransfer(callback);
+                });
+            } else if (theStack.character.id == "Vault") {
+                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat, function() {
+                    nextTransfer(callback);
+                });
+            } else {
+                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat, function() {
+                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat, function() {
+                        nextTransfer(callback);
+                    });
+                });
+            }
+        };
+
+        // kick off transfers
+        nextTransfer(undefined);
     },
     extrasGlue: function() {
         var self = this;
