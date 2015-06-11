@@ -503,8 +503,9 @@
                         <div class="character-box" data-bind="style: { backgroundImage: background }">
                             <div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
                             <div class="class" data-bind="text: classType"></div>
-                            <div class="level" data-bind="text: level"></div>
+                            <div class="level" style="cursor:pointer;" data-bind="text: level, click: showStats"></div>
                         </div>
+						<div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }" style="background-color:yellow; height:2px;">&nbsp;</div>
                     </div>
                     <div class="inventory">
                         <div class="items" data-type="item">

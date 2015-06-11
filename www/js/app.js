@@ -720,6 +720,8 @@ var app = new(function() {
                             icon: self.makeBackgroundUrl(character.emblemPath),
                             background: self.makeBackgroundUrl(character.backgroundPath),
                             level: character.characterLevel,
+							stats: character.characterBase.stats,
+							percentToNextLevel: character.percentToNextLevel,
                             race: window._raceDefs[character.characterBase.raceHash].raceName
                         });
                         var items = [];
@@ -920,29 +922,21 @@ var app = new(function() {
                 window.ref.opener = null;
                 window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
             }
-            if (isMobile && !isKindle) {
+            if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
                     self.readBungieCookie(ref, loop);
                 });
-                /*ref.addEventListener('exit', function() {
-                    if (self.loadingUser() == false) {
-                        if (_.isEmpty(self.bungie_cookies)) {
-                            self.readBungieCookie(ref, loop);
-                        } else {
-                            self.loadData();
-                        }
-                    }
-                });*/
+                ref.addEventListener('exit', function() {
+                    if (_.isEmpty(self.bungie_cookies)) {
+						self.readBungieCookie(ref, loop);
+					}
+                });
             } else {
                 clearInterval(loop);
                 loop = setInterval(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
-                        if (isKindle) {
-                            self.readBungieCookie(ref, loop);
-                        } else {
-                            self.loadData();
-                        }
+                        self.loadData();
                     }
                 }, 100);
             }
@@ -1093,6 +1087,7 @@ var app = new(function() {
             if (_.isFunction(callback)) callback();
         })
     }
+
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
             var version = parseInt(tgd.version.replace(/\./g, ''));
@@ -1437,6 +1432,7 @@ var app = new(function() {
 		self.initItemDefs();
 		tgd.perksTemplate = _.template(tgd.perksTemplate);
 		tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+		tgd.statsTemplate = _.template(tgd.statsTemplate);
 		tgd.languagesTemplate = _.template(app.activeText().language_text +tgd.languagesTemplate);
 		tgd.duplicates = ko.observableArray().extend({
 			rateLimit: {
