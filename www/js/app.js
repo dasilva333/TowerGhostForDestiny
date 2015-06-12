@@ -842,20 +842,20 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
-            var bucketSizes = {};
-            buckets.each(function() {
-                var bucketType = this.className.split(" ")[2];
-                var bucketHeight = $(this).height();
-                if (!(bucketType in bucketSizes)) {
-                    bucketSizes[bucketType] = [bucketHeight];
-                } else {
-                    bucketSizes[bucketType].push(bucketHeight);
-                }
-            });
-            _.each(bucketSizes, function(sizes, type) {
-                var maxHeight = Math.max.apply(null, sizes);
-                buckets.filter("." + type).css("min-height", maxHeight);
-            });
+	            var bucketSizes = {};
+	            buckets.each(function() {
+	                var bucketType = this.className.split(" ")[2];
+	                var bucketHeight = (4 % $(this).find(".bucket-item:visible").length) * ($(this).find(".bucket-item:visible:eq(0)").height() + 1);
+	                if (!(bucketType in bucketSizes)) {
+	                    bucketSizes[bucketType] = [bucketHeight];
+	                } else {
+	                    bucketSizes[bucketType].push(bucketHeight);
+	                }
+	            });
+	            _.each(bucketSizes, function(sizes, type) {
+	                var maxHeight = Math.max.apply(null, sizes);
+	                buckets.filter("." + type).css("min-height", maxHeight);
+	            });
         }
     }
 
