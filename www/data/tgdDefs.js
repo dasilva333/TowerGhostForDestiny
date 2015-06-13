@@ -87,6 +87,8 @@ tgd.defaults = {
 	appLocale: "",
 	//internally cached version of the itemDefs
 	defsLocale: "en",
+	//as of 2.7.0 I added versioning to itemDefs so the default would be this for everyone
+	defLocaleVersion: "2.7.0",
 	vaultPos: 0,
 	itemDefs: "",
 	preferredSystem: "PSN"
