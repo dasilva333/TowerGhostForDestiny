@@ -38,9 +38,15 @@ try {
 	  // private methods
 	  function _getAllCookies(callback) {
 	  	if (isChrome){
-			chrome.cookies.getAll({ domain: '.' + domain }, function(){
-		      callback.apply(null, arguments);
-		    });	
+			if (chrome && chrome.cookies && chrome.cookies.getAll){	
+				chrome.cookies.getAll({ domain: '.' + domain }, function(){
+				  callback.apply(null, arguments);
+				});
+			}
+			else {
+				callback([]);
+				return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
+			}
 		}    
 	  }
 	
@@ -154,6 +160,9 @@ try {
 	    if(type === 'PSN')
 	      active = systemIds.psn;
 	  }
+	  this.getMemberId = function(){
+		return membershipId;
+	  }
 	  this.gamertag = function() {
 	    return active.id;
 	  }
@@ -189,27 +198,37 @@ try {
 	  }
 	  this.search = function(activeSystem, callback) {
 		this.setsystem(activeSystem);
-		if ( _.isUndefined(active.type) ){
+		if ( active && active.type ){
+			_request({
+			  route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
+			  method: 'GET',
+			  complete: function(membership) {
+				if(membership == 0) {
+				  //console.log('error finding bungie account!', membership)
+				  callback({error: true})
+				  return;
+				}
+				membershipId = membership;
+				_request({
+				  route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
+						  '/Account/' + membership + '/',
+				  method: 'GET',
+				  complete: callback
+				});
+			  }
+			});
+		}
+	    else {
+			ga('send', 'exception', {
+				'exDescription': "active.type is undefined " + JSON.stringify(activeSystem),
+				'exFatal': false,
+				'appVersion': tgd.version,
+				'hitCallback': function() {
+					console.log("crash reported");
+				}
+			});
 			return BootstrapDialog.alert("Please sign in before attempting to refresh");
 		}
-	    _request({
-	      route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
-	      method: 'GET',
-	      complete: function(membership) {
-	        if(membership == 0) {
-	          //console.log('error finding bungie account!', membership)
-	          callback({error: true})
-	          return;
-	        }
-			membershipId = membership;
-	        _request({
-	          route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
-	                  '/Account/' + membership + '/',
-	          method: 'GET',
-	          complete: callback
-	        });
-	      }
-	    });
 	  }
 	  this.vault = function(callback) {
 	    _request({

@@ -86,12 +86,11 @@ _ga = new(function() {
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(e, request, settings) {
             ga('send', 'exception', {
-                'exDescription': e.result,
+                'exDescription': "ajax error at " + settings.url + " " + e.result,
                 'exFatal': true,
-                'appName': settings.url,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
-                    console.log("crash reported");
+                    console.log("ajax error " + settings.url);
                 }
             });
         });
