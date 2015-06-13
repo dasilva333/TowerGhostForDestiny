@@ -417,7 +417,7 @@ Item.prototype = {
                                 '</div>' +
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
-                                '<input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))' +
+                                '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
