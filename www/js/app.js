@@ -209,7 +209,7 @@ var app = new(function() {
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-	this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
+    this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
     this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
@@ -843,20 +843,20 @@ var app = new(function() {
     this.bucketSizeHandler = function() {
         var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
-	            var bucketSizes = {};
-	            buckets.each(function() {
-	                var bucketType = this.className.split(" ")[2];
-	                var bucketHeight = (4 % $(this).find(".bucket-item:visible").length) * ($(this).find(".bucket-item:visible:eq(0)").height() + 1);
-	                if (!(bucketType in bucketSizes)) {
-	                    bucketSizes[bucketType] = [bucketHeight];
-	                } else {
-	                    bucketSizes[bucketType].push(bucketHeight);
-	                }
-	            });
-	            _.each(bucketSizes, function(sizes, type) {
-	                var maxHeight = Math.max.apply(null, sizes);
-	                buckets.filter("." + type).css("min-height", maxHeight);
-	            });
+            var bucketSizes = {};
+            buckets.each(function() {
+                var bucketType = this.className.split(" ")[2];
+                var bucketHeight = (4 % $(this).find(".bucket-item:visible").length) * ($(this).find(".bucket-item:visible:eq(0)").height() + 1);
+                if (!(bucketType in bucketSizes)) {
+                    bucketSizes[bucketType] = [bucketHeight];
+                } else {
+                    bucketSizes[bucketType].push(bucketHeight);
+                }
+            });
+            _.each(bucketSizes, function(sizes, type) {
+                var maxHeight = Math.max.apply(null, sizes);
+                buckets.filter("." + type).css("min-height", maxHeight);
+            });
         }
     }
 
@@ -1058,8 +1058,8 @@ var app = new(function() {
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
                 membershipId: parseFloat(self.activeUser().user.membershipId),
-				locale: self.currentLocale(),
-				version: self.defLocaleVersion(),
+                locale: self.currentLocale(),
+                version: self.defLocaleVersion(),
                 /*this one applies only to your current profile
    				accountId: self.bungie.getMemberId()*/
             }, function(results) {
@@ -1083,10 +1083,10 @@ var app = new(function() {
                 if (_loadouts.length > 0) {
                     self.saveLoadouts(false);
                 }
-				if (results && results.itemDefs){
-					console.log("downloading locale update");
-					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-				}
+                if (results && results.itemDefs) {
+                    console.log("downloading locale update");
+                    self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+                }
             });
         } else if (_loadouts.length > 0) {
             self.loadouts(_loadouts);
@@ -1382,25 +1382,25 @@ var app = new(function() {
         }
     }
 
-	this.downloadLocale = function(locale, version){
-		$.ajax({
-		    url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
-		    success: function(data) {
-		        BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-		        try {
-		            self.itemDefs(JSON.stringify(data));
-		        } catch (e) {
-		            localStorage.clear();
-		            localStorage.setItem("quota_error", "1");
-		            console.log("quota error");
-		        }
-		        self.defsLocale(locale);
-				self.defLocaleVersion(version);
-		        window._itemDefs = data;
-		    }
-		});	
-	}
-	
+    this.downloadLocale = function(locale, version) {
+        $.ajax({
+            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+            success: function(data) {
+                BootstrapDialog.alert(self.activeText().language_pack_downloaded);
+                try {
+                    self.itemDefs(JSON.stringify(data));
+                } catch (e) {
+                    localStorage.clear();
+                    localStorage.setItem("quota_error", "1");
+                    console.log("quota error");
+                }
+                self.defsLocale(locale);
+                self.defLocaleVersion(version);
+                window._itemDefs = data;
+            }
+        });
+    }
+
     this.onLocaleChange = function() {
         var locale = self.currentLocale();
         console.log("locale changed to " + locale);
