@@ -209,6 +209,7 @@ var app = new(function() {
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+	this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
     this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
@@ -991,7 +992,7 @@ var app = new(function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api.cfm";
+        var apiURL = "https://www.towerghostfordestiny.com/api2.cfm";
         if (isChrome || isMobile) {
             $.ajax({
                 url: apiURL,
@@ -1057,9 +1058,10 @@ var app = new(function() {
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
                 membershipId: parseFloat(self.activeUser().user.membershipId),
-                /*
-                				this one applies only to your current profile
-                				accountId: self.bungie.getMemberId()*/
+				locale: self.currentLocale(),
+				version: self.defLocaleVersion(),
+                /*this one applies only to your current profile
+   				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
                 if (results && results.loadouts) {
@@ -1081,6 +1083,10 @@ var app = new(function() {
                 if (_loadouts.length > 0) {
                     self.saveLoadouts(false);
                 }
+				if (results && results.itemDefs){
+					console.log("downloading locale update");
+					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+				}
             });
         } else if (_loadouts.length > 0) {
             self.loadouts(_loadouts);
@@ -1376,6 +1382,25 @@ var app = new(function() {
         }
     }
 
+	this.downloadLocale = function(locale, version){
+		$.ajax({
+		    url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+		    success: function(data) {
+		        BootstrapDialog.alert(self.activeText().language_pack_downloaded);
+		        try {
+		            self.itemDefs(JSON.stringify(data));
+		        } catch (e) {
+		            localStorage.clear();
+		            localStorage.setItem("quota_error", "1");
+		            console.log("quota error");
+		        }
+		        self.defsLocale(locale);
+				self.defLocaleVersion(version);
+		        window._itemDefs = data;
+		    }
+		});	
+	}
+	
     this.onLocaleChange = function() {
         var locale = self.currentLocale();
         console.log("locale changed to " + locale);
@@ -1384,29 +1409,7 @@ var app = new(function() {
         }
         if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
             console.log("downloading language pack");
-            try {
-                $.ajax({
-                    url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
-                    success: function(data) {
-                        console.log("ajax success " + data.length);
-                        console.log(Object.keys(data).length);
-                        BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-                        try {
-                            self.itemDefs(JSON.stringify(data));
-                        } catch (e) {
-                            localStorage.clear();
-                            localStorage.setItem("quota_error", "1");
-                            console.log("quota error");
-                        }
-                        self.defsLocale(locale);
-                        window._itemDefs = data;
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-                console.log("crash dl pack");
-            }
-
+            self.downloadLocale(locale, tgd.version);
         }
     }
 
