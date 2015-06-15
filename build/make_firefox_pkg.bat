@@ -10,6 +10,7 @@ cp data temp\data -R
 cp scripts temp\data -R
 cp lib temp -R
 cp *.html temp\data
+copy icon.png temp
 copy ..\package.json temp
 cd ..\build
 cfx xpi --pkgdir=..\www\temp
