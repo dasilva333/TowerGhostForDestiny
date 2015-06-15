@@ -678,7 +678,7 @@ var app = new(function() {
                         console.log("crash reported");
                     }
                 });
-                return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(e));
+                return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -709,7 +709,7 @@ var app = new(function() {
                 } else {
                     loadingData = false;
                     self.refresh();
-                    return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(response));
+                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             });
             //console.time("avatars.forEach");          
@@ -752,7 +752,7 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(response));
+                        return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                     }
                 });
             });
@@ -941,7 +941,16 @@ var app = new(function() {
                 loop = setInterval(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
-                        self.loadData();
+						if ( !isMobile && !isChrome ){
+							BootstrapDialog.alert("Please wait while Firefox acquires your arsenal");
+							var event = document.createEvent('CustomEvent');
+							event.initCustomEvent("request-cookie", true, true, { });
+							document.documentElement.dispatchEvent(event);
+							setTimeout(function(){ console.log("loadData"); self.loadData(); }, 5000);
+						}
+                        else {
+							self.loadData();
+						}
                     }
                 }, 100);
             }

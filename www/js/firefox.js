@@ -1,3 +1,13 @@
+window.activeCookie = self.options.token;
+window.addEventListener("request-cookie", function(event) {
+	console.log("cookie requested");
+	self.port.on("response-cookie", function(newValue){
+		window.activeCookie = newValue;
+		console.log("new cookie is " + newValue);
+	});
+	self.port.emit("request-cookie");
+});
+
 window.addEventListener("request-message", function(event) {
     try {
         var request = event.detail;
@@ -6,7 +16,7 @@ window.addEventListener("request-message", function(event) {
         var opts = request.opts;
         var xhr = new XMLHttpRequest();
         xhr.open(opts.method, opts.route, true);
-        xhr.setRequestHeader('x-csrf', self.options.token);
+        xhr.setRequestHeader('x-csrf', window.activeCookie);
         xhr.onload = function() {
             var reply = {
                 id: request.id,
@@ -16,14 +26,14 @@ window.addEventListener("request-message", function(event) {
             window.postMessage(reply, "*");
         };
         xhr.onerror = function() {
-                var reply = {
-                    id: request.id,
-                    "status": xhr.status,
-                    "response": xhr.response
-                };
-                window.postMessage(reply, "*");
-            }
-            //console.log("setting the request header to " + self.options.token);
+			var reply = {
+				id: request.id,
+				"status": xhr.status,
+				"response": xhr.response
+			};
+			window.postMessage(reply, "*");
+		}
+		//console.log("setting the request header to " + self.options.token);
         if (opts.payload)
             xhr.send(JSON.stringify(opts.payload));
         else
