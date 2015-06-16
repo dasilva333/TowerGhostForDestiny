@@ -79,9 +79,9 @@
             <!--/ko  -->
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
-            <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master' || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
+            <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
-                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || bucketType == 'Post Master'  || bucketType == 'Consumables' || bucketType == 'Materials') ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">							<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">							</a>							<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>						</span>
+                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">							<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">							</a>							<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>						</span>
                 </div>
             </div>
             <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
@@ -538,7 +538,7 @@
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
                                 <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master'], as: 'bucketType' }"></div>
+                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties'], as: 'bucketType' }"></div>
                             </div>
                         </div>
                     </div>
