@@ -64,8 +64,11 @@
         <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == ''">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
-            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master') -->
+            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
+            <!--/ko  -->
+			<!-- ko if: (bucketType == 'Bounties') -->
+            (<span data-bind="text: character.get(bucketType).length"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/15)
