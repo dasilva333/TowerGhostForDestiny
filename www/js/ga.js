@@ -90,7 +90,7 @@ _ga = new(function() {
                 'exFatal': true,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
-                    console.log("ajax error");
+                    console.log("ajax error " + settings.url);
                 }
             });
         });

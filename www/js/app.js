@@ -64,8 +64,8 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master") {
-            return BootstrapDialog.alert(app.activeText().unable_to_move_postmaster);
+        if (item.bucketType == "Post Master" || item.bucketType == "Bounties") {
+            return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
             $movePopup.hide();
@@ -209,6 +209,7 @@ var app = new(function() {
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+    this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
     this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.computed(new tgd.StoreObj("locale"));
     this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
@@ -516,6 +517,10 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
+                //ToO Trials Passage
+                if (item.itemHash == "544000255") {
+                    info.bucketTypeHash = "2197472680";
+                }
                 var itemObject = {
                     id: item.itemHash,
                     _id: item.itemInstanceId,
@@ -537,6 +542,9 @@ var app = new(function() {
                 tgd.duplicates.push(item.itemHash);
                 if (item.primaryStat) {
                     itemObject.primaryStat = item.primaryStat.value;
+                }
+                if (info.bucketTypeHash == "2197472680" && item.progression) {
+                    itemObject.primaryStat = ((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%";
                 }
                 if (item.progression) {
                     itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
@@ -677,7 +685,7 @@ var app = new(function() {
                         console.log("crash reported");
                     }
                 });
-                return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(e));
+                return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -708,7 +716,7 @@ var app = new(function() {
                 } else {
                     loadingData = false;
                     self.refresh();
-                    return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(response));
+                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             });
             //console.time("avatars.forEach");          
@@ -751,7 +759,7 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert(self.activeText().error_loading_inventory + JSON.stringify(response));
+                        return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                     }
                 });
             });
@@ -845,7 +853,8 @@ var app = new(function() {
             var bucketSizes = {};
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var bucketHeight = $(this).height();
+                var columnsPerBucket = tgd.DestinyBucketColumns[bucketType];
+                var bucketHeight = Math.ceil($(this).find(".bucket-item:visible").length / columnsPerBucket) * ($(this).find(".bucket-item:visible:eq(0)").height() + 2);
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
                 } else {
@@ -940,7 +949,18 @@ var app = new(function() {
                 loop = setInterval(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
-                        self.loadData();
+                        if (!isMobile && !isChrome) {
+                            BootstrapDialog.alert("Please wait while Firefox acquires your arsenal");
+                            var event = document.createEvent('CustomEvent');
+                            event.initCustomEvent("request-cookie", true, true, {});
+                            document.documentElement.dispatchEvent(event);
+                            setTimeout(function() {
+                                console.log("loadData");
+                                self.loadData();
+                            }, 5000);
+                        } else {
+                            self.loadData();
+                        }
                     }
                 }, 100);
             }
@@ -991,7 +1011,7 @@ var app = new(function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api.cfm";
+        var apiURL = "https://www.towerghostfordestiny.com/api2.cfm";
         if (isChrome || isMobile) {
             $.ajax({
                 url: apiURL,
@@ -1057,9 +1077,10 @@ var app = new(function() {
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
                 membershipId: parseFloat(self.activeUser().user.membershipId),
-                /*
-                				this one applies only to your current profile
-                				accountId: self.bungie.getMemberId()*/
+                locale: self.currentLocale(),
+                version: self.defLocaleVersion(),
+                /*this one applies only to your current profile
+   				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
                 if (results && results.loadouts) {
@@ -1080,6 +1101,10 @@ var app = new(function() {
                 /* one time migrate saves the new joined array to the cloud */
                 if (_loadouts.length > 0) {
                     self.saveLoadouts(false);
+                }
+                if (results && results.itemDefs) {
+                    console.log("downloading locale update");
+                    self.downloadLocale(self.currentLocale(), results.itemDefs.version);
                 }
             });
         } else if (_loadouts.length > 0) {
@@ -1376,6 +1401,25 @@ var app = new(function() {
         }
     }
 
+    this.downloadLocale = function(locale, version) {
+        $.ajax({
+            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+            success: function(data) {
+                BootstrapDialog.alert(self.activeText().language_pack_downloaded);
+                try {
+                    self.itemDefs(JSON.stringify(data));
+                } catch (e) {
+                    localStorage.clear();
+                    localStorage.setItem("quota_error", "1");
+                    console.log("quota error");
+                }
+                self.defsLocale(locale);
+                self.defLocaleVersion(version);
+                window._itemDefs = data;
+            }
+        });
+    }
+
     this.onLocaleChange = function() {
         var locale = self.currentLocale();
         console.log("locale changed to " + locale);
@@ -1384,29 +1428,7 @@ var app = new(function() {
         }
         if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
             console.log("downloading language pack");
-            try {
-                $.ajax({
-                    url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
-                    success: function(data) {
-                        console.log("ajax success " + data.length);
-                        console.log(Object.keys(data).length);
-                        BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-                        try {
-                            self.itemDefs(JSON.stringify(data));
-                        } catch (e) {
-                            localStorage.clear();
-                            localStorage.setItem("quota_error", "1");
-                            console.log("quota error");
-                        }
-                        self.defsLocale(locale);
-                        window._itemDefs = data;
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-                console.log("crash dl pack");
-            }
-
+            self.downloadLocale(locale, tgd.version);
         }
     }
 

@@ -17,21 +17,29 @@ try {
 		var _token, id = 0;
 		window.requests = {};  
 		window.addEventListener("message", function(event) {
-			//console.log("received a firefox response");
-			try {
-				var reply = event.data;
-				//console.log(reply);
-				var response = JSON.parse(reply.response);
-				var opts = requests[reply.id];			
-				if(response.ErrorCode === 36){ 
-					//console.log("throttle retrying"); 
-					opts.route = opts.route.replace(url + "Platform",''); 
-					setTimeout(function () { requests[id+1] = opts; _request(opts); }, 1000); 
+			console.log("received a firefox response");			
+			var reply = event.data;
+			console.log(reply);
+			var response = JSON.parse(reply.response);
+			var opts = requests[reply.id];			
+			if(response.ErrorCode === 36){ 
+				console.log("throttle retrying"); 
+				opts.route = opts.route.replace(url + "Platform",''); 
+				setTimeout(function () { 
+					requests[id+1] = opts; 
+					_request(opts); 
+				}, 1000); 
+			}
+			else {
+				try {
+					console.log("calling complete for id " + reply.idclea);
+					opts.complete(response.Response, response);
+					/* for some unknown reason window.postMessage is causing this to execute twice */
+					delete requests[reply.id];
+				}catch(e){
+					//console.log(e);
 				}
-		        else { opts.complete(response.Response, response); }			
-			}catch(e){
-				console.log(e);
-			}		
+			}
 		}, false);  
 	  }
 	
@@ -145,7 +153,7 @@ try {
 		}
 		//This piece is for Firefox
 		else {
-			//console.log("sending firefox request");
+			console.log("sending firefox request");
 			var event = document.createEvent('CustomEvent');
 			opts.route = url + "Platform" + opts.route;
 			event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });
@@ -175,7 +183,7 @@ try {
 	      route: '/User/GetBungieNetUser/',
 	      method: 'GET',
 	      complete: function(res, response) {
-			if (response && response.ErrorCode && response.ErrorCode > 1){			
+			if (response && response.ErrorCode && response.ErrorCode > 1){
 				callback({error: response.Message, code: response.ErrorCode});
 	         	return;
 			}
