@@ -64,8 +64,8 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master") {
-            return BootstrapDialog.alert(app.activeText().unable_to_move_postmaster);
+        if (item.bucketType == "Post Master" || item.bucketType == "Bounties") {
+            return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
             $movePopup.hide();
@@ -846,7 +846,7 @@ var app = new(function() {
             var bucketSizes = {};
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-				var columnsPerBucket = tgd.DestinyBucketColumns[bucketType];
+                var columnsPerBucket = tgd.DestinyBucketColumns[bucketType];
                 var bucketHeight = Math.ceil($(this).find(".bucket-item:visible").length / columnsPerBucket) * ($(this).find(".bucket-item:visible:eq(0)").height() + 2);
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
@@ -942,16 +942,18 @@ var app = new(function() {
                 loop = setInterval(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
-						if ( !isMobile && !isChrome ){
-							BootstrapDialog.alert("Please wait while Firefox acquires your arsenal");
-							var event = document.createEvent('CustomEvent');
-							event.initCustomEvent("request-cookie", true, true, { });
-							document.documentElement.dispatchEvent(event);
-							setTimeout(function(){ console.log("loadData"); self.loadData(); }, 5000);
-						}
-                        else {
-							self.loadData();
-						}
+                        if (!isMobile && !isChrome) {
+                            BootstrapDialog.alert("Please wait while Firefox acquires your arsenal");
+                            var event = document.createEvent('CustomEvent');
+                            event.initCustomEvent("request-cookie", true, true, {});
+                            document.documentElement.dispatchEvent(event);
+                            setTimeout(function() {
+                                console.log("loadData");
+                                self.loadData();
+                            }, 5000);
+                        } else {
+                            self.loadData();
+                        }
                     }
                 }, 100);
             }
