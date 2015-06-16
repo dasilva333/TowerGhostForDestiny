@@ -48,6 +48,24 @@ tgd.DestinyBucketTypes = {
 	"3284755031": "Subclasses",
 	"12345": "Post Master"
 }
+tgd.DestinyBucketColumns = {
+	"Post Master": 4, 
+	"Chest": 3, 
+	"Boots": 3, 
+	"Ship": 3, 
+	"Heavy": 3, 
+	"Consumables": 4, 
+	"Primary": 3, 
+	"Class Items": 3, 
+	"Sparrow": 3, 
+	"Special": 3, 
+	"Shader": 3, 
+	"Subclasses": 3,
+	"Helmet": 3,
+	"Gauntlet": 3, 
+	"Materials": 4, 
+	"Emblem": 3
+}
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [

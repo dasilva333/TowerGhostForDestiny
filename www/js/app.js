@@ -846,7 +846,8 @@ var app = new(function() {
             var bucketSizes = {};
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var bucketHeight = (4 % $(this).find(".bucket-item:visible").length) * ($(this).find(".bucket-item:visible:eq(0)").height() + 1);
+				var columnsPerBucket = tgd.DestinyBucketColumns[bucketType];
+                var bucketHeight = Math.ceil($(this).find(".bucket-item:visible").length / columnsPerBucket) * ($(this).find(".bucket-item:visible:eq(0)").height() + 2);
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
                 } else {
