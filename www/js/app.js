@@ -521,10 +521,6 @@ var app = new(function() {
 				if (item.itemHash == "544000255"){
 					info.bucketTypeHash = "2197472680";
 				}
-				/*if (info.bucketTypeHash == "2197472680"){
-					console.log(info);
-					console.log(item);
-				}*/
                 var itemObject = {
                     id: item.itemHash,
                     _id: item.itemInstanceId,
@@ -547,6 +543,9 @@ var app = new(function() {
                 if (item.primaryStat) {
                     itemObject.primaryStat = item.primaryStat.value;
                 }
+				if (info.bucketTypeHash == "2197472680" && item.progression){
+					itemObject.primaryStat = ((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%";
+				}
                 if (item.progression) {
                     itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
                 }
