@@ -2,7 +2,7 @@ tgd.locale = {
     en: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 9 items in this slot: ",
-        unable_to_move_postmaster: "Post Master items cannot be transferred with the API.",
+        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
         this_icon: "This icon is ",
         pick_a_set: "Please pick a Set before selecting this option",
         error_loading_inventory: "Error loading inventory ",
@@ -104,7 +104,7 @@ tgd.locale = {
     es: {
         unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
         unable_to_create_loadout_for_bucket: "No se puede crear un loadout con m�s de 9 art�culos en esta ranura: ",
-        unable_to_move_postmaster: "Post Master no pueden ser transferidos con el programa.",
+        unable_to_move_bucketitems: "Post Master no pueden ser transferidos con el programa.",
         this_icon: "Este icono es ",
         pick_a_set: "Por favor elija un Set antes de seleccionar esta opci�n",
         error_loading_inventory: "Error cargando inventario",
@@ -206,7 +206,7 @@ tgd.locale = {
     fr: {
         unable_create_loadout_for_type: "Actuellement incapable de cr�er loadouts avec ce type d'article",
         unable_to_create_loadout_for_bucket: "Vous ne pouvez pas cr�er un loadout avec plus de 9 articles dans cette fente: ",
-        unable_to_move_postmaster: "Articles ma�tre de poste ne peuvent �tre transf�r�s avec l'API.",
+        unable_to_move_bucketitems: "Articles ma�tre de poste ne peuvent �tre transf�r�s avec l'API.",
         this_icon: "Cette ic�ne est ",
         pick_a_set: "S'il vous pla�t choisir un ensemble avant de choisir cette option",
         error_loading_inventory: "Erreur inventaire de chargement",
@@ -307,7 +307,7 @@ tgd.locale = {
     it: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 9 items in this slot: ",
-        unable_to_move_postmaster: "Post Master items cannot be transferred with the API.",
+        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
         this_icon: "This icon is ",
         pick_a_set: "Please pick a Set before selecting this option",
         error_loading_inventory: "Error loading inventory ",
@@ -408,7 +408,7 @@ tgd.locale = {
     de: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 9 items in this slot: ",
-        unable_to_move_postmaster: "Post Master items cannot be transferred with the API.",
+        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
         this_icon: "This icon is ",
         pick_a_set: "Please pick a Set before selecting this option",
         error_loading_inventory: "Error loading inventory ",
@@ -509,7 +509,7 @@ tgd.locale = {
     "pt-br": {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 9 items in this slot: ",
-        unable_to_move_postmaster: "Post Master items cannot be transferred with the API.",
+        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
         this_icon: "This icon is ",
         pick_a_set: "Please pick a Set before selecting this option",
         error_loading_inventory: "Error loading inventory ",
@@ -610,7 +610,7 @@ tgd.locale = {
     ja: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 9 items in this slot: ",
-        unable_to_move_postmaster: "Post Master items cannot be transferred with the API.",
+        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
         this_icon: "This icon is ",
         pick_a_set: "Please pick a Set before selecting this option",
         error_loading_inventory: "Error loading inventory ",
