@@ -64,10 +64,10 @@
         <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == ''">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
-            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties') -->
+            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
             <!--/ko  -->
-            <!-- ko if: (bucketType == 'Bounties') -->
+            <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
@@ -557,7 +557,7 @@
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
                                 <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties'], as: 'bucketType' }"></div>
+                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties','Mission'], as: 'bucketType' }"></div>
                             </div>
                         </div>
                     </div>

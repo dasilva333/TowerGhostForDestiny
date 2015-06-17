@@ -46,7 +46,7 @@ tgd.DestinyBucketTypes = {
 	"1469714392": "Consumables",
 	"1585787867": "Class Items",
 	"3284755031": "Subclasses",
-	"375726501": "Post Master",
+	"375726501": "Mission",
 	"2197472680": "Bounties",
 	"12345": "Post Master"
 }
@@ -58,6 +58,7 @@ tgd.DestinyBucketColumns = {
 	"Heavy": 3, 
 	"Consumables": 4, 
 	"Primary": 3, 
+	"Class": 3, 
 	"Class Items": 3, 
 	"Sparrow": 3, 
 	"Special": 3, 
@@ -67,7 +68,11 @@ tgd.DestinyBucketColumns = {
 	"Gauntlet": 3, 
 	"Materials": 4,
 	"Emblem": 3,
-	"Bounties": 4
+	"Bounties": 4,
+	//TODO: Improve this so I don't need two records
+	"Post": 4,
+	"Post Master": 4,
+	"Mission": 4
 }
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];

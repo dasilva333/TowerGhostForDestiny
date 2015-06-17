@@ -64,7 +64,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Bounties") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
@@ -516,10 +516,6 @@ var app = new(function() {
                     tierTypeName = info.tierTypeName;
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
-                }
-                //ToO Trials Passage
-                if (item.itemHash == "544000255") {
-                    info.bucketTypeHash = "2197472680";
                 }
                 var itemObject = {
                     id: item.itemHash,
