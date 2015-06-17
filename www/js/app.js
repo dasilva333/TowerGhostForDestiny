@@ -1013,8 +1013,8 @@ var app = new(function() {
                 url: apiURL,
                 data: params,
                 type: "POST",
-                dataType: "json",
-                success: function(response) {
+                success: function(data) {
+					var response = (typeof data == "string") ? JSON.parse(data) : data;
                     callback(response);
                 }
             });

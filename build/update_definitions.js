@@ -22,7 +22,6 @@ var neededFiles = [
 		delete obj.sourceHashes;
 		delete obj.equippingBlock;
 		delete obj.exclusive;
-		delete obj.maxStackSize;
 		delete obj.actionName;
 		delete obj.hasGeometry;
 		delete obj.rewardItemHash;
