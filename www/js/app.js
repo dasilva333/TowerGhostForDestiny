@@ -432,9 +432,9 @@ var app = new(function() {
                 action: "save_inventory",
                 username: username,
                 data: self.generateStatic()
-            }, function(){
-				self.shareView(!self.shareView());
-			});
+            }, function() {
+                self.shareView(!self.shareView());
+            });
         }
     }
     this.toggleDuplicates = function(model, event) {
