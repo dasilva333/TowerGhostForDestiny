@@ -1473,14 +1473,14 @@ var app = new(function() {
 						id: data.id,
 						level: data.level,
 						imgIcon: data.imgIcon,
-						icon: self.bungie.getUrl() + data.icon,
+						icon: data.icon,
 						background: data.background
 					});
 					profile.items(_.map(data.items, function(item){
-						item.icon = self.bungie.getUrl() + item.icon.replace("data/","");
 						return new Item(item, profile);
 					}));
 					self.characters.push(profile);
+					self.bucketSizeHandler();
 				});
 			}
 		)
@@ -1488,6 +1488,8 @@ var app = new(function() {
 	
     this.init = function() {
 		self.bungie = new bungie();
+		tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.statsTemplate = _.template(tgd.statsTemplate);
 		tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
@@ -1495,6 +1497,13 @@ var app = new(function() {
             }
         });
 		self.loadStatic(location.search.replace('?',''));
+		$("form").bind("submit", false);
+        $("html").click(self.globalClickHandler);
+        /* this fixes issue #16 */
+        self.activeView.subscribe(function() {
+            setTimeout(self.bucketSizeHandler, 500);
+        });
+        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         ko.applyBindings(self);
     }
 });
