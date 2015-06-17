@@ -1,5 +1,5 @@
 window.ua = navigator.userAgent;
-window.isChrome = (typeof chrome !== "undefined");
+window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor);
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
@@ -46,7 +46,33 @@ tgd.DestinyBucketTypes = {
 	"1469714392": "Consumables",
 	"1585787867": "Class Items",
 	"3284755031": "Subclasses",
+	"375726501": "Mission",
+	"2197472680": "Bounties",
 	"12345": "Post Master"
+}
+tgd.DestinyBucketColumns = {
+	"Post Master": 4, 
+	"Chest": 3, 
+	"Boots": 3, 
+	"Ship": 3, 
+	"Heavy": 3, 
+	"Consumables": 4, 
+	"Primary": 3, 
+	"Class": 3, 
+	"Class Items": 3, 
+	"Sparrow": 3, 
+	"Special": 3, 
+	"Shader": 3, 
+	"Subclasses": 3,
+	"Helmet": 3,
+	"Gauntlet": 3, 
+	"Materials": 4,
+	"Emblem": 3,
+	"Bounties": 4,
+	//TODO: Improve this so I don't need two records
+	"Post": 4,
+	"Post Master": 4,
+	"Mission": 4
 }
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
@@ -87,6 +113,8 @@ tgd.defaults = {
 	appLocale: "",
 	//internally cached version of the itemDefs
 	defsLocale: "en",
+	//as of 2.7.0 I added versioning to itemDefs so the default would be this for everyone
+	defLocaleVersion: "2.7.0",
 	vaultPos: 0,
 	itemDefs: "",
 	preferredSystem: "PSN"

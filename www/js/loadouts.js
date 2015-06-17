@@ -1,8 +1,8 @@
 	/*
-												targetItem: item,
-												swapItem: swapItem,
-												description: item.description + "'s swap item is " + swapItem.description
-												*/
+																	targetItem: item,
+																	swapItem: swapItem,
+																	description: item.description + "'s swap item is " + swapItem.description
+																	*/
 
 	var swapTemplate = _.template('<ul class="list-group">' +
 	    '<% swapArray.forEach(function(pair){ %>' +
@@ -333,15 +333,21 @@
 	                                }
 	                            } else {
 	                                var itemFound = false;
-	                                var swapItem = _.filter(_.where(targetBucket, {
-	                                    type: item.type
-	                                }), getFirstItem(sourceBucketIds, itemFound));
-	                                swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
+	                                if (item.bucketType == "Shader") {
+	                                    var swapItem = _.filter(targetBucket, function(otherItem) {
+	                                        return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader";
+	                                    })[0];
+	                                } else {
+	                                    var swapItem = _.filter(_.where(targetBucket, {
+	                                        type: item.type
+	                                    }), getFirstItem(sourceBucketIds, itemFound));
+	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
+	                                }
 	                                //console.log("found swap item " + swapItem.description);
 	                                if (swapItem) {
 	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
 	                                        return {
-	                                            description: item.description + app.activeText().no_transfer,
+	                                            description: item.description + app.activeText().loadouts_no_transfer,
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
@@ -423,6 +429,7 @@
 	                return swapArray;
 	            }));
 	        }
+	        msa = masterSwapArray;
 	        if (masterSwapArray.length > 0) {
 	            var $template = $(swapTemplate({
 	                swapArray: masterSwapArray
