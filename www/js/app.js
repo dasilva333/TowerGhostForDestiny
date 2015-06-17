@@ -1452,78 +1452,56 @@ var app = new(function() {
         }
     }
 
+	this.generateStatic = function(){
+		var profileKeys = ["race","order","gender","classType","id","level","imgIcon","icon","background"];
+		var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked", 
+			"description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat", 
+			"progression", "weaponIndex", "armorIndex", "perks", "isUnique", "href" ]
+		var profiles = _.map(app.characters(), function(profile){
+			var newProfile = {};
+			_.each(profileKeys, function(key){
+			   newProfile[key] = ko.unwrap(profile[key]);
+			});
+			newProfile.items = _.map(profile.items(), function(item){
+				var newItem = {};
+				_.each(itemKeys, function(key){
+				   newItem[key] = ko.unwrap(item[key]);
+				});
+				return ko.toJS(newItem);
+			});
+			return newProfile;
+		});
+		return JSON.stringify(profiles);
+	}
+	
+	this.loadStatic = function(){
+		_.each(tgd.staticProfiles, function(data){
+			var profile = new Profile({
+				race: data.race,
+				order: data.order,
+				gender: data.gender,
+				classType: data.classType,
+				id: data.id,
+				level: data.level,
+				imgIcon: data.imgIcon,
+				icon: data.icon,
+				background: data.background
+			});
+			profile.items(_.map(data.items, function(item){
+				return new Item(item, profile);
+			}));
+			self.characters.push(profile);
+		});
+	}
+	
     this.init = function() {
-        self.initLocale();
-        if (_.isUndefined(window._itemDefs)) {
-            return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
-        }
-        self.initItemDefs();
-        tgd.perksTemplate = _.template(tgd.perksTemplate);
-        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
-        tgd.statsTemplate = _.template(tgd.statsTemplate);
-        tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
-        tgd.duplicates = ko.observableArray().extend({
+		tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
                 method: "notifyWhenChangesStop"
             }
         });
-        self.doRefresh.subscribe(self.refreshHandler);
-        self.refreshSeconds.subscribe(self.refreshHandler);
-        self.loadoutMode.subscribe(self.refreshHandler);
-        self.bungie_cookies = "";
-        if (window.localStorage && window.localStorage.getItem) {
-            self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-        }
-        var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-        if (isWindowsPhone) {
-            var msViewportStyle = document.createElement("style");
-            msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
-            document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-        }
-
-        if (isMobile) {
-            Hammer(document.getElementById('charactersContainer'), {
-                    drag_min_distance: 1,
-                    swipe_velocity: 0.1,
-                    drag_horizontal: true,
-                    drag_vertical: false
-                }).on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight)
-                .on("tap", self.globalClickHandler);
-        }
-
-        if (isMobile) {
-            if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                StatusBar.overlaysWebView(false);
-            }
-            if (typeof StatusBar !== "undefined") {
-                StatusBar.styleBlackOpaque();
-                StatusBar.backgroundColorByHexString("#272B30");
-            }
-        }
-
-        if (isMobile && isEmptyCookie) {
-            self.bungie = new bungie();
-            self.activeUser({
-                "code": 99,
-                "error": "Please sign-in to continue."
-            });
-        } else {
-            setTimeout(function() {
-                self.loadData()
-            }, isChrome || isMobile ? 1 : 5000);
-        }
-        $("form").bind("submit", false);
-        $("html").click(self.globalClickHandler);
-        /* this fixes issue #16 */
-        self.activeView.subscribe(function() {
-            setTimeout(self.bucketSizeHandler, 500);
-        });
-        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
-        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
-        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        self.whatsNew();
+		self.loadStatic();
         ko.applyBindings(self);
     }
 });

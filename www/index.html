@@ -28,7 +28,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/tooltip.css">
     <link rel="stylesheet" type="text/css" href="css/style_new.css">
-    <!-- JS -->
+    <!-- JS -->	
     <script charset="utf-8" type="text/javascript" src="data/itemDefs.js"></script>
     <script type="text/javascript" src="data/statDefs.js"></script>
     <script type="text/javascript" src="data/perkDefs.js"></script>
@@ -36,6 +36,7 @@
     <script type="text/javascript" src="data/raceDefs.js"></script>
     <script type="text/javascript" src="data/setDefs.js"></script>
     <script type="text/javascript" src="data/tgdDefs.js"></script>
+	<script charset="utf-8" type="text/javascript" src="data/staticProfiles.js"></script>
     <script charset="utf-8" type="text/javascript" src="js/locale.js"></script>
     <script type="text/javascript" src="js/version.js"></script>
     <script type="text/javascript" src="js/dependencies/modernizr.custom.js"></script>
@@ -110,49 +111,6 @@
                 </div>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a>
-                    </li>
-                    <li class="dropdown">
-                        <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text" data-bind="text: $root.activeText().menu_refresh">Refresh</span></a>
-                    </li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text">Settings</span> <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i><span data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a></li>
-                            <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: $root.activeText().menu_about">About</span></a></li>
-                            <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
-                            <li><a href="#" data-bind="fastclick: donate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
-                            <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
-
-
-                            <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
-                            <li class="divider"></li>
-                            <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autorefresh">Auto Refresh</span></a>
-                            </li>
-                            <li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: tooltipsEnabled() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_destinydbtooltips">DestinyDB Tooltips</span></a>
-                            </li>
-                            <li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: destinyDbMode() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_destinydbmode">DestinyDB Mode</span></a>
-                            </li>
-                            <li data-bind="fastclick: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: autoTransferStacks() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autotransfer">Auto Transfer Stacks</span></a>
-                            </li>
-                            <li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''">
-                                <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
-                            <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
-                            <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
-                            <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
-                        </ul>
-                    </li>
-                </ul>
                 <form class="navbar-form navbar-right">
                     <div class="input-group spinner">
                         <span class="input-group-addon" data-bind="text: $root.activeText().menu_refresh">Refresh (secs)</span>
@@ -165,19 +123,6 @@
                     <input class="form-control" placeholder="Search" size="9" type="text" data-bind="value: searchKeyword">
                 </form>
                 <ul class="nav navbar-nav">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span data-bind="text: $root.activeText().menu_loadouts">Loadouts</span> <span class="caret"></span></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <!-- ko foreach: { data: sortedLoadouts, as: 'loadout' } -->
-                            <li data-bind="fastclick: setActive">
-                                <a data-bind="text: loadout.name" href="#"></a>
-                            </li>
-                            <!--/ko  -->
-                            <li class="divider"></li>
-                            <li data-bind="fastclick: createLoadout"><a href="#"><i class="fa fa-plus"></i>								<span data-bind="text: $root.activeText().menu_loadouts_create">Create</span>							</a></li>
-                            <li data-bind="fastclick: cancelLoadout"><a href="#"><i class="fa fa-times"></i>								<span data-bind="text: $root.activeText().cancel">Cancel</span>							</a></li>
-                        </ul>
-                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <span data-bind="text: $root.activeText().menu_view">View</span> <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
