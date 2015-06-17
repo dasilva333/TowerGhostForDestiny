@@ -46,16 +46,16 @@ try {
 	  // private methods
 	  function _getAllCookies(callback) {
 	  	if (isChrome){
-			if (chrome && chrome.cookies && chrome.cookies.getAll){	
+			if (typeof chrome != "undefined"){
 				chrome.cookies.getAll({ domain: '.' + domain }, function(){
 				  callback.apply(null, arguments);
 				});
-			}
+			} 
 			else {
 				callback([]);
 				return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
 			}
-		}    
+		}
 	  }
 	
 	  function readCookie(cname) {
