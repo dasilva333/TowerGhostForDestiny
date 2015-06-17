@@ -1393,12 +1393,12 @@ var app = new(function() {
     this.initItemDefs = function() {
         var itemDefs = self.itemDefs();
         if (self.currentLocale() != "en" && !_.isEmpty(itemDefs) && self.currentLocale() == self.defsLocale()) {
-			try {
-				window._itemDefs = JSON.parse(itemDefs);
-			}catch(e){
-				console.log("invalid itemDefs");
-				self.itemDefs("");
-			}
+            try {
+                window._itemDefs = JSON.parse(itemDefs);
+            } catch (e) {
+                console.log("invalid itemDefs");
+                self.itemDefs("");
+            }
         }
     }
 
