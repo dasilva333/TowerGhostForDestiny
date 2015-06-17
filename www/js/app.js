@@ -1007,7 +1007,7 @@ var app = new(function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api2.cfm";
+        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
         if (isChrome || isMobile) {
             $.ajax({
                 url: apiURL,
@@ -1474,34 +1474,42 @@ var app = new(function() {
 		return JSON.stringify(profiles);
 	}
 	
-	this.loadStatic = function(){
-		_.each(tgd.staticProfiles, function(data){
-			var profile = new Profile({
-				race: data.race,
-				order: data.order,
-				gender: data.gender,
-				classType: data.classType,
-				id: data.id,
-				level: data.level,
-				imgIcon: data.imgIcon,
-				icon: data.icon,
-				background: data.background
-			});
-			profile.items(_.map(data.items, function(item){
-				return new Item(item, profile);
-			}));
-			self.characters.push(profile);
-		});
+	this.loadStatic = function(username){
+		self.apiRequest({ 
+				username: username
+			},
+			function(staticProfiles){
+				console.log(staticProfiles);
+				_.each(staticProfiles, function(data){
+					var profile = new Profile({
+						race: data.race,
+						order: data.order,
+						gender: data.gender,
+						classType: data.classType,
+						id: data.id,
+						level: data.level,
+						imgIcon: data.imgIcon,
+						icon: self.bungie.getUrl() + data.icon,
+						background: data.background
+					});
+					profile.items(_.map(data.items, function(item){
+						return new Item(item, profile);
+					}));
+					self.characters.push(profile);
+				});
+			}
+		)
 	}
 	
     this.init = function() {
+		self.bungie = new bungie();
 		tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
                 method: "notifyWhenChangesStop"
             }
         });
-		self.loadStatic();
+		self.loadStatic(location.search.replace('?',''));
         ko.applyBindings(self);
     }
 });
