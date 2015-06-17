@@ -134,28 +134,10 @@ ko.bindingHandlers.moveItem = {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-                    tgd.moveItemPositionHandler(target, item);
+					$ZamTooltips.lastElement = target;
+					$ZamTooltips.show("destinydb", "items", item.id, target);
                 }
             })
-            // press is actually hold 
-            .on("press", function(ev) {
-                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                if (target) {
-                    var context = ko.contextFor(target);
-                    if (context && "$data" in context) {
-                        var item = ko.contextFor(target).$data;
-                        if (item && item.doEquip && app.loadoutMode() == true) {
-                            item.doEquip(!item.doEquip());
-                            item.markAsEquip(item, {
-                                target: target
-                            });
-                        } else {
-                            $ZamTooltips.lastElement = target;
-                            $ZamTooltips.show("destinydb", "items", item.id, target);
-                        }
-                    }
-                }
-            });
     }
 };
 
@@ -1479,7 +1461,9 @@ var app = new(function() {
 				username: username
 			},
 			function(staticProfiles){
-				console.log(staticProfiles);
+				if (staticProfiles.length == 0){
+					return BootstrapDialog.alert("There is no shared data to view for this profile");
+				}
 				_.each(staticProfiles, function(data){
 					var profile = new Profile({
 						race: data.race,
@@ -1493,6 +1477,7 @@ var app = new(function() {
 						background: data.background
 					});
 					profile.items(_.map(data.items, function(item){
+						item.icon = self.bungie.getUrl() + item.icon.replace("data/","");
 						return new Item(item, profile);
 					}));
 					self.characters.push(profile);
