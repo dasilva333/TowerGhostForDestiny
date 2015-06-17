@@ -425,6 +425,15 @@ var app = new(function() {
     }
     this.toggleShareView = function() {
         self.toggleBootstrapMenu();
+        if (!self.shareView()) {
+            var username = self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag();
+            self.shareUrl("https://towerghostfordestiny.com/share/?" + username);
+            self.apiRequest({
+                action: "save_inventory",
+                username: username,
+                data: self.generateStatic()
+            });
+        }
         self.shareView(!self.shareView());
     }
     this.toggleDuplicates = function(model, event) {
@@ -1007,14 +1016,14 @@ var app = new(function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api2.cfm";
+        var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
         if (isChrome || isMobile) {
             $.ajax({
                 url: apiURL,
                 data: params,
                 type: "POST",
                 success: function(data) {
-					var response = (typeof data == "string") ? JSON.parse(data) : data;
+                    var response = (typeof data == "string") ? JSON.parse(data) : data;
                     callback(response);
                 }
             });
@@ -1400,6 +1409,29 @@ var app = new(function() {
                 self.itemDefs("");
             }
         }
+    }
+
+    this.generateStatic = function() {
+        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
+        var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
+            "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
+            "progression", "weaponIndex", "armorIndex", "perks", "isUnique", "href"
+        ]
+        var profiles = _.map(self.characters(), function(profile) {
+            var newProfile = {};
+            _.each(profileKeys, function(key) {
+                newProfile[key] = ko.unwrap(profile[key]);
+            });
+            newProfile.items = _.map(profile.items(), function(item) {
+                var newItem = {};
+                _.each(itemKeys, function(key) {
+                    newItem[key] = ko.unwrap(item[key]);
+                });
+                return ko.toJS(newItem);
+            });
+            return newProfile;
+        });
+        return JSON.stringify(profiles);
     }
 
     this.downloadLocale = function(locale, version) {
