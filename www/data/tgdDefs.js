@@ -88,7 +88,7 @@ tgd.languages = [
 
 tgd.defaults = {
 	searchKeyword: "",
-	doRefresh: isMobile ? false : true,
+	doRefresh: isMobile ? false : "true",
 	refreshSeconds: 300,
 	tierFilter: 0,
 	typeFilter: 0,
@@ -100,9 +100,9 @@ tgd.defaults = {
 	shareView: false,
 	shareUrl: "",
 	showMissing: false,
-	tooltipsEnabled: true,
+	tooltipsEnabled: "true",
 	autoTransferStacks: false,
-	padBucketHeight: true,
+	padBucketHeight: "true",
 	xsColumn: 12,
 	smColumn: 6,
 	mdColumn: 4,
