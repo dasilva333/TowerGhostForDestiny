@@ -990,31 +990,15 @@ var app = new(function() {
     var id = -1;
     this.apiRequest = function(params, callback) {
         var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
-        if (isChrome || isMobile) {
-            $.ajax({
-                url: apiURL,
-                data: params,
-                type: "POST",
-                success: function(data) {
-					var response = (typeof data == "string") ? JSON.parse(data) : data;
-                    callback(response);
-                }
-            });
-        } else {
-            var event = document.createEvent('CustomEvent');
-            var opts = {
-                route: apiURL,
-                payload: params,
-                method: "POST",
-                complete: callback
-            }
-            event.initCustomEvent("api-request-message", true, true, {
-                id: ++id,
-                opts: opts
-            });
-            self.requests[id] = opts;
-            document.documentElement.dispatchEvent(event);
-        }
+        $.ajax({
+			url: apiURL,
+			data: params,
+			type: "POST",
+			success: function(data) {
+				var response = (typeof data == "string") ? JSON.parse(data) : data;
+				callback(response);
+			}
+		});
     }
 
     this.saveLoadouts = function(includeMessage) {
@@ -1479,6 +1463,8 @@ var app = new(function() {
 					profile.items(_.map(data.items, function(item){
 						return new Item(item, profile);
 					}));
+					self.addTierTypes(profile.items());
+                    self.addWeaponTypes(profile.weapons());
 					self.characters.push(profile);
 					self.bucketSizeHandler();
 				});
