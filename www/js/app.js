@@ -990,31 +990,15 @@ var app = new(function() {
     var id = -1;
     this.apiRequest = function(params, callback) {
         var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
-        if (isChrome || isMobile) {
-            $.ajax({
-                url: apiURL,
-                data: params,
-                type: "POST",
-                success: function(data) {
-					var response = (typeof data == "string") ? JSON.parse(data) : data;
-                    callback(response);
-                }
-            });
-        } else {
-            var event = document.createEvent('CustomEvent');
-            var opts = {
-                route: apiURL,
-                payload: params,
-                method: "POST",
-                complete: callback
-            }
-            event.initCustomEvent("api-request-message", true, true, {
-                id: ++id,
-                opts: opts
-            });
-            self.requests[id] = opts;
-            document.documentElement.dispatchEvent(event);
-        }
+        $.ajax({
+			url: apiURL,
+			data: params,
+			type: "POST",
+			success: function(data) {
+				var response = (typeof data == "string") ? JSON.parse(data) : data;
+				callback(response);
+			}
+		});
     }
 
     this.saveLoadouts = function(includeMessage) {
@@ -1473,14 +1457,16 @@ var app = new(function() {
 						id: data.id,
 						level: data.level,
 						imgIcon: data.imgIcon,
-						icon: self.bungie.getUrl() + data.icon,
+						icon: data.icon,
 						background: data.background
 					});
 					profile.items(_.map(data.items, function(item){
-						item.icon = self.bungie.getUrl() + item.icon.replace("data/","");
 						return new Item(item, profile);
 					}));
+					self.addTierTypes(profile.items());
+                    self.addWeaponTypes(profile.weapons());
 					self.characters.push(profile);
+					self.bucketSizeHandler();
 				});
 			}
 		)
@@ -1488,6 +1474,8 @@ var app = new(function() {
 	
     this.init = function() {
 		self.bungie = new bungie();
+		tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.statsTemplate = _.template(tgd.statsTemplate);
 		tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
@@ -1495,6 +1483,13 @@ var app = new(function() {
             }
         });
 		self.loadStatic(location.search.replace('?',''));
+		$("form").bind("submit", false);
+        $("html").click(self.globalClickHandler);
+        /* this fixes issue #16 */
+        self.activeView.subscribe(function() {
+            setTimeout(self.bucketSizeHandler, 500);
+        });
+        $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         ko.applyBindings(self);
     }
 });
@@ -1508,29 +1503,4 @@ window.zam_tooltips = {
 };
 BootstrapDialog.defaultOptions.nl2br = false;
 
-if (isMobile) {
-    window.addEventListener("statusTap", function() {
-        var target = $("body");
-
-        //disable touch scroll to kill existing inertial movement
-        target.css({
-            '-webkit-overflow-scrolling': 'auto',
-            'overflow-y': 'hidden'
-        });
-
-        //animate
-        target.animate({
-            scrollTop: 0
-        }, 300, "swing", function() {
-
-            //re-enable touch scrolling
-            target.css({
-                '-webkit-overflow-scrolling': 'touch',
-                'overflow-y': 'scroll'
-            });
-        });
-    });
-    document.addEventListener('deviceready', app.init, false);
-} else {
-    $(document).ready(app.init);
-}
+$(document).ready(app.init); 
