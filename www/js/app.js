@@ -1416,7 +1416,7 @@ var app = new(function() {
         var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
             "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
-            "progression", "weaponIndex", "armorIndex", "perks", "isUnique", "href"
+            "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
         ]
         var profiles = _.map(self.characters(), function(profile) {
             var newProfile = {};
