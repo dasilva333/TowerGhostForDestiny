@@ -17,30 +17,44 @@ try {
 		var _token, id = 0;
 		window.requests = {};  
 		window.addEventListener("message", function(event) {
-			//console.log("received a firefox response");
-			try {
-				var reply = event.data;
-				//console.log(reply);
-				var response = JSON.parse(reply.response);
-				var opts = requests[reply.id];			
-				if(response.ErrorCode === 36){ 
-					//console.log("throttle retrying"); 
-					opts.route = opts.route.replace(url + "Platform",''); 
-					setTimeout(function () { requests[id+1] = opts; _request(opts); }, 1000); 
+			console.log("received a firefox response");			
+			var reply = event.data;
+			console.log(reply);
+			var response = JSON.parse(reply.response);
+			var opts = requests[reply.id];			
+			if(response.ErrorCode === 36){ 
+				console.log("throttle retrying"); 
+				opts.route = opts.route.replace(url + "Platform",''); 
+				setTimeout(function () { 
+					requests[id+1] = opts; 
+					_request(opts); 
+				}, 1000); 
+			}
+			else {
+				try {
+					console.log("calling complete for id " + reply.idclea);
+					opts.complete(response.Response, response);
+					/* for some unknown reason window.postMessage is causing this to execute twice */
+					delete requests[reply.id];
+				}catch(e){
+					//console.log(e);
 				}
-		        else { opts.complete(response.Response, response); }			
-			}catch(e){
-				console.log(e);
-			}		
+			}
 		}, false);  
 	  }
 	
 	  // private methods
 	  function _getAllCookies(callback) {
 	  	if (isChrome){
-			chrome.cookies.getAll({ domain: '.' + domain }, function(){
-		      callback.apply(null, arguments);
-		    });	
+			if (chrome && chrome.cookies && chrome.cookies.getAll){	
+				chrome.cookies.getAll({ domain: '.' + domain }, function(){
+				  callback.apply(null, arguments);
+				});
+			}
+			else {
+				callback([]);
+				return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
+			}
 		}    
 	  }
 	
@@ -139,7 +153,7 @@ try {
 		}
 		//This piece is for Firefox
 		else {
-			//console.log("sending firefox request");
+			console.log("sending firefox request");
 			var event = document.createEvent('CustomEvent');
 			opts.route = url + "Platform" + opts.route;
 			event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });
@@ -154,6 +168,9 @@ try {
 	    if(type === 'PSN')
 	      active = systemIds.psn;
 	  }
+	  this.getMemberId = function(){
+		return membershipId;
+	  }
 	  this.gamertag = function() {
 	    return active.id;
 	  }
@@ -166,7 +183,7 @@ try {
 	      route: '/User/GetBungieNetUser/',
 	      method: 'GET',
 	      complete: function(res, response) {
-			if (response && response.ErrorCode && response.ErrorCode > 1){			
+			if (response && response.ErrorCode && response.ErrorCode > 1){
 				callback({error: response.Message, code: response.ErrorCode});
 	         	return;
 			}
@@ -188,28 +205,38 @@ try {
 	    });
 	  }
 	  this.search = function(activeSystem, callback) {
-		if ( _.isUndefined(active.type) ){
+		this.setsystem(activeSystem);
+		if ( active && active.type ){
+			_request({
+			  route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
+			  method: 'GET',
+			  complete: function(membership) {
+				if(membership == 0) {
+				  //console.log('error finding bungie account!', membership)
+				  callback({error: true})
+				  return;
+				}
+				membershipId = membership;
+				_request({
+				  route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
+						  '/Account/' + membership + '/',
+				  method: 'GET',
+				  complete: callback
+				});
+			  }
+			});
+		}
+	    else {
+			ga('send', 'exception', {
+				'exDescription': "active.type is undefined " + JSON.stringify(activeSystem),
+				'exFatal': false,
+				'appVersion': tgd.version,
+				'hitCallback': function() {
+					console.log("crash reported");
+				}
+			});
 			return BootstrapDialog.alert("Please sign in before attempting to refresh");
-		}	  
-	  	this.setsystem(activeSystem);
-	    _request({
-	      route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
-	      method: 'GET',
-	      complete: function(membership) {
-	        if(membership == 0) {
-	          //console.log('error finding bungie account!', membership)
-	          callback({error: true})
-	          return;
-	        }
-			membershipId = membership;
-	        _request({
-	          route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
-	                  '/Account/' + membership + '/',
-	          method: 'GET',
-	          complete: callback
-	        });
-	      }
-	    });
+		}
 	  }
 	  this.vault = function(callback) {
 	    _request({
