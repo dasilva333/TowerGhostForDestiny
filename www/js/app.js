@@ -318,6 +318,7 @@ var app = new(function() {
                 if (item) activeItem = item;
             });
         });
+		console.log(activeItem);
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
@@ -1482,7 +1483,7 @@ var app = new(function() {
                 method: "notifyWhenChangesStop"
             }
         });
-		self.loadStatic(location.search.replace('?',''));
+		self.loadStatic(unescape(location.search.replace('?','')));
 		$("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
@@ -1503,4 +1504,4 @@ window.zam_tooltips = {
 };
 BootstrapDialog.defaultOptions.nl2br = false;
 
-$(document).ready(app.init); 
+$(document).ready(app.init);
