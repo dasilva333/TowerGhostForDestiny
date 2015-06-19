@@ -322,9 +322,12 @@ Item.prototype = {
             //console.log(arguments);
             if (result && result.Message && result.Message == "Ok") {
                 if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
+					console.log("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
+				
                     // remainder indicates we're splitting an existing stack
                     var remainder = self.primaryStat() - amount;
                     if (remainder > 0) {
+						console.log("splitting, so updating original item w/ remainder");
                         self.primaryStat(remainder);
                     }
 
@@ -337,6 +340,7 @@ Item.prototype = {
                             return i.primaryStat() < i.maxStackSize;
                         });
                     if (existingItem !== undefined) {
+						console.log("existing stack in destination");
                         var tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat(), amount);
                         existingItem.primaryStat(existingItem.primaryStat() + tmpAmount);
 
@@ -346,48 +350,65 @@ Item.prototype = {
                             // completely moved the full stack to an existing stack
                             x.items.remove(self);
                         }
-                    }
+                    } else { console.log("no existing stack in destination"); }
 
                     // still some transferring left to do
+					var cloneOrSelf;
                     if (amount > 0) {
-                        var theItem;
+						console.log("still have some left: " + amount);
                         if (remainder > 0) {
-                            theItem = self.clone();
+							console.log("cloning original due to remainder");
+							// the clone needs to stay behind on the source character so that any
+							// future/subsequent transfers of 'self' don't lose the reference
+							var idx = x.items.indexOf(self);
+							x.items.remove(self);							
+							
+                            var cloneItem = self.clone();
+							cloneOrSelf = cloneItem;
+							// patch it back in at the same index
+							x.items.splice(idx, 0, cloneItem);
+							
                         } else {
-                            x.items.remove(self);
-                            theItem = self;
+							console.log("no remainder so full stack getting moved");							
+                            x.items.remove(self);							
+							cloneOrSelf = self;
                         }
-
-                        theItem.characterId = targetCharacterId;
-                        theItem.character = y;
-                        theItem.primaryStat(amount);
-                        y.items.push(theItem);
+						
+						self.characterId = targetCharacterId;
+						self.character = y;
+						self.primaryStat(amount);
+						y.items.push(self);
                     }
 
                     // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
                     if (remainder > 0) {
+						console.log("running cleanup code...");
                         var selfExistingItems = _.where(x.items(), {
                             description: self.description
                         });
-                        var idx = _.indexOf(selfExistingItems, self);
+                        var idx = _.indexOf(selfExistingItems, cloneOrSelf);
                         while ((idx !== -1) && (idx < selfExistingItems.length)) {
                             if ((idx + 1) >= selfExistingItems.length) {
+								console.log("nothing to cleanup");
                                 break;
                             }
 
                             var cur = selfExistingItems[idx];
                             var next = selfExistingItems[idx + 1];
                             var howMuch = Math.min(cur.maxStackSize - cur.primaryStat(), next.primaryStat());
+							console.log("shifting left...");
 
                             cur.primaryStat(cur.primaryStat() + howMuch)
                             next.primaryStat(next.primaryStat() - howMuch);
                             if (next.primaryStat() <= 0) {
+								console.log("drained a stack in cleanup");
                                 x.items.remove(next);
                             }
 
                             idx = idx + 1;
                         }
                     }
+					console.log("---------------------");
                 } else {
                     self.characterId = targetCharacterId
                     self.character = y;
