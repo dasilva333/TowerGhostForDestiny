@@ -326,11 +326,6 @@ Item.prototype = {
                     var remainder = self.primaryStat() - amount;
                     if (remainder > 0) {
                         self.primaryStat(remainder);
-
-                        // TODO: some way to force update this particular item in the observablearray?
-                        //var changedIdx = x.items.indexOf(self);
-                        //x.items.splice(changedIdx, 1);
-                        //x.items.splice(changedIdx, 0, self);
                     }
 
                     // try and merge with existing items up to the max stack size for that item type before splitting
@@ -344,11 +339,6 @@ Item.prototype = {
                     if (existingItem !== undefined) {
                         var tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat(), amount);
                         existingItem.primaryStat(existingItem.primaryStat() + tmpAmount);
-
-                        // TODO: some way to force update this particular item in the observablearray?
-                        //var changedIdx = y.items.indexOf(existingItem);
-                        //y.items.splice(changedIdx, 1);
-                        //y.items.splice(changedIdx, 0, existingItem);
 
                         amount = amount - tmpAmount;
 
