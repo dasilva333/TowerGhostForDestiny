@@ -364,16 +364,34 @@ Item.prototype = {
 							// clone and patch it back in at the same index
                             var cloneItem = self.clone();							
 							x.items.splice(idx, 0, cloneItem);
-                        } else {
+                        }
+						else {
 							x.items.remove(self);
 							console.log("no remainder so full stack getting moved");
+							
+							// might need to remove visual remnants from chained transfers
+							if (remainder < 0) {
+								console.log("visual remnants to remove: " + remainder);
+								var toRemove = {};
+								var remaining = remainder * -1;
+								var potentialExtras = _.where(x.items(), { description: self.description });
+								for (var i = potentialExtras.length - 1; i >= 0; i--) {
+									if (remaining <= 0) { break; }
+									var howMuch = Math.min(potentialExtras[i].primaryStat(), remaining);
+									potentialExtras[i].primaryStat(potentialExtras[i].primaryStat() - howMuch);
+									if (potentialExtras[i].primaryStat() <= 0) {
+										x.items.remove(potentialExtras[i]);
+									}
+									remaining = remaining - howMuch;
+								}
+							}
                         }
 						
 						self.characterId = targetCharacterId;
 						self.character = y;
 						self.primaryStat(amount);
 						y.items.push(self);
-                    }					
+                    }
 
                     // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
                     if (remainder > 0) {
