@@ -570,6 +570,7 @@ var app = new(function() {
                 }
                 if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                     itemObject.primaryStat = item.stackSize;
+                    itemObject.maxStackSize = info.maxStackSize;
                 }
                 if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
                     itemObject.stats = {};

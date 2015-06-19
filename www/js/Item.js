@@ -27,6 +27,22 @@ var Item = function(model, profile) {
 }
 
 Item.prototype = {
+    clone: function() {
+        var self = this;
+        var model = {};
+        for (var i in self) {
+            if (self.hasOwnProperty(i)) {
+                var val = ko.unwrap(self[i]);
+                if (typeof(val) !== 'function') {
+                    model[i] = val;
+                }
+            }
+        }
+        //console.log("model: ");
+        //console.log(model);
+        var newItem = new Item(model, self.character);
+        return newItem;
+    },
     hasPerkSearch: function(search) {
         var foundPerk = false,
             self = this;
@@ -306,29 +322,92 @@ Item.prototype = {
             //console.log(arguments);
             if (result && result.Message && result.Message == "Ok") {
                 if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
-                    //console.log("need to split reference of self and push it into x and y");
+                    // remainder indicates we're splitting an existing stack
                     var remainder = self.primaryStat - amount;
-                    /* at this point we can either add the item to the inventory or merge it with existing items there */
-                    var existingItem = _.findWhere(y.items(), {
-                        description: self.description
-                    });
-                    if (existingItem) {
-                        y.items.remove(existingItem);
-                        existingItem.primaryStat = existingItem.primaryStat + amount;
-                        y.items.push(existingItem);
-                    } else {
-                        self.characterId = targetCharacterId
-                        self.character = y;
-                        self.primaryStat = amount;
-                        y.items.push(self);
-                    }
-                    /* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
-                    x.items.remove(self);
                     if (remainder > 0) {
-                        self.characterId = sourceCharacterId
-                        self.character = x;
                         self.primaryStat = remainder;
-                        x.items.push(self);
+
+                        // TODO: some way to force update this particular item in the observablearray?
+                        var changedIdx = x.items.indexOf(self);
+                        x.items.splice(changedIdx, 1);
+                        x.items.splice(changedIdx, 0, self);
+                    }
+
+                    // try and merge with existing items up to the max stack size for that item type before splitting
+                    var existingItem = _.find(
+                        _.where(y.items(), {
+                            description: self.description
+                        }),
+                        function(i) {
+                            return i.primaryStat < i.maxStackSize;
+                        });
+                    if (existingItem !== undefined) {
+                        var tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat, amount);
+                        existingItem.primaryStat = existingItem.primaryStat + tmpAmount;
+
+                        // TODO: some way to force update this particular item in the observablearray?
+                        var changedIdx = y.items.indexOf(existingItem);
+                        y.items.splice(changedIdx, 1);
+                        y.items.splice(changedIdx, 0, existingItem);
+
+                        amount = amount - tmpAmount;
+
+                        if ((amount == 0) && (remainder == 0)) {
+                            // completely moved the full stack to an existing stack
+                            x.items.remove(self);
+                        }
+                    }
+
+                    // still some transferring left to do
+                    if (amount > 0) {
+                        var theItem;
+                        if (remainder > 0) {
+                            theItem = self.clone();
+                        } else {
+                            x.items.remove(self);
+                            theItem = self;
+                        }
+
+                        theItem.characterId = targetCharacterId;
+                        theItem.character = y;
+                        theItem.primaryStat = amount;
+                        y.items.push(theItem);
+                    }
+
+                    // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
+                    if (remainder > 0) {
+                        var selfExistingItems = _.where(x.items(), {
+                            description: self.description
+                        });
+                        console.log(selfExistingItems);
+                        var idx = _.indexOf(selfExistingItems, self);
+                        console.log(idx);
+                        while (idx < selfExistingItems.length) {
+                            if ((idx + 1) >= selfExistingItems.length) {
+                                break;
+                            }
+
+                            var cur = selfExistingItems[idx];
+                            var next = selfExistingItems[idx + 1];
+                            var howMuch = Math.min(cur.maxStackSize - cur.primaryStat, next.primaryStat);
+
+                            cur.primaryStat = cur.primaryStat + howMuch; {
+                                var changedIdx = x.items.indexOf(cur);
+                                x.items.splice(changedIdx, 1);
+                                x.items.splice(changedIdx, 0, cur);
+                            }
+
+                            next.primaryStat = next.primaryStat - howMuch;
+                            if (next.primaryStat <= 0) {
+                                x.items.remove(next);
+                            } else {
+                                var changedIdx = x.items.indexOf(next);
+                                x.items.splice(changedIdx, 1);
+                                x.items.splice(changedIdx, 0, next);
+                            }
+
+                            idx = idx + 1;
+                        }
                     }
                 } else {
                     self.characterId = targetCharacterId
