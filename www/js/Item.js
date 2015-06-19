@@ -6,7 +6,7 @@ var Item = function(model, profile) {
     this.character = profile;
     this.href = "https://destinydb.com/items/" + self.id;
     this.isEquipped = ko.observable(self.isEquipped);
-    this.primaryStat = self.primaryStat || "";
+    this.primaryStat = ko.observable(self.primaryStat || "");
     this.isVisible = ko.computed(this._isVisible, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
@@ -323,14 +323,14 @@ Item.prototype = {
             if (result && result.Message && result.Message == "Ok") {
                 if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
                     // remainder indicates we're splitting an existing stack
-                    var remainder = self.primaryStat - amount;
+                    var remainder = self.primaryStat() - amount;
                     if (remainder > 0) {
-                        self.primaryStat = remainder;
+                        self.primaryStat(remainder);
 
                         // TODO: some way to force update this particular item in the observablearray?
-                        var changedIdx = x.items.indexOf(self);
-                        x.items.splice(changedIdx, 1);
-                        x.items.splice(changedIdx, 0, self);
+                        //var changedIdx = x.items.indexOf(self);
+                        //x.items.splice(changedIdx, 1);
+                        //x.items.splice(changedIdx, 0, self);
                     }
 
                     // try and merge with existing items up to the max stack size for that item type before splitting
@@ -339,16 +339,16 @@ Item.prototype = {
                             description: self.description
                         }),
                         function(i) {
-                            return i.primaryStat < i.maxStackSize;
+                            return i.primaryStat() < i.maxStackSize;
                         });
                     if (existingItem !== undefined) {
-                        var tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat, amount);
-                        existingItem.primaryStat = existingItem.primaryStat + tmpAmount;
+                        var tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat(), amount);
+                        existingItem.primaryStat(existingItem.primaryStat() + tmpAmount);
 
                         // TODO: some way to force update this particular item in the observablearray?
-                        var changedIdx = y.items.indexOf(existingItem);
-                        y.items.splice(changedIdx, 1);
-                        y.items.splice(changedIdx, 0, existingItem);
+                        //var changedIdx = y.items.indexOf(existingItem);
+                        //y.items.splice(changedIdx, 1);
+                        //y.items.splice(changedIdx, 0, existingItem);
 
                         amount = amount - tmpAmount;
 
@@ -370,7 +370,7 @@ Item.prototype = {
 
                         theItem.characterId = targetCharacterId;
                         theItem.character = y;
-                        theItem.primaryStat = amount;
+                        theItem.primaryStat(amount);
                         y.items.push(theItem);
                     }
 
@@ -380,28 +380,19 @@ Item.prototype = {
                             description: self.description
                         });
                         var idx = _.indexOf(selfExistingItems, self);
-                        while (idx < selfExistingItems.length) {
+                        while ((idx !== -1) && (idx < selfExistingItems.length)) {
                             if ((idx + 1) >= selfExistingItems.length) {
                                 break;
                             }
 
                             var cur = selfExistingItems[idx];
                             var next = selfExistingItems[idx + 1];
-                            var howMuch = Math.min(cur.maxStackSize - cur.primaryStat, next.primaryStat);
+                            var howMuch = Math.min(cur.maxStackSize - cur.primaryStat(), next.primaryStat());
 
-                            cur.primaryStat = cur.primaryStat + howMuch; {
-                                var changedIdx = x.items.indexOf(cur);
-                                x.items.splice(changedIdx, 1);
-                                x.items.splice(changedIdx, 0, cur);
-                            }
-
-                            next.primaryStat = next.primaryStat - howMuch;
-                            if (next.primaryStat <= 0) {
+                            cur.primaryStat(cur.primaryStat() + howMuch)
+                            next.primaryStat(next.primaryStat() - howMuch);
+                            if (next.primaryStat() <= 0) {
                                 x.items.remove(next);
-                            } else {
-                                var changedIdx = x.items.indexOf(next);
-                                x.items.splice(changedIdx, 1);
-                                x.items.splice(changedIdx, 0, next);
                             }
 
                             idx = idx + 1;
@@ -463,10 +454,10 @@ Item.prototype = {
             }
         }
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
-            if (self.primaryStat == 1) {
+            if (self.primaryStat() == 1) {
                 done();
             } else if (app.autoTransferStacks() == true) {
-                transferAmount = self.primaryStat;
+                transferAmount = self.primaryStat();
                 done();
             } else {
                 var dialogItself = (new tgd.dialog({
@@ -479,7 +470,7 @@ Item.prototype = {
                                         description: self.description
                                     }),
                                     function(memo, j) {
-                                        return memo + j.primaryStat;
+                                        return memo + j.primaryStat();
                                     },
                                     0);
                                 itemTotal = itemTotal + characterTotal;
@@ -487,9 +478,9 @@ Item.prototype = {
                             var $content = $(
                                 '<div><div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
-                                ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
+                                ' <input type="text" id="materialsAmount" value="' + self.primaryStat() + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + self.primaryStat + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + self.primaryStat() + ') </button>' +
                                 '<button type="button" class="btn btn-default pull-right" id="one"> ' + app.activeText().transfer_one + ' </button>' +
                                 '</div>' +
                                 '<div><hr></div>' +
@@ -507,7 +498,7 @@ Item.prototype = {
                             btnInc.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(Math.min(num + 1, self.primaryStat));
+                                    $("input#materialsAmount").val(Math.min(num + 1, self.primaryStat()));
                                 }
                             });
                             var btnOne = $content.find('#one');
@@ -521,7 +512,7 @@ Item.prototype = {
                             btnAll.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(self.primaryStat);
+                                    $("input#materialsAmount").val(self.primaryStat());
                                 }
                             });
                             var inputAmt = $content.find('#materialsAmount');
@@ -609,19 +600,19 @@ Item.prototype = {
                 return;
             }
 
-            //console.log("xfer " + theStack.primaryStat + " from: " + theStack.character.id + ", to: " + targetCharacterId);
+            //console.log("xfer " + theStack.primaryStat() + " from: " + theStack.character.id + ", to: " + targetCharacterId);
 
             if (targetCharacterId == "Vault") {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat, function() {
+                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
                     nextTransfer(callback);
                 });
             } else if (theStack.character.id == "Vault") {
-                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat, function() {
+                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
                     nextTransfer(callback);
                 });
             } else {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat, function() {
-                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat, function() {
+                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
+                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
                         nextTransfer(callback);
                     });
                 });
@@ -652,7 +643,7 @@ Item.prototype = {
                                     description: self.description
                                 }),
                                 function(memo, i) {
-                                    return memo + i.primaryStat;
+                                    return memo + i.primaryStat();
                                 },
                                 0);
                             c = c + ct;

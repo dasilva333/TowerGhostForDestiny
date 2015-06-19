@@ -415,7 +415,7 @@ var app = new(function() {
                     }).get().join("")
                 );
             }
-            $content.find(".destt-primary-min").html(activeItem.primaryStat);
+            $content.find(".destt-primary-min").html(activeItem.primaryStat());
         } else {
             //remove the "Emblem" title from the image issue #31
             if ($content.find(".fhtt-emblem").length > 0) {
@@ -1176,7 +1176,7 @@ var app = new(function() {
                     description: description
                 }),
                 function(memo, i) {
-                    return memo + i.primaryStat;
+                    return memo + i.primaryStat();
                 },
                 0);
             itemTotal = itemTotal + characterTotal;
@@ -1273,7 +1273,7 @@ var app = new(function() {
             });
             var surplusItem = surplusItems[0];
 
-            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
+            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
             //console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
