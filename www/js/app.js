@@ -293,6 +293,39 @@ var app = new(function() {
         });
     }
 
+    this.handleGoogleResponse = function(data) {
+        if (data && data.response) {
+            if (data.response.errorType) {
+                BootstrapDialog.alert("Error: " + data.response.errorType);
+            } else if (data.response.orderId) {
+                BootstrapDialog.alert("Donation accepted Ref# " + data.response.orderId);
+            } else {
+                BootstrapDialog.alert("Unknown error has occurred");
+            }
+        } else {
+            BootstrapDialog.alert("No response returned");
+        }
+    }
+
+    this.showDonate = function() {
+        self.toggleBootstrapMenu();
+        (new tgd.dialog).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+            $("a.donatePaypal").attr("href", "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD");
+            $("a.donate").bind("click", function() {
+                if (isChrome) {
+                    google.payments.inapp.buy({
+                        'parameters': {
+                            'env': 'prod'
+                        },
+                        'sku': $(this).attr("sku"),
+                        'success': self.handleGoogleResponse,
+                        'failure': self.handleGoogleResponse
+                    });
+                }
+            });
+        });
+    }
+
     this.showAbout = function() {
         self.toggleBootstrapMenu();
         (new tgd.dialog).title("About").content($("#about").html()).show();
@@ -890,10 +923,6 @@ var app = new(function() {
             var bottom = top + $item.height();
             $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
         });
-    }
-
-    this.donate = function() {
-        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
     }
 
     this.readBungieCookie = function(ref, loop) {
