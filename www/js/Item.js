@@ -379,9 +379,7 @@ Item.prototype = {
                         var selfExistingItems = _.where(x.items(), {
                             description: self.description
                         });
-                        console.log(selfExistingItems);
                         var idx = _.indexOf(selfExistingItems, self);
-                        console.log(idx);
                         while (idx < selfExistingItems.length) {
                             if ((idx + 1) >= selfExistingItems.length) {
                                 break;
