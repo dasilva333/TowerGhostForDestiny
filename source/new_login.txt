@@ -1,6 +1,34 @@
-var ex_ppft = /<input type="hidden" name="PPFT" id=".*" value="(.*?)">/g;
+var liveuser = "h4rdc0r3g4m3r@hotmail.com";
+var livepass = "Richard333";
 
-var content = ' blah blah blah test <input type="hidden" name="PPFT" id="CrazyDave" value="123456789"> test test blah blah ';
-
-var value = content.split(ex_ppft)[1];
-console.log(value);
+$.ajax({
+	url: "https://www.bungie.net/en/User/SignIn/Xuid",
+	success: function(r){
+		var exp_urlpost = /urlPost:\'(https:\/\/.*?)\'/;
+		var url_post = r.split(exp_urlpost)[1];
+		var ex_ppft = /<input type="hidden" name="PPFT" id=".*" value="(.*?)"\/>/;
+		var ppft = r.split(ex_ppft)[1];
+		console.log("posting to " + url_post);
+		$.ajax({
+			type: "post",
+			url: url_post,
+			data: { 'login': liveuser, 'passwd': livepass, 'PPFT': ppft },
+			complete: function(resp){
+				var redirect_url = resp.getResponseHeader('x-selfurl');
+                console.log("calling post url " + redirect_url);
+                $.ajax({
+					url: redirect_url,
+					complete: function(resp){
+					   console.log("bungie header");
+					   bg = resp;
+					   console.log(resp.getAllResponseHeaders());
+					}
+				});
+			}
+		});
+	},
+    complete: function(resp){
+       console.log("sign in header");
+	   console.log(resp.getAllResponseHeaders());
+    }
+});
