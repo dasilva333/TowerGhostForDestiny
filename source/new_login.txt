@@ -1,0 +1,6 @@
+var ex_ppft = /<input type="hidden" name="PPFT" id=".*" value="(.*?)">/g;
+
+var content = ' blah blah blah test <input type="hidden" name="PPFT" id="CrazyDave" value="123456789"> test test blah blah ';
+
+var value = content.split(ex_ppft)[1];
+console.log(value);
