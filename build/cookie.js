@@ -1,0 +1,1 @@
+window.toughCookie = require('tough-cookie');

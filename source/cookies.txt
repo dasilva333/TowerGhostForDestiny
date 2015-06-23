@@ -1,0 +1,59 @@
+
+/*
+var Cookie = tough.Cookie;
+var Store = tough.Store;
+var CookieJar = tough.CookieJar;
+var cookieGroups = /(.*?),(?! \d\d-) ?|(.+)/
+var header = "bungled=5179007590481553366; path=/, bungledid=B73kQwStzzVAsWCJ092oPPszku9l7nvSCAAA; expires=Mon, 23-Jun-2025 17:08:45 GMT; path=/; HttpOnly, sto-id-sg_www.bungie.net=JNAKHPAK; Expires=Tue, 23-Jun-2015 18:08:44 GMT; Path=/, __cfduid=d301df8421c08461f5a297ff0cc3da2d81435079325; expires=Wed, 22-Jun-16 17:08:45 GMT; path=/; domain=.bungie.net; HttpOnly";
+var cookiejar = new tough.CookieJar();
+header.split(cookieGroups).forEach(function(c){
+	if (c){
+		var cookie = Cookie.parse(c);
+		cookiejar.setCookieSync(cookie, 'http://bungie.net');
+	}
+});
+
+var newjar = CookieJar.deserialize(cookiejar.toJSON());
+
+console.log( newjar.toJSON() );
+*/
+
+/*
+
+ var cookie = require("cookie");
+ var header = "bungled=5179007590481553366; path=/, bungledid=B73kQwStzzVAsWCJ092oPPszku9l7nvSCAAA; expires=Mon, 23-Jun-2025 17:08:45 GMT; path=/; HttpOnly, sto-id-sg_www.bungie.net=JNAKHPAK; Expires=Tue, 23-Jun-2015 18:08:44 GMT; Path=/, __cfduid=d301df8421c08461f5a297ff0cc3da2d81435079325; expires=Wed, 22-Jun-16 17:08:45 GMT; path=/; domain=.bungie.net; HttpOnly";
+header.split(";").forEach(function(c){
+ var obj = cookie.parse(c);
+ console.log( Object.keys(obj) );
+});*/
+
+/*
+var header = "bungled=5179007590481553366; path=/, bungledid=B73kQwStzzVAsWCJ092oPPszku9l7nvSCAAA; expires=Mon, 23-Jun-2025 17:08:45 GMT; path=/; HttpOnly, sto-id-sg_www.bungie.net=JNAKHPAK; Expires=Tue, 23-Jun-2015 18:08:44 GMT; Path=/, __cfduid=d301df8421c08461f5a297ff0cc3da2d81435079325; expires=Wed, 22-Jun-16 17:08:45 GMT; path=/; domain=.bungie.net; HttpOnly";
+
+var cookieJar = require("node-cookiejar"),
+    CookieAccessInfo = cookieJar.CookieAccessInfo,
+    CookieJar = cookieJar.CookieJar,
+    Cookie = cookieJar.Cookie;
+	
+header.split(",").forEach(function(c){	
+	var obj = new Cookie(c);	
+	console.log( obj );
+});
+*/
+/*
+
+var header = "bungled=5179007590481553366; path=/, bungledid=B73kQwStzzVAsWCJ092oPPszku9l7nvSCAAA; expires=Mon, 23-Jun-2025 17:08:45 GMT; path=/; HttpOnly, sto-id-sg_www.bungie.net=JNAKHPAK; Expires=Tue, 23-Jun-2015 18:08:44 GMT; Path=/, __cfduid=d301df8421c08461f5a297ff0cc3da2d81435079325; expires=Wed, 22-Jun-16 17:08:45 GMT; path=/; domain=.bungie.net; HttpOnly";
+
+var cookie = require("cookie-jar")
+	
+header.split(regex).forEach(function(c){
+	if (c){
+		try {
+			var obj = new cookie(c);
+			console.log( obj );
+		}catch(e){
+			console.log("error: " + c);
+		}
+	
+	}
+});*/

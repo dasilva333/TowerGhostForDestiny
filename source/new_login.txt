@@ -26,11 +26,11 @@ window.cookies.clear(function(){
 					$.ajax({
 						type: "post",
 						url: url_post,
-						data: { 'login': "h4rdc0r3g4m3r@hotmail.com", 'passwd': "", 'PPFT': ppft },
+						data: { 'login': "h4rdc0r3g4m3r@hotmail.com", 'passwd': "Nosoup4u", 'PPFT': ppft },
 						success: function(resp){
 							$.ajax({
 								url: "https://www.bungie.net/Platform/Destiny/1/MyAccount/Vault/",
-								headers: {'X-API-Key': 'ecde0f0dd63045399a46764891111647', 'x-csrf':  window.bungled },
+								headers: {'X-API-Key': 'ecde0f0dd63045399a46764891111647', 'x-csrf':  window.bungled, 'Cookie': '' },
 								success: function(resp){
 									console.log(Object.keys(resp));
 									console.log(resp.ErrorCode);
