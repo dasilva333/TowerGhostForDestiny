@@ -29,6 +29,7 @@
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
+	<gap:plugin name="cordova-cookie-jar" source="npm" />
 	
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
