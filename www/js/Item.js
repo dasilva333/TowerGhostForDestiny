@@ -532,9 +532,10 @@ Item.prototype = {
 						self.primaryStat(amount);
 						y.items.push(self);
                     }
+					*/
 
                     // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
-                    if (remainder > 0) {
+                    if (remainder !== 0) {
 						console.log("running cleanup code...");
                         var selfExistingItems = _.where(x.items(), {
                             description: self.description
@@ -563,7 +564,7 @@ Item.prototype = {
                             idx = idx + 1;
                         }
                     }
-					*/
+					//*/
 					console.log("---------------------");
                 } else {
                     self.characterId = targetCharacterId
