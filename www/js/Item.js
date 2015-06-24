@@ -406,6 +406,10 @@ Item.prototype = {
 						if (sourceRightMost !== undefined) {
 							sourceRightMost.primaryStat(sourceRightMost.primaryStat() - (amount - self.primaryStat()));
 							localLog("updating right most item to: " + sourceRightMost.primaryStat());
+							if (sourceRightMost.primaryStat() <= 0) {
+								x.items.remove(sourceRightMost);
+								localLog("right most dropped to 0 or less, removing");
+							}
 						}
 					} else {
 						localLog("no remainder, no clone");
