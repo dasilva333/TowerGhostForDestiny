@@ -17,6 +17,7 @@
   "permissions": [
     "storage",
     "*://*.bungie.net/*",
+	"*://*.live.com/*",
     "cookies",
     "tabs"
   ],
