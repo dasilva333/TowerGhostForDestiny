@@ -1,14 +1,6 @@
-build\addon-sdk-1.17
-build/addon-sdk-1.17
-build/locale
-build\node-modules
-build\mobileWorldContent.db
-node_modules
-platforms
-plugins
-tags*
-bower_components
-node_modules
-.sass-cache
-*.map
-*.db
+.DS_Store
+node_modules/
+bower_modules/
+
+# Don't track build output
+dist/
