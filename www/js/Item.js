@@ -441,7 +441,7 @@ Item.prototype = {
 					else {
 						// self gets added to y.items as a new stack with (amount)
 						newAmount = amount;
-					}
+					}					
 					self.characterId = targetCharacterId;
 					self.character = y;
 					self.primaryStat(newAmount);
@@ -458,6 +458,24 @@ Item.prototype = {
 					else {
 						y.items.push(self);
 						localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
+					}
+					
+					// visually split stuff if stacks transferred eceeded maxStackSize for that item
+					if (newAmount > self.maxStackSize) {
+						localLog("exceeded maxStackSize, need to do some visual splitting");
+						while (self.primaryStat() > self.maxStackSize) {
+							var extraAmount = self.primaryStat() - self.maxStackSize;
+							idxSelf = y.items.indexOf(self);
+							// put clone at self index keeping self to the 'right'
+							var theClone = self.clone();
+							theClone.characterId = targetCharacterId;
+							theClone.character = y;
+							theClone.primaryStat(self.maxStackSize);
+							y.items.splice(idxSelf, 0, theClone);
+							localLog("inserted clone to y.items @ " + idxSelf + " with primaryStat " + theClone.primaryStat());
+							// adjust self value
+							self.primaryStat(extraAmount);
+						}
 					}
 
                     // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
