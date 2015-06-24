@@ -567,10 +567,11 @@ Item.prototype = {
             } else {
                 var dialogItself = (new tgd.dialog({
                         message: function() {
-                            var itemTotal = 0;
+                            var itemTotal = 0,
+                                characterTotal = 0;
                             for (i = 0; i < app.orderedCharacters().length; i++) {
                                 var c = app.orderedCharacters()[i];
-                                var characterTotal = _.reduce(
+                                var charTotal = _.reduce(
                                     _.filter(c.items(), {
                                         description: self.description
                                     }),
@@ -578,14 +579,17 @@ Item.prototype = {
                                         return memo + j.primaryStat();
                                     },
                                     0);
-                                itemTotal = itemTotal + characterTotal;
+                                if (self.character == c) {
+                                    characterTotal = charTotal;
+                                }
+                                itemTotal = itemTotal + charTotal;
                             }
                             var $content = $(
                                 '<div><div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
                                 ' <input type="text" id="materialsAmount" value="' + self.primaryStat() + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + self.primaryStat() + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + characterTotal + ') </button>' +
                                 '<button type="button" class="btn btn-default pull-right" id="one"> ' + app.activeText().transfer_one + ' </button>' +
                                 '</div>' +
                                 '<div><hr></div>' +
@@ -603,7 +607,7 @@ Item.prototype = {
                             btnInc.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(Math.min(num + 1, self.primaryStat()));
+                                    $("input#materialsAmount").val(Math.min(num + 1, characterTotal));
                                 }
                             });
                             var btnOne = $content.find('#one');
@@ -617,7 +621,7 @@ Item.prototype = {
                             btnAll.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(self.primaryStat());
+                                    $("input#materialsAmount").val(characterTotal);
                                 }
                             });
                             var inputAmt = $content.find('#materialsAmount');
