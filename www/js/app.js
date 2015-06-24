@@ -1252,7 +1252,7 @@ var app = new(function() {
             if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
                 //console.log("all items normalized as best as possible");
                 if (usingbatchMode == false) {
-                    self.refresh();
+                    //self.refresh();
                     BootstrapDialog.alert("All items normalized as best as possible");
                 }
                 if (callback !== undefined) {
