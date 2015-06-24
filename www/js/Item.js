@@ -657,7 +657,7 @@ Item.prototype = {
                             dialogItself.modal.close();
                         } else {
                             transferAmount = parseInt($("input#materialsAmount").val());
-                            if (!isNaN(transferAmount) && (transferAmount >= 0) && (transferAmount <= characterTotal)) {
+                            if (!isNaN(transferAmount) && (transferAmount > 0) && (transferAmount <= characterTotal)) {
                                 done();
                                 dialogItself.modal.close();
                             } else {
