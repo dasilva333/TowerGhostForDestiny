@@ -398,18 +398,25 @@ Item.prototype = {
 						localLog("inserted clone to x.items @ " + idxSelf + " with primaryStat " + remainder);
 					} else if (remainder < 0) {
 						localLog("[remainder: " + remainder + "] [no clone] [underflow]");
-						localLog("need to remove " + (amount - self.primaryStat()) + " more from " + sourceCharacterId);
+						var sourceRemaining = (amount - self.primaryStat());
+						localLog("need to remove " + sourceRemaining + " more from " + sourceCharacterId);
 						var sourceExistingItems = _.where(x.items(), {
 							description: self.description
 						});
-						var sourceRightMost = sourceExistingItems[sourceExistingItems.length - 1];
-						if (sourceRightMost !== undefined) {
-							sourceRightMost.primaryStat(sourceRightMost.primaryStat() - (amount - self.primaryStat()));
-							localLog("updating right most item to: " + sourceRightMost.primaryStat());
+						// handle weird cases when user has transferred more than a stacks worth. Bungie API allows this.
+						var sourceIdx = sourceExistingItems.length - 1;
+						while ((sourceRemaining > 0) && (sourceIdx >= 0)) {
+							var sourceRightMost = sourceExistingItems[sourceIdx];
+							var sourceTmpAmount = Math.min(sourceRemaining, sourceRightMost.primaryStat());
+							localLog("removing " + sourceTmpAmount + " from right most");
+							sourceRightMost.primaryStat(sourceRightMost.primaryStat() - sourceTmpAmount);
 							if (sourceRightMost.primaryStat() <= 0) {
 								x.items.remove(sourceRightMost);
 								localLog("right most dropped to 0 or less, removing");
 							}
+							sourceRemaining = sourceRemaining - sourceTmpAmount;
+							localLog("still need to remove " + sourceRemaining + " from " + sourceCharacterId);
+							sourceIdx = sourceIdx - 1;
 						}
 					} else {
 						localLog("no remainder, no clone");
