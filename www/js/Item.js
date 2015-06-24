@@ -565,10 +565,10 @@ Item.prototype = {
                 transferAmount = self.primaryStat();
                 done();
             } else {
+                var characterTotal = 0;
                 var dialogItself = (new tgd.dialog({
                         message: function() {
-                            var itemTotal = 0,
-                                characterTotal = 0;
+                            var itemTotal = 0;
                             for (i = 0; i < app.orderedCharacters().length; i++) {
                                 var c = app.orderedCharacters()[i];
                                 var charTotal = _.reduce(
@@ -657,7 +657,7 @@ Item.prototype = {
                             dialogItself.modal.close();
                         } else {
                             transferAmount = parseInt($("input#materialsAmount").val());
-                            if (!isNaN(transferAmount)) {
+                            if (!isNaN(transferAmount) && (transferAmount >= 0) && (transferAmount <= characterTotal)) {
                                 done();
                                 dialogItself.modal.close();
                             } else {
