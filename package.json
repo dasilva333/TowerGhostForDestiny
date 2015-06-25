@@ -1,15 +1,18 @@
 {
-  "name": "tower_ghost",
-  "title": "Tower Ghost",
-  "id": "jid1-Lecsmv0nvgnC2g",
-  "description": "This app allows you to transfer items between profiles, with various filters.",
-  "author": "Richard Pinedo",
-  "license": "MPL 2.0",
-  "version": "2.8.0",
-  "icon": "icon.png",
-  "permissions": {
-    "cross-domain-content": [
-      "https://www.bungie.net"
-    ]
+  "name": "tower-ghost-for-destiny",
+  "version": "0.0.0",
+  "devDependencies": {
+    "gulp": "^3.6.2",
+    "gulp-requirejs-bundler": "^0.1.1",
+    "gulp-concat": "~2.2.0",
+    "gulp-clean": "~0.2.4",
+    "event-stream": "~3.1.0",
+    "gulp-replace": "~0.2.0",
+    "gulp-uglify": "~0.2.1",
+    "gulp-html-replace": "~1.0.0",
+
+
+    "deeply": "~0.1.0",
+    "chalk": "~0.4.0"
   }
 }

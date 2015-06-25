@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Tower Ghost For Destiny</title>
+    <title>Tower Ghost for Destiny</title>
     <!-- build:css -->
       <link href="bower_modules/components-bootstrap/css/bootstrap.min.css" rel="stylesheet">
       <link href="css/styles.css" rel="stylesheet">
@@ -12,9 +12,26 @@
       <script src="app/require.config.js"></script>
       <script data-main="app/startup" src="bower_modules/requirejs/require.js"></script>
     <!-- endbuild -->
+    <!-- Bootstrap core and other CSS -->
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/dash.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elemdnts and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->	
   </head>
   <body>
     <nav-bar params="route: route"></nav-bar>
-    <div id="page" class="container" data-bind="component: { name: route().page, params: route }"></div>
+    <!-- Enter your page content below here
+    Available navbar effects: dnl-push, dnl-overlay
+    Available navbar versions: dnl-visible, dnl-hidden 
+    Available content effects: content-opacity -->
+    <div class="content-wrap dnl-hidden content-opacity" data-effect="dnl-overlay">
+      <div class="container-fluid">	
+	    <div id="page" class="container" data-bind="component: { name: route().page, params: route }"></div>
+	  </div>
+	</div>	
   </body>
 </html>
