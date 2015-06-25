@@ -58,13 +58,85 @@ Available versions: dnl-visible, dnl-hidden -->
 
 <!-- Dash Navbar Left 
 Available versions: dnl-visible, dnl-hidden -->
-<div class="dash-navbar-left dnl-hidden">
-  <p class="dnl-nav-title">Home</p>
+<div class="dash-navbar-left dnl-hidden" data-bind="template: { afterRender: componentLoaded() }">
+  <p class="dnl-nav-title">Nav</p>
+  <ul class="dnl-nav">
+	<li>
+      <a href="#home">
+        <span class="glyphicon dnl-link-icon fa fa-home"></span>
+        <span class="dnl-link-text">Home</span>
+      </a>
+    </li>
+    <li>
+      <a href="#help">
+        <span class="glyphicon dnl-link-icon fa fa-question"></span>
+        <span class="dnl-link-text">Help</span>
+      </a>
+    </li>
+    <li>
+      <a href="#about">
+        <span class="glyphicon dnl-link-icon fa fa-info"></span>
+        <span class="dnl-link-text">About</span>
+      </a>
+    </li>
+    <li>
+      <a href="#donate">
+        <span class="glyphicon dnl-link-icon fa fa-credit-card"></span>
+        <span class="dnl-link-text">Donate</span>
+      </a>
+    </li>
+	<li>
+      <a href="#settings">
+        <span class="dnl-link-icon glyphicon glyphicon-wrench"></span>
+        <span class="dnl-link-text">Settings</span>
+      </a>
+    </li>
+  </ul>
+  <p class="dnl-nav-title">Filters</p>
+  <ul class="dnl-nav">
+    <li>
+      <a href="#">
+        <span class="fa fa-image dnl-link-icon"></span>
+        <span class="dnl-link-text">View</span>
+      </a>
+    </li>
+    <li>
+      <a href="#">
+        <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
+        <span class="dnl-link-text">Set</span>
+      </a>
+    </li>
+    <li>
+      <a href="#">
+        <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
+        <span class="dnl-link-text">Tier</span>
+      </a>
+    </li>
+    <li>
+      <a href="#">
+        <span class="glyphicon glyphicon-stats dnl-link-icon"></span>
+        <span class="dnl-link-text">Progress</span>
+      </a>
+    </li>
+    <li>
+      <a href="#">
+        <span class="fa fa-fire dnl-link-icon"></span>
+        <span class="dnl-link-text">Damage</span>
+      </a>
+    </li>
+	<li>
+      <a href="#">
+        <span class="fa fa-bullseye dnl-link-icon"></span>
+        <span class="dnl-link-text">Weapon</span>
+      </a>
+    </li>
+  </ul>
+  <p class="dnl-nav-title">Tools</p>
   <ul class="dnl-nav">
     <li>
       <a class="collapsed" data-toggle="collapse" href="#collapseStatistics" aria-expanded="false" aria-controls="collapseStatistics">
-        <span class="glyphicon glyphicon-stats dnl-link-icon"></span>
-        <span class="dnl-link-text">Statistics</span>
+        <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+        <span class="dnl-link-text">Loadouts</span>
         <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
       <!-- Dropdown level one -->
@@ -72,162 +144,33 @@ Available versions: dnl-visible, dnl-hidden -->
         <li>
           <a href="#">
             <span class="fa fa-clock-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Daily</span>
+            <span class="dnl-link-text">VOG</span>
           </a>
         </li>
         <li>
           <a href="#">
             <span class="fa fa-history dnl-link-icon"></span>
-            <span class="dnl-link-text">Annual</span>
+            <span class="dnl-link-text">Crota</span>
           </a>
         </li>
       </ul>
-    </li>
+    </li>      
     <li>
       <a href="#">
-        <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
-        <span class="dnl-link-text">Pages</span>
-      </a>
-    </li>
-    <li>
-      <a href="#">
-        <span class="glyphicon glyphicon-comment dnl-link-icon"></span>
-        <span class="dnl-link-text">Comments</span>
-        <span class="badge">4</span>
-      </a>
-    </li>
-    <li>
-      <a class="collapsed" data-toggle="collapse" href="#collapseLevelOne" aria-expanded="false" aria-controls="collapseLevelOne">
-        <span class="fa fa-sort-amount-desc dnl-link-icon"></span>
-        <span class="dnl-link-text">Dropdown level 1</span>
-        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
-      </a>
-      <!-- Dropdown level one -->
-      <ul class="dnl-sub-one collapse" id="collapseLevelOne">
-        <li>
-          <a href="#">
-            <span class="fa fa-slack dnl-link-icon"></span>
-            <span class="dnl-link-text">Level 1</span>
-          </a>
-        </li>
-        <li>
-          <a class="collapsed" data-toggle="collapse" href="#collapseLevelTwo" aria-expanded="false" aria-controls="collapseLevelTwo">
-            <span class="fa fa-level-down dnl-link-icon"></span>
-            <span class="dnl-link-text">Dropdown level 2</span>
-            <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
-          </a>
-          <!-- Dropdown level two -->
-          <ul class="dnl-sub-two collapse" id="collapseLevelTwo">
-            <li>
-              <a href="#">
-                <span class="fa fa-wifi dnl-link-icon"></span>
-                <span class="dnl-link-text">Level 2</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <span class="fa fa-wifi dnl-link-icon"></span>
-                <span class="dnl-link-text">Level 2</span>
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <span class="fa fa-wifi dnl-link-icon"></span>
-                <span class="dnl-link-text">Level 2</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a href="#">
-            <span class="fa fa-slack dnl-link-icon"></span>
-            <span class="dnl-link-text">Level 1</span>
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
-  <p class="dnl-nav-title">Filter</p>
-  <ul class="dnl-nav">
-    <li>
-      <a href="#">
-        <span class="fa fa-image dnl-link-icon"></span>
-        <span class="dnl-link-text">Image</span>
+        <span class="fa fa-share-alt dnl-link-icon"></span>
+        <span class="dnl-link-text">Share URL with friends</span>
       </a>
     </li>
     <li>
       <a href="#">
-        <span class="fa fa-video-camera dnl-link-icon"></span>
-        <span class="dnl-link-text">Video</span>
+        <span class="fa fa-external-link dnl-link-icon"></span>
+        <span class="dnl-link-text">DestinyStatus.com Profile</span>
       </a>
     </li>
-    <li>
+	<li>
       <a href="#">
-        <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
-        <span class="dnl-link-text">Audio</span>
-      </a>
-    </li>
-    <li>
-      <a href="#">
-        <span class="fa fa-file-text dnl-link-icon"></span>
-        <span class="dnl-link-text">File</span>
-        <span class="badge">4</span>
-      </a>
-    </li>
-    <li class="active">
-      <a href="#">
-        <span class="fa fa-link dnl-link-icon"></span>
-        <span class="dnl-link-text">Active link</span>
-      </a>
-    </li>
-  </ul>
-  <p class="dnl-nav-title">Category</p>
-  <ul class="dnl-nav">
-    <li>
-      <a class="collapsed" data-toggle="collapse" href="#collapseCategoryAll" aria-expanded="false" aria-controls="collapseCategoryAll">
-        <span class="glyphicon glyphicon-tags dnl-link-icon"></span>
-        <span class="dnl-link-text">All</span>
-        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
-      </a>
-      <!-- Dropdown level one -->
-      <ul class="dnl-sub-one collapse" id="collapseCategoryAll">
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">UI</span>
-            <span class="badge">4</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Design</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">App</span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Homepage</span>
-          </a>
-        </li>
-      </ul>
-    </li>
-    <li>
-      <a href="#">
-        <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-        <span class="dnl-link-text">Popular</span>
-      </a>
-    </li>
-    <li>
-      <a href="#">
-        <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-        <span class="dnl-link-text">Handpicked</span>
+        <span class="fa fa-external-link dnl-link-icon"></span>
+        <span class="dnl-link-text">DestinyTracker.com Profile</span>
       </a>
     </li>
   </ul>

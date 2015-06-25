@@ -1,4 +1,4 @@
-define(["knockout", "text!./home.html", "dash"], function(ko, homeTemplate) {
+define(["knockout", "text!./home.html"], function(ko, homeTemplate) {
 
   function HomeViewModel(route) {
     this.message = ko.observable('Welcome to Tower Ghost For Destiny!');
