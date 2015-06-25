@@ -3,15 +3,51 @@
 		<h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
 	</div>
 	<div class="panel-body">
-		<p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
-		<div class="btn-padding">
+		<p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account using these form or the buttons provided below to use an external popup.</p>
+		<form class="form-horizontal">
+		  <fieldset>
+			<legend>Login</legend>
+				<div class="form-group">
+				<label class="col-lg-2 control-label">Platform</label>
+				<div class="col-lg-10">
+				  <div class="radio">
+					<label>
+					  <input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">
+					  Xbox
+					</label>
+				  </div>
+				  <div class="radio">
+					<label>
+					  <input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">
+					  Playstation
+					</label>
+				  </div>
+				</div>
+			  </div>			
+			<div class="form-group">
+			  <label for="inputEmail" class="col-lg-2 control-label">Email</label>
+			  <div class="col-lg-10">
+				<input class="form-control" id="inputEmail" placeholder="Email" type="text">
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label for="inputPassword" class="col-lg-2 control-label">Password</label>
+			  <div class="col-lg-10">
+				<input class="form-control" id="inputPassword" placeholder="Password" type="password">
+				<div class="checkbox">
+				  <label>
+					<input type="checkbox"> Remember Me
+				  </label>
+				</div>
+			  </div>
+			</div>
+			<h4>Direct Login</h4>
 			<div class="form-group">
 				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
 			</div>
 			<div class="form-group">
 				<a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
 			</div>
-		</div>
-		<p data-bind="text: $root.activeText().login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
+		</form>	
 	</div>
 </div>
