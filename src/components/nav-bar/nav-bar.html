@@ -58,7 +58,7 @@ Available versions: dnl-visible, dnl-hidden -->
 
 <!-- Dash Navbar Left 
 Available versions: dnl-visible, dnl-hidden -->
-<div class="dash-navbar-left dnl-hidden" data-bind="template: { afterRender: componentLoaded() }">
+<div class="dash-navbar-left dnl-visible" data-bind="template: { afterRender: componentLoaded() }">
   <p class="dnl-nav-title">Nav</p>
   <ul class="dnl-nav">
 	<li>
@@ -95,61 +95,311 @@ Available versions: dnl-visible, dnl-hidden -->
   <p class="dnl-nav-title">Filters</p>
   <ul class="dnl-nav">
     <li>
-      <a href="#">
+      <a class="collapsed" data-toggle="collapse" href="#collapseView" aria-expanded="false" aria-controls="collapseView">
         <span class="fa fa-image dnl-link-icon"></span>
         <span class="dnl-link-text">View</span>
+        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
-    </li>
-    <li>
-      <a href="#">
+      <!-- Dropdown level one -->
+      <ul class="dnl-sub-one collapse" id="collapseView">
+        <li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">All</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Weapons</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Armor</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">General</span>
+          </a>
+        </li>
+      </ul>
+    </li>	
+	<li>
+      <a class="collapsed" data-toggle="collapse" href="#collapseLevelOne" aria-expanded="false" aria-controls="collapseLevelOne">
         <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
-        <span class="dnl-link-text">Set</span>
+        <span class="dnl-link-text">Sets</span>
+        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
-    </li>
-    <li>
-      <a href="#">
-        <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
-        <span class="dnl-link-text">Tier</span>
-      </a>
-    </li>
-    <li>
-      <a href="#">
-        <span class="glyphicon glyphicon-stats dnl-link-icon"></span>
-        <span class="dnl-link-text">Progress</span>
-      </a>
-    </li>
-    <li>
-      <a href="#">
-        <span class="fa fa-fire dnl-link-icon"></span>
-        <span class="dnl-link-text">Damage</span>
-      </a>
+      <!-- Dropdown level one -->
+      <ul class="dnl-sub-one collapse" id="collapseLevelOne">
+        <li>
+          <a class="collapsed" data-toggle="collapse" href="#collpaseExotics" aria-expanded="false" aria-controls="collpaseExotics">
+            <span class="fa fa-level-down dnl-link-icon"></span>
+            <span class="dnl-link-text">Exotic Weapons and Armor</span>
+            <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+          </a>
+          <!-- Dropdown level two -->
+          <ul class="dnl-sub-two collapse" id="collpaseExotics">
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Exotic Armor</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Exotic Weapons</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+		<li>
+          <a class="collapsed" data-toggle="collapse" href="#collpaseRAID" aria-expanded="false" aria-controls="collpaseRAID">
+            <span class="fa fa-level-down dnl-link-icon"></span>
+            <span class="dnl-link-text">Raid Weapons and Armor</span>
+            <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+          </a>
+          <!-- Dropdown level two -->
+          <ul class="dnl-sub-two collapse" id="collpaseRAID">
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Crota's End Armor</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Crota's End Weapons</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Vault of Glass Armor</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Vault of Glass Weapons</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+		<li>
+          <a class="collapsed" data-toggle="collapse" href="#collpaseHOW" aria-expanded="false" aria-controls="collpaseHOW">
+            <span class="fa fa-level-down dnl-link-icon"></span>
+            <span class="dnl-link-text">House of Wolves Items</span>
+            <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+          </a>
+          <!-- Dropdown level two -->
+          <ul class="dnl-sub-two collapse" id="collpaseHOW">
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Trial of Osiris Armor</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Trial of Osiris Weapons</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Prison of Elders Armor</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Prison of Elders Weapons</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Queen's Wrath Armor</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Queen's Wrath Weapons</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+		<li>
+          <a class="collapsed" data-toggle="collapse" href="#collapseFactions" aria-expanded="false" aria-controls="collapseFactions">
+            <span class="fa fa-level-down dnl-link-icon"></span>
+            <span class="dnl-link-text">Faction Items</span>
+            <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+          </a>
+          <!-- Dropdown level two -->
+          <ul class="dnl-sub-two collapse" id="collapseFactions">
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">New Monarcy Armor</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">New Monarcy Weapons</span>
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Future War Cult Armor</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Future War Cult Weapons</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Dead Orbit Armor</span>
+              </a>
+            </li>
+			<li>
+              <a href="#">
+                <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+                <span class="dnl-link-text">Dead Orbit Weapons</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </li>
 	<li>
-      <a href="#">
-        <span class="fa fa-bullseye dnl-link-icon"></span>
-        <span class="dnl-link-text">Weapon</span>
+      <a class="collapsed" data-toggle="collapse" href="#collapseTier" aria-expanded="false" aria-controls="collapseTier">
+        <span class="glyphicon glyphicon-folder-open dnl-link-icon"></span>
+        <span class="dnl-link-text">Tier</span>
+        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
+      <!-- Dropdown level one -->
+      <ul class="dnl-sub-one collapse" id="collapseTier">
+        <li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">All</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+	<li>
+      <a class="collapsed" data-toggle="collapse" href="#collapseProgress" aria-expanded="false" aria-controls="collapseProgress">
+        <span class="glyphicon glyphicon-stats dnl-link-icon"></span>
+        <span class="dnl-link-text">Progress</span>
+        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+      </a>
+      <!-- Dropdown level one -->
+      <ul class="dnl-sub-one collapse" id="collapseProgress">
+        <li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">All</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Missing XP</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Full XP</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Maxed</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+	<li>
+      <a class="collapsed" data-toggle="collapse" href="#collapseDamage" aria-expanded="false" aria-controls="collapseDamage">
+        <span class="fa fa-fire dnl-link-icon"></span>
+        <span class="dnl-link-text">Damage</span>
+        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+      </a>
+      <!-- Dropdown level one -->
+      <ul class="dnl-sub-one collapse" id="collapseDamage">
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Arc</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Solar</span>
+          </a>
+        </li>
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">Void</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+	<li>
+      <a class="collapsed" data-toggle="collapse" href="#collapseWeapons" aria-expanded="false" aria-controls="collapseWeapons">
+        <span class="fa fa-fire dnl-link-icon"></span>
+        <span class="dnl-link-text">Weapon</span>
+        <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
+      </a>
+      <!-- Dropdown level one -->
+      <ul class="dnl-sub-one collapse" id="collapseWeapons">
+		<li>
+          <a href="#">
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
+            <span class="dnl-link-text">All</span>
+          </a>
+        </li>
+      </ul>
     </li>
   </ul>
   <p class="dnl-nav-title">Tools</p>
   <ul class="dnl-nav">
     <li>
-      <a class="collapsed" data-toggle="collapse" href="#collapseStatistics" aria-expanded="false" aria-controls="collapseStatistics">
+      <a class="collapsed" data-toggle="collapse" href="#collpaseLoadouts" aria-expanded="false" aria-controls="collpaseLoadouts">
         <span class="fa fa-dot-circle-o dnl-link-icon"></span>
         <span class="dnl-link-text">Loadouts</span>
         <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
       <!-- Dropdown level one -->
-      <ul class="dnl-sub-one collapse" id="collapseStatistics">
+      <ul class="dnl-sub-one collapse" id="collpaseLoadouts">
         <li>
           <a href="#">
-            <span class="fa fa-clock-o dnl-link-icon"></span>
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
             <span class="dnl-link-text">VOG</span>
           </a>
         </li>
         <li>
           <a href="#">
-            <span class="fa fa-history dnl-link-icon"></span>
+            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
             <span class="dnl-link-text">Crota</span>
           </a>
         </li>
@@ -159,6 +409,12 @@ Available versions: dnl-visible, dnl-hidden -->
       <a href="#">
         <span class="fa fa-share-alt dnl-link-icon"></span>
         <span class="dnl-link-text">Share URL with friends</span>
+      </a>
+    </li>
+	<li>
+      <a href="#">
+        <span class="fa fa-search dnl-link-icon"></span>
+        <span class="dnl-link-text">DestinyDB.com Lookup Mode</span>
       </a>
     </li>
     <li>

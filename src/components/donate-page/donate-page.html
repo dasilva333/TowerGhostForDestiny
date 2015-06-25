@@ -1,3 +1,27 @@
-<h2>donate-page</h2>
-
-<p data-bind='text: message'></p>
+<div class="panel panel-success">
+	<div class="panel-body">
+		<p data-bind="text: $root.activeText().donation_instructions">
+			This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.
+		</p>
+		<div class="btn-padding">
+			<div class="form-group">
+				<a target="_blank" class="donatePaypal btn btn-secondary btn-block"><img src="assets/paypal.png"></a>
+			</div>
+			<hr>
+			<p data-bind="visible: isChrome" style="display:none;">
+				<div class="form-group text-center">
+					Donate now with Google Wallet <img src="assets/wallet.png" style="width:50%">
+				</div>
+				<div class="form-group">
+					<a target="_blank" sku="small" class="donate btn btn-secondary btn-block">Small Donation</a>
+				</div>
+				<div class="form-group">
+					<a target="_blank" sku="medium" class="donate btn btn-secondary btn-block">Medium Donation</a>
+				</div>
+				<div class="form-group">
+					<a target="_blank" sku="large" class="donate btn btn-secondary btn-block">Large Donation</a>
+				</div>
+			</p>
+		</div>
+	</div>
+</div>

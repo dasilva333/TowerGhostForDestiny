@@ -1,3 +1,17 @@
-<h2>login-page</h2>
-
-<p data-bind='text: message'></p>
+<div class="panel panel-success" id="loginForm">
+	<div class="panel-heading">
+		<h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
+	</div>
+	<div class="panel-body">
+		<p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
+		<div class="btn-padding">
+			<div class="form-group">
+				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
+			</div>
+			<div class="form-group">
+				<a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
+			</div>
+		</div>
+		<p data-bind="text: $root.activeText().login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
+	</div>
+</div>
