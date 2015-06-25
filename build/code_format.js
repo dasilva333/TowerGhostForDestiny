@@ -13,7 +13,7 @@ function prettify(filepath) {
     pretty = beautify[file_type](data, {
 		"indent_size": 4,
 		"indent_char": " ",
-		"eol": "\n",
+		"eol": "\r\n",
 		"indent_level": 0,
 		"indent_with_tabs": false,
 		"preserve_newlines": true,
