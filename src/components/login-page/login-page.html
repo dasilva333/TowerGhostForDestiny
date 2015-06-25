@@ -1,9 +1,9 @@
 <div class="panel panel-success" id="loginForm">
 	<div class="panel-heading">
-		<h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
+		<h2 class="panel-title" data-bind="text: activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
 	</div>
 	<div class="panel-body">
-		<p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account using these form or the buttons provided below to use an external popup.</p>
+		<p data-bind="text: activeText().login_instructions">To get started you'll need to log in to your Bungie.net account using this form or the buttons provided below to use an external popup.</p>
 		<form class="form-horizontal">
 		  <fieldset>
 			<legend>Login</legend>
@@ -13,13 +13,13 @@
 				  <div class="radio">
 					<label>
 					  <input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">
-					  Xbox
+					  Windows Live
 					</label>
 				  </div>
 				  <div class="radio">
 					<label>
 					  <input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">
-					  Playstation
+					  Playstation Network
 					</label>
 				  </div>
 				</div>
@@ -41,6 +41,12 @@
 				</div>
 			  </div>
 			</div>
+			<div class="form-group">
+				<div class="col-lg-10 col-lg-offset-2">
+				  <button class="btn btn-default" type="reset">Cancel</button>
+				  <button class="btn btn-primary" type="submit">Submit</button>
+				</div>
+            </div>
 			<h4>Direct Login</h4>
 			<div class="form-group">
 				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>

@@ -10,10 +10,18 @@ var require = {
         "knockout-projections": "bower_modules/knockout-projections/dist/knockout-projections",
         "signals":              "bower_modules/js-signals/dist/signals.min",
         "text":                 "bower_modules/requirejs-text/text",
-		"dash":                 "components/nav-bar/dash"
+		"dash":                 "components/nav-bar/dash",
+		"i18n": 				"bower_modules/requirejs-i18n/i18n",
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },
 		"dash": { deps: ["jquery"] }
-    }
+    },
+	callback: function(){
+		require.config({
+			i18n: {
+				locale: "fr"
+			}
+		});
+	}
 };

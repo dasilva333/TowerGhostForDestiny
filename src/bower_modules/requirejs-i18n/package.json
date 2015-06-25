@@ -1,0 +1,19 @@
+{
+  "volo": {
+    "url": "https://raw.githubusercontent.com/requirejs/i18n/{version}/i18n.js"
+  },
+  "name": "i18n",
+  "description": "An AMD loader plugin for loading internationalization/localization string resources.",
+  "version": "2.0.5",
+  "main": "i18n.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/requirejs/i18n.git"
+  },
+  "author": "jrburke <jrburke@gmail.com>",
+  "license": "BSD or MIT",
+  "bugs": {
+    "url": "https://github.com/requirejs/i18n/issues"
+  },
+  "homepage": "https://github.com/requirejs/i18n"
+}
