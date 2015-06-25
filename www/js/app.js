@@ -415,7 +415,7 @@ var app = new(function() {
                     }).get().join("")
                 );
             }
-            $content.find(".destt-primary-min").html(activeItem.primaryStat);
+            $content.find(".destt-primary-min").html(activeItem.primaryStat());
         } else {
             //remove the "Emblem" title from the image issue #31
             if ($content.find(".fhtt-emblem").length > 0) {
@@ -613,6 +613,7 @@ var app = new(function() {
                 }
                 if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                     itemObject.primaryStat = item.stackSize;
+                    itemObject.maxStackSize = info.maxStackSize;
                 }
                 if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
                     itemObject.stats = {};
@@ -1175,7 +1176,7 @@ var app = new(function() {
                     description: description
                 }),
                 function(memo, i) {
-                    return memo + i.primaryStat;
+                    return memo + i.primaryStat();
                 },
                 0);
             itemTotal = itemTotal + characterTotal;
@@ -1251,7 +1252,7 @@ var app = new(function() {
             if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
                 //console.log("all items normalized as best as possible");
                 if (usingbatchMode == false) {
-                    self.refresh();
+                    //self.refresh();
                     BootstrapDialog.alert("All items normalized as best as possible");
                 }
                 if (callback !== undefined) {
@@ -1272,7 +1273,7 @@ var app = new(function() {
             });
             var surplusItem = surplusItems[0];
 
-            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
+            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
             //console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
