@@ -388,11 +388,14 @@ li a {
 }
 
 .lockIcon {
-    position: relative;
+    position: absolute;
+    left: 3px;
+    top: 1px;	
 }
 
 .lockIcon img {
-    position: absolute;
+    position: relative;
+    opacity: 0.5;
 }
 
 .quickScrollView {
