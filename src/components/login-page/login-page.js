@@ -2,6 +2,7 @@ define(['knockout', 'text!./login-page.html', "tk_i18n", "fastclick", "bungie"],
 
   function LoginPage(params) {
 	window.bungie = bungie;
+	var self = this;
 	
 	this.optionsPlatform = ko.observable("1");
 	this.inputEmail = ko.observable("");

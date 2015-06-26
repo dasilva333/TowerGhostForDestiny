@@ -1,0 +1,40 @@
+{
+  "name": "requirejs-json",
+  "version": "0.0.3",
+  "main": [
+    "./json.js"
+  ],
+  "dependencies": {
+    "requirejs-text": "~2.0.10"
+  },
+  "homepage": "https://github.com/gigafied/requirejs-json",
+  "authors": [
+    "Taka Kojima <taka@gigafied.com>"
+  ],
+  "description": "A requirejs plugin for JSON",
+  "keywords": [
+    "require.js",
+    "amd",
+    "json",
+    "requirejs",
+    "plugin"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "0.0.3",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.3",
+    "commit": "d04530adc0a2a92aab5cb7dcca5bd1f83ab756be"
+  },
+  "_source": "git://github.com/gigafied/requirejs-json.git",
+  "_target": "~0.0.3",
+  "_originalSource": "requirejs-json",
+  "_direct": true
+}

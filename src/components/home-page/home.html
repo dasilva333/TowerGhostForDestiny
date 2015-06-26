@@ -1,5 +1,84 @@
-<h2>Home</h2>
+<script type="text/html" id="sections-template">
+	<!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
+	<div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master'">
+		<span data-bind="text: bucketType"></span>
+		<!-- ko if: ( character.id !== 'Vault' ) -->
+		<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
+		(<span data-bind="text: character.get(bucketType).length+1"></span>/10)
+		<!--/ko  -->
+		<!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
+		(<span data-bind="text: character.get(bucketType).length"></span>/10)
+		<!--/ko  -->
+		<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
+		(<span data-bind="text: character.get(bucketType).length"></span>/15)
+		<!--/ko  -->
+		<!-- ko if: ( bucketType == 'Post Master' ) -->
+		(<span data-bind="text: character.get(bucketType).length"></span>/20)
+		<!--/ko  -->
+		<!--/ko  -->
+		<!-- ko if: ( character.id == 'Vault' ) -->
+		(<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+		<!--/ko  -->
+	</div>
+	<div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
+		<div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
+			<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
+				<span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">							<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">							</a>							<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>						</span>
+			</div>
+		</div>
+		<div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
+			<span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">							<img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">						</a>						<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>					</span>
+		</div>
+	</div>
+	<!--/ko  -->
+</script>
 
 <p data-bind='text: message'></p>
 
-<button data-bind='click: doSomething'>Click me</button>
+<div class="container">
+	<div class="container-fluid" id="charactersContainer">
+		<div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
+			<div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
+				<div class="character">
+					<div class="character-box" data-bind="style: { backgroundImage: background }">
+						<div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
+						<div class="class" data-bind="text: classType"></div>
+						<div class="level" style="cursor:pointer;" data-bind="text: level, click: showStats"></div>
+					</div>
+					<div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }" style="background-color:yellow; height:2px;">&nbsp;</div>
+				</div>
+				<div class="inventory">
+					<div class="items" data-type="item">
+						<div data-bind="visible: $parent.activeView() == 1 || $parent.activeView() == 0">
+							<div class="title" data-bind="visible: $parent.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_weapons'">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
+							<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
+						</div>
+						<div style="display:none" data-bind="visible: $parent.activeView() == 2 || $parent.activeView() == 0">
+							<div class="title" data-bind="visible: $parent.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_armor'">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
+							<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }"></div>
+						</div>
+						<div style="display:none" data-bind="visible: ($parent.activeView() == 3 || $parent.activeView() == 0) && character.id !== 'Vault'">
+							<div class="title" data-bind="visible: $parent.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_subclasses'">Sub Classes</strong></div>
+							<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }"></div>
+						</div>
+						<div style="display:none" data-bind="visible: $parent.activeView() == 3 || $parent.activeView() == 0">
+							<div class="title" data-bind="visible: $parent.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_general'">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
+							<!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
+							<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
+						</div>
+						<div style="display:none" data-bind="visible: ($parent.activeView() == 3 || $parent.activeView() == 0) && character.id !== 'Vault'">
+							<div class="title" data-bind="visible: $parent.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_postmaster'">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
+							<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties','Mission'], as: 'bucketType' }"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ko if: $index() == 1 -->
+			<div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
+			<!--/ko  -->
+			<!-- ko if: $index() == 2 -->
+			<div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
+			<!--/ko  -->
+		</div>
+	</div>
+</div>

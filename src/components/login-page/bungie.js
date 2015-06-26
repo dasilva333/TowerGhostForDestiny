@@ -1,4 +1,4 @@
-define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hasher) {
+define(['knockout', "jquery", "underscore", "hasher", "Profile", "ProcessItem"], function (ko, $, _, hasher, Profile, ProcessItem) {
 	var Bungie = function() {
 		var self = this,
 			domain = 'bungie.net',
@@ -6,6 +6,8 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 			remoteURL = 'https://www.' + domain + '/';
 
 		this.users = ko.observableArray();
+		this.characters = ko.observableArray();
+		this.bungled = ko.observable("");
 		this.locale = ko.observable("en");
 		this.defaultSystem = ko.observable(1);
 		this.isLoggedIn = ko.observable();
@@ -18,7 +20,10 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 				hasher.setHash("");
 			}
 		});
-		this.bungled = ko.observable("");
+		
+		this.activeUser = ko.computed(function(){
+			return _.findWhere( self.users(), { type: self.defaultSystem() });
+		});
 		
 		this.hasApiKey = function(callback){
 			console.log("getApiKey");
@@ -36,10 +41,6 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 				});
 			}
 		}
-		
-		this.activeUser = ko.computed(function(){
-			return _.findWhere( self.users(), { type: self.defaultSystem() });
-		});
 		
 		this.isAuthenticated = function(callback){
 			$.ajax({
@@ -69,12 +70,152 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 			});
 		}
 		
+		this.loadProfile = function(){
+			self.getMembershipId(function(hasID){
+				if (hasID){
+					self.getCharacters();
+					self.getVault();
+				}
+			});
+		}
+		
+		this.getCharacters = function(){
+			var active = self.activeUser();
+			$.ajax({
+				url: remoteURL  + 'Platform/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') + '/Account/' + active.membershipId + '/',
+				headers: {
+					"X-API-Key": apikey,
+					"x-csrf": self.bungled()
+				},
+				success: function(resp){
+					if (resp && resp.Message == "Ok"){
+						var avatars = resp.Response.data.characters;
+						avatars.forEach(function(character, index) {
+							self.inventory(character.characterBase.characterId, function(response) {
+								//console.time("new Profile");                  
+								var profile = new Profile({
+									order: index + 1,
+									gender: "", //tgd.DestinyGender[character.characterBase.genderType],
+									classType: "", //tgd.DestinyClass[character.characterBase.classType],
+									id: character.characterBase.characterId,
+									imgIcon: self.getUrl() + character.emblemPath,
+									icon: self.makeBackgroundUrl(character.emblemPath),
+									background: self.makeBackgroundUrl(character.backgroundPath),
+									level: character.characterLevel,
+									stats: character.characterBase.stats,
+									percentToNextLevel: character.percentToNextLevel,
+									race: "" //window._raceDefs[character.characterBase.raceHash].raceName
+								});
+								var items = [];
+								Object.keys(response.data.buckets).forEach(function(bucket) {
+									response.data.buckets[bucket].forEach(function(obj) {
+										obj.items.forEach(function(item) {
+											items.push(item);
+										});
+									});
+								});
+								items.forEach(ProcessItem(profile));
+								//self.addWeaponTypes(profile.items());
+								self.characters.push(profile);
+							});
+						});
+					}
+				}
+			});
+		}
+		
+		this.inventory = function(characterId, callback){
+			var active = self.activeUser();
+			$.ajax({
+				url: remoteURL  + 'Platform/Destiny/' + active.type + '/Account/' + 
+					active.membershipId + '/Character/' + characterId + '/Inventory/',
+				headers: {
+					"X-API-Key": apikey,
+					"x-csrf": self.bungled()
+				},
+				success: function(resp){
+					window.y = resp;
+					if (resp && resp.Message == "Ok"){
+						callback(resp.Response);
+						window.a = resp;
+					}
+				}
+			});	
+		}
+		
+		this.getUrl = function(){
+			return remoteURL;
+		}
+		
+		this.makeBackgroundUrl = function(path, excludeDomain) {
+			return 'url("' + (excludeDomain ? "" : remoteURL) + path + '")';
+		}
+		
+		this.getVault = function(){
+			var active = self.activeUser();
+			$.ajax({
+				url: remoteURL  + 'Platform/Destiny/' + active.type + '/MyAccount/Vault/',
+				headers: {
+					"X-API-Key": apikey,
+					"x-csrf": self.bungled()
+				},
+				success: function(resp){
+					if (resp && resp.Message == "Ok"){
+						var buckets = resp.Response.data.buckets;
+						var profile = new Profile({
+							race: "",
+							//order: self.vaultPos(),
+							order: 0,
+							gender: "Tower",
+							classType: "Vault",
+							id: "Vault",
+							level: "",
+							imgIcon: "assets/vault_icon.jpg",
+							icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
+							background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
+						});
+
+						buckets.forEach(function(bucket) {
+							bucket.items.forEach(ProcessItem(profile));
+						});
+						self.characters.push(profile);
+						//self.addTierTypes(profile.items());
+						//self.addWeaponTypes(profile.weapons());
+					}
+				}
+			});
+		}
+		
+		this.getMembershipId = function(callback){
+			var active = self.activeUser();
+			$.ajax({
+				url: remoteURL  + 'Platform/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
+				headers: {
+					"X-API-Key": apikey,
+					"x-csrf": self.bungled()
+				},
+				success: function(resp){
+					if (resp && resp.Message == "Ok"){
+						active.membershipId = resp.Response;
+						callback(true);
+					}
+					else {
+						callback(false, resp);
+					}
+				}
+			});
+		}
+		
 		this.checkLogin = function(){
+			console.log("checking login");
 			self.hasApiKey(function(hasKey){
+				console.log("hasKey " + hasKey);
 				if (hasKey){
 					self.isAuthenticated(function(isAuth){
+						console.log("isAuth " + isAuth);
 						if (isAuth){
 							self.isLoggedIn(true);
+							self.loadProfile();
 							//at this point load the rest of the data into this viewModel
 						}
 						else {
@@ -109,8 +250,7 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 			}
 			else {
 				$.ajax({
-					//url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
-					url: "https://auth.api.sonyentertainmentnetwork.com/2.0/oauth/authorize?response_type=code&client_id=78420c74-1fdf-4575-b43f-eb94c7d770bf&redirect_uri=https%3a%2f%2fwww.bungie.net%2fen%2fUser%2fSignIn%2fPsnid&scope=psn:s2s&request_locale=en",
+					url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
 					success: function(r){
 						if ( platform == 1 ){
 							var exp_urlpost = /urlPost:\'(https:\/\/.*?)\'/;
