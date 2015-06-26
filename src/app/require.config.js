@@ -16,7 +16,7 @@ var require = {
 		"tgd_strings": 			"components/locale/strings",
 		"fastclick": 			"components/template/fastclick-ko",
 		"fastclick-lib":		"components/template/fastclick-lib",
-		"login":				"components/login-page/login"
+		"bungie":				"components/login-page/bungie"
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },

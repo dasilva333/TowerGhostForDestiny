@@ -1,9 +1,13 @@
-define(["knockout", "text!./home.html","login"], function(ko, homeTemplate, login) {
+define(["knockout", "text!./home.html", "bungie"], function(ko, homeTemplate, bungie) {
 
   function HomeViewModel(route) {
+	var self = this;
+	window.bungie = bungie;
     this.message = ko.observable('Welcome to Tower Ghost For Destiny!');
-	if (!login.isLoggedIn())
-		location.href = "#";
+	
+	if (bungie.isLoggedIn() == true){
+		self.message("Logged in as " + bungie.activeUser().id );
+	}
   }
 
   HomeViewModel.prototype.doSomething = function() {
