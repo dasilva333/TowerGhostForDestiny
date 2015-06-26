@@ -18,13 +18,14 @@
     "storage",
     "*://*.bungie.net/*",
 	"*://*.live.com/*",
+	"*://*.sonyentertainmentnetwork.com/*",
     "cookies",
     "tabs"
   ],
   "browser_action": {
     "default_icon": "www/assets/icon128.png"
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.towerghostfordestiny.com https://desjs.zamimg.com https://destinydb.com https://ssl.google-analytics.com; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.towerghostfordestiny.com https://auth.api.sonyentertainmentnetwork.com/ https://desjs.zamimg.com https://destinydb.com https://ssl.google-analytics.com; object-src 'self'",
   "incognito": "split",
   "offline_enabled": false,
   "options_page": "src/index.html"

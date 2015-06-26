@@ -4,7 +4,7 @@
 	</div>
 	<div class="panel-body">
 		<p data-bind="tk_i18n: 'login_instructions'">To get started you'll need to log in to your Bungie.net account using this form or the buttons provided below to use an external popup.</p>
-		<form class="form-horizontal">
+		<form class="form-horizontal" data-bind="submit: submitLogin">
 		  <fieldset>
 			<legend>Login</legend>
 				<div class="form-group">
@@ -12,13 +12,13 @@
 				<div class="col-lg-10">
 				  <div class="radio">
 					<label>
-					  <input type="radio" checked="" value="option1" id="optionsRadios1" name="optionsRadios">
+					  <input type="radio" value="1"data-bind="checked: optionsPlatform">
 					  Windows Live
 					</label>
 				  </div>
 				  <div class="radio">
 					<label>
-					  <input type="radio" value="option2" id="optionsRadios2" name="optionsRadios">
+					  <input type="radio" value="2" data-bind="checked: optionsPlatform">
 					  Playstation Network
 					</label>
 				  </div>
@@ -27,13 +27,13 @@
 			<div class="form-group">
 			  <label for="inputEmail" class="col-lg-2 control-label">Email</label>
 			  <div class="col-lg-10">
-				<input class="form-control" id="inputEmail" placeholder="Email" type="text">
+				<input class="form-control" data-bind="value: inputEmail" placeholder="Email" type="text">
 			  </div>
 			</div>
 			<div class="form-group">
 			  <label for="inputPassword" class="col-lg-2 control-label">Password</label>
 			  <div class="col-lg-10">
-				<input class="form-control" id="inputPassword" placeholder="Password" type="password">
+				<input class="form-control" data-bind="value: inputPassword" placeholder="Password" type="password">
 				<div class="checkbox">
 				  <label>
 					<input type="checkbox"> Remember Me

@@ -75,6 +75,7 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 					self.isAuthenticated(function(isAuth){
 						if (isAuth){
 							self.isLoggedIn(true);
+							//at this point load the rest of the data into this viewModel
 						}
 						else {
 							self.isLoggedIn(false);
@@ -88,7 +89,7 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 			return function(){
 				var loop;
 				
-				window.bungie_window = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'toolbar=0,location=0,menubar=0');
+				window.bungie_window = window.open(remoteURL + 'en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'toolbar=0,location=0,menubar=0');
 				
 				if (isChrome){
 					clearInterval(loop);
@@ -99,6 +100,53 @@ define(['knockout', "jquery", "underscore", "hasher"], function (ko, $, _, hashe
 						}
 					}, 100);
 				}
+			}
+		}
+		
+		this.directLogin = function(username, password, platform){
+			if (self.bungled() == ""){
+				
+			}
+			else {
+				$.ajax({
+					//url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
+					url: "https://auth.api.sonyentertainmentnetwork.com/2.0/oauth/authorize?response_type=code&client_id=78420c74-1fdf-4575-b43f-eb94c7d770bf&redirect_uri=https%3a%2f%2fwww.bungie.net%2fen%2fUser%2fSignIn%2fPsnid&scope=psn:s2s&request_locale=en",
+					success: function(r){
+						if ( platform == 1 ){
+							var exp_urlpost = /urlPost:\'(https:\/\/.*?)\'/;
+							var url_post = r.split(exp_urlpost)[1];
+							var ex_ppft = /<input type="hidden" name="PPFT" id=".*" value="(.*?)"\/>/;
+							var ppft = r.split(ex_ppft)[1];
+							$.ajax({
+								type: "post",
+								url: url_post,
+								data: { 'login': username, 'passwd': password, 'PPFT': ppft },
+								success: self.checkLogin
+							});
+						}
+						else { 
+							var ex_params = /<input id="brandingParams" type="hidden" name="params" value="(.*?)" \/>/
+							var params = r.split(ex_params)[1];
+							console.log(params);
+							$.ajax({
+								type: "post",
+								url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
+								data: { params: params, 'j_username': username, 'j_password': password },
+								success: function(resp){
+									console.log(resp);
+									/* I'm getting a 403 here should be a 302, not sure why. http://bungienetplatform.wikia.com/wiki/Authentication */
+									
+								},
+								complete: function(resp){
+								   console.log("sign in header");
+								   console.log(resp.getAllResponseHeaders());
+								}
+							});
+							
+						}
+						
+					}
+				});
 			}
 		}
 		
