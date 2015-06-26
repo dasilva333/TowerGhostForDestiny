@@ -1,4 +1,4 @@
-define(['knockout', 'text!./help-page.html'], function(ko, templateMarkup) {
+define(['knockout', 'text!./help-page.html', "tk_i18n"], function(ko, templateMarkup, il8n) {
 
   function HelpPage(params) {
     this.message = ko.observable('Hello from the help-page component!');

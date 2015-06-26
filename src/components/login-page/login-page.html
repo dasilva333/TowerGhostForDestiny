@@ -1,9 +1,9 @@
 <div class="panel panel-success" id="loginForm">
 	<div class="panel-heading">
-		<h2 class="panel-title" data-bind="text: activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
+		<h2 class="panel-title" data-bind="tk_i18n: 'login_title'">Welcome to Tower Ghost for Destiny!</h2>
 	</div>
 	<div class="panel-body">
-		<p data-bind="text: activeText().login_instructions">To get started you'll need to log in to your Bungie.net account using this form or the buttons provided below to use an external popup.</p>
+		<p data-bind="tk_i18n: 'login_instructions'">To get started you'll need to log in to your Bungie.net account using this form or the buttons provided below to use an external popup.</p>
 		<form class="form-horizontal">
 		  <fieldset>
 			<legend>Login</legend>
@@ -49,10 +49,10 @@
             </div>
 			<h4>Direct Login</h4>
 			<div class="form-group">
-				<a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
+				<a data-bind="fastclick:openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
 			</div>
 			<div class="form-group">
-				<a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
+				<a data-bind="fastclick:openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
 			</div>
 		</form>	
 	</div>

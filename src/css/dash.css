@@ -17,6 +17,7 @@ html {
 }
 /* Dash Navbar Top = dnt
 / -------------------------------------------------- */
+.dnl-hide { display:none; }
 .dash-navbar-top {
   background-color: #211f2a;
   margin-bottom: 0;

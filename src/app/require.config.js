@@ -6,12 +6,17 @@ var require = {
         "crossroads":           "bower_modules/crossroads/dist/crossroads.min",
         "hasher":               "bower_modules/hasher/dist/js/hasher.min",
         "jquery":               "bower_modules/jquery/dist/jquery",
+		"underscore":               "bower_modules/underscore/underscore",
         "knockout":             "bower_modules/knockout/dist/knockout",
         "knockout-projections": "bower_modules/knockout-projections/dist/knockout-projections",
         "signals":              "bower_modules/js-signals/dist/signals.min",
         "text":                 "bower_modules/requirejs-text/text",
 		"dash":                 "components/nav-bar/dash",
-		"i18n": 				"bower_modules/requirejs-i18n/i18n",
+		"tk_i18n": 				"components/locale/tk_i18n",
+		"tgd_strings": 			"components/locale/strings",
+		"fastclick": 			"components/template/fastclick-ko",
+		"fastclick-lib":		"components/template/fastclick-lib",
+		"login":				"components/login-page/login"
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },

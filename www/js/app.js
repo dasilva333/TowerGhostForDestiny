@@ -118,13 +118,6 @@ window.ko.bindingHandlers.scrollToView = {
     }
 };
 
-window.ko.bindingHandlers.fastclick = {
-    init: function(element, valueAccessor) {
-        FastClick.attach(element);
-        return ko.bindingHandlers.click.init.apply(this, arguments);
-    }
-};
-
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         Hammer(element, {
