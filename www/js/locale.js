@@ -101,7 +101,9 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     },
     es: {
         unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
@@ -205,7 +207,9 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Ajustes",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     },
     fr: {
         unable_create_loadout_for_type: "Actuellement incapable de cr�er loadouts avec ce type d'article",
@@ -308,7 +312,9 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     },
     it: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -411,7 +417,9 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     },
     de: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -514,7 +522,9 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     },
     "pt-br": {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -617,7 +627,9 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     },
     ja: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
@@ -720,6 +732,8 @@ tgd.locale = {
         menu_destinystatus: "DestinyStatus Report",
         language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
         menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again."
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     }
 }
