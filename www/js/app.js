@@ -641,7 +641,7 @@ var app = new(function() {
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 0 && _.where(self.weaponTypes(), {
+            if (item.type > 1 && _.where(self.weaponTypes(), {
                     type: item.type
                 }).length == 0) {
                 self.weaponTypes.push({
