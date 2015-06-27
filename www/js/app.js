@@ -560,6 +560,10 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
+				//some weird stuff shows up under this bucketType w/o this filter
+				if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false){
+					return;
+				}
                 var itemObject = {
                     id: item.itemHash,
                     _id: item.itemInstanceId,
@@ -626,8 +630,13 @@ var app = new(function() {
                 }
                 //console.log("new item time " + (new Date()-t));
                 profile.items.push(new Item(itemObject, profile));
-            }
-        }
+        	}
+			/*else {
+				console.log(info.itemName);
+				console.log(info);
+				console.log(item);
+			}*/
+        }		
     }
 
     this.addWeaponTypes = function(weapons) {
