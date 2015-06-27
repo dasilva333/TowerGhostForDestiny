@@ -801,6 +801,7 @@ var app = new(function() {
                         //console.time("processItems");
                         items.forEach(processItem(profile));
                         //console.timeEnd("processItems");
+						self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         //console.timeEnd("new Profile");
                         //self.characters.push(profile);
