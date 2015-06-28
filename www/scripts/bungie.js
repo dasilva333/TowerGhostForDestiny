@@ -179,30 +179,35 @@ try {
 	  }
 	
 	  this.user = function(callback) {
-	    _request({
-	      route: '/User/GetBungieNetUser/',
-	      method: 'GET',
-	      complete: function(res, response) {
-			if (response && response.ErrorCode && response.ErrorCode > 1){
-				callback({error: response.Message, code: response.ErrorCode});
-	         	return;
-			}
-			else if (res == undefined) {			
-	          callback({error: 'no response'})
-	          return;
-			}
-	
-	        systemIds.xbl = {id: res.gamerTag, type: 1};
-	        systemIds.psn = {id: res.psnId, type: 2};
-	
-	        active = systemIds.xbl;
-	
-	        if(res.psnId)
-	          active = systemIds.psn;
-	
-	        callback(res);
-	      }
-	    });
+	  	try {
+		    _request({
+		      route: '/User/GetBungieNetUser/',
+		      method: 'GET',
+		      complete: function(res, response) {
+				if (response && response.ErrorCode && response.ErrorCode > 1){
+					callback({error: response.Message, code: response.ErrorCode});
+		         	return;
+				}
+				else if (res == undefined) {			
+		          callback({error: 'no response'})
+		          return;
+				}
+		
+		        systemIds.xbl = {id: res.gamerTag, type: 1};
+		        systemIds.psn = {id: res.psnId, type: 2};
+		
+		        active = systemIds.xbl;
+		
+		        if(res.psnId)
+		          active = systemIds.psn;
+		
+		        callback(res);
+		      }
+		    });
+		}
+		catch(e){
+			callback(e);
+		}	
 	  }
 	  this.search = function(activeSystem, callback) {
 		this.setsystem(activeSystem);
