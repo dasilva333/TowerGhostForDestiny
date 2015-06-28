@@ -180,6 +180,7 @@ try {
 	
 	  this.user = function(callback) {
 	  	try {
+			window._request = _request;
 		    _request({
 		      route: '/User/GetBungieNetUser/',
 		      method: 'GET',
