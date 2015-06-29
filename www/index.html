@@ -655,23 +655,28 @@
                 </p>
                 <div class="btn-padding">
                     <div class="form-group">
-                        <a target="_system" class="donatePaypal btn btn-secondary btn-block"><img src="assets/paypal.png"></a>
+                        <a class="donatePaypal btn btn-secondary btn-block"><img src="assets/paypal.png"></a>
                     </div>
-                    <hr>
-                    <p data-bind="visible: isChrome" style="display:none;">
-                        <div class="form-group text-center">
-                            Donate now with Google Wallet <img src="assets/wallet.png" style="width:50%">
-                        </div>
-                        <div class="form-group">
-                            <a target="_blank" sku="small" class="donate btn btn-secondary btn-block">Small Donation</a>
-                        </div>
-                        <div class="form-group">
-                            <a target="_blank" sku="medium" class="donate btn btn-secondary btn-block">Medium Donation</a>
-                        </div>
-                        <div class="form-group">
-                            <a target="_blank" sku="large" class="donate btn btn-secondary btn-block">Large Donation</a>
-                        </div>
-                    </p>
+					<div class="btn-padding">
+						<div class="form-group">
+							<a target="_system" class="donatePaypal btn btn-secondary btn-block"><img src="assets/paypal.png"></a>
+						</div>
+						<div id="chromeWallet" style="display:none;">
+							<hr>
+							<div class="form-group text-center">
+								Donate now with Google Wallet <img src="assets/wallet.png" style="width:50%">
+							</div>
+							<div class="form-group">
+								<a target="_blank" sku="small" class="donate btn btn-secondary btn-block">Small Donation</a>
+							</div>
+							<div class="form-group">
+								<a target="_blank" sku="medium" class="donate btn btn-secondary btn-block">Medium Donation</a>
+							</div>
+							<div class="form-group">
+								<a target="_blank" sku="large" class="donate btn btn-secondary btn-block">Large Donation</a>
+							</div>
+						</div>
+					</div>
                 </div>
             </div>
         </div>
