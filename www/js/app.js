@@ -293,6 +293,39 @@ var app = new(function() {
         });
     }
 
+    this.handleGoogleResponse = function(data) {
+        if (data && data.response) {
+            if (data.response.errorType) {
+                BootstrapDialog.alert("Error: " + data.response.errorType);
+            } else if (data.response.orderId) {
+                BootstrapDialog.alert("Donation accepted Ref# " + data.response.orderId);
+            } else {
+                BootstrapDialog.alert("Unknown error has occurred");
+            }
+        } else {
+            BootstrapDialog.alert("No response returned");
+        }
+    }
+
+    this.showDonate = function() {
+        self.toggleBootstrapMenu();
+        (new tgd.dialog).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+            $("a.donatePaypal").attr("href", "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD");
+            $("a.donate").bind("click", function() {
+                if (isChrome) {
+                    google.payments.inapp.buy({
+                        'parameters': {
+                            'env': 'prod'
+                        },
+                        'sku': $(this).attr("sku"),
+                        'success': self.handleGoogleResponse,
+                        'failure': self.handleGoogleResponse
+                    });
+                }
+            });
+        });
+    }
+
     this.showAbout = function() {
         self.toggleBootstrapMenu();
         (new tgd.dialog).title("About").content($("#about").html()).show();
@@ -382,7 +415,7 @@ var app = new(function() {
                     }).get().join("")
                 );
             }
-            $content.find(".destt-primary-min").html(activeItem.primaryStat);
+            $content.find(".destt-primary-min").html(activeItem.primaryStat());
         } else {
             //remove the "Emblem" title from the image issue #31
             if ($content.find(".fhtt-emblem").length > 0) {
@@ -527,6 +560,10 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
+                //some weird stuff shows up under this bucketType w/o this filter
+                if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
+                    return;
+                }
                 var itemObject = {
                     id: item.itemHash,
                     _id: item.itemInstanceId,
@@ -580,6 +617,7 @@ var app = new(function() {
                 }
                 if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                     itemObject.primaryStat = item.stackSize;
+                    itemObject.maxStackSize = info.maxStackSize;
                 }
                 if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
                     itemObject.stats = {};
@@ -593,12 +631,17 @@ var app = new(function() {
                 //console.log("new item time " + (new Date()-t));
                 profile.items.push(new Item(itemObject, profile));
             }
+            /*else {
+				console.log(info.itemName);
+				console.log(info);
+				console.log(item);
+			}*/
         }
     }
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 0 && _.where(self.weaponTypes(), {
+            if (item.type > 1 && _.where(self.weaponTypes(), {
                     type: item.type
                 }).length == 0) {
                 self.weaponTypes.push({
@@ -758,6 +801,7 @@ var app = new(function() {
                         //console.time("processItems");
                         items.forEach(processItem(profile));
                         //console.timeEnd("processItems");
+                        self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         //console.timeEnd("new Profile");
                         //self.characters.push(profile);
@@ -890,10 +934,6 @@ var app = new(function() {
             var bottom = top + $item.height();
             $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
         });
-    }
-
-    this.donate = function() {
-        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
     }
 
     this.readBungieCookie = function(ref, loop) {
@@ -1146,7 +1186,7 @@ var app = new(function() {
                     description: description
                 }),
                 function(memo, i) {
-                    return memo + i.primaryStat;
+                    return memo + i.primaryStat();
                 },
                 0);
             itemTotal = itemTotal + characterTotal;
@@ -1222,7 +1262,7 @@ var app = new(function() {
             if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
                 //console.log("all items normalized as best as possible");
                 if (usingbatchMode == false) {
-                    self.refresh();
+                    //self.refresh();
                     BootstrapDialog.alert("All items normalized as best as possible");
                 }
                 if (callback !== undefined) {
@@ -1243,7 +1283,7 @@ var app = new(function() {
             });
             var surplusItem = surplusItems[0];
 
-            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
+            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
             //console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
@@ -1416,7 +1456,7 @@ var app = new(function() {
         var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
             "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
-            "progression", "weaponIndex", "armorIndex", "perks", "isUnique", "href"
+            "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
         ]
         var profiles = _.map(self.characters(), function(profile) {
             var newProfile = {};
