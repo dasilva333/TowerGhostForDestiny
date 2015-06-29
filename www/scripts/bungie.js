@@ -19,7 +19,6 @@ try {
 		window.addEventListener("message", function(event) {
 			console.log("received a firefox response");			
 			var reply = event.data;
-			console.log(reply);
 			var response = JSON.parse(reply.response);
 			var opts = requests[reply.id];			
 			if(response.ErrorCode === 36){ 
@@ -117,11 +116,13 @@ try {
 		    r.open(opts.method, url + "Platform" + opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
 		    r.onload = function() {
-			  var response = this.response;
+			  var response;
 			  //console.timeEnd("XMLHttpRequest"); 
 			  try {
-			  	response = JSON.parse(this.response);
-			  }catch(e){}		  
+			  	response = JSON.parse(this.responseText);
+			  }catch(e){
+			  	console.log("error parsing responseText: " + this.responseText);
+			  }		  
 		      if (this.status >= 200 && this.status < 400) {	        		
 			        if(response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
 			        else { opts.complete(response.Response, response); }			
@@ -179,30 +180,36 @@ try {
 	  }
 	
 	  this.user = function(callback) {
-	    _request({
-	      route: '/User/GetBungieNetUser/',
-	      method: 'GET',
-	      complete: function(res, response) {
-			if (response && response.ErrorCode && response.ErrorCode > 1){
-				callback({error: response.Message, code: response.ErrorCode});
-	         	return;
-			}
-			else if (res == undefined) {			
-	          callback({error: 'no response'})
-	          return;
-			}
-	
-	        systemIds.xbl = {id: res.gamerTag, type: 1};
-	        systemIds.psn = {id: res.psnId, type: 2};
-	
-	        active = systemIds.xbl;
-	
-	        if(res.psnId)
-	          active = systemIds.psn;
-	
-	        callback(res);
-	      }
-	    });
+	  	try {
+			window._request = _request;
+		    _request({
+		      route: '/User/GetBungieNetUser/',
+		      method: 'GET',
+		      complete: function(res, response) {
+				if (response && response.ErrorCode && response.ErrorCode > 1){
+					callback({error: response.Message, code: response.ErrorCode});
+		         	return;
+				}
+				else if (res == undefined) {			
+		          callback({error: 'no response'})
+		          return;
+				}
+		
+		        systemIds.xbl = {id: res.gamerTag, type: 1};
+		        systemIds.psn = {id: res.psnId, type: 2};
+		
+		        active = systemIds.xbl;
+		
+		        if(res.psnId)
+		          active = systemIds.psn;
+		
+		        callback(res);
+		      }
+		    });
+		}
+		catch(e){
+			callback(e);
+		}	
 	  }
 	  this.search = function(activeSystem, callback) {
 		this.setsystem(activeSystem);

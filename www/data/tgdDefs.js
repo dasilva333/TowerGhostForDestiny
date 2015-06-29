@@ -48,7 +48,8 @@ tgd.DestinyBucketTypes = {
 	"3284755031": "Subclasses",
 	"375726501": "Mission",
 	"2197472680": "Bounties",
-	"12345": "Post Master"
+	"12345": "Post Master",
+	"2422292810": "Post Master"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 

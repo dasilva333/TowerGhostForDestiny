@@ -560,6 +560,10 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
+                //some weird stuff shows up under this bucketType w/o this filter
+                if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
+                    return;
+                }
                 var itemObject = {
                     id: item.itemHash,
                     _id: item.itemInstanceId,
@@ -627,12 +631,17 @@ var app = new(function() {
                 //console.log("new item time " + (new Date()-t));
                 profile.items.push(new Item(itemObject, profile));
             }
+            /*else {
+				console.log(info.itemName);
+				console.log(info);
+				console.log(item);
+			}*/
         }
     }
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 0 && _.where(self.weaponTypes(), {
+            if (item.type > 1 && _.where(self.weaponTypes(), {
                     type: item.type
                 }).length == 0) {
                 self.weaponTypes.push({
@@ -792,6 +801,7 @@ var app = new(function() {
                         //console.time("processItems");
                         items.forEach(processItem(profile));
                         //console.timeEnd("processItems");
+                        self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         //console.timeEnd("new Profile");
                         //self.characters.push(profile);

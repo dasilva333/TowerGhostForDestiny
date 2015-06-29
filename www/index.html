@@ -87,23 +87,43 @@
                 <div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">						
 
+
+
 						<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+
+
 
 							<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
 
+
+
 						</a>
+
+
 
 						<div class="lockIcon" data-bind="if: item.locked">
 
+
+
 							<img src="assets/lock.png" />
 
+
+
 						</div>
+
+
 
 						<div class="attkIcon">														
 
+
+
 							<div data-bind="text: primaryStat, css: damageTypeName"></div>
 
+
+
 						</div>
+
+
 
 					</span>
                 </div>
@@ -111,25 +131,47 @@
             <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
                 <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 
+
+
 					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
+
+
 
 					<img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">
 
+
+
 					</a>
+
+
 
 					<div class="lockIcon" data-bind="if: locked">
 
+
+
 							<img src="assets/lock.png" />
 
+
+
 						</div>
+
+
 
 					<div class="attkIcon">
 
+
+
 						<div data-bind="text: primaryStat, css: damageTypeName">
+
+
 
 						</div>
 
+
+
 					</div>
+
+
 
 				</span>
             </div>
@@ -145,7 +187,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.8.1</span></a>
+                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.8.2</span></a>
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
                         <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false">
@@ -613,7 +655,7 @@
                 </p>
                 <div class="btn-padding">
                     <div class="form-group">
-                        <a target="_blank" class="donatePaypal btn btn-secondary btn-block"><img src="assets/paypal.png"></a>
+                        <a target="_system" class="donatePaypal btn btn-secondary btn-block"><img src="assets/paypal.png"></a>
                     </div>
                     <hr>
                     <p data-bind="visible: isChrome" style="display:none;">
@@ -637,7 +679,7 @@
     </div>
     <div id="about" style="display:none">
         <h2 style="margin-top:0;">Tower Ghost for Destiny<br>Manage your gear anywhere</h2>
-        <p><strong>Version: <span class="version">2.8.1</span></strong></p>
+        <p><strong>Version: <span class="version">2.8.2</span></strong></p>
         <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -692,7 +734,7 @@
         </ul>
     </div>
     <div id="showwhatsnew" style="display:none;">true</div>
-    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%5Ct%3Cli%3EImproved%20handling%20of%20transferring%20materials%20and%20consumables%20stacks.%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EAdded%20icon%20indicator%20for%20locked%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20layout%20and%20options%20available%20for%20Donate%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20it%20wouldn%27t%20share%20armor%20stats%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EShare%20URL%20with%20Friends%20is%20back%2C%20try%20it%20out%20to%20generate%20your%20own%20custom%20link%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Auto%20Pad%20Height%2C%20now%20looks%20even%20better.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20sign%20in%20process%20for%20Firefox%20users%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENew%20section%20for%20Bounties%20%26%20Mission%20items%20are%20now%20available%20under%20General%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EPublic%20event%20packages%20now%20show%20under%20Post%20Master%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20consolidate%20materials%20in%20the%20transfer%20popup%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20various%20menu%20options%20so%20that%20it%20auto%20hides%20the%20menu%20on%20click%20for%20mobile.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ESwipe%20left%20and%20right%20on%20mobile%20has%20been%20improved%20to%20be%20more%20consistent.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20clicking%20on%20the%20next%20item%20required%20two%20taps.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20change%20your%20language%20in%20TGD%20under%20Settings.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20click%20on%20your%20level%20to%20see%20the%20character%20stats.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDestinExotics%20Share%20URL%20removed%20from%20menu%2C%20will%20return%20in%20the%20future.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDestinyStatus%20reported%20added%20to%20the%20menu%2C%20visit%20it%20to%20see%20your%20current%20progress.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Sets%20filter%20to%20support%20new%20Trials%20of%20Osiris%20and%20Prison%20of%20Elders%20sets.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-account%20support%20for%20preferred%20systems%2C%20will%20now%20default%20to%20Xbox%20after%20refresh.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20see%20this%20message%20by%20clicking%20on%20TGD%20in%20the%20%3Cstrong%3Etop%20left%3C/strong%3E%20corner.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECustom%20columns%20and%20vault%20position%20options%20under%20%3Cstrong%3EView%3C/strong%3E%20menu.%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThanks%20to%20@SchubyDoo%2C%20@bluetidepro%2C%20@Mulchman%2C%20@ssoriche%2C%20@rvvisse%20and%20everyone%20else%20for%20helping%20out.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
+    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20ability%20to%20see%20rank%20up%20packages%20in%20the%20Post%20Master%20section%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20Tier%20and%20Weapons%20filter%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20for%20certain%20users%20unable%20to%20use%20the%20app%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20handling%20of%20transferring%20materials%20and%20consumables%20stacks.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20icon%20indicator%20for%20locked%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20layout%20and%20options%20available%20for%20Donate%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20it%20wouldn%27t%20share%20armor%20stats%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EShare%20URL%20with%20Friends%20is%20back%2C%20try%20it%20out%20to%20generate%20your%20own%20custom%20link%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Auto%20Pad%20Height%2C%20now%20looks%20even%20better.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20sign%20in%20process%20for%20Firefox%20users%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENew%20section%20for%20Bounties%20%26%20Mission%20items%20are%20now%20available%20under%20General%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20consolidate%20materials%20in%20the%20transfer%20popup%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20various%20menu%20options%20so%20that%20it%20auto%20hides%20the%20menu%20on%20click%20for%20mobile.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20clicking%20on%20the%20next%20item%20required%20two%20taps.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20change%20your%20language%20in%20TGD%20under%20Settings.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20click%20on%20your%20level%20to%20see%20the%20character%20stats.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDestinyStatus%20reported%20added%20to%20the%20menu%2C%20visit%20it%20to%20see%20your%20current%20progress.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Sets%20filter%20to%20support%20new%20Trials%20of%20Osiris%20and%20Prison%20of%20Elders%20sets.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-account%20support%20for%20preferred%20systems%2C%20will%20now%20default%20to%20Xbox%20after%20refresh.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20see%20this%20message%20by%20clicking%20on%20TGD%20in%20the%20%3Cstrong%3Etop%20left%3C/strong%3E%20corner.%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThanks%20to%20@SchubyDoo%2C%20@bluetidepro%2C%20@Mulchman%2C%20@ssoriche%2C%20@rvvisse%20and%20everyone%20else%20for%20helping%20out.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
 </body>
 
 </html>
