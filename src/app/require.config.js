@@ -20,7 +20,8 @@ var require = {
 		"bungie":				"components/login-page/bungie",
 		"Profile":				"components/home-page/Profile",
 		"Item":					"components/home-page/Item",
-		"ProcessItem":			"components/home-page/ProcessItem"
+		"ProcessItem":			"components/home-page/ProcessItem",
+		"tgd":					"components/home-page/tgd"
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },
