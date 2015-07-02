@@ -28,5 +28,5 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://www.towerghostfordestiny.com https://auth.api.sonyentertainmentnetwork.com/ https://desjs.zamimg.com https://destinydb.com https://ssl.google-analytics.com; object-src 'self'",
   "incognito": "split",
   "offline_enabled": false,
-  "options_page": "src/index.html"
+  "options_page": "www/index.html"
 }
