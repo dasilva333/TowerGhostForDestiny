@@ -14,4 +14,3 @@ node_modules/
 *.db
 .DS_Store
 # Don't track build output
-dist/
