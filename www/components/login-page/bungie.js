@@ -1,4 +1,4 @@
-define(['knockout', "jquery", "underscore", "hasher", "Profile", "ProcessItem"], function (ko, $, _, hasher, Profile, ProcessItem) {
+define(['knockout', "jquery", "underscore", "components/login-page/cookies", "hasher", "Profile", "ProcessItem"], function (ko, $, _, cookies, hasher, Profile, ProcessItem) {
 	var Bungie = function() {
 		var self = this,
 			domain = 'bungie.net',
@@ -39,6 +39,9 @@ define(['knockout', "jquery", "underscore", "hasher", "Profile", "ProcessItem"],
 						callback(false);
 					}
 				});
+			}
+			else if (isMobile){
+				callback( self.bungled() !== "" );
 			}
 		}
 		
@@ -244,49 +247,73 @@ define(['knockout', "jquery", "underscore", "hasher", "Profile", "ProcessItem"],
 			}
 		}
 		
+		this.performLogin = function(username, password, platform){
+			$.ajax({
+				url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
+				success: function(r){
+					if ( platform == 1 ){
+						var exp_urlpost = /urlPost:\'(https:\/\/.*?)\'/;
+						var url_post = r.split(exp_urlpost)[1];
+						var ex_ppft = /<input type="hidden" name="PPFT" id=".*" value="(.*?)"\/>/;
+						var ppft = r.split(ex_ppft)[1];
+						$.ajax({
+							type: "post",
+							url: url_post,
+							data: { 'login': username, 'passwd': password, 'PPFT': ppft },
+							success: self.checkLogin
+						});
+					}
+					else { 
+						$.ajax({
+							url: "https://auth.api.sonyentertainmentnetwork.com/login.jsp?request_locale=en_US&request_theme=liquid",
+							complete: function(resp){
+							   console.log("2nd header"); 
+							   var auth = resp.getResponseHeader('Set-Cookie');
+							   console.log(auth);
+							   $.ajax({
+									type: "post",
+									url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
+									data: { 'j_username': username, 'j_password': password },
+									headers: { Cookie: "JSESSIONID=57302AD726EAC0A38738A7B455B42737.lvp-p2-npversat01-4809" },
+									success: function(resp, statusText){ 
+										console.log(resp.status);
+										console.log(statusText);
+										/* I'm getting a 403 here should be a 302, not sure why. http://bungienetplatform.wikia.com/wiki/Authentication */
+										
+									},
+									complete: function(resp, statusText){
+									   console.log("3rd header");
+									   console.log(resp.status);
+									   console.log(statusText);
+									   console.log(resp.responseText);
+									   console.log(resp.getResponseHeader('Set-Cookie'));
+									}
+								});
+							}
+						});
+					}
+				}, 
+				complete: function(resp){ 
+					console.log("first header");
+					console.log(resp.getResponseHeader('Set-Cookie')) 
+				}
+			});
+		}
+		
 		this.directLogin = function(username, password, platform){
 			if (self.bungled() == ""){
-				
+				$.ajax({ 
+					url: remoteURL, 
+					complete: function(resp){ 
+						var jar = cookies.parse(resp.getResponseHeader('Set-Cookie'), remoteURL);
+						var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"}).value;;
+						self.bungled(bungled);
+						self.performLogin(username, password, platform);
+					} 
+				});
 			}
 			else {
-				$.ajax({
-					url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
-					success: function(r){
-						if ( platform == 1 ){
-							var exp_urlpost = /urlPost:\'(https:\/\/.*?)\'/;
-							var url_post = r.split(exp_urlpost)[1];
-							var ex_ppft = /<input type="hidden" name="PPFT" id=".*" value="(.*?)"\/>/;
-							var ppft = r.split(ex_ppft)[1];
-							$.ajax({
-								type: "post",
-								url: url_post,
-								data: { 'login': username, 'passwd': password, 'PPFT': ppft },
-								success: self.checkLogin
-							});
-						}
-						else { 
-							var ex_params = /<input id="brandingParams" type="hidden" name="params" value="(.*?)" \/>/
-							var params = r.split(ex_params)[1];
-							console.log(params);
-							$.ajax({
-								type: "post",
-								url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
-								data: { params: params, 'j_username': username, 'j_password': password },
-								success: function(resp){
-									console.log(resp);
-									/* I'm getting a 403 here should be a 302, not sure why. http://bungienetplatform.wikia.com/wiki/Authentication */
-									
-								},
-								complete: function(resp){
-								   console.log("sign in header");
-								   console.log(resp.getAllResponseHeaders());
-								}
-							});
-							
-						}
-						
-					}
-				});
+				self.performLogin(username, password, platform);
 			}
 		}
 		
@@ -297,4 +324,4 @@ define(['knockout', "jquery", "underscore", "hasher", "Profile", "ProcessItem"],
 	console.log("new Bungie");
 	var bungie = new Bungie();
 	return bungie;  
-}); 
+});
