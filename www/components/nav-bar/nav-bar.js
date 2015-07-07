@@ -1,4 +1,4 @@
-define(['knockout', 'text!./nav-bar.html'], function(ko, template) {
+define(['knockout', 'text!./nav-bar.html', 'bungie'], function(ko, template, bungie) {
 
   function NavBarViewModel(params) {
 
@@ -7,6 +7,8 @@ define(['knockout', 'text!./nav-bar.html'], function(ko, template) {
     // But in most apps, you'll want some viewmodel logic to determine what navigation options appear.
 
     this.route = params.route;
+	
+	this.bungie = bungie;
 	
 	this.componentLoaded = function(){
 		require(['dash'], function(){ console.log("dash loaded") });

@@ -22,14 +22,13 @@ Available versions: dnl-visible, dnl-hidden -->
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="dnt-collapse">
       <!-- This dropdown is for avatar -->
-      <ul class="nav navbar-nav navbar-right navbar-avatar">
+      <ul class="nav navbar-nav navbar-right navbar-avatar" data-bind="visible: bungie.users().length > 0">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i></a>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Standard</a></li>
-            <li><a href="#">Upload</a></li>
-            <li class="active"><a href="#">Active link</a></li>
-            <li><a href="#">Logout</a></li>
+			<li data-bind="visible: bungie.hasBothAccounts, css: bungie.defaultSystem() == 1 ? 'active' : ''"><a href="#" data-bind="click: bungie.useXboxAccount, tk_i18n: 'menu_usexbox'">Use Xbox Account</a></li>
+            <li data-bind="visible: bungie.hasBothAccounts, css: bungie.defaultSystem() == 2 ? 'active' : ''"><a href="#" data-bind="click: bungie.usePlaystationAccount, tk_i18n: 'menu_useps'">Use Playstation Account</a></li>
+            <li><a href="#" data-bind="click: bungie.logout">Logout</a></li>
           </ul>
         </li>
       </ul>

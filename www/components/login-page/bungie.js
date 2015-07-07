@@ -250,7 +250,8 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 							type: "post",
 							url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
 							data: { 'j_username': username, 'j_password': password },
-							headers: { "Origin": "https://auth.api.sonyentertainmentnetwork.com" },
+							//Only Phonegap allows override of the Origin header
+							headers: isMobile ? { "Origin": "https://auth.api.sonyentertainmentnetwork.com" } : {},
 							success: function(){
 								console.log("logindo:success");
 								$.ajax({
@@ -323,6 +324,22 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 				});
 			}
 		}
+		
+		this.useXboxAccount = function(){
+			self.defaultSystem(1);
+			self.characters.removeAll();
+			self.loadProfile();
+		}
+		
+		this.usePlaystationAccount = function(){
+			self.defaultSystem(2);
+			self.characters.removeAll();
+			self.loadProfile();
+		}
+		
+		this.hasBothAccounts = ko.computed(function(){
+			return self.users().length == 2;
+		});
 		
 		hasher.setHash("");
 		self.checkLogin();
