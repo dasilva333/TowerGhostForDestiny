@@ -25,26 +25,6 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 			return _.findWhere( self.users(), { type: self.defaultSystem() });
 		});
 		
-		this.hasApiKey = function(callback){
-			console.log("getApiKey");
-			if ( isChrome ){
-				chrome.cookies.getAll({ domain: '.' + domain }, function(cookies){
-					console.log("cookies.getAll");
-					var apiCookie = _.findWhere(cookies, { name: "bungled" });
-					if (apiCookie){
-						self.bungled( apiCookie.value );
-						callback(true);
-					}
-					else {
-						callback(false);
-					}
-				});
-			}
-			else if (isMobile){
-				callback( self.bungled() !== "" );
-			}
-		}
-		
 		this.isAuthenticated = function(callback){
 			$.ajax({
 				url: remoteURL  + "Platform/User/GetBungieNetUser/",
@@ -211,7 +191,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 		
 		this.checkLogin = function(){
 			console.log("checking login");
-			self.hasApiKey(function(hasKey){
+			self.getApiKey(function(hasKey){
 				console.log("hasKey " + hasKey);
 				if (hasKey){
 					self.isAuthenticated(function(isAuth){
@@ -265,63 +245,76 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 					}
 					else { 
 						$.ajax({
-							url: "https://auth.api.sonyentertainmentnetwork.com/login.jsp?request_locale=en_US&request_theme=liquid",
-							complete: function(resp){
-							   console.log("2nd header"); 
-							   var auth = resp.getResponseHeader('Set-Cookie');
-							   console.log(auth);
-							   $.ajax({
-									type: "post",
-									url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
-									data: { 'j_username': username, 'j_password': password },
-									headers: { Cookie: "JSESSIONID=57302AD726EAC0A38738A7B455B42737.lvp-p2-npversat01-4809" },
-									success: function(resp, statusText){ 
-										console.log(resp.status);
-										console.log(statusText);
-										/* I'm getting a 403 here should be a 302, not sure why. http://bungienetplatform.wikia.com/wiki/Authentication */
-										
-									},
-									complete: function(resp, statusText){
-									   console.log("3rd header");
-									   console.log(resp.status);
-									   console.log(statusText);
-									   console.log(resp.responseText);
-									   console.log(resp.getResponseHeader('Set-Cookie'));
-									}
-								});
-							}
+							type: "post",
+							url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
+							data: { 'j_username': username, 'j_password': password },
+							success: self.checkLogin
 						});
 					}
-				}, 
-				complete: function(resp){ 
-					console.log("first header");
-					console.log(resp.getResponseHeader('Set-Cookie')) 
 				}
 			});
 		}
 		
-		this.directLogin = function(username, password, platform){
-			if (self.bungled() == ""){
+		this.getApiKey = function(callback){
+			if ( isChrome ){
+				chrome.cookies.getAll({ domain: '.' + domain }, function(cookies){
+					var apiCookie = _.findWhere(cookies, { name: "bungled" });
+					if (apiCookie){
+						self.bungled( apiCookie.value );
+						callback(true);
+					}
+					else {
+						callback(false);
+					}
+				});
+			}
+			else if (isMobile){
 				$.ajax({ 
 					url: remoteURL, 
 					complete: function(resp){ 
 						var jar = cookies.parse(resp.getResponseHeader('Set-Cookie'), remoteURL);
-						var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"}).value;;
-						self.bungled(bungled);
-						self.performLogin(username, password, platform);
+						var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"}).value;
+						if (bungled){
+							self.bungled(bungled);
+							callback(true);
+						}
+						else {
+							callback(false);
+						}
 					} 
 				});
 			}
-			else {
-				self.performLogin(username, password, platform);
-			}
 		}
 		
+		this.directLogin = function(username, password, platform){
+			self.getApiKey(function(hasKey){
+				self.performLogin(username, password, platform);
+			});
+		}
+		
+		this.logout = function(){
+			window.open(remoteURL + "en/User/SignOut");
+		}
 		hasher.setHash("");
 		self.checkLogin();
 	}
 	
 	console.log("new Bungie");
 	var bungie = new Bungie();
+	
+	if (isChrome){
+		/* Sony is blocking requests to their API if it includes an Origin header */
+		chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
+           for (var i = 0; i < details.requestHeaders.length; ++i) {
+             if (details.requestHeaders[i].name === 'Origin') {
+               details.requestHeaders.splice(i, 1);
+               break;
+             }
+           }     
+          return {requestHeaders: details.requestHeaders};
+        },
+        {urls: ["https://auth.api.sonyentertainmentnetwork.com/login.do"]},
+        ["blocking", "requestHeaders"]);	
+	}
 	return bungie;  
 });

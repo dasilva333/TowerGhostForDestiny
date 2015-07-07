@@ -16,6 +16,8 @@
   },
   "permissions": [
     "storage",
+	"webRequest",
+	"webRequestBlocking",
     "*://*.bungie.net/*",
 	"*://*.live.com/*",
 	"*://*.sonyentertainmentnetwork.com/*",
