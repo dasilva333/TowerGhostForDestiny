@@ -228,9 +228,11 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 		}
 		
 		this.performLogin = function(username, password, platform){
+			console.log("performLogin");
 			$.ajax({
 				url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
 				success: function(r){
+					console.log("performLogin:success");
 					if ( platform == 1 ){
 						var exp_urlpost = /urlPost:\'(https:\/\/.*?)\'/;
 						var url_post = r.split(exp_urlpost)[1];
@@ -241,14 +243,21 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 							url: url_post,
 							data: { 'login': username, 'passwd': password, 'PPFT': ppft },
 							success: self.checkLogin
-						});
+						}); 
 					}
 					else { 
 						$.ajax({
 							type: "post",
 							url: "https://auth.api.sonyentertainmentnetwork.com/login.do",
 							data: { 'j_username': username, 'j_password': password },
-							success: self.checkLogin
+							headers: { "Origin": "https://auth.api.sonyentertainmentnetwork.com" },
+							success: function(){
+								console.log("logindo:success");
+								$.ajax({
+									url: remoteURL,
+									success: self.checkLogin
+								});	
+							}
 						});
 					}
 				}
@@ -269,20 +278,29 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 				});
 			}
 			else if (isMobile){
-				$.ajax({ 
-					url: remoteURL, 
-					complete: function(resp){ 
-						var jar = cookies.parse(resp.getResponseHeader('Set-Cookie'), remoteURL);
-						var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"}).value;
-						if (bungled){
-							self.bungled(bungled);
-							callback(true);
-						}
-						else {
-							callback(false);
-						}
-					} 
-				});
+				console.log("blank api key");
+				if (self.bungled() == ""){
+					$.ajax({ 
+						url: remoteURL, 
+						complete: function(resp){ 
+							console.log("hit homepage got new key");
+							var header = resp.getResponseHeader('Set-Cookie');
+							if (header){
+								var jar = cookies.parse(header, remoteURL);
+								var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"}).value;
+								console.log("new key is " + bungled);
+								self.bungled(bungled);
+								callback(true);
+							}
+							else {
+								callback(false);
+							}
+						} 
+					});
+				}
+				else {
+					callback(true);
+				}
 			}
 		}
 		
@@ -293,8 +311,19 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 		}
 		
 		this.logout = function(){
-			window.open(remoteURL + "en/User/SignOut");
+			window.winLogout = window.open(remoteURL + "en/User/SignOut","_blank");
+			if (isChrome){
+				setTimeout(function(){
+					winLogout.close();
+				}, 10 * 1000);
+			}
+			else if (isMobile){
+				winLogout.addEventListener('loadstop', function(event) {
+					winLogout.close();
+				});
+			}
 		}
+		
 		hasher.setHash("");
 		self.checkLogin();
 	}
