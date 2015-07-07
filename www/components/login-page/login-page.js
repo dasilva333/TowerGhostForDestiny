@@ -1,4 +1,4 @@
-define(['knockout', 'text!./login-page.html', "tk_i18n", "fastclick", "bungie"],  function(ko, templateMarkup, il8n, fastclick, bungie) {
+define(['knockout', 'text!./login-page.html', "bungie"],  function(ko, templateMarkup, bungie) {
 
   function LoginPage(params) {
 	window.bungie = bungie;

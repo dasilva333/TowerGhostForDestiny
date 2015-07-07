@@ -17,13 +17,13 @@
 		<!--/ko  -->
 		<!--/ko  -->
 		<!-- ko if: ( character.id == 'Vault' ) -->
-		(<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+		(<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: $component.tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
 		<!--/ko  -->
 	</div>
 	<div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
-		<div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
+		<div class="itemBucket" data-bind="css: ((character.id == 'Vault' || $component.tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
 			<div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
-				<span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">							<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">							</a>							<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>						</span>
+				<span class="bucket-item" data-bind="css: ((character.id == 'Vault' || $component.tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">							<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">								<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">							</a>							<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>						</span>
 			</div>
 		</div>
 		<div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">

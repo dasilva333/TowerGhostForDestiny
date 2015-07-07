@@ -2,9 +2,8 @@ define(["knockout", "text!./home.html", "bungie", "tgd"], function(ko, homeTempl
 
   function HomeViewModel(route) {
 	var self = this;
-	//temp hack for ProcessItem
-	window.bungie = bungie;
-	window._tgd = tgd;
+	
+	this.tgd = tgd;
     this.message = ko.observable('Welcome to Tower Ghost For Destiny!');
 	this.activeView = ko.observable(1);
 	this.searchKeyword = ko.observable();

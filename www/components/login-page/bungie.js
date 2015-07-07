@@ -97,7 +97,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 										});
 									});
 								});
-								items.forEach(ProcessItem(profile));
+								items.forEach(ProcessItem(profile, bungie));
 								//self.addWeaponTypes(profile.items());
 								self.characters.push(profile);
 							});
@@ -159,7 +159,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 						});
 
 						buckets.forEach(function(bucket) {
-							bucket.items.forEach(ProcessItem(profile));
+							bucket.items.forEach(ProcessItem(profile, bungie));
 						});
 						self.characters.push(profile);
 						//self.addTierTypes(profile.items());

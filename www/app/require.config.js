@@ -15,7 +15,7 @@ var require = {
 		"dash":                 "components/nav-bar/dash",
 		"tk_i18n": 				"components/locale/tk_i18n",
 		"tgd_strings": 			"components/locale/strings",
-		"fastclick": 			"components/template/fastclick-ko",
+		"fastclick-ko":			"components/template/fastclick-ko",
 		"fastclick-lib":		"components/template/fastclick-lib",
 		"bungie":				"components/login-page/bungie",
 		"Profile":				"components/home-page/Profile",

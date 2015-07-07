@@ -2,10 +2,12 @@ define(["underscore", "Item",
 	"json!components/destiny-data/itemDefs.js",
 	"json!components/destiny-data/perkDefs.js",
 	"json!components/destiny-data/statDefs.js",
-	"json!components/destiny-data/tgdDefs.js"], function(_, Item, itemDefs, perkDefs, statDefs, tgd){
+	"tgd"], function(_, Item, itemDefs, perkDefs, statDefs, tgd){
+	
+	console.log("Bungie " + typeof bungie);
 	var dataDir = "/www/data";
-	window.tgd = tgd;
-    var ProcessItem = function(profile) {
+	
+    var ProcessItem = function(profile, bungie) {
         return function(item) {
             if (!(item.itemHash in itemDefs)) {
                 console.log("found an item without a definition! " + JSON.stringify(item));
