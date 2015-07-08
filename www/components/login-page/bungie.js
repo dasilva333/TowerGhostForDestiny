@@ -1,31 +1,37 @@
-define(['knockout', "jquery", "underscore", "components/login-page/cookies", "hasher", "Profile", "ProcessItem"], function (ko, $, _, cookies, hasher, Profile, ProcessItem) {
+define(['knockout', "jquery", "underscore", "components/login-page/cookies", "hasher", "Profile", "ProcessItem", "tgd"], function (ko, $, _, cookies, hasher, Profile, ProcessItem, tgd) {
 	var Bungie = function() {
 		var self = this,
 			domain = 'bungie.net',
 			apikey = '5cae9cdee67a42848025223b4e61f929', //this one is linked to dasilva333
 			remoteURL = 'https://www.' + domain + '/';
 
+		this.loggedOut = false;
 		this.users = ko.observableArray();
 		this.characters = ko.observableArray();
 		this.bungled = ko.observable("");
 		this.locale = ko.observable("en");
-		this.defaultSystem = ko.observable(1);
+		this.defaultSystem = ko.computed(new tgd.StoreObj("defaultSystem"));
+		this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
 		this.isLoggedIn = ko.observable();
 		this.isLoggedIn.subscribe(function(newValue){
-			console.log("isLoggedIn " + newValue);
 			if (newValue == true){
+				self.loadProfile();		
 				hasher.setHash("home");
 			}
 			else {
+				self.characters.removeAll();				
 				hasher.setHash("");
 			}
 		});
 		
 		this.activeUser = ko.computed(function(){
-			return _.findWhere( self.users(), { type: self.defaultSystem() });
-		});
+			var activeSystem = self.defaultSystem();
+			if (self.preferredSystem() != "") activeSystem = self.preferredSystem();
+			return _.findWhere( self.users(), { type: parseInt(activeSystem) });
+		});		
 		
 		this.isAuthenticated = function(callback){
+			console.log("isAuthenticated");
 			$.ajax({
 				url: remoteURL  + "Platform/User/GetBungieNetUser/",
 				headers: {
@@ -35,6 +41,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 				success: function(resp){
 					if (resp && resp.Message == "Ok"){
 						console.log("good response");
+						//self.users.removeAll();
 						var data = resp.Response;
 						if (data.gamerTag){
 							self.users.push({id: data.gamerTag, type: 1});
@@ -44,10 +51,12 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 							self.users.push({id: data.psnId, type: 2});
 							self.defaultSystem(2);
 						}
+						self.isLoggedIn(true);
 						callback(true, null);
 					}
 					else {
-						callback(false, resp);
+						self.isLoggedIn(false);
+						callback(false, "");
 					}
 				}
 			});
@@ -56,6 +65,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 		this.loadProfile = function(){
 			self.getMembershipId(function(hasID){
 				if (hasID){
+					console.log("hasID " + hasID);
 					self.getCharacters();
 					self.getVault();
 				}
@@ -179,32 +189,13 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 				},
 				success: function(resp){
 					if (resp && resp.Message == "Ok"){
+						console.log("assigning active user the id of " + resp.Response);
 						active.membershipId = resp.Response;
 						callback(true);
 					}
 					else {
 						callback(false, resp);
 					}
-				}
-			});
-		}
-		
-		this.checkLogin = function(){
-			console.log("checking login");
-			self.getApiKey(function(hasKey){
-				console.log("hasKey " + hasKey);
-				if (hasKey){
-					self.isAuthenticated(function(isAuth){
-						console.log("isAuth " + isAuth);
-						if (isAuth){
-							self.isLoggedIn(true);
-							self.loadProfile();
-							//at this point load the rest of the data into this viewModel
-						}
-						else {
-							self.isLoggedIn(false);
-						}
-					});
 				}
 			});
 		}
@@ -227,7 +218,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 			}
 		}
 		
-		this.performLogin = function(username, password, platform){
+		this.performLogin = function(username, password, platform, callback){
 			console.log("performLogin");
 			$.ajax({
 				url: remoteURL + "en/User/SignIn/" + ((platform == 1) ? "Xuid" : "Psnid"),
@@ -242,7 +233,9 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 							type: "post",
 							url: url_post,
 							data: { 'login': username, 'passwd': password, 'PPFT': ppft },
-							success: self.checkLogin
+							success: function(){
+								self.isAuthenticated(callback);
+							}
 						}); 
 					}
 					else { 
@@ -256,7 +249,9 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 								console.log("logindo:success");
 								$.ajax({
 									url: remoteURL,
-									success: self.checkLogin
+									success: function(){
+										self.isAuthenticated(callback);
+									}
 								});	
 							}
 						});
@@ -264,6 +259,20 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 				}
 			});
 		}
+		
+		
+		this.checkLogin = function(callback){
+			console.log("checking login");
+			self.getApiKey(function(hasKey){
+				console.log("hasKey " + hasKey);
+				if (hasKey){
+					self.isAuthenticated(function(isAuth){
+						if(callback) callback(isAuth);
+						console.log("isAuth " + isAuth);
+					});
+				}
+			});
+		}		
 		
 		this.getApiKey = function(callback){
 			if ( isChrome ){
@@ -274,7 +283,13 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 						callback(true);
 					}
 					else {
-						callback(false);
+						$.ajax({
+							url: remoteURL,
+							success: function(){
+								console.log("we have a bungled? " + self.bungled());
+								callback(self.bungled() != "");
+							}							
+						});						
 					}
 				});
 			}
@@ -305,34 +320,35 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 			}
 		}
 		
-		this.directLogin = function(username, password, platform){
+		this.directLogin = function(username, password, platform, callback){
 			self.getApiKey(function(hasKey){
-				self.performLogin(username, password, platform);
+				if (hasKey){
+					self.performLogin(username, password, platform, callback);
+				}
+				else {
+					callback(false);
+				}				
 			});
 		}
 		
 		this.logout = function(){
-			window.winLogout = window.open(remoteURL + "en/User/SignOut","_blank");
-			if (isChrome){
-				setTimeout(function(){
-					winLogout.close();
-				}, 10 * 1000);
-			}
-			else if (isMobile){
-				winLogout.addEventListener('loadstop', function(event) {
-					winLogout.close();
-				});
-			}
+			$.ajax({
+				url: remoteURL + "en/User/SignOut",
+				success: function(){
+					self.loggedOut = true;
+					self.isLoggedIn(false)
+				}
+			});
 		}
 		
 		this.useXboxAccount = function(){
-			self.defaultSystem(1);
+			self.preferredSystem(1);
 			self.characters.removeAll();
 			self.loadProfile();
 		}
 		
 		this.usePlaystationAccount = function(){
-			self.defaultSystem(2);
+			self.preferredSystem(2);
 			self.characters.removeAll();
 			self.loadProfile();
 		}
@@ -342,25 +358,36 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 		});
 		
 		hasher.setHash("");
-		self.checkLogin();
+		if (isChrome){
+			/* Sony is blocking requests to their API if it includes an Origin header */
+			chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
+	           for (var i = 0; i < details.requestHeaders.length; ++i) {
+	             if (details.requestHeaders[i].name === 'Origin') {
+	               details.requestHeaders.splice(i, 1);
+	               break;
+	             }
+	           }     
+	          return {requestHeaders: details.requestHeaders};
+	        },
+	        {urls: ["https://auth.api.sonyentertainmentnetwork.com/login.do"]},
+	        ["blocking", "requestHeaders"]);
+			/* Acquire Bungie.net's bungled key on demand */
+			chrome.webRequest.onHeadersReceived.addListener(function(details){
+				var header = _.pluck(_.where( details.responseHeaders, { name: "set-cookie" }),'value').join(",");
+				var jar = cookies.parse(header, remoteURL);
+				var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"});
+				if (bungled && bungled.value){				
+					console.log("new key is " + bungled.value);
+					self.bungled(bungled.value);
+				}
+			 },
+			{urls: [remoteURL]},["responseHeaders"]) 
+		}		
 	}
 	
 	console.log("new Bungie");
 	var bungie = new Bungie();
 	
-	if (isChrome){
-		/* Sony is blocking requests to their API if it includes an Origin header */
-		chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
-           for (var i = 0; i < details.requestHeaders.length; ++i) {
-             if (details.requestHeaders[i].name === 'Origin') {
-               details.requestHeaders.splice(i, 1);
-               break;
-             }
-           }     
-          return {requestHeaders: details.requestHeaders};
-        },
-        {urls: ["https://auth.api.sonyentertainmentnetwork.com/login.do"]},
-        ["blocking", "requestHeaders"]);	
-	}
+
 	return bungie;  
 });

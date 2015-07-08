@@ -171,7 +171,12 @@ define(['knockout', "underscore"], function(ko, _){
 		defLocaleVersion: "2.7.0",
 		vaultPos: 0,
 		itemDefs: "",
-		preferredSystem: "PSN"
+		defaultSystem: "2",
+		preferredSystem: "",
+		optionsPlatform: "2",
+		inputEmail: "",
+		inputPassword: "",
+		rememberMe: ""
 	};
 	
 	return tgd;
