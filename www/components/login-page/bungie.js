@@ -1,4 +1,5 @@
 define(['knockout', "jquery", "underscore", "components/login-page/cookies", "hasher", "Profile", "ProcessItem", "tgd"], function (ko, $, _, cookies, hasher, Profile, ProcessItem, tgd) {
+	
 	var Bungie = function() {
 		var self = this,
 			domain = 'bungie.net',
@@ -232,7 +233,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 					code: 'document.cookie'
 				}, function(header) {
 					console.log("result " + header);
-					var jar = cookies.parse(header, remoteURL);
+					var jar = cookies.parse(header.split(";").join(","), remoteURL);
 					var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"});
 					if (bungled && bungled.value){				
 						console.log("new key is " + bungled.value);

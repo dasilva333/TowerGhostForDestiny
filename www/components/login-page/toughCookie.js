@@ -3961,3 +3961,6 @@ module.exports={
 }
 
 },{}]},{},[11]);
+define([], function () {
+	return toughCookie;
+});

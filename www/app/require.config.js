@@ -3,6 +3,7 @@ var require = {
     baseUrl: ".",
     paths: {
         "bootstrap":            "bower_modules/components-bootstrap/js/bootstrap.min",
+		"bootstrap-dialog":      "bower_modules/BootstrapDialog/dist/js/bootstrap-dialog",
         "crossroads":           "bower_modules/crossroads/dist/crossroads.min",
         "hasher":               "bower_modules/hasher/dist/js/hasher.min",
         "jquery":               "bower_modules/jquery/dist/jquery",
@@ -25,6 +26,7 @@ var require = {
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },
+		"bootstrap-dialog": { deps: ["jquery"] },
 		"dash": { deps: ["jquery"] }
     },
 	callback: function(){

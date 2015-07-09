@@ -1,4 +1,4 @@
-define([], function () {
+define(["./toughCookie"], function (toughCookie) {
 	var Cookies = function() {
 		var self = this;
 		var cookieGroups = /(.*?),(?! \d\d-) ?|(.+)/
