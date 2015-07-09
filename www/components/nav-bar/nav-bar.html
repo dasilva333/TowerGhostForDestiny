@@ -101,30 +101,30 @@ Available versions: dnl-visible, dnl-hidden -->
       </a>
       <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseView">
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">All</span>
-          </a>
-        </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Weapons</span>
-          </a>
-        </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Armor</span>
-          </a>
-        </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">General</span>
-          </a>
-        </li>
+		<li class="menu-opt" data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="0">
+			<a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_all'">All</span>
+			</a>
+		</li>
+		<li data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="1">
+			<a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 1 ? 'fa-check-square' : 'fa-square'"></i>
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_view_weapons'">Weapons</span>
+			</a>
+		</li>
+		<li data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="2">
+			<a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 2 ? 'fa-check-square' : 'fa-square'"></i>
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_view_armor'">Armor</span>
+			</a>
+		</li>
+		<li data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="3">
+			<a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_view_general'">General</span>
+			</a>
+		</li>		
       </ul>
     </li>	
 	<li>

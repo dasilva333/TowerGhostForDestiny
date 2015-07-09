@@ -1,12 +1,10 @@
-define(["knockout", "text!./home.html", "bungie", "tgd"], function(ko, homeTemplate, bungie, tgd) {
+define(["knockout", "text!./home.html", "bungie", "tgd", "components/home-page/filters"], function(ko, homeTemplate, bungie, tgd, filters) {
 
   function HomeViewModel(route) {
 	var self = this;
 	
 	this.tgd = tgd;
-    this.message = ko.observable('Welcome to Tower Ghost For Destiny!');
-	this.activeView = ko.observable(1);
-	this.searchKeyword = ko.observable();
+	this.filters = filters;
     this.orderedCharacters = ko.computed(function() {
         return bungie.characters().sort(function(a, b) {
             return a.order() - b.order();
@@ -21,9 +19,9 @@ define(["knockout", "text!./home.html", "bungie", "tgd"], function(ko, homeTempl
         return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
     });
 	
-	if (bungie.isLoggedIn() == true){
+	/*if (bungie.isLoggedIn() == true){
 		self.message("Logged in as " + bungie.activeUser().id);
-	}
+	}*/
   }
 
   HomeViewModel.prototype.doSomething = function() {

@@ -2,6 +2,7 @@ define(['knockout', "underscore", "tgd"], function(ko, _, tgd){
 	var ItemFilters = function(){
 		var self = this;
 		
+		this.activeView = ko.computed(new tgd.StoreObj("activeView"));
 		this.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
@@ -20,7 +21,10 @@ define(['knockout', "underscore", "tgd"], function(ko, _, tgd){
 			if ($(".navbar-toggle").is(":visible"))
 				$(".navbar-toggle").click();
 		}
-		
+		this.setView = function(model, event) {
+			self.toggleBootstrapMenu();
+			self.activeView($(event.target).closest('li').attr("value"));
+		}		
 		this.setDmgFilter = function(model, event) {
 			self.toggleBootstrapMenu();
 			var dmgType = $(event.target).closest('li').attr("value");
