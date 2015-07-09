@@ -204,7 +204,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 			return function(){
 				var loop;
 				
-				window.bungie_window = window.open(remoteURL + 'en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'toolbar=0,location=0,menubar=0');
+				window.bungie_window = window.open(remoteURL + 'en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_system', 'toolbar=0,location=0,menubar=0');
 				
 				if (isChrome){
 					clearInterval(loop);
@@ -215,6 +215,32 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 						}
 					}, 100);
 				}
+				else if (isMobile){
+					bungie_window.addEventListener('loadstop', function(event) {
+						self.readBungieCookie(bungie_window);
+					});
+					bungie_window.addEventListener('exit', function() {
+						self.readBungieCookie(bungie_window);
+					});
+				}
+			}
+		}
+
+		this.readBungieCookie = function(ref) {
+			if (self.bungled() == ""){
+				ref.executeScript({
+					code: 'document.cookie'
+				}, function(header) {
+					console.log("result " + header);
+					var jar = cookies.parse(header, remoteURL);
+					var bungled = _.findWhere( jar.toJSON().cookies, { key: "bungled"});
+					if (bungled && bungled.value){				
+						console.log("new key is " + bungled.value);
+						self.bungled(bungled.value);
+						self.isAuthenticated();
+						bungie_window.close();
+					}
+				});
 			}
 		}
 		
