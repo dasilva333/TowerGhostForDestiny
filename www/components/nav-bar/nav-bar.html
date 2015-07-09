@@ -343,24 +343,34 @@ Available versions: dnl-visible, dnl-hidden -->
       </a>
       <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseDamage">
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Arc</span>
-          </a>
-        </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Solar</span>
-          </a>
-        </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Void</span>
-          </a>
-        </li>
+		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Kinetic">
+			<a href="#">
+				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Kinetic') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<img src="assets/kinetic.png" class="icon">
+				Kinetic (None)
+			</a>
+		</li>
+		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Solar">
+			<a href="#">
+				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Solar') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<img src="assets/solar.png" class="icon">
+				Solar
+			</a>
+		</li>
+		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Arc">
+			<a href="#">
+				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Arc') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<img src="assets/arc.png" class="icon">
+				Arc
+			</a>
+		</li>
+		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Void">
+			<a href="#">
+				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Void') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<img src="assets/void.png" class="icon">
+				Void
+			</a>
+		</li>
       </ul>
     </li>
 	<li>

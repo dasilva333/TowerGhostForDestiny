@@ -26,7 +26,7 @@ define(['knockout', 'text!./login-page.html', "bungie", "tgd"],  function(ko, te
 	}
 	this.responseHandler = function(isAuth){
 		if (isAuth == false){
-			alert("Authentication error");
+			BootstrapDialog.alert("Authentication error");
 		}			
 	}
 	this.submitLogin = function(form){
