@@ -7,7 +7,6 @@ define(['knockout', 'text!./nav-bar.html', 'bungie', "components/home-page/filte
     // But in most apps, you'll want some viewmodel logic to determine what navigation options appear.
 
     this.route = params.route;
-	
 	this.filters = filters;
 	this.bungie = bungie;
 	

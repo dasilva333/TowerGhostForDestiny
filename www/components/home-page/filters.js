@@ -3,6 +3,8 @@ define(['knockout', "underscore", "tgd"], function(ko, _, tgd){
 		var self = this;
 		
 		this.activeView = ko.computed(new tgd.StoreObj("activeView"));
+		this.tierTypes = ko.observableArray();
+		this.weaponTypes = ko.observableArray();
 		this.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,

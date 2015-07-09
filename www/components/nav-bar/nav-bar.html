@@ -59,32 +59,32 @@ Available versions: dnl-visible, dnl-hidden -->
 Available versions: dnl-visible, dnl-hidden -->
 <div class="dash-navbar-left dnl-visible" data-bind="template: { afterRender: componentLoaded() }">
   <p class="dnl-nav-title">Nav</p>
-  <ul class="dnl-nav">
-	<li>
+  <ul class="dnl-nav" data-bind="with: route">
+	<li data-bind="css: { active: page === 'home-page' }">
       <a href="#home">
         <span class="glyphicon dnl-link-icon fa fa-home"></span>
         <span class="dnl-link-text">Home</span>
       </a>
     </li>
-    <li>
+    <li data-bind="css: { active: page === 'help-page' }">
       <a href="#help">
         <span class="glyphicon dnl-link-icon fa fa-question"></span>
         <span class="dnl-link-text">Help</span>
       </a>
     </li>
-    <li>
+    <li data-bind="css: { active: page === 'about-page' }">
       <a href="#about">
         <span class="glyphicon dnl-link-icon fa fa-info"></span>
         <span class="dnl-link-text">About</span>
       </a>
     </li>
-    <li>
+    <li data-bind="css: { active: page === 'donate-page' }">
       <a href="#donate">
         <span class="glyphicon dnl-link-icon fa fa-credit-card"></span>
         <span class="dnl-link-text">Donate</span>
       </a>
     </li>
-	<li>
+	<li data-bind="css: { active: page === 'settings-page' }">
       <a href="#settings">
         <span class="dnl-link-icon glyphicon glyphicon-wrench"></span>
         <span class="dnl-link-text">Settings</span>
@@ -92,36 +92,35 @@ Available versions: dnl-visible, dnl-hidden -->
     </li>
   </ul>
   <p class="dnl-nav-title">Filters</p>
-  <ul class="dnl-nav">
+  <ul class="dnl-nav" data-bind="with: filters">
     <li>
       <a class="collapsed" data-toggle="collapse" href="#collapseView" aria-expanded="false" aria-controls="collapseView">
         <span class="fa fa-image dnl-link-icon"></span>
         <span class="dnl-link-text">View</span>
         <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
-      <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseView">
-		<li class="menu-opt" data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="0">
+		<li class="menu-opt" data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="0">
 			<a href="#">
-				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: activeView() == 0 ? 'fa-check-square' : 'fa-square'"></i>
 				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_all'">All</span>
 			</a>
 		</li>
-		<li data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="1">
+		<li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="1">
 			<a href="#">
-				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 1 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: activeView() == 1 ? 'fa-check-square' : 'fa-square'"></i>
 				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_view_weapons'">Weapons</span>
 			</a>
 		</li>
-		<li data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="2">
+		<li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="2">
 			<a href="#">
-				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 2 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: activeView() == 2 ? 'fa-check-square' : 'fa-square'"></i>
 				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_view_armor'">Armor</span>
 			</a>
 		</li>
-		<li data-bind="css: filters.activeView() == $($element).attr('value') ? 'active' : '', fastclick: filters.setView" value="3">
+		<li data-bind="css: activeView() == $($element).attr('value') ? 'active' : '', fastclick: setView" value="3">
 			<a href="#">
-				<i class="fa dnl-link-icon" data-bind="css: filters.activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>
 				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_view_general'">General</span>
 			</a>
 		</li>		
@@ -299,6 +298,20 @@ Available versions: dnl-visible, dnl-hidden -->
             <span class="dnl-link-text">All</span>
           </a>
         </li>
+		<li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: function(){ $root.setTierFilter({ tier: 0 }) }" value="0">
+			<a href="#">
+				<i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+				<span data-bind="tk_i18n: 'menu_all'">All</span>
+			</a>
+		</li>
+		<!-- ko foreach: { data: tierTypes, as: 'tierType' } -->
+			<li data-bind="css: $parent.tierFilter() == tierType.tier ? 'active' : '', fastclick: $parent.setTierFilter, value: tierType.tier" value="0">
+				<a href="#">
+					<i class="fa" data-bind="css: $parent.tierFilter() == tierType.tier ? 'fa-check-square' : 'fa-square'"></i>
+					<span data-bind="text: tierType.name"></span>
+				</a>
+			</li>
+		<!--/ko  -->
       </ul>
     </li>
 	<li>
@@ -341,32 +354,31 @@ Available versions: dnl-visible, dnl-hidden -->
         <span class="dnl-link-text">Damage</span>
         <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
-      <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseDamage">
-		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Kinetic">
+		<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Kinetic">
 			<a href="#">
-				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Kinetic') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: dmgFilter().indexOf('Kinetic') > -1 ? 'fa-check-square' : 'fa-square'"></i>
 				<img src="assets/kinetic.png" class="icon">
 				Kinetic (None)
 			</a>
 		</li>
-		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Solar">
+		<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Solar">
 			<a href="#">
-				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Solar') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: dmgFilter().indexOf('Solar') > -1 ? 'fa-check-square' : 'fa-square'"></i>
 				<img src="assets/solar.png" class="icon">
 				Solar
 			</a>
 		</li>
-		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Arc">
+		<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Arc">
 			<a href="#">
-				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Arc') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: dmgFilter().indexOf('Arc') > -1 ? 'fa-check-square' : 'fa-square'"></i>
 				<img src="assets/arc.png" class="icon">
 				Arc
 			</a>
 		</li>
-		<li data-bind="css: filters.dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: filters.setDmgFilter" value="Void">
+		<li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Void">
 			<a href="#">
-				<i class="fa" data-bind="css: filters.dmgFilter().indexOf('Void') > -1 ? 'fa-check-square' : 'fa-square'"></i>
+				<i class="fa dnl-link-icon" data-bind="css: dmgFilter().indexOf('Void') > -1 ? 'fa-check-square' : 'fa-square'"></i>
 				<img src="assets/void.png" class="icon">
 				Void
 			</a>
@@ -375,18 +387,25 @@ Available versions: dnl-visible, dnl-hidden -->
     </li>
 	<li>
       <a class="collapsed" data-toggle="collapse" href="#collapseWeapons" aria-expanded="false" aria-controls="collapseWeapons">
-        <span class="fa fa-fire dnl-link-icon"></span>
+        <span class="fa fa-dot-circle-o dnl-link-icon"></span>
         <span class="dnl-link-text">Weapon</span>
         <span class="fa fa-angle-up dnl-btn-sub-collapse"></span>
       </a>
-      <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseWeapons">
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">All</span>
-          </a>
-        </li>
+		<li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter" value="0">
+			<a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_all'">All</span>
+			</a>
+		</li>
+		<!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
+			<li data-bind="css: $parent.typeFilter() == weaponType.type ? 'active' : '', fastclick: $parent.setTypeFilter, value: weaponType.type" value="0">
+				<a href="#">
+					<i class="fa dnl-link-icon" data-bind="css: $parent.typeFilter() == weaponType.type ? 'fa-check-square' : 'fa-square'"></i>
+					<span data-bind="text: weaponType.name">All</span>
+				</a>
+			</li>
+		<!--/ko  -->
       </ul>
     </li>
   </ul>
