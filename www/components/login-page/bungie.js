@@ -1,4 +1,4 @@
-define(['knockout', "jquery", "underscore", "components/login-page/cookies", "hasher", "Profile", "ProcessItem", "tgd"], function (ko, $, _, cookies, hasher, Profile, ProcessItem, tgd) {
+define(['knockout', "jquery", "underscore", "components/login-page/cookies", "hasher", "Profile", "tgd"], function (ko, $, _, cookies, hasher, Profile, tgd) {
 	
 	var Bungie = function() {
 		var self = this,
@@ -73,6 +73,32 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 			});
 		}
 		
+		this.getVault = function(){
+			var active = self.activeUser();
+			$.ajax({
+				url: remoteURL  + 'Platform/Destiny/' + active.type + '/MyAccount/Vault/',
+				headers: {
+					"X-API-Key": apikey,
+					"x-csrf": self.bungled()
+				},
+				success: function(resp){
+					if (resp && resp.Message == "Ok"){
+						var buckets = resp.Response.data.buckets;
+						var items = [];
+						buckets.forEach(function(bucket) {
+							bucket.items.forEach(function(item){
+								items.push(item);
+							});							
+						});
+						var profile = new Profile("Vault", items, bungie);						
+						tgd.filters.addTierTypes(profile.items());
+						tgd.filters.addWeaponTypes(profile.weapons());
+						self.characters.push(profile);
+					}
+				}
+			});
+		}		
+		
 		this.getCharacters = function(){
 			var active = self.activeUser();
 			$.ajax({
@@ -85,21 +111,7 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 					if (resp && resp.Message == "Ok"){
 						var avatars = resp.Response.data.characters;
 						avatars.forEach(function(character, index) {
-							self.inventory(character.characterBase.characterId, function(response) {
-								//console.time("new Profile");                  
-								var profile = new Profile({
-									order: index + 1,
-									gender: "", //tgd.DestinyGender[character.characterBase.genderType],
-									classType: "", //tgd.DestinyClass[character.characterBase.classType],
-									id: character.characterBase.characterId,
-									imgIcon: self.getUrl() + character.emblemPath,
-									icon: self.makeBackgroundUrl(character.emblemPath),
-									background: self.makeBackgroundUrl(character.backgroundPath),
-									level: character.characterLevel,
-									stats: character.characterBase.stats,
-									percentToNextLevel: character.percentToNextLevel,
-									race: "" //window._raceDefs[character.characterBase.raceHash].raceName
-								});
+							self.inventory(character.characterBase.characterId, function(response) {						
 								var items = [];
 								Object.keys(response.data.buckets).forEach(function(bucket) {
 									response.data.buckets[bucket].forEach(function(obj) {
@@ -108,8 +120,9 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 										});
 									});
 								});
-								items.forEach(ProcessItem(profile, bungie));
-								//self.addWeaponTypes(profile.items());
+								var profile = new Profile(character, items, bungie);
+								tgd.filters.addTierTypes(profile.items());
+								tgd.filters.addWeaponTypes(profile.items());
 								self.characters.push(profile);
 							});
 						});
@@ -143,41 +156,6 @@ define(['knockout', "jquery", "underscore", "components/login-page/cookies", "ha
 		
 		this.makeBackgroundUrl = function(path, excludeDomain) {
 			return 'url("' + (excludeDomain ? "" : remoteURL) + path + '")';
-		}
-		
-		this.getVault = function(){
-			var active = self.activeUser();
-			$.ajax({
-				url: remoteURL  + 'Platform/Destiny/' + active.type + '/MyAccount/Vault/',
-				headers: {
-					"X-API-Key": apikey,
-					"x-csrf": self.bungled()
-				},
-				success: function(resp){
-					if (resp && resp.Message == "Ok"){
-						var buckets = resp.Response.data.buckets;
-						var profile = new Profile({
-							race: "",
-							//order: self.vaultPos(),
-							order: 0,
-							gender: "Tower",
-							classType: "Vault",
-							id: "Vault",
-							level: "",
-							imgIcon: "assets/vault_icon.jpg",
-							icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
-							background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
-						});
-
-						buckets.forEach(function(bucket) {
-							bucket.items.forEach(ProcessItem(profile, bungie));
-						});
-						self.characters.push(profile);
-						//self.addTierTypes(profile.items());
-						//self.addWeaponTypes(profile.weapons());
-					}
-				}
-			});
 		}
 		
 		this.getMembershipId = function(callback){

@@ -1,24 +1,66 @@
-define(['knockout', "underscore"], function(ko, _){
-	var Profile = function(model) {
+define(['knockout', "underscore", "tgd", "Item", "json!./components/destiny-data/raceDefs.js"], function(ko, _, tgd, Item, raceDefs){
+	var Profile = function(character, items, bungie) {
 		var self = this;
-		_.each(model, function(value, key) {
-			self[key] = value;
-		});
 
-		this.order = ko.observable(self.order);
-		this.icon = ko.observable(self.icon);
-		this.background = ko.observable(self.background);
+		this.character = character;
+		this.bungie = bungie;
+		this.order = ko.observable();
+		this.icon = ko.observable("");
+		this.background = ko.observable("");
 		this.items = ko.observableArray([]);
-		this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-		this.classLetter = ""; //self.classType[0].toUpperCase();
+		this.uniqueName = "";
+		this.classLetter = "";
+		this.race = "";
+		
 		this.weapons = ko.computed(this._weapons, this);
 		this.armor = ko.computed(this._armor, this);
 		this.general = ko.computed(this._general, this);
 		this.postmaster = ko.computed(this._postmaster, this);
 		this.container = ko.observable();
+		this.init(items);
 	}
 
 	Profile.prototype = {
+		init: function(rawItems){
+			var self = this;		
+
+			if (_.isString(self.character)){
+				self.order(0);
+				self.background(self.bungie.makeBackgroundUrl("assets/vault_emblem.jpg", true));
+				self.icon(self.bungie.makeBackgroundUrl("assets/vault_icon.jpg", true));
+				
+				self.gender = "Tower";
+				self.classType = "Vault";
+				self.id = "Vault";
+				self.imgIcon = "assets/vault_icon.jpg";
+				
+				self.level = "";
+				self.stats = "";
+				self.percentToNextLevel = "";
+				self.race = "";
+			}
+			else {
+				self.background(self.bungie.makeBackgroundUrl(self.character.backgroundPath));
+				self.icon(self.bungie.makeBackgroundUrl(self.character.emblemPath));
+				
+				self.gender= tgd.DestinyGender[self.character.characterBase.genderType];
+				self.classType= tgd.DestinyClass[self.character.characterBase.classType];
+				self.id= self.character.characterBase.characterId;
+				self.imgIcon= self.bungie.getUrl() + self.character.emblemPath;
+				
+				
+				self.level= self.character.characterLevel;
+				self.stats= self.character.characterBase.stats;
+				self.percentToNextLevel= self.character.percentToNextLevel;
+				self.race= raceDefs[self.character.characterBase.raceHash].raceName;
+			}
+			self.classLetter = self.classType[0].toUpperCase();
+			self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
+			
+			self.items(_.map(rawItems, function(item){
+				return new Item(item, self);
+			}));
+		},
 		_weapons: function() {
 			return _.filter(this.items(), function(item) {
 				if (item.weaponIndex > -1)

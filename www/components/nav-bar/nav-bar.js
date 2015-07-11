@@ -1,4 +1,4 @@
-define(['knockout', 'text!./nav-bar.html', 'bungie', "components/home-page/filters"], function(ko, template, bungie, filters) {
+define(['knockout', 'text!./nav-bar.html', 'bungie', "tgd"], function(ko, template, bungie, tgd) {
 
   function NavBarViewModel(params) {
 	//window.filters = filters;
@@ -7,7 +7,7 @@ define(['knockout', 'text!./nav-bar.html', 'bungie', "components/home-page/filte
     // But in most apps, you'll want some viewmodel logic to determine what navigation options appear.
 
     this.route = params.route;
-	this.filters = filters;
+	this.filters = tgd.filters;
 	this.bungie = bungie;
 	
 	this.componentLoaded = function(){

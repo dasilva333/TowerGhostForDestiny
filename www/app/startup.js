@@ -29,7 +29,7 @@ define(['jquery', 'knockout', './router', 'bootstrap', 'bootstrap-dialog', 'knoc
 
   ko.components.register('settings-page', { require: 'components/settings-page/settings-page' });
 
-
+  ko.components.register('items', { require: 'components/items/items' });
   // [Scaffolded component registrations will be inserted here. To retain this feature, don't remove this comment.]
 
   // Start the application

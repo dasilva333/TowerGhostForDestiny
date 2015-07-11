@@ -1,4 +1,4 @@
-define(['knockout', "underscore"], function(ko, _){
+define(['knockout', "underscore", "./components/home-page/filters"], function(ko, _, ItemFilters){
 	var tgd = {
 		"DestinyViews": {
 			"0": "All",
@@ -178,6 +178,8 @@ define(['knockout', "underscore"], function(ko, _){
 		inputPassword: "",
 		rememberMe: ""
 	};
+	
+	tgd.filters = new ItemFilters(tgd);
 	
 	return tgd;
 });

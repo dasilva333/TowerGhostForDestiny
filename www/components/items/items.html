@@ -1,0 +1,24 @@
+
+<div class="items" data-type="item">
+	<div data-bind="visible: tgd.filters.activeView() == 1 || tgd.filters.activeView() == 0">
+		<div class="title" data-bind="visible: tgd.filters.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_weapons'">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
+		<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
+	</div>
+	<div style="display:none" data-bind="visible: tgd.filters.activeView() == 2 || tgd.filters.activeView() == 0">
+		<div class="title" data-bind="visible: tgd.filters.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_armor'">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
+		<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }"></div>
+	</div>
+	<div style="display:none" data-bind="visible: (tgd.filters.activeView() == 3 || tgd.filters.activeView() == 0) && character.id !== 'Vault'">
+		<div class="title" data-bind="visible: tgd.filters.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_subclasses'">Sub Classes</strong></div>
+		<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }"></div>
+	</div>
+	<div style="display:none" data-bind="visible: tgd.filters.activeView() == 3 || tgd.filters.activeView() == 0">
+		<div class="title" data-bind="visible: tgd.filters.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_general'">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
+		<!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
+		<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
+	</div>
+	<div style="display:none" data-bind="visible: (tgd.filters.activeView() == 3 || tgd.filters.activeView() == 0) && character.id !== 'Vault'">
+		<div class="title" data-bind="visible: tgd.filters.searchKeyword() == ''"><strong data-bind="tk_i18n: 'inventory_postmaster'">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
+		<div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties','Mission'], as: 'bucketType' }"></div>
+	</div>
+</div>

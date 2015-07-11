@@ -1,5 +1,6 @@
-define(['knockout', "underscore", "tgd"], function(ko, _, tgd){
-	var ItemFilters = function(){
+define(['knockout', "underscore"], function(ko, _){
+	var ItemFilters = function(tgd){
+
 		var self = this;
 		
 		this.activeView = ko.computed(new tgd.StoreObj("activeView"));
@@ -44,6 +45,30 @@ define(['knockout', "underscore", "tgd"], function(ko, _, tgd){
 			self.toggleBootstrapMenu();
 			self.progressFilter($(event.target).closest('li').attr("value"));
 		}
+	    this.addWeaponTypes = function(weapons) {
+	        weapons.forEach(function(item) {
+	            if (item.type > 0 && _.where(self.weaponTypes(), {
+	                    type: item.type
+	                }).length == 0) {
+	                self.weaponTypes.push({
+	                    name: item.typeName,
+	                    type: item.type
+	                });
+	            }
+	        });
+	    }	
+	    this.addTierTypes = function(items) {
+	        items.forEach(function(item) {
+	            if (_.where(self.tierTypes(), {
+	                    tier: item.tierType
+	                }).length == 0) {
+	                self.tierTypes.push({
+	                    name: item.tierTypeName,
+	                    tier: item.tierType
+	                });
+	            }
+	        });
+	    }
 	};
-	return new ItemFilters();
+	return ItemFilters;
 });

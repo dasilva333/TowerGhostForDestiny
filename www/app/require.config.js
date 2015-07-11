@@ -2,11 +2,10 @@
 var require = {
     baseUrl: ".",
     paths: {
-        "bootstrap":            "bower_modules/components-bootstrap/js/bootstrap.min",
-		"bootstrap-dialog":      "bower_modules/BootstrapDialog/dist/js/bootstrap-dialog",
-        "crossroads":           "bower_modules/crossroads/dist/crossroads.min",
-        "hasher":               "bower_modules/hasher/dist/js/hasher.min",
         "jquery":               "bower_modules/jquery/dist/jquery",
+		"bootstrap":            "bower_modules/components-bootstrap/js/bootstrap",		
+        "crossroads":           "bower_modules/crossroads/dist/crossroads.min",
+        "hasher":               "bower_modules/hasher/dist/js/hasher.min",        
 		"underscore":           "bower_modules/underscore/underscore",
         "knockout":             "bower_modules/knockout/dist/knockout",
         "knockout-projections": "bower_modules/knockout-projections/dist/knockout-projections",
@@ -21,8 +20,8 @@ var require = {
 		"bungie":				"components/login-page/bungie",
 		"Profile":				"components/home-page/Profile",
 		"Item":					"components/home-page/Item",
-		"ProcessItem":			"components/home-page/ProcessItem",
-		"tgd":					"components/home-page/tgd"
+		"tgd":					"components/home-page/tgd",
+		"bootstrap-dialog":     "bower_modules/BootstrapDialog/dist/js/bootstrap-dialog"
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },
