@@ -20,8 +20,7 @@ var require = {
 		"bungie":				"components/login-page/bungie",
 		"Profile":				"components/home-page/Profile",
 		"Item":					"components/home-page/Item",
-		"tgd":					"components/home-page/tgd",
-		"bootstrap-dialog":     "bower_modules/BootstrapDialog/dist/js/bootstrap-dialog"
+		"tgd":					"components/home-page/tgd"
     },
     shim: {
         "bootstrap": { deps: ["jquery"] },

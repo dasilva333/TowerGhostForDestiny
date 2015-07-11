@@ -291,13 +291,7 @@ Available versions: dnl-visible, dnl-hidden -->
       </a>
       <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseTier">
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">All</span>
-          </a>
-        </li>
-		<li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: function(){ $root.setTierFilter({ tier: 0 }) }" value="0">
+		<li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: function(){ setTierFilter({ tier: 0 }) }" value="0">
 			<a href="#">
 				<i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
 				<span data-bind="tk_i18n: 'menu_all'">All</span>
@@ -321,29 +315,29 @@ Available versions: dnl-visible, dnl-hidden -->
       </a>
       <!-- Dropdown level one -->
       <ul class="dnl-sub-one collapse" id="collapseProgress">
-        <li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">All</span>
-          </a>
+        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="0">
+            <a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: progressFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_all'">All</span>								
+			</a>
         </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Missing XP</span>
-          </a>
+        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="1">
+            <a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: progressFilter() == 1 ? 'fa-check-square' : 'fa-square'"></i>									
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_progress_1'">Missing XP</span>								
+			</a>
         </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Full XP</span>
-          </a>
+        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="2">
+            <a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: progressFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>									
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_progress_2'">Full XP</span>								
+			</a>
         </li>
-		<li>
-          <a href="#">
-            <span class="fa fa-dot-circle-o dnl-link-icon"></span>
-            <span class="dnl-link-text">Maxed</span>
-          </a>
+        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="3">
+            <a href="#">
+				<i class="fa dnl-link-icon" data-bind="css: progressFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>									
+				<span class="dnl-link-text" data-bind="tk_i18n: 'menu_progress_3'">Maxed</span>								
+			</a>
         </li>
       </ul>
     </li>
