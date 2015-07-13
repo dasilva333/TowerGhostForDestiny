@@ -1345,19 +1345,19 @@ var app = new(function() {
             nextTransfer(callback);
         }
     }
-	
+
     this.normalizeAll = function(bucketType) {
-		var useVault = false;		
+        var useVault = false;
         var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
             return c.id == "Vault"
         });
         var selector = function(i) {
             return i.bucketType == bucketType;
-        };		
+        };
 
         /* gather all consumable and material descriptions from all characters */
         var descriptions = _.union(
-            (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));        
+            (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
 
         var getNextDescription = (function() {
             var i = 0;
@@ -1380,73 +1380,73 @@ var app = new(function() {
             }
 
             if (description == undefined) {
-				BootstrapDialog.alert("All items normalized as best as possible");
+                BootstrapDialog.alert("All items normalized as best as possible");
                 return;
             }
-            
-			// normalizeSingle = function(description, characters, usingbatchMode, callback)
+
+            // normalizeSingle = function(description, characters, usingbatchMode, callback)
             self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
         }
 
         nextNormalize();
     }
-	
-	this.reloadBucket = function(character, bucketType) {
-		//console.log(character.id + ": " + bucketType);
-		
-		var itemsToRemove = _.filter(character.items(), { bucketType: bucketType });
-		for (var i = 0; i < itemsToRemove.length; ++i) {
-			character.items.remove(itemsToRemove[i]);
-		}
-		
-		if (character.id == "Vault") {
-			self.bungie.vault(function(results, response) {
+
+    this.reloadBucket = function(character, bucketType) {
+        //console.log(character.id + ": " + bucketType);
+
+        var itemsToRemove = _.filter(character.items(), {
+            bucketType: bucketType
+        });
+        for (var i = 0; i < itemsToRemove.length; ++i) {
+            character.items.remove(itemsToRemove[i]);
+        }
+
+        if (character.id == "Vault") {
+            self.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
-				
-					var items = [];					
-					results.data.buckets.forEach(function(bucket) {
+
+                    var items = [];
+                    results.data.buckets.forEach(function(bucket) {
                         bucket.items.forEach(function(item) {
-							var info = window._itemDefs[item.itemHash];
-							if (info.bucketTypeHash in tgd.DestinyBucketTypes) {								
-								var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
-								if (itemBucketType == bucketType) {
-									items.push(item);
-								}
-							}
-						});
-                    });					
-					items.forEach(processItem(character));
+                            var info = window._itemDefs[item.itemHash];
+                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                if (itemBucketType == bucketType) {
+                                    items.push(item);
+                                }
+                            }
+                        });
+                    });
+                    items.forEach(processItem(character));
                 } else {
                     console.log("else clause for 'results && results.data && results.data.buckets' (Vault)");
                 }
             });
-		}
-		else {		
-			self.bungie.inventory(character.id, function(response) {
-				if (response && response.data && response.data.buckets) {
-				
-					var items = [];
-					Object.keys(response.data.buckets).forEach(function(bucket) {
-						response.data.buckets[bucket].forEach(function(obj) {
-							obj.items.forEach(function(item) {
-								var info = window._itemDefs[item.itemHash];
-								if (info.bucketTypeHash in tgd.DestinyBucketTypes) {								
-									var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
-									if (itemBucketType == bucketType) {
-										items.push(item);
-									}
-								}
-							});
-						});
-					});				
-					items.forEach(processItem(character));
-				}
-				else {
-					console.log("else clause for 'response && response.data && response.data.buckets' (character)");
-				}
-			});
-		}
-	}
+        } else {
+            self.bungie.inventory(character.id, function(response) {
+                if (response && response.data && response.data.buckets) {
+
+                    var items = [];
+                    Object.keys(response.data.buckets).forEach(function(bucket) {
+                        response.data.buckets[bucket].forEach(function(obj) {
+                            obj.items.forEach(function(item) {
+                                var info = window._itemDefs[item.itemHash];
+                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                    var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    if (itemBucketType == bucketType) {
+                                        items.push(item);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                    items.forEach(processItem(character));
+                } else {
+                    console.log("else clause for 'response && response.data && response.data.buckets' (character)");
+                }
+            });
+        }
+    }
 
     this.setVaultTo = function(pos) {
         return function() {
