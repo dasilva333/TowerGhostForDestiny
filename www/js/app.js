@@ -1399,13 +1399,13 @@ var app = new(function() {
 			character.items.remove(itemsToRemove[i]);
 		}
 		
-		self.bungie.inventory(character.id, function(response) {
-			if (response && response.data && response.data.buckets) {
-			
-				var items = [];
-				Object.keys(response.data.buckets).forEach(function(bucket) {
-					response.data.buckets[bucket].forEach(function(obj) {
-						obj.items.forEach(function(item) {
+		if (character.id == "Vault") {
+			self.bungie.vault(function(results, response) {
+                if (results && results.data && results.data.buckets) {
+				
+					var items = [];					
+					results.data.buckets.forEach(function(bucket) {
+                        bucket.items.forEach(function(item) {
 							var info = window._itemDefs[item.itemHash];
 							if (info.bucketTypeHash in tgd.DestinyBucketTypes) {								
 								var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
@@ -1414,14 +1414,38 @@ var app = new(function() {
 								}
 							}
 						});
-					});
-				});				
-				items.forEach(processItem(character));
-			}
-			else {
-				console.log("else clause for 'response && response.data && response.data.buckets'");
-			}
-		});
+                    });					
+					items.forEach(processItem(character));
+                } else {
+                    console.log("else clause for 'results && results.data && results.data.buckets' (Vault)");
+                }
+            });
+		}
+		else {		
+			self.bungie.inventory(character.id, function(response) {
+				if (response && response.data && response.data.buckets) {
+				
+					var items = [];
+					Object.keys(response.data.buckets).forEach(function(bucket) {
+						response.data.buckets[bucket].forEach(function(obj) {
+							obj.items.forEach(function(item) {
+								var info = window._itemDefs[item.itemHash];
+								if (info.bucketTypeHash in tgd.DestinyBucketTypes) {								
+									var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+									if (itemBucketType == bucketType) {
+										items.push(item);
+									}
+								}
+							});
+						});
+					});				
+					items.forEach(processItem(character));
+				}
+				else {
+					console.log("else clause for 'response && response.data && response.data.buckets' (character)");
+				}
+			});
+		}
 	}
 
     this.setVaultTo = function(pos) {
