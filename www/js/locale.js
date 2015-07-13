@@ -49,8 +49,6 @@ tgd.locale = {
         menu_progress_3: "Maxed",
         menu_damage: "Damage",
         menu_weapons: "Weapons",
-		menu_normalize: "Normalize",
-		menu_normalize_all: "All",
         language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
         vo_number_of_columns: "Vault Position",
         vo_vault_first: "First/Left",
