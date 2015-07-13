@@ -1392,7 +1392,7 @@ var app = new(function() {
     }
 	
 	this.reloadBucket = function(character, bucketType) {
-		console.log(character.id + ": " + bucketType);
+		//console.log(character.id + ": " + bucketType);
 		
 		var itemsToRemove = _.filter(character.items(), { bucketType: bucketType });
 		for (var i = 0; i < itemsToRemove.length; ++i) {
