@@ -1404,7 +1404,6 @@ var app = new(function() {
         if (character.id == "Vault") {
             self.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
-
                     var items = [];
                     results.data.buckets.forEach(function(bucket) {
                         bucket.items.forEach(function(item) {
@@ -1419,7 +1418,8 @@ var app = new(function() {
                     });
                     items.forEach(processItem(character));
                 } else {
-                    console.log("else clause for 'results && results.data && results.data.buckets' (Vault)");
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             });
         } else {
@@ -1442,7 +1442,8 @@ var app = new(function() {
                     });
                     items.forEach(processItem(character));
                 } else {
-                    console.log("else clause for 'response && response.data && response.data.buckets' (character)");
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             });
         }
