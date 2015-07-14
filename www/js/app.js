@@ -234,6 +234,10 @@ var app = new(function() {
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
+	this.showSectionRefresh = ko.observable(false);
+	this.toggleSectionRefresh = function() {
+		self.showSectionRefresh(!self.showSectionRefresh());
+	}
 
     this.sortedLoadouts = ko.computed(function() {
         return self.loadouts().sort(function(left, right) {

@@ -54,7 +54,7 @@
     <script type="text/javascript" src="js/Profile.js"></script>
     <script type="text/javascript" src="js/Item.js"></script>
     <script type="text/javascript" src="js/app.js"></script>
-    <script type="text/javascript" src="js/ga.js"></script>
+    <!--<script type="text/javascript" src="js/ga.js"></script>-->
     <script type="text/javascript" src="js/tooltips.min.js"></script>
     <script type="text/javascript" src="cordova.js"></script>
 </head>
@@ -62,18 +62,24 @@
 <body>
     <script type="text/html" id="sections-template">
         <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false, event: { mouseover: $root.toggleSectionRefresh, mouseout: $root.toggleSectionRefresh }, mouseoverBubble: false">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
+			<div class="alignright" data-bind="if: $root.showSectionRefresh">				
+				<img src="assets/arrow_refresh.png" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false" />
+			</div>
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/15)
-            <img class="alignright" src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+			<div class="alignright" data-bind="if: $root.showSectionRefresh">
+				<img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+				<img src="assets/arrow_refresh.png" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false" />            
+			</div>
             <!--/ko  -->
             <!-- ko if: ( bucketType == 'Post Master' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/40)
@@ -81,6 +87,9 @@
             <!--/ko  -->
             <!-- ko if: ( character.id == 'Vault' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+			<div class="alignright" data-bind="if: $root.showSectionRefresh">
+				<img src="assets/arrow_refresh.png" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false" />
+			</div>
             <!--/ko  -->
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
