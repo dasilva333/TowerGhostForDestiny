@@ -1348,66 +1348,66 @@ var app = new(function() {
 
     this.normalizeAll = function(bucketType) {
         //console.log("normalizeAll(" + bucketType + ")");
-		
-		var done = function(onlyCharacters) {
-			var selector = function(i) {
-				return i.bucketType == bucketType;
-			};
 
-			/* gather all consumable and/or material descriptions from all characters */
-			var descriptions = _.union(
-				(onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
+        var done = function(onlyCharacters) {
+            var selector = function(i) {
+                return i.bucketType == bucketType;
+            };
 
-			var getNextDescription = (function() {
-				var i = 0;
-				return function() {
-					return i < descriptions.length ? descriptions[i++] : undefined;
-				};
-			})();
+            /* gather all consumable and/or material descriptions from all characters */
+            var descriptions = _.union(
+                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
 
-			var nextNormalize = function() {
-				var description = getNextDescription();
+            var getNextDescription = (function() {
+                var i = 0;
+                return function() {
+                    return i < descriptions.length ? descriptions[i++] : undefined;
+                };
+            })();
 
-				while (description !== undefined) {
-					if ((description !== "Hadronic Essence") &&
-						(description !== "Sapphire Wire") &&
-						(description !== "Plasteel Plating")) {
-						break;
-					} else {
-						description = getNextDescription();
-					}
-				}
+            var nextNormalize = function() {
+                var description = getNextDescription();
 
-				if (description == undefined) {
-					BootstrapDialog.alert("All items normalized as best as possible");
-					return;
-				}
+                while (description !== undefined) {
+                    if ((description !== "Hadronic Essence") &&
+                        (description !== "Sapphire Wire") &&
+                        (description !== "Plasteel Plating")) {
+                        break;
+                    } else {
+                        description = getNextDescription();
+                    }
+                }
 
-				// normalizeSingle = function(description, characters, usingbatchMode, callback)
-				self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
-			}
+                if (description == undefined) {
+                    BootstrapDialog.alert("All items normalized as best as possible");
+                    return;
+                }
 
-			nextNormalize();
-		}
-		
-		this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
+                // normalizeSingle = function(description, characters, usingbatchMode, callback)
+                self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
+            }
+
+            nextNormalize();
+        }
+
+        this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
     }
 
-	this.selectMultiCharacters = function(title, description, callback) {
-		var selectedStatus = [];
+    this.selectMultiCharacters = function(title, description, callback) {
+        var selectedStatus = [];
         for (i = 0; i < app.orderedCharacters().length; i++) {
             var id = app.orderedCharacters()[i].id;
             selectedStatus[id] = (id !== "Vault");
-        }		
-		var dialogItself = (new tgd.dialog({
+        }
+        var dialogItself = (new tgd.dialog({
             message: function(dialogItself) {
                 var $content = $(tgd.selectMultiCharactersTemplate({
-					description: description,
+                    description: description,
                     characters: app.orderedCharacters(),
                     selected: selectedStatus
                 }));
                 var charButtonClicked = function(self, id) {
-                    selectedStatus[id] = !selectedStatus[id];                    
+                    selectedStatus[id] = !selectedStatus[id];
                     self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
                 };
                 $.each(app.orderedCharacters(), function(i, val) {
@@ -1425,14 +1425,13 @@ var app = new(function() {
                 action: function(dialogItself) {
                     var characters = _.filter(app.orderedCharacters(), function(c) {
                         return selectedStatus[c.id] == true;
-                    });					
-                    if (characters.length <= 1) {						
+                    });
+                    if (characters.length <= 1) {
                         BootstrapDialog.alert("Need to select two or more characters.");
+                    } else {
+                        callback(characters);
                     }
-					else {
-						callback(characters);
-					}
-					dialogItself.close();
+                    dialogItself.close();
                 }
             }, {
                 label: 'Close',
@@ -1441,8 +1440,8 @@ var app = new(function() {
                 }
             }]
         })).title(title).show(true);
-	}
-	
+    }
+
     this.reloadBucket = function(character, bucketType) {
         //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
 
@@ -1643,7 +1642,7 @@ var app = new(function() {
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
-		tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
+        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
