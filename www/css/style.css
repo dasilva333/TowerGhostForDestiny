@@ -270,6 +270,20 @@ body {
     padding-left: 5px;
 }
 
+.container .title2 {
+    text-transform: uppercase;
+    position: relative;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    /* border-bottom: 2px solid rgba(245,245,245,.6); */
+    
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(238, 238, 238, .9);	
+    background: rgba(18, 21, 20, .8);
+    padding-left: 5px;
+}
+
 .complete .itemImage {
     border-color: #f5dc56;
 }
