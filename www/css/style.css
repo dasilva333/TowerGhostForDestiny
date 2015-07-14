@@ -257,7 +257,7 @@ body {
 }
 
 .container .title {
-    text-transform: uppercase;
+    #text-transform: uppercase;
     position: relative;
     margin-top: 8px;
     margin-bottom: 8px;
