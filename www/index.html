@@ -62,12 +62,12 @@
 <body>
     <script type="text/html" id="sections-template">
         <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false, event: { mouseover: $root.toggleSectionRefresh, mouseout: $root.toggleSectionRefresh }, mouseoverBubble: false">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false, event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
-			<div class="alignright" data-bind="if: $root.showSectionRefresh">				
+			<div class="alignright" data-bind="if: $root.showSectionRefresh">
 				<img src="assets/arrow_refresh.png" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false" />
 			</div>
             <!--/ko  -->
