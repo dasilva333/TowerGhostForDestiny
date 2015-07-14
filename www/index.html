@@ -62,20 +62,18 @@
 <body>
     <script type="text/html" id="sections-template">
         <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == ''">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
-            <a href="#" class="alignright" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }"><img src="assets/arrow_refresh.png" /></a>
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/15)
-            <a href="#" class="alignright" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }"><img src="assets/arrow_refresh.png" /></a>
-            <a href="#" class="alignright" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }"><img src="assets/swap_16.png" /></a>
+            <img class="alignright" src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
             <!--/ko  -->
             <!-- ko if: ( bucketType == 'Post Master' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/40)
@@ -83,44 +81,29 @@
             <!--/ko  -->
             <!-- ko if: ( character.id == 'Vault' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
-            <a href="#" class="alignright" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }"><img src="assets/arrow_refresh.png" /></a>
             <!--/ko  -->
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
-
 						<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-
 							<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-
 						</a>
-
 						<div class="lockIcon" data-bind="if: item.locked">
-
 							<img src="assets/lock.png" />
-
 						</div>
-
 						<div class="attkIcon">
-
 							<div data-bind="text: primaryStat, css: damageTypeName"></div>
-
 						</div>
-
 					</span>
                 </div>
             </div>
             <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
                 <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-
 					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
-
 					<div class="lockIcon" data-bind="if: locked"><img src="assets/lock.png" /></div>
-
 					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-
 				</span>
             </div>
         </div>
@@ -597,7 +580,23 @@
 
 
 
+
+
+
+
+
+
+
+
 				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">					
+
+
+
+
+
+
+
+
 
 
 
@@ -613,7 +612,23 @@
 
 
 
+
+
+
+
+
+
+
+
 					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">						
+
+
+
+
+
+
+
+
 
 
 
@@ -629,7 +644,23 @@
 
 
 
+
+
+
+
+
+
+
+
 					</a>					
+
+
+
+
+
+
+
+
 
 
 
@@ -645,7 +676,23 @@
 
 
 
+
+
+
+
+
+
+
+
 				</div>
+
+
+
+
+
+
+
+
 
 
 

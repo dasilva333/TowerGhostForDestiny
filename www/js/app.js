@@ -1347,6 +1347,7 @@ var app = new(function() {
     }
 
     this.normalizeAll = function(bucketType) {
+        //console.log("normalizeAll(" + bucketType + ")");
         var useVault = false;
         var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
             return c.id == "Vault"
@@ -1392,7 +1393,7 @@ var app = new(function() {
     }
 
     this.reloadBucket = function(character, bucketType) {
-        //console.log(character.id + ": " + bucketType);
+        //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
 
         var itemsToRemove = _.filter(character.items(), {
             bucketType: bucketType
