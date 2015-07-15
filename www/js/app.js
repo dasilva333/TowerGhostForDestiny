@@ -109,16 +109,12 @@ window.ko.bindingHandlers.refreshableSection = {
         }
         $(element)
             .bind("mouseenter", function() {
-                if ($(this).find(".alignright").get().length > 0) {
-                    $(this).addClass("titleHover");
-                    $(this).find(".alignright").show();
-                }
+                $(this).addClass("titleHover");
+                $(this).find(".alignright").show();
             })
             .bind("mouseleave", function() {
-                if ($(this).find(".alignright").get().length > 0) {
-                    $(this).removeClass("titleHover");
-                    $(this).find(".alignright").hide();
-                }
+                $(this).removeClass("titleHover");
+                $(this).find(".alignright").hide();
             });
     }
 };
