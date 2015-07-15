@@ -274,6 +274,11 @@ body {
     background: rgba(18, 21, 20, .5);
 }
 
+.container .titleRefresh {
+    margin-right: 2px;
+    float: right;
+}
+
 .container .title2 {
     text-transform: uppercase;
     position: relative;

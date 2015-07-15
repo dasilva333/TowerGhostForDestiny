@@ -110,11 +110,11 @@ window.ko.bindingHandlers.refreshableSection = {
         $(element)
             .bind("mouseenter", function() {
                 $(this).addClass("titleHover");
-                $(this).find(".alignright").show();
+                $(this).find(".titleRefresh").show();
             })
             .bind("mouseleave", function() {
                 $(this).removeClass("titleHover");
-                $(this).find(".alignright").hide();
+                $(this).find(".titleRefresh").hide();
             });
     }
 };
