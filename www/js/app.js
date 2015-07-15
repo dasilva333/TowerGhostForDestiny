@@ -106,12 +106,16 @@ window.ko.bindingHandlers.refreshableSection = {
         //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
         $(element)
             .bind("mouseenter", function() {
-                $(this).addClass("titleHover");
-                $(this).find(".alignright").show();
+                if ($(this).find(".alignright").get().length > 0) {
+                    $(this).addClass("titleHover");
+                    $(this).find(".alignright").show();
+                }
             })
             .bind("mouseleave", function() {
-                $(this).removeClass("titleHover");
-                $(this).find(".alignright").hide();
+                if ($(this).find(".alignright").get().length > 0) {
+                    $(this).removeClass("titleHover");
+                    $(this).find(".alignright").hide();
+                }
             });
     }
 };
