@@ -67,36 +67,26 @@
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
-            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false"></i>
-            </div>
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/10)
-            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false"></i>
-            </div>
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/15)
-            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                <img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
-                <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false"></i>
-            </div>
             <!--/ko  -->
             <!-- ko if: ( bucketType == 'Post Master' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/40)
-            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false"></i>
-            </div>
             <!--/ko  -->
             <!--/ko  -->
             <!-- ko if: ( character.id == 'Vault' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+            <!--/ko  -->
             <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
+                <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
+                <img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+                <!--/ko  -->
                 <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false"></i>
             </div>
-            <!--/ko  -->
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
