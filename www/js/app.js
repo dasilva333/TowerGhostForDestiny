@@ -100,6 +100,22 @@ tgd.moveItemPositionHandler = function(element, item) {
     }
 }
 
+window.ko.bindingHandlers.refreshableSection = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        //console.log(element);
+        //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("titleHover");
+                $(this).find(".alignright").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("titleHover");
+                $(this).find(".alignright").hide();
+            });
+    }
+};
+
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         Hammer(element, {
@@ -234,10 +250,6 @@ var app = new(function() {
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
-	this.showSectionRefresh = ko.observable(false);
-	this.toggleSectionRefresh = function() {
-		self.showSectionRefresh(!self.showSectionRefresh());
-	}
 
     this.sortedLoadouts = ko.computed(function() {
         return self.loadouts().sort(function(left, right) {

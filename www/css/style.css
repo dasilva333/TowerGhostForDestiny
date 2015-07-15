@@ -259,8 +259,8 @@ body {
 .container .title {
     #text-transform: uppercase;
     position: relative;
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin-top: 12px;
+    margin-bottom: 2px;
     /* border-bottom: 2px solid rgba(245,245,245,.6); */
     
     font-size: 15px;
@@ -271,14 +271,14 @@ body {
 }
 
 .container .titleHover {
-    background: rgba(18, 21, 20, .7);
+    background: rgba(18, 21, 20, .5);
 }
 
 .container .title2 {
     text-transform: uppercase;
     position: relative;
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin-top: 12px;
+    margin-bottom: 2px;
     /* border-bottom: 2px solid rgba(245,245,245,.6); */
     
     font-size: 15px;
