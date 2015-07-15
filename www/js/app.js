@@ -104,6 +104,9 @@ window.ko.bindingHandlers.refreshableSection = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         //console.log(element);
         //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
+        if (isMobile) {
+            return;
+        }
         $(element)
             .bind("mouseenter", function() {
                 if ($(this).find(".alignright").get().length > 0) {
