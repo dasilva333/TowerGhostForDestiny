@@ -64,7 +64,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
@@ -593,12 +593,13 @@ var app = new(function() {
                     characterId: profile.id,
                     damageType: item.damageType,
                     damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+                    isEquipment: item.isEquipment,
                     isEquipped: item.isEquipped,
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
                     itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
                     typeName: itemTypeName,
                     tierType: info.tierType,
@@ -1479,7 +1480,7 @@ var app = new(function() {
                         bucket.items.forEach(function(item) {
                             var info = window._itemDefs[item.itemHash];
                             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
                                 if (itemBucketType == bucketType) {
                                     items.push(item);
                                 }
@@ -1502,7 +1503,7 @@ var app = new(function() {
                             obj.items.forEach(function(item) {
                                 var info = window._itemDefs[item.itemHash];
                                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
                                     if (itemBucketType == bucketType) {
                                         items.push(item);
                                     }

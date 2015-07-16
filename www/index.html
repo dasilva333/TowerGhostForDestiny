@@ -62,10 +62,10 @@
 <body>
     <script type="text/html" id="sections-template">
         <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, refreshableSection: true">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, refreshableSection: true">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
-            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
+            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Lost Items' || bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
@@ -74,8 +74,8 @@
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/15)
             <!--/ko  -->
-            <!-- ko if: ( bucketType == 'Post Master' ) -->
-            (<span data-bind="text: character.get(bucketType).length"></span>/40)
+            <!-- ko if: ( bucketType == 'Messages' || bucketType == 'Lost Items' ) -->
+            (<span data-bind="text: character.get(bucketType).length"></span>/20)
             <!--/ko  -->
             <!--/ko  -->
             <!-- ko if: ( character.id == 'Vault' ) -->
@@ -544,8 +544,8 @@
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties','Mission'], as: 'bucketType' }"></div>
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/40)</div>
+                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Messages','Lost Items','Bounties','Mission'], as: 'bucketType' }"></div>
                             </div>
                         </div>
                     </div>
@@ -577,134 +577,14 @@
                     <span data-bind="text: $root.activeText().loadouts_instructions_contd">to equip.</span>
                 </p>
             </div>
-            <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">				
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">						
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						<img class="itemImage" src="about:blank" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					</a>					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>				
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
+				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
+					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
+					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+						<img class="itemImage" src="about:blank" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+					</a>
+					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
 				</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </span>
         </div>
     </div>
