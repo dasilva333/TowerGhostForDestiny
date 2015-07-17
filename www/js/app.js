@@ -583,6 +583,12 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
+				if (description == "Focused Light") {
+					console.log("item:");
+					console.log(item);
+					console.log("info:");
+					console.log(info);
+				}				
                 //some weird stuff shows up under this bucketType w/o this filter
                 if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
                     return;
