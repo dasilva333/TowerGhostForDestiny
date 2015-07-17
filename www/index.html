@@ -62,7 +62,7 @@
 <body>
     <script type="text/html" id="sections-template">
         <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == ''">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == '', fastclick: function(){ $root.reloadBucket(character, bucketType); }, refreshableSection: true">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
@@ -81,686 +81,34 @@
             <!-- ko if: ( character.id == 'Vault' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
             <!--/ko  -->
+            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
+                <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
+                <img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+                <!--/ko  -->
+                <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ $root.reloadBucket(character, bucketType); }, clickBubble: false"></i>
+            </div>
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
-                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">						
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 						<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						<div class="lockIcon" data-bind="if: item.locked">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 							<img src="assets/lock.png" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						<div class="attkIcon">														
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+						<div class="attkIcon">
 							<div data-bind="text: primaryStat, css: damageTypeName"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 						</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 					</span>
                 </div>
             </div>
             <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
                 <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					</a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<div class="lockIcon" data-bind="if: locked">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-							<img src="assets/lock.png" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<div class="attkIcon">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						<div data-bind="text: primaryStat, css: damageTypeName">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
+					<div class="lockIcon" data-bind="if: locked"><img src="assets/lock.png" /></div>
+					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
 				</span>
             </div>
         </div>
@@ -798,8 +146,6 @@
                             <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
                             <li><a href="#" data-bind="fastclick: showDonate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
                             <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
-
-
                             <li class="divider"></li>
                             <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
                             <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
@@ -1181,24 +527,24 @@
                     <div class="inventory">
                         <div class="items" data-type="item">
                             <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_subclasses">Sub Classes</strong></div>
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_subclasses">Sub Classes</strong></div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_general">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_general">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
                                 <!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
                             </div>
                             <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties','Mission'], as: 'bucketType' }"></div>
                             </div>
                         </div>
@@ -1235,7 +581,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">					
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1243,7 +613,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">						
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1251,7 +645,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 					</a>					
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1259,7 +677,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 				</div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

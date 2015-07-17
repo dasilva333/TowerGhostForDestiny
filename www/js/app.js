@@ -100,6 +100,25 @@ tgd.moveItemPositionHandler = function(element, item) {
     }
 }
 
+window.ko.bindingHandlers.refreshableSection = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        //console.log(element);
+        //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("titleHover");
+                $(this).find(".titleRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("titleHover");
+                $(this).find(".titleRefresh").hide();
+            });
+    }
+};
+
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         Hammer(element, {
@@ -1346,53 +1365,158 @@ var app = new(function() {
         }
     }
 
-    this.normalizeAll = function(model, event, useVault) {
-        if (useVault) {
-            return BootstrapDialog.alert("'useVault' flag not tested; aborting!");
-        }
+    this.normalizeAll = function(bucketType) {
+        //console.log("normalizeAll(" + bucketType + ")");
 
-        var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
-            return c.id == "Vault"
-        });
-        var selector = function(i) {
-            return i.bucketType == "Consumables" || i.bucketType == "Materials"
-        };
-
-        /* gather all consumable and material descriptions from all characters */
-        var descriptions = _.union(
-            (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
-        //console.log(descriptions);
-
-        var getNextDescription = (function() {
-            var i = 0;
-            return function() {
-                return i < descriptions.length ? descriptions[i++] : undefined;
+        var done = function(onlyCharacters) {
+            var selector = function(i) {
+                return i.bucketType == bucketType;
             };
-        })();
 
-        var nextNormalize = function() {
-            var description = getNextDescription();
+            /* gather all consumable and/or material descriptions from all characters */
+            var descriptions = _.union(
+                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
 
-            while (description !== undefined) {
-                if ((description !== "Hadronic Essence") &&
-                    (description !== "Sapphire Wire") &&
-                    (description !== "Plasteel Plating")) {
-                    break;
-                } else {
-                    description = getNextDescription();
+            var getNextDescription = (function() {
+                var i = 0;
+                return function() {
+                    return i < descriptions.length ? descriptions[i++] : undefined;
+                };
+            })();
+
+            var nextNormalize = function() {
+                var description = getNextDescription();
+
+                while (description !== undefined) {
+                    if ((description !== "Hadronic Essence") &&
+                        (description !== "Sapphire Wire") &&
+                        (description !== "Plasteel Plating")) {
+                        break;
+                    } else {
+                        description = getNextDescription();
+                    }
                 }
+
+                if (description == undefined) {
+                    BootstrapDialog.alert("All items normalized as best as possible");
+                    return;
+                }
+
+                // normalizeSingle = function(description, characters, usingbatchMode, callback)
+                self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
             }
 
-            if (description == undefined) {
-                self.refresh();
-                return;
-            }
-
-            //console.log(description);
-            self.normalizeSingle(description, false, true, nextNormalize);
+            nextNormalize();
         }
 
-        nextNormalize();
+        this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
+    }
+
+    this.selectMultiCharacters = function(title, description, callback) {
+        var selectedStatus = [];
+        for (i = 0; i < app.orderedCharacters().length; i++) {
+            var id = app.orderedCharacters()[i].id;
+            selectedStatus[id] = (id !== "Vault");
+        }
+        var dialogItself = (new tgd.dialog({
+            message: function(dialogItself) {
+                var $content = $(tgd.selectMultiCharactersTemplate({
+                    description: description,
+                    characters: app.orderedCharacters(),
+                    selected: selectedStatus
+                }));
+                var charButtonClicked = function(self, id) {
+                    selectedStatus[id] = !selectedStatus[id];
+                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                };
+                $.each(app.orderedCharacters(), function(i, val) {
+                    var id = val.id;
+                    var sel = "#char" + i.toString();
+                    $content.find(sel).click(function() {
+                        charButtonClicked($(this), id);
+                    });
+                });
+                return $content;
+            },
+            buttons: [{
+                label: 'OK',
+                cssClass: 'btn-primary',
+                action: function(dialogItself) {
+                    var characters = _.filter(app.orderedCharacters(), function(c) {
+                        return selectedStatus[c.id] == true;
+                    });
+                    if (characters.length <= 1) {
+                        BootstrapDialog.alert("Need to select two or more characters.");
+                    } else {
+                        callback(characters);
+                    }
+                    dialogItself.close();
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        })).title(title).show(true);
+    }
+
+    this.reloadBucket = function(character, bucketType) {
+        //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
+
+        var itemsToRemove = _.filter(character.items(), {
+            bucketType: bucketType
+        });
+        for (var i = 0; i < itemsToRemove.length; ++i) {
+            character.items.remove(itemsToRemove[i]);
+        }
+
+        if (character.id == "Vault") {
+            self.bungie.vault(function(results, response) {
+                if (results && results.data && results.data.buckets) {
+                    var items = [];
+                    results.data.buckets.forEach(function(bucket) {
+                        bucket.items.forEach(function(item) {
+                            var info = window._itemDefs[item.itemHash];
+                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                if (itemBucketType == bucketType) {
+                                    items.push(item);
+                                }
+                            }
+                        });
+                    });
+                    items.forEach(processItem(character));
+                } else {
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                }
+            });
+        } else {
+            self.bungie.inventory(character.id, function(response) {
+                if (response && response.data && response.data.buckets) {
+
+                    var items = [];
+                    Object.keys(response.data.buckets).forEach(function(bucket) {
+                        response.data.buckets[bucket].forEach(function(obj) {
+                            obj.items.forEach(function(item) {
+                                var info = window._itemDefs[item.itemHash];
+                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                    var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    if (itemBucketType == bucketType) {
+                                        items.push(item);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                    items.forEach(processItem(character));
+                } else {
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                }
+            });
+        }
     }
 
     this.setVaultTo = function(pos) {
@@ -1537,6 +1661,7 @@ var app = new(function() {
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
