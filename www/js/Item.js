@@ -6,7 +6,7 @@ var Item = function(model, profile) {
     this.character = profile;
     this.href = "https://destinydb.com/items/" + self.id;
     this.isEquipped = ko.observable(self.isEquipped);
-    this.primaryStat = self.primaryStat || "";
+    this.primaryStat = ko.observable(self.primaryStat || "");
     this.isVisible = ko.computed(this._isVisible, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
@@ -27,6 +27,22 @@ var Item = function(model, profile) {
 }
 
 Item.prototype = {
+    clone: function() {
+        var self = this;
+        var model = {};
+        for (var i in self) {
+            if (self.hasOwnProperty(i)) {
+                var val = ko.unwrap(self[i]);
+                if (typeof(val) !== 'function') {
+                    model[i] = val;
+                }
+            }
+        }
+        //console.log("model: ");
+        //console.log(model);
+        var newItem = new Item(model, self.character);
+        return newItem;
+    },
     hasPerkSearch: function(search) {
         var foundPerk = false,
             self = this;
@@ -306,35 +322,192 @@ Item.prototype = {
             //console.log(arguments);
             if (result && result.Message && result.Message == "Ok") {
                 if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
-                    //console.log("need to split reference of self and push it into x and y");
-                    var remainder = self.primaryStat - amount;
-                    /* at this point we can either add the item to the inventory or merge it with existing items there */
-                    var existingItem = _.findWhere(y.items(), {
-                        description: self.description
-                    });
-                    if (existingItem) {
-                        y.items.remove(existingItem);
-                        existingItem.primaryStat = existingItem.primaryStat + amount;
-                        y.items.push(existingItem);
+                    /*
+                     * Whatever happens, make sure 'self' is always preserved in case there were/are chained transfers before/after.
+                     * All we're looking to do is make the GUI appear correct. The transfer has already happened successfully.
+                     * Simple cases:
+                     * 1) Target has no existing items, so simply move self from one players' items list to the other.
+                     * 2) Target has existing items, but all existing stacks full, so simply do the same as previous case.
+                     * Edge cases:
+                     * 1) If self gets swallowed (ie. completely added to an existing stack) then the stack that's swallowing needs to
+                     * be removed and self adjusted to appear to be that swallowing stack.
+                     * 2) If self gets swallowed but there's overflow (ie. added to an existing stack but hit maxStackSize and a new
+                     * stack needs to be created visually) then self needs to be adjusted to appear as the newly created stack.
+                     * 3) If self.primaryStat is < amount then there was a previous transfer that overflowed and now we've got an
+                     * underflow. self needs to be the 'right' most stack that visually gets removed and added to the new character.
+                     * Cleanup cases:
+                     * 1) When multiple stacks exist on the source character, and the user has selected a partial transfer from a stack
+                     * that's not at the end of the list, we need to make the counts correct by shuffling things 'left' and potentially
+                     * removing anything on the right that went < 0.
+                     * Random notes:
+                     * 1) Bungie API lets you move more than a stacks worth of an item, so logic is needed to visually break up stacks
+                     * if they're > maxStackSize for that particular item.					 
+                     */
+                    var localLogging = false;
+                    var localLog = function(msg) {
+                        if (localLogging) {
+                            console.log(msg);
+                        }
+                    };
+
+                    localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
+                    var existingItem = _.find(
+                        _.where(y.items(), {
+                            description: self.description
+                        }),
+                        function(i) {
+                            return i.primaryStat() < i.maxStackSize;
+                        });
+
+                    var remainder = self.primaryStat() - amount;
+                    var isOverflow = existingItem == undefined ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
+                    localLog("[remainder: " + remainder + "] [overflow: " + isOverflow + "] [underflow: " + (remainder < 0) + "]");
+
+                    var tmpAmount = 0;
+                    if (existingItem !== undefined) {
+                        localLog("existing stack in destination");
+                        tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat(), amount);
+                        localLog("tmpAmount: " + tmpAmount);
+                        if (isOverflow) {
+                            localLog("overflow: " + (amount - tmpAmount));
+                            // existing stack gets maxed
+                            existingItem.primaryStat(existingItem.maxStackSize);
+                            localLog("existingItem.primaryStat updated to " + existingItem.maxStackSize);
+                        } else {
+                            localLog("no overflow");
+                        }
                     } else {
-                        self.characterId = targetCharacterId
-                        self.character = y;
-                        self.primaryStat = amount;
-                        y.items.push(self);
+                        localLog("no existing stack in destination or existing stacks are full");
                     }
-                    /* the source item gets removed from the array, change the stack size, and add it back to the array if theres items left behind */
+
+                    // grab self index in x.items
+                    var idxSelf = x.items.indexOf(self);
+                    // remove self from x.items
                     x.items.remove(self);
+                    localLog("removed self from x.items @ index " + idxSelf);
+                    // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
                     if (remainder > 0) {
-                        self.characterId = sourceCharacterId
-                        self.character = x;
-                        self.primaryStat = remainder;
-                        x.items.push(self);
+                        localLog("[remainder: " + remainder + "] [clone on source: " + remainder + "]");
+                        var theClone = self.clone();
+                        theClone.characterId = sourceCharacterId;
+                        theClone.character = x;
+                        theClone.primaryStat(remainder);
+                        x.items.splice(idxSelf, 0, theClone);
+                        localLog("inserted clone to x.items @ " + idxSelf + " with primaryStat " + remainder);
+                    } else if (remainder < 0) {
+                        localLog("[remainder: " + remainder + "] [no clone] [underflow]");
+                        var sourceRemaining = (amount - self.primaryStat());
+                        localLog("need to remove " + sourceRemaining + " more from " + sourceCharacterId);
+                        var sourceExistingItems = _.where(x.items(), {
+                            description: self.description
+                        });
+                        // handle weird cases when user has transferred more than a stacks worth. Bungie API allows this.
+                        var sourceIdx = sourceExistingItems.length - 1;
+                        while ((sourceRemaining > 0) && (sourceIdx >= 0)) {
+                            var sourceRightMost = sourceExistingItems[sourceIdx];
+                            var sourceTmpAmount = Math.min(sourceRemaining, sourceRightMost.primaryStat());
+                            localLog("removing " + sourceTmpAmount + " from right most");
+                            sourceRightMost.primaryStat(sourceRightMost.primaryStat() - sourceTmpAmount);
+                            if (sourceRightMost.primaryStat() <= 0) {
+                                x.items.remove(sourceRightMost);
+                                localLog("right most dropped to 0 or less, removing");
+                            }
+                            sourceRemaining = sourceRemaining - sourceTmpAmount;
+                            localLog("still need to remove " + sourceRemaining + " from " + sourceCharacterId);
+                            sourceIdx = sourceIdx - 1;
+                        }
+                    } else {
+                        localLog("no remainder, no clone");
                     }
+                    var idxExistingItem = undefined;
+                    var newAmount;
+                    if (existingItem !== undefined) {
+                        if (!isOverflow) {
+                            // grab existingItem index in y.items
+                            idxExisting = y.items.indexOf(existingItem);
+                            // remove existingItem from y.items
+                            y.items.remove(existingItem);
+                            localLog("removed existingItem from y.items @ index " + idxExisting);
+                            // self becomes the swallowing stack @ y.items indexOf existingItem with (amount + existingItem.primaryStat())
+                            newAmount = amount + existingItem.primaryStat();
+                        } else {
+                            // self gets added to y.items as a new stack with (amount - tmpAmount)
+                            newAmount = amount - tmpAmount;
+                        }
+                    } else {
+                        // self gets added to y.items as a new stack with (amount)
+                        newAmount = amount;
+                    }
+                    self.characterId = targetCharacterId;
+                    self.character = y;
+                    self.primaryStat(newAmount);
+                    if (existingItem !== undefined) {
+                        if (!isOverflow) {
+                            y.items.splice(idxExisting, 0, self);
+                            localLog("adding self to y.items @ index " + idxExisting + " with amount: " + self.primaryStat());
+                        } else {
+                            y.items.push(self);
+                            localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
+                        }
+                    } else {
+                        y.items.push(self);
+                        localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
+                    }
+
+                    // visually split stuff if stacks transferred eceeded maxStackSize for that item
+                    if (newAmount > self.maxStackSize) {
+                        localLog("exceeded maxStackSize, need to do some visual splitting");
+                        while (self.primaryStat() > self.maxStackSize) {
+                            var extraAmount = self.primaryStat() - self.maxStackSize;
+                            idxSelf = y.items.indexOf(self);
+                            // put clone at self index keeping self to the 'right'
+                            var theClone = self.clone();
+                            theClone.characterId = targetCharacterId;
+                            theClone.character = y;
+                            theClone.primaryStat(self.maxStackSize);
+                            y.items.splice(idxSelf, 0, theClone);
+                            localLog("inserted clone to y.items @ " + idxSelf + " with primaryStat " + theClone.primaryStat());
+                            // adjust self value
+                            self.primaryStat(extraAmount);
+                        }
+                    }
+
+                    // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
+                    if (remainder !== 0) {
+                        localLog("running cleanup code...");
+                        var selfExistingItems = _.where(x.items(), {
+                            description: self.description
+                        });
+                        var idx = 0;
+                        while (idx < selfExistingItems.length) {
+                            if ((idx + 1) >= selfExistingItems.length) {
+                                localLog("nothing to cleanup");
+                                break;
+                            }
+
+                            var cur = selfExistingItems[idx];
+                            if (cur.primaryStat() < cur.maxStackSize) {
+                                var next = selfExistingItems[idx + 1];
+                                var howMuch = Math.min(cur.maxStackSize - cur.primaryStat(), next.primaryStat());
+                                localLog("shifting left...");
+
+                                cur.primaryStat(cur.primaryStat() + howMuch)
+                                next.primaryStat(next.primaryStat() - howMuch);
+                                if (next.primaryStat() <= 0) {
+                                    localLog("drained a stack in cleanup");
+                                    x.items.remove(next);
+                                }
+                            }
+
+                            idx = idx + 1;
+                        }
+                    }
+                    localLog("---------------------");
                 } else {
+                    x.items.remove(self);
                     self.characterId = targetCharacterId
                     self.character = y;
                     y.items.push(self);
-                    x.items.remove(self);
                 }
                 if (cb) cb(y, x);
             } else {
@@ -386,33 +559,37 @@ Item.prototype = {
             }
         }
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
-            if (self.primaryStat == 1) {
+            if (self.primaryStat() == 1) {
                 done();
             } else if (app.autoTransferStacks() == true) {
-                transferAmount = self.primaryStat;
+                transferAmount = self.primaryStat();
                 done();
             } else {
+                var characterTotal = 0;
                 var dialogItself = (new tgd.dialog({
                         message: function() {
                             var itemTotal = 0;
                             for (i = 0; i < app.orderedCharacters().length; i++) {
                                 var c = app.orderedCharacters()[i];
-                                var characterTotal = _.reduce(
+                                var charTotal = _.reduce(
                                     _.filter(c.items(), {
                                         description: self.description
                                     }),
                                     function(memo, j) {
-                                        return memo + j.primaryStat;
+                                        return memo + j.primaryStat();
                                     },
                                     0);
-                                itemTotal = itemTotal + characterTotal;
+                                if (self.character == c) {
+                                    characterTotal = charTotal;
+                                }
+                                itemTotal = itemTotal + charTotal;
                             }
                             var $content = $(
                                 '<div><div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
                                 '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
-                                ' <input type="text" id="materialsAmount" value="' + self.primaryStat + '" size="4"> ' +
+                                ' <input type="text" id="materialsAmount" value="' + self.primaryStat() + '" size="4"> ' +
                                 '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + self.primaryStat + ') </button>' +
+                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + characterTotal + ') </button>' +
                                 '<button type="button" class="btn btn-default pull-right" id="one"> ' + app.activeText().transfer_one + ' </button>' +
                                 '</div>' +
                                 '<div><hr></div>' +
@@ -430,7 +607,7 @@ Item.prototype = {
                             btnInc.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(Math.min(num + 1, self.primaryStat));
+                                    $("input#materialsAmount").val(Math.min(num + 1, characterTotal));
                                 }
                             });
                             var btnOne = $content.find('#one');
@@ -444,7 +621,7 @@ Item.prototype = {
                             btnAll.click(function() {
                                 var num = parseInt($("input#materialsAmount").val());
                                 if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(self.primaryStat);
+                                    $("input#materialsAmount").val(characterTotal);
                                 }
                             });
                             var inputAmt = $content.find('#materialsAmount');
@@ -480,7 +657,7 @@ Item.prototype = {
                             dialogItself.modal.close();
                         } else {
                             transferAmount = parseInt($("input#materialsAmount").val());
-                            if (!isNaN(transferAmount)) {
+                            if (!isNaN(transferAmount) && (transferAmount > 0) && (transferAmount <= characterTotal)) {
                                 done();
                                 dialogItself.modal.close();
                             } else {
@@ -532,19 +709,19 @@ Item.prototype = {
                 return;
             }
 
-            //console.log("xfer " + theStack.primaryStat + " from: " + theStack.character.id + ", to: " + targetCharacterId);
+            //console.log("xfer " + theStack.primaryStat() + " from: " + theStack.character.id + ", to: " + targetCharacterId);
 
             if (targetCharacterId == "Vault") {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat, function() {
+                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
                     nextTransfer(callback);
                 });
             } else if (theStack.character.id == "Vault") {
-                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat, function() {
+                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
                     nextTransfer(callback);
                 });
             } else {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat, function() {
-                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat, function() {
+                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
+                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
                         nextTransfer(callback);
                     });
                 });
@@ -575,7 +752,7 @@ Item.prototype = {
                                     description: self.description
                                 }),
                                 function(memo, i) {
-                                    return memo + i.primaryStat;
+                                    return memo + i.primaryStat();
                                 },
                                 0);
                             c = c + ct;
