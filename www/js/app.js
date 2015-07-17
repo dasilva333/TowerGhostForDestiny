@@ -1659,23 +1659,30 @@ var app = new(function() {
 	}
 	
     this.init = function() {
+        self.initLocale();
 		self.bungie = new bungie();
-		tgd.perksTemplate = _.template(tgd.perksTemplate);
+        self.initItemDefs();
+        tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
-		tgd.duplicates = ko.observableArray().extend({
+        tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
+        tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
                 method: "notifyWhenChangesStop"
             }
         });
 		self.loadStatic(unescape(location.search.replace('?','')));
-		$("form").bind("submit", false);
+        $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(function() {
             setTimeout(self.bucketSizeHandler, 500);
         });
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
+        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
+        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         ko.applyBindings(self);
     }
 });
