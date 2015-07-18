@@ -9,7 +9,6 @@
     </author>
 
     <content src="index.html" />
-	<preference name='phonegap-version' value='cli-5.1.1' />	
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
