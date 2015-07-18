@@ -64,7 +64,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
@@ -99,6 +99,25 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     }
 }
+
+window.ko.bindingHandlers.refreshableSection = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        //console.log(element);
+        //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("titleHover");
+                $(this).find(".titleRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("titleHover");
+                $(this).find(".titleRefresh").hide();
+            });
+    }
+};
 
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -275,6 +294,43 @@ var app = new(function() {
         });
     }
 
+    this.handleGoogleResponse = function(data) {
+        if (data && data.response) {
+            if (data.response.errorType) {
+                BootstrapDialog.alert("Error: " + data.response.errorType);
+            } else if (data.response.orderId) {
+                BootstrapDialog.alert("Donation accepted Ref# " + data.response.orderId);
+            } else {
+                BootstrapDialog.alert("Unknown error has occurred");
+            }
+        } else {
+            BootstrapDialog.alert("No response returned");
+        }
+    }
+
+    this.showDonate = function() {
+        self.toggleBootstrapMenu();
+        (new tgd.dialog).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+            $("a.donatePaypal").click(function() {
+                window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
+                return false;
+            });
+            $("div.chromeWallet").toggle(isChrome == true);
+            $("a.donate").bind("click", function() {
+                if (isChrome) {
+                    google.payments.inapp.buy({
+                        'parameters': {
+                            'env': 'prod'
+                        },
+                        'sku': $(this).attr("sku"),
+                        'success': self.handleGoogleResponse,
+                        'failure': self.handleGoogleResponse
+                    });
+                }
+            });
+        });
+    }
+
     this.showAbout = function() {
         self.toggleBootstrapMenu();
         (new tgd.dialog).title("About").content($("#about").html()).show();
@@ -318,7 +374,6 @@ var app = new(function() {
                 if (item) activeItem = item;
             });
         });
-		console.log(activeItem);
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
@@ -365,7 +420,7 @@ var app = new(function() {
                     }).get().join("")
                 );
             }
-            $content.find(".destt-primary-min").html(activeItem.primaryStat);
+            $content.find(".destt-primary-min").html(activeItem.primaryStat());
         } else {
             //remove the "Emblem" title from the image issue #31
             if ($content.find(".fhtt-emblem").length > 0) {
@@ -500,18 +555,23 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
+                //some weird stuff shows up under this bucketType w/o this filter
+                if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
+                    return;
+                }
                 var itemObject = {
                     id: item.itemHash,
                     _id: item.itemInstanceId,
                     characterId: profile.id,
                     damageType: item.damageType,
                     damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+                    isEquipment: item.isEquipment,
                     isEquipped: item.isEquipped,
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
                     itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
                     typeName: itemTypeName,
                     tierType: info.tierType,
@@ -553,6 +613,7 @@ var app = new(function() {
                 }
                 if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                     itemObject.primaryStat = item.stackSize;
+                    itemObject.maxStackSize = info.maxStackSize;
                 }
                 if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
                     itemObject.stats = {};
@@ -566,12 +627,17 @@ var app = new(function() {
                 //console.log("new item time " + (new Date()-t));
                 profile.items.push(new Item(itemObject, profile));
             }
+            /*else {
+				console.log(info.itemName);
+				console.log(info);
+				console.log(item);
+			}*/
         }
     }
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 0 && _.where(self.weaponTypes(), {
+            if (item.type > 1 && _.where(self.weaponTypes(), {
                     type: item.type
                 }).length == 0) {
                 self.weaponTypes.push({
@@ -731,6 +797,7 @@ var app = new(function() {
                         //console.time("processItems");
                         items.forEach(processItem(profile));
                         //console.timeEnd("processItems");
+                        self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         //console.timeEnd("new Profile");
                         //self.characters.push(profile);
@@ -865,10 +932,6 @@ var app = new(function() {
         });
     }
 
-    this.donate = function() {
-        window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
-    }
-
     this.readBungieCookie = function(ref, loop) {
         //console.log( typeof ref.executeScript );
         //console.log( Object.keys(ref) ); 
@@ -991,15 +1054,31 @@ var app = new(function() {
     var id = -1;
     this.apiRequest = function(params, callback) {
         var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
-        $.ajax({
-			url: apiURL,
-			data: params,
-			type: "POST",
-			success: function(data) {
-				var response = (typeof data == "string") ? JSON.parse(data) : data;
-				callback(response);
-			}
-		});
+        if (isChrome || isMobile) {
+            $.ajax({
+                url: apiURL,
+                data: params,
+                type: "POST",
+                success: function(data) {
+                    var response = (typeof data == "string") ? JSON.parse(data) : data;
+                    callback(response);
+                }
+            });
+        } else {
+            var event = document.createEvent('CustomEvent');
+            var opts = {
+                route: apiURL,
+                payload: params,
+                method: "POST",
+                complete: callback
+            }
+            event.initCustomEvent("api-request-message", true, true, {
+                id: ++id,
+                opts: opts
+            });
+            self.requests[id] = opts;
+            document.documentElement.dispatchEvent(event);
+        }
     }
 
     this.saveLoadouts = function(includeMessage) {
@@ -1065,10 +1144,10 @@ var app = new(function() {
                 if (_loadouts.length > 0) {
                     self.saveLoadouts(false);
                 }
-                if (results && results.itemDefs) {
+                /*if (results && results.itemDefs) {
                     console.log("downloading locale update");
                     self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-                }
+                }*/
             });
         } else if (_loadouts.length > 0) {
             self.loadouts(_loadouts);
@@ -1103,7 +1182,7 @@ var app = new(function() {
                     description: description
                 }),
                 function(memo, i) {
-                    return memo + i.primaryStat;
+                    return memo + i.primaryStat();
                 },
                 0);
             itemTotal = itemTotal + characterTotal;
@@ -1179,7 +1258,7 @@ var app = new(function() {
             if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
                 //console.log("all items normalized as best as possible");
                 if (usingbatchMode == false) {
-                    self.refresh();
+                    //self.refresh();
                     BootstrapDialog.alert("All items normalized as best as possible");
                 }
                 if (callback !== undefined) {
@@ -1200,7 +1279,7 @@ var app = new(function() {
             });
             var surplusItem = surplusItems[0];
 
-            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat, (surplusCharacter.needed * -1));
+            var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
             //console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
@@ -1259,53 +1338,158 @@ var app = new(function() {
         }
     }
 
-    this.normalizeAll = function(model, event, useVault) {
-        if (useVault) {
-            return BootstrapDialog.alert("'useVault' flag not tested; aborting!");
-        }
+    this.normalizeAll = function(bucketType) {
+        //console.log("normalizeAll(" + bucketType + ")");
 
-        var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
-            return c.id == "Vault"
-        });
-        var selector = function(i) {
-            return i.bucketType == "Consumables" || i.bucketType == "Materials"
-        };
-
-        /* gather all consumable and material descriptions from all characters */
-        var descriptions = _.union(
-            (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
-        //console.log(descriptions);
-
-        var getNextDescription = (function() {
-            var i = 0;
-            return function() {
-                return i < descriptions.length ? descriptions[i++] : undefined;
+        var done = function(onlyCharacters) {
+            var selector = function(i) {
+                return i.bucketType == bucketType;
             };
-        })();
 
-        var nextNormalize = function() {
-            var description = getNextDescription();
+            /* gather all consumable and/or material descriptions from all characters */
+            var descriptions = _.union(
+                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
 
-            while (description !== undefined) {
-                if ((description !== "Hadronic Essence") &&
-                    (description !== "Sapphire Wire") &&
-                    (description !== "Plasteel Plating")) {
-                    break;
-                } else {
-                    description = getNextDescription();
+            var getNextDescription = (function() {
+                var i = 0;
+                return function() {
+                    return i < descriptions.length ? descriptions[i++] : undefined;
+                };
+            })();
+
+            var nextNormalize = function() {
+                var description = getNextDescription();
+
+                while (description !== undefined) {
+                    if ((description !== "Hadronic Essence") &&
+                        (description !== "Sapphire Wire") &&
+                        (description !== "Plasteel Plating")) {
+                        break;
+                    } else {
+                        description = getNextDescription();
+                    }
                 }
+
+                if (description == undefined) {
+                    BootstrapDialog.alert("All items normalized as best as possible");
+                    return;
+                }
+
+                // normalizeSingle = function(description, characters, usingbatchMode, callback)
+                self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
             }
 
-            if (description == undefined) {
-                self.refresh();
-                return;
-            }
-
-            //console.log(description);
-            self.normalizeSingle(description, false, true, nextNormalize);
+            nextNormalize();
         }
 
-        nextNormalize();
+        this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
+    }
+
+    this.selectMultiCharacters = function(title, description, callback) {
+        var selectedStatus = [];
+        for (i = 0; i < app.orderedCharacters().length; i++) {
+            var id = app.orderedCharacters()[i].id;
+            selectedStatus[id] = (id !== "Vault");
+        }
+        var dialogItself = (new tgd.dialog({
+            message: function(dialogItself) {
+                var $content = $(tgd.selectMultiCharactersTemplate({
+                    description: description,
+                    characters: app.orderedCharacters(),
+                    selected: selectedStatus
+                }));
+                var charButtonClicked = function(self, id) {
+                    selectedStatus[id] = !selectedStatus[id];
+                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                };
+                $.each(app.orderedCharacters(), function(i, val) {
+                    var id = val.id;
+                    var sel = "#char" + i.toString();
+                    $content.find(sel).click(function() {
+                        charButtonClicked($(this), id);
+                    });
+                });
+                return $content;
+            },
+            buttons: [{
+                label: 'OK',
+                cssClass: 'btn-primary',
+                action: function(dialogItself) {
+                    var characters = _.filter(app.orderedCharacters(), function(c) {
+                        return selectedStatus[c.id] == true;
+                    });
+                    if (characters.length <= 1) {
+                        BootstrapDialog.alert("Need to select two or more characters.");
+                    } else {
+                        callback(characters);
+                    }
+                    dialogItself.close();
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        })).title(title).show(true);
+    }
+
+    this.reloadBucket = function(character, bucketType) {
+        //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
+
+        var itemsToRemove = _.filter(character.items(), {
+            bucketType: bucketType
+        });
+        for (var i = 0; i < itemsToRemove.length; ++i) {
+            character.items.remove(itemsToRemove[i]);
+        }
+
+        if (character.id == "Vault") {
+            self.bungie.vault(function(results, response) {
+                if (results && results.data && results.data.buckets) {
+                    var items = [];
+                    results.data.buckets.forEach(function(bucket) {
+                        bucket.items.forEach(function(item) {
+                            var info = window._itemDefs[item.itemHash];
+                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                if (itemBucketType == bucketType) {
+                                    items.push(item);
+                                }
+                            }
+                        });
+                    });
+                    items.forEach(processItem(character));
+                } else {
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                }
+            });
+        } else {
+            self.bungie.inventory(character.id, function(response) {
+                if (response && response.data && response.data.buckets) {
+
+                    var items = [];
+                    Object.keys(response.data.buckets).forEach(function(bucket) {
+                        response.data.buckets[bucket].forEach(function(obj) {
+                            obj.items.forEach(function(item) {
+                                var info = window._itemDefs[item.itemHash];
+                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    if (itemBucketType == bucketType) {
+                                        items.push(item);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                    items.forEach(processItem(character));
+                } else {
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                }
+            });
+        }
     }
 
     this.setVaultTo = function(pos) {
@@ -1369,6 +1553,29 @@ var app = new(function() {
         }
     }
 
+    this.generateStatic = function() {
+        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
+        var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
+            "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
+            "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
+        ]
+        var profiles = _.map(self.characters(), function(profile) {
+            var newProfile = {};
+            _.each(profileKeys, function(key) {
+                newProfile[key] = ko.unwrap(profile[key]);
+            });
+            newProfile.items = _.map(profile.items(), function(item) {
+                var newItem = {};
+                _.each(itemKeys, function(key) {
+                    newItem[key] = ko.unwrap(item[key]);
+                });
+                return ko.toJS(newItem);
+            });
+            return newProfile;
+        });
+        return JSON.stringify(profiles);
+    }
+
     this.downloadLocale = function(locale, version) {
         $.ajax({
             url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
@@ -1419,28 +1626,6 @@ var app = new(function() {
         }
     }
 
-	this.generateStatic = function(){
-		var profileKeys = ["race","order","gender","classType","id","level","imgIcon","icon","background"];
-		var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked", 
-			"description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat", 
-			"progression", "weaponIndex", "armorIndex", "perks", "isUnique", "href" ]
-		var profiles = _.map(app.characters(), function(profile){
-			var newProfile = {};
-			_.each(profileKeys, function(key){
-			   newProfile[key] = ko.unwrap(profile[key]);
-			});
-			newProfile.items = _.map(profile.items(), function(item){
-				var newItem = {};
-				_.each(itemKeys, function(key){
-				   newItem[key] = ko.unwrap(item[key]);
-				});
-				return ko.toJS(newItem);
-			});
-			return newProfile;
-		});
-		return JSON.stringify(profiles);
-	}
-	
 	this.loadStatic = function(username){
 		self.apiRequest({ 
 				username: username
@@ -1474,23 +1659,30 @@ var app = new(function() {
 	}
 	
     this.init = function() {
+        self.initLocale();
 		self.bungie = new bungie();
-		tgd.perksTemplate = _.template(tgd.perksTemplate);
+        self.initItemDefs();
+        tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
-		tgd.duplicates = ko.observableArray().extend({
+        tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
+        tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
                 method: "notifyWhenChangesStop"
             }
         });
 		self.loadStatic(unescape(location.search.replace('?','')));
-		$("form").bind("submit", false);
+        $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(function() {
             setTimeout(self.bucketSizeHandler, 500);
         });
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
+        $(window).resize(_.throttle(self.quickIconHighlighter, 500));
+        $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         ko.applyBindings(self);
     }
 });
@@ -1504,4 +1696,29 @@ window.zam_tooltips = {
 };
 BootstrapDialog.defaultOptions.nl2br = false;
 
-$(document).ready(app.init);
+if (isMobile) {
+    window.addEventListener("statusTap", function() {
+        var target = $("body");
+
+        //disable touch scroll to kill existing inertial movement
+        target.css({
+            '-webkit-overflow-scrolling': 'auto',
+            'overflow-y': 'hidden'
+        });
+
+        //animate
+        target.animate({
+            scrollTop: 0
+        }, 300, "swing", function() {
+
+            //re-enable touch scrolling
+            target.css({
+                '-webkit-overflow-scrolling': 'touch',
+                'overflow-y': 'scroll'
+            });
+        });
+    });
+    document.addEventListener('deviceready', app.init, false);
+} else {
+    $(document).ready(app.init);
+}
