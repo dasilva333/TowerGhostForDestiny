@@ -14,6 +14,8 @@ var Profile = function(model) {
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
     this.postmaster = ko.computed(this._postmaster, this);
+    this.messages = ko.computed(this._messages, this);
+    this.lostItems = ko.computed(this._lostItems, this);
     this.container = ko.observable();
 }
 
@@ -32,13 +34,25 @@ Profile.prototype = {
     },
     _general: function() {
         return _.filter(this.items(), function(item) {
-            if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Subclasses")
+            if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Messages" && item.bucketType !== "Lost Items" && item.bucketType !== "Subclasses")
                 return item;
         });
     },
     _postmaster: function() {
         return _.filter(this.items(), function(item) {
-            if (item.bucketType == "Post Master")
+            if ((item.bucketType == "Post Master") || (item.bucketType == "Messages") || (item.bucketType == "Lost Items"))
+                return item;
+        });
+    },
+    _messages: function() {
+        return _.filter(this.items(), function(item) {
+            if (item.bucketType == "Messages")
+                return item;
+        });
+    },
+    _lostItems: function() {
+        return _.filter(this.items(), function(item) {
+            if (item.bucketType == "Lost Items")
                 return item;
         });
     },
