@@ -1663,8 +1663,6 @@ var app = new(function() {
 		self.bungie = new bungie();
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
-        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
-        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
@@ -1696,29 +1694,4 @@ window.zam_tooltips = {
 };
 BootstrapDialog.defaultOptions.nl2br = false;
 
-if (isMobile) {
-    window.addEventListener("statusTap", function() {
-        var target = $("body");
-
-        //disable touch scroll to kill existing inertial movement
-        target.css({
-            '-webkit-overflow-scrolling': 'auto',
-            'overflow-y': 'hidden'
-        });
-
-        //animate
-        target.animate({
-            scrollTop: 0
-        }, 300, "swing", function() {
-
-            //re-enable touch scrolling
-            target.css({
-                '-webkit-overflow-scrolling': 'touch',
-                'overflow-y': 'scroll'
-            });
-        });
-    });
-    document.addEventListener('deviceready', app.init, false);
-} else {
-    $(document).ready(app.init);
-}
+$(document).ready(app.init);
