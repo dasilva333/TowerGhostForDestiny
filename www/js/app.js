@@ -1726,7 +1726,6 @@ var app = new(function() {
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        self.whatsNew();
         ko.applyBindings(self);
     }
 });
