@@ -250,6 +250,15 @@ try {
 			return BootstrapDialog.alert("Please sign in before attempting to refresh");
 		}
 	  }
+	  this.account = function(callback) {
+	    _request({
+	      route: '/Destiny/' + active.type +
+	              '/Account/' + membershipId +
+	              '/',
+	      method: 'GET',
+	      complete: callback
+	    });	  
+	  }
 	  this.vault = function(callback) {
 	    _request({
 	      route: '/Destiny/' + active.type + '/MyAccount/Vault/',

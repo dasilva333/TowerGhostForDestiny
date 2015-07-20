@@ -583,12 +583,6 @@ var app = new(function() {
                     itemDescription = info.itemDescription;
                     itemTypeName = info.itemTypeName;
                 }
-				if (description == "Focused Light") {
-					console.log("item:");
-					console.log(item);
-					console.log("info:");
-					console.log(info);
-				}				
                 //some weird stuff shows up under this bucketType w/o this filter
                 if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
                     return;
@@ -741,9 +735,28 @@ var app = new(function() {
                 self.tierTypes(self.tierTypes.sort(function(a, b) {
                     return b.type - a.type
                 }));
-                setTimeout(self.bucketSizeHandler, 500);
-                loadingData = false;
-                //console.timeEnd("avatars.forEach");
+
+                function realDone() {
+                    console.log("real done");
+                    setTimeout(self.bucketSizeHandler, 500);
+                    loadingData = false;
+                    //console.timeEnd("avatars.forEach");
+                }
+                // check for invisible items eg. Focused Light)
+                self.bungie.account(function(results, response) {
+                    if (results && results.data && results.data.inventory && results.data.inventory.buckets && results.data.inventory.buckets.Invisible) {
+                        var invisible = results.data.inventory.buckets.Invisible;
+                        var characters = _.filter(self.characters(), function(character) {
+                            return character.id !== "Vault";
+                        });
+                        invisible.forEach(function(buckets) {
+                            characters.forEach(function(character) {
+                                buckets.items.forEach(processItem(character));
+                            });
+                        });
+                    }
+                    realDone();
+                });
             }
         }
         self.bungie.search(self.preferredSystem(), function(e) {

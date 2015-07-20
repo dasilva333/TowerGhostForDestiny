@@ -577,134 +577,14 @@
                     <span data-bind="text: $root.activeText().loadouts_instructions_contd">to equip.</span>
                 </p>
             </div>
-            <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">				
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">						
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-						<img class="itemImage" src="about:blank" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					</a>					
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>				
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
+				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">	
+					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
+					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+						<img class="itemImage" src="about:blank" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+					</a>
+					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
 				</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </span>
         </div>
     </div>
