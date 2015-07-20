@@ -639,7 +639,7 @@ var app = new(function() {
 								if (node.isActivated && node.hidden == false){
 									var nodes = _.findWhere( talentGridNodes, { nodeHash: node.nodeHash });
 									var perk = nodes.steps[node.stepIndex];
-									if ( perk.nodeStepName !== "Upgrade Damage" && perk.nodeStepName !== "Upgrade Defense" && perk.activationRequirement.gridLevel > 0 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1) ){
+									if ( tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1) ){
 										itemObject.perks.push({ 
 											name: perk.nodeStepName,
 											description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
