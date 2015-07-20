@@ -560,6 +560,24 @@ var app = new(function() {
         return missingIds;
     })
 
+    var lostItemsHelper = [420519466, 1322081400, 2551875383];
+    var invisibleItemsHelper = [2910404660];
+    var getBucketTypeHelper = function(item, info) {
+        if (item.location !== 4) {
+            return tgd.DestinyBucketTypes[info.bucketTypeHash];
+        }
+        if (item.isEquipment) {
+            return "Lost Items";
+        }
+        if (lostItemsHelper.indexOf(item.itemHash) > -1) {
+            return "Lost Items";
+        }
+        if (invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+            return "Invisible";
+        }
+        return "Messages";
+    }
+
     var processItem = function(profile, ignoreDups) {
         return function(item) {
             if (!(item.itemHash in window._itemDefs)) {
@@ -597,7 +615,7 @@ var app = new(function() {
                     locked: item.locked,
                     description: description,
                     itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                    bucketType: getBucketTypeHelper(item, info),
                     type: info.itemSubType,
                     typeName: itemTypeName,
                     tierType: info.tierType,
@@ -758,7 +776,6 @@ var app = new(function() {
                 }));
 
                 function realDone() {
-                    console.log("real done");
                     setTimeout(self.bucketSizeHandler, 500);
                     loadingData = false;
                     //console.timeEnd("avatars.forEach");
@@ -1532,7 +1549,7 @@ var app = new(function() {
                         bucket.items.forEach(function(item) {
                             var info = window._itemDefs[item.itemHash];
                             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                var itemBucketType = getBucketTypeHelper(item, info);
                                 if (itemBucketType == bucketType) {
                                     items.push(item);
                                 }
@@ -1557,7 +1574,7 @@ var app = new(function() {
                             obj.items.forEach(function(item) {
                                 var info = window._itemDefs[item.itemHash];
                                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    var itemBucketType = getBucketTypeHelper(item, info);
                                     if (itemBucketType == bucketType) {
                                         items.push(item);
                                     }
