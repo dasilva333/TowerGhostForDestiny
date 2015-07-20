@@ -562,6 +562,11 @@ var app = new(function() {
         return missingIds;
     })
 
+    var lostItemsHelper = [420519466, 1322081400, 2551875383];
+    var getBucketTypeHelper = function(item, info) {
+        return (item.location == 4) ? (item.isEquipment ? "Lost Items" : (lostItemsHelper.indexOf(item.itemHash) > -1 ? "Lost Items" : "Messages")) : tgd.DestinyBucketTypes[info.bucketTypeHash];
+    }
+
     var processItem = function(profile) {
         return function(item) {
             if (!(item.itemHash in window._itemDefs)) {
@@ -599,7 +604,7 @@ var app = new(function() {
                     locked: item.locked,
                     description: description,
                     itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                    bucketType: getBucketTypeHelper(item, info),
                     type: info.itemSubType,
                     typeName: itemTypeName,
                     tierType: info.tierType,
@@ -634,29 +639,32 @@ var app = new(function() {
                         }
                     });
                     itemObject.isUnique = false;
-					itemObject.stats = {};
+                    itemObject.stats = {};
                     _.each(item.stats, function(stat) {
                         if (stat.statHash in window._statDefs) {
                             var p = window._statDefs[stat.statHash];
                             itemObject.stats[p.statName] = stat.value;
                         }
                     });
-					
-					var perks = [], perkHashes = _.pluck(item.perks, 'perkHash');
-					var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
-					_.each(item.nodes, function(node){
-						if (node.isActivated && node.hidden == false){
-							var nodes = _.findWhere( talentGridNodes, { nodeHash: node.nodeHash });
-							var perk = nodes.steps[node.stepIndex];
-							if ( perk.nodeStepName !== "Upgrade Damage" && perk.nodeStepName !== "Upgrade Defense" && perk.activationRequirement.gridLevel > 0 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1) ){
-								itemObject.perks.push({ 
-									name: perk.nodeStepName,
-									description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-									iconPath: self.bungie.getUrl() + perk.icon
-								});
-							}
-						}
-					});
+
+                    var perks = [],
+                        perkHashes = _.pluck(item.perks, 'perkHash');
+                    var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
+                    _.each(item.nodes, function(node) {
+                        if (node.isActivated && node.hidden == false) {
+                            var nodes = _.findWhere(talentGridNodes, {
+                                nodeHash: node.nodeHash
+                            });
+                            var perk = nodes.steps[node.stepIndex];
+                            if (perk.nodeStepName !== "Upgrade Damage" && perk.nodeStepName !== "Upgrade Defense" && perk.activationRequirement.gridLevel > 0 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                itemObject.perks.push({
+                                    name: perk.nodeStepName,
+                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                    iconPath: self.bungie.getUrl() + perk.icon
+                                });
+                            }
+                        }
+                    });
                 }
                 if (itemObject.typeName && itemObject.typeName == "Emblem") {
                     itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
@@ -1506,7 +1514,7 @@ var app = new(function() {
                         bucket.items.forEach(function(item) {
                             var info = window._itemDefs[item.itemHash];
                             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                var itemBucketType = getBucketTypeHelper(item, info);
                                 if (itemBucketType == bucketType) {
                                     items.push(item);
                                 }
@@ -1531,7 +1539,7 @@ var app = new(function() {
                             obj.items.forEach(function(item) {
                                 var info = window._itemDefs[item.itemHash];
                                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    var itemBucketType = getBucketTypeHelper(item, info);
                                     if (itemBucketType == bucketType) {
                                         items.push(item);
                                     }
