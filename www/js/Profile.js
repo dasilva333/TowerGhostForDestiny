@@ -68,8 +68,17 @@ Profile.prototype = {
             return item.tierType * -1;
         });
     },
+    getVisible: function(type) {
+        return _.filter(this.get(type), function(item) {
+            return item.isVisible();
+        });
+    },
     itemEquipped: function(type) {
         return ko.utils.arrayFirst(this.items(), this.filterItemByType(type, true));
+    },
+    itemEquippedVisible: function(type) {
+        var ie = this.itemEquipped(type);
+        return ie == undefined ? false : ie.isVisible();
     },
     showStats: function() {
         var character = this;

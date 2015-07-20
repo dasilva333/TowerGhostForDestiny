@@ -560,7 +560,7 @@ var app = new(function() {
         return missingIds;
     })
 
-    var processItem = function(profile) {
+    var processItem = function(profile, ignoreDups) {
         return function(item) {
             if (!(item.itemHash in window._itemDefs)) {
                 console.log("found an item without a definition! " + JSON.stringify(item));
@@ -604,7 +604,9 @@ var app = new(function() {
                     tierTypeName: tierTypeName,
                     icon: dataDir + info.icon
                 };
-                tgd.duplicates.push(item.itemHash);
+                if (ignoreDups == undefined || ignoreDups == false) {
+                    tgd.duplicates.push(item.itemHash);
+                }
                 if (item.primaryStat) {
                     itemObject.primaryStat = item.primaryStat.value;
                 }
@@ -1537,7 +1539,7 @@ var app = new(function() {
                             }
                         });
                     });
-                    items.forEach(processItem(character));
+                    items.forEach(processItem(character, true));
                     reloadingBucket = false;
                 } else {
                     reloadingBucket = false;
@@ -1563,7 +1565,7 @@ var app = new(function() {
                             });
                         });
                     });
-                    items.forEach(processItem(character));
+                    items.forEach(processItem(character, true));
                     reloadingBucket = false;
                 } else {
                     reloadingBucket = false;
