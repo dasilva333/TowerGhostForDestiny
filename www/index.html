@@ -66,7 +66,7 @@
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Lost Items' || bucketType == 'Bounties' || bucketType == 'Mission') -->
-            (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
+            (<span data-bind="text: character.getVisible(bucketType).length + (character.itemEquippedVisible(bucketType) ? 1 : 0)"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/10)
@@ -79,7 +79,7 @@
             <!--/ko  -->
             <!--/ko  -->
             <!-- ko if: ( character.id == 'Vault' ) -->
-            (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+            (<span data-bind="text: character.getVisible(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
             <!--/ko  -->
             <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
                 <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
