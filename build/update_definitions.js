@@ -34,7 +34,20 @@ var neededFiles = [
 	}},
 	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash", reduce: function(item){
 		var obj = {};
-		obj.nodes = _.where( item.nodes, { column: 5 });
+		obj.nodes = _.map(item.nodes, function(node){
+			return {
+				nodeHash: node.nodeHash,
+				steps: _.map(node.steps, function(step){
+					return {
+						icon: step.icon,
+						nodeStepName: step.nodeStepName,
+						nodeStepDescription: step.nodeStepDescription,
+						perkHashes: step.perkHashes,
+						activationRequirement: step.activationRequirement
+					}
+				})
+			}
+		});
 		return obj;
 	}},
 	{ table: "DestinyRaceDefinition", name: "raceDefs", key: "raceHash", reduce: function(item){
