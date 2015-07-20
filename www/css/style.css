@@ -233,6 +233,8 @@ body {
 
 #loadout-contents .item {
     position: relative;
+	display: inline-block;
+	width: 67px;
 }
 
 #loadout-contents input {

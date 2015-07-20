@@ -64,7 +64,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
@@ -593,12 +593,13 @@ var app = new(function() {
                     characterId: profile.id,
                     damageType: item.damageType,
                     damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+                    isEquipment: item.isEquipment,
                     isEquipped: item.isEquipped,
                     isGridComplete: item.isGridComplete,
                     locked: item.locked,
                     description: description,
                     itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
                     type: info.itemSubType,
                     typeName: itemTypeName,
                     tierType: info.tierType,
@@ -626,30 +627,43 @@ var app = new(function() {
                             return {
                                 iconPath: self.bungie.getUrl() + perk.iconPath,
                                 name: p.displayName,
-                                description: p.displayDescription
+                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription
                             }
                         } else {
                             return perk;
                         }
                     });
                     itemObject.isUnique = false;
-                }
-
-                if (itemObject.typeName && itemObject.typeName == "Emblem") {
-                    itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
-                }
-                if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
-                    itemObject.primaryStat = item.stackSize;
-                    itemObject.maxStackSize = info.maxStackSize;
-                }
-                if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
-                    itemObject.stats = {};
+					itemObject.stats = {};
                     _.each(item.stats, function(stat) {
                         if (stat.statHash in window._statDefs) {
                             var p = window._statDefs[stat.statHash];
                             itemObject.stats[p.statName] = stat.value;
                         }
                     });
+					
+					var perks = [], perkHashes = _.pluck(item.perks, 'perkHash');
+					var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
+					_.each(item.nodes, function(node){
+						if (node.isActivated && node.hidden == false){
+							var nodes = _.findWhere( talentGridNodes, { nodeHash: node.nodeHash });
+							var perk = nodes.steps[node.stepIndex];
+							if ( perk.nodeStepName !== "Upgrade Damage" && perk.nodeStepName !== "Upgrade Defense" && perk.activationRequirement.gridLevel > 0 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1) ){
+								itemObject.perks.push({ 
+									name: perk.nodeStepName,
+									description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+									iconPath: self.bungie.getUrl() + perk.icon
+								});
+							}
+						}
+					});
+                }
+                if (itemObject.typeName && itemObject.typeName == "Emblem") {
+                    itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
+                }
+                if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
+                    itemObject.primaryStat = item.stackSize;
+                    itemObject.maxStackSize = info.maxStackSize;
                 }
                 //console.log("new item time " + (new Date()-t));
                 profile.items.push(new Item(itemObject, profile));
@@ -1480,15 +1494,28 @@ var app = new(function() {
         })).title(title).show(true);
     }
 
+    var reloadingBucket = false;
     this.reloadBucket = function(character, bucketType) {
+        if (reloadingBucket) {
+            //console.log("reentrancy guard hit");
+            return;
+        }
+        reloadingBucket = true;
         //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
 
         var itemsToRemove = _.filter(character.items(), {
             bucketType: bucketType
         });
+        // manually remove so as to avoid knockout events firing and killing perf on mobile
+        var ary = character.items();
         for (var i = 0; i < itemsToRemove.length; ++i) {
-            character.items.remove(itemsToRemove[i]);
+            var pos = ary.indexOf(itemsToRemove[i]);
+            if (pos > -1) {
+                ary.splice(pos, 1);
+            }
+            //character.items.remove(itemsToRemove[i]);
         }
+        character.items.valueHasMutated();
 
         if (character.id == "Vault") {
             self.bungie.vault(function(results, response) {
@@ -1498,7 +1525,7 @@ var app = new(function() {
                         bucket.items.forEach(function(item) {
                             var info = window._itemDefs[item.itemHash];
                             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
                                 if (itemBucketType == bucketType) {
                                     items.push(item);
                                 }
@@ -1506,7 +1533,9 @@ var app = new(function() {
                         });
                     });
                     items.forEach(processItem(character));
+                    reloadingBucket = false;
                 } else {
+                    reloadingBucket = false;
                     self.refresh();
                     return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
@@ -1521,7 +1550,7 @@ var app = new(function() {
                             obj.items.forEach(function(item) {
                                 var info = window._itemDefs[item.itemHash];
                                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
                                     if (itemBucketType == bucketType) {
                                         items.push(item);
                                     }
@@ -1530,7 +1559,9 @@ var app = new(function() {
                         });
                     });
                     items.forEach(processItem(character));
+                    reloadingBucket = false;
                 } else {
+                    reloadingBucket = false;
                     self.refresh();
                     return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }

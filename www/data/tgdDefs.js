@@ -74,6 +74,9 @@ tgd.DestinyBucketColumns = {
 	//TODO: Improve this so I don't need two records
 	"Post": 4,
 	"Post Master": 4,
+	"Messages": 4,
+	"Lost": 4,
+	"Lost Items": 4,
 	"Mission": 4,
 	"Invisible": 4
 }
