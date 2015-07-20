@@ -1462,15 +1462,28 @@ var app = new(function() {
         })).title(title).show(true);
     }
 
+    var reloadingBucket = false;
     this.reloadBucket = function(character, bucketType) {
+        if (reloadingBucket) {
+            //console.log("reentrancy guard hit");
+            return;
+        }
+        reloadingBucket = true;
         //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
 
         var itemsToRemove = _.filter(character.items(), {
             bucketType: bucketType
         });
+        // manually remove so as to avoid knockout events firing and killing perf on mobile
+        var ary = character.items();
         for (var i = 0; i < itemsToRemove.length; ++i) {
-            character.items.remove(itemsToRemove[i]);
+            var pos = ary.indexOf(itemsToRemove[i]);
+            if (pos > -1) {
+                ary.splice(pos, 1);
+            }
+            //character.items.remove(itemsToRemove[i]);
         }
+        character.items.valueHasMutated();
 
         if (character.id == "Vault") {
             self.bungie.vault(function(results, response) {
@@ -1488,7 +1501,9 @@ var app = new(function() {
                         });
                     });
                     items.forEach(processItem(character));
+                    reloadingBucket = false;
                 } else {
+                    reloadingBucket = false;
                     self.refresh();
                     return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
@@ -1512,7 +1527,9 @@ var app = new(function() {
                         });
                     });
                     items.forEach(processItem(character));
+                    reloadingBucket = false;
                 } else {
+                    reloadingBucket = false;
                     self.refresh();
                     return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
