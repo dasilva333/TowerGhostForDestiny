@@ -5,7 +5,7 @@
   "description": "This app allows you to transfer items between profiles, with various filters.",
   "author": "Richard Pinedo",
   "license": "MPL 2.0",
-  "version": "2.8.5",
+  "version": "2.8.6",
   "icon": "icon.png",
   "permissions": {
     "cross-domain-content": [

@@ -73,6 +73,9 @@ tgd.DestinyBucketColumns = {
 	//TODO: Improve this so I don't need two records
 	"Post": 4,
 	"Post Master": 4,
+	"Messages": 4,
+	"Lost": 4,
+	"Lost Items": 4,
 	"Mission": 4
 }
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
@@ -202,5 +205,35 @@ tgd.normalizeTemplate = '<div id="menu">' +
 			'<a class="list-group-item row">sub-item 2</a>' +
 		'</div>' +
 		'-->' +
+	'</div>' +
+'</div>';
+
+tgd.selectMultiCharactersTemplate = '<div id="menu">' +
+	'<div class="panel list-group">' +
+		'<div class="list-group-item row">' +
+			'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' + 				
+				'<p><%= description %></p>' +
+			'</div>' +
+		'</div>' +
+		'<div id="opt1" class="collapse in">' +
+			'<div class="list-group-item row">' +
+				'<div class="locations col-xs-12 col-sm-12 col-md-12 col-lg-12">' +					
+					'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2"><!-- padding --></div>' +
+					'<% for (i = 0; i < characters.length; i++){ %>' +
+						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
+							'<div class="attkIcon">' +
+								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
+								'<% if (selected[characters[i].id] == true){ %>' +
+									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+								'<% } else { %>' +
+									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+								'<% } %>' +
+								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
+							'</div>' +
+						'</div>' +
+					'<% } %>' +
+				'</div>' +
+			'</div>' +
+		'</div>' +
 	'</div>' +
 '</div>';
