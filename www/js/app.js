@@ -602,7 +602,8 @@ var app = new(function() {
                     typeName: itemTypeName,
                     tierType: info.tierType,
                     tierTypeName: tierTypeName,
-                    icon: dataDir + info.icon
+                    icon: dataDir + info.icon,
+					isUnique: false
                 };
                 if (ignoreDups == undefined || ignoreDups == false) {
                     tgd.duplicates.push(item.itemHash);
@@ -619,52 +620,48 @@ var app = new(function() {
 
                 itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
                 itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-                /* both weapon engrams and weapons fit under this condition*/
-                if (itemObject.type > 1) {
-                    if (item.perks.length > 0) {
-                        itemObject.perks = item.perks.map(function(perk) {
-                            if (perk.perkHash in window._perkDefs) {
-                                var p = window._perkDefs[perk.perkHash];
-                                return {
-                                    iconPath: self.bungie.getUrl() + perk.iconPath,
-                                    name: p.displayName,
-                                    description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription
-                                }
-                            } else {
-                                return perk;
-                            }
-                        });
-                        if (item.talentGridHash in _talentGridDefs) {
-                            var perkHashes = _.pluck(item.perks, 'perkHash');
-                            var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
-                            _.each(item.nodes, function(node) {
-                                if (node.isActivated && node.hidden == false) {
-                                    var nodes = _.findWhere(talentGridNodes, {
-                                        nodeHash: node.nodeHash
-                                    });
-                                    var perk = nodes.steps[node.stepIndex];
-                                    if (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-                                        itemObject.perks.push({
-                                            name: perk.nodeStepName,
-                                            description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                            iconPath: self.bungie.getUrl() + perk.icon
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    if (item.stats.length > 0) {
-                        itemObject.stats = {};
-                        _.each(item.stats, function(stat) {
-                            if (stat.statHash in window._statDefs) {
-                                var p = window._statDefs[stat.statHash];
-                                itemObject.stats[p.statName] = stat.value;
-                            }
-                        });
-                    }
-                    itemObject.isUnique = false;
-                }
+                 if (item.perks.length > 0) {
+                     itemObject.perks = item.perks.map(function(perk) {
+                         if (perk.perkHash in window._perkDefs) {
+                             var p = window._perkDefs[perk.perkHash];
+                             return {
+                                 iconPath: self.bungie.getUrl() + perk.iconPath,
+                                 name: p.displayName,
+                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription
+                             }
+                         } else {
+                             return perk;
+                         }
+                     });
+                     if (item.talentGridHash in _talentGridDefs) {
+                         var perkHashes = _.pluck(item.perks, 'perkHash');
+                         var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
+                         _.each(item.nodes, function(node) {
+                             if (node.isActivated && node.hidden == false) {
+                                 var nodes = _.findWhere(talentGridNodes, {
+                                     nodeHash: node.nodeHash
+                                 });
+                                 var perk = nodes.steps[node.stepIndex];
+                                 if (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                     itemObject.perks.push({
+                                         name: perk.nodeStepName,
+                                         description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                         iconPath: self.bungie.getUrl() + perk.icon
+                                     });
+                                 }
+                             }
+                         });
+                     }
+                 }
+                 if (item.stats.length > 0) {
+                     itemObject.stats = {};
+                     _.each(item.stats, function(stat) {
+                         if (stat.statHash in window._statDefs) {
+                             var p = window._statDefs[stat.statHash];
+                             itemObject.stats[p.statName] = stat.value;
+                         }
+                     });
+                 }
                 if (itemObject.typeName && itemObject.typeName == "Emblem") {
                     itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
                 }
