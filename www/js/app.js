@@ -215,7 +215,6 @@ tgd.StoreObj = function(key, compare, writeCallback) {
 
 var app = new(function() {
     var self = this;
-    var dataDir = "data";
 
     this.retryCount = ko.observable(0);
     this.loadingUser = ko.observable(false);
@@ -564,136 +563,7 @@ var app = new(function() {
         });
         return missingIds;
     })
-
-    var processItem = function(profile, ignoreDups) {
-        return function(item) {
-            if (!(item.itemHash in window._itemDefs)) {
-                console.log("found an item without a definition! " + JSON.stringify(item));
-                console.log(item.itemHash);
-                return;
-            }
-            var info = window._itemDefs[item.itemHash];
-            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var description, tierTypeName, itemDescription, itemTypeName;
-                try {
-                    description = decodeURIComponent(info.itemName);
-                    tierTypeName = decodeURIComponent(info.tierTypeName);
-                    itemDescription = decodeURIComponent(info.itemDescription);
-                    itemTypeName = decodeURIComponent(info.itemTypeName);
-                } catch (e) {
-                    description = info.itemName;
-                    tierTypeName = info.tierTypeName;
-                    itemDescription = info.itemDescription;
-                    itemTypeName = info.itemTypeName;
-                }
-                //some weird stuff shows up under this bucketType w/o this filter
-                if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
-                    return;
-                }
-                var itemObject = {
-                    id: item.itemHash,
-                    _id: item.itemInstanceId,
-                    characterId: profile.id,
-                    damageType: item.damageType,
-                    damageTypeName: tgd.DestinyDamageTypes[item.damageType],
-                    isEquipment: item.isEquipment,
-                    isEquipped: item.isEquipped,
-                    isGridComplete: item.isGridComplete,
-                    locked: item.locked,
-                    description: description,
-                    itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
-                    type: info.itemSubType,
-                    typeName: itemTypeName,
-                    tierType: info.tierType,
-                    tierTypeName: tierTypeName,
-                    icon: dataDir + info.icon,
-					isUnique: false
-                };
-                if (ignoreDups == undefined || ignoreDups == false) {
-                    tgd.duplicates.push(item.itemHash);
-                }
-                if (item.primaryStat) {
-                    itemObject.primaryStat = item.primaryStat.value;
-                }
-                if (info.bucketTypeHash == "2197472680" && item.progression) {
-                    itemObject.primaryStat = ((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%";
-                }
-                if (item.progression) {
-                    itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
-                }
-
-                itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
-                itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-                 if (item.perks.length > 0) {
-                     itemObject.perks = item.perks.map(function(perk) {
-                         if (perk.perkHash in window._perkDefs) {
-                             var p = window._perkDefs[perk.perkHash];
-                             return {
-                                 iconPath: self.bungie.getUrl() + perk.iconPath,
-                                 name: p.displayName,
-                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-								 active: perk.isActive
-                             }
-                         } else {
-                             return perk;
-                         }
-                     });
-                     if (item.talentGridHash in _talentGridDefs) {
-                         var perkHashes = _.pluck(item.perks, 'perkHash'), 
-							perkNames = _.pluck(itemObject.perks, 'name'),
-							talentPerks = {};
-                         var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
-                         _.each(item.nodes, function(node) {
-                             if (node.isActivated && node.hidden == false) {
-                                 var nodes = _.findWhere(talentGridNodes, {
-                                     nodeHash: node.nodeHash
-                                 });
-                                 var perk = nodes.steps[node.stepIndex];
-                                 if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-									(perkNames.indexOf(perk.nodeStepName) == -1 ) &&
-									(perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-									 talentPerks[perk.nodeStepName] = {
-										 active: true,
-                                         name: perk.nodeStepName,
-                                         description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                         iconPath: self.bungie.getUrl() + perk.icon
-                                     };
-                                 }
-                             }
-                         });
-						_.each(talentPerks, function(perk){
-							itemObject.perks.push(perk);
-						});
-                     }
-                 }
-                 if (item.stats.length > 0) {
-                     itemObject.stats = {};
-                     _.each(item.stats, function(stat) {
-                         if (stat.statHash in window._statDefs) {
-                             var p = window._statDefs[stat.statHash];
-                             itemObject.stats[p.statName] = stat.value;
-                         }
-                     });
-                 }
-                if (itemObject.typeName && itemObject.typeName == "Emblem") {
-                    itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
-                }
-                if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
-                    itemObject.primaryStat = item.stackSize;
-                    itemObject.maxStackSize = info.maxStackSize;
-                }
-                //console.log("new item time " + (new Date()-t));
-                profile.items.push(new Item(itemObject, profile));
-            }
-            /*else {
-				console.log(info.itemName);
-				console.log(info);
-				console.log(item);
-			}*/
-        }
-    }
-
+    
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
             if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
@@ -807,26 +677,16 @@ var app = new(function() {
             self.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
                     var buckets = results.data.buckets;
-                    var profile = new Profile({
-                        race: "",
-                        order: self.vaultPos(),
-                        gender: "Tower",
-                        classType: "Vault",
-                        id: "Vault",
-                        level: "",
-                        imgIcon: "assets/vault_icon.jpg",
-                        icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
-                        background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
-                    });
-
-                    buckets.forEach(function(bucket) {
-                        bucket.items.forEach(processItem(profile));
-                    });
+					var items = [];
+					buckets.forEach(function(bucket) {
+						bucket.items.forEach(function(item){
+							items.push(item);
+						});							
+					});
+					var profile = new Profile("Vault", items);
                     self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
-                    //self.characters.push(profile);
-                    //console.timeEnd("self.bungie.vault");
-                    done(profile)
+                    self.characters.push(profile);
                 } else {
                     loadingData = false;
                     self.refresh();
@@ -836,41 +696,19 @@ var app = new(function() {
             //console.time("avatars.forEach");          
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (response && response.data && response.data.buckets) {
-                        //console.time("new Profile");                  
-                        var profile = new Profile({
-                            order: index + 1,
-                            gender: tgd.DestinyGender[character.characterBase.genderType],
-                            classType: tgd.DestinyClass[character.characterBase.classType],
-                            id: character.characterBase.characterId,
-                            imgIcon: self.bungie.getUrl() + character.emblemPath,
-                            icon: self.makeBackgroundUrl(character.emblemPath),
-                            background: self.makeBackgroundUrl(character.backgroundPath),
-                            level: character.characterLevel,
-                            stats: character.characterBase.stats,
-                            percentToNextLevel: character.percentToNextLevel,
-                            race: window._raceDefs[character.characterBase.raceHash].raceName
-                        });
-                        var items = [];
-
-
-                        Object.keys(response.data.buckets).forEach(function(bucket) {
-                            response.data.buckets[bucket].forEach(function(obj) {
-                                obj.items.forEach(function(item) {
-                                    items.push(item);
-                                });
-                            });
-                        });
-                        //simulate me having the 4th horseman
-                        //items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-                        //console.time("processItems");
-                        items.forEach(processItem(profile));
-                        //console.timeEnd("processItems");
+                    if (response && response.data && response.data.buckets) {  
+						var items = [];
+						Object.keys(response.data.buckets).forEach(function(bucket) {
+							response.data.buckets[bucket].forEach(function(obj) {
+								obj.items.forEach(function(item) {
+									items.push(item);
+								});
+							});
+						});
+						var profile = new Profile(character, items);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
-                        //console.timeEnd("new Profile");
-                        //self.characters.push(profile);
-                        done(profile);
+                        self.characters.push(profile);
                     } else {
                         loadingData = false;
                         self.refresh();
@@ -1501,81 +1339,6 @@ var app = new(function() {
                 }
             }]
         })).title(title).show(true);
-    }
-
-    var reloadingBucket = false;
-    this.reloadBucket = function(character, bucketType) {
-        if (reloadingBucket) {
-            //console.log("reentrancy guard hit");
-            return;
-        }
-        reloadingBucket = true;
-        //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
-
-        var itemsToRemove = _.filter(character.items(), {
-            bucketType: bucketType
-        });
-        // manually remove so as to avoid knockout events firing and killing perf on mobile
-        var ary = character.items();
-        for (var i = 0; i < itemsToRemove.length; ++i) {
-            var pos = ary.indexOf(itemsToRemove[i]);
-            if (pos > -1) {
-                ary.splice(pos, 1);
-            }
-            //character.items.remove(itemsToRemove[i]);
-        }
-        character.items.valueHasMutated();
-
-        if (character.id == "Vault") {
-            self.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var items = [];
-                    results.data.buckets.forEach(function(bucket) {
-                        bucket.items.forEach(function(item) {
-                            var info = window._itemDefs[item.itemHash];
-                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
-                                if (itemBucketType == bucketType) {
-                                    items.push(item);
-                                }
-                            }
-                        });
-                    });
-                    items.forEach(processItem(character, true));
-                    reloadingBucket = false;
-                } else {
-                    reloadingBucket = false;
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-        } else {
-            self.bungie.inventory(character.id, function(response) {
-                if (response && response.data && response.data.buckets) {
-
-                    var items = [];
-                    Object.keys(response.data.buckets).forEach(function(bucket) {
-                        response.data.buckets[bucket].forEach(function(obj) {
-                            obj.items.forEach(function(item) {
-                                var info = window._itemDefs[item.itemHash];
-                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
-                                    if (itemBucketType == bucketType) {
-                                        items.push(item);
-                                    }
-                                }
-                            });
-                        });
-                    });
-                    items.forEach(processItem(character, true));
-                    reloadingBucket = false;
-                } else {
-                    reloadingBucket = false;
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-        }
     }
 
     this.setVaultTo = function(pos) {
