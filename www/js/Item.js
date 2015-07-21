@@ -85,7 +85,7 @@ Item.prototype = {
         var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
         var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
         var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
-        var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
+        var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.typeName;
         var dupes = _.filter(tgd.duplicates(), function(id) {
             return id == self.id
         }).length;

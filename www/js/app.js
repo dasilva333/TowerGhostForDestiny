@@ -539,9 +539,13 @@ var app = new(function() {
         self.toggleBootstrapMenu();
         self.tierFilter(model.tier);
     }
-    this.setTypeFilter = function(model, event) {
-        self.toggleBootstrapMenu();
-        self.typeFilter($(event.target).closest('li').attr("value"));
+    this.setTypeFilter = function(weaponType) {
+		return function(){		
+			self.toggleBootstrapMenu();
+			var type = weaponType.name;
+			console.log("type: " + type);
+			self.typeFilter(type);
+		}
     }
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -692,13 +696,23 @@ var app = new(function() {
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 1 && _.where(self.weaponTypes(), {
-                    type: item.type
-                }).length == 0) {
+            if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
+                    name: item.typeName
+                }).length == 0) {				
                 self.weaponTypes.push({
                     name: item.typeName,
                     type: item.type
                 });
+				self.weaponTypes.sort(function (a, b) {
+				  if (a.name > b.name) {
+					return 1;
+				  }
+				  if (a.name < b.name) {
+					return -1;
+				  }
+				  // a must be equal to b
+				  return 0;
+				})
             }
         });
     }

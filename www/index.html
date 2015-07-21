@@ -350,12 +350,17 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter" value="0">
-                                <a href="#"><i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                            <li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter({ name: 0 })">
+                                <a href="#">
+									<i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: $root.activeText().menu_all">All</span>
+								</a>
                             </li>
                             <!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
-                            <li data-bind="css: $parent.typeFilter() == weaponType.type ? 'active' : '', fastclick: $parent.setTypeFilter, value: weaponType.type" value="0">
-                                <a href="#"><i class="fa" data-bind="css: $parent.typeFilter() == weaponType.type ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: weaponType.name">All</span></a>
+                            <li data-bind="css: $parent.typeFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setTypeFilter(weaponType)">
+                                <a href="#"><i class="fa" data-bind="css: $parent.typeFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: weaponType.name">All</span>
+								</a>
                             </li>
                             <!--/ko  -->
                         </ul>
