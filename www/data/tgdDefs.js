@@ -49,7 +49,8 @@ tgd.DestinyBucketTypes = {
 	"375726501": "Mission",
 	"2197472680": "Bounties",
 	"12345": "Post Master",
-	"2422292810": "Post Master"
+	"2422292810": "Post Master",
+	"1367666825": "Invisible"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -76,7 +77,8 @@ tgd.DestinyBucketColumns = {
 	"Messages": 4,
 	"Lost": 4,
 	"Lost Items": 4,
-	"Mission": 4
+	"Mission": 4,
+	"Invisible": 4
 }
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
