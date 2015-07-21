@@ -131,7 +131,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 			'<div class="destt-talent-icon">' +
 				'<img src="<%= perk.iconPath %>" width="36">' +
 			'</div>' +
-			'<div class="destt-talent-description">' +
+			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
 				'<%= perk.description %>' +
 			'</div>' +
 		'</div>' +

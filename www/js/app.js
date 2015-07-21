@@ -627,14 +627,17 @@ var app = new(function() {
                              return {
                                  iconPath: self.bungie.getUrl() + perk.iconPath,
                                  name: p.displayName,
-                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription
+                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+								 active: perk.isActive
                              }
                          } else {
                              return perk;
                          }
                      });
                      if (item.talentGridHash in _talentGridDefs) {
-                         var perkHashes = _.pluck(item.perks, 'perkHash');
+                         var perkHashes = _.pluck(item.perks, 'perkHash'), 
+							perkNames = _.pluck(itemObject.perks, 'name'),
+							talentPerks = {};
                          var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
                          _.each(item.nodes, function(node) {
                              if (node.isActivated && node.hidden == false) {
@@ -642,15 +645,21 @@ var app = new(function() {
                                      nodeHash: node.nodeHash
                                  });
                                  var perk = nodes.steps[node.stepIndex];
-                                 if (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-                                     itemObject.perks.push({
+                                 if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+									(perkNames.indexOf(perk.nodeStepName) == -1 ) &&
+									(perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+									 talentPerks[perk.nodeStepName] = {
+										 active: true,
                                          name: perk.nodeStepName,
                                          description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
                                          iconPath: self.bungie.getUrl() + perk.icon
-                                     });
+                                     };
                                  }
                              }
                          });
+						_.each(talentPerks, function(perk){
+							itemObject.perks.push(perk);
+						});
                      }
                  }
                  if (item.stats.length > 0) {
