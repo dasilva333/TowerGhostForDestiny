@@ -1727,6 +1727,53 @@ var app = new(function() {
         }
     }
 
+    this.getLocalizedBucketName = function(bucketType) {
+        // turn into lookup table that's initialized when locale is set/changed
+        var text;
+        if (bucketType == "Primary") {
+            text = self.activeText().inventory_primary;
+        } else if (bucketType == "Special") {
+            text = self.activeText().inventory_special;
+        } else if (bucketType == "Heavy") {
+            text = self.activeText().inventory_heavy;
+        } else if (bucketType == "Helmet") {
+            text = self.activeText().inventory_helmet;
+        } else if (bucketType == "Gauntlet") {
+            text = self.activeText().inventory_gauntlet;
+        } else if (bucketType == "Chest") {
+            text = self.activeText().inventory_chest;
+        } else if (bucketType == "Boots") {
+            text = self.activeText().inventory_boot;
+        } else if (bucketType == "Class Items") {
+            text = self.activeText().inventory_class_items;
+        } else if (bucketType == "Consumables") {
+            text = self.activeText().inventory_consumables;
+        } else if (bucketType == "Materials") {
+            text = self.activeText().inventory_materials;
+        } else if (bucketType == "Shader") {
+            text = self.activeText().inventory_shader;
+        } else if (bucketType == "Emblem") {
+            text = self.activeText().inventory_emblem;
+        } else if (bucketType == "Ship") {
+            text = self.activeText().inventory_ship;
+        } else if (bucketType == "Sparrow") {
+            text = self.activeText().inventory_sparrow;
+        } else if (bucketType == "Messages") {
+            text = self.activeText().inventory_postmaster_messages;
+        } else if (bucketType == "Invisible") {
+            text = self.activeText().inventory_postmaster_special_orders;
+        } else if (bucketType == "Lost Items") {
+            text = self.activeText().inventory_postmaster_lost_items;
+        } else if (bucketType == "Bounties") {
+            text = self.activeText().inventory_bounties;
+        } else if (bucketType == "Mission") {
+            text = self.activeText().inventory_mission;
+        } else {
+            text = "localize me";
+        }
+        return text;
+    }
+
     this.init = function() {
         self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
