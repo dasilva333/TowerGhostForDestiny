@@ -384,12 +384,14 @@ var app = new(function() {
         if (element) lastElement = element
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
-        self.characters().forEach(function(character) {
-            var item = _.findWhere(character.items(), {
-                '_id': instanceId
-            });
-            if (item) activeItem = item;
-        });
+		if (instanceId > 0){
+			self.characters().forEach(function(character) {
+				var item = _.findWhere(character.items(), {
+					'_id': instanceId
+				});
+				if (item) activeItem = item;
+			});
+		}
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
@@ -397,6 +399,10 @@ var app = new(function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Description using locale */
             $content.find(".destt-desc").text(activeItem.itemDescription);
+			/* Remove Emblem Text */
+			if ($content.find(".fhtt-emblem").length > 0) {
+                $content.find("span").remove();
+            }
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
@@ -437,11 +443,6 @@ var app = new(function() {
                 );
             }
             $content.find(".destt-primary-min").html(activeItem.primaryStat());
-        } else {
-            //remove the "Emblem" title from the image issue #31
-            if ($content.find(".fhtt-emblem").length > 0) {
-                $content.find("span").remove();
-            }
         }
         var width = $(window).width();
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen
@@ -620,7 +621,8 @@ var app = new(function() {
                     typeName: itemTypeName,
                     tierType: info.tierType,
                     tierTypeName: tierTypeName,
-                    icon: dataDir + info.icon
+                    icon: dataDir + info.icon,
+					isUnique: false
                 };
                 if (ignoreDups == undefined || ignoreDups == false) {
                     tgd.duplicates.push(item.itemHash);
@@ -637,52 +639,57 @@ var app = new(function() {
 
                 itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
                 itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-                /* both weapon engrams and weapons fit under this condition*/
-                if (itemObject.type > 1) {
-                    if (item.perks.length > 0) {
-                        itemObject.perks = item.perks.map(function(perk) {
-                            if (perk.perkHash in window._perkDefs) {
-                                var p = window._perkDefs[perk.perkHash];
-                                return {
-                                    iconPath: self.bungie.getUrl() + perk.iconPath,
-                                    name: p.displayName,
-                                    description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription
-                                }
-                            } else {
-                                return perk;
-                            }
-                        });
-                        if (item.talentGridHash in _talentGridDefs) {
-                            var perkHashes = _.pluck(item.perks, 'perkHash');
-                            var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
-                            _.each(item.nodes, function(node) {
-                                if (node.isActivated && node.hidden == false) {
-                                    var nodes = _.findWhere(talentGridNodes, {
-                                        nodeHash: node.nodeHash
-                                    });
-                                    var perk = nodes.steps[node.stepIndex];
-                                    if (perk.nodeStepName !== "Upgrade Damage" && perk.nodeStepName !== "Upgrade Defense" && perk.activationRequirement.gridLevel > 0 && (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-                                        itemObject.perks.push({
-                                            name: perk.nodeStepName,
-                                            description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                            iconPath: self.bungie.getUrl() + perk.icon
-                                        });
-                                    }
-                                }
-                            });
-                        }
-                    }
-                    if (item.stats.length > 0) {
-                        itemObject.stats = {};
-                        _.each(item.stats, function(stat) {
-                            if (stat.statHash in window._statDefs) {
-                                var p = window._statDefs[stat.statHash];
-                                itemObject.stats[p.statName] = stat.value;
-                            }
-                        });
-                    }
-                    itemObject.isUnique = false;
-                }
+                 if (item.perks.length > 0) {
+                     itemObject.perks = item.perks.map(function(perk) {
+                         if (perk.perkHash in window._perkDefs) {
+                             var p = window._perkDefs[perk.perkHash];
+                             return {
+                                 iconPath: self.bungie.getUrl() + perk.iconPath,
+                                 name: p.displayName,
+                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+								 active: perk.isActive
+                             }
+                         } else {
+                             return perk;
+                         }
+                     });
+                     if (item.talentGridHash in _talentGridDefs) {
+                         var perkHashes = _.pluck(item.perks, 'perkHash'), 
+							perkNames = _.pluck(itemObject.perks, 'name'),
+							talentPerks = {};
+                         var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
+                         _.each(item.nodes, function(node) {
+                             if (node.isActivated && node.hidden == false) {
+                                 var nodes = _.findWhere(talentGridNodes, {
+                                     nodeHash: node.nodeHash
+                                 });
+                                 var perk = nodes.steps[node.stepIndex];
+                                 if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+									(perkNames.indexOf(perk.nodeStepName) == -1 ) &&
+									(perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+									 talentPerks[perk.nodeStepName] = {
+										 active: true,
+                                         name: perk.nodeStepName,
+                                         description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                         iconPath: self.bungie.getUrl() + perk.icon
+                                     };
+                                 }
+                             }
+                         });
+						_.each(talentPerks, function(perk){
+							itemObject.perks.push(perk);
+						});
+                     }
+                 }
+                 if (item.stats.length > 0) {
+                     itemObject.stats = {};
+                     _.each(item.stats, function(stat) {
+                         if (stat.statHash in window._statDefs) {
+                             var p = window._statDefs[stat.statHash];
+                             itemObject.stats[p.statName] = stat.value;
+                         }
+                     });
+                 }
                 if (itemObject.typeName && itemObject.typeName == "Emblem") {
                     itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
                 }
