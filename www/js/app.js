@@ -215,7 +215,6 @@ tgd.StoreObj = function(key, compare, writeCallback) {
 
 var app = new(function() {
     var self = this;
-    var dataDir = "data";
 
     this.retryCount = ko.observable(0);
     this.loadingUser = ko.observable(false);
@@ -384,14 +383,14 @@ var app = new(function() {
         if (element) lastElement = element
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
-        self.characters().forEach(function(character) {
-            ['weapons', 'armor'].forEach(function(list) {
-                var item = _.findWhere(character[list](), {
+        if (instanceId > 0) {
+            self.characters().forEach(function(character) {
+                var item = _.findWhere(character.items(), {
                     '_id': instanceId
                 });
                 if (item) activeItem = item;
             });
-        });
+        }
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
@@ -399,6 +398,10 @@ var app = new(function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Description using locale */
             $content.find(".destt-desc").text(activeItem.itemDescription);
+            /* Remove Emblem Text */
+            if ($content.find(".fhtt-emblem").length > 0) {
+                $content.find("span").remove();
+            }
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
@@ -439,11 +442,6 @@ var app = new(function() {
                 );
             }
             $content.find(".destt-primary-min").html(activeItem.primaryStat());
-        } else {
-            //remove the "Emblem" title from the image issue #31
-            if ($content.find(".fhtt-emblem").length > 0) {
-                $content.find("span").remove();
-            }
         }
         var width = $(window).width();
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen
@@ -540,9 +538,13 @@ var app = new(function() {
         self.toggleBootstrapMenu();
         self.tierFilter(model.tier);
     }
-    this.setTypeFilter = function(model, event) {
-        self.toggleBootstrapMenu();
-        self.typeFilter($(event.target).closest('li').attr("value"));
+    this.setTypeFilter = function(weaponType) {
+        return function() {
+            self.toggleBootstrapMenu();
+            var type = weaponType.name;
+            console.log("type: " + type);
+            self.typeFilter(type);
+        }
     }
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -562,111 +564,10 @@ var app = new(function() {
         return missingIds;
     })
 
-    var processItem = function(profile) {
-        return function(item) {
-            if (!(item.itemHash in window._itemDefs)) {
-                console.log("found an item without a definition! " + JSON.stringify(item));
-                console.log(item.itemHash);
-                return;
-            }
-            var info = window._itemDefs[item.itemHash];
-            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var description, tierTypeName, itemDescription, itemTypeName;
-                try {
-                    description = decodeURIComponent(info.itemName);
-                    tierTypeName = decodeURIComponent(info.tierTypeName);
-                    itemDescription = decodeURIComponent(info.itemDescription);
-                    itemTypeName = decodeURIComponent(info.itemTypeName);
-                } catch (e) {
-                    description = info.itemName;
-                    tierTypeName = info.tierTypeName;
-                    itemDescription = info.itemDescription;
-                    itemTypeName = info.itemTypeName;
-                }
-                //some weird stuff shows up under this bucketType w/o this filter
-                if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
-                    return;
-                }
-                var itemObject = {
-                    id: item.itemHash,
-                    _id: item.itemInstanceId,
-                    characterId: profile.id,
-                    damageType: item.damageType,
-                    damageTypeName: tgd.DestinyDamageTypes[item.damageType],
-                    isEquipment: item.isEquipment,
-                    isEquipped: item.isEquipped,
-                    isGridComplete: item.isGridComplete,
-                    locked: item.locked,
-                    description: description,
-                    itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
-                    type: info.itemSubType,
-                    typeName: itemTypeName,
-                    tierType: info.tierType,
-                    tierTypeName: tierTypeName,
-                    icon: dataDir + info.icon
-                };
-                tgd.duplicates.push(item.itemHash);
-                if (item.primaryStat) {
-                    itemObject.primaryStat = item.primaryStat.value;
-                }
-                if (info.bucketTypeHash == "2197472680" && item.progression) {
-                    itemObject.primaryStat = ((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%";
-                }
-                if (item.progression) {
-                    itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
-                }
-
-                itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
-                itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-                /* both weapon engrams and weapons fit under this condition*/
-                if ((itemObject.weaponIndex > -1 || itemObject.armorIndex > -1) && item.perks.length > 0) {
-                    itemObject.perks = item.perks.map(function(perk) {
-                        if (perk.perkHash in window._perkDefs) {
-                            var p = window._perkDefs[perk.perkHash];
-                            return {
-                                iconPath: self.bungie.getUrl() + perk.iconPath,
-                                name: p.displayName,
-                                description: p.displayDescription
-                            }
-                        } else {
-                            return perk;
-                        }
-                    });
-                    itemObject.isUnique = false;
-                }
-
-                if (itemObject.typeName && itemObject.typeName == "Emblem") {
-                    itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
-                }
-                if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
-                    itemObject.primaryStat = item.stackSize;
-                    itemObject.maxStackSize = info.maxStackSize;
-                }
-                if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
-                    itemObject.stats = {};
-                    _.each(item.stats, function(stat) {
-                        if (stat.statHash in window._statDefs) {
-                            var p = window._statDefs[stat.statHash];
-                            itemObject.stats[p.statName] = stat.value;
-                        }
-                    });
-                }
-                //console.log("new item time " + (new Date()-t));
-                profile.items.push(new Item(itemObject, profile));
-            }
-            /*else {
-				console.log(info.itemName);
-				console.log(info);
-				console.log(item);
-			}*/
-        }
-    }
-
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 1 && _.where(self.weaponTypes(), {
-                    type: item.type
+            if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
+                    name: item.typeName
                 }).length == 0) {
                 self.weaponTypes.push({
                     name: item.typeName,
@@ -679,8 +580,8 @@ var app = new(function() {
 
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
-            if (_.where(self.tierTypes(), {
-                    tier: item.tierType
+            if (item.tierTypeName && _.where(self.tierTypes(), {
+                    name: item.tierTypeName
                 }).length == 0) {
                 self.tierTypes.push({
                     name: item.tierTypeName,
@@ -733,9 +634,18 @@ var app = new(function() {
                 self.characters(profiles);
                 self.loadingUser(false);
                 self.loadLoadouts();
-                self.tierTypes(self.tierTypes.sort(function(a, b) {
-                    return b.type - a.type
-                }));
+                self.tierTypes.sort(function(a, b) {
+                    return a.tier - b.tier;
+                });
+                self.weaponTypes.sort(function(a, b) {
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    return 0;
+                })
                 setTimeout(self.bucketSizeHandler, 500);
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
@@ -766,26 +676,16 @@ var app = new(function() {
             self.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
                     var buckets = results.data.buckets;
-                    var profile = new Profile({
-                        race: "",
-                        order: self.vaultPos(),
-                        gender: "Tower",
-                        classType: "Vault",
-                        id: "Vault",
-                        level: "",
-                        imgIcon: "assets/vault_icon.jpg",
-                        icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
-                        background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
-                    });
-
+                    var items = [];
                     buckets.forEach(function(bucket) {
-                        bucket.items.forEach(processItem(profile));
+                        bucket.items.forEach(function(item) {
+                            items.push(item);
+                        });
                     });
+                    var profile = new Profile("Vault", items);
                     self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
-                    //self.characters.push(profile);
-                    //console.timeEnd("self.bungie.vault");
-                    done(profile)
+                    done(profile);
                 } else {
                     loadingData = false;
                     self.refresh();
@@ -796,23 +696,7 @@ var app = new(function() {
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
-                        //console.time("new Profile");                  
-                        var profile = new Profile({
-                            order: index + 1,
-                            gender: tgd.DestinyGender[character.characterBase.genderType],
-                            classType: tgd.DestinyClass[character.characterBase.classType],
-                            id: character.characterBase.characterId,
-                            imgIcon: self.bungie.getUrl() + character.emblemPath,
-                            icon: self.makeBackgroundUrl(character.emblemPath),
-                            background: self.makeBackgroundUrl(character.backgroundPath),
-                            level: character.characterLevel,
-                            stats: character.characterBase.stats,
-                            percentToNextLevel: character.percentToNextLevel,
-                            race: window._raceDefs[character.characterBase.raceHash].raceName
-                        });
                         var items = [];
-
-
                         Object.keys(response.data.buckets).forEach(function(bucket) {
                             response.data.buckets[bucket].forEach(function(obj) {
                                 obj.items.forEach(function(item) {
@@ -820,15 +704,9 @@ var app = new(function() {
                                 });
                             });
                         });
-                        //simulate me having the 4th horseman
-                        //items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-                        //console.time("processItems");
-                        items.forEach(processItem(profile));
-                        //console.timeEnd("processItems");
+                        var profile = new Profile(character, items);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
-                        //console.timeEnd("new Profile");
-                        //self.characters.push(profile);
                         done(profile);
                     } else {
                         loadingData = false;
@@ -1460,64 +1338,6 @@ var app = new(function() {
                 }
             }]
         })).title(title).show(true);
-    }
-
-    this.reloadBucket = function(character, bucketType) {
-        //console.log("reloadBucket(" + character.id + ", " + bucketType + ")");
-
-        var itemsToRemove = _.filter(character.items(), {
-            bucketType: bucketType
-        });
-        for (var i = 0; i < itemsToRemove.length; ++i) {
-            character.items.remove(itemsToRemove[i]);
-        }
-
-        if (character.id == "Vault") {
-            self.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var items = [];
-                    results.data.buckets.forEach(function(bucket) {
-                        bucket.items.forEach(function(item) {
-                            var info = window._itemDefs[item.itemHash];
-                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
-                                if (itemBucketType == bucketType) {
-                                    items.push(item);
-                                }
-                            }
-                        });
-                    });
-                    items.forEach(processItem(character));
-                } else {
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-        } else {
-            self.bungie.inventory(character.id, function(response) {
-                if (response && response.data && response.data.buckets) {
-
-                    var items = [];
-                    Object.keys(response.data.buckets).forEach(function(bucket) {
-                        response.data.buckets[bucket].forEach(function(obj) {
-                            obj.items.forEach(function(item) {
-                                var info = window._itemDefs[item.itemHash];
-                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
-                                    if (itemBucketType == bucketType) {
-                                        items.push(item);
-                                    }
-                                }
-                            });
-                        });
-                    });
-                    items.forEach(processItem(character));
-                } else {
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-        }
     }
 
     this.setVaultTo = function(pos) {

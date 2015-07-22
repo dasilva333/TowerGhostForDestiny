@@ -1,12 +1,9 @@
-var Item = function(model, profile) {
+var dataDir = "data";
+
+var Item = function(model, profile, ignoreDups) {
     var self = this;
-    _.each(model, function(value, key) {
-        self[key] = value;
-    });
+
     this.character = profile;
-    this.href = "https://destinydb.com/items/" + self.id;
-    this.isEquipped = ko.observable(self.isEquipped);
-    this.primaryStat = ko.observable(self.primaryStat || "");
     this.isVisible = ko.computed(this._isVisible, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
@@ -24,9 +21,132 @@ var Item = function(model, profile) {
                 (self.isEquipped() && self.character.id == avatarId);
         });
     }
+    this.init(model, ignoreDups);
 }
 
 Item.prototype = {
+    init: function(item, ignoreDups) {
+        var self = this;
+        if (!(item.itemHash in _itemDefs)) {
+            console.log("found an item without a definition! " + JSON.stringify(item));
+            console.log(item.itemHash);
+            return;
+        }
+        var info = _itemDefs[item.itemHash];
+        if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+            var description, tierTypeName, itemDescription, itemTypeName;
+            try {
+                description = decodeURIComponent(info.itemName);
+                tierTypeName = decodeURIComponent(info.tierTypeName);
+                itemDescription = decodeURIComponent(info.itemDescription);
+                itemTypeName = decodeURIComponent(info.itemTypeName);
+            } catch (e) {
+                description = info.itemName;
+                tierTypeName = info.tierTypeName;
+                itemDescription = info.itemDescription;
+                itemTypeName = info.itemTypeName;
+            }
+            //some weird stuff shows up under this bucketType w/o this filter
+            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
+                return;
+            }
+            var itemObject = {
+                id: item.itemHash,
+                href: "https://destinydb.com/items/" + item.itemHash,
+                _id: item.itemInstanceId,
+                characterId: self.character.id,
+                damageType: item.damageType,
+                damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+                isEquipment: item.isEquipment,
+                isEquipped: ko.observable(item.isEquipped),
+                primaryStat: ko.observable(1),
+                isGridComplete: item.isGridComplete,
+                locked: item.locked,
+                description: description,
+                itemDescription: itemDescription,
+                bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                type: info.itemSubType,
+                typeName: itemTypeName,
+                tierType: info.tierType,
+                tierTypeName: tierTypeName,
+                icon: dataDir + info.icon,
+                isUnique: false
+            };
+            if (ignoreDups == undefined || ignoreDups == false) {
+                tgd.duplicates.push(item.itemHash);
+            }
+            if (item.primaryStat) {
+                itemObject.primaryStat(item.primaryStat.value);
+            }
+            if (info.bucketTypeHash == "2197472680" && item.progression) {
+                itemObject.primaryStat(((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%");
+            }
+            if (item.progression) {
+                itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
+            }
+            itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
+            itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
+            if (item.perks.length > 0) {
+                itemObject.perks = item.perks.map(function(perk) {
+                    if (perk.perkHash in window._perkDefs) {
+                        var p = window._perkDefs[perk.perkHash];
+                        return {
+                            iconPath: app.bungie.getUrl() + perk.iconPath,
+                            name: p.displayName,
+                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                            active: perk.isActive
+                        }
+                    } else {
+                        return perk;
+                    }
+                });
+                if (item.talentGridHash in _talentGridDefs) {
+                    var perkHashes = _.pluck(item.perks, 'perkHash'),
+                        perkNames = _.pluck(itemObject.perks, 'name'),
+                        talentPerks = {};
+                    var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
+                    _.each(item.nodes, function(node) {
+                        if (node.isActivated && node.hidden == false) {
+                            var nodes = _.findWhere(talentGridNodes, {
+                                nodeHash: node.nodeHash
+                            });
+                            var perk = nodes.steps[node.stepIndex];
+                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                talentPerks[perk.nodeStepName] = {
+                                    active: true,
+                                    name: perk.nodeStepName,
+                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                    iconPath: app.bungie.getUrl() + perk.icon
+                                };
+                            }
+                        }
+                    });
+                    _.each(talentPerks, function(perk) {
+                        itemObject.perks.push(perk);
+                    });
+                }
+            }
+            if (item.stats.length > 0) {
+                itemObject.stats = {};
+                _.each(item.stats, function(stat) {
+                    if (stat.statHash in window._statDefs) {
+                        var p = window._statDefs[stat.statHash];
+                        itemObject.stats[p.statName] = stat.value;
+                    }
+                });
+            }
+            if (itemObject.typeName && itemObject.typeName == "Emblem") {
+                itemObject.backgroundPath = app.makeBackgroundUrl(info.secondaryIcon);
+            }
+            if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
+                itemObject.primaryStat(item.stackSize);
+                itemObject.maxStackSize = info.maxStackSize;
+            }
+            $.extend(self, itemObject);
+        }
+    },
     clone: function() {
         var self = this;
         var model = {};
@@ -85,7 +205,7 @@ Item.prototype = {
         var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
         var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
         var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
-        var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.type;
+        var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.typeName;
         var dupes = _.filter(tgd.duplicates(), function(id) {
             return id == self.id
         }).length;
