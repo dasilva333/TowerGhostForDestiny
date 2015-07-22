@@ -52,7 +52,7 @@ body {
 
 .desktop .move-popup {
     position: absolute;
-    z-index: 2;
+    z-index: 1004;
     top: -75px;
     width: 380px;
     height: 75px;
