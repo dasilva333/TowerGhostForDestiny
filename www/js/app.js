@@ -455,6 +455,15 @@ var app = new(function() {
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
         $("#viewOptions").toggle();
+		var isVisible = $("#viewOptions").is(":visible");
+		if (isVisible){
+			$(".character").css("margin",'auto');
+			$(".character-box").css("position",'relative');
+		}
+		else {
+			$(".character").css("margin",'');
+			$(".character-box").css("position",'fixed');
+		}
     }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
