@@ -572,17 +572,7 @@ var app = new(function() {
                 self.weaponTypes.push({
                     name: item.typeName,
                     type: item.type
-                });
-				self.weaponTypes.sort(function (a, b) {
-				  if (a.name > b.name) {
-					return 1;
-				  }
-				  if (a.name < b.name) {
-					return -1;
-				  }
-				  // a must be equal to b
-				  return 0;
-				})
+                });				
             }
         });
     }
@@ -590,8 +580,8 @@ var app = new(function() {
 
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
-            if (_.where(self.tierTypes(), {
-                    tier: item.tierType
+            if (item.tierTypeName && _.where(self.tierTypes(), {
+                    name: item.tierTypeName
                 }).length == 0) {
                 self.tierTypes.push({
                     name: item.tierTypeName,
@@ -644,9 +634,18 @@ var app = new(function() {
                 self.characters(profiles);
                 self.loadingUser(false);
                 self.loadLoadouts();
-                self.tierTypes(self.tierTypes.sort(function(a, b) {
-                    return b.type - a.type
-                }));
+                self.tierTypes.sort(function (a, b) {
+				  return a.tier - b.tier;
+				});
+				self.weaponTypes.sort(function (a, b) {
+				  if (a.name > b.name) {
+					return 1;
+				  }
+				  if (a.name < b.name) {
+					return -1;
+				  }	
+				  return 0;
+				})
                 setTimeout(self.bucketSizeHandler, 500);
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
@@ -686,7 +685,7 @@ var app = new(function() {
 					var profile = new Profile("Vault", items);
                     self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
-                    self.characters.push(profile);
+                    done(profile);
                 } else {
                     loadingData = false;
                     self.refresh();
@@ -708,7 +707,7 @@ var app = new(function() {
 						var profile = new Profile(character, items);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
-                        self.characters.push(profile);
+                        done(profile);
                     } else {
                         loadingData = false;
                         self.refresh();
