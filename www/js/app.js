@@ -455,15 +455,14 @@ var app = new(function() {
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
         $("#viewOptions").toggle();
-		var isVisible = $("#viewOptions").is(":visible");
-		if (isVisible){
-			$(".character").css("margin",'auto');
-			$(".character-box").css("position",'relative');
-		}
-		else {
-			$(".character").css("margin",'');
-			$(".character-box").css("position",'fixed');
-		}
+        var isVisible = $("#viewOptions").is(":visible");
+        if (isVisible) {
+            $(".character").css("margin", 'auto');
+            $(".character-box").css("position", 'relative');
+        } else {
+            $(".character").css("margin", '');
+            $(".character-box").css("position", 'fixed');
+        }
     }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
@@ -655,9 +654,9 @@ var app = new(function() {
                     return 0;
                 })
                 setTimeout(self.bucketSizeHandler, 500);
-				self.quickIconHighlighter();
+                self.quickIconHighlighter();
                 loadingData = false;
-				self.loadingUser(false);
+                self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
         }
@@ -714,7 +713,7 @@ var app = new(function() {
                                 });
                             });
                         });
-                        var profile = new Profile(character, items, index+1);
+                        var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         done(profile);
@@ -842,15 +841,17 @@ var app = new(function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
             var $item = $(item);
-			var characterId = $item.attr('id');
+            var characterId = $item.attr('id');
             var $quickIcon = $(".quickScrollView ." + characterId);
-			var $characterBox = $(".character-box." + characterId);
+            var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-			var isActive = scrollTop >= top && scrollTop <= bottom;
+            var isActive = scrollTop >= top && scrollTop <= bottom;
             $quickIcon.toggleClass("activeProfile", isActive);
-			$characterBox.toggle( isActive );
-			$characterBox.css({ width: $characterBox.parent().width() + 'px' });
+            $characterBox.toggle(isActive);
+            $characterBox.css({
+                width: $characterBox.parent().width() + 'px'
+            });
         });
     }
 

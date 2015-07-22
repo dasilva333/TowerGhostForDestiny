@@ -9,7 +9,7 @@ var Profile = function(character, items, index) {
     this.uniqueName = "";
     this.classLetter = "";
     this.race = "";
-	this.reloadingBucket = false;
+    this.reloadingBucket = false;
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -40,7 +40,7 @@ Profile.prototype = {
             self.percentToNextLevel = "";
             self.race = "";
         } else {
-			self.order(index);
+            self.order(index);
             self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
             self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
 
@@ -56,11 +56,11 @@ Profile.prototype = {
         }
         self.classLetter = self.classType[0].toUpperCase();
         self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
-		
-		var processedItems = [];
-		_.each(rawItems, function(item) {
-			var processedItem = new Item(item, self);
-			if ("id" in processedItem) processedItems.push(processedItem);
+
+        var processedItems = [];
+        _.each(rawItems, function(item) {
+            var processedItem = new Item(item, self);
+            if ("id" in processedItem) processedItems.push(processedItem);
         });
         self.items(processedItems);
     },
@@ -77,8 +77,8 @@ Profile.prototype = {
         }
         return "Messages";
     },
-	reloadBucket: function(bucketType) {
-		var self = this;
+    reloadBucket: function(bucketType) {
+        var self = this;
         /* this function should exist under Profile object not in app */
         if (self.reloadingBucket) {
             //console.log("reentrancy guard hit");
@@ -91,9 +91,9 @@ Profile.prototype = {
             bucketType: bucketType
         });
 
-		self.items.removeAll(itemsToRemove);
+        self.items.removeAll(itemsToRemove);
 
-		
+
         if (self.id == "Vault") {
             app.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
