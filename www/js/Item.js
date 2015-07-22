@@ -4,6 +4,9 @@ var Item = function(model, profile, ignoreDups) {
     var self = this;
 
     this.character = profile;
+	
+	this.init(model, ignoreDups);
+	
     this.isVisible = ko.computed(this._isVisible, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
@@ -21,7 +24,6 @@ var Item = function(model, profile, ignoreDups) {
                 (self.isEquipped() && self.character.id == avatarId);
         });
     }
-    this.init(model, ignoreDups);
 }
 
 Item.prototype = {
@@ -202,6 +204,10 @@ Item.prototype = {
     _isVisible: function() {
         var $parent = app,
             self = this;
+			
+		if (typeof self.id == "undefined"){
+			return false;
+		}
         var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
             ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;

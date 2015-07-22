@@ -9,7 +9,7 @@ var Profile = function(character, items, index) {
     this.uniqueName = "";
     this.classLetter = "";
     this.race = "";
-	this.reloadingBucket;
+	this.reloadingBucket = false;
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -56,10 +56,13 @@ Profile.prototype = {
         }
         self.classLetter = self.classType[0].toUpperCase();
         self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
-
-        self.items(_.map(rawItems, function(item) {
-            return new Item(item, self);
-        }));
+		
+		var processedItems = [];
+		_.each(rawItems, function(item) {
+			var processedItem = new Item(item, self);
+			if ("id" in processedItem) processedItems.push(processedItem);
+        });
+        self.items(processedItems);
     },
     getBucketTypeHelper: function(item, info) {
         var self = this;
@@ -87,17 +90,10 @@ Profile.prototype = {
         var itemsToRemove = _.filter(self.items(), {
             bucketType: bucketType
         });
-        // manually remove so as to avoid knockout events firing and killing perf on mobile
-        var ary = self.items();
-        for (var i = 0; i < itemsToRemove.length; ++i) {
-            var pos = ary.indexOf(itemsToRemove[i]);
-            if (pos > -1) {
-                ary.splice(pos, 1);
-            }
-            //self.items.remove(itemsToRemove[i]);
-        }
-        self.items.valueHasMutated();
 
+		self.items.removeAll(itemsToRemove);
+
+		
         if (self.id == "Vault") {
             app.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
@@ -114,7 +110,7 @@ Profile.prototype = {
                         });
                     });
                     _.each(items, function(item) {
-                        self.items.push(new Item(item, self));
+                        self.items.push(new Item(item, self, true));
                     });
                     self.reloadingBucket = false;
                 } else {
@@ -142,7 +138,7 @@ Profile.prototype = {
                         });
                     });
                     _.each(items, function(item) {
-                        self.items.push(new Item(item, self));
+                        self.items.push(new Item(item, self, true));
                     });
                     self.reloadingBucket = false;
                 } else {
