@@ -536,7 +536,7 @@
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
                 <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
                     <div class="character">
-                        <div class="character-box" data-bind="style: { backgroundImage: background }">
+                        <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id">
                             <div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
                             <div class="class" data-bind="text: classType"></div>
                             <div class="level" style="cursor:pointer;" data-bind="text: level, click: showStats"></div>

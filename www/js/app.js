@@ -827,14 +827,20 @@ var app = new(function() {
         }
     }
 
+
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
             var $item = $(item);
-            var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
+			var characterId = $item.attr('id');
+            var $quickIcon = $(".quickScrollView ." + characterId);
+			var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-            $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
+			var isActive = scrollTop >= top && scrollTop <= bottom;
+            $quickIcon.toggleClass("activeProfile", isActive);
+			$characterBox.toggleClass("activeProfile", isActive);
+			$characterBox.css({ width: $characterBox.parent().width() + 'px' });
         });
     }
 

@@ -430,8 +430,13 @@ li a {
     display: none;
 }
 
-.activeProfile {
+.quickScrollView .activeProfile {
     border: 3px solid white;
+}
+.character-box.activeProfile {
+    position: fixed !important;
+	z-index: 1003;
+	top: 47px;
 }
 /* 960 px is the breakpoint for 4 columns */
 
