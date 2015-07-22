@@ -16,7 +16,8 @@ var Profile = function(character, items, index) {
     this.postmaster = ko.computed(this._postmaster, this);
     this.messages = ko.computed(this._messages, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    this.container = ko.observable();   
+    this.container = ko.observable();
+    this.lostItemsHelper = [420519466, 1322081400, 2551875383];
     this.init(items, index);
 }
 
@@ -60,6 +61,19 @@ Profile.prototype = {
             return new Item(item, self);
         }));
     },
+    getBucketTypeHelper: function(item, info) {
+        var self = this;
+        if (item.location !== 4) {
+            return tgd.DestinyBucketTypes[info.bucketTypeHash];
+        }
+        if (item.isEquipment) {
+            return "Lost Items";
+        }
+        if (self.lostItemsHelper.indexOf(item.itemHash) > -1) {
+            return "Lost Items";
+        }
+        return "Messages";
+    },
 	reloadBucket: function(bucketType) {
 		var self = this;
         /* this function should exist under Profile object not in app */
@@ -92,7 +106,7 @@ Profile.prototype = {
                         bucket.items.forEach(function(item) {
                             var info = window._itemDefs[item.itemHash];
                             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                var itemBucketType = self.getBucketTypeHelper(item, info);
                                 if (itemBucketType == bucketType) {
                                     items.push(item);
                                 }
@@ -119,7 +133,7 @@ Profile.prototype = {
                             obj.items.forEach(function(item) {
                                 var info = window._itemDefs[item.itemHash];
                                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash];
+                                    var itemBucketType = self.getBucketTypeHelper(item, info);
                                     if (itemBucketType == bucketType) {
                                         items.push(item);
                                     }
