@@ -383,14 +383,14 @@ var app = new(function() {
         if (element) lastElement = element
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
-		if (instanceId > 0){
-			self.characters().forEach(function(character) {
-				var item = _.findWhere(character.items(), {
-					'_id': instanceId
-				});
-				if (item) activeItem = item;
-			});
-		}
+        if (instanceId > 0) {
+            self.characters().forEach(function(character) {
+                var item = _.findWhere(character.items(), {
+                    '_id': instanceId
+                });
+                if (item) activeItem = item;
+            });
+        }
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
@@ -398,8 +398,8 @@ var app = new(function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Description using locale */
             $content.find(".destt-desc").text(activeItem.itemDescription);
-			/* Remove Emblem Text */
-			if ($content.find(".fhtt-emblem").length > 0) {
+            /* Remove Emblem Text */
+            if ($content.find(".fhtt-emblem").length > 0) {
                 $content.find("span").remove();
             }
             /* Damage Colors */
@@ -539,12 +539,12 @@ var app = new(function() {
         self.tierFilter(model.tier);
     }
     this.setTypeFilter = function(weaponType) {
-		return function(){		
-			self.toggleBootstrapMenu();
-			var type = weaponType.name;
-			console.log("type: " + type);
-			self.typeFilter(type);
-		}
+        return function() {
+            self.toggleBootstrapMenu();
+            var type = weaponType.name;
+            console.log("type: " + type);
+            self.typeFilter(type);
+        }
     }
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -563,16 +563,16 @@ var app = new(function() {
         });
         return missingIds;
     })
-    
+
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
             if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
                     name: item.typeName
-                }).length == 0) {				
+                }).length == 0) {
                 self.weaponTypes.push({
                     name: item.typeName,
                     type: item.type
-                });				
+                });
             }
         });
     }
@@ -634,18 +634,18 @@ var app = new(function() {
                 self.characters(profiles);
                 self.loadingUser(false);
                 self.loadLoadouts();
-                self.tierTypes.sort(function (a, b) {
-				  return a.tier - b.tier;
-				});
-				self.weaponTypes.sort(function (a, b) {
-				  if (a.name > b.name) {
-					return 1;
-				  }
-				  if (a.name < b.name) {
-					return -1;
-				  }	
-				  return 0;
-				})
+                self.tierTypes.sort(function(a, b) {
+                    return a.tier - b.tier;
+                });
+                self.weaponTypes.sort(function(a, b) {
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    return 0;
+                })
                 setTimeout(self.bucketSizeHandler, 500);
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
@@ -676,13 +676,13 @@ var app = new(function() {
             self.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
                     var buckets = results.data.buckets;
-					var items = [];
-					buckets.forEach(function(bucket) {
-						bucket.items.forEach(function(item){
-							items.push(item);
-						});							
-					});
-					var profile = new Profile("Vault", items);
+                    var items = [];
+                    buckets.forEach(function(bucket) {
+                        bucket.items.forEach(function(item) {
+                            items.push(item);
+                        });
+                    });
+                    var profile = new Profile("Vault", items);
                     self.addTierTypes(profile.items());
                     self.addWeaponTypes(profile.weapons());
                     done(profile);
@@ -695,16 +695,16 @@ var app = new(function() {
             //console.time("avatars.forEach");          
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (response && response.data && response.data.buckets) {  
-						var items = [];
-						Object.keys(response.data.buckets).forEach(function(bucket) {
-							response.data.buckets[bucket].forEach(function(obj) {
-								obj.items.forEach(function(item) {
-									items.push(item);
-								});
-							});
-						});
-						var profile = new Profile(character, items);
+                    if (response && response.data && response.data.buckets) {
+                        var items = [];
+                        Object.keys(response.data.buckets).forEach(function(bucket) {
+                            response.data.buckets[bucket].forEach(function(obj) {
+                                obj.items.forEach(function(item) {
+                                    items.push(item);
+                                });
+                            });
+                        });
+                        var profile = new Profile(character, items);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         done(profile);
