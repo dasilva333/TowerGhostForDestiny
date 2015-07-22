@@ -144,6 +144,9 @@ Item.prototype = {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
             }
+			if (itemObject.bucketType == "Lost Items" && item.maxStackSize > 1){
+				itemObject.primaryStat(item.stackSize);
+			}
             $.extend(self, itemObject);
         }
     },

@@ -647,6 +647,7 @@ var app = new(function() {
                     return 0;
                 })
                 setTimeout(self.bucketSizeHandler, 500);
+				self.quickIconHighlighter();
                 loadingData = false;
                 //console.timeEnd("avatars.forEach");
             }
@@ -839,7 +840,7 @@ var app = new(function() {
             var bottom = top + $item.height();
 			var isActive = scrollTop >= top && scrollTop <= bottom;
             $quickIcon.toggleClass("activeProfile", isActive);
-			$characterBox.toggleClass("activeProfile", isActive);
+			//$characterBox.toggleClass("activeProfile", isActive);
 			$characterBox.css({ width: $characterBox.parent().width() + 'px' });
         });
     }

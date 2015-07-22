@@ -306,9 +306,13 @@ body {
 .nav > li > a {
     padding: 10px;
 }
+.character {
+	margin-bottom: 47px;
+}
 
 .character-box {
-    position: relative;
+    position: fixed;
+	top: 47px;
     display: inline-block;
     height: 43px;
     padding: 0 0 0 50px;
@@ -318,6 +322,14 @@ body {
     color: #f5f5f5;
     text-decoration: none;
     background-size: cover;
+	z-index: 1003;
+}
+.character-box  .progression {
+	background-color:yellow; 
+	height:2px !important;
+	position: absolute;
+	top: 18px !important;
+	left: 0;
 }
 
 .character-box .emblem {
@@ -433,11 +445,7 @@ li a {
 .quickScrollView .activeProfile {
     border: 3px solid white;
 }
-.character-box.activeProfile {
-    position: fixed !important;
-	z-index: 1003;
-	top: 47px;
-}
+
 /* 960 px is the breakpoint for 4 columns */
 
 @media (max-width: 959px) {
