@@ -64,7 +64,7 @@ Item.prototype = {
                 locked: item.locked,
                 description: description,
                 itemDescription: itemDescription,
-                bucketType: (item.location == 4) ? (item.isEquipment ? "Lost Items" : "Messages") : tgd.DestinyBucketTypes[info.bucketTypeHash],
+                bucketType: self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
                 tierType: info.tierType,
