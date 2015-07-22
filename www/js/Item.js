@@ -59,7 +59,7 @@ Item.prototype = {
                 damageTypeName: tgd.DestinyDamageTypes[item.damageType],
                 isEquipment: item.isEquipment,
                 isEquipped: ko.observable(item.isEquipped),
-                primaryStat: ko.observable(1),
+                primaryStat: ko.observable(""),
                 isGridComplete: item.isGridComplete,
                 locked: item.locked,
                 description: description,

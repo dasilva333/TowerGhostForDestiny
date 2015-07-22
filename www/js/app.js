@@ -704,7 +704,7 @@ var app = new(function() {
                                 });
                             });
                         });
-                        var profile = new Profile(character, items);
+                        var profile = new Profile(character, items, index+1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         done(profile);

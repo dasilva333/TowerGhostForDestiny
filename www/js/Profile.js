@@ -1,4 +1,4 @@
-var Profile = function(character, items) {
+var Profile = function(character, items, index) {
     var self = this;
 
     this.profile = character;
@@ -9,22 +9,65 @@ var Profile = function(character, items) {
     this.uniqueName = "";
     this.classLetter = "";
     this.race = "";
-
+	this.reloadingBucket;
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
     this.postmaster = ko.computed(this._postmaster, this);
     this.messages = ko.computed(this._messages, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    this.container = ko.observable();
-    var reloadingBucket = false;
-    this.reloadBucket = function(bucketType) {
+    this.container = ko.observable();   
+    this.init(items, index);
+}
+
+Profile.prototype = {
+    init: function(rawItems, index) {
+        var self = this;
+
+        if (_.isString(self.profile)) {
+            self.order(app.vaultPos());
+            self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
+            self.icon(app.makeBackgroundUrl("assets/vault_icon.jpg", true));
+
+            self.gender = "Tower";
+            self.classType = "Vault";
+            self.id = "Vault";
+            self.imgIcon = "assets/vault_icon.jpg";
+
+            self.level = "";
+            self.stats = "";
+            self.percentToNextLevel = "";
+            self.race = "";
+        } else {
+			self.order(index);
+            self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
+            self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
+
+            self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
+            self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
+            self.id = self.profile.characterBase.characterId;
+            self.imgIcon = app.bungie.getUrl() + self.profile.emblemPath;
+
+            self.level = self.profile.characterLevel;
+            self.stats = self.profile.characterBase.stats;
+            self.percentToNextLevel = self.profile.percentToNextLevel;
+            self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
+        }
+        self.classLetter = self.classType[0].toUpperCase();
+        self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
+
+        self.items(_.map(rawItems, function(item) {
+            return new Item(item, self);
+        }));
+    },
+	reloadBucket: function(bucketType) {
+		var self = this;
         /* this function should exist under Profile object not in app */
-        if (reloadingBucket) {
+        if (self.reloadingBucket) {
             //console.log("reentrancy guard hit");
             return;
         }
-        reloadingBucket = true;
+        self.reloadingBucket = true;
         //console.log("reloadBucket(" + self.id + ", " + bucketType + ")");
 
         var itemsToRemove = _.filter(self.items(), {
@@ -59,9 +102,9 @@ var Profile = function(character, items) {
                     _.each(items, function(item) {
                         self.items.push(new Item(item, self));
                     });
-                    reloadingBucket = false;
+                    self.reloadingBucket = false;
                 } else {
-                    reloadingBucket = false;
+                    self.reloadingBucket = false;
                     self.refresh();
                     return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
@@ -87,56 +130,14 @@ var Profile = function(character, items) {
                     _.each(items, function(item) {
                         self.items.push(new Item(item, self));
                     });
-                    reloadingBucket = false;
+                    self.reloadingBucket = false;
                 } else {
-                    reloadingBucket = false;
+                    self.reloadingBucket = false;
                     self.refresh();
                     return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             });
         }
-    }
-    this.init(items);
-}
-
-Profile.prototype = {
-    init: function(rawItems) {
-        var self = this;
-
-        if (_.isString(self.profile)) {
-            self.order(0);
-            self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
-            self.icon(app.makeBackgroundUrl("assets/vault_icon.jpg", true));
-
-            self.gender = "Tower";
-            self.classType = "Vault";
-            self.id = "Vault";
-            self.imgIcon = "assets/vault_icon.jpg";
-
-            self.level = "";
-            self.stats = "";
-            self.percentToNextLevel = "";
-            self.race = "";
-        } else {
-            self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
-            self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
-
-            self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
-            self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
-            self.id = self.profile.characterBase.characterId;
-            self.imgIcon = app.bungie.getUrl() + self.profile.emblemPath;
-
-            self.level = self.profile.characterLevel;
-            self.stats = self.profile.characterBase.stats;
-            self.percentToNextLevel = self.profile.percentToNextLevel;
-            self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
-        }
-        self.classLetter = self.classType[0].toUpperCase();
-        self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
-
-        self.items(_.map(rawItems, function(item) {
-            return new Item(item, self);
-        }));
     },
     _weapons: function() {
         return _.filter(this.items(), function(item) {
