@@ -455,6 +455,15 @@ var app = new(function() {
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
         $("#viewOptions").toggle();
+		var isVisible = $("#viewOptions").is(":visible");
+		if (isVisible){
+			$(".character").css("margin",'auto');
+			$(".character-box").css("position",'relative');
+		}
+		else {
+			$(".character").css("margin",'');
+			$(".character-box").css("position",'fixed');
+		}
     }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
@@ -632,7 +641,6 @@ var app = new(function() {
             count++;
             if (count == total) {
                 self.characters(profiles);
-                self.loadingUser(false);
                 self.loadLoadouts();
                 self.tierTypes.sort(function(a, b) {
                     return a.tier - b.tier;
@@ -647,7 +655,9 @@ var app = new(function() {
                     return 0;
                 })
                 setTimeout(self.bucketSizeHandler, 500);
+				self.quickIconHighlighter();
                 loadingData = false;
+				self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
         }
@@ -827,14 +837,20 @@ var app = new(function() {
         }
     }
 
+
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
             var $item = $(item);
-            var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
+			var characterId = $item.attr('id');
+            var $quickIcon = $(".quickScrollView ." + characterId);
+			var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-            $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
+			var isActive = scrollTop >= top && scrollTop <= bottom;
+            $quickIcon.toggleClass("activeProfile", isActive);
+			$characterBox.toggle( isActive );
+			$characterBox.css({ width: $characterBox.parent().width() + 'px' });
         });
     }
 
