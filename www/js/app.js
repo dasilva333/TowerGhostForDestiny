@@ -641,7 +641,6 @@ var app = new(function() {
             count++;
             if (count == total) {
                 self.characters(profiles);
-                self.loadingUser(false);
                 self.loadLoadouts();
                 self.tierTypes.sort(function(a, b) {
                     return a.tier - b.tier;
@@ -658,6 +657,7 @@ var app = new(function() {
                 setTimeout(self.bucketSizeHandler, 500);
 				self.quickIconHighlighter();
                 loadingData = false;
+				self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
         }
