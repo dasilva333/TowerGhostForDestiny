@@ -62,7 +62,7 @@
 <body>
     <script type="text/html" id="sections-template">
         <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', fastclick: function(){ character.reloadBucket(bucketType); }, refreshableSection: true">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', fastclick: character.reloadBucket, refreshableSection: true">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Lost Items' || bucketType == 'Bounties' || bucketType == 'Mission') -->
@@ -85,7 +85,7 @@
                 <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
                 <img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
                 <!--/ko  -->
-                <i class="fa fa-refresh text-success" data-bind="fastclick: function(){ character.reloadBucket(bucketType); }, clickBubble: false"></i>
+                <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
             </div>
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">

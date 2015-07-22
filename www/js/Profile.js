@@ -15,6 +15,7 @@ var Profile = function(character, items, index) {
     this.classLetter = "";
     this.race = "";
 	this.reloadingBucket = false;
+	this.reloadBucket = _.bind(this._reloadBucket, this);
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -82,7 +83,7 @@ Profile.prototype = {
         }
         return "Messages";
     },
-	reloadBucket: function(bucketType) {
+	_reloadBucket: function(bucketType, event) {
 		var self = this;
         /* this function should exist under Profile object not in app */
         if (self.reloadingBucket) {
@@ -90,7 +91,18 @@ Profile.prototype = {
             return;
         }
         self.reloadingBucket = true;
-        //console.log("reloadBucket(" + self.id + ", " + bucketType + ")");
+        if (event !== undefined) {
+            var blah = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+            blah.addClass("fa-spin");
+        }
+
+        function done() {
+            self.reloadingBucket = false;
+            if (event !== undefined) {
+                var blah = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+                blah.removeClass("fa-spin");
+            }
+        }
 
         var itemsToRemove = _.filter(self.items(), {
             bucketType: bucketType
@@ -117,9 +129,9 @@ Profile.prototype = {
                     _.each(items, function(item) {
                         self.items.push(new Item(item, self, true));
                     });
-                    self.reloadingBucket = false;
+                    done();
                 } else {
-                    self.reloadingBucket = false;
+                    done();
                     self.refresh();
                     return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
@@ -145,9 +157,9 @@ Profile.prototype = {
                     _.each(items, function(item) {
                         self.items.push(new Item(item, self, true));
                     });
-                    self.reloadingBucket = false;
+                    done();
                 } else {
-                    self.reloadingBucket = false;
+                    done();
                     self.refresh();
                     return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
