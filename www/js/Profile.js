@@ -5,7 +5,12 @@ var Profile = function(character, items, index) {
     this.order = ko.observable();
     this.icon = ko.observable("");
     this.background = ko.observable("");
-    this.items = ko.observableArray();
+    this.items = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 500,
+            method: "notifyWhenChangesStop"
+        }
+    });
     this.uniqueName = "";
     this.classLetter = "";
     this.race = "";
