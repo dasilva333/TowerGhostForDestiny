@@ -23,7 +23,7 @@ var Profile = function(character, items, index) {
     this.lostItems = ko.computed(this._lostItems, this);
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383];
-	this.reloadBucket = _.bind(this._reloadBucket, this);
+    this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(items, index);
 }
 
@@ -84,12 +84,13 @@ Profile.prototype = {
         return "Messages";
     },
     _reloadBucket: function(bucketType, event) {
-        var self = this, element;
+        var self = this,
+            element;
         if (self.reloadingBucket) {
             return;
         }
-        self.reloadingBucket = true;		
-		if (typeof event !== "undefined") {
+        self.reloadingBucket = true;
+        if (typeof event !== "undefined") {
             var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
             element.addClass("fa-spin");
         }
