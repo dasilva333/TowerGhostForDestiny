@@ -264,7 +264,12 @@ var app = new(function() {
 
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
-    this.characters = ko.observableArray();
+    this.characters = ko.observableArray().extend({
+           rateLimit: {
+               timeout: 1000,
+               method: "notifyWhenChangesStop"
+           }
+       });
     this.orderedCharacters = ko.computed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
@@ -655,7 +660,7 @@ var app = new(function() {
                     return 0;
                 })
                 setTimeout(self.bucketSizeHandler, 500);
-				self.quickIconHighlighter();
+				setTimeout(self.quickIconHighlighter, 1000);
                 loadingData = false;
 				self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
