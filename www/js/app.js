@@ -264,7 +264,12 @@ var app = new(function() {
 
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
-    this.characters = ko.observableArray();
+    this.characters = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 1000,
+            method: "notifyWhenChangesStop"
+        }
+    });
     this.orderedCharacters = ko.computed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
@@ -408,19 +413,19 @@ var app = new(function() {
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
             /* Weapon Perks (Pre-HoW) */
-            if (activeItem.perks && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+            if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
             /* Weapon Perks (Post-HoW) */
-            else if (activeItem.perks && $content.find(".destt-talent").length == 0) {
+            else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
                 $content.find(".destt-info").prepend(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
             /* Armor Perks */
-            else if (activeItem.perks && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
+            else if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
@@ -653,12 +658,13 @@ var app = new(function() {
                     }
                     return 0;
                 })
-                setTimeout(self.bucketSizeHandler, 500);
-                self.quickIconHighlighter();
+                setTimeout(self.bucketSizeHandler, 1000);
+                setTimeout(self.quickIconHighlighter, 1000);
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
+
         }
         self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {

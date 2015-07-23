@@ -23,6 +23,7 @@ var Profile = function(character, items, index) {
     this.lostItems = ko.computed(this._lostItems, this);
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383];
+    this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(items, index);
 }
 
@@ -82,15 +83,24 @@ Profile.prototype = {
         }
         return "Messages";
     },
-    reloadBucket: function(bucketType) {
-        var self = this;
-        /* this function should exist under Profile object not in app */
+    _reloadBucket: function(bucketType, event) {
+        var self = this,
+            element;
         if (self.reloadingBucket) {
-            //console.log("reentrancy guard hit");
             return;
         }
         self.reloadingBucket = true;
-        //console.log("reloadBucket(" + self.id + ", " + bucketType + ")");
+        if (typeof event !== "undefined") {
+            var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+            element.addClass("fa-spin");
+        }
+
+        function done() {
+            self.reloadingBucket = false;
+            if (element) {
+                element.removeClass("fa-spin");
+            }
+        }
 
         var itemsToRemove = _.filter(self.items(), {
             bucketType: bucketType
@@ -117,9 +127,9 @@ Profile.prototype = {
                     _.each(items, function(item) {
                         self.items.push(new Item(item, self, true));
                     });
-                    self.reloadingBucket = false;
+                    done();
                 } else {
-                    self.reloadingBucket = false;
+                    done();
                     self.refresh();
                     return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
@@ -145,9 +155,9 @@ Profile.prototype = {
                     _.each(items, function(item) {
                         self.items.push(new Item(item, self, true));
                     });
-                    self.reloadingBucket = false;
+                    done();
                 } else {
-                    self.reloadingBucket = false;
+                    done();
                     self.refresh();
                     return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                 }
