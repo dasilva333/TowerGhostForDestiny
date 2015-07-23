@@ -97,7 +97,7 @@ Item.prototype = {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
                         return {
-                            iconPath: app.bungie.getUrl() + perk.iconPath.substring(1, perk.iconPath.length),
+                            iconPath: dataDir + p.displayIcon,
                             name: p.displayName,
                             description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                             active: perk.isActive
@@ -124,7 +124,7 @@ Item.prototype = {
                                     active: true,
                                     name: perk.nodeStepName,
                                     description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: app.bungie.getUrl() + perk.icon.substring(1, perk.icon.length)
+                                    iconPath: dataDir + perk.icon
                                 };
                             }
                         }
