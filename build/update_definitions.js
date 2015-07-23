@@ -156,9 +156,9 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 		queue.push(item.displayIcon);
 	});
 	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.js").toString("utf8").replace("_talentGridDefs=",""));
-	_.each( contents, function(tg){
+	_.each(contents , function(tg){
 		_.each(tg.nodes, function(node){
-			_.each(node.steps, function(step){
+			_.each( node.steps, function(step){
 				queue.push(step.icon);
 			});
 		});
