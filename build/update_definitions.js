@@ -142,6 +142,18 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 	_.each(contents, function(item){
 		queue.push(item.icon);
 	});
+	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.js").toString("utf8").replace("_perkDefs=",""));
+	_.each(contents, function(item){
+		queue.push(item.displayIcon);
+	});
+	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.js").toString("utf8").replace("_talentGridDefs=",""));
+	_.each(contents , function(tg){
+		_.each(tg.nodes, function(node){
+			_.each( node.steps, function(step){
+				queue.push(step.icon);
+			});
+		});
+	});
 	cacheIcons();
 }
 else {
