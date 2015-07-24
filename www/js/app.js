@@ -774,13 +774,6 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(user);
-				try {
-					self.locale(self.activeUser().user.locale);
-				}catch(e){
-					console.log(e);
-					console.log(user);
-					console.log(typeof self.activeUser());
-				}
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
