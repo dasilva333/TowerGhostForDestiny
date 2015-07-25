@@ -774,7 +774,6 @@ var app = new(function() {
                     ref = null;
                 }
                 self.activeUser(user);
-                self.locale(self.activeUser().user.locale);
                 self.loadingUser(false);
                 _.defer(function() {
                     self.search();
