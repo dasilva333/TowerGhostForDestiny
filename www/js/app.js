@@ -854,7 +854,7 @@ var app = new(function() {
             var bottom = top + $item.height();
             var isActive = scrollTop >= top && scrollTop <= bottom;
             $quickIcon.toggleClass("activeProfile", isActive);
-            $characterBox.toggle(isActive);
+            $characterBox.toggleClass("active", !isActive);
             $characterBox.css({
                 width: $characterBox.parent().width() + 'px'
             });

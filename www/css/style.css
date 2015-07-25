@@ -324,6 +324,10 @@ body {
     background-size: cover;
 	z-index: 1003;
 }
+.character-box.active {
+	position: relative;
+}
+
 .character-box  .progression {
 	background-color:yellow; 
 	height:2px !important;
