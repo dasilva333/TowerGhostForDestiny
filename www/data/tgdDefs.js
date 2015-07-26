@@ -78,6 +78,7 @@ tgd.DestinyBucketColumns = {
 	"Lost Items": 4,
 	"Mission": 4
 }
+tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
@@ -130,7 +131,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 			'<div class="destt-talent-icon">' +
 				'<img src="<%= perk.iconPath %>" width="36">' +
 			'</div>' +
-			'<div class="destt-talent-description">' +
+			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
 				'<%= perk.description %>' +
 			'</div>' +
 		'</div>' +

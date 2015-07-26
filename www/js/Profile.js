@@ -1,15 +1,20 @@
-var Profile = function(model) {
+var Profile = function(character, items, index) {
     var self = this;
-    _.each(model, function(value, key) {
-        self[key] = value;
-    });
 
-    this.order = ko.observable(self.order);
-    this.icon = ko.observable(self.icon);
-    this.background = ko.observable(self.background);
-    this.items = ko.observableArray([]);
-    this.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-    this.classLetter = self.classType[0].toUpperCase();
+    this.profile = character;
+    this.order = ko.observable();
+    this.icon = ko.observable("");
+    this.background = ko.observable("");
+    this.items = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 500,
+            method: "notifyWhenChangesStop"
+        }
+    });
+    this.uniqueName = "";
+    this.classLetter = "";
+    this.race = "";
+    this.reloadingBucket = false;
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -17,9 +22,148 @@ var Profile = function(model) {
     this.messages = ko.computed(this._messages, this);
     this.lostItems = ko.computed(this._lostItems, this);
     this.container = ko.observable();
+    this.lostItemsHelper = [420519466, 1322081400, 2551875383];
+    this.reloadBucket = _.bind(this._reloadBucket, this);
+    this.init(items, index);
 }
 
 Profile.prototype = {
+    init: function(rawItems, index) {
+        var self = this;
+
+        if (_.isString(self.profile)) {
+            self.order(app.vaultPos());
+            self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
+            self.icon(app.makeBackgroundUrl("assets/vault_icon.jpg", true));
+
+            self.gender = "Tower";
+            self.classType = "Vault";
+            self.id = "Vault";
+            self.imgIcon = "assets/vault_icon.jpg";
+
+            self.level = "";
+            self.stats = "";
+            self.percentToNextLevel = "";
+            self.race = "";
+        } else {
+            self.order(index);
+            self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
+            self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
+
+            self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
+            self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
+            self.id = self.profile.characterBase.characterId;
+            self.imgIcon = app.bungie.getUrl() + self.profile.emblemPath;
+
+            self.level = self.profile.characterLevel;
+            self.stats = self.profile.characterBase.stats;
+            self.percentToNextLevel = self.profile.percentToNextLevel;
+            self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
+        }
+        self.classLetter = self.classType[0].toUpperCase();
+        self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
+
+        var processedItems = [];
+        _.each(rawItems, function(item) {
+            var processedItem = new Item(item, self);
+            if ("id" in processedItem) processedItems.push(processedItem);
+        });
+        self.items(processedItems);
+    },
+    getBucketTypeHelper: function(item, info) {
+        var self = this;
+        if (item.location !== 4) {
+            return tgd.DestinyBucketTypes[info.bucketTypeHash];
+        }
+        if (item.isEquipment) {
+            return "Lost Items";
+        }
+        if (self.lostItemsHelper.indexOf(item.itemHash) > -1) {
+            return "Lost Items";
+        }
+        return "Messages";
+    },
+    _reloadBucket: function(bucketType, event) {
+        var self = this,
+            element;
+        if (self.reloadingBucket) {
+            return;
+        }
+        self.reloadingBucket = true;
+        if (typeof event !== "undefined") {
+            var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+            element.addClass("fa-spin");
+        }
+
+        function done() {
+            self.reloadingBucket = false;
+            if (element) {
+                element.removeClass("fa-spin");
+            }
+        }
+
+        var itemsToRemove = _.filter(self.items(), {
+            bucketType: bucketType
+        });
+
+        self.items.removeAll(itemsToRemove);
+
+
+        if (self.id == "Vault") {
+            app.bungie.vault(function(results, response) {
+                if (results && results.data && results.data.buckets) {
+                    var items = [];
+                    results.data.buckets.forEach(function(bucket) {
+                        bucket.items.forEach(function(item) {
+                            var info = window._itemDefs[item.itemHash];
+                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                var itemBucketType = self.getBucketTypeHelper(item, info);
+                                if (itemBucketType == bucketType) {
+                                    items.push(item);
+                                }
+                            }
+                        });
+                    });
+                    _.each(items, function(item) {
+                        self.items.push(new Item(item, self, true));
+                    });
+                    done();
+                } else {
+                    done();
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                }
+            });
+        } else {
+            app.bungie.inventory(self.id, function(response) {
+                if (response && response.data && response.data.buckets) {
+
+                    var items = [];
+                    Object.keys(response.data.buckets).forEach(function(bucket) {
+                        response.data.buckets[bucket].forEach(function(obj) {
+                            obj.items.forEach(function(item) {
+                                var info = window._itemDefs[item.itemHash];
+                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                    var itemBucketType = self.getBucketTypeHelper(item, info);
+                                    if (itemBucketType == bucketType) {
+                                        items.push(item);
+                                    }
+                                }
+                            });
+                        });
+                    });
+                    _.each(items, function(item) {
+                        self.items.push(new Item(item, self, true));
+                    });
+                    done();
+                } else {
+                    done();
+                    self.refresh();
+                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                }
+            });
+        }
+    },
     _weapons: function() {
         return _.filter(this.items(), function(item) {
             if (item.weaponIndex > -1)
@@ -68,8 +212,17 @@ Profile.prototype = {
             return item.tierType * -1;
         });
     },
+    getVisible: function(type) {
+        return _.filter(this.get(type), function(item) {
+            return item.isVisible();
+        });
+    },
     itemEquipped: function(type) {
         return ko.utils.arrayFirst(this.items(), this.filterItemByType(type, true));
+    },
+    itemEquippedVisible: function(type) {
+        var ie = this.itemEquipped(type);
+        return ie == undefined ? false : ie.isVisible();
     },
     showStats: function() {
         var character = this;
