@@ -2,15 +2,15 @@ var dataDir = "data";
 
 var Item = function(model, profile, ignoreDups) {
     var self = this;
-	
-	_.each(model, function(value, key){
-		self[key] = value;
-	});
-	
+
+    _.each(model, function(value, key) {
+        self[key] = value;
+    });
+
     this.character = profile;
-	
-	this.init(model, ignoreDups);
-	
+
+    this.init(model, ignoreDups);
+
     this.isVisible = ko.computed(this._isVisible, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
@@ -97,7 +97,8 @@ Item.prototype = {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
                         return {
-                            iconPath: app.bungie.getUrl() + perk.iconPath.substring(1,perk.iconPath.length),
+
+                            iconPath: dataDir + p.displayIcon,
                             name: p.displayName,
                             description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                             active: perk.isActive
@@ -124,7 +125,7 @@ Item.prototype = {
                                     active: true,
                                     name: perk.nodeStepName,
                                     description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: app.bungie.getUrl() + perk.icon.substring(1,perk.icon.length)
+                                    iconPath: dataDir + perk.icon
                                 };
                             }
                         }
@@ -150,9 +151,9 @@ Item.prototype = {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
             }
-			if (itemObject.bucketType == "Lost Items" && item.stackSize > 1){
-				itemObject.primaryStat(item.stackSize);
-			}
+            if (itemObject.bucketType == "Lost Items" && item.stackSize > 1) {
+                itemObject.primaryStat(item.stackSize);
+            }
             $.extend(self, itemObject);
         }
     },
@@ -208,10 +209,10 @@ Item.prototype = {
     _isVisible: function() {
         var $parent = app,
             self = this;
-			
-		if (typeof self.id == "undefined"){
-			return false;
-		}
+
+        if (typeof self.id == "undefined") {
+            return false;
+        }
         var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
             ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;

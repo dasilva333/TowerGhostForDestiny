@@ -264,7 +264,12 @@ var app = new(function() {
 
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
-    this.characters = ko.observableArray();
+    this.characters = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 1000,
+            method: "notifyWhenChangesStop"
+        }
+    });
     this.orderedCharacters = ko.computed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
@@ -408,19 +413,19 @@ var app = new(function() {
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
             /* Weapon Perks (Pre-HoW) */
-            if (activeItem.perks && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+            if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
             /* Weapon Perks (Post-HoW) */
-            else if (activeItem.perks && $content.find(".destt-talent").length == 0) {
+            else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
                 $content.find(".destt-info").prepend(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
             /* Armor Perks */
-            else if (activeItem.perks && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
+            else if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
@@ -455,15 +460,14 @@ var app = new(function() {
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
         $("#viewOptions").toggle();
-		var isVisible = $("#viewOptions").is(":visible");
-		if (isVisible){
-			$(".character").css("margin",'auto');
-			$(".character-box").css("position",'relative');
-		}
-		else {
-			$(".character").css("margin",'');
-			$(".character-box").css("position",'fixed');
-		}
+        var isVisible = $("#viewOptions").is(":visible");
+        if (isVisible) {
+            $(".character").css("margin", 'auto');
+            $(".character-box").css("position", 'relative');
+        } else {
+            $(".character").css("margin", '');
+            $(".character-box").css("position", 'fixed');
+        }
     }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
@@ -654,12 +658,13 @@ var app = new(function() {
                     }
                     return 0;
                 })
-                setTimeout(self.bucketSizeHandler, 500);
-				self.quickIconHighlighter();
+                setTimeout(self.bucketSizeHandler, 1000);
+                setTimeout(self.quickIconHighlighter, 1000);
                 loadingData = false;
-				self.loadingUser(false);
+                self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
+
         }
         self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {
@@ -682,27 +687,21 @@ var app = new(function() {
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
-            //console.time("self.bungie.vault");
-            self.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var buckets = results.data.buckets;
-                    var items = [];
-                    buckets.forEach(function(bucket) {
-                        bucket.items.forEach(function(item) {
-                            items.push(item);
-                        });
-                    });
-                    var profile = new Profile("Vault", items);
-                    self.addTierTypes(profile.items());
-                    self.addWeaponTypes(profile.weapons());
-                    done(profile);
-                } else {
-                    loadingData = false;
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-            //console.time("avatars.forEach");          
+			var buckets = e.data.inventory.buckets;
+			var items = [];
+			Object.keys(buckets).forEach(function(bucketName) {
+				buckets[bucketName].forEach(function(bucket) {
+					bucket.items.forEach(function(item){
+						items.push(item);
+					});
+				});
+			});
+			var profile = new Profile("Vault", items);
+			self.addTierTypes(profile.items());
+			self.addWeaponTypes(profile.weapons());
+			done(profile);
+			
+            //console.time("avatars.forEach");
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
@@ -714,7 +713,7 @@ var app = new(function() {
                                 });
                             });
                         });
-                        var profile = new Profile(character, items, index+1);
+                        var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
                         done(profile);
@@ -842,15 +841,17 @@ var app = new(function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
             var $item = $(item);
-			var characterId = $item.attr('id');
+            var characterId = $item.attr('id');
             var $quickIcon = $(".quickScrollView ." + characterId);
-			var $characterBox = $(".character-box." + characterId);
+            var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-			var isActive = scrollTop >= top && scrollTop <= bottom;
+            var isActive = scrollTop >= top && scrollTop <= bottom;
             $quickIcon.toggleClass("activeProfile", isActive);
-			$characterBox.toggle( isActive );
-			$characterBox.css({ width: $characterBox.parent().width() + 'px' });
+            $characterBox.toggleClass("active", !isActive);
+            $characterBox.css({
+                width: $characterBox.parent().width() + 'px'
+            });
         });
     }
 

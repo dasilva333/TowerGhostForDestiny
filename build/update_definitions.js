@@ -1,7 +1,8 @@
 var http = require("http"),
+	https = require("https"),
 	fs = require("fs"),
 	_ = require("lodash");
-var bungieURL = "http://www.bungie.net";
+var bungieURL = "https://www.bungie.net";
 var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
 var jsonPath = "../www/data/";
 var neededFiles = [
@@ -63,17 +64,25 @@ var queue = [];
 var cacheIcons = function(){
 	var icon = queue.pop();
 	if ( !fs.existsSync(jsonPath + icon) ){
-		console.log("downloading icon");
-		http.get(bungieURL + icon, function(res) {
-			var data = []; // List of Buffer objects
-			res.on("data", function(chunk) {
-				data.push(chunk); // Append Buffer object
-			});
-			res.on("end", function() {
-				fs.writeFileSync(jsonPath + icon, Buffer.concat(data));
+		console.log("downloading icon " + (bungieURL + icon));
+		https.get(bungieURL + icon, function(res) {
+			if (res.statusCode != 200){
+				console.log(res.statusCode + " status code for icon " + icon);
 				if (queue.length > 0)
 					cacheIcons();
-			});
+				return;
+			}
+			else {
+				var data = []; // List of Buffer objects
+				res.on("data", function(chunk) {
+					data.push(chunk); // Append Buffer object
+				});
+				res.on("end", function() {
+					fs.writeFileSync(jsonPath + icon, Buffer.concat(data));
+					if (queue.length > 0)
+						cacheIcons();
+				});			
+			}
 		});
 	}
 	else {
@@ -141,6 +150,18 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.icon);
+	});
+	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.js").toString("utf8").replace("_perkDefs=",""));
+	_.each(contents, function(item){
+		queue.push(item.displayIcon);
+	});
+	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.js").toString("utf8").replace("_talentGridDefs=",""));
+	_.each(contents , function(tg){
+		_.each(tg.nodes, function(node){
+			_.each( node.steps, function(step){
+				queue.push(step.icon);
+			});
+		});
 	});
 	cacheIcons();
 }

@@ -14,8 +14,7 @@ var Profile = function(character, items, index) {
     this.uniqueName = "";
     this.classLetter = "";
     this.race = "";
-	this.reloadingBucket = false;
-	this.reloadBucket = _.bind(this._reloadBucket, this);
+    this.reloadingBucket = false;
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -24,6 +23,7 @@ var Profile = function(character, items, index) {
     this.lostItems = ko.computed(this._lostItems, this);
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383];
+    this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(items, index);
 }
 
@@ -46,7 +46,7 @@ Profile.prototype = {
             self.percentToNextLevel = "";
             self.race = "";
         } else {
-			self.order(index);
+            self.order(index);
             self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
             self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
 
@@ -62,11 +62,11 @@ Profile.prototype = {
         }
         self.classLetter = self.classType[0].toUpperCase();
         self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
-		
-		var processedItems = [];
-		_.each(rawItems, function(item) {
-			var processedItem = new Item(item, self);
-			if ("id" in processedItem) processedItems.push(processedItem);
+
+        var processedItems = [];
+        _.each(rawItems, function(item) {
+            var processedItem = new Item(item, self);
+            if ("id" in processedItem) processedItems.push(processedItem);
         });
         self.items(processedItems);
     },
@@ -83,24 +83,22 @@ Profile.prototype = {
         }
         return "Messages";
     },
-	_reloadBucket: function(bucketType, event) {
-		var self = this;
-        /* this function should exist under Profile object not in app */
+    _reloadBucket: function(bucketType, event) {
+        var self = this,
+            element;
         if (self.reloadingBucket) {
-            //console.log("reentrancy guard hit");
             return;
         }
         self.reloadingBucket = true;
-        if (event !== undefined) {
-            var blah = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
-            blah.addClass("fa-spin");
+        if (typeof event !== "undefined") {
+            var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+            element.addClass("fa-spin");
         }
 
         function done() {
             self.reloadingBucket = false;
-            if (event !== undefined) {
-                var blah = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
-                blah.removeClass("fa-spin");
+            if (element) {
+                element.removeClass("fa-spin");
             }
         }
 
@@ -108,9 +106,9 @@ Profile.prototype = {
             bucketType: bucketType
         });
 
-		self.items.removeAll(itemsToRemove);
+        self.items.removeAll(itemsToRemove);
 
-		
+
         if (self.id == "Vault") {
             app.bungie.vault(function(results, response) {
                 if (results && results.data && results.data.buckets) {
