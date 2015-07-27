@@ -687,27 +687,21 @@ var app = new(function() {
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
-            //console.time("self.bungie.vault");
-            self.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var buckets = results.data.buckets;
-                    var items = [];
-                    buckets.forEach(function(bucket) {
-                        bucket.items.forEach(function(item) {
-                            items.push(item);
-                        });
-                    });
-                    var profile = new Profile("Vault", items);
-                    self.addTierTypes(profile.items());
-                    self.addWeaponTypes(profile.weapons());
-                    done(profile);
-                } else {
-                    loadingData = false;
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-            //console.time("avatars.forEach");          
+			var buckets = e.data.inventory.buckets;
+			var items = [];
+			Object.keys(buckets).forEach(function(bucketName) {
+				buckets[bucketName].forEach(function(bucket) {
+					bucket.items.forEach(function(item){
+						items.push(item);
+					});
+				});
+			});
+			var profile = new Profile("Vault", items);
+			self.addTierTypes(profile.items());
+			self.addWeaponTypes(profile.weapons());
+			done(profile);
+			
+            //console.time("avatars.forEach");
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {

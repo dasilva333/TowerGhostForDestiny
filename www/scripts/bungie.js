@@ -230,7 +230,7 @@ try {
 				}
 				membershipId = membership;
 				_request({
-				  route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
+				  route: '/Destiny/' + active.type +
 						  '/Account/' + membership + '/',
 				  method: 'GET',
 				  complete: callback
