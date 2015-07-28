@@ -688,15 +688,20 @@ var app = new(function() {
             var avatars = e.data.characters;
             total = avatars.length + 1;
 			var buckets = e.data.inventory.buckets;
-			var items = [];
+			var vaultItems = [], globalItems = [];
 			Object.keys(buckets).forEach(function(bucketName) {
 				buckets[bucketName].forEach(function(bucket) {
 					bucket.items.forEach(function(item){
-						items.push(item);
+						if (bucketName == "Invisible"){
+							globalItems.push(item);
+						}
+						else {
+							vaultItems.push(item);
+						}
 					});
 				});
 			});
-			var profile = new Profile("Vault", items);
+			var profile = new Profile("Vault", vaultItems);
 			self.addTierTypes(profile.items());
 			self.addWeaponTypes(profile.weapons());
 			done(profile);
@@ -705,7 +710,7 @@ var app = new(function() {
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
-                        var items = [];
+                        var items = [].concat(globalItems);
                         Object.keys(response.data.buckets).forEach(function(bucket) {
                             response.data.buckets[bucket].forEach(function(obj) {
                                 obj.items.forEach(function(item) {
