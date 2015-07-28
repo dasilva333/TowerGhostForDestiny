@@ -35,14 +35,15 @@ var ffXHR = function(){
 	this.onreadystatechange = function(){
 		//console.log("state changed");
 	}
-	window.addEventListener("message", function(event) {
-		var xhr = event.data;
+	window.addEventListener("xhr-reply", function(event) {
+		console.log("xhr-reply! " + self.request.url);
+		var xhr = event.detail;
 		self.readyState = xhr.readyState;
 		self.status = xhr.status;
 		self.statusText = xhr.statusText;
 		self.responseText = xhr.responseText;
 		self.onreadystatechange();
-	});
+	}, false);
 	return self;
 };
 

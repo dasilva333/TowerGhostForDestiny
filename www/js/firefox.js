@@ -10,39 +10,33 @@ window.addEventListener("request-cookie", function(event) {
 */
 
 window.addEventListener("xhr-request", function(event) {
-    try {
-		console.log("firefox.js received xhr-request");
-        var request = event.detail;
-        var xhr = new XMLHttpRequest();
-        xhr.open(request.type, request.url, request.async);
-		request.headers.forEach(function(header){
-			xhr.setRequestHeader(header.key, header.value);
-		});
-        xhr.onload = function() {
-			var fXHR = {
-				readyState: 4,
-				status: xhr.status,
-				statusText: xhr.statusText,
-				responseText: xhr.responseText
-			};
-            window.postMessage(fXHR, "*");
-        };
-        xhr.onerror = function() {
-			var fXHR = {
-				readyState: 4,
-				status: xhr.status,
-				statusText: xhr.statusText,
-				responseText: xhr.responseText
-			};
-            window.postMessage(fXHR, "*");
-		}
-        if (request.payload)
-            xhr.send(request.payload);
-        else
-			xhr.send();
-    } catch (e) {
-        console.log("try catch error");
-        console.log(e.toString());
-    }
+	console.log("firefox.js received xhr-request");		
+	var request = event.detail;
+	var xhr = new XMLHttpRequest();
+	var responseHandler = function() {
+		var fXHR = {
+			readyState: 4,
+			status: xhr.status,
+			statusText: xhr.statusText,
+			responseText: xhr.responseText
+		};
+		console.log("onload fired " + request.url);
+		var cloned = cloneInto(fXHR, document.defaultView);
+		var event = document.createEvent('CustomEvent');
+		event.initCustomEvent("xhr-reply", true, true, cloned);
+		document.documentElement.dispatchEvent(event);
+	};	
+	xhr.open(request.type, request.url, request.async);
+	request.headers.forEach(function(header){
+		xhr.setRequestHeader(header.key, header.value);
+	});
+	xhr.onload = responseHandler;
+	xhr.onerror = responseHandler;
+	if (request.payload){
+		xhr.send(request.payload);
+	}
+	else {
+		xhr.send();
+	}	
 
 }, false);

@@ -36,7 +36,6 @@ tabs.on('ready', function(tab) {
 		console.log("cookieValue: " + cookieValue);
 		worker = tab.attach({
 		    contentScriptFile: data.url("js/firefox.js"),
-			contentScriptWhen: "start",
 			contentScriptOptions: {"token" : cookieValue } //referenced as self.options.token
 		});
 		worker.port.on("request-cookie", function(){
