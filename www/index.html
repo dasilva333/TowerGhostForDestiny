@@ -113,7 +113,7 @@
 					</span>
                 </div>
             </div>
-            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
+            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), with: character.itemEquipped(bucketType)">
                 <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 
 					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
