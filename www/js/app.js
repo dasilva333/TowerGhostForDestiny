@@ -4,31 +4,45 @@ var ffXHR = function(){
 	this.readyState = 1;
 	this.status = 500;
 	this.statusText = "";
+	this.request = {};
 	
 	this.open = function(type, url, async, username, password){
-		setTimeout(function(){
-			self.readyState = 4;
-			self.status = 200;
-			self.statusText = "OK";
-			self.responseText = "Hello World";
-			self.onreadystatechange();
-		}, 1000)
+		self.request = {
+			type: type,
+			url: url,
+			async: async,
+			username: username,
+			password: password,
+			headers: []
+		};
 	}
 	this.abort = function(){
 		
 	}
-	this.setRequestHeader = function(key, name){
-		console.log(arguments);
+	this.setRequestHeader = function(key, value){
+		self.request.headers.push({ key: key, value: value });
 	}
 	this.getAllResponseHeaders = function(){
 		return "";
 	}
-	this.send = function(headers, complete){
-		console.log(headers);
+	this.send = function(payload){
+		if (payload)
+			self.request.payload = payload;
+		var event = document.createEvent('CustomEvent');
+		event.initCustomEvent("xhr-request", true, true, self.request);
+		document.documentElement.dispatchEvent(event);
 	}
 	this.onreadystatechange = function(){
-		console.log("state changed");
+		//console.log("state changed");
 	}
+	window.addEventListener("message", function(event) {
+		var xhr = event.data;
+		self.readyState = xhr.readyState;
+		self.status = xhr.status;
+		self.statusText = xhr.statusText;
+		self.responseText = xhr.responseText;
+		self.onreadystatechange();
+	});
 	return self;
 };
 
@@ -40,23 +54,29 @@ var app = new(function() {
     var self = this;
 
     this.init = function() {
-		$.ajax({
-			url: "https://www.bungie.net",
-			headers: {
-				foo: 'bar'
-			},
-			xhrFields: {
-				withCredentials: true
-			},
-			xhr: function(){
-				return firefoxXHR();
-				return jQuery.ajaxSettings.xhr();
-			},
-			success: function(result){
-				console.log("success is called");
-				$("#result").html(result);
-			}
-		});
+		setTimeout(function(){
+			$.ajax({
+				url: "https://www.bungie.net",
+				type: "POST",
+				headers: {
+					foo: 'bar'
+				},
+				xhrFields: {
+					withCredentials: true
+				},
+				data: JSON.stringify({
+					foo: 'baz'
+				}),
+				xhr: function(){
+					return firefoxXHR();
+					return jQuery.ajaxSettings.xhr();
+				},
+				success: function(result){
+					console.log("success is called");
+					$("#result").html(result);
+				}
+			});
+		},5000);
     }
 });
 

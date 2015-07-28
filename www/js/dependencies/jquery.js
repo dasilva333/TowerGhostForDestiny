@@ -9622,7 +9622,6 @@ if ( xhrSupported ) {
 						id = ++xhrId;
 
 					// Open the socket
-					console.log("calling open");
 					xhr.open( options.type, options.url, options.async, options.username, options.password );
 
 					// Apply custom fields if provided
@@ -9662,18 +9661,18 @@ if ( xhrSupported ) {
 					// Do send the request
 					// This may raise an exception which is actually
 					// handled in jQuery.ajax (so no try/catch here)
-					console.log("calling send");
+					console.log("calling xhr send")
+					console.log(options);
+					window.o = options;
 					xhr.send( ( options.hasContent && options.data ) || null );
 
 					// Listener
 					callback = function( _, isAbort ) {
-						console.log("calling callback");
 						var status, statusText, responses;
 
 						// Was never called and is aborted or complete
 						if ( callback && ( isAbort || xhr.readyState === 4 ) ) {
 							// Clean up
-							console.log("Clean up");
 							delete xhrCallbacks[ id ];
 							callback = undefined;
 							xhr.onreadystatechange = jQuery.noop;
@@ -9716,18 +9715,13 @@ if ( xhrSupported ) {
 								}
 							}
 						}
-						console.log("responses");
-						console.log(responses);
+
 						// Call complete if needed
 						if ( responses ) {
-							console.log(statusText + " complete called " + status );
 							complete( status, statusText, responses, xhr.getAllResponseHeaders() );
 						}
 					};
-					
-					console.log(options.async);
-					console.log(xhr.readyState);
-					
+
 					if ( !options.async ) {
 						// if we're in sync mode we fire the callback
 						callback();
