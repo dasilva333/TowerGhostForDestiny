@@ -9661,9 +9661,6 @@ if ( xhrSupported ) {
 					// Do send the request
 					// This may raise an exception which is actually
 					// handled in jQuery.ajax (so no try/catch here)
-					console.log("calling xhr send")
-					console.log(options);
-					window.o = options;
 					xhr.send( ( options.hasContent && options.data ) || null );
 
 					// Listener

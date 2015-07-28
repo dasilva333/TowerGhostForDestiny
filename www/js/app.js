@@ -1,3 +1,5 @@
+var Localizer = {};
+
 var ffXHR = function(){
 	var self = this;
 	
@@ -26,6 +28,7 @@ var ffXHR = function(){
 		return "";
 	}
 	this.send = function(payload){
+		//console.log("send request to " + self.request.url);
 		if (payload)
 			self.request.payload = payload;
 		var event = document.createEvent('CustomEvent');
@@ -36,7 +39,7 @@ var ffXHR = function(){
 		//console.log("state changed");
 	}
 	window.addEventListener("xhr-reply", function(event) {
-		console.log("xhr-reply! " + self.request.url);
+		//console.log("xhr-reply! " + self.request.url);
 		var xhr = event.detail;
 		self.readyState = xhr.readyState;
 		self.status = xhr.status;
@@ -55,6 +58,12 @@ var app = new(function() {
     var self = this;
 
     this.init = function() {
+		$.ajaxSetup({
+			xhr: function(){
+				return firefoxXHR();
+				return jQuery.ajaxSettings.xhr();
+			},
+		});
 		setTimeout(function(){
 			$.ajax({
 				url: "https://www.bungie.net",
@@ -62,22 +71,25 @@ var app = new(function() {
 				headers: {
 					foo: 'bar'
 				},
-				xhrFields: {
-					withCredentials: true
-				},
 				data: JSON.stringify({
 					foo: 'baz'
 				}),
-				xhr: function(){
-					return firefoxXHR();
-					return jQuery.ajaxSettings.xhr();
-				},
 				success: function(result){
 					console.log("success is called");
 					$("#result").html(result);
 				}
 			});
 		},5000);
+		setTimeout(function(){
+			$.ajax({
+				url: "https://www.bungie.net/en-us/View/Bungie/terms",
+				type: "get",
+				success: function(result){
+					console.log("success is called");
+					$("#result").html(result);
+				}
+			});
+		},15000);
     }
 });
 
