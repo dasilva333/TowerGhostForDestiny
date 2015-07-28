@@ -546,8 +546,15 @@
                     <div class="inventory">
                         <div class="items" data-type="item">
                             <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
+                                <!-- ko with: { bucketTypes: ['Primary','Special','Heavy'] } -->
+                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
+                                    <strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)
+                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
+                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+                                    </div>
+                                </div>
+                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: bucketTypes, as: 'bucketType' }"></div>
+                                <!-- /ko -->
                             </div>
                             <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
                                 <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
