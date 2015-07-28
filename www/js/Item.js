@@ -151,7 +151,7 @@ Item.prototype = {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
             }
-            if (itemObject.bucketType == "Lost Items" && item.stackSize > 1) {
+            if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Messages") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
             $.extend(self, itemObject);
