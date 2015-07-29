@@ -1,4 +1,20 @@
 
+var ffContentScripts = {
+	isReady: false,
+	queue: []
+}
+
+window.addEventListener("cs-ready", function(event) {
+	app.requestCookie(function(bungled){
+		ffContentScripts.isReady = true;
+		ffContentScripts.queue.forEach(function(event){
+			event.detail.headers.push({ key: 'x-csrf', value: bungled });
+			document.documentElement.dispatchEvent(event);
+		});
+		ffContentScripts.queue = [];
+	});
+});
+
 var ffXHR = function(){
 	var self = this;
 	
@@ -32,7 +48,12 @@ var ffXHR = function(){
 			self.request.payload = payload;
 		var event = document.createEvent('CustomEvent');
 		event.initCustomEvent("xhr-request", true, true, self.request);
-		document.documentElement.dispatchEvent(event);
+		if (ffContentScripts.isReady){
+			document.documentElement.dispatchEvent(event);
+		}
+		else {
+			ffContentScripts.queue.push(event);
+		}
 	}
 	this.onreadystatechange = function(){
 		//console.log("state changed");

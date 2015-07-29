@@ -1,5 +1,8 @@
 var { ActionButton } = require("sdk/ui/button/action");
 var tabs = require("sdk/tabs");
+var data = require("sdk/self").data;
+var pageUrl = data.url("index.html");
+var pageMod = require("sdk/page-mod");
 
 var button = ActionButton({
   id: "tgd-link",
@@ -9,14 +12,12 @@ var button = ActionButton({
     "32": "./assets/icon32.png",
     "64": "./assets/icon64.png"
   },
-  onClick: handleClick
+  onClick: function handleClick(state) {
+		tabs.open(pageUrl);
+	}
 });
 
-var data = require("sdk/self").data;
-var pageUrl = data.url("index.html");
-var pageMod = require("sdk/page-mod");
-
-function getBungieCookies(){
+function getBungledCookie(){
 	var {Cc, Ci} = require("chrome");
 	var cookieValue = "", cookieMgr = Cc["@mozilla.org/cookiemanager;1"].getService(Ci.nsICookieManager);
 	for (var e = cookieMgr.enumerator; e.hasMoreElements();) {
@@ -32,19 +33,13 @@ function getBungieCookies(){
 
 tabs.on('ready', function(tab) {
 	if (tab.url == pageUrl){
-		var cookieValue = getBungieCookies();
-		console.log("cookieValue: " + cookieValue);
 		worker = tab.attach({
-		    contentScriptFile: data.url("js/firefox.js"),
-			contentScriptOptions: {"token" : cookieValue } //referenced as self.options.token
+		    contentScriptFile: data.url("js/firefox.js")
 		});
-		worker.port.on("request-cookie", function(){
-			console.log("main.js received request");
-			worker.port.emit("response-cookie", getBungieCookies());
+		worker.port.on("request-cookie-from-cs", function(){
+			console.log("request-cookie-from-cs");
+			worker.port.emit("response-cookie-from-as", getBungledCookie());
 		});
 	}
 });
 
-function handleClick(state) {
- 	var tab = tabs.open(pageUrl);
-}

@@ -1,13 +1,14 @@
-/*window.activeCookie = self.options.token;
-window.addEventListener("request-cookie", function(event) {
-    console.log("cookie requested");
-    self.port.on("response-cookie", function(newValue) {
-        window.activeCookie = newValue;
-        console.log("new cookie is " + newValue);
+window.addEventListener("request-cookie-from-ps", function(event) {
+    console.log("request-cookie-from-ps");
+    self.port.on("response-cookie-from-as", function(newValue) {
+		var cloned = cloneInto(newValue, document.defaultView);
+		var event = document.createEvent('CustomEvent');
+		event.initCustomEvent("response-cookie-from-cs", true, true, cloned);
+		document.documentElement.dispatchEvent(event);
+		console.log("sending out response-cookie-from-cs, got response-cookie-from-as: " + cloned);
     });
-    self.port.emit("request-cookie");
+    self.port.emit("request-cookie-from-cs");
 });
-*/
 
 window.addEventListener("xhr-request", function(event) {
 	var request = event.detail;
@@ -32,6 +33,7 @@ window.addEventListener("xhr-request", function(event) {
 	xhr.open(request.type, request.url, request.async);
 	request.headers.forEach(function(header){
 		xhr.setRequestHeader(header.key, header.value);
+		console.log(header.key + " header: " + header.value);
 	});
 	xhr.onreadystatechange = responseHandler;
 	if (request.payload){
@@ -48,3 +50,7 @@ window.addEventListener("xhr-request", function(event) {
 	}, 30*1000);*/
 
 }, false);
+
+var event = document.createEvent('CustomEvent');
+event.initCustomEvent("cs-ready", true, true, {});
+document.documentElement.dispatchEvent(event);
