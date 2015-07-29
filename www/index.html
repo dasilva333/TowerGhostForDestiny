@@ -543,27 +543,15 @@
                     </div>
                     <div class="inventory">
                         <div class="items" data-type="item">
-                            <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_subclasses">Sub Classes</strong></div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_general">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
-                                <!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/40)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Messages','Lost Items','Bounties','Mission'], as: 'bucketType' }"></div>
-                            </div>
+							<!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
+								<div data-bind="visible: layout.isVisible(character)">
+									<div class="title2" data-bind="visible: $root.searchKeyword() == ''">
+										<strong data-bind="text: $root.activeText()[layout.headerText]"></strong>
+										<span data-bind="text: layout.countText(character)"></span>
+									</div>
+									<div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
+								</div>
+							<!--/ko  -->
                         </div>
                     </div>
                 </div>
