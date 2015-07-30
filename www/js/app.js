@@ -1,3 +1,28 @@
+var Layout = function(layout){
+	var self = this;
+	
+	self.name = Object.keys(layout)[0];
+	var data = layout[self.name];
+	self.id = data.view;
+	self.bucketTypes = data.bucketTypes;
+	self.headerText = data.headerText;
+	self.array = data.array;
+	self.counts = data.counts;
+	self.countText = function(character){
+		return ko.computed(function(){
+			var text = "";
+			if (self.array != ""){
+				text = "(" + character[self.array]().length + "/" + (character.id == 'Vault' ? self.counts[0] : self.counts[1]) + ")";
+			}
+			return text;
+		});
+	}	
+	self.isVisible = function(character){
+		return ko.computed(function(){
+			return ((character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault");
+		});
+	}
+}
 tgd.dialog = (function(options) {
     var self = this;
 
@@ -261,7 +286,21 @@ var app = new(function() {
 
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
-
+	this.allLayouts = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 1000,
+            method: "notifyWhenChangesStop"
+        }
+    });
+	this.activeLayouts = ko.computed(function() {
+        var layouts = [];
+		_.each(self.allLayouts(), function(layout){
+			if (self.activeView() == layout.id || self.activeView() == 0) {
+				layouts.push(layout);
+			}
+		});
+        return layouts;
+    });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray().extend({
@@ -420,7 +459,7 @@ var app = new(function() {
             }
             /* Weapon Perks (Post-HoW) */
             else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                $content.find(".destt-info").prepend(tgd.perksTemplate({
+                $content.find(".destt-info").before(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
@@ -792,6 +831,12 @@ var app = new(function() {
         self.refresh();
     }
 
+	this.logout = function(){
+		self.bungie.logout(function(){
+			window.location.reload();
+		});
+	}
+	
     this.refresh = function() {
         self.loadingUser(true);
         self.characters.removeAll();
@@ -1497,6 +1542,12 @@ var app = new(function() {
     }
 
     this.init = function() {
+		
+		_.each(tgd.DestinyLayout, function(object){
+			self.allLayouts.push(new Layout(object));
+		});
+		
+		
         self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);

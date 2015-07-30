@@ -178,6 +178,7 @@
                                 <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
                             </li>
                             <li class="divider"></li>
+							<li><a href="#" data-bind="fastclick: logout">Logout</a></li>
                             <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
                             <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
                             <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
@@ -543,62 +544,15 @@
                     </div>
                     <div class="inventory">
                         <div class="items" data-type="item">
-                            <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-                                <!-- ko with: { bucketTypes: ['Primary','Special','Heavy'] } -->
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
-                                    <strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)
-                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
-                                    </div>
-                                </div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: bucketTypes, as: 'bucketType' }"></div>
-                                <!-- /ko -->
-                            </div>
-                            <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-                                <!-- ko with: { bucketTypes: ['Helmet','Gauntlet','Chest','Boots','Class Items'] } -->
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
-                                    <strong data-bind="text: $root.activeText().inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)
-                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
-                                    </div>
-                                </div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: bucketTypes, as: 'bucketType' }"></div>
-                                <!-- /ko -->
-                            </div>
-                            <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <!-- ko with: { bucketTypes: ['Subclasses'] } -->
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
-                                    <strong data-bind="text: $root.activeText().inventory_subclasses">Sub Classes</strong>
-                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
-                                    </div>
-                                </div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: bucketTypes, as: 'bucketType' }"></div>
-                                <!-- /ko -->
-                            </div>
-                            <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-                                <!-- ko with: { bucketTypes: ['Consumables','Materials','Shader','Emblem','Ship','Sparrow'] } -->
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
-                                    <strong data-bind="text: $root.activeText().inventory_general">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)
-                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
-                                    </div>
-                                </div>
-                                <!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: bucketTypes, as: 'bucketType' }"></div>
-                                <!-- /ko -->
-                            </div>
-                            <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <!-- ko with: { bucketTypes: ['Messages','Lost Items','Bounties','Mission'] } -->
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
-                                    <strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/40)
-                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
-                                    </div>
-                                </div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: bucketTypes, as: 'bucketType' }"></div>
-                                <!-- /ko -->
-                            </div>
+							<!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
+								<div data-bind="visible: layout.isVisible(character)">
+									<div class="title2" data-bind="visible: $root.searchKeyword() == ''">
+										<strong data-bind="text: $root.activeText()[layout.headerText]"></strong>
+										<span data-bind="text: layout.countText(character)"></span>
+									</div>
+									<div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
+								</div>
+							<!--/ko  -->
                         </div>
                     </div>
                 </div>
