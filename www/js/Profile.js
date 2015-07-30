@@ -95,6 +95,22 @@ Profile.prototype = {
 			}
 		}
 	},
+	reloadBucketHandler: function(buckets, done){
+		var self = this;
+		return function(results, response) {
+			if (results && results.data && results.data.buckets) {
+				var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
+				_.each(items, function(item) {
+					self.items.push(new Item(item, self, true));
+				});
+				done();
+			} else {
+				done();
+				self.refresh();
+				return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+			}
+		}
+	},
     _reloadBucket: function(model, event) {
         var self = this,
             element;
@@ -128,33 +144,9 @@ Profile.prototype = {
         self.items.removeAll(itemsToRemove);
 
         if (self.id == "Vault") {
-            app.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
-                    _.each(items, function(item) {
-                        self.items.push(new Item(item, self, true));
-                    });
-                    done();
-                } else {
-                    done();
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
+            app.bungie.vault(self.reloadBucketHandler(buckets, done));
         } else {
-            app.bungie.inventory(self.id, function(results, response) {
-                if (results && results.data && results.data.buckets) {
-					var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
-                    _.each(items, function(item) {
-                        self.items.push(new Item(item, self, true));
-                    });
-                    done();
-                } else {
-                    done();
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
+            app.bungie.inventory(self.id, self.reloadBucketHandler(buckets));
         }
     },
     _weapons: function() {
