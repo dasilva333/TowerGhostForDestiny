@@ -19,7 +19,7 @@ var Layout = function(layout){
 	}	
 	self.isVisible = function(character){
 		return ko.computed(function(){
-			return ((character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault");
+			return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
 		});
 	}
 }
