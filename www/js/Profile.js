@@ -83,7 +83,7 @@ Profile.prototype = {
         }
         return "Messages";
     },
-    _reloadBucket: function(bucketType, event) {
+    _reloadBucket: function(model, event) {
         var self = this,
             element;
         if (self.reloadingBucket) {
@@ -91,10 +91,10 @@ Profile.prototype = {
         }
 
         var buckets = [];
-        if (typeof bucketType === 'string' || bucketType instanceof String) {
-            buckets.push(bucketType);
+        if (typeof model === 'string' || model instanceof String) {
+            buckets.push(model);
         } else {
-            buckets.push.apply(buckets, bucketType.bucketTypes);
+            buckets.push.apply(buckets, model.bucketTypes);
         }
 
         self.reloadingBucket = true;
@@ -113,7 +113,6 @@ Profile.prototype = {
         var itemsToRemove = _.filter(self.items(), function(item) {
             return buckets.indexOf(item.bucketType) > -1;
         });
-
         self.items.removeAll(itemsToRemove);
 
         if (self.id == "Vault") {
