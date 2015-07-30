@@ -324,8 +324,31 @@ try {
 	      complete: callback
 	    })
 	  }
+	  
 	  this.getUrl = function(){
 	  	return url;
+	  }
+	  
+	  this.flattenItemArray = function(buckets){
+		var items = [];
+		if (_.isArray(buckets)){
+			buckets.forEach(function(bucket) {
+				bucket.items.forEach(function(item) {
+					items.push(item);
+				});
+			});
+		}
+		else {
+			Object.keys(buckets).forEach(function(bucketName) {
+				buckets[bucketName].forEach(function(bucket) {
+					bucket.items.forEach(function(item){
+						item.bucketName = bucketName;
+						items.push(item);
+					});
+				});
+			});
+		}
+		return items;
 	  }
 	}
 
