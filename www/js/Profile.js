@@ -83,12 +83,20 @@ Profile.prototype = {
         }
         return "Messages";
     },
-    _reloadBucket: function(bucketType, event) {
+    _reloadBucket: function(model, event) {
         var self = this,
             element;
         if (self.reloadingBucket) {
             return;
         }
+
+        var buckets = [];
+        if (typeof model === 'string' || model instanceof String) {
+            buckets.push(model);
+        } else {
+            buckets.push.apply(buckets, model.bucketTypes);
+        }
+
         self.reloadingBucket = true;
         if (typeof event !== "undefined") {
             var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
@@ -102,12 +110,10 @@ Profile.prototype = {
             }
         }
 
-        var itemsToRemove = _.filter(self.items(), {
-            bucketType: bucketType
+        var itemsToRemove = _.filter(self.items(), function(item) {
+            return buckets.indexOf(item.bucketType) > -1;
         });
-
         self.items.removeAll(itemsToRemove);
-
 
         if (self.id == "Vault") {
             app.bungie.vault(function(results, response) {
@@ -118,7 +124,7 @@ Profile.prototype = {
                             var info = window._itemDefs[item.itemHash];
                             if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
                                 var itemBucketType = self.getBucketTypeHelper(item, info);
-                                if (itemBucketType == bucketType) {
+                                if (buckets.indexOf(itemBucketType) > -1) {
                                     items.push(item);
                                 }
                             }
@@ -145,7 +151,7 @@ Profile.prototype = {
                                 var info = window._itemDefs[item.itemHash];
                                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
                                     var itemBucketType = self.getBucketTypeHelper(item, info);
-                                    if (itemBucketType == bucketType) {
+                                    if (buckets.indexOf(itemBucketType) > -1) {
                                         items.push(item);
                                     }
                                 }
