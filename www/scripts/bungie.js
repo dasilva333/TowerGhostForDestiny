@@ -110,10 +110,12 @@ try {
 	  function _request(opts) {
 	  	//This is for Mobile platform/Chrome
 		//console.log("received a _request");
+		if (opts.route.indexOf("http") == -1)
+			opts.route = url + "Platform" + opts.route;
 	  	if (isChrome || isMobile){
 			//console.time("XMLHttpRequest"); 
 			var r = new XMLHttpRequest();
-		    r.open(opts.method, url + "Platform" + opts.route, true);
+		    r.open(opts.method, opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
 			if (isMobile && typeof cookieString == "string"){
 				cookieString.split(";").forEach(function(cookie){
@@ -129,8 +131,13 @@ try {
 			  	console.log("error parsing responseText: " + this.responseText);
 			  }		  
 		      if (this.status >= 200 && this.status < 400) {	        		
-			        if(response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
-			        else { opts.complete(response.Response, response); }			
+			        if(response && response.ErrorCode && response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
+			        else { 
+						var obj = response;
+						if (typeof obj == "object" && "Response" in obj)
+							obj = response.Response;
+						opts.complete(obj, response); 
+					}			
 		      } 
 			  else {
 		       	    opts.complete({error: 'network error:' + this.status}, response);
@@ -161,7 +168,6 @@ try {
 		else {
 			console.log("sending firefox request");
 			var event = document.createEvent('CustomEvent');
-			opts.route = url + "Platform" + opts.route;
 			event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });
 			requests[id] = opts;
 			document.documentElement.dispatchEvent(event);	
@@ -183,7 +189,15 @@ try {
 	  this.system = function() {
 	    return systemIds;
 	  }
-	
+
+	  this.logout = function(callback){
+		_request({
+	      route: url + 'en/User/SignOut',
+	      method: 'GET',
+	      complete: callback
+	    });
+	  }
+	  
 	  this.user = function(callback) {
 	  	try {
 			window._request = _request;

@@ -831,6 +831,12 @@ var app = new(function() {
         self.refresh();
     }
 
+	this.logout = function(){
+		self.bungie.logout(function(){
+			window.location.reload();
+		});
+	}
+	
     this.refresh = function() {
         self.loadingUser(true);
         self.characters.removeAll();
