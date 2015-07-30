@@ -146,7 +146,7 @@ Profile.prototype = {
         if (self.id == "Vault") {
             app.bungie.vault(self.reloadBucketHandler(buckets, done));
         } else {
-            app.bungie.inventory(self.id, self.reloadBucketHandler(buckets));
+            app.bungie.inventory(self.id, self.reloadBucketHandler(buckets, done));
         }
     },
     _weapons: function() {
