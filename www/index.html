@@ -546,9 +546,12 @@
                         <div class="items" data-type="item">
 							<!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
 								<div data-bind="visible: layout.isVisible(character)">
-									<div class="title2" data-bind="visible: $root.searchKeyword() == ''">
+									<div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
 										<strong data-bind="text: $root.activeText()[layout.headerText]"></strong>
 										<span data-bind="text: layout.countText(character)"></span>
+                                        <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
+                                            <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+                                        </div>
 									</div>
 									<div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
 								</div>
