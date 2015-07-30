@@ -61,12 +61,11 @@
 
 <body>
     <script type="text/html" id="sections-template">
-        <!-- ko if: character.id !== 'Vault' || (character.id == 'Vault') -->
-        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && bucketType !== 'Post Master' && $root.searchKeyword() == ''">
+        <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', fastclick: character.reloadBucket, refreshableSection: true">
             <span data-bind="text: bucketType"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
-            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Post Master' || bucketType == 'Bounties' || bucketType == 'Mission') -->
-            (<span data-bind="text: character.get(bucketType).length+1"></span>/10)
+            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Lost Items' || bucketType == 'Bounties' || bucketType == 'Mission') -->
+            (<span data-bind="text: character.getVisible(bucketType).length + (character.itemEquippedVisible(bucketType) ? 1 : 0)"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties' || bucketType == 'Mission') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/10)
@@ -74,193 +73,58 @@
             <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/15)
             <!--/ko  -->
-            <!-- ko if: ( bucketType == 'Post Master' ) -->
+            <!-- ko if: ( bucketType == 'Messages' || bucketType == 'Lost Items' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/20)
             <!--/ko  -->
             <!--/ko  -->
             <!-- ko if: ( character.id == 'Vault' ) -->
-            (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+            (<span data-bind="text: character.getVisible(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
             <!--/ko  -->
+            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
+                <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
+                <img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+                <!--/ko  -->
+                <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+            </div>
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
-                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">						
-
-
-
-
-
-
+                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 
 						<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
 
-
-
-
-
-
-
 							<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
-
-
-
-
-
-
 
 						</a>
 
-
-
-
-
-
-
 						<div class="lockIcon" data-bind="if: item.locked">
-
-
-
-
-
-
 
 							<img src="assets/lock.png" />
 
-
-
-
-
-
-
 						</div>
 
-
-
-
-
-
-
-						<div class="attkIcon">														
-
-
-
-
-
-
+						<div class="attkIcon">
 
 							<div data-bind="text: primaryStat, css: damageTypeName"></div>
 
-
-
-
-
-
-
 						</div>
-
-
-
-
-
-
 
 					</span>
                 </div>
             </div>
-            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: character.id != 'Vault', with: character.itemEquipped(bucketType)">
+            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), with: character.itemEquipped(bucketType)">
                 <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 
+					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
 
+					<div class="lockIcon" data-bind="if: locked"><img src="assets/lock.png" /></div>
 
-
-
-
-
-					<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
-
-
-
-
-
-
-
-					<img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">
-
-
-
-
-
-
-
-					</a>
-
-
-
-
-
-
-
-					<div class="lockIcon" data-bind="if: locked">
-
-
-
-
-
-
-
-							<img src="assets/lock.png" />
-
-
-
-
-
-
-
-						</div>
-
-
-
-
-
-
-
-					<div class="attkIcon">
-
-
-
-
-
-
-
-						<div data-bind="text: primaryStat, css: damageTypeName">
-
-
-
-
-
-
-
-						</div>
-
-
-
-
-
-
-
-					</div>
-
-
-
-
-
-
+					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
 
 				</span>
             </div>
         </div>
-        <!--/ko  -->
     </script>
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
@@ -271,10 +135,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <span data-bind="visible: !isMobile"><span class="version">2.8.3</span></a>
+                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">2.9.0</span></strong></a>
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
-                        <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false">
+                        <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">
                     </div>
                 </div>
             </div>
@@ -294,8 +158,6 @@
                             <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
                             <li><a href="#" data-bind="fastclick: showDonate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
                             <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
-
-
                             <li class="divider"></li>
                             <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
                             <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
@@ -316,6 +178,7 @@
                                 <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
                             </li>
                             <li class="divider"></li>
+							<li><a href="#" data-bind="fastclick: logout">Logout</a></li>
                             <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
                             <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
                             <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
@@ -383,10 +246,10 @@
                                 <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultArmor ? 'fa-check-square' : 'fa-square'"></i>VoG Armor</a>
                             </li>
                             <li data-bind="css: setFilter() == _collections.crotaWeapons ? 'active' : '', fastclick: setSetFilter" value="crotaWeapons">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaWeapons ? 'fa-check-square' : 'fa-square'"></i>CE End Weapons</a>
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaWeapons ? 'fa-check-square' : 'fa-square'"></i>CE Weapons</a>
                             </li>
                             <li data-bind="css: setFilter() == _collections.crotaArmor ? 'active' : '', fastclick: setSetFilter" value="crotaArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaArmor ? 'fa-check-square' : 'fa-square'"></i>CE End Armor</a>
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaArmor ? 'fa-check-square' : 'fa-square'"></i>CE Armor</a>
                             </li>
                             <li data-bind="css: setFilter() == _collections.tooWeapons ? 'active' : '', fastclick: setSetFilter" value="tooWeapons">
                                 <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooWeapons ? 'fa-check-square' : 'fa-square'"></i>ToO Weapons</a>
@@ -486,12 +349,17 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter" value="0">
-                                <a href="#"><i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                            <li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter({ name: 0 })">
+                                <a href="#">
+                                    <i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                    <span data-bind="text: $root.activeText().menu_all">All</span>
+                                </a>
                             </li>
                             <!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
-                            <li data-bind="css: $parent.typeFilter() == weaponType.type ? 'active' : '', fastclick: $parent.setTypeFilter, value: weaponType.type" value="0">
-                                <a href="#"><i class="fa" data-bind="css: $parent.typeFilter() == weaponType.type ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: weaponType.name">All</span></a>
+                            <li data-bind="css: $parent.typeFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setTypeFilter(weaponType)">
+                                <a href="#"><i class="fa" data-bind="css: $parent.typeFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: weaponType.name">All</span>
+								</a>
                             </li>
                             <!--/ko  -->
                         </ul>
@@ -570,7 +438,7 @@
     </div>
     <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
         <strong data-bind="text: $root.activeText().missing_items">Missing Items</strong>
-        <span data-bind="foreach: { data: missingSets }">			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }"><img data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>		</span>
+        <span data-bind="foreach: { data: missingSets }">			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }"><img src="about:blank" data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>		</span>
     </div>
     <div data-bind="with: $root.activeUser()" style="">
         <div data-bind="visible: typeof error !== 'undefined'" style="display:none;">
@@ -633,21 +501,21 @@
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_vault"></div>
-                                <img data-bind="attr: { src : imgIcon }">
+                                <img src="about:blank" data-bind="attr: { src : imgIcon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_store"></div>
-                                <img data-bind="attr: { src : imgIcon }">
+                                <img src="about:blank" data-bind="attr: { src : imgIcon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_equip"></div>
-                                <img data-bind="attr: { src : imgIcon }">
+                                <img src="about:blank" data-bind="attr: { src : imgIcon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
@@ -667,36 +535,27 @@
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
                 <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
                     <div class="character">
-                        <div class="character-box" data-bind="style: { backgroundImage: background }">
+                        <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id">
                             <div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
                             <div class="class" data-bind="text: classType"></div>
                             <div class="level" style="cursor:pointer;" data-bind="text: level, click: showStats"></div>
+                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>
                         </div>
-                        <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }" style="background-color:yellow; height:2px;">&nbsp;</div>
                     </div>
                     <div class="inventory">
                         <div class="items" data-type="item">
-                            <div data-bind="visible: $root.activeView() == 1 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_weapons">Weapons</strong> (<span data-bind="text: character.weapons().length"></span>/<span data-bind="text: character.id == 'Vault' ? 36 : 30"></span>)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Primary','Special','Heavy'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: $root.activeView() == 2 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_armor">Armor</strong> (<span data-bind="text: character.armor().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 50"></span>)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_subclasses">Sub Classes</strong></div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Subclasses'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: $root.activeView() == 3 || $root.activeView() == 0">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_general">General</strong> (<span data-bind="text: character.general().length"></span>/<span data-bind="text: character.id == 'Vault' ? 24 : 70"></span>)</div>
-                                <!-- Consumables = 15 Materials = 15 Shader = 10 Emblem = 10 Ship = 10 Sparrow = 10 so 70 -->
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], as: 'bucketType' }"></div>
-                            </div>
-                            <div style="display:none" data-bind="visible: ($root.activeView() == 3 || $root.activeView() == 0) && character.id !== 'Vault'">
-                                <div class="title" data-bind="visible: $root.searchKeyword() == ''"><strong data-bind="text: $root.activeText().inventory_postmaster">Post Master</strong> (<span data-bind="text: character.postmaster().length"></span>/20)</div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: ['Post Master','Bounties','Mission'], as: 'bucketType' }"></div>
-                            </div>
+							<!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
+								<div data-bind="visible: layout.isVisible(character)">
+									<div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
+										<strong data-bind="text: $root.activeText()[layout.headerText]"></strong>
+										<span data-bind="text: layout.countText(character)"></span>
+                                        <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
+                                            <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+                                        </div>
+									</div>
+									<div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
+								</div>
+							<!--/ko  -->
                         </div>
                     </div>
                 </div>
@@ -713,9 +572,9 @@
         <div class="content" data-bind="with: activeLoadout">
             <div id="loadout-options">
                 <input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
-                <span id="loadout-save" data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
-                <span id="loadout-save" data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
-                <span id="loadout-save" data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
+                <span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
+                <span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
+                <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
                 <!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
                 <div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }">
                     <div class="lower-left" data-bind="text: classLetter"></div>
@@ -727,7 +586,22 @@
                     <span data-bind="text: $root.activeText().loadouts_instructions_contd">to equip.</span>
                 </p>
             </div>
-            <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">				<span class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">						<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">					</a>					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>				</span>
+            <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
+
+				<div class="item" data-bind="css: isMobile && doEquip() ? 'doEquip' : ''">
+
+					<input type="checkbox" value="true" data-bind="checked: doEquip, fastclick: markAsEquip, visible: !isMobile" title="Enable to mark as the equip item">
+
+					<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+
+						<img class="itemImage" src="about:blank" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+
+					</a>
+
+					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+
+				</div>
+
             </span>
         </div>
     </div>
@@ -760,10 +634,9 @@
             </div>
         </div>
     </div>
-    </div>
     <div id="about" style="display:none">
         <h2 style="margin-top:0;">Tower Ghost for Destiny<br>Manage your gear anywhere</h2>
-        <p><strong>Version: <span class="version">2.8.3</span></strong></p>
+        <p><strong>Version: <span class="version">2.9.0</span></strong></p>
         <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -779,6 +652,7 @@
             <li>Multiple primaries, special, heavy per loadout</li>
             <li>Option to equip an item per bucket in your loadout</li>
             <li>Equipping items & transferring items across characters</li>
+            <li>Specify amounts of consumables/materials to transfer</li>
             <li>Filter by Perk Name, Description, Gun Name</li>
             <li>Filter by gun progress (Maxed (gold border), Full XP, Missing XP)</li>
             <li>Filter by burn (Kinetic, Arc, Solar, Void)</li>
@@ -789,6 +663,8 @@
             <li>Filter by Weapons, Armor or General items</li>
             <li>Supports dual-linked accounts to Xbox and Playstation</li>
             <li>Change emblem dynamically</li>
+            <li>Distribute consumables/materials equally across characters (normalize)</li>
+            <li>Move all of a consumable/material to a character (consolidate)</li>
         </ul>
         <h3>Support and New Issues:</h3>
         <p><a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_blank">Github.com</a> or Contact me on via email <a href="mailto:support@towerghostfordestiny.com">support@towerghostfordestiny.com</a></p>
@@ -815,10 +691,12 @@
             <li><strong>Damage</strong> Filter by burn type, kinetic is the default burn applied to all weapons if it's not arc, void or solar.</li>
             <li><strong>Weapon</strong> Filter by type of weapon, this list will only show types you have in your inventory.</li>
             <li><strong>Name or Perk</strong> Filter by the name of the item, or the name of the perk, or the description in the perk.</li>
+            <li><strong>Normalize</strong> Equally distribute consumables/materials across selected characters.</li>
+            <li><strong>Consolidate</strong> Move all of a certain consumable/material to a character.</li>
         </ul>
     </div>
     <div id="showwhatsnew" style="display:none;">true</div>
-    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%5Ct%3Cli%3EImproved%20logging%20in%20times%20for%20iOS%20and%20Windows%20Phone%20devices%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20ability%20to%20see%20rank%20up%20packages%20in%20the%20Post%20Master%20section%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20Tier%20and%20Weapons%20filter%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20for%20certain%20users%20unable%20to%20use%20the%20app%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20handling%20of%20transferring%20materials%20and%20consumables%20stacks.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20icon%20indicator%20for%20locked%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20layout%20and%20options%20available%20for%20Donate%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20it%20wouldn%27t%20share%20armor%20stats%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EShare%20URL%20with%20Friends%20is%20back%2C%20try%20it%20out%20to%20generate%20your%20own%20custom%20link%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Auto%20Pad%20Height%2C%20now%20looks%20even%20better.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20sign%20in%20process%20for%20Firefox%20users%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENew%20section%20for%20Bounties%20%26%20Mission%20items%20are%20now%20available%20under%20General%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20consolidate%20materials%20in%20the%20transfer%20popup%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20various%20menu%20options%20so%20that%20it%20auto%20hides%20the%20menu%20on%20click%20for%20mobile.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20clicking%20on%20the%20next%20item%20required%20two%20taps.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20change%20your%20language%20in%20TGD%20under%20Settings.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20click%20on%20your%20level%20to%20see%20the%20character%20stats.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDestinyStatus%20reported%20added%20to%20the%20menu%2C%20visit%20it%20to%20see%20your%20current%20progress.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Sets%20filter%20to%20support%20new%20Trials%20of%20Osiris%20and%20Prison%20of%20Elders%20sets.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20multi-account%20support%20for%20preferred%20systems%2C%20will%20now%20default%20to%20Xbox%20after%20refresh.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20see%20this%20message%20by%20clicking%20on%20TGD%20in%20the%20%3Cstrong%3Etop%20left%3C/strong%3E%20corner.%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThanks%20to%20@SchubyDoo%2C%20@bluetidepro%2C%20@Mulchman%2C%20@ssoriche%2C%20@rvvisse%20and%20everyone%20else%20for%20helping%20out.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
+    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%5Ct%3Cli%3EAdded%20the%20ability%20to%20refresh%20every%20section%20now%20with%20animated%20spinner%3C/li%3E%5Cr%5Cn%5Ct%3Cli%3EAll%20perk%20images%20are%20now%20locally%20cached%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Post%20Master%20section%20with%20support%20for%20more%20items%20and%20correct%20counts%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECharacter%20emblems%20now%20follow%20you%20on%20scroll%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20ability%20to%20search%20for%20items%20by%20secondary%20perks%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ESecondary%20perks%20are%20now%20displayed%20for%20weapons%20and%20armor%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDestinyDB%20tooltips%20now%20include%20weapon%20stats%3C/li%3E%20%20%20%20%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20logging%20in%20times%20for%20iOS%20and%20Windows%20Phone%20devices%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20ability%20to%20see%20rank%20up%20packages%20in%20the%20Post%20Master%20section%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20Tier%20and%20Weapons%20filter%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20for%20certain%20users%20unable%20to%20use%20the%20app%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20handling%20of%20transferring%20materials%20and%20consumables%20stacks.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20icon%20indicator%20for%20locked%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20layout%20and%20options%20available%20for%20Donate%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20bug%20where%20it%20wouldn%27t%20share%20armor%20stats%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EShare%20URL%20with%20Friends%20is%20back%2C%20try%20it%20out%20to%20generate%20your%20own%20custom%20link%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Auto%20Pad%20Height%2C%20now%20looks%20even%20better.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20sign%20in%20process%20for%20Firefox%20users%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENew%20section%20for%20Bounties%20%26%20Mission%20items%20are%20now%20available%20under%20General%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20consolidate%20materials%20in%20the%20transfer%20popup%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20various%20menu%20options%20so%20that%20it%20auto%20hides%20the%20menu%20on%20click%20for%20mobile.%3C/li%3E%5Cr%5Cn%3C/ul%3E%5Cr%5Cn%5Cr%5Cn%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThanks%20to%20@SchubyDoo%2C%20@bluetidepro%2C%20@Mulchman%2C%20@ssoriche%2C%20@rvvisse%20and%20everyone%20else%20for%20helping%20out.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
 </body>
 
 </html>

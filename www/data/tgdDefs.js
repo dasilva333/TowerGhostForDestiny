@@ -5,7 +5,13 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-
+tgd.DestinyLayout = [
+  { "Weapons": { array: 'weapons', counts: [36,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
+  { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
+  { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
+  { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
+  { "Post Master": { array: 'postmaster', counts: [40,40], bucketTypes: ['Messages','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
+]
 tgd.DestinyViews = {
 	"0": "All",
 	"1": "Weapons",
@@ -73,8 +79,12 @@ tgd.DestinyBucketColumns = {
 	//TODO: Improve this so I don't need two records
 	"Post": 4,
 	"Post Master": 4,
+	"Messages": 4,
+	"Lost": 4,
+	"Lost Items": 4,
 	"Mission": 4
 }
+tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
@@ -127,7 +137,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 			'<div class="destt-talent-icon">' +
 				'<img src="<%= perk.iconPath %>" width="36">' +
 			'</div>' +
-			'<div class="destt-talent-description">' +
+			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
 				'<%= perk.description %>' +
 			'</div>' +
 		'</div>' +
@@ -202,5 +212,35 @@ tgd.normalizeTemplate = '<div id="menu">' +
 			'<a class="list-group-item row">sub-item 2</a>' +
 		'</div>' +
 		'-->' +
+	'</div>' +
+'</div>';
+
+tgd.selectMultiCharactersTemplate = '<div id="menu">' +
+	'<div class="panel list-group">' +
+		'<div class="list-group-item row">' +
+			'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' + 				
+				'<p><%= description %></p>' +
+			'</div>' +
+		'</div>' +
+		'<div id="opt1" class="collapse in">' +
+			'<div class="list-group-item row">' +
+				'<div class="locations col-xs-12 col-sm-12 col-md-12 col-lg-12">' +					
+					'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2"><!-- padding --></div>' +
+					'<% for (i = 0; i < characters.length; i++){ %>' +
+						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
+							'<div class="attkIcon">' +
+								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
+								'<% if (selected[characters[i].id] == true){ %>' +
+									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+								'<% } else { %>' +
+									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+								'<% } %>' +
+								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
+							'</div>' +
+						'</div>' +
+					'<% } %>' +
+				'</div>' +
+			'</div>' +
+		'</div>' +
 	'</div>' +
 '</div>';

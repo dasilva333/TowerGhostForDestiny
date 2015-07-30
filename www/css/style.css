@@ -52,7 +52,7 @@ body {
 
 .desktop .move-popup {
     position: absolute;
-    z-index: 2;
+    z-index: 1004;
     top: -75px;
     width: 380px;
     height: 75px;
@@ -233,6 +233,8 @@ body {
 
 #loadout-contents .item {
     position: relative;
+	display: inline-block;
+	width: 67px;
 }
 
 #loadout-contents input {
@@ -257,16 +259,39 @@ body {
 }
 
 .container .title {
-    text-transform: uppercase;
+    #text-transform: uppercase;
     position: relative;
-    margin-top: 8px;
-    margin-bottom: 8px;
+    margin-top: 12px;
+    margin-bottom: 2px;
     /* border-bottom: 2px solid rgba(245,245,245,.6); */
     
     font-size: 15px;
     font-weight: 500;
     color: rgba(245, 245, 245, .6);
     background: rgba(0, 0, 0, .2);
+    padding-left: 5px;
+}
+
+.container .titleHover {
+    background: rgba(18, 21, 20, .5);
+}
+
+.container .titleRefresh {
+    margin-right: 4px;
+    float: right;
+}
+
+.container .title2 {
+    text-transform: uppercase;
+    position: relative;
+    margin-top: 12px;
+    margin-bottom: 2px;
+    /* border-bottom: 2px solid rgba(245,245,245,.6); */
+    
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(245, 245, 245, .8);	
+    background: rgba(18, 21, 20, .7);
     padding-left: 5px;
 }
 
@@ -281,9 +306,13 @@ body {
 .nav > li > a {
     padding: 10px;
 }
+.character {
+	margin-bottom: 47px;
+}
 
 .character-box {
-    position: relative;
+    position: fixed;
+	top: 47px;
     display: inline-block;
     height: 43px;
     padding: 0 0 0 50px;
@@ -293,6 +322,18 @@ body {
     color: #f5f5f5;
     text-decoration: none;
     background-size: cover;
+	z-index: 1003;
+}
+.character-box.active {
+	position: relative;
+}
+
+.character-box  .progression {
+	background-color:yellow; 
+	height:2px !important;
+	position: absolute;
+	top: 18px !important;
+	left: 0;
 }
 
 .character-box .emblem {
@@ -405,9 +446,10 @@ li a {
     display: none;
 }
 
-.activeProfile {
+.quickScrollView .activeProfile {
     border: 3px solid white;
 }
+
 /* 960 px is the breakpoint for 4 columns */
 
 @media (max-width: 959px) {

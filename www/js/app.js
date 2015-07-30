@@ -1,3 +1,28 @@
+var Layout = function(layout){
+	var self = this;
+	
+	self.name = Object.keys(layout)[0];
+	var data = layout[self.name];
+	self.id = data.view;
+	self.bucketTypes = data.bucketTypes;
+	self.headerText = data.headerText;
+	self.array = data.array;
+	self.counts = data.counts;
+	self.countText = function(character){
+		return ko.computed(function(){
+			var text = "";
+			if (self.array != ""){
+				text = "(" + character[self.array]().length + "/" + (character.id == 'Vault' ? self.counts[0] : self.counts[1]) + ")";
+			}
+			return text;
+		});
+	}	
+	self.isVisible = function(character){
+		return ko.computed(function(){
+			return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
+		});
+	}
+}
 tgd.dialog = (function(options) {
     var self = this;
 
@@ -64,7 +89,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     } else {
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
@@ -99,6 +124,25 @@ tgd.moveItemPositionHandler = function(element, item) {
         }
     }
 }
+
+window.ko.bindingHandlers.refreshableSection = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        //console.log(element);
+        //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("titleHover");
+                $(this).find(".titleRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("titleHover");
+                $(this).find(".titleRefresh").hide();
+            });
+    }
+};
 
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -196,7 +240,6 @@ tgd.StoreObj = function(key, compare, writeCallback) {
 
 var app = new(function() {
     var self = this;
-    var dataDir = "data";
 
     this.retryCount = ko.observable(0);
     this.loadingUser = ko.observable(false);
@@ -243,10 +286,29 @@ var app = new(function() {
 
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
-
+	this.allLayouts = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 1000,
+            method: "notifyWhenChangesStop"
+        }
+    });
+	this.activeLayouts = ko.computed(function() {
+        var layouts = [];
+		_.each(self.allLayouts(), function(layout){
+			if (self.activeView() == layout.id || self.activeView() == 0) {
+				layouts.push(layout);
+			}
+		});
+        return layouts;
+    });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
-    this.characters = ko.observableArray();
+    this.characters = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 1000,
+            method: "notifyWhenChangesStop"
+        }
+    });
     this.orderedCharacters = ko.computed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
@@ -365,14 +427,14 @@ var app = new(function() {
         if (element) lastElement = element
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
-        self.characters().forEach(function(character) {
-            ['weapons', 'armor'].forEach(function(list) {
-                var item = _.findWhere(character[list](), {
+        if (instanceId > 0) {
+            self.characters().forEach(function(character) {
+                var item = _.findWhere(character.items(), {
                     '_id': instanceId
                 });
                 if (item) activeItem = item;
             });
-        });
+        }
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
@@ -380,25 +442,29 @@ var app = new(function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Description using locale */
             $content.find(".destt-desc").text(activeItem.itemDescription);
+            /* Remove Emblem Text */
+            if ($content.find(".fhtt-emblem").length > 0) {
+                $content.find("span").remove();
+            }
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
             /* Weapon Perks (Pre-HoW) */
-            if (activeItem.perks && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+            if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
             /* Weapon Perks (Post-HoW) */
-            else if (activeItem.perks && $content.find(".destt-talent").length == 0) {
-                $content.find(".destt-info").prepend(tgd.perksTemplate({
+            else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
+                $content.find(".destt-info").before(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
             /* Armor Perks */
-            else if (activeItem.perks && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
+            else if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
                 $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
@@ -420,11 +486,6 @@ var app = new(function() {
                 );
             }
             $content.find(".destt-primary-min").html(activeItem.primaryStat());
-        } else {
-            //remove the "Emblem" title from the image issue #31
-            if ($content.find(".fhtt-emblem").length > 0) {
-                $content.find("span").remove();
-            }
         }
         var width = $(window).width();
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen
@@ -438,6 +499,14 @@ var app = new(function() {
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
         $("#viewOptions").toggle();
+        var isVisible = $("#viewOptions").is(":visible");
+        if (isVisible) {
+            $(".character").css("margin", 'auto');
+            $(".character-box").css("position", 'relative');
+        } else {
+            $(".character").css("margin", '');
+            $(".character-box").css("position", 'fixed');
+        }
     }
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
@@ -521,9 +590,13 @@ var app = new(function() {
         self.toggleBootstrapMenu();
         self.tierFilter(model.tier);
     }
-    this.setTypeFilter = function(model, event) {
-        self.toggleBootstrapMenu();
-        self.typeFilter($(event.target).closest('li').attr("value"));
+    this.setTypeFilter = function(weaponType) {
+        return function() {
+            self.toggleBootstrapMenu();
+            var type = weaponType.name;
+            console.log("type: " + type);
+            self.typeFilter(type);
+        }
     }
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -543,110 +616,10 @@ var app = new(function() {
         return missingIds;
     })
 
-    var processItem = function(profile) {
-        return function(item) {
-            if (!(item.itemHash in window._itemDefs)) {
-                console.log("found an item without a definition! " + JSON.stringify(item));
-                console.log(item.itemHash);
-                return;
-            }
-            var info = window._itemDefs[item.itemHash];
-            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var description, tierTypeName, itemDescription, itemTypeName;
-                try {
-                    description = decodeURIComponent(info.itemName);
-                    tierTypeName = decodeURIComponent(info.tierTypeName);
-                    itemDescription = decodeURIComponent(info.itemDescription);
-                    itemTypeName = decodeURIComponent(info.itemTypeName);
-                } catch (e) {
-                    description = info.itemName;
-                    tierTypeName = info.tierTypeName;
-                    itemDescription = info.itemDescription;
-                    itemTypeName = info.itemTypeName;
-                }
-                //some weird stuff shows up under this bucketType w/o this filter
-                if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
-                    return;
-                }
-                var itemObject = {
-                    id: item.itemHash,
-                    _id: item.itemInstanceId,
-                    characterId: profile.id,
-                    damageType: item.damageType,
-                    damageTypeName: tgd.DestinyDamageTypes[item.damageType],
-                    isEquipped: item.isEquipped,
-                    isGridComplete: item.isGridComplete,
-                    locked: item.locked,
-                    description: description,
-                    itemDescription: itemDescription,
-                    bucketType: (item.location == 4) ? "Post Master" : tgd.DestinyBucketTypes[info.bucketTypeHash],
-                    type: info.itemSubType,
-                    typeName: itemTypeName,
-                    tierType: info.tierType,
-                    tierTypeName: tierTypeName,
-                    icon: dataDir + info.icon
-                };
-                tgd.duplicates.push(item.itemHash);
-                if (item.primaryStat) {
-                    itemObject.primaryStat = item.primaryStat.value;
-                }
-                if (info.bucketTypeHash == "2197472680" && item.progression) {
-                    itemObject.primaryStat = ((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%";
-                }
-                if (item.progression) {
-                    itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
-                }
-
-                itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
-                itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-                /* both weapon engrams and weapons fit under this condition*/
-                if ((itemObject.weaponIndex > -1 || itemObject.armorIndex > -1) && item.perks.length > 0) {
-                    itemObject.perks = item.perks.map(function(perk) {
-                        if (perk.perkHash in window._perkDefs) {
-                            var p = window._perkDefs[perk.perkHash];
-                            return {
-                                iconPath: self.bungie.getUrl() + perk.iconPath,
-                                name: p.displayName,
-                                description: p.displayDescription
-                            }
-                        } else {
-                            return perk;
-                        }
-                    });
-                    itemObject.isUnique = false;
-                }
-
-                if (itemObject.typeName && itemObject.typeName == "Emblem") {
-                    itemObject.backgroundPath = self.makeBackgroundUrl(info.secondaryIcon);
-                }
-                if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
-                    itemObject.primaryStat = item.stackSize;
-                    itemObject.maxStackSize = info.maxStackSize;
-                }
-                if (info.itemType == 2 && itemObject.bucketType != "Class Items") {
-                    itemObject.stats = {};
-                    _.each(item.stats, function(stat) {
-                        if (stat.statHash in window._statDefs) {
-                            var p = window._statDefs[stat.statHash];
-                            itemObject.stats[p.statName] = stat.value;
-                        }
-                    });
-                }
-                //console.log("new item time " + (new Date()-t));
-                profile.items.push(new Item(itemObject, profile));
-            }
-            /*else {
-				console.log(info.itemName);
-				console.log(info);
-				console.log(item);
-			}*/
-        }
-    }
-
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.type > 1 && _.where(self.weaponTypes(), {
-                    type: item.type
+            if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
+                    name: item.typeName
                 }).length == 0) {
                 self.weaponTypes.push({
                     name: item.typeName,
@@ -659,8 +632,8 @@ var app = new(function() {
 
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
-            if (_.where(self.tierTypes(), {
-                    tier: item.tierType
+            if (item.tierTypeName && _.where(self.tierTypes(), {
+                    name: item.tierTypeName
                 }).length == 0) {
                 self.tierTypes.push({
                     name: item.tierTypeName,
@@ -711,15 +684,26 @@ var app = new(function() {
             count++;
             if (count == total) {
                 self.characters(profiles);
-                self.loadingUser(false);
                 self.loadLoadouts();
-                self.tierTypes(self.tierTypes.sort(function(a, b) {
-                    return b.type - a.type
-                }));
-                setTimeout(self.bucketSizeHandler, 500);
+                self.tierTypes.sort(function(a, b) {
+                    return a.tier - b.tier;
+                });
+                self.weaponTypes.sort(function(a, b) {
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    if (a.name < b.name) {
+                        return -1;
+                    }
+                    return 0;
+                })
+                setTimeout(self.bucketSizeHandler, 1000);
+                setTimeout(self.quickIconHighlighter, 1000);
                 loadingData = false;
+                self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
+
         }
         self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {
@@ -742,57 +726,30 @@ var app = new(function() {
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
-            //console.time("self.bungie.vault");
-            self.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var buckets = results.data.buckets;
-                    var profile = new Profile({
-                        race: "",
-                        order: self.vaultPos(),
-                        gender: "Tower",
-                        classType: "Vault",
-                        id: "Vault",
-                        level: "",
-                        imgIcon: "assets/vault_icon.jpg",
-                        icon: self.makeBackgroundUrl("assets/vault_icon.jpg", true),
-                        background: self.makeBackgroundUrl("assets/vault_emblem.jpg", true)
-                    });
-
-                    buckets.forEach(function(bucket) {
-                        bucket.items.forEach(processItem(profile));
-                    });
-                    self.addTierTypes(profile.items());
-                    self.addWeaponTypes(profile.weapons());
-                    //self.characters.push(profile);
-                    //console.timeEnd("self.bungie.vault");
-                    done(profile)
-                } else {
-                    loadingData = false;
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-            //console.time("avatars.forEach");          
+			var buckets = e.data.inventory.buckets;
+			var vaultItems = [], globalItems = [];
+			Object.keys(buckets).forEach(function(bucketName) {
+				buckets[bucketName].forEach(function(bucket) {
+					bucket.items.forEach(function(item){
+						if (bucketName == "Invisible"){
+							globalItems.push(item);
+						}
+						else {
+							vaultItems.push(item);
+						}
+					});
+				});
+			});
+			var profile = new Profile("Vault", vaultItems);
+			self.addTierTypes(profile.items());
+			self.addWeaponTypes(profile.weapons());
+			done(profile);
+			
+            //console.time("avatars.forEach");
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
-                        //console.time("new Profile");                  
-                        var profile = new Profile({
-                            order: index + 1,
-                            gender: tgd.DestinyGender[character.characterBase.genderType],
-                            classType: tgd.DestinyClass[character.characterBase.classType],
-                            id: character.characterBase.characterId,
-                            imgIcon: self.bungie.getUrl() + character.emblemPath,
-                            icon: self.makeBackgroundUrl(character.emblemPath),
-                            background: self.makeBackgroundUrl(character.backgroundPath),
-                            level: character.characterLevel,
-                            stats: character.characterBase.stats,
-                            percentToNextLevel: character.percentToNextLevel,
-                            race: window._raceDefs[character.characterBase.raceHash].raceName
-                        });
-                        var items = [];
-
-
+                        var items = [].concat(globalItems);
                         Object.keys(response.data.buckets).forEach(function(bucket) {
                             response.data.buckets[bucket].forEach(function(obj) {
                                 obj.items.forEach(function(item) {
@@ -800,15 +757,9 @@ var app = new(function() {
                                 });
                             });
                         });
-                        //simulate me having the 4th horseman
-                        //items.push({"itemHash":2344494718,"bindStatus":0,"isEquipped":false,"itemInstanceId":"6917529046313340492","itemLevel":22,"stackSize":1,"qualityLevel":70});
-                        //console.time("processItems");
-                        items.forEach(processItem(profile));
-                        //console.timeEnd("processItems");
+                        var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
-                        //console.timeEnd("new Profile");
-                        //self.characters.push(profile);
                         done(profile);
                     } else {
                         loadingData = false;
@@ -880,6 +831,12 @@ var app = new(function() {
         self.refresh();
     }
 
+	this.logout = function(){
+		self.bungie.logout(function(){
+			window.location.reload();
+		});
+	}
+	
     this.refresh = function() {
         self.loadingUser(true);
         self.characters.removeAll();
@@ -929,14 +886,22 @@ var app = new(function() {
         }
     }
 
+
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
             var $item = $(item);
-            var $quickIcon = $(".quickScrollView ." + $item.attr('id'));
+            var characterId = $item.attr('id');
+            var $quickIcon = $(".quickScrollView ." + characterId);
+            var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-            $quickIcon.toggleClass("activeProfile", scrollTop >= top && scrollTop <= bottom);
+            var isActive = scrollTop >= top && scrollTop <= bottom;
+            $quickIcon.toggleClass("activeProfile", isActive);
+            $characterBox.toggleClass("active", !isActive);
+            $characterBox.css({
+                width: $characterBox.parent().width() + 'px'
+            });
         });
     }
 
@@ -1346,53 +1311,100 @@ var app = new(function() {
         }
     }
 
-    this.normalizeAll = function(model, event, useVault) {
-        if (useVault) {
-            return BootstrapDialog.alert("'useVault' flag not tested; aborting!");
-        }
+    this.normalizeAll = function(bucketType) {
+        //console.log("normalizeAll(" + bucketType + ")");
 
-        var onlyCharacters = useVault ? app.characters() : _.reject(app.characters(), function(c) {
-            return c.id == "Vault"
-        });
-        var selector = function(i) {
-            return i.bucketType == "Consumables" || i.bucketType == "Materials"
-        };
-
-        /* gather all consumable and material descriptions from all characters */
-        var descriptions = _.union(
-            (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
-        //console.log(descriptions);
-
-        var getNextDescription = (function() {
-            var i = 0;
-            return function() {
-                return i < descriptions.length ? descriptions[i++] : undefined;
+        var done = function(onlyCharacters) {
+            var selector = function(i) {
+                return i.bucketType == bucketType;
             };
-        })();
 
-        var nextNormalize = function() {
-            var description = getNextDescription();
+            /* gather all consumable and/or material descriptions from all characters */
+            var descriptions = _.union(
+                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
 
-            while (description !== undefined) {
-                if ((description !== "Hadronic Essence") &&
-                    (description !== "Sapphire Wire") &&
-                    (description !== "Plasteel Plating")) {
-                    break;
-                } else {
-                    description = getNextDescription();
+            var getNextDescription = (function() {
+                var i = 0;
+                return function() {
+                    return i < descriptions.length ? descriptions[i++] : undefined;
+                };
+            })();
+
+            var nextNormalize = function() {
+                var description = getNextDescription();
+
+                while (description !== undefined) {
+                    if ((description !== "Hadronic Essence") &&
+                        (description !== "Sapphire Wire") &&
+                        (description !== "Plasteel Plating")) {
+                        break;
+                    } else {
+                        description = getNextDescription();
+                    }
                 }
+
+                if (description == undefined) {
+                    BootstrapDialog.alert("All items normalized as best as possible");
+                    return;
+                }
+
+                // normalizeSingle = function(description, characters, usingbatchMode, callback)
+                self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
             }
 
-            if (description == undefined) {
-                self.refresh();
-                return;
-            }
-
-            //console.log(description);
-            self.normalizeSingle(description, false, true, nextNormalize);
+            nextNormalize();
         }
 
-        nextNormalize();
+        this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
+    }
+
+    this.selectMultiCharacters = function(title, description, callback) {
+        var selectedStatus = [];
+        for (i = 0; i < app.orderedCharacters().length; i++) {
+            var id = app.orderedCharacters()[i].id;
+            selectedStatus[id] = (id !== "Vault");
+        }
+        var dialogItself = (new tgd.dialog({
+            message: function(dialogItself) {
+                var $content = $(tgd.selectMultiCharactersTemplate({
+                    description: description,
+                    characters: app.orderedCharacters(),
+                    selected: selectedStatus
+                }));
+                var charButtonClicked = function(self, id) {
+                    selectedStatus[id] = !selectedStatus[id];
+                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                };
+                $.each(app.orderedCharacters(), function(i, val) {
+                    var id = val.id;
+                    var sel = "#char" + i.toString();
+                    $content.find(sel).click(function() {
+                        charButtonClicked($(this), id);
+                    });
+                });
+                return $content;
+            },
+            buttons: [{
+                label: 'OK',
+                cssClass: 'btn-primary',
+                action: function(dialogItself) {
+                    var characters = _.filter(app.orderedCharacters(), function(c) {
+                        return selectedStatus[c.id] == true;
+                    });
+                    if (characters.length <= 1) {
+                        BootstrapDialog.alert("Need to select two or more characters.");
+                    } else {
+                        callback(characters);
+                    }
+                    dialogItself.close();
+                }
+            }, {
+                label: 'Close',
+                action: function(dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        })).title(title).show(true);
     }
 
     this.setVaultTo = function(pos) {
@@ -1530,6 +1542,12 @@ var app = new(function() {
     }
 
     this.init = function() {
+		
+		_.each(tgd.DestinyLayout, function(object){
+			self.allLayouts.push(new Layout(object));
+		});
+		
+		
         self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
@@ -1537,6 +1555,7 @@ var app = new(function() {
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
