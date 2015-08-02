@@ -83,34 +83,34 @@ Profile.prototype = {
         }
         return "Messages";
     },
-	reloadBucketFilter: function(buckets){
-		var self = this;
-		return function(item) {
-			var info = window._itemDefs[item.itemHash];
-			if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-				var itemBucketType = self.getBucketTypeHelper(item, info);
-				if (buckets.indexOf(itemBucketType) > -1) {
-					return true;
-				}
-			}
-		}
-	},
-	reloadBucketHandler: function(buckets, done){
-		var self = this;
-		return function(results, response) {
-			if (results && results.data && results.data.buckets) {
-				var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
-				_.each(items, function(item) {
-					self.items.push(new Item(item, self, true));
-				});
-				done();
-			} else {
-				done();
-				self.refresh();
-				return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-			}
-		}
-	},
+    reloadBucketFilter: function(buckets) {
+        var self = this;
+        return function(item) {
+            var info = window._itemDefs[item.itemHash];
+            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                var itemBucketType = self.getBucketTypeHelper(item, info);
+                if (buckets.indexOf(itemBucketType) > -1) {
+                    return true;
+                }
+            }
+        }
+    },
+    reloadBucketHandler: function(buckets, done) {
+        var self = this;
+        return function(results, response) {
+            if (results && results.data && results.data.buckets) {
+                var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
+                _.each(items, function(item) {
+                    self.items.push(new Item(item, self, true));
+                });
+                done();
+            } else {
+                done();
+                self.refresh();
+                return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+            }
+        }
+    },
     _reloadBucket: function(model, event) {
         var self = this,
             element;
