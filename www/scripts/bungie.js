@@ -117,11 +117,11 @@ try {
 			var r = new XMLHttpRequest();
 		    r.open(opts.method, opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
-			if (isMobile && typeof cookieString == "string"){
+			/*if (isMobile && typeof cookieString == "string"){
 				cookieString.split(";").forEach(function(cookie){
 					r.setRequestHeader('Cookie', cookie);
 				});
-			}
+			}*/
 		    r.onload = function() {
 			  var response;
 			  //console.timeEnd("XMLHttpRequest"); 
