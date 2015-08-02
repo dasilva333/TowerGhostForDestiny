@@ -110,14 +110,20 @@ try {
 	  function _request(opts) {
 	  	//This is for Mobile platform/Chrome
 		//console.log("received a _request");
+		if (opts.route.indexOf("http") == -1)
+			opts.route = url + "Platform" + opts.route;
 	  	if (isChrome || isMobile){
 			//console.time("XMLHttpRequest"); 
 			var r = new XMLHttpRequest();
-		    r.open(opts.method, url + "Platform" + opts.route, true);
+		    r.open(opts.method, opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
 			if (isMobile && typeof cookieString == "string"){
-				cookieString.split(";").forEach(function(cookie){
-					r.setRequestHeader('Cookie', cookie);
+				_.each( cookieString.split(";"), function(cookie){
+					try {
+						r.setRequestHeader('Cookie', cookie);
+					}catch(e){
+					
+					}	
 				});
 			}
 		    r.onload = function() {
@@ -129,8 +135,13 @@ try {
 			  	console.log("error parsing responseText: " + this.responseText);
 			  }		  
 		      if (this.status >= 200 && this.status < 400) {	        		
-			        if(response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
-			        else { opts.complete(response.Response, response); }			
+			        if(response && response.ErrorCode && response.ErrorCode === 36){ setTimeout(function () { _request(opts); }, 1000); }
+			        else { 
+						var obj = response;
+						if (typeof obj == "object" && "Response" in obj)
+							obj = response.Response;
+						opts.complete(obj, response); 
+					}			
 		      } 
 			  else {
 		       	    opts.complete({error: 'network error:' + this.status}, response);
@@ -161,7 +172,6 @@ try {
 		else {
 			console.log("sending firefox request");
 			var event = document.createEvent('CustomEvent');
-			opts.route = url + "Platform" + opts.route;
 			event.initCustomEvent("request-message", true, true, { id: ++id, opts: opts });
 			requests[id] = opts;
 			document.documentElement.dispatchEvent(event);	
@@ -183,7 +193,15 @@ try {
 	  this.system = function() {
 	    return systemIds;
 	  }
-	
+
+	  this.logout = function(callback){
+		_request({
+	      route: url + 'en/User/SignOut',
+	      method: 'GET',
+	      complete: callback
+	    });
+	  }
+	  
 	  this.user = function(callback) {
 	  	try {
 			window._request = _request;
@@ -230,7 +248,7 @@ try {
 				}
 				membershipId = membership;
 				_request({
-				  route: '/Destiny/Tiger' + (active.type == 1 ? 'Xbox' : 'PSN') +
+				  route: '/Destiny/' + active.type +
 						  '/Account/' + membership + '/',
 				  method: 'GET',
 				  complete: callback
@@ -310,8 +328,31 @@ try {
 	      complete: callback
 	    })
 	  }
+	  
 	  this.getUrl = function(){
 	  	return url;
+	  }
+	  
+	  this.flattenItemArray = function(buckets){
+		var items = [];
+		if (_.isArray(buckets)){
+			buckets.forEach(function(bucket) {
+				bucket.items.forEach(function(item) {
+					items.push(item);
+				});
+			});
+		}
+		else {
+			Object.keys(buckets).forEach(function(bucketName) {
+				buckets[bucketName].forEach(function(bucket) {
+					bucket.items.forEach(function(item){
+						item.bucketName = bucketName;
+						items.push(item);
+					});
+				});
+			});
+		}
+		return items;
 	  }
 	}
 
