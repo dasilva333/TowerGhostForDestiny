@@ -930,7 +930,12 @@ var app = new(function() {
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
-            if (isChrome || isMobile) {
+            if (require){
+				var gui = require('nw.gui');
+				var mainwin = gui.Window.get();
+				window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
+			}
+			else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
                 window.ref = window.open('about:blank');
@@ -946,7 +951,13 @@ var app = new(function() {
                         self.readBungieCookie(ref, loop);
                     }
                 });
-            } else {
+			}	
+			else if (require){
+				window.ref.on('loaded', function(){
+					location.reload();
+				});
+			}
+            else {
                 clearInterval(loop);
                 loop = setInterval(function() {
                     if (window.ref.closed) {

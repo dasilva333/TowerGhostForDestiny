@@ -50,6 +50,11 @@ try {
 				  callback.apply(null, arguments);
 				});
 			}
+			else if (require){
+				require("nw.gui").Window.get().cookies.getAll({}, function(a,b){
+					callback.apply(null, arguments);
+				});
+			}
 			else {
 				callback([]);
 				return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
