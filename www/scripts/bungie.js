@@ -118,8 +118,12 @@ try {
 		    r.open(opts.method, opts.route, true);
 		    r.setRequestHeader('X-API-Key', apikey);
 			if (isMobile && typeof cookieString == "string"){
-				cookieString.split(";").forEach(function(cookie){
-					r.setRequestHeader('Cookie', cookie);
+				_.each( cookieString.split(";"), function(cookie){
+					try {
+						r.setRequestHeader('Cookie', cookie);
+					}catch(e){
+					
+					}	
 				});
 			}
 		    r.onload = function() {
