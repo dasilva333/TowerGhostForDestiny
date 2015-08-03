@@ -7,6 +7,15 @@
   "license": "MPL 2.0",
   "version": "2.9.0",
   "icon": "icon.png",
+  "main": "www\\index.html",
+  "window": {
+    "frame": true,
+    "toolbar": false,
+	"width": 1024,
+	"height": 768,
+	"position": "center",
+	"icon": "www\\icon.png"
+  },
   "permissions": {
     "cross-domain-content": [
       "https://www.bungie.net"
