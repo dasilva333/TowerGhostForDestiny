@@ -106,7 +106,7 @@
         setScrollbar: function() {
             var bodyPad = BootstrapDialogModal.ORIGINAL_BODY_PADDING;
             if (this.bodyIsOverflowing) {
-                this.$body.css('padding-right', bodyPad + this.scrollbarWidth);
+                //this.$body.css('padding-right', bodyPad + this.scrollbarWidth);
             }
         },
         /**
