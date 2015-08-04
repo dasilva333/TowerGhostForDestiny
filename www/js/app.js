@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var Layout = function(layout) {
     var self = this;
 
@@ -23,32 +22,6 @@ var Layout = function(layout) {
             return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
         });
     }
-=======
-var Layout = function(layout){
-	var self = this;
-	
-	self.name = Object.keys(layout)[0];
-	var data = layout[self.name];
-	self.id = data.view;
-	self.bucketTypes = data.bucketTypes;
-	self.headerText = data.headerText;
-	self.array = data.array;
-	self.counts = data.counts;
-	self.countText = function(character){
-		return ko.computed(function(){
-			var text = "";
-			if (self.array != ""){
-				text = "(" + character[self.array]().length + "/" + (character.id == 'Vault' ? self.counts[0] : self.counts[1]) + ")";
-			}
-			return text;
-		});
-	}	
-	self.isVisible = function(character){
-		return ko.computed(function(){
-			return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
-		});
-	}
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
 }
 tgd.dialog = (function(options) {
     var self = this;
@@ -313,17 +286,12 @@ var app = new(function() {
 
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
-<<<<<<< HEAD
     this.allLayouts = ko.observableArray().extend({
-=======
-	this.allLayouts = ko.observableArray().extend({
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
         rateLimit: {
             timeout: 1000,
             method: "notifyWhenChangesStop"
         }
     });
-<<<<<<< HEAD
     this.activeLayouts = ko.computed(function() {
         var layouts = [];
         _.each(self.allLayouts(), function(layout) {
@@ -331,15 +299,6 @@ var app = new(function() {
                 layouts.push(layout);
             }
         });
-=======
-	this.activeLayouts = ko.computed(function() {
-        var layouts = [];
-		_.each(self.allLayouts(), function(layout){
-			if (self.activeView() == layout.id || self.activeView() == 0) {
-				layouts.push(layout);
-			}
-		});
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
         return layouts;
     });
     this.tierTypes = ko.observableArray();
@@ -767,7 +726,6 @@ var app = new(function() {
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
-<<<<<<< HEAD
 
             var items = self.bungie.flattenItemArray(e.data.inventory.buckets);
             var vaultItems = _.where(items, function(item) {
@@ -781,43 +739,11 @@ var app = new(function() {
             self.addWeaponTypes(profile.weapons());
             done(profile);
 
-=======
-			var buckets = e.data.inventory.buckets;
-			var vaultItems = [], globalItems = [];
-			Object.keys(buckets).forEach(function(bucketName) {
-				buckets[bucketName].forEach(function(bucket) {
-					bucket.items.forEach(function(item){
-						if (bucketName == "Invisible"){
-							globalItems.push(item);
-						}
-						else {
-							vaultItems.push(item);
-						}
-					});
-				});
-			});
-			var profile = new Profile("Vault", vaultItems);
-			self.addTierTypes(profile.items());
-			self.addWeaponTypes(profile.weapons());
-			done(profile);
-			
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
             //console.time("avatars.forEach");
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
-<<<<<<< HEAD
                         var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
-=======
-                        var items = [].concat(globalItems);
-                        Object.keys(response.data.buckets).forEach(function(bucket) {
-                            response.data.buckets[bucket].forEach(function(obj) {
-                                obj.items.forEach(function(item) {
-                                    items.push(item);
-                                });
-                            });
-                        });
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
                         var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
@@ -892,21 +818,12 @@ var app = new(function() {
         self.refresh();
     }
 
-<<<<<<< HEAD
     this.logout = function() {
         self.bungie.logout(function() {
             window.location.reload();
         });
     }
 
-=======
-	this.logout = function(){
-		self.bungie.logout(function(){
-			window.location.reload();
-		});
-	}
-	
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
     this.refresh = function() {
         self.loadingUser(true);
         self.characters.removeAll();
@@ -1623,21 +1540,12 @@ var app = new(function() {
     }
 
     this.init = function() {
-<<<<<<< HEAD
 
         _.each(tgd.DestinyLayout, function(object) {
             self.allLayouts.push(new Layout(object));
         });
 
 
-=======
-		
-		_.each(tgd.DestinyLayout, function(object){
-			self.allLayouts.push(new Layout(object));
-		});
-		
-		
->>>>>>> f0803f72a4592032c56c84616efa6a55470e0c11
         self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
