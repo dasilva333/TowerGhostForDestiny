@@ -952,7 +952,7 @@ var app = new(function() {
                     }
                 });
 			}	
-			else if (require){
+			else if (isNWJS){
 				window.ref.on('loaded', function(){
 					location.reload();
 				});
