@@ -1,11 +1,18 @@
 window.ua = navigator.userAgent;
+window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-
+tgd.DestinyLayout = [
+  { "Weapons": { array: 'weapons', counts: [36,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
+  { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
+  { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
+  { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
+  { "Post Master": { array: 'postmaster', counts: [40,40], bucketTypes: ['Messages','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
+]
 tgd.DestinyViews = {
 	"0": "All",
 	"1": "Weapons",
@@ -78,6 +85,7 @@ tgd.DestinyBucketColumns = {
 	"Lost Items": 4,
 	"Mission": 4
 }
+tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
@@ -92,7 +100,7 @@ tgd.languages = [
 
 tgd.defaults = {
 	searchKeyword: "",
-	doRefresh: isMobile ? false : "true",
+	doRefresh: false,
 	refreshSeconds: 300,
 	tierFilter: 0,
 	typeFilter: 0,
@@ -104,9 +112,9 @@ tgd.defaults = {
 	shareView: false,
 	shareUrl: "",
 	showMissing: false,
-	tooltipsEnabled: isMobile ? false : "true",
+	tooltipsEnabled: true,
 	autoTransferStacks: false,
-	padBucketHeight: false,
+	padBucketHeight: true,
 	xsColumn: 12,
 	smColumn: 6,
 	mdColumn: 4,
@@ -130,7 +138,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 			'<div class="destt-talent-icon">' +
 				'<img src="<%= perk.iconPath %>" width="36">' +
 			'</div>' +
-			'<div class="destt-talent-description">' +
+			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
 				'<%= perk.description %>' +
 			'</div>' +
 		'</div>' +
