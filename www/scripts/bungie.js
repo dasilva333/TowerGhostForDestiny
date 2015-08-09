@@ -50,7 +50,7 @@ try {
 				  callback.apply(null, arguments);
 				});
 			}
-			else if (require){
+			else if (isNWJS){
 				require("nw.gui").Window.get().cookies.getAll({}, function(a,b){
 					callback.apply(null, arguments);
 				});

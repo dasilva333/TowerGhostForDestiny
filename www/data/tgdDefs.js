@@ -1,4 +1,5 @@
 window.ua = navigator.userAgent;
+window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
