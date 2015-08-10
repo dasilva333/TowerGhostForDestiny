@@ -237,7 +237,6 @@
 									transferBothItems(callback);
 								}
 								else {
-									transferNextItem();
 									if(callback) callback(); else transferNextItem();
 								}
 		                    });
@@ -254,7 +253,6 @@
 							console.log("has no targetItem is inVault, transferNextItem");
 							progressValue = progressValue + increments;
 							loader.width(progressValue + "%");
-							transferNextItem();
 							if(callback) callback(); else transferNextItem();
 						}
 					}
@@ -268,7 +266,6 @@
 								console.log("1.else transferNextItem");
 								progressValue = progressValue + increments;
 								loader.width(progressValue + "%");
-								transferNextItem();
 								if(callback) callback(); else transferNextItem();
 							}
 						}, true);
@@ -284,7 +281,7 @@
 					console.log("spaceNeededInVault: " + spaceNeededInVault);
 					console.log(arrayName + " space available: " + spaceAvailableInVault);
 					
-					if ( spaceAvailableInVault <  spaceNeededInVault ){
+					if ( spaceAvailableInVault <= spaceNeededInVault ){
 						console.log("vault has at least 2 slots to make xfer");
 						startSwapping();
 					}
@@ -315,7 +312,7 @@
 								}
 							});
 						});
-						console.log("so the plan is to move this from the vault");
+						console.log("so the plan is to move these from the vault");
 						console.log(tmpItems);
 						window.r = tmpItems;
 						var preCount = 0, postCount = 0;
@@ -561,6 +558,7 @@
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
+								console.log("swapItems finished");
 	                            BootstrapDialog.alert(app.activeText().loadouts_transferred);
 	                            dialog.close()
 	                        });
