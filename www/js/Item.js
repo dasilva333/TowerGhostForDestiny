@@ -343,7 +343,7 @@ Item.prototype = {
     equip: function(targetCharacterId, callback, allowReplacement) {
         var self = this;
         var done = function() {
-            //console.log("making bungie call to equip " + self.description);
+            console.log("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
                     //console.log("result was OKed");
@@ -360,7 +360,6 @@ Item.prototype = {
                     }
                     if (callback) callback(true);
                 } else {
-                    //console.log("result failed");
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false);
                     else if (result && result.Message) {
@@ -374,9 +373,9 @@ Item.prototype = {
             });
         }
         var sourceCharacterId = self.characterId;
-        //console.log("equip called from " + sourceCharacterId + " to " + targetCharacterId);
+        console.log("equip called from " + sourceCharacterId + " to " + targetCharacterId);
         if (targetCharacterId == sourceCharacterId) {
-            //console.log("item is already in the character");
+            console.log("item is already in the character");
             /* if item is exotic */
             if (self.tierType == 6 && allowReplacement) {
                 //console.log("item is exotic");
@@ -406,9 +405,9 @@ Item.prototype = {
                 done()
             }
         } else {
-            //console.log("item is NOT already in the character");
+            console.log("item is NOT already in the character");
             self.store(targetCharacterId, function(newProfile) {
-                //console.log("item is now in the target destination");
+                console.log("item is now in the target destination");
                 self.character = newProfile;
                 self.characterId = newProfile.id;
                 self.equip(targetCharacterId, callback, allowReplacement);
@@ -453,7 +452,7 @@ Item.prototype = {
         //console.log( self.description );
         app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result) {
             //console.log("app.bungie.transfer after");
-            //console.log(arguments);
+            //console.log(arguments);			
             if (result && result.Message && result.Message == "Ok") {
                 if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
                     /*
@@ -644,9 +643,9 @@ Item.prototype = {
                     y.items.push(self);
                 }
                 if (cb) cb(y, x);
-            } else {
+            } else {				
                 if (result && result.Message) {
-                    BootstrapDialog.alert(result.Message);
+					if (cb) cb(y, x, result);
                 } else {
 
                 }
@@ -654,32 +653,50 @@ Item.prototype = {
         });
     },
     store: function(targetCharacterId, callback, allowReplacement) {
-        //console.log("item.store");
+        console.log("item.store");
         //console.log(arguments);
         var self = this;
         var sourceCharacterId = self.characterId,
             transferAmount = 1;
         var done = function() {
             if (targetCharacterId == "Vault") {
-                //console.log("from character to vault " + self.description);
+                console.log("from character to vault " + self.description);
                 self.unequip(function(result) {
-                    //console.log("calling transfer from character to vault");
-                    if (result)
-                        self.transfer(sourceCharacterId, "Vault", transferAmount, callback);
-                    if (result == false && callback)
-                        callback(self.character);
+                    console.log("calling transfer from character to vault " + result);
+                    if (result == true){
+						self.transfer(sourceCharacterId, "Vault", transferAmount, function(y,x,result){
+							console.log(arguments);
+							if (result && result.ErrorCode && result.ErrorCode == 1656){
+								console.log("reloading bucket");
+								x._reloadBucket( self.bucketType, undefined, function(){
+									console.log("retransferring");
+									//TODO move this function to a more general area for common use
+									var newItem = Loadout.prototype.findReference(self);
+									newItem.store(targetCharacterId, callback, allowReplacement);
+								});
+							}
+							else if (result && result.Message){
+								BootstrapDialog.alert(result.Message);
+							}
+							if (callback)
+								callback(y,x);
+						});
+					}
+                    else if (result == false && callback){
+					    callback(self.character);
+					}
                 }, allowReplacement);
             } else if (sourceCharacterId !== "Vault") {
-                //console.log("from character to vault to character " + self.description);				
+                console.log("from character to vault to character " + self.description);				
                 self.unequip(function(result) {
                     if (result) {
                         if (self.bucketType == "Subclasses") {
                             if (callback)
                                 callback(self.character);
                         } else {
-                            //console.log("xfering item to Vault " + self.description);
+                            console.log("xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, function() {
-                                //console.log("xfered item to vault and now to " + targetCharacterId);
+                                console.log("xfered item to vault and now to " + targetCharacterId);
                                 self.transfer("Vault", targetCharacterId, transferAmount, callback);
                             });
                         }
@@ -688,7 +705,7 @@ Item.prototype = {
                         callback(self.character);
                 }, allowReplacement);
             } else {
-                //console.log("from vault to character");
+                console.log("from vault to character");
                 self.transfer("Vault", targetCharacterId, transferAmount, callback);
             }
         }
