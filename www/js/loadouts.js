@@ -188,16 +188,24 @@
 	        var loader = $(".bootstrap-dialog-message .progress").show().find(".progress-bar").width(progressValue + "%");
 	        var transferNextItem = function() {
 	            console.log("transferNextItem");
-	            var pair = swapArray[++itemIndex], targetItem, swapItem, targetId, swapId, action;
+	            var pair = swapArray[++itemIndex], targetItem, swapItem, action, targetOwner;
 				//now that they are both in the vault transfer them to their respective location
 				var transferBothItems = function(){				
-					console.log(targetItem.description + " transferBothItems from vault to  " + swapId);
-					targetItem[action](swapId, function() {
-						console.log(swapItem.description + " transferBothItems from vault to  " + targetId);
-						swapItem.transfer("Vault", targetId, 1, function() {
+					console.log(targetItem.description + " transferBothItems from vault to  " + targetOwner);
+					if (targetOwner == "Vault"){
+						console.log('half of both');
+						targetItem[action](targetCharacterId, function() {	
 							transferNextItem();
-						});                        
-                    });
+						});
+					}
+					else {					
+						swapItem.transfer("Vault", targetOwner, 1, function() {
+							console.log(swapItem.description + " transferBothItems from vault to  " + targetCharacterId);
+							targetItem[action](targetCharacterId, function() {	
+								transferNextItem();
+							});                        
+	                    });
+					}
 				}
 	            var transferTargetItem = function() {	  
 					action = (_.where(self.ids(), {
@@ -205,24 +213,32 @@
 	                }).filter(onlyEquipped).length == 0) ? "store" : "equip";					              
 	                targetItem = self.findReference(pair.targetItem);
 	                if (targetItem) {
-						targetId = pair.targetItem.character.id;
-						console.log("transferTargetItem " + targetId);
-						if (targetId == "Vault"){
-							if (swapItem){
+						targetOwner = pair.targetItem.character.id;
+						console.log(targetOwner +" from, to transferTargetItem " + targetCharacterId);
+						if (targetOwner == "Vault"){
+							if (typeof pair.swapItem !== "undefined"){
+								console.log("from Vault to bothItems transfer");
 								transferBothItems();
 							}
 							else {
+								console.log("manually transferring target item " + targetItem.description);
 								targetItem[action](targetCharacterId, function() {
+									console.log("transferNextItem");
 									transferNextItem();
 								});
 							}
 						}
 						else {
-							console.log(pair.targetItem.description + " transferring this item from this guy to vault " + targetId);
+							console.log(pair.targetItem.description + " transferring this item from this guy to vault " + targetOwner);
 		                    targetItem.store("Vault", function() {
 		                        progressValue = progressValue + increments;
 		                        loader.width(progressValue + "%");
-		                        transferBothItems();
+		                        if (swapItem){
+									transferBothItems();
+								}
+								else {
+									transferNextItem();
+								}
 		                    });						
 						}
 
@@ -232,13 +248,13 @@
 	                /* swap item has to be moved first in case the swap bucket is full, then move the target item in after */
 	                if (typeof pair.swapItem !== "undefined") {						
 						swapItem = self.findReference(pair.swapItem);
-						swapId = pair.swapItem.character.id;
-						if (swapId == "Vault"){
+						var swapId = pair.swapItem.character.id;
+						if (targetCharacterId == "Vault"){
 							if (typeof pair.targetItem !== "undefined") {
-	                            console.log("finished xfering swap item now onto the TARGET item transferTargetItem");
+	                            console.log("has targetItem is inVault, transferTargetItem");
 	                            transferTargetItem();
 	                        } else {
-								console.log("1.else transferNextItem");
+								console.log("has no targetItem is inVault, transferNextItem");
 	                            progressValue = progressValue + increments;
 	                            loader.width(progressValue + "%");
 	                            transferNextItem();
@@ -260,7 +276,7 @@
 						}
                     	
 	                } else if (typeof pair.targetItem !== "undefined") {
-	                    console.log("no swap item now onto the TARGET item, transferTargetItem");
+	                    console.log("no swapItem, transferTargetItem");
 	                    transferTargetItem();
 	                } else {
 						console.log("2.else transferNextItem");
