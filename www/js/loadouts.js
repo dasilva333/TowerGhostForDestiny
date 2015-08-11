@@ -172,9 +172,8 @@
 	            id: item.character.id
 	        });
 	        //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-	        var x = _.findWhere(c.items(), {
-	            _id: item._id
-	        });
+			var query = item._id == 0 ? { id: item.id } : { _id: item._id };
+	        var x = _.findWhere(c.items(), query);
 	        return x;
 	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {

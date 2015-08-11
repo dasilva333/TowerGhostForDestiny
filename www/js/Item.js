@@ -666,13 +666,15 @@ Item.prototype = {
                     if (result == true){
 						self.transfer(sourceCharacterId, "Vault", transferAmount, function(y,x,result){
 							console.log(arguments);
-							if (result && result.ErrorCode && result.ErrorCode == 1656){
+							if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)){
 								console.log("reloading bucket");
 								x._reloadBucket( self.bucketType, undefined, function(){
-									console.log("retransferring");
-									//TODO move this function to a more general area for common use
-									var newItem = Loadout.prototype.findReference(self);
-									newItem.store(targetCharacterId, callback, allowReplacement);
+									y._reloadBucket( self.bucketType, undefined, function(){
+										console.log("retransferring");
+										//TODO move this function to a more general area for common use
+										var newItem = Loadout.prototype.findReference(self);
+										newItem.store(targetCharacterId, callback, allowReplacement);
+									});
 								});
 							}
 							else if (result && result.Message){
