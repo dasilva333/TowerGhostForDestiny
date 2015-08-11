@@ -136,6 +136,7 @@
 	    },
 	    setActive: function() {
 	        app.loadoutMode(true);
+			app.dynamicMode(false);
 	        app.activeLoadout(this);
 	    },
 	    remove: function() {

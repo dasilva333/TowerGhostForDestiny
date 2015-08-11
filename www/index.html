@@ -571,10 +571,12 @@
     <div id="loadout-create" data-bind="visible: loadoutMode" style="display:none;">
         <div class="content" data-bind="with: activeLoadout">
             <div id="loadout-options">
-                <input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
-                <span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
-                <span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
-                <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
+				<controls data-bind="visible: $parent.dynamicMode() == false">
+					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
+					<span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
+					<span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
+				</controls>
+				<span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
                 <!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
                 <div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }">
                     <div class="lower-left" data-bind="text: classLetter"></div>

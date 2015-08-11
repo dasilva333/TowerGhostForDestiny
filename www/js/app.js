@@ -181,6 +181,23 @@ ko.bindingHandlers.moveItem = {
                     tgd.moveItemPositionHandler(target, item);
                 }
             })
+			.on("doubletap", function(ev) {
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var item = ko.contextFor(target).$data;
+					if (app.dynamicMode() == false){
+						app.dynamicMode(true);
+						app.createLoadout();
+					}
+                    console.log("double tap");
+					console.log(item);
+					app.activeLoadout().addItem({
+						id: item._id,
+						bucketType: item.bucketType,
+						doEquip: false
+					});
+                }
+            })
             // press is actually hold 
             .on("press", function(ev) {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
@@ -246,7 +263,8 @@ var app = new(function() {
     this.hiddenWindowOpen = ko.observable(false);
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
-    this.activeLoadout = ko.observable(new Loadout());
+    this.dynamicMode = ko.observable(false);
+	this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
