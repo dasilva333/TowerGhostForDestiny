@@ -652,6 +652,28 @@ Item.prototype = {
             }
         });
     },
+	handleTransfer: function(targetCharacterId, cb, allowReplacement) {
+		var self = this;
+		return function(y,x,result){
+			if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)){
+				console.log("reloading bucket " + self.bucketType);
+				x._reloadBucket( self.bucketType, undefined, function(){
+					y._reloadBucket( self.bucketType, undefined, function(){
+						console.log("retransferring");
+						//TODO move this function to a more general area for common use
+						var newItem = Loadout.prototype.findReference(self);
+						newItem.store(targetCharacterId, cb, allowReplacement);
+					});
+				});
+			}
+			else if (result && result.Message){
+				BootstrapDialog.alert(result.Message);
+			}
+			else if (cb){
+				cb(y,x);
+			}	
+		}
+	},
     store: function(targetCharacterId, callback, allowReplacement) {
         console.log("item.store");
         //console.log(arguments);
@@ -664,32 +686,14 @@ Item.prototype = {
                 self.unequip(function(result) {
                     console.log("calling transfer from character to vault " + result);
                     if (result == true){
-						self.transfer(sourceCharacterId, "Vault", transferAmount, function(y,x,result){
-							console.log(arguments);
-							if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)){
-								console.log("reloading bucket");
-								x._reloadBucket( self.bucketType, undefined, function(){
-									y._reloadBucket( self.bucketType, undefined, function(){
-										console.log("retransferring");
-										//TODO move this function to a more general area for common use
-										var newItem = Loadout.prototype.findReference(self);
-										newItem.store(targetCharacterId, callback, allowReplacement);
-									});
-								});
-							}
-							else if (result && result.Message){
-								BootstrapDialog.alert(result.Message);
-							}
-							if (callback)
-								callback(y,x);
-						});
+						self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback, allowReplacement));
 					}
                     else if (result == false && callback){
 					    callback(self.character);
 					}
                 }, allowReplacement);
             } else if (sourceCharacterId !== "Vault") {
-                console.log("from character to vault to character " + self.description);				
+                console.log("from character to vault to character " + self.description);
                 self.unequip(function(result) {
                     if (result) {
                         if (self.bucketType == "Subclasses") {
@@ -697,10 +701,10 @@ Item.prototype = {
                                 callback(self.character);
                         } else {
                             console.log("xfering item to Vault " + self.description);
-                            self.transfer(sourceCharacterId, "Vault", transferAmount, function() {
+                            self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function(){
                                 console.log("xfered item to vault and now to " + targetCharacterId);
                                 self.transfer("Vault", targetCharacterId, transferAmount, callback);
-                            });
+							}, allowReplacement));
                         }
                     }
                     if (result == false && callback)
