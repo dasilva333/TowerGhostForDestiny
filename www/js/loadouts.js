@@ -136,7 +136,7 @@
 	    },
 	    setActive: function() {
 	        app.loadoutMode(true);
-			app.dynamicMode(false);
+	        app.dynamicMode(false);
 	        app.activeLoadout(this);
 	    },
 	    remove: function() {
@@ -172,13 +172,17 @@
 	        var c = _.findWhere(app.characters(), {
 	            id: item.character.id
 	        });
-			//console.log("querying with character id " + item.character.id);
-			//console.log(c.uniqueName);
+	        //console.log("querying with character id " + item.character.id);
+	        //console.log(c.uniqueName);
 	        //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-			var query = item._id == 0 ? { id: item.id } : { _id: item._id };
-			//console.log("querying with " + JSON.stringify(query));
+	        var query = item._id == 0 ? {
+	            id: item.id
+	        } : {
+	            _id: item._id
+	        };
+	        //console.log("querying with " + JSON.stringify(query));
 	        var x = _.findWhere(c.items(), query);
-			//console.log(x);
+	        //console.log(x);
 	        return x;
 	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {
@@ -192,160 +196,169 @@
 	        var loader = $(".bootstrap-dialog-message .progress").show().find(".progress-bar").width(progressValue + "%");
 	        var transferNextItem = function() {
 	            console.log("**************transferNextItem*************");
-	            var pair = swapArray[++itemIndex], targetItem, swapItem, action, targetOwner;
-				progressValue = progressValue + increments;
-				loader.width(progressValue + "%");
-				//now that they are both in the vault transfer them to their respective location
-				var transferTargetItemToVault = function(complete){
-					targetItem = self.findReference(pair.targetItem);
-					targetOwner = targetItem.character.id;
-					console.log(" transferTargetItemToVault " + targetItem.description );
-					if (targetOwner == "Vault"){
-						complete();
-					}
-					else {
-						targetItem.store("Vault", complete);
-					}
-				}
-				var transferSwapItemToVault = function(complete){
-					swapItem = self.findReference(pair.swapItem);
-					console.log(" transferSwapItemToVault " + swapItem.description );
-					if (swapItem.character.id == "Vault"){		
-						complete();
-					}
-					else {
-						swapItem.store("Vault", complete);
-					}
-				}
-				var transferTargetItemToDestination = function(complete){
-					var action = (_.where(self.ids(), {
+	            var pair = swapArray[++itemIndex],
+	                targetItem, swapItem, action, targetOwner;
+	            progressValue = progressValue + increments;
+	            loader.width(progressValue + "%");
+	            //now that they are both in the vault transfer them to their respective location
+	            var transferTargetItemToVault = function(complete) {
+	                targetItem = self.findReference(pair.targetItem);
+	                targetOwner = targetItem.character.id;
+	                console.log(" transferTargetItemToVault " + targetItem.description);
+	                if (targetOwner == "Vault") {
+	                    complete();
+	                } else {
+	                    targetItem.store("Vault", complete);
+	                }
+	            }
+	            var transferSwapItemToVault = function(complete) {
+	                swapItem = self.findReference(pair.swapItem);
+	                console.log(" transferSwapItemToVault " + swapItem.description);
+	                if (swapItem.character.id == "Vault") {
+	                    complete();
+	                } else {
+	                    swapItem.store("Vault", complete);
+	                }
+	            }
+	            var transferTargetItemToDestination = function(complete) {
+	                var action = (_.where(self.ids(), {
 	                    id: pair.targetItem._id
 	                }).filter(onlyEquipped).length == 0) ? "store" : "equip";
-					if (typeof targetItem == "undefined")
-						targetItem = self.findReference(pair.targetItem);
-					console.log(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
-					if ( targetCharacterId == "Vault" && targetItem.character.id == "Vault"){
-						console.log("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
-						complete();
-					}
-					else {
-						targetItem[action](targetCharacterId, complete);
-					}
-				}
-				var transferSwapItemToDestination = function(complete){
-					swapItem = self.findReference(pair.swapItem);
-					console.log(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description );
-					if ( targetOwner == "Vault" && swapItem.character.id == "Vault"){
-						console.log("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
-						complete();
-					}
-					else {
-						swapItem.store(targetOwner, complete);
-					}
-				}
-				/* this assumes there is no swap item */
-	            var transferTargetItem = function(finish) {
-					console.log("transferTargetItem");
-					transferTargetItemToDestination(function(){
-						if(finish) finish(); else transferNextItem();
-					});
+	                if (typeof targetItem == "undefined")
+	                    targetItem = self.findReference(pair.targetItem);
+	                console.log(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
+	                if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
+	                    console.log("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
+	                    complete();
+	                } else {
+	                    targetItem[action](targetCharacterId, complete);
+	                }
 	            }
-				/* this assumes there is a swap item and a target item*/
-				var startSwapping = function(finish){
-					console.log("startSwapping");
-					transferTargetItemToVault(function(){
-						transferSwapItemToVault(function(){
-							transferTargetItemToDestination(function(){
-								transferSwapItemToDestination(function(){
-									console.log("*********finished xfering swap items **************" + (typeof finish));
-									if(finish) finish(); else transferNextItem();
-								});
-							});
-						});
-					});
-				}
-				/* this assumes there is a swap item and a target item*/
-				var checkForFreeSpace = function(){
-					swapItem = self.findReference(pair.swapItem);
-					var vault = _.findWhere( app.characters(), { id: "Vault" });
-					var bucketType = swapItem.bucketType, otherBucketTypes;
-					var arrayName = (swapItem.weaponIndex > -1 ? "weapons" : "armor");
-					var layout = _.findWhere( app.allLayouts(), { array: arrayName });
-					var spaceNeededInVault = layout.counts[0] - 2;
-					var spaceUsedInVault = vault[arrayName]().length;
-					console.log("spaceNeededInVault: " + spaceNeededInVault);
-					console.log(arrayName + " space used: " + spaceUsedInVault);
-					
-					if ( spaceUsedInVault <= spaceNeededInVault || targetCharacterId == "Vault" ){
-						console.log("vault has at least 2 slots to make xfer");
-						startSwapping();
-					}
-					else {
-						//console.log("why did i run out of space already?");
-						//abort;
-						var maxFreeSpace = 9, tmpItems = [], tmpIds = [];
-						var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
-						console.log("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
-						var otherBucketTypes = swapItem.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
-						otherBucketTypes.splice(swapItem.weaponIndex > -1 ? swapItem.weaponIndex : swapItem.armorIndex, 1);
-						console.log(otherBucketTypes + " being checked in other characters");
-						_.each(otherBucketTypes, function(bucketType){
-							_.each( app.characters(), function(character){
-								if (freeSpaceNeeded > 0 && character.id != "Vault"){
-									console.log("checking " + character.uniqueName);
-									var freeSpace = maxFreeSpace - character.get(bucketType).length;
-									if (freeSpace > 0){
-										console.log(bucketType + " found with free space: " + freeSpace);
-										var itemsToMove = vault.get(bucketType);
-										_.each(itemsToMove, function(item){
-											if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1){
-												tmpItems.push({ item: item, character: character });
-												tmpIds.push(item._id);
-												freeSpaceNeeded = freeSpaceNeeded - 1;
-												freeSpace = freeSpace - 1;
-											}
-										});
-									}
-								}
-							});
-						});
-						console.log("so the plan is to move these from the vault");
-						console.log(tmpItems);
-						window.r = tmpItems;
-						var preCount = 0, postCount = 0;
-						var finish = function(){
-							postCount++;
-							if (postCount == tmpItems.length){
-								console.log("********* Operating under checkFreeSpace, finished, transferNextItem *********");
-								transferNextItem();
-							}
-						}
-						var done = function(){
-							preCount++;
-							console.log(preCount + " x " + tmpItems.length);
-							if (preCount == tmpItems.length){
-								console.log("calling start swap with callback");
-								startSwapping(function(){
-									_.each(tmpItems, function(pair){
-										pair.item.store("Vault", finish);
-									});
-								});
-							}
-						}
-						_.each(tmpItems, function(pair){
-							pair.item.store(pair.character.id, done);
-						});
-					}
-					
-				}
+	            var transferSwapItemToDestination = function(complete) {
+	                    swapItem = self.findReference(pair.swapItem);
+	                    console.log(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+	                    if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
+	                        console.log("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
+	                        complete();
+	                    } else {
+	                        swapItem.store(targetOwner, complete);
+	                    }
+	                }
+	                /* this assumes there is no swap item */
+	            var transferTargetItem = function(finish) {
+	                    console.log("transferTargetItem");
+	                    transferTargetItemToDestination(function() {
+	                        if (finish) finish();
+	                        else transferNextItem();
+	                    });
+	                }
+	                /* this assumes there is a swap item and a target item*/
+	            var startSwapping = function(finish) {
+	                    console.log("startSwapping");
+	                    transferTargetItemToVault(function() {
+	                        transferSwapItemToVault(function() {
+	                            transferTargetItemToDestination(function() {
+	                                transferSwapItemToDestination(function() {
+	                                    console.log("*********finished xfering swap items **************" + (typeof finish));
+	                                    if (finish) finish();
+	                                    else transferNextItem();
+	                                });
+	                            });
+	                        });
+	                    });
+	                }
+	                /* this assumes there is a swap item and a target item*/
+	            var checkForFreeSpace = function() {
+	                swapItem = self.findReference(pair.swapItem);
+	                var vault = _.findWhere(app.characters(), {
+	                    id: "Vault"
+	                });
+	                var bucketType = swapItem.bucketType,
+	                    otherBucketTypes;
+	                var arrayName = (swapItem.weaponIndex > -1 ? "weapons" : "armor");
+	                var layout = _.findWhere(app.allLayouts(), {
+	                    array: arrayName
+	                });
+	                var spaceNeededInVault = layout.counts[0] - 2;
+	                var spaceUsedInVault = vault[arrayName]().length;
+	                console.log("spaceNeededInVault: " + spaceNeededInVault);
+	                console.log(arrayName + " space used: " + spaceUsedInVault);
+
+	                if (spaceUsedInVault <= spaceNeededInVault || targetCharacterId == "Vault") {
+	                    console.log("vault has at least 2 slots to make xfer");
+	                    startSwapping();
+	                } else {
+	                    //console.log("why did i run out of space already?");
+	                    //abort;
+	                    var maxFreeSpace = 9,
+	                        tmpItems = [],
+	                        tmpIds = [];
+	                    var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
+	                    console.log("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
+	                    var otherBucketTypes = swapItem.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
+	                    otherBucketTypes.splice(swapItem.weaponIndex > -1 ? swapItem.weaponIndex : swapItem.armorIndex, 1);
+	                    console.log(otherBucketTypes + " being checked in other characters");
+	                    _.each(otherBucketTypes, function(bucketType) {
+	                        _.each(app.characters(), function(character) {
+	                            if (freeSpaceNeeded > 0 && character.id != "Vault") {
+	                                console.log("checking " + character.uniqueName);
+	                                var freeSpace = maxFreeSpace - character.get(bucketType).length;
+	                                if (freeSpace > 0) {
+	                                    console.log(bucketType + " found with free space: " + freeSpace);
+	                                    var itemsToMove = vault.get(bucketType);
+	                                    _.each(itemsToMove, function(item) {
+	                                        if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
+	                                            tmpItems.push({
+	                                                item: item,
+	                                                character: character
+	                                            });
+	                                            tmpIds.push(item._id);
+	                                            freeSpaceNeeded = freeSpaceNeeded - 1;
+	                                            freeSpace = freeSpace - 1;
+	                                        }
+	                                    });
+	                                }
+	                            }
+	                        });
+	                    });
+	                    console.log("so the plan is to move these from the vault");
+	                    console.log(tmpItems);
+	                    window.r = tmpItems;
+	                    var preCount = 0,
+	                        postCount = 0;
+	                    var finish = function() {
+	                        postCount++;
+	                        if (postCount == tmpItems.length) {
+	                            console.log("********* Operating under checkFreeSpace, finished, transferNextItem *********");
+	                            transferNextItem();
+	                        }
+	                    }
+	                    var done = function() {
+	                        preCount++;
+	                        console.log(preCount + " x " + tmpItems.length);
+	                        if (preCount == tmpItems.length) {
+	                            console.log("calling start swap with callback");
+	                            startSwapping(function() {
+	                                _.each(tmpItems, function(pair) {
+	                                    pair.item.store("Vault", finish);
+	                                });
+	                            });
+	                        }
+	                    }
+	                    _.each(tmpItems, function(pair) {
+	                        pair.item.store(pair.character.id, done);
+	                    });
+	                }
+
+	            }
 	            if (pair) {
 	                if (typeof pair.swapItem !== "undefined") {
-						checkForFreeSpace();
+	                    checkForFreeSpace();
 	                } else if (typeof pair.targetItem !== "undefined") {
 	                    console.log("no swapItem, transferTargetItem");
 	                    transferTargetItem();
 	                } else {
-						console.log("******* if pair else (no target, swap) transferNextItem**********************");
+	                    console.log("******* if pair else (no target, swap) transferNextItem**********************");
 	                    transferNextItem();
 	                }
 	            } else {
@@ -401,20 +414,20 @@
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
 	                    var maxBucketSize = 10;
-						var targetBucketSize = targetBucket.length;
-						var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
+	                    var targetBucketSize = targetBucket.length;
+	                    var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
 	                    if (targetCharacter.id == "Vault") {
-							targetBucketSize = targetCharacter[arrayName]().length;
+	                        targetBucketSize = targetCharacter[arrayName]().length;
 	                        maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 36 : 24;
 	                    }
-						//console.log("the current bucket size is " + targetBucketSize);
+	                    //console.log("the current bucket size is " + targetBucketSize);
 	                    var targetMaxed = (targetBucketSize == maxBucketSize);
 	                    console.log(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
-						console.log("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
+	                    console.log("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
 	                    /* use the swap item strategy */
 	                    /* by finding a random item in the targetBucket that isnt part of sourceBucket */
 	                    if (sourceBucket.length + targetBucketSize >= maxBucketSize) {
-							console.log("using swap strategy");
+	                        console.log("using swap strategy");
 	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                        swapArray = _.map(sourceBucket, function(item) {
 	                            var cantMove = self.cantMove(item, key, targetMaxed);
@@ -457,7 +470,7 @@
 	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
 	                                }
 	                                if (swapItem) {
-										targetBucket.splice(1,targetBucket.indexOf(swapItem));
+	                                    targetBucket.splice(1, targetBucket.indexOf(swapItem));
 	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
 	                                        return {
 	                                            description: item.description + app.activeText().loadouts_no_transfer,
@@ -473,7 +486,7 @@
 	                                        actionIcon: "assets/swap.png"
 	                                    }
 	                                } else {
-										console.log("to transfer: " + item.description);
+	                                    console.log("to transfer: " + item.description);
 	                                    return {
 	                                        targetItem: item,
 	                                        description: item.description + app.activeText().loadouts_to_transfer,
@@ -529,7 +542,7 @@
 	                                        swapIcon: targetCharacterIcon
 	                                    }
 	                                } else {
-										console.log("loadouts_to_transfer: " + item.description);
+	                                    console.log("loadouts_to_transfer: " + item.description);
 	                                    return {
 	                                        targetItem: item,
 	                                        description: item.description + app.activeText().loadouts_to_transfer,
@@ -556,9 +569,9 @@
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-								console.log("swapItems finished");
+	                            console.log("swapItems finished");
 	                            BootstrapDialog.alert(app.activeText().loadouts_transferred);
-								app.dynamicMode(false);
+	                            app.dynamicMode(false);
 	                            dialog.close()
 	                        });
 	                    }

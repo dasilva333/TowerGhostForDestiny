@@ -181,21 +181,21 @@ ko.bindingHandlers.moveItem = {
                     tgd.moveItemPositionHandler(target, item);
                 }
             })
-			.on("doubletap", function(ev) {
+            .on("doubletap", function(ev) {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-					if (app.dynamicMode() == false){
-						app.dynamicMode(true);
-						app.createLoadout();
-					}
+                    if (app.dynamicMode() == false) {
+                        app.dynamicMode(true);
+                        app.createLoadout();
+                    }
                     console.log("double tap");
-					console.log(item);
-					app.activeLoadout().addItem({
-						id: item._id,
-						bucketType: item.bucketType,
-						doEquip: false
-					});
+                    console.log(item);
+                    app.activeLoadout().addItem({
+                        id: item._id,
+                        bucketType: item.bucketType,
+                        doEquip: false
+                    });
                 }
             })
             // press is actually hold 
@@ -264,7 +264,7 @@ var app = new(function() {
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
-	this.activeLoadout = ko.observable(new Loadout());
+    this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
@@ -948,12 +948,11 @@ var app = new(function() {
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
-            if (isNWJS){
-				var gui = require('nw.gui');
-				var mainwin = gui.Window.get();
-				window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
-			}
-			else if (isChrome || isMobile) {
+            if (isNWJS) {
+                var gui = require('nw.gui');
+                var mainwin = gui.Window.get();
+                window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
+            } else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
                 window.ref = window.open('about:blank');
@@ -969,13 +968,11 @@ var app = new(function() {
                         self.readBungieCookie(ref, loop);
                     }
                 });
-			}	
-			else if (isNWJS){
-				window.ref.on('loaded', function(){
-					location.reload();
-				});
-			}
-            else {
+            } else if (isNWJS) {
+                window.ref.on('loaded', function() {
+                    location.reload();
+                });
+            } else {
                 clearInterval(loop);
                 loop = setInterval(function() {
                     if (window.ref.closed) {

@@ -643,92 +643,90 @@ Item.prototype = {
                     y.items.push(self);
                 }
                 if (cb) cb(y, x);
-            } else {				
+            } else {
                 if (result && result.Message) {
-					if (cb) cb(y, x, result);
+                    if (cb) cb(y, x, result);
                 }
             }
         });
     },
-	handleTransfer: function(targetCharacterId, cb, allowReplacement) {
-		var self = this;
-		return function(y,x,result){
-			if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)){
-				console.log("reloading bucket " + self.bucketType);
-				/*var characterId = app.characters()[1].id;
+    handleTransfer: function(targetCharacterId, cb, allowReplacement) {
+        var self = this;
+        return function(y, x, result) {
+            if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)) {
+                console.log("reloading bucket " + self.bucketType);
+                /*var characterId = app.characters()[1].id;
 				var instanceId = app.characters()[1].weapons()[0]._id;*/
-				app.bungie.getAccountSummary(function(results){
-					var characterIndex = _.findWhere(results.data.items, { itemId: self._id  }).characterIndex;
-					if (characterIndex > -1){
-						characterId = results.data.characters[characterIndex].characterBase.characterId;
-					}
-					else {
-						characterId = "Vault";
-					}
-					console.log(characterId + " is where the item was found, it was supposed to be in " + self.character.id);
-					if ( characterId != self.character.id ){
-						var character = _.findWhere(app.characters(), { id: characterId });
-						/* handle refresh of other buckets */
-						console.log("found the item elsewhere");
-						if ( characterId == targetCharacterId ){
-							console.log("item is already where it needed to be");
-							x.items.remove(self);
-		                    self.characterId = targetCharacterId
-		                    self.character = character;
-		                    character.items.push(self);
-							if (cb) cb(y,x);
-						}
-						else {
-							console.log("item is not where it needs to be");
-							x._reloadBucket( self.bucketType, undefined, function(){
-								character._reloadBucket( self.bucketType, undefined, function(){
-									console.log("retransferring");
-									//TODO move this function to a more general area for common use
-									self.character.id = characterId;
-									var newItem = Loadout.prototype.findReference(self);
-									console.log(newItem.character.id + " has new reference of " + newItem.description);
-									newItem.store(targetCharacterId, cb, allowReplacement);
-								});
-							});
-						}
-					}
-					else {
-						x._reloadBucket( self.bucketType, undefined, function(){
-							y._reloadBucket( self.bucketType, undefined, function(){
-								console.log("retransferring");
-								//TODO move this function to a more general area for common use
-								var newItem = Loadout.prototype.findReference(self);
-								newItem.store(targetCharacterId, cb, allowReplacement);
-							});
-						});
-					}
-				});				
-			}
-			else if (result && result.Message){
-				BootstrapDialog.alert(result.Message);
-			}
-			else if (cb){
-				cb(y,x);
-			}	
-		}
-	},
+                app.bungie.getAccountSummary(function(results) {
+                    var characterIndex = _.findWhere(results.data.items, {
+                        itemId: self._id
+                    }).characterIndex;
+                    if (characterIndex > -1) {
+                        characterId = results.data.characters[characterIndex].characterBase.characterId;
+                    } else {
+                        characterId = "Vault";
+                    }
+                    console.log(characterId + " is where the item was found, it was supposed to be in " + self.character.id);
+                    if (characterId != self.character.id) {
+                        var character = _.findWhere(app.characters(), {
+                            id: characterId
+                        });
+                        /* handle refresh of other buckets */
+                        console.log("found the item elsewhere");
+                        if (characterId == targetCharacterId) {
+                            console.log("item is already where it needed to be");
+                            x.items.remove(self);
+                            self.characterId = targetCharacterId
+                            self.character = character;
+                            character.items.push(self);
+                            if (cb) cb(y, x);
+                        } else {
+                            console.log("item is not where it needs to be");
+                            x._reloadBucket(self.bucketType, undefined, function() {
+                                character._reloadBucket(self.bucketType, undefined, function() {
+                                    console.log("retransferring");
+                                    //TODO move this function to a more general area for common use
+                                    self.character.id = characterId;
+                                    var newItem = Loadout.prototype.findReference(self);
+                                    console.log(newItem.character.id + " has new reference of " + newItem.description);
+                                    newItem.store(targetCharacterId, cb, allowReplacement);
+                                });
+                            });
+                        }
+                    } else {
+                        x._reloadBucket(self.bucketType, undefined, function() {
+                            y._reloadBucket(self.bucketType, undefined, function() {
+                                console.log("retransferring");
+                                //TODO move this function to a more general area for common use
+                                var newItem = Loadout.prototype.findReference(self);
+                                newItem.store(targetCharacterId, cb, allowReplacement);
+                            });
+                        });
+                    }
+                });
+            } else if (result && result.Message) {
+                BootstrapDialog.alert(result.Message);
+            } else if (cb) {
+                cb(y, x);
+            }
+        }
+    },
     store: function(targetCharacterId, callback, allowReplacement) {
         //console.log(arguments);
         var self = this;
         var sourceCharacterId = self.character.id,
             transferAmount = 1;
-		console.log("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);	
+        console.log("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
         var done = function() {
             if (targetCharacterId == "Vault") {
                 console.log("from character to vault " + self.description);
                 self.unequip(function(result) {
                     console.log(sourceCharacterId + " calling transfer from character to vault " + result);
-                    if (result == true){
-						self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback, allowReplacement));
-					}
-                    else if (result == false && callback){
-					    callback(self.character);
-					}
+                    if (result == true) {
+                        self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback, allowReplacement));
+                    } else if (result == false && callback) {
+                        callback(self.character);
+                    }
                 }, allowReplacement);
             } else if (sourceCharacterId !== "Vault") {
                 console.log("from character to vault to character " + self.description);
@@ -739,10 +737,10 @@ Item.prototype = {
                                 callback(self.character);
                         } else {
                             console.log("xfering item to Vault " + self.description);
-                            self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function(){
+                            self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
                                 console.log("xfered item to vault and now to " + targetCharacterId);
                                 self.transfer("Vault", targetCharacterId, transferAmount, callback);
-							}, allowReplacement));
+                            }, allowReplacement));
                         }
                     }
                     if (result == false && callback)

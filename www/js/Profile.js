@@ -136,8 +136,8 @@ Profile.prototype = {
             if (element) {
                 element.removeClass("fa-spin");
             }
-			if (callback)
-				callback();
+            if (callback)
+                callback();
         }
 
         var itemsToRemove = _.filter(self.items(), function(item) {
