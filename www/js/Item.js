@@ -713,16 +713,16 @@ Item.prototype = {
 		}
 	},
     store: function(targetCharacterId, callback, allowReplacement) {
-        console.log("item.store");
         //console.log(arguments);
         var self = this;
-        var sourceCharacterId = self.characterId,
+        var sourceCharacterId = self.character.id,
             transferAmount = 1;
+		console.log("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);	
         var done = function() {
             if (targetCharacterId == "Vault") {
                 console.log("from character to vault " + self.description);
                 self.unequip(function(result) {
-                    console.log("calling transfer from character to vault " + result);
+                    console.log(sourceCharacterId + " calling transfer from character to vault " + result);
                     if (result == true){
 						self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback, allowReplacement));
 					}
