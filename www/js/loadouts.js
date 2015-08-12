@@ -584,14 +584,14 @@
 	        //fix to exclude subclasses
 	        if (item.armorIndex == -1 && item.weaponIndex == -1) return;
 	        var ownerIcon = item.character.icon().replace('url("', "").replace('")', '');
-	        if (maxBucketSize) {
+	        /*if (maxBucketSize) {
 	            return {
 	                description: item.description + app.activeText().loadouts_outofspace + key,
 	                targetIcon: item.icon,
 	                actionIcon: "assets/no-transfer.png",
 	                swapIcon: ownerIcon
 	            }
-	        }
+	        }*/
 	        var ownerBucket = item.character.get(key);
 	        var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
 	        otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex, 1);
