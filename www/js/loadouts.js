@@ -172,9 +172,13 @@
 	        var c = _.findWhere(app.characters(), {
 	            id: item.character.id
 	        });
+			//console.log("querying with character id " + item.character.id);
+			//console.log(c.uniqueName);
 	        //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
 			var query = item._id == 0 ? { id: item.id } : { _id: item._id };
+			//console.log("querying with " + JSON.stringify(query));
 	        var x = _.findWhere(c.items(), query);
+			//console.log(x);
 	        return x;
 	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {

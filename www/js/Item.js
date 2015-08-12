@@ -646,8 +646,6 @@ Item.prototype = {
             } else {				
                 if (result && result.Message) {
 					if (cb) cb(y, x, result);
-                } else {
-
                 }
             }
         });
@@ -657,14 +655,54 @@ Item.prototype = {
 		return function(y,x,result){
 			if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)){
 				console.log("reloading bucket " + self.bucketType);
-				x._reloadBucket( self.bucketType, undefined, function(){
-					y._reloadBucket( self.bucketType, undefined, function(){
-						console.log("retransferring");
-						//TODO move this function to a more general area for common use
-						var newItem = Loadout.prototype.findReference(self);
-						newItem.store(targetCharacterId, cb, allowReplacement);
-					});
-				});
+				/*var characterId = app.characters()[1].id;
+				var instanceId = app.characters()[1].weapons()[0]._id;*/
+				app.bungie.getAccountSummary(function(results){
+					var characterIndex = _.findWhere(results.data.items, { itemId: self._id  }).characterIndex;
+					if (characterIndex > -1){
+						characterId = results.data.characters[characterIndex].characterBase.characterId;
+					}
+					else {
+						characterId = "Vault";
+					}
+					console.log(characterId + " is where the item was found, it was supposed to be in " + self.character.id);
+					if ( characterId != self.character.id ){
+						var character = _.findWhere(app.characters(), { id: characterId });
+						/* handle refresh of other buckets */
+						console.log("found the item elsewhere");
+						if ( characterId == targetCharacterId ){
+							console.log("item is already where it needed to be");
+							x.items.remove(self);
+		                    self.characterId = targetCharacterId
+		                    self.character = character;
+		                    character.items.push(self);
+							if (cb) cb(y,x);
+						}
+						else {
+							console.log("item is not where it needs to be");
+							x._reloadBucket( self.bucketType, undefined, function(){
+								character._reloadBucket( self.bucketType, undefined, function(){
+									console.log("retransferring");
+									//TODO move this function to a more general area for common use
+									self.character.id = characterId;
+									var newItem = Loadout.prototype.findReference(self);
+									console.log(newItem.character.id + " has new reference of " + newItem.description);
+									newItem.store(targetCharacterId, cb, allowReplacement);
+								});
+							});
+						}
+					}
+					else {
+						x._reloadBucket( self.bucketType, undefined, function(){
+							y._reloadBucket( self.bucketType, undefined, function(){
+								console.log("retransferring");
+								//TODO move this function to a more general area for common use
+								var newItem = Loadout.prototype.findReference(self);
+								newItem.store(targetCharacterId, cb, allowReplacement);
+							});
+						});
+					}
+				});				
 			}
 			else if (result && result.Message){
 				BootstrapDialog.alert(result.Message);
