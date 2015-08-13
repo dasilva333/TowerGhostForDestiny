@@ -704,7 +704,20 @@ Item.prototype = {
                         });
                     }
                 });
-            } else if (result && result.Message) {
+            } 
+			else if (result && result.ErrorCode && result.ErrorCode == 1642) {
+				var adhoc = new Loadout();
+	            adhoc.addItem({
+	                id: self._id,
+	                bucketType: self.bucketType,
+	                doEquip: false
+	            });
+				var msa = adhoc.transfer(targetCharacterId, true);
+				adhoc.swapItems(msa, targetCharacterId, function(){
+					cb(y,x);
+				});
+			}
+			else if (result && result.Message) {
                 BootstrapDialog.alert(result.Message);
             } else if (cb) {
                 cb(y, x);

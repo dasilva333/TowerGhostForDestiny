@@ -348,6 +348,7 @@ var app = new(function() {
     }
     this.cancelLoadout = function() {
         self.loadoutMode(false);
+		self.dynamicMode(false);
         self.activeLoadout(new Loadout());
     }
 

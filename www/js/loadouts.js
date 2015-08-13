@@ -213,11 +213,6 @@
 	                        swapItem.store(targetOwner, complete);
 	                    }
 	                }
-	                /* this assumes there is no swap item */
-	            var transferTargetItem = function() {
-	                transferTargetItemToDestination(transferNextItem);
-
-	            }
 	            var getVaultSize = function() {
 	                    return app.characters()[0].weapons().length;
 	                }
@@ -330,7 +325,7 @@
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
 	                } else if (typeof pair.targetItem !== "undefined") {
 	                    tgd.localLog("no swapItem, transferTargetItem");
-	                    checkAndMakeFreeSpace(pair.targetItem, 1, transferTargetItem);
+	                    checkAndMakeFreeSpace(pair.targetItem, 1, transferTargetItemToDestination);
 	                } else {
 	                    tgd.localLog("******* if pair else (no target, swap) transferNextItem**********************");
 	                    transferNextItem();
