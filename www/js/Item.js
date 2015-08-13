@@ -636,19 +636,18 @@ Item.prototype = {
                     self.character = y;
                     y.items.push(self);
                 }
-				//not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
-				setTimeout(function(){
-					if (cb) cb(y, x);
-				}, 500);
-            } else if (cb) { 
-				tgd.localLog( self.description  + "  error during transfer!!!");
-				tgd.localLog(result);
-				cb(y, x, result); 
-			}
-			else if (result && result.Message) {
+                //not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
+                setTimeout(function() {
+                    if (cb) cb(y, x);
+                }, 500);
+            } else if (cb) {
+                tgd.localLog(self.description + "  error during transfer!!!");
+                tgd.localLog(result);
+                cb(y, x, result);
+            } else if (result && result.Message) {
                 BootstrapDialog.alert(result.Message);
-			
-			}
+
+            }
         });
     },
     handleTransfer: function(targetCharacterId, cb, allowReplacement) {
@@ -868,19 +867,18 @@ Item.prototype = {
                 }, 500);
             }
         } else {
-			var adhoc = new Loadout();
-			adhoc.addItem({
-				id: self._id,
-				bucketType: self.bucketType,
-				doEquip: false
-			});
-			var result = adhoc.transfer( targetCharacterId, true)[0];
-			if (result && result.swapItem){
-				adhoc.promptUserConfirm([result]);
-			}
-			else {
-				done();
-			}
+            var adhoc = new Loadout();
+            adhoc.addItem({
+                id: self._id,
+                bucketType: self.bucketType,
+                doEquip: false
+            });
+            var result = adhoc.transfer(targetCharacterId, true)[0];
+            if (result && result.swapItem) {
+                adhoc.promptUserConfirm([result]);
+            } else {
+                done();
+            }
         }
     },
     normalize: function(characters) {
