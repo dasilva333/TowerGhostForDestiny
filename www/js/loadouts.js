@@ -235,38 +235,49 @@
 	                }
 	            }
 	            var transferSwapItemToDestination = function(complete) {
-	                    swapItem = self.findReference(pair.swapItem);
-	                    console.log(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
-	                    if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
-	                        console.log("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
-	                        complete();
-	                    } else {
-	                        swapItem.store(targetOwner, complete);
-	                    }
-	                }
-	                /* this assumes there is no swap item */
+                    swapItem = self.findReference(pair.swapItem);
+                    console.log(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+                    if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
+                        console.log("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
+                        complete();
+                    } else {
+                        swapItem.store(targetOwner, complete);
+                    }
+                }
+                /* this assumes there is no swap item */
 	            var transferTargetItem = function(finish) {
-	                    console.log("transferTargetItem");
-	                    transferTargetItemToDestination(function() {
-	                        if (finish) finish();
-	                        else transferNextItem();
-	                    });
-	                }
-	                /* this assumes there is a swap item and a target item*/
+                    console.log("transferTargetItem");
+                    transferTargetItemToDestination(function() {
+                        if (finish) finish();
+                        else transferNextItem();
+                    });
+                }
+	            var getVaultSize = function(){
+					var vault = _.findWhere(app.characters(), {
+	                    id: "Vault"
+	                });
+					return vault.weapons().length; 
+				}
+				/* this assumes there is a swap item and a target item*/
 	            var startSwapping = function(finish) {
-	                    console.log("startSwapping");
-	                    transferTargetItemToVault(function() {
-	                        transferSwapItemToVault(function() {
-	                            transferTargetItemToDestination(function() {
-	                                transferSwapItemToDestination(function() {
-	                                    console.log("*********finished xfering swap items **************" + (typeof finish));
-	                                    if (finish) finish();
-	                                    else transferNextItem();
-	                                });
-	                            });
-	                        });
-	                    });
-	                }
+                    console.log("startSwapping " + getVaultSize());
+                    transferTargetItemToVault(function() {
+						console.log("finished transferTargetItemToVault at " + getVaultSize());
+						console.log("finished transferTargetItemToVault at " + getVaultSize());
+                        transferSwapItemToVault(function() {
+							console.log("finished transferSwapItemToVault at " + getVaultSize());
+							console.log("finished transferSwapItemToVault at " + getVaultSize());
+                            transferTargetItemToDestination(function() {
+								console.log("finished transferTargetItemToDestination item to vault at " + getVaultSize());
+                                transferSwapItemToDestination(function() {
+                                    console.log("*********finished transferSwapItemToDestination swap items **************" + getVaultSize());
+                                    if (finish) finish();
+                                    else transferNextItem();
+                                });
+                            });
+                        });
+                    });
+                }
 	                /* this assumes there is a swap item and a target item*/
 	            var checkForFreeSpace = function() {
 	                swapItem = self.findReference(pair.swapItem);
@@ -321,7 +332,7 @@
 	                            }
 	                        });
 	                    });
-	                    console.log("so the plan is to move these from the vault");
+	                    console.log("so the plan is to move these from the vault " + getVaultSize());
 	                    console.log(tmpItems);
 	                    window.r = tmpItems;
 	                    var preCount = 0,
@@ -329,7 +340,7 @@
 	                    var finish = function() {
 	                        postCount++;
 	                        if (postCount == tmpItems.length) {
-	                            console.log("********* Operating under checkFreeSpace, finished, transferNextItem *********");
+	                            console.log("********* temp items moved back, finished, transferNextItem ********* " + getVaultSize());
 	                            transferNextItem();
 	                        }
 	                    }
@@ -337,7 +348,8 @@
 	                        preCount++;
 	                        console.log(preCount + " x " + tmpItems.length);
 	                        if (preCount == tmpItems.length) {
-	                            console.log("calling start swap with callback");
+	                            console.log("moved temp items out, now start swap with callback " + getVaultSize());
+								//abort;
 	                            startSwapping(function() {
 	                                _.each(tmpItems, function(pair) {
 	                                    pair.item.store("Vault", finish);
@@ -426,7 +438,7 @@
 	                    console.log("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
 	                    /* use the swap item strategy */
 	                    /* by finding a random item in the targetBucket that isnt part of sourceBucket */
-	                    if (sourceBucket.length + targetBucketSize >= maxBucketSize) {
+	                    if (sourceBucket.length + targetBucketSize > maxBucketSize) {
 	                        console.log("using swap strategy");
 	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                        swapArray = _.map(sourceBucket, function(item) {

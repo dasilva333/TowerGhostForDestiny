@@ -643,11 +643,11 @@ Item.prototype = {
                     y.items.push(self);
                 }
                 if (cb) cb(y, x);
-            } else {
-                if (result && result.Message) {
-                    if (cb) cb(y, x, result);
-                }
-            }
+            } else if (cb) { 
+				console.log( self.description  + "  error during transfer!!!");
+				console.log(result);
+				cb(y, x, result); 
+			}
         });
     },
     handleTransfer: function(targetCharacterId, cb, allowReplacement) {
