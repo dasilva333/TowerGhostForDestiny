@@ -642,7 +642,10 @@ Item.prototype = {
                     self.character = y;
                     y.items.push(self);
                 }
-                if (cb) cb(y, x);
+				//not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
+				setTimeout(function(){
+					if (cb) cb(y, x);
+				}, 500);
             } else if (cb) { 
 				console.log( self.description  + "  error during transfer!!!");
 				console.log(result);

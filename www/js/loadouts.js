@@ -1,34 +1,3 @@
-	/*
-																								targetItem: item,
-																								swapItem: swapItem,
-																								description: item.description + "'s swap item is " + swapItem.description
-																								*/
-
-	var swapTemplate = _.template('<ul class="list-group">' +
-	    '<% swapArray.forEach(function(pair){ %>' +
-	    '<li class="list-group-item">' +
-	    '<div class="row">' +
-	    '<div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
-	    '<%= pair.description %>' +
-	    '</div>' +
-	    '<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-	    '<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' +
-	    '<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
-	    '</a>' +
-	    '</div>' +
-	    '<div class="text-center col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
-	    '<img src="<%= pair.actionIcon %>">' +
-	    '</div>' +
-	    '<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-	    '<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' +
-	    '<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
-	    '</a>' +
-	    '</div>' +
-	    '</div>' +
-	    '</li>' +
-	    '<% }) %>' +
-	    '</ul>');
-
 	var LoadoutItem = function(model) {
 	    var self = this;
 
@@ -245,18 +214,12 @@
                     }
                 }
                 /* this assumes there is no swap item */
-	            var transferTargetItem = function(finish) {
-                    console.log("transferTargetItem");
-                    transferTargetItemToDestination(function() {
-                        if (finish) finish();
-                        else transferNextItem();
-                    });
+	            var transferTargetItem = function() {
+                    transferTargetItemToDestination(transferNextItem);
+                    
                 }
-	            var getVaultSize = function(){
-					var vault = _.findWhere(app.characters(), {
-	                    id: "Vault"
-	                });
-					return vault.weapons().length; 
+				var getVaultSize = function(){
+					return app.characters()[0].weapons().length; 
 				}
 				/* this assumes there is a swap item and a target item*/
 	            var startSwapping = function(finish) {
@@ -279,35 +242,35 @@
                     });
                 }
 	                /* this assumes there is a swap item and a target item*/
-	            var checkForFreeSpace = function() {
-	                swapItem = self.findReference(pair.swapItem);
+	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
+	                var item = self.findReference(ref);
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"
 	                });
-	                var bucketType = swapItem.bucketType,
+	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
-	                var arrayName = (swapItem.weaponIndex > -1 ? "weapons" : "armor");
+	                var arrayName = (item.weaponIndex > -1 ? "weapons" : "armor");
 	                var layout = _.findWhere(app.allLayouts(), {
 	                    array: arrayName
 	                });
-	                var spaceNeededInVault = layout.counts[0] - 2;
+	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
 	                var spaceUsedInVault = vault[arrayName]().length;
 	                console.log("spaceNeededInVault: " + spaceNeededInVault);
 	                console.log(arrayName + " space used: " + spaceUsedInVault);
 
 	                if (spaceUsedInVault <= spaceNeededInVault || targetCharacterId == "Vault") {
 	                    console.log("vault has at least 2 slots to make xfer");
-	                    startSwapping();
+	                    fnHasFreeSpace();
 	                } else {
 	                    //console.log("why did i run out of space already?");
 	                    //abort;
-	                    var maxFreeSpace = 9,
+	                    var maxFreeSpace = 9, //not counting the equipped
 	                        tmpItems = [],
 	                        tmpIds = [];
 	                    var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
 	                    console.log("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
-	                    var otherBucketTypes = swapItem.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
-	                    otherBucketTypes.splice(swapItem.weaponIndex > -1 ? swapItem.weaponIndex : swapItem.armorIndex, 1);
+	                    var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
+	                    otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex, 1);
 	                    console.log(otherBucketTypes + " being checked in other characters");
 	                    _.each(otherBucketTypes, function(bucketType) {
 	                        _.each(app.characters(), function(character) {
@@ -346,11 +309,10 @@
 	                    }
 	                    var done = function() {
 	                        preCount++;
-	                        console.log(preCount + " x " + tmpItems.length);
+	                        console.log("current: " + preCount + " total: " + tmpItems.length + " vault size: " + getVaultSize());
 	                        if (preCount == tmpItems.length) {
 	                            console.log("moved temp items out, now start swap with callback " + getVaultSize());
-								//abort;
-	                            startSwapping(function() {
+	                            fnHasFreeSpace(function() {
 	                                _.each(tmpItems, function(pair) {
 	                                    pair.item.store("Vault", finish);
 	                                });
@@ -365,10 +327,10 @@
 	            }
 	            if (pair) {
 	                if (typeof pair.swapItem !== "undefined") {
-	                    checkForFreeSpace();
+	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
 	                } else if (typeof pair.targetItem !== "undefined") {
 	                    console.log("no swapItem, transferTargetItem");
-	                    transferTargetItem();
+	                    checkAndMakeFreeSpace(pair.targetItem, 1, transferTargetItem);
 	                } else {
 	                    console.log("******* if pair else (no target, swap) transferNextItem**********************");
 	                    transferNextItem();
@@ -571,7 +533,7 @@
 	        }
 	        msa = masterSwapArray;
 	        if (masterSwapArray.length > 0) {
-	            var $template = $(swapTemplate({
+	            var $template = $(tgd.swapTemplate({
 	                swapArray: masterSwapArray
 	            }));
 	            //$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
