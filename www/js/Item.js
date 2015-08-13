@@ -752,7 +752,14 @@ Item.prototype = {
                             tgd.localLog("xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
                                 tgd.localLog("xfered item to vault and now to " + targetCharacterId);
-                                self.transfer("Vault", targetCharacterId, transferAmount, callback);
+								if (self.character.id == targetCharacterId){
+									tgd.localLog("took the long route ending it short " + self.description);
+									if (callback) callback(self.character);
+								}
+								else {
+									tgd.localLog("taking the short route " + self.description);
+									self.transfer("Vault", targetCharacterId, transferAmount, callback);
+								}
                             }, allowReplacement));
                         }
                     }
