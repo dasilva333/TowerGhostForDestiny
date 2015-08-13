@@ -6,6 +6,12 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
+tgd.localLogging = false;
+tgd.localLog = function(msg) {
+	if (tgd.localLogging) {
+		console.log(msg);
+	}
+};
 tgd.DestinyLayout = [
   { "Weapons": { array: 'weapons', counts: [36,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
   { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },

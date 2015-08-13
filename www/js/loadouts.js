@@ -70,7 +70,7 @@
 	    if (model && model.ids && model.ids.length > 0) {
 	        var firstItem = model.ids[0];
 	        if (firstItem && _.isString(firstItem)) {
-	            //console.log("this model needs a migration " + JSON.stringify(model));
+	            //tgd.localLog("this model needs a migration " + JSON.stringify(model));
 	            var _ids = [];
 	            _.each(model.ids, function(id) {
 	                var equipDef = _.findWhere(model.equipIds, {
@@ -86,9 +86,9 @@
 	            });
 	            self.ids(_ids);
 	        } else {
-	            //console.log("this model doesn't need a migration " + JSON.stringify(model));
+	            //tgd.localLog("this model doesn't need a migration " + JSON.stringify(model));
 	            self.ids(_.map(model.ids, function(obj) {
-	                //console.log(obj);
+	                //tgd.localLog(obj);
 	                return new LoadoutItem(obj);
 	            }));
 	        }
@@ -141,17 +141,17 @@
 	        var c = _.findWhere(app.characters(), {
 	            id: item.character.id
 	        });
-	        //console.log("querying with character id " + item.character.id);
-	        //console.log(c.uniqueName);
+	        //tgd.localLog("querying with character id " + item.character.id);
+	        //tgd.localLog(c.uniqueName);
 	        //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
 	        var query = item._id == 0 ? {
 	            id: item.id
 	        } : {
 	            _id: item._id
 	        };
-	        //console.log("querying with " + JSON.stringify(query));
+	        //tgd.localLog("querying with " + JSON.stringify(query));
 	        var x = _.findWhere(c.items(), query);
-	        //console.log(x);
+	        //tgd.localLog(x);
 	        return x;
 	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {
@@ -164,7 +164,7 @@
 	            progressValue = 5;
 	        var loader = $(".bootstrap-dialog-message .progress").show().find(".progress-bar").width(progressValue + "%");
 	        var transferNextItem = function() {
-	            console.log("**************transferNextItem*************");
+	            tgd.localLog("**************transferNextItem*************");
 	            var pair = swapArray[++itemIndex],
 	                targetItem, swapItem, action, targetOwner;
 	            progressValue = progressValue + increments;
@@ -173,7 +173,7 @@
 	            var transferTargetItemToVault = function(complete) {
 	                targetItem = self.findReference(pair.targetItem);
 	                targetOwner = targetItem.character.id;
-	                console.log(" transferTargetItemToVault " + targetItem.description);
+	                tgd.localLog(" transferTargetItemToVault " + targetItem.description);
 	                if (targetOwner == "Vault") {
 	                    complete();
 	                } else {
@@ -182,7 +182,7 @@
 	            }
 	            var transferSwapItemToVault = function(complete) {
 	                swapItem = self.findReference(pair.swapItem);
-	                console.log(" transferSwapItemToVault " + swapItem.description);
+	                tgd.localLog(" transferSwapItemToVault " + swapItem.description);
 	                if (swapItem.character.id == "Vault") {
 	                    complete();
 	                } else {
@@ -195,9 +195,9 @@
 	                }).filter(onlyEquipped).length == 0) ? "store" : "equip";
 	                if (typeof targetItem == "undefined")
 	                    targetItem = self.findReference(pair.targetItem);
-	                console.log(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
+	                tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
 	                if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
-	                    console.log("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
+	                    tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
 	                    complete();
 	                } else {
 	                    targetItem[action](targetCharacterId, complete);
@@ -205,9 +205,9 @@
 	            }
 	            var transferSwapItemToDestination = function(complete) {
                     swapItem = self.findReference(pair.swapItem);
-                    console.log(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+                    tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
                     if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
-                        console.log("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
+                        tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
                         complete();
                     } else {
                         swapItem.store(targetOwner, complete);
@@ -223,17 +223,17 @@
 				}
 				/* this assumes there is a swap item and a target item*/
 	            var startSwapping = function(finish) {
-                    console.log("startSwapping " + getVaultSize());
+                    tgd.localLog("startSwapping " + getVaultSize());
                     transferTargetItemToVault(function() {
-						console.log("finished transferTargetItemToVault at " + getVaultSize());
-						console.log("finished transferTargetItemToVault at " + getVaultSize());
+						tgd.localLog("finished transferTargetItemToVault at " + getVaultSize());
+						tgd.localLog("finished transferTargetItemToVault at " + getVaultSize());
                         transferSwapItemToVault(function() {
-							console.log("finished transferSwapItemToVault at " + getVaultSize());
-							console.log("finished transferSwapItemToVault at " + getVaultSize());
+							tgd.localLog("finished transferSwapItemToVault at " + getVaultSize());
+							tgd.localLog("finished transferSwapItemToVault at " + getVaultSize());
                             transferTargetItemToDestination(function() {
-								console.log("finished transferTargetItemToDestination item to vault at " + getVaultSize());
+								tgd.localLog("finished transferTargetItemToDestination item to vault at " + getVaultSize());
                                 transferSwapItemToDestination(function() {
-                                    console.log("*********finished transferSwapItemToDestination swap items **************" + getVaultSize());
+                                    tgd.localLog("*********finished transferSwapItemToDestination swap items **************" + getVaultSize());
                                     if (finish) finish();
                                     else transferNextItem();
                                 });
@@ -255,30 +255,30 @@
 	                });
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
 	                var spaceUsedInVault = vault[arrayName]().length;
-	                console.log("spaceNeededInVault: " + spaceNeededInVault);
-	                console.log(arrayName + " space used: " + spaceUsedInVault);
+	                tgd.localLog("spaceNeededInVault: " + spaceNeededInVault);
+	                tgd.localLog(arrayName + " space used: " + spaceUsedInVault);
 
 	                if (spaceUsedInVault <= spaceNeededInVault || targetCharacterId == "Vault") {
-	                    console.log("vault has at least 2 slots to make xfer");
+	                    tgd.localLog("vault has at least 2 slots to make xfer");
 	                    fnHasFreeSpace();
 	                } else {
-	                    //console.log("why did i run out of space already?");
+	                    //tgd.localLog("why did i run out of space already?");
 	                    //abort;
 	                    var maxFreeSpace = 9, //not counting the equipped
 	                        tmpItems = [],
 	                        tmpIds = [];
 	                    var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
-	                    console.log("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
+	                    tgd.localLog("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
 	                    var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
 	                    otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex, 1);
-	                    console.log(otherBucketTypes + " being checked in other characters");
+	                    tgd.localLog(otherBucketTypes + " being checked in other characters");
 	                    _.each(otherBucketTypes, function(bucketType) {
 	                        _.each(app.characters(), function(character) {
 	                            if (freeSpaceNeeded > 0 && character.id != "Vault") {
-	                                console.log("checking " + character.uniqueName);
+	                                tgd.localLog("checking " + character.uniqueName);
 	                                var freeSpace = maxFreeSpace - character.get(bucketType).length;
 	                                if (freeSpace > 0) {
-	                                    console.log(bucketType + " found with free space: " + freeSpace);
+	                                    tgd.localLog(bucketType + " found with free space: " + freeSpace);
 	                                    var itemsToMove = vault.get(bucketType);
 	                                    _.each(itemsToMove, function(item) {
 	                                        if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
@@ -295,23 +295,23 @@
 	                            }
 	                        });
 	                    });
-	                    console.log("so the plan is to move these from the vault " + getVaultSize());
-	                    console.log(tmpItems);
+	                    tgd.localLog("so the plan is to move these from the vault " + getVaultSize());
+	                    tgd.localLog(tmpItems);
 	                    window.r = tmpItems;
 	                    var preCount = 0,
 	                        postCount = 0;
 	                    var finish = function() {
 	                        postCount++;
 	                        if (postCount == tmpItems.length) {
-	                            console.log("********* temp items moved back, finished, transferNextItem ********* " + getVaultSize());
+	                            tgd.localLog("********* temp items moved back, finished, transferNextItem ********* " + getVaultSize());
 	                            transferNextItem();
 	                        }
 	                    }
 	                    var done = function() {
 	                        preCount++;
-	                        console.log("current: " + preCount + " total: " + tmpItems.length + " vault size: " + getVaultSize());
+	                        tgd.localLog("current: " + preCount + " total: " + tmpItems.length + " vault size: " + getVaultSize());
 	                        if (preCount == tmpItems.length) {
-	                            console.log("moved temp items out, now start swap with callback " + getVaultSize());
+	                            tgd.localLog("moved temp items out, now start swap with callback " + getVaultSize());
 	                            fnHasFreeSpace(function() {
 	                                _.each(tmpItems, function(pair) {
 	                                    pair.item.store("Vault", finish);
@@ -329,14 +329,14 @@
 	                if (typeof pair.swapItem !== "undefined") {
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
 	                } else if (typeof pair.targetItem !== "undefined") {
-	                    console.log("no swapItem, transferTargetItem");
+	                    tgd.localLog("no swapItem, transferTargetItem");
 	                    checkAndMakeFreeSpace(pair.targetItem, 1, transferTargetItem);
 	                } else {
-	                    console.log("******* if pair else (no target, swap) transferNextItem**********************");
+	                    tgd.localLog("******* if pair else (no target, swap) transferNextItem**********************");
 	                    transferNextItem();
 	                }
 	            } else {
-	                console.log("pair is not defined, calling callback");
+	                tgd.localLog("pair is not defined, calling callback");
 	                if (callback)
 	                    callback();
 	            }
@@ -360,7 +360,7 @@
 	    /* strategy one involves simply moving the items across assuming enough space to fit in both without having to move other things */
 	    /* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
 	    /* strategy three is the same as strategy one except nothing will be moved bc it's already at the destination */
-	    transfer: function(targetCharacterId) {
+	    transfer: function(targetCharacterId, callback) {
 	        var self = this;
 	        var targetCharacter = _.findWhere(app.characters(), {
 	            id: targetCharacterId
@@ -394,14 +394,14 @@
 	                        targetBucketSize = targetCharacter[arrayName]().length;
 	                        maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 36 : 24;
 	                    }
-	                    //console.log("the current bucket size is " + targetBucketSize);
+	                    //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                    var targetMaxed = (targetBucketSize == maxBucketSize);
-	                    console.log(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
-	                    console.log("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
+	                    tgd.localLog(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
+	                    tgd.localLog("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
 	                    /* use the swap item strategy */
 	                    /* by finding a random item in the targetBucket that isnt part of sourceBucket */
 	                    if (sourceBucket.length + targetBucketSize > maxBucketSize) {
-	                        console.log("using swap strategy");
+	                        tgd.localLog("using swap strategy");
 	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                        swapArray = _.map(sourceBucket, function(item) {
 	                            var cantMove = self.cantMove(item, key, targetMaxed);
@@ -460,7 +460,7 @@
 	                                        actionIcon: "assets/swap.png"
 	                                    }
 	                                } else {
-	                                    console.log("to transfer: " + item.description);
+	                                    tgd.localLog("to transfer: " + item.description);
 	                                    return {
 	                                        targetItem: item,
 	                                        description: item.description + app.activeText().loadouts_to_transfer,
@@ -516,7 +516,7 @@
 	                                        swapIcon: targetCharacterIcon
 	                                    }
 	                                } else {
-	                                    console.log("loadouts_to_transfer: " + item.description);
+	                                    tgd.localLog("loadouts_to_transfer: " + item.description);
 	                                    return {
 	                                        targetItem: item,
 	                                        description: item.description + app.activeText().loadouts_to_transfer,
@@ -531,33 +531,41 @@
 	                return swapArray;
 	            }));
 	        }
-	        msa = masterSwapArray;
-	        if (masterSwapArray.length > 0) {
-	            var $template = $(tgd.swapTemplate({
-	                swapArray: masterSwapArray
-	            }));
-	            //$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
-	            $template = $template.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
-	            (new tgd.dialog({
-	                buttons: [{
-	                    label: app.activeText().loadouts_transfer,
-	                    action: function(dialog) {
-	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            console.log("swapItems finished");
-	                            BootstrapDialog.alert(app.activeText().loadouts_transferred);
-	                            app.dynamicMode(false);
-	                            dialog.close()
-	                        });
-	                    }
-	                }, {
-	                    label: app.activeText().cancel,
-	                    action: function(dialog) {
-	                        dialog.close()
-	                    }
-	                }]
-	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
-	        }
+			if (callback){
+				if (_.isFunction(callback)) callback(masterSwapArray);
+				else return masterSwapArray;
+			}
+			else {
+				self.promptUserConfirm(masterSwapArray);
+			}
 	    },
+		promptUserConfirm: function(masterSwapArray){
+			if (masterSwapArray.length > 0) {
+				var $template = $(tgd.swapTemplate({
+					swapArray: masterSwapArray
+				}));
+				//$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
+				$template = $template.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
+				(new tgd.dialog({
+					buttons: [{
+						label: app.activeText().loadouts_transfer,
+						action: function(dialog) {
+							self.swapItems(masterSwapArray, targetCharacterId, function() {
+								tgd.localLog("swapItems finished");
+								BootstrapDialog.alert(app.activeText().loadouts_transferred);
+								app.dynamicMode(false);
+								dialog.close()
+							});
+						}
+					}, {
+						label: app.activeText().cancel,
+						action: function(dialog) {
+							dialog.close()
+						}
+					}]
+				})).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
+			}
+		},
 	    /* hold on there cowboy can't make a promise we can't keep 
 		this pieces needs to have all the /existing logic/ that comprises that sum of Item.store/transfer/equip/unquip
 		The first absolute no go siutation (cant xfer wo going outside of character) is 
@@ -604,7 +612,7 @@
 	                    'exFatal': false,
 	                    'appVersion': tgd.version,
 	                    'hitCallback': function() {
-	                        console.log("crash reported");
+	                        tgd.localLog("crash reported");
 	                    }
 	                });
 	            }
