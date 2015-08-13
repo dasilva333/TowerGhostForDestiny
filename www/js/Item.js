@@ -875,7 +875,7 @@ Item.prototype = {
             });
             var result = adhoc.transfer(targetCharacterId, true)[0];
             if (result && result.swapItem) {
-                adhoc.promptUserConfirm([result]);
+                adhoc.promptUserConfirm([result], targetCharacterId);
             } else {
                 done();
             }

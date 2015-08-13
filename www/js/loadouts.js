@@ -535,11 +535,12 @@
 	            if (_.isFunction(callback)) callback(masterSwapArray);
 	            else return masterSwapArray;
 	        } else {
-	            self.promptUserConfirm(masterSwapArray);
+	            self.promptUserConfirm(masterSwapArray, targetCharacterId);
 	        }
 	    },
-	    E:\Github\TowerGhostForDestiny\masterpromptUserConfirm: function(masterSwapArray) {
+	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
 	        if (masterSwapArray.length > 0) {
+				var self = this;
 	            var $template = $(tgd.swapTemplate({
 	                swapArray: masterSwapArray
 	            }));
