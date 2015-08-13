@@ -901,7 +901,7 @@ var app = new(function() {
             var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-            var isActive = scrollTop >= top && scrollTop <= bottom;
+            var isActive = scrollTop >= top && scrollTop <= bottom && scrollTop > 0;
             $quickIcon.toggleClass("activeProfile", isActive);
             $characterBox.toggleClass("active", !isActive);
             $characterBox.css({
