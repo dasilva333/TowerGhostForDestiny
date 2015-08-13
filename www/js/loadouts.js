@@ -325,7 +325,11 @@
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
 	                } else if (typeof pair.targetItem !== "undefined") {
 	                    tgd.localLog("no swapItem, transferTargetItem");
-	                    checkAndMakeFreeSpace(pair.targetItem, 1, transferTargetItemToDestination);
+	                    checkAndMakeFreeSpace(pair.targetItem, 1, function(){
+							transferTargetItemToDestination(function(){
+								transferNextItem();
+							});
+						});
 	                } else {
 	                    tgd.localLog("******* if pair else (no target, swap) transferNextItem**********************");
 	                    transferNextItem();
