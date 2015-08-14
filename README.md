@@ -1,13 +1,11 @@
 # TowerGhostForDestiny
 
-TowerGhostforDestiny-release.apk 	 - Hydrated version of the Android App, no matter what version it says on the commit you'll have the latest version after install.
+Please visit the Downloads section on my website for a full list of all the available platforms and options.
 
-TowerGhostforDestiny.ipa  - The iOS app, compatible with iPod, iPhone, iPad for those who are jailbroken, and those who subscribed to the adhoc beta.
+http://towerghostfordestiny.com/index.php/downloads/
 
-TowerGhostforDestinyAppStore.ipa 	The latest ipa or next ipa that is going to be available in the AppStore/FlightTest
+If you would like to download the standalone version simply download the appropriate file labeled tgd-{platform}-{x32 or x64}.zip.
 
-app.xap 	- Windows Phone 8 version, this will also auto update to the latest version
+For example to download TGD standalone for Windows 64-bit the file is tgd-windows-x64.zip.
 
-tower_ghost.xpi - this file is for the Firefox browser
-
-tower_ghost.zip - this file is for the Chrome browser
+Thank you
