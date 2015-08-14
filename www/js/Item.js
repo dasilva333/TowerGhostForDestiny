@@ -704,20 +704,18 @@ Item.prototype = {
                         });
                     }
                 });
-            } 
-			else if (result && result.ErrorCode && result.ErrorCode == 1642) {
-				var adhoc = new Loadout();
-	            adhoc.addItem({
-	                id: self._id,
-	                bucketType: self.bucketType,
-	                doEquip: false
-	            });
-				var msa = adhoc.transfer(targetCharacterId, true);
-				adhoc.swapItems(msa, targetCharacterId, function(){
-					cb(y,x);
-				});
-			}
-			else if (result && result.Message) {
+            } else if (result && result.ErrorCode && result.ErrorCode == 1642) {
+                var adhoc = new Loadout();
+                adhoc.addItem({
+                    id: self._id,
+                    bucketType: self.bucketType,
+                    doEquip: false
+                });
+                var msa = adhoc.transfer(targetCharacterId, true);
+                adhoc.swapItems(msa, targetCharacterId, function() {
+                    cb(y, x);
+                });
+            } else if (result && result.Message) {
                 BootstrapDialog.alert(result.Message);
             } else if (cb) {
                 cb(y, x);
@@ -752,14 +750,13 @@ Item.prototype = {
                             tgd.localLog("xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
                                 tgd.localLog("xfered item to vault and now to " + targetCharacterId);
-								if (self.character.id == targetCharacterId){
-									tgd.localLog("took the long route ending it short " + self.description);
-									if (callback) callback(self.character);
-								}
-								else {
-									tgd.localLog("taking the short route " + self.description);
-									self.transfer("Vault", targetCharacterId, transferAmount, callback);
-								}
+                                if (self.character.id == targetCharacterId) {
+                                    tgd.localLog("took the long route ending it short " + self.description);
+                                    if (callback) callback(self.character);
+                                } else {
+                                    tgd.localLog("taking the short route " + self.description);
+                                    self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                                }
                             }, allowReplacement));
                         }
                     }

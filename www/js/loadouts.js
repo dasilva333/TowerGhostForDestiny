@@ -204,15 +204,15 @@
 	                }
 	            }
 	            var transferSwapItemToDestination = function(complete) {
-	                    swapItem = self.findReference(pair.swapItem);
-	                    tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
-	                    if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
-	                        tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
-	                        complete();
-	                    } else {
-	                        swapItem.store(targetOwner, complete);
-	                    }
+	                swapItem = self.findReference(pair.swapItem);
+	                tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+	                if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
+	                    tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
+	                    complete();
+	                } else {
+	                    swapItem.store(targetOwner, complete);
 	                }
+	            }
 	            var getVaultSize = function() {
 	                    return app.characters()[0].weapons().length;
 	                }
@@ -325,11 +325,11 @@
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
 	                } else if (typeof pair.targetItem !== "undefined") {
 	                    tgd.localLog("no swapItem, transferTargetItem");
-	                    checkAndMakeFreeSpace(pair.targetItem, 1, function(){
-							transferTargetItemToDestination(function(){
-								transferNextItem();
-							});
-						});
+	                    checkAndMakeFreeSpace(pair.targetItem, 1, function() {
+	                        transferTargetItemToDestination(function() {
+	                            transferNextItem();
+	                        });
+	                    });
 	                } else {
 	                    tgd.localLog("******* if pair else (no target, swap) transferNextItem**********************");
 	                    transferNextItem();
@@ -539,7 +539,7 @@
 	    },
 	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
 	        if (masterSwapArray.length > 0) {
-				var self = this;
+	            var self = this;
 	            var $template = $(tgd.swapTemplate({
 	                swapArray: masterSwapArray
 	            }));
