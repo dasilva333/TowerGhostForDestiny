@@ -50,6 +50,11 @@ try {
 				  callback.apply(null, arguments);
 				});
 			}
+			else if (isNWJS){
+				require("nw.gui").Window.get().cookies.getAll({}, function(a,b){
+					callback.apply(null, arguments);
+				});
+			}
 			else {
 				callback([]);
 				return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
@@ -275,6 +280,25 @@ try {
 	      complete: callback
 	    });
 	  }
+	  this.getAccountSummary = function(callback){
+		 _request({
+	      route: '/Destiny/' + active.type +
+	              '/Account/' + membershipId +
+	              '/Summary/',
+	      method: 'GET',
+	      complete: callback
+	    });
+	  }
+	  this.getItemDetail = function(characterId,instanceId,callback){
+		_request({
+	      route: '/Destiny/' + active.type +
+		  	'/Account/' + membershipId + 
+			'/Character/' + characterId + 
+			'/Inventory/' + instanceId,
+	      method: 'GET',
+	      complete: callback
+	    });
+	  }	  
 	  this.inventory = function(characterId, callback) {
 	    _request({
 	      route: '/Destiny/' + active.type +
