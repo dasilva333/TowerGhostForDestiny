@@ -11,6 +11,6 @@ cp scripts temp\data -R
 cp lib temp -R
 cp *.html temp\data
 copy icon.png temp
-copy ..\package.json temp
+copy ..\package_firefox.json temp\package.json
 cd ..\build
 cfx xpi --pkgdir=..\www\temp
