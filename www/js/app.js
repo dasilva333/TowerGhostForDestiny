@@ -12,12 +12,12 @@ var Layout = function(layout) {
         return ko.computed(function() {
             var text = "";
             if (self.array != "") {
-				var currentAmount = character[self.array]().length;
-				var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
+                var currentAmount = character[self.array]().length;
+                var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
                 text = "(" + currentAmount + "/" + totalAmount + ")";
-				if ( currentAmount == totalAmount ){
-					text = "<label class='label label-danger'>" + text + "</label>";
-				}
+                if (currentAmount == totalAmount) {
+                    text = "<label class='label label-danger'>" + text + "</label>";
+                }
             }
             return text;
         });
@@ -92,7 +92,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
-	    app.activeItem(item);
+        app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
@@ -155,7 +155,7 @@ window.ko.bindingHandlers.scrollToView = {
                 time: 2000
             })
             .on("tap", function() {
-				var index = $(element).index('.mobile-characters-image'),
+                var index = $(element).index('.mobile-characters-image'),
                     distance = $(".profile:eq(" + index + ")").position().top - 50;
                 app.scrollTo(distance);
             })
@@ -188,22 +188,21 @@ ko.bindingHandlers.moveItem = {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-					if (item._id > 0){
-	                    if (app.dynamicMode() == false) {
-	                        app.dynamicMode(true);
-	                        app.createLoadout();
-	                    }
-	                    tgd.localLog("double tap");
-	                    tgd.localLog(item);
-	                    app.activeLoadout().addItem({
-	                        id: item._id,
-	                        bucketType: item.bucketType,
-	                        doEquip: false
-	                    });					
-					}
-					else {						
-						BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
-					}
+                    if (item._id > 0) {
+                        if (app.dynamicMode() == false) {
+                            app.dynamicMode(true);
+                            app.createLoadout();
+                        }
+                        tgd.localLog("double tap");
+                        tgd.localLog(item);
+                        app.activeLoadout().addItem({
+                            id: item._id,
+                            bucketType: item.bucketType,
+                            doEquip: false
+                        });
+                    } else {
+                        BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+                    }
                 }
             })
             // press is actually hold 
@@ -913,7 +912,7 @@ var app = new(function() {
             var isActive = scrollTop >= top && scrollTop <= bottom && scrollTop > 0;
             $quickIcon.toggleClass("activeProfile", isActive);
             $characterBox.toggleClass("active", isActive);
-			$characterBox.toggleClass("not-active", !isActive);
+            $characterBox.toggleClass("not-active", !isActive);
             $characterBox.css({
                 width: $characterBox.parent().width() + 'px'
             });

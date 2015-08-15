@@ -8,10 +8,15 @@ var chromeConfig = require(chromeConfigFile);
 chromeConfig.version = versionInfo;
 fs.writeFileSync(chromeConfigFile, JSON.stringify(chromeConfig, null, 2));
 
-var firefoxConfigFile = "../package.json";
+var firefoxConfigFile = "../package_firefox.json";
 var firefoxConfig = require(firefoxConfigFile);
 firefoxConfig.version = versionInfo;
 fs.writeFileSync(firefoxConfigFile, JSON.stringify(firefoxConfig, null, 2));
+
+var nwConfigFile = "../package_nw.json";
+var nwConfig = require(nwConfigFile);
+nwConfig.version = versionInfo;
+fs.writeFileSync(nwConfigFile, JSON.stringify(nwConfig, null, 2));
 
 var adobeBuildConfigFile = "../www/config.xml";
 var xmlConfig = fs.readFileSync(adobeBuildConfigFile).toString("utf8");
