@@ -366,8 +366,10 @@
 	        });
 	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
+	            //console.log(itemFound + " getFirstItem: " + sourceBucketIds);
 	            return function(otherItem) {
 	                /* if the otherItem is not part of the sourceBucket then it can go */
+	                //console.log(otherItem.description + " is in " + sourceBucketIds);
 	                if (sourceBucketIds.indexOf(otherItem._id) == -1 && itemFound == false) {
 	                    itemFound = true;
 	                    sourceBucketIds.push(otherItem._id);
@@ -437,10 +439,22 @@
 	                                        return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader" && sourceBucketIds.indexOf(otherItem._id) == -1;
 	                                    })[0];
 	                                } else {
-	                                    var swapItem = _.filter(_.where(targetBucket, {
+	                                    /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
+											e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
+										*/
+	                                    var sourceBucketHashes = _.flatten(_.map(sourceBucket, function(item) {
+	                                        return _.pluck(item.character.items(), 'id');
+	                                    }));
+	                                    var candidates = _.filter(targetBucket, function(otherItem) {
+	                                        if (sourceBucketHashes.indexOf(otherItem.id) == -1) {
+	                                            return true;
+	                                        }
+	                                    });
+	                                    var swapItem = _.filter(_.where(candidates, {
 	                                        type: item.type
 	                                    }), getFirstItem(sourceBucketIds, itemFound));
-	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
+
+	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
 	                                }
 	                                if (swapItem) {
 	                                    targetBucket.splice(1, targetBucket.indexOf(swapItem));
