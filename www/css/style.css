@@ -294,6 +294,7 @@ body {
     background: rgba(18, 21, 20, .7);
     padding-left: 5px;
 }
+.title2 .label { padding: 0.1em; }
 
 .complete .itemImage {
     border-color: #f5dc56;

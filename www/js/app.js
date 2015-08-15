@@ -12,7 +12,12 @@ var Layout = function(layout) {
         return ko.computed(function() {
             var text = "";
             if (self.array != "") {
-                text = "(" + character[self.array]().length + "/" + (character.id == 'Vault' ? self.counts[0] : self.counts[1]) + ")";
+				var currentAmount = character[self.array]().length;
+				var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
+                text = "(" + currentAmount + "/" + totalAmount + ")";
+				if ( currentAmount == totalAmount ){
+					text = "<label class='label label-danger'>" + text + "</label>";
+				}
             }
             return text;
         });
@@ -183,17 +188,22 @@ ko.bindingHandlers.moveItem = {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-                    if (app.dynamicMode() == false) {
-                        app.dynamicMode(true);
-                        app.createLoadout();
-                    }
-                    tgd.localLog("double tap");
-                    tgd.localLog(item);
-                    app.activeLoadout().addItem({
-                        id: item._id,
-                        bucketType: item.bucketType,
-                        doEquip: false
-                    });
+					if (item._id > 0){
+	                    if (app.dynamicMode() == false) {
+	                        app.dynamicMode(true);
+	                        app.createLoadout();
+	                    }
+	                    tgd.localLog("double tap");
+	                    tgd.localLog(item);
+	                    app.activeLoadout().addItem({
+	                        id: item._id,
+	                        bucketType: item.bucketType,
+	                        doEquip: false
+	                    });					
+					}
+					else {						
+						BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+					}
                 }
             })
             // press is actually hold 
