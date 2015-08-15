@@ -32,7 +32,7 @@ Profile.prototype = {
         var self = this;
 
         if (_.isString(self.profile)) {
-            self.order(app.vaultPos());
+            self.order(parseInt(app.vaultPos()));
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
             self.icon(app.makeBackgroundUrl("assets/vault_icon.jpg", true));
 
@@ -111,7 +111,7 @@ Profile.prototype = {
             }
         }
     },
-    _reloadBucket: function(model, event) {
+    _reloadBucket: function(model, event, callback) {
         var self = this,
             element;
         if (self.reloadingBucket) {
@@ -136,6 +136,8 @@ Profile.prototype = {
             if (element) {
                 element.removeClass("fa-spin");
             }
+            if (callback)
+                callback();
         }
 
         var itemsToRemove = _.filter(self.items(), function(item) {
