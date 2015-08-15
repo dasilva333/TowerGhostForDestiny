@@ -12,7 +12,12 @@ var Layout = function(layout) {
         return ko.computed(function() {
             var text = "";
             if (self.array != "") {
-                text = "(" + character[self.array]().length + "/" + (character.id == 'Vault' ? self.counts[0] : self.counts[1]) + ")";
+				var currentAmount = character[self.array]().length;
+				var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
+                text = "(" + currentAmount + "/" + totalAmount + ")";
+				if ( currentAmount == totalAmount ){
+					text = "<label class='label label-danger'>" + text + "</label>";
+				}
             }
             return text;
         });
@@ -62,7 +67,6 @@ tgd.dialog = (function(options) {
 
 tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
-    app.activeItem(item);
     if (app.destinyDbMode() == true) {
         window.open(item.href, "_system");
         return false;
@@ -88,6 +92,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
+	    app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
@@ -102,7 +107,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $("body").css("padding-bottom", $movePopup.height() + "px");
                 /* bringing back the delay it's sitll a problem in issue #128 */
                 setTimeout(function() {
-                    $movePopup.show();
+                    $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -150,15 +155,13 @@ window.ko.bindingHandlers.scrollToView = {
                 time: 2000
             })
             .on("tap", function() {
-                var index = $(".profile#" + viewModel.id).index(".profile"),
+				var index = $(element).index('.mobile-characters-image'),
                     distance = $(".profile:eq(" + index + ")").position().top - 50;
                 app.scrollTo(distance);
             })
             .on("press", function() {
-
                 BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
             });
-        app.quickIconHighlighter();
     }
 };
 
@@ -185,17 +188,22 @@ ko.bindingHandlers.moveItem = {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-                    if (app.dynamicMode() == false) {
-                        app.dynamicMode(true);
-                        app.createLoadout();
-                    }
-                    tgd.localLog("double tap");
-                    tgd.localLog(item);
-                    app.activeLoadout().addItem({
-                        id: item._id,
-                        bucketType: item.bucketType,
-                        doEquip: false
-                    });
+					if (item._id > 0){
+	                    if (app.dynamicMode() == false) {
+	                        app.dynamicMode(true);
+	                        app.createLoadout();
+	                    }
+	                    tgd.localLog("double tap");
+	                    tgd.localLog(item);
+	                    app.activeLoadout().addItem({
+	                        id: item._id,
+	                        bucketType: item.bucketType,
+	                        doEquip: false
+	                    });					
+					}
+					else {						
+						BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+					}
                 }
             })
             // press is actually hold 
@@ -904,7 +912,8 @@ var app = new(function() {
             var bottom = top + $item.height();
             var isActive = scrollTop >= top && scrollTop <= bottom && scrollTop > 0;
             $quickIcon.toggleClass("activeProfile", isActive);
-            $characterBox.toggleClass("active", !isActive);
+            $characterBox.toggleClass("active", isActive);
+			$characterBox.toggleClass("not-active", !isActive);
             $characterBox.css({
                 width: $characterBox.parent().width() + 'px'
             });

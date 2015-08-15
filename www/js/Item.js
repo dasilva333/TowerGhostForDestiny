@@ -704,7 +704,10 @@ Item.prototype = {
                         });
                     }
                 });
-            } else if (result && result.ErrorCode && result.ErrorCode == 1642) {
+            } 
+			//this condition only applies to armor/weapons until loadouts can support mats
+			else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0) {
+				tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 var adhoc = new Loadout();
                 adhoc.addItem({
                     id: self._id,

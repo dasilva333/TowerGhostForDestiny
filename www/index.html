@@ -548,7 +548,7 @@
                             <div data-bind="visible: layout.isVisible(character)">
                                 <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
                                     <strong data-bind="text: $root.activeText()[layout.headerText]"></strong>
-                                    <span data-bind="text: layout.countText(character)"></span>
+                                    <span data-bind="html: layout.countText(character)"></span>
                                     <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
                                         <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
                                     </div>
