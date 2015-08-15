@@ -67,7 +67,6 @@ tgd.dialog = (function(options) {
 
 tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
-    app.activeItem(item);
     if (app.destinyDbMode() == true) {
         window.open(item.href, "_system");
         return false;
@@ -93,6 +92,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
+	    app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
@@ -107,7 +107,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $("body").css("padding-bottom", $movePopup.height() + "px");
                 /* bringing back the delay it's sitll a problem in issue #128 */
                 setTimeout(function() {
-                    $movePopup.show();
+                    $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({

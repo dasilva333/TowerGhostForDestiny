@@ -50,6 +50,13 @@ body {
     cursor: pointer;
 }
 
+#move-popup.mobile .attkIcon {
+    height: 65px;
+}
+#move-popup.mobile .locations img {
+	height: 100%;
+}
+
 .desktop .move-popup {
     position: absolute;
     z-index: 1004;
