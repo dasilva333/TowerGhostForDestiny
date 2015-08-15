@@ -1,3 +1,33 @@
+var Layout = function(layout) {
+    var self = this;
+
+    self.name = Object.keys(layout)[0];
+    var data = layout[self.name];
+    self.id = data.view;
+    self.bucketTypes = data.bucketTypes;
+    self.headerText = data.headerText;
+    self.array = data.array;
+    self.counts = data.counts;
+    self.countText = function(character) {
+        return ko.computed(function() {
+            var text = "";
+            if (self.array != "") {
+                var currentAmount = character[self.array]().length;
+                var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
+                text = "(" + currentAmount + "/" + totalAmount + ")";
+                if (currentAmount == totalAmount) {
+                    text = "<label class='label label-danger'>" + text + "</label>";
+                }
+            }
+            return text;
+        });
+    }
+    self.isVisible = function(character) {
+        return ko.computed(function() {
+            return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
+        });
+    }
+}
 tgd.dialog = (function(options) {
     var self = this;
 
@@ -37,7 +67,6 @@ tgd.dialog = (function(options) {
 
 tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
-    app.activeItem(item);
     if (app.destinyDbMode() == true) {
         window.open(item.href, "_system");
         return false;
@@ -63,6 +92,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
+        app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
@@ -77,7 +107,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $("body").css("padding-bottom", $movePopup.height() + "px");
                 /* bringing back the delay it's sitll a problem in issue #128 */
                 setTimeout(function() {
-                    $movePopup.show();
+                    $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
@@ -102,7 +132,7 @@ tgd.moveItemPositionHandler = function(element, item) {
 
 window.ko.bindingHandlers.refreshableSection = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        //console.log(element);
+        //tgd.localLog(element);
         //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
         if (isMobile) {
             return;
@@ -125,15 +155,13 @@ window.ko.bindingHandlers.scrollToView = {
                 time: 2000
             })
             .on("tap", function() {
-                var index = $(".profile#" + viewModel.id).index(".profile"),
+                var index = $(element).index('.mobile-characters-image'),
                     distance = $(".profile:eq(" + index + ")").position().top - 50;
                 app.scrollTo(distance);
             })
             .on("press", function() {
-
                 BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
             });
-        app.quickIconHighlighter();
     }
 };
 
@@ -154,6 +182,27 @@ ko.bindingHandlers.moveItem = {
                 if (target) {
                     var item = ko.contextFor(target).$data;
                     tgd.moveItemPositionHandler(target, item);
+                }
+            })
+            .on("doubletap", function(ev) {
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var item = ko.contextFor(target).$data;
+                    if (item._id > 0) {
+                        if (app.dynamicMode() == false) {
+                            app.dynamicMode(true);
+                            app.createLoadout();
+                        }
+                        tgd.localLog("double tap");
+                        tgd.localLog(item);
+                        app.activeLoadout().addItem({
+                            id: item._id,
+                            bucketType: item.bucketType,
+                            doEquip: false
+                        });
+                    } else {
+                        BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+                    }
                 }
             })
             // press is actually hold 
@@ -221,6 +270,7 @@ var app = new(function() {
     this.hiddenWindowOpen = ko.observable(false);
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
+    this.dynamicMode = ko.observable(false);
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -261,7 +311,21 @@ var app = new(function() {
 
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
-
+    this.allLayouts = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 1000,
+            method: "notifyWhenChangesStop"
+        }
+    });
+    this.activeLayouts = ko.computed(function() {
+        var layouts = [];
+        _.each(self.allLayouts(), function(layout) {
+            if (self.activeView() == layout.id || self.activeView() == 0) {
+                layouts.push(layout);
+            }
+        });
+        return layouts;
+    });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray().extend({
@@ -291,6 +355,7 @@ var app = new(function() {
     }
     this.cancelLoadout = function() {
         self.loadoutMode(false);
+        self.dynamicMode(false);
         self.activeLoadout(new Loadout());
     }
 
@@ -307,7 +372,7 @@ var app = new(function() {
                 languages: tgd.languages
             })
         })).title("Set Language").show(true, function() {}, function() {
-            console.log("showed modal");
+            tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
                 self.appLocale(this.value);
                 $(".btn-setLanguage").removeClass("btn-primary");
@@ -420,7 +485,7 @@ var app = new(function() {
             }
             /* Weapon Perks (Post-HoW) */
             else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                $content.find(".destt-info").prepend(tgd.perksTemplate({
+                $content.find(".destt-info").before(tgd.perksTemplate({
                     perks: activeItem.perks
                 }));
             }
@@ -555,7 +620,7 @@ var app = new(function() {
         return function() {
             self.toggleBootstrapMenu();
             var type = weaponType.name;
-            console.log("type: " + type);
+            tgd.localLog("type: " + type);
             self.typeFilter(type);
         }
     }
@@ -680,45 +745,31 @@ var app = new(function() {
                     'exFatal': false,
                     'appVersion': tgd.version,
                     'hitCallback': function() {
-                        console.log("crash reported");
+                        tgd.localLog("crash reported");
                     }
                 });
                 return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
-            //console.time("self.bungie.vault");
-            self.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var buckets = results.data.buckets;
-                    var items = [];
-                    buckets.forEach(function(bucket) {
-                        bucket.items.forEach(function(item) {
-                            items.push(item);
-                        });
-                    });
-                    var profile = new Profile("Vault", items);
-                    self.addTierTypes(profile.items());
-                    self.addWeaponTypes(profile.weapons());
-                    done(profile);
-                } else {
-                    loadingData = false;
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
-            //console.time("avatars.forEach");          
+
+            var items = self.bungie.flattenItemArray(e.data.inventory.buckets);
+            var vaultItems = _.where(items, function(item) {
+                    return item.bucketName != "Invisible";
+                }),
+                globalItems = _.where(items, {
+                    bucketName: "Invisible"
+                });
+            var profile = new Profile("Vault", vaultItems);
+            self.addTierTypes(profile.items());
+            self.addWeaponTypes(profile.weapons());
+            done(profile);
+
+            //console.time("avatars.forEach");
             avatars.forEach(function(character, index) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
-                        var items = [];
-                        Object.keys(response.data.buckets).forEach(function(bucket) {
-                            response.data.buckets[bucket].forEach(function(obj) {
-                                obj.items.forEach(function(item) {
-                                    items.push(item);
-                                });
-                            });
-                        });
+                        var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
                         var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
@@ -793,6 +844,12 @@ var app = new(function() {
         self.refresh();
     }
 
+    this.logout = function() {
+        self.bungie.logout(function() {
+            window.location.reload();
+        });
+    }
+
     this.refresh = function() {
         self.loadingUser(true);
         self.characters.removeAll();
@@ -852,9 +909,10 @@ var app = new(function() {
             var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-            var isActive = scrollTop >= top && scrollTop <= bottom;
+            var isActive = scrollTop >= top && scrollTop <= bottom && scrollTop > 0;
             $quickIcon.toggleClass("activeProfile", isActive);
-            $characterBox.toggleClass("active", !isActive);
+            $characterBox.toggleClass("active", isActive);
+            $characterBox.toggleClass("not-active", !isActive);
             $characterBox.css({
                 width: $characterBox.parent().width() + 'px'
             });
@@ -862,13 +920,13 @@ var app = new(function() {
     }
 
     this.readBungieCookie = function(ref, loop) {
-        //console.log( typeof ref.executeScript );
-        //console.log( Object.keys(ref) ); 
+        //tgd.localLog( typeof ref.executeScript );
+        //tgd.localLog( Object.keys(ref) ); 
         try {
             ref.executeScript({
                 code: 'document.cookie'
             }, function(result) {
-                console.log("result " + result);
+                tgd.localLog("result " + result);
                 if ((result || "").toString().indexOf("bungled") > -1) {
                     self.bungie_cookies = result;
                     window.localStorage.setItem("bungie_cookies", result);
@@ -876,7 +934,7 @@ var app = new(function() {
                 }
             });
         } catch (e) {
-            console.log(e);
+            tgd.localLog(e);
         }
 
     }
@@ -892,14 +950,18 @@ var app = new(function() {
     this.clearCookies = function() {
         window.cookies.clear(function() {
             window.localStorage.setItem("bungie_cookies", "");
-            console.log("Cookies cleared");
+            tgd.localLog("Cookies cleared");
         });
     }
 
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
-            if (isChrome || isMobile) {
+            if (isNWJS) {
+                var gui = require('nw.gui');
+                var mainwin = gui.Window.get();
+                window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
+            } else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
                 window.ref = window.open('about:blank');
@@ -915,6 +977,10 @@ var app = new(function() {
                         self.readBungieCookie(ref, loop);
                     }
                 });
+            } else if (isNWJS) {
+                window.ref.on('loaded', function() {
+                    location.reload();
+                });
             } else {
                 clearInterval(loop);
                 loop = setInterval(function() {
@@ -926,7 +992,7 @@ var app = new(function() {
                             event.initCustomEvent("request-cookie", true, true, {});
                             document.documentElement.dispatchEvent(event);
                             setTimeout(function() {
-                                console.log("loadData");
+                                tgd.localLog("loadData");
                                 self.loadData();
                             }, 5000);
                         } else {
@@ -1074,7 +1140,7 @@ var app = new(function() {
                     self.saveLoadouts(false);
                 }
                 /*if (results && results.itemDefs) {
-                    console.log("downloading locale update");
+                    tgd.localLog("downloading locale update");
                     self.downloadLocale(self.currentLocale(), results.itemDefs.version);
                 }*/
             });
@@ -1121,7 +1187,7 @@ var app = new(function() {
                 needed: 0
             };
         });
-        //console.log(characterStatus);
+        //tgd.localLog(characterStatus);
 
         if (itemTotal < characterStatus.length) {
             if (usingbatchMode == false) {
@@ -1134,13 +1200,13 @@ var app = new(function() {
         }
 
         var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-        //console.log("Each character needs " + itemSplit + " " + description);
+        //tgd.localLog("Each character needs " + itemSplit + " " + description);
 
         /* calculate how much to increment/decrement each character */
         _.each(characterStatus, function(c) {
             c.needed = itemSplit - c.current;
         });
-        //console.log(characterStatus);
+        //tgd.localLog(characterStatus);
 
         var getNextSurplusCharacter = (function() {
             return function() {
@@ -1160,7 +1226,7 @@ var app = new(function() {
 
         /* bail early conditions */
         if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)) {
-            //console.log("all items normalized as best as possible");
+            //tgd.localLog("all items normalized as best as possible");
             if (usingbatchMode == false) {
                 BootstrapDialog.alert(description + " already normalized as best as possible.");
             }
@@ -1173,11 +1239,11 @@ var app = new(function() {
         var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred) {
             surplusCharacter.current = surplusCharacter.current - amountTransferred;
             surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
-            //console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+            //tgd.localLog("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
 
             shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
             shortageCharacter.current = shortageCharacter.current + amountTransferred;
-            //console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+            //tgd.localLog("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
         };
 
         var nextTransfer = function(callback) {
@@ -1185,7 +1251,7 @@ var app = new(function() {
             var shortageCharacter = getNextShortageCharacter();
 
             if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
-                //console.log("all items normalized as best as possible");
+                //tgd.localLog("all items normalized as best as possible");
                 if (usingbatchMode == false) {
                     //self.refresh();
                     BootstrapDialog.alert("All items normalized as best as possible");
@@ -1196,7 +1262,7 @@ var app = new(function() {
                 return;
             }
             if (surplusCharacter.character.id == shortageCharacter.character.id) {
-                //console.log("surplusCharacter is shortageCharacter!?");
+                //tgd.localLog("surplusCharacter is shortageCharacter!?");
                 if (callback !== undefined) {
                     callback();
                 }
@@ -1211,18 +1277,18 @@ var app = new(function() {
             var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
-            //console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
+            //tgd.localLog("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
             //surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
             //shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
             if (surplusCharacter.character.id == "Vault") {
-                //console.log("surplus is vault");
+                //tgd.localLog("surplus is vault");
                 surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function() {
                     adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
                     nextTransfer(callback);
                 });
             } else if (shortageCharacter.character.id == "Vault") {
-                //console.log("shortage is vault");
+                //tgd.localLog("shortage is vault");
                 surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
                     adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
                     nextTransfer(callback);
@@ -1268,7 +1334,7 @@ var app = new(function() {
     }
 
     this.normalizeAll = function(bucketType) {
-        //console.log("normalizeAll(" + bucketType + ")");
+        //tgd.localLog("normalizeAll(" + bucketType + ")");
 
         var done = function(onlyCharacters) {
             var selector = function(i) {
@@ -1418,7 +1484,7 @@ var app = new(function() {
             try {
                 window._itemDefs = JSON.parse(itemDefs);
             } catch (e) {
-                console.log("invalid itemDefs");
+                tgd.localLog("invalid itemDefs");
                 self.itemDefs("");
             }
         }
@@ -1457,7 +1523,7 @@ var app = new(function() {
                 } catch (e) {
                     localStorage.clear();
                     localStorage.setItem("quota_error", "1");
-                    console.log("quota error");
+                    tgd.localLog("quota error");
                 }
                 self.defsLocale(locale);
                 self.defLocaleVersion(version);
@@ -1468,12 +1534,12 @@ var app = new(function() {
 
     this.onLocaleChange = function() {
         var locale = self.currentLocale();
-        console.log("locale changed to " + locale);
+        tgd.localLog("locale changed to " + locale);
         if (locale == "en") {
             self.defsLocale(locale);
         }
         if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
-            console.log("downloading language pack");
+            tgd.localLog("downloading language pack");
             self.downloadLocale(locale, tgd.version);
         }
     }
@@ -1482,12 +1548,12 @@ var app = new(function() {
         self.locale.subscribe(self.onLocaleChange);
         self.appLocale.subscribe(self.onLocaleChange);
         if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
-            console.log("getting device locale internally");
+            tgd.localLog("getting device locale internally");
             navigator.globalization.getPreferredLanguage(function(a) {
                 if (a && a.value && a.value.indexOf("-") > -1) {
                     var value = a.value.split("-")[0];
                     if (_.pluck(tgd.languages, 'code').indexOf(value) > -1) {
-                        console.log("internal locale is " + value);
+                        tgd.localLog("internal locale is " + value);
                         if (value == "pt")
                             value = "pt-br";
                         self.locale(value);
@@ -1498,6 +1564,12 @@ var app = new(function() {
     }
 
     this.init = function() {
+
+        _.each(tgd.DestinyLayout, function(object) {
+            self.allLayouts.push(new Layout(object));
+        });
+
+
         self.initLocale();
         if (_.isUndefined(window._itemDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
@@ -1507,6 +1579,7 @@ var app = new(function() {
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
+        tgd.swapTemplate = _.template(tgd.swapTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {

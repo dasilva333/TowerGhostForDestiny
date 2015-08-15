@@ -1,11 +1,24 @@
 window.ua = navigator.userAgent;
+window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
 window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-
+tgd.localLogging = false;
+tgd.localLog = function(msg) {
+	if (tgd.localLogging) {
+		console.log(msg);
+	}
+};
+tgd.DestinyLayout = [
+  { "Weapons": { array: 'weapons', counts: [36,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
+  { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
+  { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
+  { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
+  { "Post Master": { array: 'postmaster', counts: [40,40], bucketTypes: ['Messages','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
+]
 tgd.DestinyViews = {
 	"0": "All",
 	"1": "Weapons",
@@ -238,3 +251,28 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 		'</div>' +
 	'</div>' +
 '</div>';
+	
+tgd.swapTemplate = '<ul class="list-group">' +
+	'<% swapArray.forEach(function(pair){ %>' +
+		'<li class="list-group-item">' +
+			'<div class="row">' +
+				'<div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
+					'<%= pair.description %>' +
+				'</div>' +
+				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' +
+						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
+					'</a>' +
+				'</div>' +
+				'<div class="text-center col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
+					'<img src="<%= pair.actionIcon %>">' +
+				'</div>' +
+				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' +
+						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
+					'</a>' +
+				'</div>' +
+			'</div>' +
+		'</li>' +
+	'<% }) %>' +
+'</ul>';

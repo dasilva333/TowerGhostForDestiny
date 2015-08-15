@@ -32,7 +32,7 @@ Profile.prototype = {
         var self = this;
 
         if (_.isString(self.profile)) {
-            self.order(app.vaultPos());
+            self.order(parseInt(app.vaultPos()));
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
             self.icon(app.makeBackgroundUrl("assets/vault_icon.jpg", true));
 
@@ -83,12 +83,48 @@ Profile.prototype = {
         }
         return "Messages";
     },
-    _reloadBucket: function(bucketType, event) {
+    reloadBucketFilter: function(buckets) {
+        var self = this;
+        return function(item) {
+            var info = window._itemDefs[item.itemHash];
+            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                var itemBucketType = self.getBucketTypeHelper(item, info);
+                if (buckets.indexOf(itemBucketType) > -1) {
+                    return true;
+                }
+            }
+        }
+    },
+    reloadBucketHandler: function(buckets, done) {
+        var self = this;
+        return function(results, response) {
+            if (results && results.data && results.data.buckets) {
+                var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
+                _.each(items, function(item) {
+                    self.items.push(new Item(item, self, true));
+                });
+                done();
+            } else {
+                done();
+                self.refresh();
+                return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+            }
+        }
+    },
+    _reloadBucket: function(model, event, callback) {
         var self = this,
             element;
         if (self.reloadingBucket) {
             return;
         }
+
+        var buckets = [];
+        if (typeof model === 'string' || model instanceof String) {
+            buckets.push(model);
+        } else {
+            buckets.push.apply(buckets, model.bucketTypes);
+        }
+
         self.reloadingBucket = true;
         if (typeof event !== "undefined") {
             var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
@@ -100,68 +136,19 @@ Profile.prototype = {
             if (element) {
                 element.removeClass("fa-spin");
             }
+            if (callback)
+                callback();
         }
 
-        var itemsToRemove = _.filter(self.items(), {
-            bucketType: bucketType
+        var itemsToRemove = _.filter(self.items(), function(item) {
+            return buckets.indexOf(item.bucketType) > -1;
         });
-
         self.items.removeAll(itemsToRemove);
 
-
         if (self.id == "Vault") {
-            app.bungie.vault(function(results, response) {
-                if (results && results.data && results.data.buckets) {
-                    var items = [];
-                    results.data.buckets.forEach(function(bucket) {
-                        bucket.items.forEach(function(item) {
-                            var info = window._itemDefs[item.itemHash];
-                            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                var itemBucketType = self.getBucketTypeHelper(item, info);
-                                if (itemBucketType == bucketType) {
-                                    items.push(item);
-                                }
-                            }
-                        });
-                    });
-                    _.each(items, function(item) {
-                        self.items.push(new Item(item, self, true));
-                    });
-                    done();
-                } else {
-                    done();
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
+            app.bungie.vault(self.reloadBucketHandler(buckets, done));
         } else {
-            app.bungie.inventory(self.id, function(response) {
-                if (response && response.data && response.data.buckets) {
-
-                    var items = [];
-                    Object.keys(response.data.buckets).forEach(function(bucket) {
-                        response.data.buckets[bucket].forEach(function(obj) {
-                            obj.items.forEach(function(item) {
-                                var info = window._itemDefs[item.itemHash];
-                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var itemBucketType = self.getBucketTypeHelper(item, info);
-                                    if (itemBucketType == bucketType) {
-                                        items.push(item);
-                                    }
-                                }
-                            });
-                        });
-                    });
-                    _.each(items, function(item) {
-                        self.items.push(new Item(item, self, true));
-                    });
-                    done();
-                } else {
-                    done();
-                    self.refresh();
-                    return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                }
-            });
+            app.bungie.inventory(self.id, self.reloadBucketHandler(buckets, done));
         }
     },
     _weapons: function() {
