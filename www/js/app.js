@@ -150,15 +150,13 @@ window.ko.bindingHandlers.scrollToView = {
                 time: 2000
             })
             .on("tap", function() {
-                var index = $(".profile#" + viewModel.id).index(".profile"),
+				var index = $(element).index('.mobile-characters-image'),
                     distance = $(".profile:eq(" + index + ")").position().top - 50;
                 app.scrollTo(distance);
             })
             .on("press", function() {
-
                 BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
             });
-        app.quickIconHighlighter();
     }
 };
 
@@ -904,7 +902,8 @@ var app = new(function() {
             var bottom = top + $item.height();
             var isActive = scrollTop >= top && scrollTop <= bottom && scrollTop > 0;
             $quickIcon.toggleClass("activeProfile", isActive);
-            $characterBox.toggleClass("active", !isActive);
+            $characterBox.toggleClass("active", isActive);
+			$characterBox.toggleClass("not-active", !isActive);
             $characterBox.css({
                 width: $characterBox.parent().width() + 'px'
             });

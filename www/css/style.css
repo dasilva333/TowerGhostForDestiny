@@ -312,7 +312,7 @@ body {
 
 .character-box {
     position: fixed;
-	top: 47px;
+	/*top: 47px;*/
     display: inline-block;
     height: 43px;
     padding: 0 0 0 50px;
@@ -323,9 +323,13 @@ body {
     text-decoration: none;
     background-size: cover;
 	z-index: 1003;
+	width: 95%;
 }
 .character-box.active {
-	position: relative;
+	top: 47px;
+}
+.character-box.not-active {
+	position: absolute;
 }
 
 .character-box  .progression {
