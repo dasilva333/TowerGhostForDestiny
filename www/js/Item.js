@@ -300,6 +300,16 @@ Item.prototype = {
                                 }
                                 //unequip failed
                                 else {
+                                	/* I'm a lazy bitch and don't know the APIs but can we grep the remaining bucket
+                                	 * space from the other characters/vault for an equippable item that isn't an item
+                                	 * from the loadout you've selected and swap it over to the character...then retry
+                                	 * the swap before failing? A warning dialog might still be nice since the app
+                                	 * didn't "plan" on this and tell the user via the loadout dialog that x will be
+                                	 * swapped with y.  The only situation that I know of where this dialog could pop
+                                	 * is when pulling armor/weapons out and only exotics remain so we're thus unable to
+                                	 * swap the remaining items.  Pop a quick legendary or lower item over into the failed
+                                	 * swap bucket and retry...presto!
+                                	 */
                                     BootstrapDialog.alert(app.activeText().unable_unequip + itemEquipped.description);
                                     callback(false);
                                 }
@@ -309,7 +319,7 @@ Item.prototype = {
                     });
                     if (!otherItemUnequipped) {
                         //tgd.localLog("no other exotic equipped, safe to equip");
-                        tryNextItem();
+                        tryNextItem();
                     }
                 } else {
                     tryNextItem();
