@@ -73,7 +73,8 @@ function process_directory(directory) {
 
 var directories = [
     '../www',
-    '../www/js'
+    '../www/js',
+	'../www/scripts'
 ];
 
 directories.forEach(function(value) {
