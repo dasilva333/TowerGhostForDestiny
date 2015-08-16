@@ -1,6 +1,8 @@
-# Contributing to Tower Ghost For Destiny
+# Contributing and Collaborating
 
-If you would like to contribute to the project simply submit a Pull Request for your changes. This requires you to have a Github account to complete this process, you may also contribute in our discussion board on Reddit here:
+If you would like to contribute to the project simply submit a *Pull Request* for your changes. This requires you to have a Github account to complete this process, you may also contribute in the discussion board on Reddit:
+
+<http://www.reddit.com/r/towerghostfordestiny>
 
 You may also request access to a chat room used to collaborate and discuss some of the more involved interactions, visit the link below for further instructions on how to participate.
 
@@ -26,10 +28,7 @@ TLDR: Remove ga.js from index.html while working on a private branch
 
 If you would like to contribute in other ways here's a few that need improvements.
 
--package the project for Windows Store (.appx package)
-
--Create a new splash screen for the mobile app
-
--Maintain the Sets items and making sure they are up to date and include everything it should
-
--Browse through the code for the keyword: TODO and get those fixed
+- package the project for Windows Store (.appx package)
+- Create a new splash screen for the mobile app
+- Maintain the Sets items and making sure they are up to date and include everything it should
+- Browse through the code for the keyword: TODO and get those fixed
