@@ -7,7 +7,7 @@ You may also request access to a chat room used to collaborate and discuss some 
 <https://github.com/dasilva333/TowerGhostForDestiny/wiki/Slack-Group-Chat>
 Thanks to @bluetidepro
 
-# Step by step instructions:
+## Step by step instructions:
 
 1. Checkout my project on Github
 https://github.com/dasilva333/TowerGhostForDestiny/
