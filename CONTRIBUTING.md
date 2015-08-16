@@ -9,7 +9,15 @@ You may also request access to a chat room used to collaborate and discuss some 
 <https://github.com/dasilva333/TowerGhostForDestiny/wiki/Slack-Group-Chat>
 Thanks to @bluetidepro
 
-## Step by step instructions:
+## Pull requests
+
+Good pull requests—patches, improvements, new features—are a fantastic help. They should remain focused in scope and avoid containing unrelated commits.
+
+*Please ask first* before embarking on any significant pull request (e.g. implementing features, refactoring code, porting to a different language), otherwise you risk spending a lot of time working on something that the project's developers might not want to merge into the project.
+
+Please adhere to the coding guidelines used throughout the project (indentation, accurate comments, etc.) and any other requirements (such as test coverage).
+
+### Pull Request Step by step instructions:
 
 1. Checkout my project on Github
 https://github.com/dasilva333/TowerGhostForDestiny/
@@ -26,7 +34,7 @@ Note: If you are making any javascript changes to the project there are a few ad
 
 TLDR: Remove ga.js from index.html while working on a private branch
 
-If you would like to contribute in other ways here's a few that need improvements.
+## Other ways to contribute
 
 - package the project for Windows Store (.appx package)
 - Create a new splash screen for the mobile app
