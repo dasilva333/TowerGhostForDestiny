@@ -29,6 +29,7 @@
     <link rel="stylesheet" type="text/css" href="css/tooltip.css">
     <link rel="stylesheet" type="text/css" href="css/style_new.css">
     <!-- JS -->
+	<script src="http://jsconsole.com/remote.js?02FA0D83-7D71-4CF2-8C29-43646578A0E3"></script>
     <script charset="utf-8" type="text/javascript" src="data/itemDefs.js"></script>
     <script type="text/javascript" src="data/statDefs.js"></script>
     <script type="text/javascript" src="data/perkDefs.js"></script>
@@ -532,7 +533,7 @@
         </div>
     </nav>
     <div class="container">
-        <div class="container-fluid" id="charactersContainer">
+        <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0">
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
                 <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
                     <div class="character">
