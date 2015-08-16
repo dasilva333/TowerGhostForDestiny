@@ -15,7 +15,7 @@ var Profile = function(character, items, index) {
     this.classLetter = "";
     this.race = "";
     this.reloadingBucket = false;
-	this.statsShowing = ko.observable(false);
+    this.statsShowing = ko.observable(false);
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -212,7 +212,7 @@ Profile.prototype = {
         var ie = this.itemEquipped(type);
         return ie == undefined ? false : ie.isVisible();
     },
-	toggleStats: function(){
-		this.statsShowing(!this.statsShowing());
-	}
+    toggleStats: function() {
+        this.statsShowing(!this.statsShowing());
+    }
 }

@@ -9,8 +9,8 @@ var bungie = (function(cookieString, complete) {
 
     this.bungled = "";
     this.systemIds = {};
-	this.requests = {};  
-	
+    this.requests = {};
+
     // private methods
     function _getAllCookies(callback) {
         if (chrome && chrome.cookies && chrome.cookies.getAll) {
@@ -55,17 +55,15 @@ var bungie = (function(cookieString, complete) {
                 }
                 callback(c ? c.value : null);
             });
-        } 
-		else if (!isChrome && !isMobile) {
-			console.log("sent getCookie request");
-			var event = document.createEvent('CustomEvent');
-			event.initCustomEvent("request-cookie", true, true, {});
-			document.documentElement.dispatchEvent(event);
-			setTimeout(function(){
-				callback("firefox");
-			}, 5000);
-		}
-		else {
+        } else if (!isChrome && !isMobile) {
+            console.log("sent getCookie request");
+            var event = document.createEvent('CustomEvent');
+            event.initCustomEvent("request-cookie", true, true, {});
+            document.documentElement.dispatchEvent(event);
+            setTimeout(function() {
+                callback("firefox");
+            }, 5000);
+        } else {
             callback(readCookie('bungled'));
         }
     }
@@ -311,19 +309,19 @@ var bungie = (function(cookieString, complete) {
 
     this.init = function() {
         if (!isChrome && !isMobile) {
-			var event = document.createEvent('CustomEvent');
-			event.initCustomEvent("request-cookie", true, true, {});
-			document.documentElement.dispatchEvent(event);
-			
+            var event = document.createEvent('CustomEvent');
+            event.initCustomEvent("request-cookie", true, true, {});
+            document.documentElement.dispatchEvent(event);
+
             window.addEventListener("message", function(event) {
                 console.log("received a firefox response");
                 var reply = event.data;
-				var response;
-				try {
-                	response = JSON.parse(reply.response);
-				} catch(e) {
-					response = reply.response;
-				}
+                var response;
+                try {
+                    response = JSON.parse(reply.response);
+                } catch (e) {
+                    response = reply.response;
+                }
                 var opts = self.requests[reply.id];
                 if (response.ErrorCode === 36) {
                     console.log("throttle retrying");
@@ -344,7 +342,7 @@ var bungie = (function(cookieString, complete) {
                 }
             }, false);
         }
-		
+
         self.login(function() {
             self.getCookie('bungled', function(token) {
                 self.bungled = token;
