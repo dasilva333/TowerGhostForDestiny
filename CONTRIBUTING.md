@@ -18,6 +18,9 @@ That's it, if done correctly I should be able to just automatically accept your 
 If you would like to contribute in other ways here's a few that need improvements.
 
 -package the project for Windows Store (.appx package)
+
 -Create a new splash screen for the mobile app
+
 -Maintain the Sets items and making sure they are up to date and include everything it should
+
 -Browse through the code for the keyword: TODO and get those fixed
