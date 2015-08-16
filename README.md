@@ -5,15 +5,8 @@ To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
 ## Table of contents
 
 - [Store Install Instructions](#store-install-instructions)
-- [Current Features Supported](#current-features-supported)
-- [Screenshot Running on IOS](#screenshot-running-on-ios)
-- [Features Incoming](#features-incoming)
-- [Known Issues](#known-issues)
-- [Troubleshooting](#troubleshooting)
-- [Mobile Install](#mobile-install)
 - [Download Files](#download-files)
-- [Manual Chrome Install Instructions](#manual-chrome-install-instructions)
-- [Manual Firefox Install Instructions](#manual-firefox-install-instructions)
+- [Install Instructions](#install-instructions)
 - [Editing CSS](#editing-css)
 - [Contributing](#contributing)
 - [Project Powered](#project-powered-by)
