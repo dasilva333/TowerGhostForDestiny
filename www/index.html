@@ -153,6 +153,13 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text" data-bind="text: $root.activeText().menu_settings">Settings</span> <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu">
+							
+                            <li><a href="#" data-bind="fastclick: logout">Logout</a></li>
+                            <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
+                            <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
+                            <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
+                            <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
+							<li class="divider"></li>
                             <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i><span data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a></li>
                             <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: $root.activeText().menu_about">About</span></a></li>
                             <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
@@ -176,13 +183,7 @@
                             </li>
                             <li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''">
                                 <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a href="#" data-bind="fastclick: logout">Logout</a></li>
-                            <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
-                            <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
-                            <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
-                            <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
+                            </li>                            
                         </ul>
                     </li>
                 </ul>
