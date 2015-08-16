@@ -4,14 +4,14 @@ To get started, check out <http://towerghostfordestiny.com//>! You can look up p
 
 ## Table of contents
 
-- [Store Install Instructions](#store-install-instructions)
+- [Store Install Links](#store-install-instructions)
 - [Download Files](#download-files)
 - [Install Instructions](#install-instructions)
 - [Editing CSS](#editing-css)
 - [Contributing](#contributing)
 - [Project Powered](#project-powered-by)
 
-##Store Install Instructions
+##Store Install Links
 
 - [Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
 - [Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
