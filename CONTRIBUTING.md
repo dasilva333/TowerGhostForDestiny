@@ -32,3 +32,4 @@ If you would like to contribute in other ways here's a few that need improvement
 - Create a new splash screen for the mobile app
 - Maintain the Sets items and making sure they are up to date and include everything it should
 - Browse through the code for the keyword: TODO and get those fixed
+- Filter for issues marked *Help Wanted* in the my issues page <https://github.com/dasilva333/TowerGhostForDestiny/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22>
