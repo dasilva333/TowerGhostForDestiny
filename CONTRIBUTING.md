@@ -15,6 +15,10 @@ http://towerghostfordestiny.com/index.php/support/
 
 That's it, if done correctly I should be able to just automatically accept your changes and test them before including them in the next version of TGD.
 
+Note: If you are making any javascript changes to the project there are a few additional steps to ensure that Google Analytics doesn't log any crashes or errors that occur.
+
+TLDR: Remove ga.js from index.html while working on a private branch
+
 If you would like to contribute in other ways here's a few that need improvements.
 
 -package the project for Windows Store (.appx package)
