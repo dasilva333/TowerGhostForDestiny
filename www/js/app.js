@@ -1625,7 +1625,7 @@ var app = new(function() {
         }
 
         if (isMobile && isEmptyCookie) {
-            self.bungie = new bungie(function() {
+            self.bungie = new bungie('', function() {
                 self.activeUser({
                     "code": 99,
                     "error": "Please sign-in to continue."
