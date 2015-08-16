@@ -317,6 +317,21 @@ body {
 .character {
 	margin-bottom: 47px;
 }
+.character .stats {
+	position: absolute; top: 51px; left: 20px; background: rgba(18, 21, 20, .8); z-index: 2; width: 96%;
+}
+.character .stats div {
+	font-size: 15px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+.character .stats span {
+	font-size: 16px;
+    font-weight: bold;
+}
+.character .stats img {
+	height: 24px;
+}
 
 .character-box {
     position: fixed;

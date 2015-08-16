@@ -159,19 +159,6 @@ tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% }) %>' +
 '</div>';
 
-tgd.statsTemplate = '<div class="row">' +
-	'<% stats.forEach(function(stat){ %>' +
-		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">' +
-			'<div class="col-xs-9 text-right">' +
-				'<strong><%= stat.name %></strong>' +
-			'</div>' +
-			'<div class="col-xs-3">' +
-				'<%= stat.value %>' +
-			'</div>' +
-		'</div>' +
-	'<% }) %>' +
-'</div>';
-
 tgd.normalizeTemplate = '<div id="menu">' +
 	'<div class="panel list-group">' +
 		'<div class="list-group-item row">' +

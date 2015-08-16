@@ -788,47 +788,48 @@ var app = new(function() {
         if (self.loadingUser() == false || self.hiddenWindowOpen() == true) {
             //window.t = (new Date());
             self.loadingUser(true);
-            self.bungie = new bungie(self.bungie_cookies);
-            self.characters.removeAll();
-            //console.time("self.bungie.user");
-            self.bungie.user(function(user) {
-                //console.timeEnd("self.bungie.user");
-                if (user.error) {
-                    if (user.error == 'network error:502') {
-                        try {
-                            window.cookies.clear(function() {
-                                BootstrapDialog.alert('Cookies cleared!');
-                            });
-                        } catch (e) {
-                            window.ref = window.open('https://www.bungie.net/', '_blank', 'location=yes,clearsessioncache=yes');
-                            BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
+            self.bungie = new bungie(self.bungie_cookies, function() {
+                self.characters.removeAll();
+                //console.time("self.bungie.user");
+                self.bungie.user(function(user) {
+                    //console.timeEnd("self.bungie.user");
+                    if (user.error) {
+                        if (user.error == 'network error:502') {
+                            try {
+                                window.cookies.clear(function() {
+                                    BootstrapDialog.alert('Cookies cleared!');
+                                });
+                            } catch (e) {
+                                window.ref = window.open('https://www.bungie.net/', '_blank', 'location=yes,clearsessioncache=yes');
+                                BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
+                            }
                         }
-                    }
-                    if (isMobile) {
-                        if (self.hiddenWindowOpen() == false) {
-                            self.hiddenWindowOpen(true);
-                            self.openHiddenBungieWindow();
+                        if (isMobile) {
+                            if (self.hiddenWindowOpen() == false) {
+                                self.hiddenWindowOpen(true);
+                                self.openHiddenBungieWindow();
+                            } else {
+                                setTimeout(function() {
+                                    self.loadData(ref);
+                                }, 1000);
+                            }
                         } else {
-                            setTimeout(function() {
-                                self.loadData(ref);
-                            }, 1000);
+                            self.activeUser(user);
+                            self.loadingUser(false);
                         }
-                    } else {
-                        self.activeUser(user);
-                        self.loadingUser(false);
+                        return
                     }
-                    return
-                }
-                if (ref && ref.close) {
-                    ref.close();
-                    self.hiddenWindowOpen(false);
-                    ref = null;
-                }
-                self.activeUser(user);
-                self.locale(self.activeUser().user.locale);
-                self.loadingUser(false);
-                _.defer(function() {
-                    self.search();
+                    if (ref && ref.close) {
+                        ref.close();
+                        self.hiddenWindowOpen(false);
+                        ref = null;
+                    }
+                    self.activeUser(user);
+                    self.locale(self.activeUser().user.locale);
+                    self.loadingUser(false);
+                    _.defer(function() {
+                        self.search();
+                    });
                 });
             });
         }
@@ -859,7 +860,9 @@ var app = new(function() {
     this.refreshHandler = function() {
         clearInterval(self.refreshInterval);
         if (self.loadoutMode() == true) {
-            self.toggleBootstrapMenu();
+            if (self.dynamicMode() == false) {
+                self.toggleBootstrapMenu();
+            }
             $("body").css("padding-bottom", "260px");
         } else {
             $("body").css("padding-bottom", "80px");
@@ -1578,7 +1581,6 @@ var app = new(function() {
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
-        tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.swapTemplate = _.template(tgd.swapTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({
@@ -1623,10 +1625,11 @@ var app = new(function() {
         }
 
         if (isMobile && isEmptyCookie) {
-            self.bungie = new bungie();
-            self.activeUser({
-                "code": 99,
-                "error": "Please sign-in to continue."
+            self.bungie = new bungie(function() {
+                self.activeUser({
+                    "code": 99,
+                    "error": "Please sign-in to continue."
+                });
             });
         } else {
             setTimeout(function() {
