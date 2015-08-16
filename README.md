@@ -26,19 +26,6 @@ To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
 - [Tower Ghost in Google Play Store](https://play.google.com/store/apps/details?id=com.richardpinedo.towerghostfordestiny)
 - [Tower Ghost in Windows Phone Store](http://www.windowsphone.com/en-us/store/app/destiny-item-viewer/f98e5060-3464-419c-b83d-14300714a676)
 
-##Current Features Supported
-
-- Equipping items & transferring items across characters
-- Filter by Perk Name, Description, Gun Name [Screenshot](http://i.imgur.com/qGNNduy.png)
-- Filter by gun progress (Maxed (gold border), Full XP, Missing XP)
-- Filter by burn (Kinetic, Arc, Solar, Void)
-- Filter by weapon type (Scout, Auto, Hand Cannon, etc...)
-- Filter by Tier (Exotic, Legendary, Rare, etc...) [Screenshot](http://i.imgur.com/BZkdB12.png)
-- Auto Refresh Toggle, Custom set seconds [Screenshot](http://i.imgur.com/Tk6pwcr.png)
-- DestinyDB tooltips now display personal perks attached to your weapon [Screenshot](http://i.imgur.com/UH8AvGq.png)
-- Personal primary stats in transfer popup [Screenshot](http://i.imgur.com/hjLrO9i.png)
-- Inline stat values on the item icons [Screenshot](http://i.imgur.com/gMpnHIh.png)
-
 ##Download Files
 
 You can find the latest download for each platform here:
