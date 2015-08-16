@@ -1581,7 +1581,6 @@ var app = new(function() {
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
-        tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.swapTemplate = _.template(tgd.swapTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         tgd.duplicates = ko.observableArray().extend({

@@ -15,6 +15,7 @@ var Profile = function(character, items, index) {
     this.classLetter = "";
     this.race = "";
     this.reloadingBucket = false;
+	this.statsShowing = ko.observable(false);
     this.weapons = ko.computed(this._weapons, this);
     this.armor = ko.computed(this._armor, this);
     this.general = ko.computed(this._general, this);
@@ -211,22 +212,7 @@ Profile.prototype = {
         var ie = this.itemEquipped(type);
         return ie == undefined ? false : ie.isVisible();
     },
-    showStats: function() {
-        var character = this;
-        if (character && character.stats) {
-            var keys = Object.keys(character.stats),
-                newStats = [];
-            _.each(keys, function(key) {
-                var name = key.replace("STAT_", '');
-                name = name.substring(0, 1) + name.substring(1, name.length).toLowerCase();
-                newStats.push({
-                    name: name,
-                    value: character.stats[key].value
-                });
-            });
-            (new tgd.dialog).title("Character Stats").content(tgd.statsTemplate({
-                stats: newStats
-            })).show();
-        }
-    }
+	toggleStats: function(){
+		this.statsShowing(!this.statsShowing());
+	}
 }

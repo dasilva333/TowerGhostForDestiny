@@ -78,8 +78,6 @@ var bungie = (function(cookieString, complete) {
         if (opts.payload)
             data = JSON.stringify(opts.payload);
 
-        console.log("making http request " + self.bungled);
-
         if (isChrome || isMobile) {
             $.ajax({
                 url: opts.route,
@@ -350,7 +348,7 @@ var bungie = (function(cookieString, complete) {
         self.login(function() {
             self.getCookie('bungled', function(token) {
                 self.bungled = token;
-                console.log("bungied started with token " + token);
+                tgd.localLog("bungied started with token " + token);
                 complete(token);
             });
         });

@@ -539,9 +539,35 @@
                         <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id">
                             <div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
                             <div class="class" data-bind="text: classType"></div>
-                            <div class="level" style="cursor:pointer;" data-bind="text: level, click: showStats"></div>
-                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>
+                            <div class="level" style="cursor:pointer;" data-bind="text: level, click: toggleStats"></div>
+                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>							
                         </div>
+						<div class="row stats" data-bind="with: stats, visible: statsShowing">
+							<div class="col-xs-6">
+								Defense <span data-bind="text: STAT_DEFENSE.value"></span>
+							</div>
+							<div class="col-xs-6 text-right">
+								Light <span data-bind="text: STAT_LIGHT.value"></span> <img src="assets/light.png">
+							</div>							
+							<div class="col-xs-5">
+								Armor <span data-bind="text: STAT_ARMOR.value"></span>
+							</div>
+							<div class="col-xs-7 text-right">
+								Intellect <span data-bind="text: STAT_INTELLECT.value"></span> <img src="assets/Intellect.png">
+							</div>
+							<div class="col-xs-5">
+								Recovery <span data-bind="text: STAT_RECOVERY.value"></span>
+							</div>
+							<div class="col-xs-7 text-right">
+								Discipline <span data-bind="text: STAT_DISCIPLINE.value"></span> <img src="assets/Discipline.png">
+							</div>
+							<div class="col-xs-5">
+								Agility <span data-bind="text: STAT_AGILITY.value"></span>
+							</div>							
+							<div class="col-xs-7 text-right">
+								Strength <span data-bind="text: STAT_STRENGTH.value"></span> <img src="assets/Strength.png">
+							</div>
+						</div>
                     </div>
                     <div class="inventory">
                         <div class="items" data-type="item">
