@@ -1,6 +1,6 @@
 ![TowerGhostForDestiny](http://i.imgur.com/GUVISBH.png)
 
-To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
+To get started, check out <http://towerghostfordestiny.com//>! You can look up profiles online <http://towerghostfordestiny.com/index.php/tgd-online/>
 
 ## Table of contents
 
@@ -23,13 +23,13 @@ To get started, check out <http://dasilva333.github.io/TowerGhostForDestiny/>!
 
 You can find the latest download for each platform here:
 
-http://towerghostfordestiny.com/index.php/downloads/
+<http://towerghostfordestiny.com/index.php/downloads/>
 
 ##Install Instructions
 
 Latest help & FAQ support found here: 
 
-http://towerghostfordestiny.com/index.php/support/
+<http://towerghostfordestiny.com/index.php/support/>
 
 ##Editing CSS
 
