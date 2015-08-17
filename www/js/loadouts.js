@@ -253,7 +253,7 @@
 	                tgd.localLog("spaceNeededInVault: " + spaceNeededInVault);
 	                tgd.localLog(arrayName + " space used: " + spaceUsedInVault);
 
-	                if (spaceUsedInVault <= spaceNeededInVault || targetCharacterId == "Vault") {
+	                if (spaceUsedInVault <= spaceNeededInVault) { // || targetCharacterId == "Vault"
 	                    tgd.localLog("vault has at least 2 slots to make xfer");
 	                    fnHasFreeSpace();
 	                } else {
