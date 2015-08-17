@@ -144,11 +144,11 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a>
+					<li class="dropdown">
+                        <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text" data-bind="text: $root.activeText().menu_refresh">Refresh</span></a>
                     </li>
                     <li class="dropdown">
-                        <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text" data-bind="text: $root.activeText().menu_refresh">Refresh</span></a>
+                        <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text" data-bind="text: $root.activeText().menu_settings">Settings</span> <span class="caret"></span></a>
@@ -188,7 +188,8 @@
                     </li>
                 </ul>
                 <form class="navbar-form navbar-right">
-                    <div class="input-group spinner">
+                    <input class="form-control" placeholder="Search" size="9" type="text" data-bind="value: searchKeyword">
+					<div class="input-group spinner">
                         <span class="input-group-addon" data-bind="text: $root.activeText().menu_refresh">Refresh (secs)</span>
                         <input type="text" class="form-control" placeholder="Refresh (in seconds)" title="Refresh Automatically (in seconds)" data-bind="value: refreshSeconds">
                         <div class="input-group-btn-vertical">
@@ -196,7 +197,6 @@
                             <button class="btn btn-default" type="button" data-bind="click: decrementSeconds"><i class="fa fa-caret-down"></i></button>
                         </div>
                     </div>
-                    <input class="form-control" placeholder="Search" size="9" type="text" data-bind="value: searchKeyword">
                 </form>
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
