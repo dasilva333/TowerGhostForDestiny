@@ -58,6 +58,8 @@ Profile.prototype = {
 
             self.level = self.profile.characterLevel;
             self.stats = self.profile.characterBase.stats;
+			if (!("STAT_LIGHT" in self.stats))
+				self.stats.STAT_LIGHT = 0;
             self.percentToNextLevel = self.profile.percentToNextLevel;
             self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
         }
