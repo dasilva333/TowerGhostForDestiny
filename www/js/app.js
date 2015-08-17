@@ -156,8 +156,11 @@ window.ko.bindingHandlers.scrollToView = {
             })
             .on("tap", function() {
                 var index = $(element).index('.mobile-characters-image'),
-                    distance = $(".profile:eq(" + index + ")").position().top - 50;
-                app.scrollTo(distance);
+                    distance = $(".profile:eq(" + index + ")");
+				if (distance.length > 0){
+					distance = distance.position().top - 50;
+					app.scrollTo(distance);
+				}                
             })
             .on("press", function() {
                 BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
