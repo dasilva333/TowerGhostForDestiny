@@ -131,14 +131,14 @@ var bungie = (function(cookieString, complete) {
             document.documentElement.dispatchEvent(event);
         }
     }
-	
-	this.vault = function(callback) {
-	  self.request({
-	    route: '/Destiny/' + active.type + '/MyAccount/Vault/',
-	    method: 'GET',
-	    complete: callback
-	  });
-	}	
+
+    this.vault = function(callback) {
+        self.request({
+            route: '/Destiny/' + active.type + '/MyAccount/Vault/',
+            method: 'GET',
+            complete: callback
+        });
+    }
 
     this.logout = function(callback) {
         self.request({
