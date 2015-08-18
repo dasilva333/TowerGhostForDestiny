@@ -22,6 +22,8 @@ var adobeBuildConfigFile = "../www/config.xml";
 var xmlConfig = fs.readFileSync(adobeBuildConfigFile).toString("utf8");
 //avoid having to load xml libraries to update it
 xmlConfig = xmlConfig.replace(/version="(.*)" xmlns=\"http:\/\/www.w3.org\/ns\/widgets\"/,'version="' + versionInfo + '" xmlns="http://www.w3.org/ns/widgets"');
+xmlConfig = xmlConfig.replace(/id=\"com.richardpinedo.towerghostfordestiny\" versionCode="(.*)" version/,'id=\"com.richardpinedo.towerghostfordestiny\" versionCode="' + versionInfo.replace(/\./g,'') + '0" version');
+
 fs.writeFileSync(adobeBuildConfigFile, xmlConfig);
 
 var indexHomePage = "../www/index.html";
