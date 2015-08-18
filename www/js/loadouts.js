@@ -442,29 +442,31 @@
 	                                    /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
 											e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
 										*/
-										//tgd.localLog("looking for a swap item for " + item.description);
-	                                    var sourceBucketHashes = _.pluck(_.where(item.character.items(), {bucketType: item.bucketType}), 'id');
-										//tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
-										//console.log("the target where this is going has these many items " + targetBucket.length);
+	                                    //tgd.localLog("looking for a swap item for " + item.description);
+	                                    var sourceBucketHashes = _.pluck(_.where(item.character.items(), {
+	                                        bucketType: item.bucketType
+	                                    }), 'id');
+	                                    //tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
+	                                    //console.log("the target where this is going has these many items " + targetBucket.length);
 	                                    var candidates = _.filter(targetBucket, function(otherItem) {
-											var index = sourceBucketHashes.indexOf(otherItem.id);
-											//tgd.localLog(index + " candidate: " + otherItem.description);
+	                                        var index = sourceBucketHashes.indexOf(otherItem.id);
+	                                        //tgd.localLog(index + " candidate: " + otherItem.description);
 	                                        return index == -1;
 	                                    });
-										//tgd.localLog("candidates: " + _.pluck(candidates,'description'));
+	                                    //tgd.localLog("candidates: " + _.pluck(candidates,'description'));
 	                                    var swapItem = _.filter(_.where(candidates, {
 	                                        type: item.type
 	                                    }), getFirstItem(sourceBucketIds, itemFound));
-										//tgd.localLog("1.swapItem: " + swapItem.length);
-										if(swapItem.length == 0){
-											tgd.localLog("candidates: " + _.pluck(candidates,'description'));
-										}
+	                                    //tgd.localLog("1.swapItem: " + swapItem.length);
+	                                    if (swapItem.length == 0) {
+	                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+	                                    }
 	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
-										//tgd.localLog("2.swapItem: " + swapItem.description);
+	                                    //tgd.localLog("2.swapItem: " + swapItem.description);
 	                                }
 	                                if (swapItem) {
 	                                    targetBucket.splice(targetBucket.indexOf(swapItem), 1);
-										//console.log("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
+	                                    //console.log("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
 	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
 	                                        return {
 	                                            description: item.description + app.activeText().loadouts_no_transfer,
