@@ -132,6 +132,14 @@ var bungie = (function(cookieString, complete) {
         }
     }
 
+    this.vault = function(callback) {
+        self.request({
+            route: '/Destiny/' + active.type + '/MyAccount/Vault/',
+            method: 'GET',
+            complete: callback
+        });
+    }
+
     this.logout = function(callback) {
         self.request({
             route: url + 'en/User/SignOut',
