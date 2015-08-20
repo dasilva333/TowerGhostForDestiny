@@ -405,9 +405,10 @@ var app = new(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
             });
-            $("div.supportsIAB").toggle(isChrome == true || isAndroid == true);
+            $("div.supportsIAB").toggle(isChrome == true || isAndroid == true || isIOS == true);
             $("div.chromeWallet").toggle(isChrome == true);
             $("div.googlePlay").toggle(isAndroid == true);
+            $("div.appleIAP").toggle(isIOS == true);
             $("a.donate").bind("click", function() {
                 if (isChrome) {
                     google.payments.inapp.buy({
@@ -418,7 +419,7 @@ var app = new(function() {
                         'success': self.handleGoogleResponse,
                         'failure': self.handleGoogleResponse
                     });
-                } else if (isAndroid) {
+                } else if (isAndroid || isIOS) {
                     inappbilling.buy(
                         function() {
                             BootstrapDialog.alert("Donation accepted, thank you for your support");
