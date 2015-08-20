@@ -1,8 +1,7 @@
 var http = require("http"),
-	https = require("https"),
 	fs = require("fs"),
 	_ = require("lodash");
-var bungieURL = "https://www.bungie.net";
+var bungieURL = "http://www.bungie.net";
 var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
 var jsonPath = "../www/data/";
 var neededFiles = [
@@ -65,7 +64,7 @@ var cacheIcons = function(){
 	var icon = queue.pop();
 	if ( !fs.existsSync(jsonPath + icon) ){
 		console.log("downloading icon " + (bungieURL + icon));
-		https.get(bungieURL + icon, function(res) {
+		http.get(bungieURL + icon, function(res) {
 			if (res.statusCode != 200){
 				console.log(res.statusCode + " status code for icon " + icon);
 				if (queue.length > 0)
