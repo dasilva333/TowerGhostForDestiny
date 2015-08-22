@@ -182,53 +182,97 @@
 	            }
 	            var transferSwapItemToVault = function(complete) {
 	                swapItem = self.findReference(pair.swapItem);
-	                tgd.localLog(" transferSwapItemToVault " + swapItem.description);
+	                tgd.localLog("^^^^^^^^^^" + swapItem.character.id + " transferSwapItemToVault " + swapItem.description);
 	                if (swapItem.character.id == "Vault") {
 	                    complete();
 	                } else {
-	                    swapItem.store("Vault", complete);
+						var originalCharacterId = swapItem.character.id;
+	                    swapItem.store("Vault", function(profile){
+							tgd.localLog(originalCharacterId + " transferSwapItemToVault result " + profile.id);
+							/* unequip failed, pick another swapItem not used in the swapArray */
+							if ( profile.id ==  originalCharacterId){														
+								var equippedItem = swapItem;
+								console.log("^^^^^^^^^unequipped failed for " + swapItem.description);
+								console.log(swapArray);
+								var swapAndTargetIDs = _.flatten(_.map( swapArray, function(pair){
+									return [pair.swapItem._id, pair.targetItem._id];
+								}));
+								console.log("swapAndTargetIDs: " + swapAndTargetIDs);
+								console.log("targetItem character is " + targetItem.character.uniqueName);
+								var candidates = _.filter(swapItem.character.get(swapItem.bucketType), function(item){
+									var isCandidate = swapAndTargetIDs.indexOf(item._id) == -1;
+									console.log(item.description + " is part of the swap and target ids? " + isCandidate);
+									return isCandidate; 
+								});
+								console.log(candidates.length + " candidates: " + _.pluck(candidates,'description'));															
+								if (candidates.length > 0){
+									swapItem = candidates[0];
+									console.log("candidate is " + swapItem._id + " and is currently sitting in " + swapItem.character.uniqueName);
+									abort;//there should be no valid candidates
+									swapItem.store("Vault", function(){
+										console.log("^^^^^^^ xfered new candidate to vault");
+										complete();
+									});
+								}
+								else {
+									BootstrapDialog.alert("Unable to unequip " + equippedItem.description + " while playing in game");
+									pair.swapItem = pair.targetItem = targetItem = swapItem = null;
+									console.log("No candidates can't xfer targetItem");
+									complete();
+								}
+							}
+							else {
+								complete();
+							}						
+						});
 	                }
 	            }
-	            var transferTargetItemToDestination = function(complete) {
-	                var action = (_.where(self.ids(), {
-	                    id: pair.targetItem._id
-	                }).filter(onlyEquipped).length == 0) ? "store" : "equip";
-	                if (typeof targetItem == "undefined")
+	            var transferTargetItemToDestination = function(complete) {	                
+	                if (typeof targetItem == "undefined" && pair.targetItem)
 	                    targetItem = self.findReference(pair.targetItem);
-	                tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
-	                if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
-	                    tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
-	                    complete();
-	                } else {
-	                    targetItem[action](targetCharacterId, complete);
-	                }
+					if (targetItem){
+						var action = (_.where(self.ids(), {
+		                    id: targetItem._id
+		                }).filter(onlyEquipped).length == 0) ? "store" : "equip";
+						tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
+		                if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
+		                    tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
+		                    complete();
+		                } else {
+		                    targetItem[action](targetCharacterId, complete);
+		                }
+					}
+					else {
+						complete();
+					}	                
 	            }
 	            var transferSwapItemToDestination = function(complete) {
-	                swapItem = self.findReference(pair.swapItem);
-	                tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
-	                if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
-	                    tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
-	                    complete();
-	                } else {
-	                    swapItem.store(targetOwner, complete);
-	                }
+					if (typeof swapItem == "undefined" && pair.swapItem)
+		                swapItem = self.findReference(pair.swapItem);
+					if (swapItem){
+						tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+		                if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
+		                    tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
+		                    complete();
+		                } else {
+		                    swapItem.store(targetOwner, complete);
+		                }
+					}
+					else {
+						complete();
+					}	                
 	            }
-	            var getVaultSize = function() {
-	                    return app.characters()[0].weapons().length;
-	                }
 	                /* this assumes there is a swap item and a target item*/
 	            var startSwapping = function(finish) {
-	                    tgd.localLog("startSwapping " + getVaultSize());
+	                    tgd.localLog("startSwapping ");
 	                    transferTargetItemToVault(function() {
-	                        tgd.localLog("finished transferTargetItemToVault at " + getVaultSize());
-	                        tgd.localLog("finished transferTargetItemToVault at " + getVaultSize());
+	                        tgd.localLog("finished transferTargetItemToVault at "); 
 	                        transferSwapItemToVault(function() {
-	                            tgd.localLog("finished transferSwapItemToVault at " + getVaultSize());
-	                            tgd.localLog("finished transferSwapItemToVault at " + getVaultSize());
+	                            tgd.localLog("finished transferSwapItemToVault at "); 
 	                            transferTargetItemToDestination(function() {
-	                                tgd.localLog("finished transferTargetItemToDestination item to vault at " + getVaultSize());
+	                                tgd.localLog("finished transferTargetItemToDestination item to vault at ");
 	                                transferSwapItemToDestination(function() {
-	                                    tgd.localLog("*********finished transferSwapItemToDestination swap items **************" + getVaultSize());
+	                                    tgd.localLog("*********finished transferSwapItemToDestination swap items **************");
 	                                    if (finish) finish();
 	                                    else transferNextItem();
 	                                });
@@ -290,7 +334,7 @@
 	                            }
 	                        });
 	                    });
-	                    tgd.localLog("so the plan is to move these from the vault " + getVaultSize());
+	                    tgd.localLog("so the plan is to move these from the vault ");
 	                    tgd.localLog(tmpItems);
 	                    window.r = tmpItems;
 	                    var preCount = 0,
@@ -298,15 +342,15 @@
 	                    var finish = function() {
 	                        postCount++;
 	                        if (postCount == tmpItems.length) {
-	                            tgd.localLog("********* temp items moved back, finished, transferNextItem ********* " + getVaultSize());
+	                            tgd.localLog("********* temp items moved back, finished, transferNextItem ********* ");
 	                            transferNextItem();
 	                        }
 	                    }
 	                    var done = function() {
 	                        preCount++;
-	                        tgd.localLog("current: " + preCount + " total: " + tmpItems.length + " vault size: " + getVaultSize());
+	                        tgd.localLog("current: " + preCount + " total: " + tmpItems.length + " vault size: ");
 	                        if (preCount == tmpItems.length) {
-	                            tgd.localLog("moved temp items out, now start swap with callback " + getVaultSize());
+	                            tgd.localLog("moved temp items out, now start swap with callback ");
 	                            fnHasFreeSpace(function() {
 	                                _.each(tmpItems, function(pair) {
 	                                    pair.item.store("Vault", finish);
@@ -442,29 +486,34 @@
 	                                    /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
 											e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
 										*/
-	                                    //tgd.localLog("looking for a swap item for " + item.description);
+	                                    tgd.localLog("looking for a swap item for " + item.description);
 	                                    var sourceBucketHashes = _.pluck(_.where(item.character.items(), {
 	                                        bucketType: item.bucketType
 	                                    }), 'id');
-	                                    //tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
-	                                    //console.log("the target where this is going has these many items " + targetBucket.length);
+	                                    tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
+	                                    console.log("the target where this is going has these many items " + targetBucket.length);
 	                                    var candidates = _.filter(targetBucket, function(otherItem) {
 	                                        var index = sourceBucketHashes.indexOf(otherItem.id);
-	                                        //tgd.localLog(index + " candidate: " + otherItem.description);
-	                                        return index == -1;
+	                                        tgd.localLog(index + " candidate: " + otherItem.description);
+	                                        return index == -1; // && otherItem.isEquipped() == false
 	                                    });
-	                                    //tgd.localLog("candidates: " + _.pluck(candidates,'description'));
+	                                    tgd.localLog("candidates: " + _.pluck(candidates,'description'));
 	                                    var swapItem = _.filter(_.where(candidates, {
 	                                        type: item.type
 	                                    }), getFirstItem(sourceBucketIds, itemFound));
-	                                    //tgd.localLog("1.swapItem: " + swapItem.length);
+	                                    tgd.localLog("1.swapItem: " + swapItem.length);
 	                                    if (swapItem.length == 0) {
-	                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+	                                        //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+											console.log(targetBucket);
 	                                    }
 	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
-	                                    //tgd.localLog("2.swapItem: " + swapItem.description);
+										/* if there is still no swapItem at this point I have to break the original rule the prevents duplicates*/
+										if (!swapItem){
+											swapItem = _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
+										}										
 	                                }
 	                                if (swapItem) {
+										tgd.localLog("2.swapItem: " + swapItem.description);
 	                                    targetBucket.splice(targetBucket.indexOf(swapItem), 1);
 	                                    //console.log("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
 	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {

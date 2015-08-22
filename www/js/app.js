@@ -81,7 +81,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
-                }).length < 9) {
+                }).length < 10) {
                 app.activeLoadout().addItem({
                     id: item._id,
                     bucketType: item.bucketType,
