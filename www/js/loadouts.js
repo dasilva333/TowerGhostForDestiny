@@ -575,6 +575,9 @@
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
 	                            tgd.localLog("swapItems finished");
 	                            BootstrapDialog.alert(app.activeText().loadouts_transferred);
+	                            setTimeout(function() {
+	                                $("#donateLink").click(app.showDonate);
+	                            }, 1000);
 	                            app.dynamicMode(false);
 	                            dialog.close()
 	                        });
