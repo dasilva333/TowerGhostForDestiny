@@ -270,12 +270,17 @@ Item.prototype = {
                         if (otherEquipped == false) {
                             if (item != self && item.equip) {
                                 //tgd.localLog("trying to equip " + item.description);
-                                item.equip(self.characterId, function(isEquipped) {
+                                item.equip(self.characterId, function(isEquipped, result) {
                                     //tgd.localLog( item.description + " result was " + isEquipped);
+									console.log(arguments);
                                     if (isEquipped == true) {
                                         otherEquipped = true;
                                         callback(true);
-                                    } else {
+                                    } 
+									else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634){
+										callback(false);
+									}
+									else {
                                         tryNextItem(); /*tgd.localLog("tryNextItem")*/
                                     }
                                 });
@@ -346,7 +351,7 @@ Item.prototype = {
                     if (callback) callback(true);
                 } else {
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
-                    if (callback) callback(false);
+                    if (callback) callback(false, result);
                     else if (result && result.Message) {
                         BootstrapDialog.alert(result.Message);
                     }
@@ -723,14 +728,19 @@ Item.prototype = {
                     tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
                     if (result == true) {
                         self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback));
-                    } else if (result == false && callback) {
-                        callback(self.character);
-                    }
+                    } else {
+						if (callback){
+							callback(self.character);
+						}
+						else {
+							BootstrapDialog.alert("Unable to unequip " + self.description);
+						}
+					}  
                 });
             } else if (sourceCharacterId !== "Vault") {
                 tgd.localLog("from character to vault to character " + self.description);
                 self.unequip(function(result) {
-                    if (result) {
+                    if (result == true) {
                         if (self.bucketType == "Subclasses") {
                             if (callback)
                                 callback(self.character);
@@ -748,8 +758,14 @@ Item.prototype = {
                             }));
                         }
                     }
-                    if (result == false && callback)
-                        callback(self.character);
+                   else {
+						if (callback){
+							callback(self.character);
+						}
+						else {
+							BootstrapDialog.alert("Unable to unequip " + self.description);
+						}
+					}                        
                 });
             } else {
                 tgd.localLog("from vault to character");

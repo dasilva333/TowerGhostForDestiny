@@ -177,7 +177,16 @@
 	                if (targetOwner == "Vault") {
 	                    complete();
 	                } else {
-	                    targetItem.store("Vault", complete);
+						var originalCharacterId = targetItem.character.id;
+	                    targetItem.store("Vault", function(profile){
+							if ( profile.id ==  originalCharacterId){
+								BootstrapDialog.alert("Unable to unequip " + targetItem.description + " while playing in game");
+								complete();
+							}
+							else {
+								complete();
+							}
+						});
 	                }
 	            }
 	            var transferSwapItemToVault = function(complete) {
@@ -195,7 +204,12 @@
 								console.log("^^^^^^^^^unequipped failed for " + swapItem.description);
 								console.log(swapArray);
 								var swapAndTargetIDs = _.flatten(_.map( swapArray, function(pair){
-									return [pair.swapItem._id, pair.targetItem._id];
+									var tmp = [];
+									if (pair.swapItem)
+										tmp.push(pair.swapItem._id)
+									if (pair.targetItem)
+										tmp.push(pair.targetItem._id)										
+									return tmp;
 								}));
 								console.log("swapAndTargetIDs: " + swapAndTargetIDs);
 								console.log("targetItem character is " + targetItem.character.uniqueName);
@@ -208,7 +222,6 @@
 								if (candidates.length > 0){
 									swapItem = candidates[0];
 									console.log("candidate is " + swapItem._id + " and is currently sitting in " + swapItem.character.uniqueName);
-									abort;//there should be no valid candidates
 									swapItem.store("Vault", function(){
 										console.log("^^^^^^^ xfered new candidate to vault");
 										complete();
@@ -239,7 +252,16 @@
 		                    tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
 		                    complete();
 		                } else {
-		                    targetItem[action](targetCharacterId, complete);
+							var originalCharacterId = targetItem.character.id;
+		                    targetItem[action](targetCharacterId, function(profile){
+								if ( profile.id ==  originalCharacterId){
+									BootstrapDialog.alert("Unable to unequip " + targetItem.description + " while playing in game");
+									complete();
+								}
+								else {
+									complete();
+								}
+							});
 		                }
 					}
 					else {
@@ -449,11 +471,11 @@
 	                        tgd.localLog("using swap strategy");
 	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                        swapArray = _.map(sourceBucket, function(item) {
-	                            var cantMove = self.cantMove(item, key, targetMaxed);
+	                            //var cantMove = self.cantMove(item, key, targetMaxed);
 	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
-	                            if (cantMove) {
+	                            /*if (cantMove) {
 	                                return cantMove;
-	                            }
+	                            }*/
 	                            /* if the item is already in the targetBucket */
 	                            if (_.findWhere(targetBucket, {
 	                                    _id: item._id
