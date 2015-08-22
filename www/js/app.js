@@ -156,8 +156,11 @@ window.ko.bindingHandlers.scrollToView = {
             })
             .on("tap", function() {
                 var index = $(element).index('.mobile-characters-image'),
-                    distance = $(".profile:eq(" + index + ")").position().top - 50;
-                app.scrollTo(distance);
+                    distance = $(".profile:eq(" + index + ")");
+                if (distance.length > 0) {
+                    distance = distance.position().top - 50;
+                    app.scrollTo(distance);
+                }
             })
             .on("press", function() {
                 BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
@@ -402,7 +405,10 @@ var app = new(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
             });
+            $("div.supportsIAB").toggle(isChrome == true || isAndroid == true || isIOS == true);
             $("div.chromeWallet").toggle(isChrome == true);
+            $("div.googlePlay").toggle(isAndroid == true);
+            $("div.appleIAP").toggle(isIOS == true);
             $("a.donate").bind("click", function() {
                 if (isChrome) {
                     google.payments.inapp.buy({
@@ -413,6 +419,14 @@ var app = new(function() {
                         'success': self.handleGoogleResponse,
                         'failure': self.handleGoogleResponse
                     });
+                } else if (isAndroid || isIOS) {
+                    inappbilling.buy(
+                        function() {
+                            BootstrapDialog.alert("Donation accepted, thank you for your support");
+                        },
+                        function() {},
+                        $(this).attr("sku")
+                    );
                 }
             });
         });
@@ -1612,15 +1626,19 @@ var app = new(function() {
                 }).on("swipeleft", self.shiftViewLeft)
                 .on("swiperight", self.shiftViewRight)
                 .on("tap", self.globalClickHandler);
-        }
 
-        if (isMobile) {
             if (window.device && device.platform === "iOS" && device.version >= 7.0) {
                 StatusBar.overlaysWebView(false);
             }
             if (typeof StatusBar !== "undefined") {
                 StatusBar.styleBlackOpaque();
                 StatusBar.backgroundColorByHexString("#272B30");
+            }
+
+            if (typeof inappbilling != "undefined") {
+                inappbilling.init(function() {}, function() {}, {
+                    showLog: true
+                }, ['small', 'medium', 'large']);
             }
         }
 
