@@ -240,44 +240,47 @@
                             <li data-bind="css: setFilter().length == 0 ? 'active' : '', fastclick: setSetFilter" value="All">
                                 <a href="#"><i class="fa" data-bind="css: setFilter().length == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
                             </li>
-                            <li data-bind="css: setFilter() == _collections.vaultWeapons ? 'active' : '', fastclick: setSetFilter" value="vaultWeapons">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultWeapons ? 'fa-check-square' : 'fa-square'"></i>VoG Weapons</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.vaultArmor ? 'active' : '', fastclick: setSetFilter" value="vaultArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultArmor ? 'fa-check-square' : 'fa-square'"></i>VoG Armor</a>
+                            <li data-bind="css: setFilter() == _collections.crotaArmor ? 'active' : '', fastclick: setSetFilter" value="crotaArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaArmor ? 'fa-check-square' : 'fa-square'"></i>CE Armor</a>
                             </li>
                             <li data-bind="css: setFilter() == _collections.crotaWeapons ? 'active' : '', fastclick: setSetFilter" value="crotaWeapons">
                                 <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaWeapons ? 'fa-check-square' : 'fa-square'"></i>CE Weapons</a>
                             </li>
-                            <li data-bind="css: setFilter() == _collections.crotaArmor ? 'active' : '', fastclick: setSetFilter" value="crotaArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaArmor ? 'fa-check-square' : 'fa-square'"></i>CE Armor</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.tooWeapons ? 'active' : '', fastclick: setSetFilter" value="tooWeapons">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooWeapons ? 'fa-check-square' : 'fa-square'"></i>ToO Weapons</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.tooArmor ? 'active' : '', fastclick: setSetFilter" value="tooArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooArmor ? 'fa-check-square' : 'fa-square'"></i>ToO Armor</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.poeWeapons ? 'active' : '', fastclick: setSetFilter" value="poeWeapons">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.poeWeapons ? 'fa-check-square' : 'fa-square'"></i>PoE Weapons</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.poeArmor ? 'active' : '', fastclick: setSetFilter" value="poeArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.poeArmor ? 'fa-check-square' : 'fa-square'"></i>PoE Armor</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.queensWeapons ? 'active' : '', fastclick: setSetFilter" value="queensWeapons">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.queensWeapons ? 'fa-check-square' : 'fa-square'"></i>QW Weapons</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.ironWeapons ? 'active' : '', fastclick: setSetFilter" value="ironWeapons">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.ironWeapons ? 'fa-check-square' : 'fa-square'"></i>Iron Banner Weapons</a>
-                            </li>
-                            <li data-bind="css: setFilter() == _collections.ironArmor ? 'active' : '', fastclick: setSetFilter" value="ironArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.ironArmor ? 'fa-check-square' : 'fa-square'"></i>Iron Banner Armor</a>
+                            <li data-bind="css: setFilter() == _collections.exoticArmor ? 'active' : '', fastclick: setSetFilter" value="exoticArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.exoticArmor ? 'fa-check-square' : 'fa-square'"></i>Exotic Armor</a>
                             </li>
                             <li data-bind="css: setFilter() == _collections.exoticWeapons ? 'active' : '', fastclick: setSetFilter" value="exoticWeapons">
                                 <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.exoticWeapons ? 'fa-check-square' : 'fa-square'"></i>Exotic Weapons</a>
                             </li>
-                            <li data-bind="css: setFilter() == _collections.exoticArmor ? 'active' : '', fastclick: setSetFilter" value="exoticArmor">
-                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.exoticArmor ? 'fa-check-square' : 'fa-square'"></i>Exotic Armor</a>
+                            <li data-bind="css: setFilter() == _collections.ironArmor ? 'active' : '', fastclick: setSetFilter" value="ironArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.ironArmor ? 'fa-check-square' : 'fa-square'"></i>Iron Banner Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.ironWeapons ? 'active' : '', fastclick: setSetFilter" value="ironWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.ironWeapons ? 'fa-check-square' : 'fa-square'"></i>Iron Banner Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.poeArmor ? 'active' : '', fastclick: setSetFilter" value="poeArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.poeArmor ? 'fa-check-square' : 'fa-square'"></i>PoE Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.poeWeapons ? 'active' : '', fastclick: setSetFilter" value="poeWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.poeWeapons ? 'fa-check-square' : 'fa-square'"></i>PoE Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.queensArmor ? 'active' : '', fastclick: setSetFilter" value="queensArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.queensArmor ? 'fa-check-square' : 'fa-square'"></i>QW Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.queensWeapons ? 'active' : '', fastclick: setSetFilter" value="queensWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.queensWeapons ? 'fa-check-square' : 'fa-square'"></i>QW Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.tooArmor ? 'active' : '', fastclick: setSetFilter" value="tooArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooArmor ? 'fa-check-square' : 'fa-square'"></i>ToO Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.tooWeapons ? 'active' : '', fastclick: setSetFilter" value="tooWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooWeapons ? 'fa-check-square' : 'fa-square'"></i>ToO Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.vaultArmor ? 'active' : '', fastclick: setSetFilter" value="vaultArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultArmor ? 'fa-check-square' : 'fa-square'"></i>VoG Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.vaultWeapons ? 'active' : '', fastclick: setSetFilter" value="vaultWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultWeapons ? 'fa-check-square' : 'fa-square'"></i>VoG Weapons</a>
                             </li>
                             <li class="divider"></li>
                             <li data-bind="css: showMissing() ? 'active' : '', fastclick: toggleShowMissing">
