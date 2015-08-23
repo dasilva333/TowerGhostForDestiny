@@ -692,6 +692,7 @@ var app = new(function() {
     }
 
     this.useXboxAccount = function() {
+        self.toggleBootstrapMenu();
         self.preferredSystem("XBL");
         self.characters.removeAll();
         self.loadingUser(true);
@@ -699,6 +700,7 @@ var app = new(function() {
     }
 
     this.usePlaystationAccount = function() {
+        self.toggleBootstrapMenu();
         self.preferredSystem("PSN");
         self.characters.removeAll();
         self.loadingUser(true);
