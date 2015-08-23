@@ -77,7 +77,8 @@ _ga = new(function() {
                     'appName': e.filename + ':  ' + e.lineno,
                     'appVersion': tgd.version,
                     'hitCallback': function() {
-                        console.log("crash reported");
+                        console.log("crash reported " + e.message);
+                        console.log(e);
                     }
                 });
             }
