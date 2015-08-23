@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" versionCode="2950" version="2.9.5" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" versionCode="2990" version="2.9.9" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
 		Formerly known as DIV. This app allows you to transfer items between profiles, with various filters.
@@ -30,6 +30,9 @@
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
 	
+	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
+    <preference name="android-iabplugin-license-key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6kyZb15cxcGhaUVThjCY+c/rGCpKXW2Ek0v/dFOlx6MTAyTA9lUe3dMijtW1RjrTzqsZ+QgcCLRAGiAzL1+tgnalZJFeAIbbWA9DXjFrkw7hMqlrAeRLWWpLXCE96lqspvrxvtcnFb2doZTmuJmH68Y7MtItM7Gdg5K2G/bDACkWcA4qD2lNTkcWG/qTvUeOM0amV+2ENdJO0uQrneva/qM7BgIRqBQqTfiFL+xMAOwDRZBHdY35e+FMWgirIrKxA0XymIRbQVyHnTIFkQOMJBZ9dUaEn0LwRgBJjblYH7puwrYSUDshMXefcQDDfb9wfisDQD90iwbgy5SzDxmwwIDAQAB" />
+
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
     <icon gap:platform="android" gap:qualifier="mdpi" src="res/icon/android/icon-48-mdpi.png" />
