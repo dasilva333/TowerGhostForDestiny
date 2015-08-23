@@ -78,7 +78,7 @@ _ga = new(function() {
                     'appVersion': tgd.version,
                     'hitCallback': function() {
                         console.log("crash reported " + e.message);
-						console.log(e);
+                        console.log(e);
                     }
                 });
             }
