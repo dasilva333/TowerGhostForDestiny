@@ -6,7 +6,6 @@ _ga = new(function() {
     var self = this;
 
     this.init = function() {
-        self.loadLib();
         var ga_options = {
             'cookieDomain': 'none'
         };
@@ -36,22 +35,6 @@ _ga = new(function() {
         });
         ga('send', 'pageview');
         self.loadListeners();
-    }
-
-    this.loadLib = function() {
-        //Tracking for Universal Analytics
-        (function(i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function() {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://ssl.google-analytics.com/analytics.js', 'ga'); //analytics_debug.js to debug
-
     }
 
     this.loadListeners = function() {
