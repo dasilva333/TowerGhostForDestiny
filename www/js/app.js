@@ -362,6 +362,11 @@ var app = new(function() {
         self.activeLoadout(new Loadout());
     }
 
+    this.startMultiSelect = function() {
+        self.dynamicMode(true);
+        self.createLoadout();
+    }
+
     this.showHelp = function() {
         self.toggleBootstrapMenu();
         (new tgd.dialog).title("Help").content($("#help").html()).show();
@@ -692,6 +697,7 @@ var app = new(function() {
     }
 
     this.useXboxAccount = function() {
+        self.toggleBootstrapMenu();
         self.preferredSystem("XBL");
         self.characters.removeAll();
         self.loadingUser(true);
@@ -699,6 +705,7 @@ var app = new(function() {
     }
 
     this.usePlaystationAccount = function() {
+        self.toggleBootstrapMenu();
         self.preferredSystem("PSN");
         self.characters.removeAll();
         self.loadingUser(true);

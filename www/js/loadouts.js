@@ -53,6 +53,17 @@
 	            }
 	            return item.doEquip() == true && item._id != loadoutItem.id;
 	        });
+	        /* if the item being equipped is an exotic then the other exotics become unequipped */
+	        if (item.tierType == 6 && item.doEquip()) {
+	            _.each(self.ids(), function(equip) {
+	                var itemFound = self.findItemById(equip.id);
+	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && equip.doEquip() && equip.id != item._id && (
+	                        (item.weaponIndex > -1 && itemFound.weaponIndex > -1) || (item.armorIndex > -1 && itemFound.armorIndex > -1)
+	                    )) {
+	                    existingItems.push(equip);
+	                }
+	            });
+	        }
 	        if (existingItems.length > 0) {
 	            _.each(existingItems, function(loadoutItem) {
 	                loadoutItem.doEquip(false);
