@@ -929,24 +929,46 @@ var app = new(function() {
         }
     }
 
-    this.bucketSizeHandler = function() {
+	this.bucketSizeHandler = function() {
         var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
             var bucketSizes = {};
+			var itemHeight = 0;
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
                 var isVault = this.className.indexOf("12") > -1;
                 var columnsPerBucket = isVault ? 4 : tgd.DestinyBucketColumns[bucketType];
-                var bucketHeight = Math.ceil($(this).find(".bucket-item:visible").length / columnsPerBucket) * ($(this).find(".bucket-item:visible:eq(0)").height() + 2);
+				var $visibleBucketItems = $(this).find(".bucket-item:visible");
+				var visibleBucketHeight = $visibleBucketItems.eq(0).height();
+                var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
+
+				if(isVault){
+					$(this).addClass('isVault');
+				} else {
+					$(this).addClass('notVault');
+				}
+				if((visibleBucketHeight)&&(visibleBucketHeight>itemHeight)) {
+					itemHeight = visibleBucketHeight;
+				}
+				
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
                 } else {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
+			var maxNonVaultHeight = (itemHeight+2)*3;
             _.each(bucketSizes, function(sizes, type) {
                 var maxHeight = Math.max.apply(null, sizes);
-                buckets.filter("." + type).css("min-height", maxHeight);
+				var useMargin = itemHeight + 2;
+				var notVaultItems = buckets.filter(".notVault." + type);
+				var vaultItems = buckets.filter(".isVault." + type);
+				if(maxHeight > maxNonVaultHeight) {
+					notVaultItems.css("min-height", maxNonVaultHeight).css('margin-bottom',useMargin);
+				} else {
+					notVaultItems.css("min-height", maxHeight);					
+				}
+				vaultItems.css("min-height", maxHeight);
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             {
