@@ -83,7 +83,7 @@
             <!--/ko  -->
             <div class="titleRefresh" data-bind="visible: isMobile">
 				<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables') -->
-					<i title="Click to begin mutli-select transfer" class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
+					<i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
                 <!--/ko  -->
 				<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
 					<img title="Click to normalize all consumables" src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
@@ -585,7 +585,7 @@
                                     <span data-bind="html: layout.countText(character)"></span>
                                     <div class="titleRefresh" data-bind="visible: isMobile">
 										<!-- ko if: (layout.headerText == 'inventory_weapons' || layout.headerText == 'inventory_armor') -->
-											<i title="Click to start multi-select transfer" class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
+											<i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
 										<!--/ko  -->
                                         <i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
                                     </div>
