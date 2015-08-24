@@ -105,7 +105,7 @@
 
 						</div>
 
-						<div class="attkIcon">
+						<div class="attkIcon" data-bind="visible: primaryStat() != ''">
 
 							<div data-bind="text: primaryStat, css: damageTypeName"></div>
 
@@ -121,7 +121,7 @@
 
 					<div class="lockIcon" data-bind="if: locked"><img src="assets/lock.png" /></div>
 
-					<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+					<div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
 
 				</span>
             </div>
