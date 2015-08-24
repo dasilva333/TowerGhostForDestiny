@@ -361,6 +361,11 @@ var app = new(function() {
         self.dynamicMode(false);
         self.activeLoadout(new Loadout());
     }
+	
+	this.startMultiSelect = function(){
+		self.dynamicMode(true);
+		self.createLoadout();
+	}
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();

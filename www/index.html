@@ -23,7 +23,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="assets/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
     <!-- CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/tooltip.css">
@@ -81,11 +81,14 @@
             <!-- ko if: ( character.id == 'Vault' ) -->
             (<span data-bind="text: character.getVisible(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
             <!--/ko  -->
-            <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                <!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
-                <img src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+            <div class="titleRefresh" data-bind="visible: isMobile">
+				<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables') -->
+					<i title="Click to begin mutli-select transfer" class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
                 <!--/ko  -->
-                <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+				<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
+					<img title="Click to normalize all consumables" src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+                <!--/ko  -->
+                <i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
             </div>
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
@@ -580,8 +583,11 @@
                                 <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true, fastclick: character.reloadBucket">
                                     <strong data-bind="text: $root.activeText()[layout.headerText]"></strong>
                                     <span data-bind="html: layout.countText(character)"></span>
-                                    <div class="titleRefresh" data-bind="style: { display: !isMobile ? 'none' : 'initial' }">
-                                        <i class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+                                    <div class="titleRefresh" data-bind="visible: isMobile">
+										<!-- ko if: (layout.headerText == 'inventory_weapons' || layout.headerText == 'inventory_armor') -->
+											<i title="Click to start multi-select transfer" class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
+										<!--/ko  -->
+                                        <i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
                                     </div>
                                 </div>
                                 <div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
