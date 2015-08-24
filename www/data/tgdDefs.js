@@ -8,7 +8,7 @@ window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-tgd.localLogging = true;
+tgd.localLogging = false;
 tgd.localLog = function(msg) {
 	if (tgd.localLogging) {
 		console.log(msg);
@@ -19,7 +19,7 @@ tgd.DestinyLayout = [
   { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
   { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
   { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
-  { "Post Master": { array: 'postmaster', counts: [40,40], bucketTypes: ['Messages','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
+  { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
 ]
 tgd.DestinyViews = {
 	"0": "All",
@@ -64,7 +64,8 @@ tgd.DestinyBucketTypes = {
 	"375726501": "Mission",
 	"2197472680": "Bounties",
 	"12345": "Post Master",
-	"2422292810": "Post Master"
+	"2422292810": "Post Master",
+	"1367666825": "Invisible"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -91,7 +92,8 @@ tgd.DestinyBucketColumns = {
 	"Messages": 4,
 	"Lost": 4,
 	"Lost Items": 4,
-	"Mission": 4
+	"Mission": 4,
+	"Invisible": 4
 }
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
