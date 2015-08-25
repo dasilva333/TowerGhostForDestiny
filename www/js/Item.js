@@ -67,7 +67,7 @@ Item.prototype = {
                 isEquipped: ko.observable(item.isEquipped),
                 primaryStat: ko.observable(""),
                 isGridComplete: item.isGridComplete,
-                locked: item.locked,
+                locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
                 bucketType: self.character.getBucketTypeHelper(item, info),
@@ -151,7 +151,7 @@ Item.prototype = {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
             }
-            if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Messages") && item.stackSize > 1) {
+            if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
             $.extend(self, itemObject);
@@ -241,9 +241,9 @@ Item.prototype = {
     /* helper function that unequips the current item in favor of anything else */
     unequip: function(callback, excludeExotic) {
         var self = this;
-        tgd.localLog('trying to unequip too!');
+        //tgd.localLog('trying to unequip too!');
         if (self.isEquipped() == true) {
-            tgd.localLog("and its actually equipped");
+            //tgd.localLog("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
                 otherItems = [];
@@ -693,7 +693,7 @@ Item.prototype = {
                 });
             }
             //this condition only applies to armor/weapons until loadouts can support mats
-            else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0) {
+            else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 var adhoc = new Loadout();
                 adhoc.addItem({
@@ -703,7 +703,7 @@ Item.prototype = {
                 });
                 var msa = adhoc.transfer(targetCharacterId, true);
                 adhoc.swapItems(msa, targetCharacterId, function() {
-                    cb(y, x);
+                    if (cb) cb(y, x);
                 });
             } else if (result && result.Message) {
                 BootstrapDialog.alert(result.Message);
@@ -717,12 +717,12 @@ Item.prototype = {
         var self = this;
         var sourceCharacterId = self.character.id,
             transferAmount = 1;
-        tgd.localLog("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
+        //tgd.localLog("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
         var done = function() {
             if (targetCharacterId == "Vault") {
-                tgd.localLog("*******from character to vault " + self.description);
+                //tgd.localLog("*******from character to vault " + self.description);
                 self.unequip(function(result) {
-                    tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
+                    //tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
                     if (result == true) {
                         self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback));
                     } else {
@@ -734,21 +734,21 @@ Item.prototype = {
                     }
                 });
             } else if (sourceCharacterId !== "Vault") {
-                tgd.localLog("from character to vault to character " + self.description);
+                //tgd.localLog("from character to vault to character " + self.description);
                 self.unequip(function(result) {
                     if (result == true) {
                         if (self.bucketType == "Subclasses") {
                             if (callback)
                                 callback(self.character);
                         } else {
-                            tgd.localLog("xfering item to Vault " + self.description);
+                            //tgd.localLog("xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
-                                tgd.localLog("xfered item to vault and now to " + targetCharacterId);
+                                //tgd.localLog("xfered item to vault and now to " + targetCharacterId);
                                 if (self.character.id == targetCharacterId) {
-                                    tgd.localLog("took the long route ending it short " + self.description);
+                                    //tgd.localLog("took the long route ending it short " + self.description);
                                     if (callback) callback(self.character);
                                 } else {
-                                    tgd.localLog("taking the short route " + self.description);
+                                    //tgd.localLog("taking the short route " + self.description);
                                     self.transfer("Vault", targetCharacterId, transferAmount, callback);
                                 }
                             }));
@@ -1023,5 +1023,23 @@ Item.prototype = {
                 }
             }]
         })).title("Extras for " + self.description).show(true);
+    },
+    toggleLock: function() {
+        var self = this;
+        // have to use an actual character id and not the vault for lock/unlock
+        var characterId = self.character.id == 'Vault' ? _.find(app.orderedCharacters(), function(c) {
+            return c.id !== 'Vault';
+        }).id : self.character.id;
+        var newState = !self.locked();
+        //console.log(characterId + " changing " + self._id + " to be " + (newState ? "locked" : "unlocked"));
+
+        app.bungie.setlockstate(characterId, self._id, newState, function(results, response) {
+            if (response.ErrorCode !== 1) {
+                return BootstrapDialog.alert("setlockstate error: " + JSON.stringify(response));
+            } else {
+                //console.log(characterId + " changed " + self._id + " to be " + (newState ? "locked" : "unlocked"));
+                self.locked(newState);
+            }
+        });
     }
 }

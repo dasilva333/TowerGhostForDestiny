@@ -24,7 +24,7 @@ var Layout = function(layout) {
     }
     self.isVisible = function(character) {
         return ko.computed(function() {
-            return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
+            return ((character.id == "Vault" && (self.name !== "Post Master")) || character.id !== "Vault");
         });
     }
 }
@@ -94,7 +94,7 @@ tgd.moveItemPositionHandler = function(element, item) {
     } else {
         app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
             return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
         }
         if (element == tgd.activeElement) {
@@ -148,6 +148,39 @@ window.ko.bindingHandlers.refreshableSection = {
             });
     }
 };
+
+window.ko.bindingHandlers.refreshableEmblem = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("emblemHover");
+                //$(this).find(".emblemRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("emblemHover");
+                //$(this).find(".emblemRefresh").hide();
+            });
+    }
+};
+
+/*
+window.ko.bindingHandlers.logger = {
+    update: function(element, valueAccessor, allBindings) {
+        //store a counter with this element
+        var count = ko.utils.domData.get(element, "_ko_logger") || 0,
+            data = ko.toJS(valueAccessor() || allBindings());
+
+        ko.utils.domData.set(element, "_ko_logger", ++count);
+
+        if (window.console && console.log) {
+            console.log(count, element, data);
+        }
+    }
+};
+*/
 
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -749,6 +782,7 @@ var app = new(function() {
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
+                console.time("templates");
             }
 
         }
@@ -896,13 +930,22 @@ var app = new(function() {
     }
 
     this.bucketSizeHandler = function() {
-        var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
+        var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
             var bucketSizes = {};
+            var itemHeight = 0;
+            var vaultPos = parseInt(self.vaultPos()) - 1;
+            vaultPos = (vaultPos < 0) ? 0 : vaultPos;
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var columnsPerBucket = tgd.DestinyBucketColumns[bucketType];
-                var bucketHeight = Math.ceil($(this).find(".bucket-item:visible").length / columnsPerBucket) * ($(this).find(".bucket-item:visible:eq(0)").height() + 2);
+                var isVault = this.className.indexOf("12") > -1;
+                var columnsPerBucket = isVault ? 4 : tgd.DestinyBucketColumns[bucketType];
+                var $visibleBucketItems = $(this).find(".bucket-item:visible");
+                var visibleBucketHeight = $visibleBucketItems.eq(0).height();
+                var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
+                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight)) {
+                    itemHeight = visibleBucketHeight;
+                }
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
                 } else {
@@ -910,9 +953,28 @@ var app = new(function() {
                 }
             });
             _.each(bucketSizes, function(sizes, type) {
+                //this is the max height all buckets will use
                 var maxHeight = Math.max.apply(null, sizes);
-                buckets.filter("." + type).css("min-height", maxHeight);
+                //this is the max height the non-vault characters will use
+                var profileSizes = sizes.slice(0);
+                profileSizes.splice(vaultPos, 1);
+                var maxProfilesHeight = Math.max.apply(null, profileSizes);
+                var minNumRows = 1;
+                if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
+                    minNumRows = 3;
+                } else if (type == "Materials") {
+                    minNumRows = 4;
+                }
+                maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
+                var itemBuckets = buckets.filter("." + type);
+                itemBuckets.css("min-height", maxHeight);
+                itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
             });
+            // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
+            var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
+            var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
+            vaultSubClass.css("min-height", notVaultSubClass.height());
+            vaultSubClass.css("visibility", "hidden");
         }
     }
 
@@ -922,7 +984,6 @@ var app = new(function() {
             tgd.activeElement = null;
         }
     }
-
 
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
@@ -1279,6 +1340,9 @@ var app = new(function() {
                 if (usingbatchMode == false) {
                     //self.refresh();
                     BootstrapDialog.alert("All items normalized as best as possible");
+                    setTimeout(function() {
+                        self.bucketSizeHandler();
+                    }, 1000);
                 }
                 if (callback !== undefined) {
                     callback();
@@ -1391,6 +1455,9 @@ var app = new(function() {
 
                 if (description == undefined) {
                     BootstrapDialog.alert("All items normalized as best as possible");
+                    setTimeout(function() {
+                        self.bucketSizeHandler();
+                    }, 1000);
                     return;
                 }
 
@@ -1584,6 +1651,15 @@ var app = new(function() {
                     }
                 }
             });
+        }
+    }
+
+    /* This function can be used in the future to localize header names */
+    this.getBucketName = function(bucketType) {
+        if (bucketType == "Invisible") {
+            return "Special Orders";
+        } else {
+            return bucketType;
         }
     }
 
