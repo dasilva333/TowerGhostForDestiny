@@ -21,9 +21,11 @@ var Profile = function(character, items, index) {
     this.general = ko.computed(this._general, this);
     this.postmaster = ko.computed(this._postmaster, this);
     this.messages = ko.computed(this._messages, this);
+    this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383];
+    this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(items, index);
 }
@@ -84,6 +86,9 @@ Profile.prototype = {
         if (self.lostItemsHelper.indexOf(item.itemHash) > -1) {
             return "Lost Items";
         }
+        if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+            return "Invisible";
+        }
         return "Messages";
     },
     reloadBucketFilter: function(buckets) {
@@ -124,20 +129,59 @@ Profile.prototype = {
         var buckets = [];
         if (typeof model === 'string' || model instanceof String) {
             buckets.push(model);
-        } else {
+        } else if (model instanceof Layout) {
             buckets.push.apply(buckets, model.bucketTypes);
+        } else if (model instanceof Profile) {
+            _.each(tgd.DestinyLayout, function(layout) {
+                _.each(layout, function(l) {
+                    buckets.push.apply(buckets, l.bucketTypes);
+                });
+            });
         }
 
         self.reloadingBucket = true;
         if (typeof event !== "undefined") {
-            var element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+            element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+            if (element.is(".fa") == false) {
+                element = $(event.target).is(".emblem") ? $(event.target) : $(event.target).find(".emblem");
+                if (element.is(".emblem") == false) {
+                    element = $(event.target).parent().find(".emblem");
+                }
+            }
             element.addClass("fa-spin");
         }
 
+        var needsInvisibleRefresh = buckets.indexOf("Invisible") > -1;
+
         function done() {
-            self.reloadingBucket = false;
-            if (element) {
-                element.removeClass("fa-spin");
+            function reallyDone() {
+                self.reloadingBucket = false;
+                if (element) {
+                    element.removeClass("fa-spin");
+                    setTimeout(function() {
+                        app.bucketSizeHandler();
+                    }, 1000);
+                }
+            }
+
+            if (needsInvisibleRefresh) {
+                app.bungie.account(function(results, response) {
+                    if (results && results.data && results.data.inventory && results.data.inventory.buckets && results.data.inventory.buckets.Invisible) {
+                        var invisible = results.data.inventory.buckets.Invisible;
+                        invisible.forEach(function(b) {
+                            b.items.forEach(function(item) {
+                                self.items.push(new Item(item, self, true));
+                            });
+                        });
+                        reallyDone();
+                    } else {
+                        reallyDone();
+                        self.refresh();
+                        return BootstrapDialog.alert("Code 40: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                    }
+                });
+            } else {
+                reallyDone();
             }
             if (callback)
                 callback();
@@ -168,19 +212,25 @@ Profile.prototype = {
     },
     _general: function() {
         return _.filter(this.items(), function(item) {
-            if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Messages" && item.bucketType !== "Lost Items" && item.bucketType !== "Subclasses")
+            if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Messages" && item.bucketType !== "Invisible" && item.bucketType !== "Lost Items" && item.bucketType !== "Subclasses")
                 return item;
         });
     },
     _postmaster: function() {
         return _.filter(this.items(), function(item) {
-            if ((item.bucketType == "Post Master") || (item.bucketType == "Messages") || (item.bucketType == "Lost Items"))
+            if ((item.bucketType == "Post Master") || (item.bucketType == "Messages") || (item.bucketType == "Invisible") || (item.bucketType == "Lost Items"))
                 return item;
         });
     },
     _messages: function() {
         return _.filter(this.items(), function(item) {
             if (item.bucketType == "Messages")
+                return item;
+        });
+    },
+    _invisible: function() {
+        return _.filter(this.items(), function(item) {
+            if (item.bucketType == "Invisible")
                 return item;
         });
     },
