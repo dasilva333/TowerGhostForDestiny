@@ -46,7 +46,8 @@
     <script type="text/javascript" src="js/dependencies/hammer.js"></script>
     <script type="text/javascript" src="js/dependencies/bootstrap.js"></script>
     <script type="text/javascript" src="js/dependencies/bootstrap-dialog.js"></script>
-    <script type="text/javascript" src="js/dependencies/knockout.js"></script>
+    <script type="text/javascript" src="js/dependencies/knockout.js"></script>	
+	<script type="text/javascript" src="js/dependencies/knockout-sortable.js"></script>
     <script type="text/javascript" src="js/dependencies/underscore-min.js"></script>
     <script type="text/javascript" src="js/dependencies/fastclick.js"></script>
     <script type="text/javascript" src="js/dependencies/analytics.js"></script>
@@ -93,7 +94,7 @@
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
-                <div class="itemBucketBG" data-bind="foreach: { data: character.get(bucketType), as: 'item' }">
+				<div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
                         <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
                             <img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
@@ -107,13 +108,15 @@
                     </span>
                 </div>
             </div>
-            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), with: character.itemEquipped(bucketType)">
-                <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
-                    <a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
-                    <div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
-                    <div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
-                </span>
-            </div>
+			<!-- ko if: (character.id !== 'Vault') -->
+				<div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [character.itemEquipped(bucketType)]">
+					<span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
+						<div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
+						<div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+					</span>
+				</div>
+			<!--/ko  -->
         </div>
     </script>
     <nav class="navbar navbar-default navbar-fixed-top">

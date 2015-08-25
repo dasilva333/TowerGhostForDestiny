@@ -819,12 +819,15 @@ var app = new(function() {
             self.addTierTypes(profile.items());
             self.addWeaponTypes(profile.weapons());
             done(profile);
-
+			var characterIds = _.sortBy(_.map(avatars, function(character){
+				return character.characterBase.characterId;
+			}));
             //console.time("avatars.forEach");
-            avatars.forEach(function(character, index) {
+            avatars.forEach(function(character) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
                         var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
+						var index = characterIds.indexOf(character.characterBase.characterId);
                         var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
@@ -1662,6 +1665,17 @@ var app = new(function() {
             return bucketType;
         }
     }
+	
+	this.dndBeforeMove = function(arg){	
+		arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType);
+	}
+	
+	this.dndAfterMove = function(arg){
+		var destination = arg.targetParent[1];
+		var action = destination.isEquipped() ? "equip" : "store";
+		//console.log("the item " + arg.item.description + " will be " + action + "d to " + destination.characterId);
+		arg.item[action]( destination.characterId );
+	}
 
     this.init = function() {
 
@@ -1720,10 +1734,16 @@ var app = new(function() {
 
             if (typeof inappbilling != "undefined") {
                 inappbilling.init(function() {}, function() {}, {
-                    showLog: true
+                    showLog: false
                 }, ['small', 'medium', 'large']);
             }
+			ko.bindingHandlers.sortable.isEnabled = false;
+			ko.bindingHandlers.draggable.isEnabled = false;
         }
+		else {
+			ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+			ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
+		}
 
         if (isMobile && isEmptyCookie) {
             self.bungie = new bungie('', function() {
