@@ -929,11 +929,13 @@ var app = new(function() {
         }
     }
 
-	this.bucketSizeHandler = function() {
+    this.bucketSizeHandler = function() {
         var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
             var bucketSizes = {};
-			var itemHeight = 0;
+            var itemHeight = 0;
+			var vaultPos = parseInt(self.vaultPos())-1;
+			vaultPos = (vaultPos < 0) ? 0 : vaultPos;			
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
                 var isVault = this.className.indexOf("12") > -1;
@@ -941,42 +943,39 @@ var app = new(function() {
 				var $visibleBucketItems = $(this).find(".bucket-item:visible");
 				var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
-
-				if(isVault){
-					$(this).addClass('isVault');
-				} else {
-					$(this).addClass('notVault');
-				}
 				if((visibleBucketHeight)&&(visibleBucketHeight>itemHeight)) {
 					itemHeight = visibleBucketHeight;
 				}
-				
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
                 } else {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
-			var maxNonVaultHeight = (itemHeight+2)*3;
             _.each(bucketSizes, function(sizes, type) {
-                var maxHeight = Math.max.apply(null, sizes);
-				var useMargin = itemHeight + 2;
-				var notVaultItems = buckets.filter(".notVault." + type);
-				var vaultItems = buckets.filter(".isVault." + type);
-				if(maxHeight > maxNonVaultHeight) {
-					notVaultItems.css("min-height", maxNonVaultHeight).css('margin-bottom',useMargin);
-				} else {
-					notVaultItems.css("min-height", maxHeight);					
+                //this is the max height all buckets will use
+				var maxHeight = Math.max.apply(null, sizes);
+				//this is the max height the non-vault characters will use
+				var profileSizes = sizes.slice(0);
+				profileSizes.splice(vaultPos,1);
+				var maxProfilesHeight = Math.max.apply(null, profileSizes);
+				var minNumRows = 1;
+				if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1){
+					minNumRows = 3;
 				}
-				vaultItems.css("min-height", maxHeight);
+				else if (type == "Materials"){
+					minNumRows = 4;
+				}
+				maxProfilesHeight = Math.max(itemHeight * minNumRows,maxProfilesHeight);
+				var itemBuckets = buckets.filter("." + type);
+                itemBuckets.css("min-height", maxHeight);
+				itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
-            {
-                var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
-                var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
-                vaultSubClass.css("min-height", notVaultSubClass.height());
-                vaultSubClass.css("visibility", "hidden");
-            }
+            var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
+            var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
+            vaultSubClass.css("min-height", notVaultSubClass.height());
+            vaultSubClass.css("visibility", "hidden");
         }
     }
 
