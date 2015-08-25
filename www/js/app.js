@@ -221,8 +221,10 @@ ko.bindingHandlers.moveItem = {
                 time: 2000
             })
             .on("tap", function(ev) {
+				console.log("item.tap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
+					console.log("has target");
                     var item = ko.contextFor(target).$data;
                     tgd.moveItemPositionHandler(target, item);
                 }
