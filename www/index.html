@@ -108,8 +108,8 @@
                     </span>
                 </div>
             </div>
-			<!-- ko if: (character.id !== 'Vault') -->
-				<div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [character.itemEquipped(bucketType)]">
+			<!-- ko with: character.itemEquipped(bucketType) -->
+				<div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
 					<span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
 						<div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
