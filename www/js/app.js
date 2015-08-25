@@ -217,6 +217,7 @@ window.ko.bindingHandlers.fastclick = {
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+		console.log(element);
         Hammer(element, {
                 time: 2000
             })
