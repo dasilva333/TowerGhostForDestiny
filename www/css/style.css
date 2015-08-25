@@ -288,6 +288,16 @@ body {
     float: right;
 }
 
+/*.container .emblemRefresh {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 100px;
+}*/
+
+.container .emblemHover {
+    background: rgba(18, 21, 20, .5);
+}
+
 .container .title2 {
     text-transform: uppercase;
     position: relative;

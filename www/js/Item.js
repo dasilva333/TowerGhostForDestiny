@@ -693,7 +693,7 @@ Item.prototype = {
                 });
             }
             //this condition only applies to armor/weapons until loadouts can support mats
-            else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0) {
+            else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 var adhoc = new Loadout();
                 adhoc.addItem({
@@ -703,7 +703,7 @@ Item.prototype = {
                 });
                 var msa = adhoc.transfer(targetCharacterId, true);
                 adhoc.swapItems(msa, targetCharacterId, function() {
-                    cb(y, x);
+					if (cb) cb(y, x);
                 });
             } else if (result && result.Message) {
                 BootstrapDialog.alert(result.Message);

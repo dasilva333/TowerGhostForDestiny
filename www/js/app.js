@@ -157,11 +157,11 @@ window.ko.bindingHandlers.refreshableEmblem = {
         $(element)
             .bind("mouseenter", function() {
                 $(this).addClass("emblemHover");
-                $(this).find(".emblemRefresh").show();
+                //$(this).find(".emblemRefresh").show();
             })
             .bind("mouseleave", function() {
                 $(this).removeClass("emblemHover");
-                $(this).find(".emblemRefresh").hide();
+                //$(this).find(".emblemRefresh").hide();
             });
     }
 };
