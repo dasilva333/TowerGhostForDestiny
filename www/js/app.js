@@ -217,7 +217,6 @@ window.ko.bindingHandlers.fastclick = {
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-		console.log(element);
         Hammer(element, {
                 time: 2000
             })
@@ -1767,6 +1766,7 @@ var app = new(function() {
             ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
             ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
             ko.bindingHandlers.sortable.options = {
+				helper: "clone",
                 start: function() {
                     $ZamTooltips.isEnabled = false;
                     $ZamTooltips.hide()
