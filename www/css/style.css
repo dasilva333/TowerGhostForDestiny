@@ -255,7 +255,7 @@ body {
 
 .itemImage {}
 
-.itemBucket {
+.itemBucket .itemBucketBG {
     /* border: 1px solid white; */
     
     background: rgba(255, 255, 255, .1);
@@ -286,6 +286,16 @@ body {
 .container .titleRefresh {
     margin-right: 4px;
     float: right;
+}
+
+/*.container .emblemRefresh {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 100px;
+}*/
+
+.container .emblemHover {
+    background: rgba(18, 21, 20, .5);
 }
 
 .container .title2 {

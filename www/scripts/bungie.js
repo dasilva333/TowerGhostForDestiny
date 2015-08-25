@@ -209,7 +209,28 @@ var bungie = (function(cookieString, complete) {
             }
         });
     }
-
+    this.account = function(callback) {
+        self.request({
+            route: '/Destiny/' + active.type +
+                '/Account/' + membershipId +
+                '/',
+            method: 'GET',
+            complete: callback
+        });
+    }
+    this.setlockstate = function(characterId, itemId, state, callback) {
+        self.request({
+            route: '/Destiny/SetLockState/',
+            method: 'POST',
+            payload: {
+                membershipType: active.type,
+                characterId: characterId,
+                itemId: itemId,
+                state: state
+            },
+            complete: callback
+        });
+    }
     this.transfer = function(characterId, itemId, itemHash, amount, toVault, callback) {
         self.request({
             route: '/Destiny/TransferItem/',
