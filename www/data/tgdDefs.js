@@ -124,7 +124,7 @@ tgd.defaults = {
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : "true",
 	autoTransferStacks: false,
-	padBucketHeight: false,
+	padBucketHeight: isMobile ? false : true,
 	xsColumn: 12,
 	smColumn: 6,
 	mdColumn: 4,

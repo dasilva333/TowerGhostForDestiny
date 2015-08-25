@@ -819,15 +819,15 @@ var app = new(function() {
             self.addTierTypes(profile.items());
             self.addWeaponTypes(profile.weapons());
             done(profile);
-			var characterIds = _.sortBy(_.map(avatars, function(character){
-				return character.characterBase.characterId;
-			}));
+            var characterIds = _.sortBy(_.map(avatars, function(character) {
+                return character.characterBase.characterId;
+            }));
             //console.time("avatars.forEach");
             avatars.forEach(function(character) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
                         var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
-						var index = characterIds.indexOf(character.characterBase.characterId);
+                        var index = characterIds.indexOf(character.characterBase.characterId);
                         var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
@@ -1665,17 +1665,29 @@ var app = new(function() {
             return bucketType;
         }
     }
-	
-	this.dndBeforeMove = function(arg){	
-		arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType);
-	}
-	
-	this.dndAfterMove = function(arg){
-		var destination = arg.targetParent[1];
-		var action = destination.isEquipped() ? "equip" : "store";
-		//console.log("the item " + arg.item.description + " will be " + action + "d to " + destination.characterId);
-		arg.item[action]( destination.characterId );
-	}
+
+    this.dndBeforeMove = function(arg) {
+        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType);
+    }
+
+    this.dndAfterMove = function(arg) {
+        var destination = _.filter(arg.targetParent, function(item) {
+            return item.character.id != arg.item.character.id;
+        });
+        if (destination.length == 0) {
+            destination = _.filter(arg.targetParent, function(item) {
+                return item._id != arg.item._id;
+            });
+        }
+        if (destination.length > 0) {
+            destination = destination[0];
+            if (destination.character.id != arg.item.character.id) {
+                var action = destination.isEquipped() ? "equip" : "store";
+                console.log("the item " + arg.item.description + " will be " + action + "d to " + destination.character.uniqueName);
+                arg.item[action](destination.character.id);
+            }
+        }
+    }
 
     this.init = function() {
 
@@ -1737,13 +1749,23 @@ var app = new(function() {
                     showLog: false
                 }, ['small', 'medium', 'large']);
             }
-			ko.bindingHandlers.sortable.isEnabled = false;
-			ko.bindingHandlers.draggable.isEnabled = false;
         }
-		else {
-			ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
-			ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
-		}
+
+        ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
+        ko.bindingHandlers.draggable.isEnabled = !isMobile && self.padBucketHeight();
+        if (!isMobile) {
+            ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+            ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
+            ko.bindingHandlers.sortable.options = {
+                start: function() {
+                    $ZamTooltips.isEnabled = false;
+                    $ZamTooltips.hide()
+                },
+                stop: function() {
+                    $ZamTooltips.isEnabled = true;
+                }
+            }
+        }
 
         if (isMobile && isEmptyCookie) {
             self.bungie = new bungie('', function() {
