@@ -1760,7 +1760,7 @@ var app = new(function() {
             }
         }
 
-        ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
+        /*ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
         ko.bindingHandlers.draggable.isEnabled = !isMobile && self.padBucketHeight();
         if (!isMobile) {
             ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
@@ -1775,7 +1775,9 @@ var app = new(function() {
                     $ZamTooltips.isEnabled = true;
                 }
             }
-        }
+        }*/
+		ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+		ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
 
         if (isMobile && isEmptyCookie) {
             self.bungie = new bungie('', function() {
