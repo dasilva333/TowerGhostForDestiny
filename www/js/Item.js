@@ -703,7 +703,7 @@ Item.prototype = {
                 });
                 var msa = adhoc.transfer(targetCharacterId, true);
                 adhoc.swapItems(msa, targetCharacterId, function() {
-					if (cb) cb(y, x);
+                    if (cb) cb(y, x);
                 });
             } else if (result && result.Message) {
                 BootstrapDialog.alert(result.Message);
