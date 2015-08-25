@@ -67,10 +67,13 @@ tgd.dialog = (function(options) {
 
 tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
+	console.log("moveItemPositionHandler");
     if (app.destinyDbMode() == true) {
+		console.log("destinyDbMode");
         window.open(item.href, "_system");
         return false;
     } else if (app.loadoutMode() == true) {
+		console.log("loadoutMode");
         var existingItem = _.findWhere(app.activeLoadout().ids(), {
             id: item._id
         });
@@ -92,6 +95,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
+		console.log("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
@@ -100,7 +104,9 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (element == tgd.activeElement) {
             $movePopup.hide();
             tgd.activeElement = null;
+			console.log("hide");
         } else {
+			console.log("show");
             tgd.activeElement = element;
             $ZamTooltips.hide();
             if (window.isMobile) {
@@ -110,6 +116,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                     $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
+				console.log("display");
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
                     my: "left bottom",
                     at: "left top",
