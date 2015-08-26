@@ -1792,7 +1792,14 @@ var app = new(function() {
                 },
                 stop: function() {
                     $ZamTooltips.isEnabled = true;
-                }
+                },
+				over: function(){
+					$(this).addClass("active");
+				},
+				out: function(){
+					$(this).removeClass("active");
+				},
+				placeholder: "item-placeholder"
             }
         }
 
