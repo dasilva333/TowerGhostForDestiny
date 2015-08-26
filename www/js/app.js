@@ -224,29 +224,60 @@ ko.bindingHandlers.moveItem = {
 				console.log("item.tap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
-					console.log("has target");
                     var item = ko.contextFor(target).$data;
                     tgd.moveItemPositionHandler(target, item);
                 }
             })
             .on("doubletap", function(ev) {
-                console.log("item.doubletap");
+				console.log("item.doubletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
-					console.log("has target");
                     var item = ko.contextFor(target).$data;
-                    tgd.moveItemPositionHandler(target, item);
+                    if (item._id > 0) {
+                        if (app.dynamicMode() == false) {
+                            app.dynamicMode(true);
+                            app.createLoadout();
+                        }
+                        tgd.localLog("double tap");
+                        tgd.localLog(item);
+                        app.activeLoadout().addItem({
+                            id: item._id,
+                            bucketType: item.bucketType,
+                            doEquip: false
+                        });
+                    } else {
+                        BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+                    }
                 }
             })
             // press is actually hold 
             .on("press", function(ev) {
-                console.log("item.press");
-                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                if (target) {
-					console.log("has target");
-                    var item = ko.contextFor(target).$data;
-                    tgd.moveItemPositionHandler(target, item);
-                }
+				console.log("item.press");
+				if (navigator.platform == "MacIntel"){
+	                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+	                if (target) {
+	                    var item = ko.contextFor(target).$data;
+	                    tgd.moveItemPositionHandler(target, item);
+	                }
+				}
+				else {
+					var target = tgd.getEventDelegate(ev.target, ".itemLink");
+	                if (target) {
+	                    var context = ko.contextFor(target);
+	                    if (context && "$data" in context) {
+	                        var item = ko.contextFor(target).$data;
+	                        if (item && item.doEquip && app.loadoutMode() == true) {
+	                            item.doEquip(!item.doEquip());
+	                            item.markAsEquip(item, {
+	                                target: target
+	                            });
+	                        } else {
+	                            $ZamTooltips.lastElement = target;
+	                            $ZamTooltips.show("destinydb", "items", item.id, target);
+	                        }
+	                    }
+	                }
+				}                
             });
     }
 };
@@ -1739,13 +1770,12 @@ var app = new(function() {
             }
         }
 
-        /*ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
+        ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
         ko.bindingHandlers.draggable.isEnabled = !isMobile && self.padBucketHeight();
         if (!isMobile) {
             ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
             ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
             ko.bindingHandlers.sortable.options = {
-				helper: "clone",
                 start: function() {
                     $ZamTooltips.isEnabled = false;
                     $ZamTooltips.hide()
@@ -1754,7 +1784,7 @@ var app = new(function() {
                     $ZamTooltips.isEnabled = true;
                 }
             }
-        }*/
+        }
 		ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
 		ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
 
