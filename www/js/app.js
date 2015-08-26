@@ -1711,7 +1711,11 @@ var app = new(function() {
             destination = destination[0];
             if (destination.character.id != arg.item.character.id) {
                 var action = destination.isEquipped() ? "equip" : "store";
-                tgd.localLog("the item " + arg.item.description + " will be " + action + "d to " + destination.character.uniqueName);
+				$.toaster({
+					priority: 'info',
+					title: 'Transfer:',
+					message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
+				});
                 arg.item[action](destination.character.id);
             }
         }
@@ -1799,7 +1803,10 @@ var app = new(function() {
 				out: function(){
 					$(this).removeClass("active");
 				},
-				placeholder: "item-placeholder"
+				placeholder: "item-placeholder",
+				cursorAt: { cursor: "move", top: 27, left: 27 },
+				cursor: "pointer",
+				appendTo: "body"
             }
         }
 
