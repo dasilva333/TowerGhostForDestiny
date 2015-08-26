@@ -67,10 +67,13 @@ tgd.dialog = (function(options) {
 
 tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
+    tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() == true) {
+        tgd.localLog("destinyDbMode");
         window.open(item.href, "_system");
         return false;
     } else if (app.loadoutMode() == true) {
+        tgd.localLog("loadoutMode");
         var existingItem = _.findWhere(app.activeLoadout().ids(), {
             id: item._id
         });
@@ -92,6 +95,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
+        tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
@@ -100,7 +104,9 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (element == tgd.activeElement) {
             $movePopup.hide();
             tgd.activeElement = null;
+            tgd.localLog("hide");
         } else {
+            tgd.localLog("show");
             tgd.activeElement = element;
             $ZamTooltips.hide();
             if (window.isMobile) {
@@ -110,6 +116,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                     $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
+                tgd.localLog("display");
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
                     my: "left bottom",
                     at: "left top",
@@ -175,8 +182,8 @@ window.ko.bindingHandlers.logger = {
 
         ko.utils.domData.set(element, "_ko_logger", ++count);
 
-        if (window.console && console.log) {
-            console.log(count, element, data);
+        if (window.console && tgd.localLog) {
+            tgd.localLog(count, element, data);
         }
     }
 };
@@ -214,6 +221,7 @@ ko.bindingHandlers.moveItem = {
                 time: 2000
             })
             .on("tap", function(ev) {
+                tgd.localLog("item.tap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
@@ -221,6 +229,7 @@ ko.bindingHandlers.moveItem = {
                 }
             })
             .on("doubletap", function(ev) {
+                tgd.localLog("item.doubletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
@@ -243,19 +252,28 @@ ko.bindingHandlers.moveItem = {
             })
             // press is actually hold 
             .on("press", function(ev) {
-                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                if (target) {
-                    var context = ko.contextFor(target);
-                    if (context && "$data" in context) {
+                tgd.localLog("item.press");
+                if (navigator.platform == "MacIntel") {
+                    var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                    if (target) {
                         var item = ko.contextFor(target).$data;
-                        if (item && item.doEquip && app.loadoutMode() == true) {
-                            item.doEquip(!item.doEquip());
-                            item.markAsEquip(item, {
-                                target: target
-                            });
-                        } else {
-                            $ZamTooltips.lastElement = target;
-                            $ZamTooltips.show("destinydb", "items", item.id, target);
+                        tgd.moveItemPositionHandler(target, item);
+                    }
+                } else {
+                    var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                    if (target) {
+                        var context = ko.contextFor(target);
+                        if (context && "$data" in context) {
+                            var item = ko.contextFor(target).$data;
+                            if (item && item.doEquip && app.loadoutMode() == true) {
+                                item.doEquip(!item.doEquip());
+                                item.markAsEquip(item, {
+                                    target: target
+                                });
+                            } else {
+                                $ZamTooltips.lastElement = target;
+                                $ZamTooltips.show("destinydb", "items", item.id, target);
+                            }
                         }
                     }
                 }
@@ -325,6 +343,7 @@ var app = new(function() {
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
     this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
+    this.dragAndDrop = ko.computed(new tgd.StoreObj("dragAndDrop", "true"));
     this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
@@ -595,6 +614,15 @@ var app = new(function() {
         self.padBucketHeight(!self.padBucketHeight());
         self.bucketSizeHandler();
     }
+    this.toggleDragAndDrop = function() {
+        self.toggleBootstrapMenu();
+        self.dragAndDrop(!self.dragAndDrop());
+        if (self.dragAndDrop() == true) {
+            self.padBucketHeight(true);
+			location.reload();
+        }
+        self.bucketSizeHandler();
+    }
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
         self.autoTransferStacks(!self.autoTransferStacks());
@@ -819,12 +847,15 @@ var app = new(function() {
             self.addTierTypes(profile.items());
             self.addWeaponTypes(profile.weapons());
             done(profile);
-
+            var characterIds = _.sortBy(_.map(avatars, function(character) {
+                return character.characterBase.characterId;
+            }));
             //console.time("avatars.forEach");
-            avatars.forEach(function(character, index) {
+            avatars.forEach(function(character) {
                 self.bungie.inventory(character.characterBase.characterId, function(response) {
                     if (response && response.data && response.data.buckets) {
                         var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
+                        var index = characterIds.indexOf(character.characterBase.characterId);
                         var profile = new Profile(character, items, index + 1);
                         self.addTierTypes(profile.items());
                         self.addWeaponTypes(profile.items());
@@ -1663,6 +1694,33 @@ var app = new(function() {
         }
     }
 
+    this.dndBeforeMove = function(arg) {
+        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType);
+    }
+
+    this.dndAfterMove = function(arg) {
+        var destination = _.filter(arg.targetParent, function(item) {
+            return item.character.id != arg.item.character.id;
+        });
+        if (destination.length == 0) {
+            destination = _.filter(arg.targetParent, function(item) {
+                return item._id != arg.item._id;
+            });
+        }
+        if (destination.length > 0) {
+            destination = destination[0];
+            if (destination.character.id != arg.item.character.id) {
+                var action = destination.isEquipped() ? "equip" : "store";
+				$.toaster({
+					priority: 'info',
+					title: 'Transfer:',
+					message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
+				});
+                arg.item[action](destination.character.id);
+            }
+        }
+    }
+
     this.init = function() {
 
         _.each(tgd.DestinyLayout, function(object) {
@@ -1720,8 +1778,44 @@ var app = new(function() {
 
             if (typeof inappbilling != "undefined") {
                 inappbilling.init(function() {}, function() {}, {
-                    showLog: true
+                    showLog: false
                 }, ['small', 'medium', 'large']);
+            }
+        }
+
+        var dragAndDropEnabled = self.padBucketHeight() == true && self.dragAndDrop() == true;
+        ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
+        ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
+        if (dragAndDropEnabled) {
+            ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+            ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
+            ko.bindingHandlers.sortable.options = {
+                start: function() {
+                    $ZamTooltips.isEnabled = false;
+                    $ZamTooltips.hide();
+                },
+                stop: function() {
+                    $ZamTooltips.isEnabled = true;
+                },
+				over: function(){
+					$(this).addClass("active");
+				},
+				out: function(){
+					$(this).removeClass("active");
+				},
+				sort: function(event, ui){
+					var $target = $(event.target);
+					if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+						var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+						ui.helper.css({'top' : top + 'px'});
+					}
+				},
+				scroll: false,
+				revert: false,
+				placeholder: "item-placeholder",
+				cursorAt: { cursor: "move", top: 27, left: 27 },
+				cursor: "pointer",
+				appendTo: "body"
             }
         }
 
