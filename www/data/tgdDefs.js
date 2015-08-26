@@ -125,6 +125,7 @@ tgd.defaults = {
 	tooltipsEnabled: isMobile ? false : "true",
 	autoTransferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
+	dragAndDrop: isMobile ? false : "true",
 	xsColumn: 12,
 	smColumn: 6,
 	mdColumn: 4,
