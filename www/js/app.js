@@ -343,6 +343,7 @@ var app = new(function() {
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
     this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
+    this.dragAndDrop = ko.computed(new tgd.StoreObj("dragAndDrop", "true"));
     this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
@@ -611,6 +612,14 @@ var app = new(function() {
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
+        self.bucketSizeHandler();
+    }
+    this.toggleDragAndDrop = function() {
+        self.toggleBootstrapMenu();
+        self.dragAndDrop(!self.dragAndDrop());
+        if (self.dragAndDrop() == true) {
+            self.padBucketHeight(true);
+        }
         self.bucketSizeHandler();
     }
     this.toggleTransferStacks = function() {
@@ -1769,9 +1778,10 @@ var app = new(function() {
             }
         }
 
-        ko.bindingHandlers.sortable.isEnabled = self.padBucketHeight();
-        ko.bindingHandlers.draggable.isEnabled = self.padBucketHeight();
-        if (ko.bindingHandlers.draggable.isEnabled) {
+        var dragAndDropEnabled = self.padBucketHeight() == true && self.dragAndDrop() == true;
+        ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
+        ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
+        if (dragAndDropEnabled) {
             ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
             ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
             ko.bindingHandlers.sortable.options = {
