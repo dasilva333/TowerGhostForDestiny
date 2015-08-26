@@ -1769,8 +1769,8 @@ var app = new(function() {
             }
         }
 
-        ko.bindingHandlers.sortable.isEnabled = self.padBucketHeight();
-        ko.bindingHandlers.draggable.isEnabled = self.padBucketHeight();
+        ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
+        ko.bindingHandlers.draggable.isEnabled = !isMobile && self.padBucketHeight();
         if (ko.bindingHandlers.draggable.isEnabled) {
             ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
             ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
