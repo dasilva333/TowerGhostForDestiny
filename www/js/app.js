@@ -1793,6 +1793,7 @@ var app = new(function() {
                 start: function() {
                     $ZamTooltips.isEnabled = false;
                     $ZamTooltips.hide()
+					$(this).data("startingScrollTop", $(this).offsetParent().scrollTop());
                 },
                 stop: function() {
                     $ZamTooltips.isEnabled = true;
@@ -1803,6 +1804,22 @@ var app = new(function() {
 				out: function(){
 					$(this).removeClass("active");
 				},
+				sort: function(event, ui){
+					/*console.log('offset:' + JSON.stringify(ui.offset));
+					console.log('position:' + JSON.stringify(ui.position));
+					console.log('originalPosition:' + JSON.stringify(ui.originalPosition));
+					console.log(event);*/
+					//var st = parseInt($(this).data("startingScrollTop"));
+					//ui.position.top -= $(this).offsetParent().scrollTop() - st;
+					//ui.position.top = ui.offset.top;
+					var $target = $(event.target);
+					if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+						var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+						ui.helper.css({'top' : top + 'px'});
+					}
+				},
+				scroll: false,
+				revert: false,
 				placeholder: "item-placeholder",
 				cursorAt: { cursor: "move", top: 27, left: 27 },
 				cursor: "pointer",
