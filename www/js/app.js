@@ -1771,7 +1771,7 @@ var app = new(function() {
 
         ko.bindingHandlers.sortable.isEnabled = !isMobile && self.padBucketHeight();
         ko.bindingHandlers.draggable.isEnabled = !isMobile && self.padBucketHeight();
-        if (ko.bindingHandlers.draggable.isEnabled) {
+        if (!isMobile) {
             ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
             ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
             ko.bindingHandlers.sortable.options = {
@@ -1784,6 +1784,8 @@ var app = new(function() {
                 }
             }
         }
+        ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+        ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
 
         if (isMobile && isEmptyCookie) {
             self.bungie = new bungie('', function() {
