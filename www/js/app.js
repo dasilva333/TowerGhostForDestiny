@@ -1792,8 +1792,7 @@ var app = new(function() {
             ko.bindingHandlers.sortable.options = {
                 start: function() {
                     $ZamTooltips.isEnabled = false;
-                    $ZamTooltips.hide()
-					$(this).data("startingScrollTop", $(this).offsetParent().scrollTop());
+                    $ZamTooltips.hide();
                 },
                 stop: function() {
                     $ZamTooltips.isEnabled = true;
