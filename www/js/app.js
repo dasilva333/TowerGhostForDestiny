@@ -1803,7 +1803,10 @@ var app = new(function() {
 				out: function(){
 					$(this).removeClass("active");
 				},
-				placeholder: "item-placeholder"
+				placeholder: "item-placeholder",
+				cursorAt: { cursor: "move", top: 27, left: 27 },
+				cursor: "pointer",
+				appendTo: "body"
             }
         }
 
