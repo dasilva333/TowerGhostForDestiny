@@ -1792,7 +1792,7 @@ var app = new(function() {
             ko.bindingHandlers.sortable.options = {
                 start: function() {
                     $ZamTooltips.isEnabled = false;
-                    $ZamTooltips.hide()
+                    $ZamTooltips.hide();
                 },
                 stop: function() {
                     $ZamTooltips.isEnabled = true;
@@ -1803,6 +1803,15 @@ var app = new(function() {
 				out: function(){
 					$(this).removeClass("active");
 				},
+				sort: function(event, ui){
+					var $target = $(event.target);
+					if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+						var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+						ui.helper.css({'top' : top + 'px'});
+					}
+				},
+				scroll: false,
+				revert: false,
 				placeholder: "item-placeholder",
 				cursorAt: { cursor: "move", top: 27, left: 27 },
 				cursor: "pointer",
