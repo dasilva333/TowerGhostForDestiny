@@ -619,6 +619,7 @@ var app = new(function() {
         self.dragAndDrop(!self.dragAndDrop());
         if (self.dragAndDrop() == true) {
             self.padBucketHeight(true);
+			location.reload();
         }
         self.bucketSizeHandler();
     }
