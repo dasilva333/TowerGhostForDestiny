@@ -67,13 +67,13 @@ tgd.dialog = (function(options) {
 
 tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
-	console.log("moveItemPositionHandler");
+    tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() == true) {
-		console.log("destinyDbMode");
+        tgd.localLog("destinyDbMode");
         window.open(item.href, "_system");
         return false;
     } else if (app.loadoutMode() == true) {
-		console.log("loadoutMode");
+        tgd.localLog("loadoutMode");
         var existingItem = _.findWhere(app.activeLoadout().ids(), {
             id: item._id
         });
@@ -95,7 +95,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     } else {
-		console.log("else");
+        tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
@@ -104,9 +104,9 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (element == tgd.activeElement) {
             $movePopup.hide();
             tgd.activeElement = null;
-			console.log("hide");
+            tgd.localLog("hide");
         } else {
-			console.log("show");
+            tgd.localLog("show");
             tgd.activeElement = element;
             $ZamTooltips.hide();
             if (window.isMobile) {
@@ -116,7 +116,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                     $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
-				console.log("display");
+                tgd.localLog("display");
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
                     my: "left bottom",
                     at: "left top",
@@ -182,8 +182,8 @@ window.ko.bindingHandlers.logger = {
 
         ko.utils.domData.set(element, "_ko_logger", ++count);
 
-        if (window.console && console.log) {
-            console.log(count, element, data);
+        if (window.console && tgd.localLog) {
+            tgd.localLog(count, element, data);
         }
     }
 };
@@ -221,7 +221,7 @@ ko.bindingHandlers.moveItem = {
                 time: 2000
             })
             .on("tap", function(ev) {
-				console.log("item.tap");
+                tgd.localLog("item.tap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
@@ -229,7 +229,7 @@ ko.bindingHandlers.moveItem = {
                 }
             })
             .on("doubletap", function(ev) {
-				console.log("item.doubletap");
+                tgd.localLog("item.doubletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
@@ -252,32 +252,31 @@ ko.bindingHandlers.moveItem = {
             })
             // press is actually hold 
             .on("press", function(ev) {
-				console.log("item.press");
-				if (navigator.platform == "MacIntel"){
-	                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-	                if (target) {
-	                    var item = ko.contextFor(target).$data;
-	                    tgd.moveItemPositionHandler(target, item);
-	                }
-				}
-				else {
-					var target = tgd.getEventDelegate(ev.target, ".itemLink");
-	                if (target) {
-	                    var context = ko.contextFor(target);
-	                    if (context && "$data" in context) {
-	                        var item = ko.contextFor(target).$data;
-	                        if (item && item.doEquip && app.loadoutMode() == true) {
-	                            item.doEquip(!item.doEquip());
-	                            item.markAsEquip(item, {
-	                                target: target
-	                            });
-	                        } else {
-	                            $ZamTooltips.lastElement = target;
-	                            $ZamTooltips.show("destinydb", "items", item.id, target);
-	                        }
-	                    }
-	                }
-				}                
+                tgd.localLog("item.press");
+                if (navigator.platform == "MacIntel") {
+                    var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                    if (target) {
+                        var item = ko.contextFor(target).$data;
+                        tgd.moveItemPositionHandler(target, item);
+                    }
+                } else {
+                    var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                    if (target) {
+                        var context = ko.contextFor(target);
+                        if (context && "$data" in context) {
+                            var item = ko.contextFor(target).$data;
+                            if (item && item.doEquip && app.loadoutMode() == true) {
+                                item.doEquip(!item.doEquip());
+                                item.markAsEquip(item, {
+                                    target: target
+                                });
+                            } else {
+                                $ZamTooltips.lastElement = target;
+                                $ZamTooltips.show("destinydb", "items", item.id, target);
+                            }
+                        }
+                    }
+                }
             });
     }
 };
@@ -1702,7 +1701,7 @@ var app = new(function() {
             destination = destination[0];
             if (destination.character.id != arg.item.character.id) {
                 var action = destination.isEquipped() ? "equip" : "store";
-                console.log("the item " + arg.item.description + " will be " + action + "d to " + destination.character.uniqueName);
+                tgd.localLog("the item " + arg.item.description + " will be " + action + "d to " + destination.character.uniqueName);
                 arg.item[action](destination.character.id);
             }
         }
@@ -1785,8 +1784,8 @@ var app = new(function() {
                 }
             }
         }
-		ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
-		ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
+        ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+        ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
 
         if (isMobile && isEmptyCookie) {
             self.bungie = new bungie('', function() {
