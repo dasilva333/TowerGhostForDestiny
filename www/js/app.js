@@ -230,43 +230,22 @@ ko.bindingHandlers.moveItem = {
                 }
             })
             .on("doubletap", function(ev) {
+                console.log("item.doubletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
+					console.log("has target");
                     var item = ko.contextFor(target).$data;
-                    if (item._id > 0) {
-                        if (app.dynamicMode() == false) {
-                            app.dynamicMode(true);
-                            app.createLoadout();
-                        }
-                        tgd.localLog("double tap");
-                        tgd.localLog(item);
-                        app.activeLoadout().addItem({
-                            id: item._id,
-                            bucketType: item.bucketType,
-                            doEquip: false
-                        });
-                    } else {
-                        BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
-                    }
+                    tgd.moveItemPositionHandler(target, item);
                 }
             })
             // press is actually hold 
             .on("press", function(ev) {
+                console.log("item.press");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
-                    var context = ko.contextFor(target);
-                    if (context && "$data" in context) {
-                        var item = ko.contextFor(target).$data;
-                        if (item && item.doEquip && app.loadoutMode() == true) {
-                            item.doEquip(!item.doEquip());
-                            item.markAsEquip(item, {
-                                target: target
-                            });
-                        } else {
-                            $ZamTooltips.lastElement = target;
-                            $ZamTooltips.show("destinydb", "items", item.id, target);
-                        }
-                    }
+					console.log("has target");
+                    var item = ko.contextFor(target).$data;
+                    tgd.moveItemPositionHandler(target, item);
                 }
             });
     }
