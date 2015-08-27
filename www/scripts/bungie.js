@@ -77,6 +77,7 @@ var bungie = (function(cookieString, complete) {
             data = JSON.stringify(opts.payload);
 
         if (isChrome || isMobile) {
+			console.log("request to " + opts.route);
             $.ajax({
                 url: opts.route,
                 type: opts.method,
@@ -101,6 +102,8 @@ var bungie = (function(cookieString, complete) {
                     } catch (e) {
                         //console.log("error parsing responseText: " + xhr.responseText);
                     }
+					console.log("response is " + xhr.status);
+					console.log(xhr.responseText);
                     if (xhr.status >= 200 && xhr.status < 400) {
                         if (response && response.ErrorCode && response.ErrorCode === 36) {
                             setTimeout(function() {
@@ -148,8 +151,9 @@ var bungie = (function(cookieString, complete) {
         });
     }
     this.login = function(callback) {
+		console.log("calling login");
         self.request({
-            route: url + "en/User/Profile",
+            route: url,
             method: "GET",
             complete: callback
         });

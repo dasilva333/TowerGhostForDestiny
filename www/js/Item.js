@@ -365,11 +365,11 @@ Item.prototype = {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
             if (self.tierType == 6) {
-                //tgd.localLog("item is exotic");
+                tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
                 otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex, 1);
-                //tgd.localLog("the other bucket types are " + JSON.stringify(otherBucketTypes));
+                tgd.localLog("the other bucket types are " + JSON.stringify(otherBucketTypes));
                 _.each(otherBucketTypes, function(bucketType) {
                     var otherExotic = _.filter(_.where(self.character.items(), {
                         bucketType: bucketType,
@@ -377,9 +377,9 @@ Item.prototype = {
                     }), function(item) {
                         return item.isEquipped();
                     });
-                    //tgd.localLog( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
+                    tgd.localLog( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
                     if (otherExotic.length > 0) {
-                        //tgd.localLog("found another exotic equipped " + otherExotic[0].description);
+                        tgd.localLog("found another exotic equipped " + otherExotic[0].description);
                         otherExoticFound = true;
                         otherExotic[0].unequip(done);
                     }
@@ -388,7 +388,7 @@ Item.prototype = {
                     done();
                 }
             } else {
-                //tgd.localLog("request is not part of a loadout");
+                tgd.localLog("request is not part of a loadout");
                 done()
             }
         } else {
@@ -644,7 +644,7 @@ Item.prototype = {
                 tgd.localLog("reloading bucket " + self.bucketType);
                 /*var characterId = app.characters()[1].id;
 				var instanceId = app.characters()[1].weapons()[0]._id;*/
-                app.bungie.getAccountSummary(function(results) {
+                /*app.bungie.getAccountSummary(function(results) {
                     var characterIndex = _.findWhere(results.data.items, {
                         itemId: self._id
                     }).characterIndex;
@@ -658,7 +658,7 @@ Item.prototype = {
                         var character = _.findWhere(app.characters(), {
                             id: characterId
                         });
-                        /* handle refresh of other buckets */
+                        // handle refresh of other buckets
                         tgd.localLog("found the item elsewhere");
                         if (characterId == targetCharacterId) {
                             tgd.localLog("item is already where it needed to be");
@@ -680,7 +680,7 @@ Item.prototype = {
                                 });
                             });
                         }
-                    } else {
+                    } else {*/
                         x._reloadBucket(self.bucketType, undefined, function() {
                             y._reloadBucket(self.bucketType, undefined, function() {
                                 tgd.localLog("retransferring");
@@ -689,8 +689,8 @@ Item.prototype = {
                                 newItem.store(targetCharacterId, cb);
                             });
                         });
-                    }
-                });
+                /*    }
+                });*/
             }
             //this condition only applies to armor/weapons until loadouts can support mats
             else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {

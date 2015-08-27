@@ -363,7 +363,6 @@
 	                    });
 	                    tgd.localLog("so the plan is to move these from the vault ");
 	                    tgd.localLog(tmpItems);
-	                    window.r = tmpItems;
 	                    var preCount = 0,
 	                        postCount = 0;
 	                    var finish = function() {
@@ -379,6 +378,7 @@
 	                        if (preCount == tmpItems.length) {
 	                            tgd.localLog("moved temp items out, now start swap with callback ");
 	                            fnHasFreeSpace(function() {
+									console.log("^^^^^^^^ fnHasFreeSpace released control moving items back");
 	                                _.each(tmpItems, function(pair) {
 	                                    pair.item.store("Vault", finish);
 	                                });
@@ -396,9 +396,9 @@
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
 	                } else if (typeof pair.targetItem !== "undefined") {
 	                    tgd.localLog("no swapItem, transferTargetItem");
-	                    checkAndMakeFreeSpace(pair.targetItem, 1, function() {
+	                    checkAndMakeFreeSpace(pair.targetItem, 1, function(callback) {
 	                        transferTargetItemToDestination(function() {
-	                            transferNextItem();
+	                            callback();
 	                        });
 	                    });
 	                } else {

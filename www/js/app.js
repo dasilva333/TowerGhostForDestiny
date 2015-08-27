@@ -522,6 +522,7 @@ var app = new(function() {
     }
     this.renderCallback = function(context, content, element, callback) {
         if (element) lastElement = element
+		content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g,'');
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
         if (instanceId > 0) {
