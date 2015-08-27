@@ -104,7 +104,7 @@ var bungie = (function(cookieString, complete) {
                     }
 					console.log("response is " + xhr.status);
 					console.log(xhr.responseText);
-                    if (xhr.status >= 200 && xhr.status < 400) {
+                    if ((xhr.status >= 200 && xhr.status < 400) || xhr.status == 0) {
                         if (response && response.ErrorCode && response.ErrorCode === 36) {
                             setTimeout(function() {
                                 self.request(opts);
