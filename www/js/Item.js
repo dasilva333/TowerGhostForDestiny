@@ -644,7 +644,7 @@ Item.prototype = {
                 tgd.localLog("reloading bucket " + self.bucketType);
                 /*var characterId = app.characters()[1].id;
 				var instanceId = app.characters()[1].weapons()[0]._id;*/
-                app.bungie.getAccountSummary(function(results) {
+                /*app.bungie.getAccountSummary(function(results) {
                     var characterIndex = _.findWhere(results.data.items, {
                         itemId: self._id
                     }).characterIndex;
@@ -658,7 +658,7 @@ Item.prototype = {
                         var character = _.findWhere(app.characters(), {
                             id: characterId
                         });
-                        /* handle refresh of other buckets */
+                        // handle refresh of other buckets
                         tgd.localLog("found the item elsewhere");
                         if (characterId == targetCharacterId) {
                             tgd.localLog("item is already where it needed to be");
@@ -680,7 +680,7 @@ Item.prototype = {
                                 });
                             });
                         }
-                    } else {
+                    } else {*/
                         x._reloadBucket(self.bucketType, undefined, function() {
                             y._reloadBucket(self.bucketType, undefined, function() {
                                 tgd.localLog("retransferring");
@@ -689,8 +689,8 @@ Item.prototype = {
                                 newItem.store(targetCharacterId, cb);
                             });
                         });
-                    }
-                });
+                /*    }
+                });*/
             }
             //this condition only applies to armor/weapons until loadouts can support mats
             else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {

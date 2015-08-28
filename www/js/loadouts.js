@@ -398,7 +398,8 @@
 	                    tgd.localLog("no swapItem, transferTargetItem");
 	                    checkAndMakeFreeSpace(pair.targetItem, 1, function(callback) {
 	                        transferTargetItemToDestination(function() {
-	                            callback();
+								if (callback) callback();
+	                            else transferNextItem();
 	                        });
 	                    });
 	                } else {

@@ -85,7 +85,7 @@ var bungie = (function(cookieString, complete) {
                     'x-csrf': self.bungled
                 },
                 beforeSend: function(xhr) {
-                    if (isMobile && typeof cookieString == "string") {
+                    if (isMobile && typeof cookieString == "string" && navigator.userAgent.indexOf("CPU OS 9_0") == -1) {
                         _.each(cookieString.split(";"), function(cookie) {
                             try {
                                 xhr.setRequestHeader('Cookie', cookie);
