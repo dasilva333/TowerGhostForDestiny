@@ -690,7 +690,7 @@ var app = new(function() {
     }
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
-		self.activeView(1);
+        self.activeView(1);
         var dmgType = $(event.target).closest('li').attr("value");
         self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
     }
@@ -701,7 +701,7 @@ var app = new(function() {
     this.setTypeFilter = function(weaponType) {
         return function() {
             self.toggleBootstrapMenu();
-			self.activeView(1);
+            self.activeView(1);
             var type = weaponType.name;
             tgd.localLog("type: " + type);
             self.typeFilter(type);
