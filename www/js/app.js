@@ -522,7 +522,7 @@ var app = new(function() {
     }
     this.renderCallback = function(context, content, element, callback) {
         if (element) lastElement = element
-		content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g,'');
+        content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
         if (instanceId > 0) {
@@ -620,7 +620,7 @@ var app = new(function() {
         self.dragAndDrop(!self.dragAndDrop());
         if (self.dragAndDrop() == true) {
             self.padBucketHeight(true);
-			location.reload();
+            location.reload();
         }
         self.bucketSizeHandler();
     }
@@ -1712,11 +1712,11 @@ var app = new(function() {
             destination = destination[0];
             if (destination.character.id != arg.item.character.id) {
                 var action = destination.isEquipped() ? "equip" : "store";
-				$.toaster({
-					priority: 'info',
-					title: 'Transfer:',
-					message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
-				});
+                $.toaster({
+                    priority: 'info',
+                    title: 'Transfer:',
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
+                });
                 arg.item[action](destination.character.id);
             }
         }
@@ -1798,25 +1798,31 @@ var app = new(function() {
                 stop: function() {
                     $ZamTooltips.isEnabled = true;
                 },
-				over: function(){
-					$(this).addClass("active");
-				},
-				out: function(){
-					$(this).removeClass("active");
-				},
-				sort: function(event, ui){
-					var $target = $(event.target);
-					if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
-						var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
-						ui.helper.css({'top' : top + 'px'});
-					}
-				},
-				scroll: false,
-				revert: false,
-				placeholder: "item-placeholder",
-				cursorAt: { cursor: "move", top: 27, left: 27 },
-				cursor: "pointer",
-				appendTo: "body"
+                over: function() {
+                    $(this).addClass("active");
+                },
+                out: function() {
+                    $(this).removeClass("active");
+                },
+                sort: function(event, ui) {
+                    var $target = $(event.target);
+                    if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+                        var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+                        ui.helper.css({
+                            'top': top + 'px'
+                        });
+                    }
+                },
+                scroll: false,
+                revert: false,
+                placeholder: "item-placeholder",
+                cursorAt: {
+                    cursor: "move",
+                    top: 27,
+                    left: 27
+                },
+                cursor: "pointer",
+                appendTo: "body"
             }
         }
 

@@ -378,7 +378,7 @@
 	                        if (preCount == tmpItems.length) {
 	                            tgd.localLog("moved temp items out, now start swap with callback ");
 	                            fnHasFreeSpace(function() {
-									console.log("^^^^^^^^ fnHasFreeSpace released control moving items back");
+	                                //console.log("^^^^^^^^ fnHasFreeSpace released control moving items back");
 	                                _.each(tmpItems, function(pair) {
 	                                    pair.item.store("Vault", finish);
 	                                });
@@ -398,7 +398,7 @@
 	                    tgd.localLog("no swapItem, transferTargetItem");
 	                    checkAndMakeFreeSpace(pair.targetItem, 1, function(callback) {
 	                        transferTargetItemToDestination(function() {
-								if (callback) callback();
+	                            if (callback) callback();
 	                            else transferNextItem();
 	                        });
 	                    });
