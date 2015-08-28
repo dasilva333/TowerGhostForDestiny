@@ -86,13 +86,13 @@ var bungie = (function(cookieString, complete) {
                     'x-csrf': self.bungled
                 },
                 beforeSend: function(xhr) {
-                    if (isMobile && typeof cookieString == "string") {
+                    /*if (isMobile && typeof cookieString == "string") {
                         _.each(cookieString.split(";"), function(cookie) {
                             try {
                                 xhr.setRequestHeader('Cookie', cookie);
                             } catch (e) {}
                         });
-                    }
+                    }*/
                 },
                 data: data,
                 complete: function(xhr, status) {
