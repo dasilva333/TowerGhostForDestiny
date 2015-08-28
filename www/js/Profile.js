@@ -249,7 +249,7 @@ Profile.prototype = {
         return _.sortBy(_.sortBy(this.items().filter(this.filterItemByType(type, false)), function(item) {
             return item.type;
         }), function(item) {
-            return item.tierType;
+            return item.tierType * -1;
         });
     },
     getVisible: function(type) {
