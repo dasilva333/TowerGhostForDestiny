@@ -77,7 +77,6 @@ var bungie = (function(cookieString, complete) {
             data = JSON.stringify(opts.payload);
 
         if (isChrome || isMobile) {
-			console.log("request to " + opts.route);
             $.ajax({
                 url: opts.route,
                 type: opts.method,
@@ -86,13 +85,14 @@ var bungie = (function(cookieString, complete) {
                     'x-csrf': self.bungled
                 },
                 beforeSend: function(xhr) {
-                    /*if (isMobile && typeof cookieString == "string") {
+                    /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload*/
+                    if (isMobile && typeof cookieString == "string" && navigator.userAgent.indexOf("CPU OS 9_0") == -1) {
                         _.each(cookieString.split(";"), function(cookie) {
                             try {
                                 xhr.setRequestHeader('Cookie', cookie);
                             } catch (e) {}
                         });
-                    }*/
+                    }
                 },
                 data: data,
                 complete: function(xhr, status) {
@@ -102,9 +102,7 @@ var bungie = (function(cookieString, complete) {
                     } catch (e) {
                         //console.log("error parsing responseText: " + xhr.responseText);
                     }
-					console.log("response is " + xhr.status);
-					console.log(xhr.responseText);
-                    if ((xhr.status >= 200 && xhr.status < 400) || xhr.status == 0) {
+                    if (xhr.status >= 200 && xhr.status < 400) {
                         if (response && response.ErrorCode && response.ErrorCode === 36) {
                             setTimeout(function() {
                                 self.request(opts);
@@ -151,9 +149,8 @@ var bungie = (function(cookieString, complete) {
         });
     }
     this.login = function(callback) {
-		console.log("calling login");
         self.request({
-            route: url,
+            route: url + "en/User/Profile",
             method: "GET",
             complete: callback
         });

@@ -365,11 +365,11 @@ Item.prototype = {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
             if (self.tierType == 6) {
-                tgd.localLog("item is exotic");
+                //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
                 otherBucketTypes.splice(self.weaponIndex > -1 ? self.weaponIndex : self.armorIndex, 1);
-                tgd.localLog("the other bucket types are " + JSON.stringify(otherBucketTypes));
+                //tgd.localLog("the other bucket types are " + JSON.stringify(otherBucketTypes));
                 _.each(otherBucketTypes, function(bucketType) {
                     var otherExotic = _.filter(_.where(self.character.items(), {
                         bucketType: bucketType,
@@ -377,9 +377,9 @@ Item.prototype = {
                     }), function(item) {
                         return item.isEquipped();
                     });
-                    tgd.localLog( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
+                    //tgd.localLog( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
                     if (otherExotic.length > 0) {
-                        tgd.localLog("found another exotic equipped " + otherExotic[0].description);
+                        //tgd.localLog("found another exotic equipped " + otherExotic[0].description);
                         otherExoticFound = true;
                         otherExotic[0].unequip(done);
                     }
@@ -388,7 +388,7 @@ Item.prototype = {
                     done();
                 }
             } else {
-                tgd.localLog("request is not part of a loadout");
+                //tgd.localLog("request is not part of a loadout");
                 done()
             }
         } else {
@@ -681,14 +681,14 @@ Item.prototype = {
                             });
                         }
                     } else {*/
-                        x._reloadBucket(self.bucketType, undefined, function() {
-                            y._reloadBucket(self.bucketType, undefined, function() {
-                                tgd.localLog("retransferring");
-                                //TODO move this function to a more general area for common use
-                                var newItem = Loadout.prototype.findReference(self);
-                                newItem.store(targetCharacterId, cb);
-                            });
-                        });
+                x._reloadBucket(self.bucketType, undefined, function() {
+                    y._reloadBucket(self.bucketType, undefined, function() {
+                        tgd.localLog("retransferring");
+                        //TODO move this function to a more general area for common use
+                        var newItem = Loadout.prototype.findReference(self);
+                        newItem.store(targetCharacterId, cb);
+                    });
+                });
                 /*    }
                 });*/
             }
