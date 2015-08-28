@@ -247,9 +247,9 @@ Profile.prototype = {
     },
     get: function(type) {
         return _.sortBy(_.sortBy(this.items().filter(this.filterItemByType(type, false)), function(item) {
-            return item.description;
+            return item.type;
         }), function(item) {
-            return item.tierType * -1;
+            return item.tierType;
         });
     },
     getVisible: function(type) {
