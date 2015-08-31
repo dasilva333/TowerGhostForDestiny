@@ -253,27 +253,21 @@ ko.bindingHandlers.moveItem = {
             // press is actually hold 
             .on("press", function(ev) {
                 tgd.localLog("item.press");
-                if (navigator.platform == "MacIntel") {
-                    var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                    if (target) {
-                        var item = ko.contextFor(target).$data;
-                        tgd.moveItemPositionHandler(target, item);
-                    }
-                } else {
-                    var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                    if (target) {
-                        var context = ko.contextFor(target);
-                        if (context && "$data" in context) {
-                            var item = ko.contextFor(target).$data;
-                            if (item && item.doEquip && app.loadoutMode() == true) {
-                                item.doEquip(!item.doEquip());
-                                item.markAsEquip(item, {
-                                    target: target
-                                });
-                            } else {
-                                $ZamTooltips.lastElement = target;
-                                $ZamTooltips.show("destinydb", "items", item.id, target);
-                            }
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item && item.doEquip && app.loadoutMode() == true) {
+                            item.doEquip(!item.doEquip());
+                            item.markAsEquip(item, {
+                                target: target
+                            });
+                        } else if (!isMobile) {
+                            tgd.moveItemPositionHandler(target, item);
+                        } else {
+                            $ZamTooltips.lastElement = target;
+                            $ZamTooltips.show("destinydb", "items", item.id, target);
                         }
                     }
                 }
@@ -690,6 +684,7 @@ var app = new(function() {
     }
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
+        self.activeView(1);
         var dmgType = $(event.target).closest('li').attr("value");
         self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
     }
@@ -700,6 +695,7 @@ var app = new(function() {
     this.setTypeFilter = function(weaponType) {
         return function() {
             self.toggleBootstrapMenu();
+            self.activeView(1);
             var type = weaponType.name;
             tgd.localLog("type: " + type);
             self.typeFilter(type);
