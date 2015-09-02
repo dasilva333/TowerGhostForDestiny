@@ -712,16 +712,20 @@ Item.prototype = {
             //this condition only applies to armor/weapons until loadouts can support mats
             else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
-                var adhoc = new Loadout();
-                adhoc.addItem({
-                    id: self._id,
-                    bucketType: self.bucketType,
-                    doEquip: false
-                });
-                var msa = adhoc.transfer(targetCharacterId, true);
-                adhoc.swapItems(msa, targetCharacterId, function() {
-                    if (cb) cb(y, x);
-                });
+				x._reloadBucket(self.bucketType, undefined, function() {
+                    y._reloadBucket(self.bucketType, undefined, function() {
+						var adhoc = new Loadout();
+						adhoc.addItem({
+							id: self._id,
+							bucketType: self.bucketType,
+							doEquip: false
+						});
+						var msa = adhoc.transfer(targetCharacterId, true);
+						adhoc.swapItems(msa, targetCharacterId, function() {
+							if (cb) cb(y, x);
+						});
+					});
+                });	
             } else if (result && result.Message) {
                 $.toaster({
                     priority: 'info',
@@ -774,7 +778,7 @@ Item.prototype = {
                                     if (callback) callback(self.character);
                                 } else {
                                     //tgd.localLog("taking the short route " + self.description);
-                                    self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                                    self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
                                 }
                             }));
                         }
@@ -792,7 +796,7 @@ Item.prototype = {
                 });
             } else {
                 tgd.localLog("from vault to character");
-                self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
             }
         }
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
