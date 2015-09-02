@@ -712,20 +712,20 @@ Item.prototype = {
             //this condition only applies to armor/weapons until loadouts can support mats
             else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
-				x._reloadBucket(self.bucketType, undefined, function() {
+                x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
-						var adhoc = new Loadout();
-						adhoc.addItem({
-							id: self._id,
-							bucketType: self.bucketType,
-							doEquip: false
-						});
-						var msa = adhoc.transfer(targetCharacterId, true);
-						adhoc.swapItems(msa, targetCharacterId, function() {
-							if (cb) cb(y, x);
-						});
-					});
-                });	
+                        var adhoc = new Loadout();
+                        adhoc.addItem({
+                            id: self._id,
+                            bucketType: self.bucketType,
+                            doEquip: false
+                        });
+                        var msa = adhoc.transfer(targetCharacterId, true);
+                        adhoc.swapItems(msa, targetCharacterId, function() {
+                            if (cb) cb(y, x);
+                        });
+                    });
+                });
             } else if (result && result.Message) {
                 $.toaster({
                     priority: 'info',
