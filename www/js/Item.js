@@ -262,7 +262,13 @@ Item.prototype = {
                         var item = otherItems[++itemIndex];
                         if (_.isUndefined(item)) {
                             if (callback) callback(false);
-                            else BootstrapDialog.alert(app.activeText().cannot_unequip + self.description);
+                            else {
+                                $.toaster({
+                                    priority: 'danger',
+                                    title: 'Error:',
+                                    message: app.activeText().cannot_unequip + self.description
+                                });
+                            }
                             return;
                         }
                         //tgd.localLog(item.description);
@@ -304,7 +310,11 @@ Item.prototype = {
                                 }
                                 //unequip failed
                                 else {
-                                    BootstrapDialog.alert(app.activeText().unable_unequip + itemEquipped.description);
+                                    $.toaster({
+                                        priority: 'danger',
+                                        title: 'Error:',
+                                        message: app.activeText().unable_unequip + itemEquipped.description
+                                    });
                                     callback(false);
                                 }
                             }, false, true);
@@ -342,7 +352,7 @@ Item.prototype = {
                         }
                     });
                     if (self.bucketType == "Emblem") {
-                        self.character.icon(app.makeBackgroundUrl(self.icon, true));
+                        self.character.icon(self.icon);
                         self.character.background(self.backgroundPath);
                     }
                     if (callback) callback(true);
@@ -350,7 +360,11 @@ Item.prototype = {
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
                     else if (result && result.Message) {
-                        BootstrapDialog.alert(result.Message);
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Error:',
+                            message: result.Message
+                        });
                     }
                     //TODO perhaps log this condition and determine the cause
                     else {
@@ -632,8 +646,11 @@ Item.prototype = {
                 tgd.localLog(result);
                 cb(y, x, result);
             } else if (result && result.Message) {
-                BootstrapDialog.alert(result.Message);
-
+                $.toaster({
+                    priority: 'info',
+                    title: 'Error:',
+                    message: result.Message
+                });
             }
         });
     },
@@ -695,18 +712,26 @@ Item.prototype = {
             //this condition only applies to armor/weapons until loadouts can support mats
             else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
-                var adhoc = new Loadout();
-                adhoc.addItem({
-                    id: self._id,
-                    bucketType: self.bucketType,
-                    doEquip: false
-                });
-                var msa = adhoc.transfer(targetCharacterId, true);
-                adhoc.swapItems(msa, targetCharacterId, function() {
-                    if (cb) cb(y, x);
+                x._reloadBucket(self.bucketType, undefined, function() {
+                    y._reloadBucket(self.bucketType, undefined, function() {
+                        var adhoc = new Loadout();
+                        adhoc.addItem({
+                            id: self._id,
+                            bucketType: self.bucketType,
+                            doEquip: false
+                        });
+                        var msa = adhoc.transfer(targetCharacterId, true);
+                        adhoc.swapItems(msa, targetCharacterId, function() {
+                            if (cb) cb(y, x);
+                        });
+                    });
                 });
             } else if (result && result.Message) {
-                BootstrapDialog.alert(result.Message);
+                $.toaster({
+                    priority: 'info',
+                    title: 'Error:',
+                    message: result.Message
+                });
             } else if (cb) {
                 cb(y, x);
             }
@@ -729,7 +754,11 @@ Item.prototype = {
                         if (callback) {
                             callback(self.character);
                         } else {
-                            BootstrapDialog.alert("Unable to unequip " + self.description);
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Error:',
+                                message: "Unable to unequip " + self.description
+                            });
                         }
                     }
                 });
@@ -749,7 +778,7 @@ Item.prototype = {
                                     if (callback) callback(self.character);
                                 } else {
                                     //tgd.localLog("taking the short route " + self.description);
-                                    self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                                    self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
                                 }
                             }));
                         }
@@ -757,13 +786,17 @@ Item.prototype = {
                         if (callback) {
                             callback(self.character);
                         } else {
-                            BootstrapDialog.alert("Unable to unequip " + self.description);
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Error:',
+                                message: "Unable to unequip " + self.description
+                            });
                         }
                     }
                 });
             } else {
                 tgd.localLog("from vault to character");
-                self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
             }
         }
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
@@ -974,7 +1007,7 @@ Item.prototype = {
                                     return memo + i.primaryStat();
                                 },
                                 0);
-                            c = c + ct;
+                            c = c + parseInt(ct);
                         }
                     }
                     return c;

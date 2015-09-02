@@ -190,9 +190,9 @@ tgd.normalizeTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -230,9 +230,9 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +

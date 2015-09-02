@@ -191,7 +191,11 @@
 	                    var originalCharacterId = targetItem.character.id;
 	                    targetItem.store("Vault", function(profile) {
 	                        if (profile.id == originalCharacterId) {
-	                            BootstrapDialog.alert("Unable to unequip " + targetItem.description + " while playing in game");
+	                            $.toaster({
+	                                priority: 'danger',
+	                                title: 'Error:',
+	                                message: "Unable to unequip " + targetItem.description + " while playing in game"
+	                            });
 	                            complete();
 	                        } else {
 	                            complete();
@@ -237,7 +241,11 @@
 	                                    complete();
 	                                });
 	                            } else {
-	                                BootstrapDialog.alert("Unable to unequip " + equippedItem.description + " while playing in game");
+	                                $.toaster({
+	                                    priority: 'danger',
+	                                    title: 'Error:',
+	                                    message: "Unable to unequip " + equippedItem.description + " while playing in game"
+	                                });
 	                                pair.swapItem = pair.targetItem = targetItem = swapItem = null;
 	                                tgd.localLog("No candidates can't xfer targetItem");
 	                                complete();
@@ -263,7 +271,11 @@
 	                        var originalCharacterId = targetItem.character.id;
 	                        targetItem[action](targetCharacterId, function(profile) {
 	                            if (profile.id == originalCharacterId) {
-	                                BootstrapDialog.alert("Unable to unequip " + targetItem.description + " while playing in game");
+	                                $.toaster({
+	                                    priority: 'danger',
+	                                    title: 'Error:',
+	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
+	                                });
 	                                complete();
 	                            } else {
 	                                complete();
@@ -651,9 +663,19 @@
 	                    action: function(dialog) {
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
 	                            tgd.localLog("swapItems finished");
-	                            BootstrapDialog.alert(app.activeText().loadouts_transferred);
+	                            $.toaster({
+	                                settings: {
+	                                    timeout: 15 * 1000
+	                                }
+	                            });
+	                            $.toaster({
+	                                priority: 'success',
+	                                title: 'Success:',
+	                                message: app.activeText().loadouts_transferred
+	                            });
+	                            $.toaster.reset();
 	                            setTimeout(function() {
-	                                $("#donateLink").click(app.showDonate);
+	                                $(".donateLink").click(app.showDonate);
 	                            }, 1000);
 	                            app.dynamicMode(false);
 	                            dialog.close()

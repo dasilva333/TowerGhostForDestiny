@@ -81,7 +81,11 @@ tgd.moveItemPositionHandler = function(element, item) {
             app.activeLoadout().ids.remove(existingItem);
         else {
             if (item._id == 0) {
-                BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning:',
+                    message: app.activeText().unable_create_loadout_for_type
+                });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
                 }).length < 10) {
@@ -91,7 +95,11 @@ tgd.moveItemPositionHandler = function(element, item) {
                     doEquip: false
                 });
             } else {
-                BootstrapDialog.alert(app.activeText().unable_to_create_loadout_for_bucket + item.bucketType);
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Error:',
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                });
             }
         }
     } else {
@@ -99,7 +107,12 @@ tgd.moveItemPositionHandler = function(element, item) {
         app.activeItem(item);
         var $movePopup = $("#move-popup");
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
-            return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
+            $.toaster({
+                priority: 'danger',
+                title: 'Error:',
+                message: app.activeText().unable_to_move_bucketitems
+            });
+            return;
         }
         if (element == tgd.activeElement) {
             $movePopup.hide();
@@ -203,7 +216,11 @@ window.ko.bindingHandlers.scrollToView = {
                 }
             })
             .on("press", function() {
-                BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
+                $.toaster({
+                    priority: 'info',
+                    title: 'Info:',
+                    message: app.activeText().this_icon + viewModel.uniqueName
+                });
             });
     }
 };
@@ -246,7 +263,11 @@ ko.bindingHandlers.moveItem = {
                             doEquip: false
                         });
                     } else {
-                        BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+                        $.toaster({
+                            priority: 'danger',
+                            title: 'Warning:',
+                            message: app.activeText().unable_create_loadout_for_type
+                        });
                     }
                 }
             })
@@ -651,7 +672,11 @@ var app = new(function() {
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length == 0) {
-            BootstrapDialog.alert(self.activeText().pick_a_set);
+            $.toaster({
+                priority: 'danger',
+                title: 'Warning:',
+                message: self.activeText().pick_a_set
+            });
         } else {
             self.showMissing(!self.showMissing());
         }
@@ -807,7 +832,6 @@ var app = new(function() {
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
-                console.time("templates");
             }
 
         }
@@ -878,14 +902,7 @@ var app = new(function() {
                     //console.timeEnd("self.bungie.user");
                     if (user.error) {
                         if (user.error == 'network error:502') {
-                            try {
-                                window.cookies.clear(function() {
-                                    BootstrapDialog.alert('Cookies cleared!');
-                                });
-                            } catch (e) {
-                                window.ref = window.open('https://www.bungie.net/', '_blank', 'location=yes,clearsessioncache=yes');
-                                BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
-                            }
+                            return self.logout();
                         }
                         if (isMobile) {
                             if (self.hiddenWindowOpen() == false) {
@@ -1013,6 +1030,7 @@ var app = new(function() {
         }
     }
 
+
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
         $(".profile").each(function(index, item) {
@@ -1100,7 +1118,11 @@ var app = new(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
                         if (!isMobile && !isChrome) {
-                            BootstrapDialog.alert("Please wait while Firefox acquires your arsenal");
+                            toaster({
+                                priority: 'success',
+                                title: 'Loading:',
+                                message: "Please wait while Firefox acquires your arsenal"
+                            });
                             var event = document.createEvent('CustomEvent');
                             event.initCustomEvent("request-cookie", true, true, {});
                             document.documentElement.dispatchEvent(event);
@@ -1200,8 +1222,13 @@ var app = new(function() {
                 }
                 self.apiRequest(params, function(results) {
                     if (_includeMessage == true) {
-                        if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-                        else BootstrapDialog.alert("Error has occurred saving loadouts");
+                        if (results.success) {
+                            $.toaster({
+                                priority: 'success',
+                                title: 'Saved:',
+                                message: "Loadouts saved to the cloud"
+                            });
+                        } else BootstrapDialog.alert("Error has occurred saving loadouts");
                     }
                 });
             } else {
@@ -1304,7 +1331,11 @@ var app = new(function() {
 
         if (itemTotal < characterStatus.length) {
             if (usingbatchMode == false) {
-                BootstrapDialog.alert("Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.");
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning:',
+                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
+                });
             }
             if (callback !== undefined) {
                 callback();
@@ -1341,7 +1372,11 @@ var app = new(function() {
         if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)) {
             //tgd.localLog("all items normalized as best as possible");
             if (usingbatchMode == false) {
-                BootstrapDialog.alert(description + " already normalized as best as possible.");
+                $.toaster({
+                    priority: 'success',
+                    title: 'Result:',
+                    message: description + " already normalized as best as possible."
+                });
             }
             if (callback !== undefined) {
                 callback();
@@ -1367,7 +1402,11 @@ var app = new(function() {
                 //tgd.localLog("all items normalized as best as possible");
                 if (usingbatchMode == false) {
                     //self.refresh();
-                    BootstrapDialog.alert("All items normalized as best as possible");
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Error:',
+                        message: "All items normalized as best as possible"
+                    });
                     setTimeout(function() {
                         self.bucketSizeHandler();
                     }, 1000);
@@ -1482,7 +1521,11 @@ var app = new(function() {
                 }
 
                 if (description == undefined) {
-                    BootstrapDialog.alert("All items normalized as best as possible");
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Result:',
+                        message: "All items normalized as best as possible"
+                    });
                     setTimeout(function() {
                         self.bucketSizeHandler();
                     }, 1000);
