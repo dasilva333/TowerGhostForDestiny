@@ -352,7 +352,7 @@ Item.prototype = {
                         }
                     });
                     if (self.bucketType == "Emblem") {
-                        self.character.icon(app.makeBackgroundUrl(self.icon, true));
+                        self.character.icon(self.icon);
                         self.character.background(self.backgroundPath);
                     }
                     if (callback) callback(true);
@@ -1007,7 +1007,7 @@ Item.prototype = {
                                     return memo + i.primaryStat();
                                 },
                                 0);
-                            c = c + ct;
+                            c = c + parseInt(ct);
                         }
                     }
                     return c;
