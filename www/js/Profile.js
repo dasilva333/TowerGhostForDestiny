@@ -53,7 +53,7 @@ Profile.prototype = {
         } else {
             self.order(index);
             self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
-            self.icon('data/' + self.profile.emblemPath);
+            self.icon('data' + self.profile.emblemPath);
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
             self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
