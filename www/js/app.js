@@ -1676,9 +1676,8 @@ var app = new(function() {
     }
 
     this.downloadLocale = function(locale, version) {
-		var bungie_code = _.findWhere( tgd.languages, { code: locale }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
+            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {
@@ -1701,7 +1700,7 @@ var app = new(function() {
         if (locale == "en") {
             self.defsLocale(locale);
         }
-        if (locale != "en" && locale != "tr" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+        if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
             tgd.localLog("downloading language pack");
             self.downloadLocale(locale, tgd.version);
         }
