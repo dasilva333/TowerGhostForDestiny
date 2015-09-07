@@ -105,7 +105,8 @@ tgd.languages = [
 	{ code: "de", description: "German", bungie_code: "de" },
 	{ code: "ja", description: "Japanese", bungie_code: "ja" },
 	{ code: "pt", description: "Portuguese", bungie_code: "pt-br" },
-	{ code: "fr", description: "French", bungie_code: "fr" }	
+	{ code: "fr", description: "French", bungie_code: "fr" },
+	{ code: "tr", description: "Turkish", bungie_code: "en" }
 ];
 
 tgd.defaults = {
@@ -159,7 +160,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
 		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +
-			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.bungie_code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.bungie_code %>"><%= language.description %></button>' +
+			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.code %>"><%= language.description %></button>' +
 		'</div>' +
 	'<% }) %>' +
 '</div>';
