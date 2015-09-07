@@ -105,7 +105,8 @@ tgd.languages = [
 	{ code: "de", description: "German", bungie_code: "de" },
 	{ code: "ja", description: "Japanese", bungie_code: "ja" },
 	{ code: "pt", description: "Portuguese", bungie_code: "pt-br" },
-	{ code: "fr", description: "French", bungie_code: "fr" }	
+	{ code: "fr", description: "French", bungie_code: "fr" },
+	{ code: "tr", description: "Turkish", bungie_code: "en" }
 ];
 
 tgd.defaults = {
@@ -159,7 +160,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
 		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +
-			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.bungie_code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.bungie_code %>"><%= language.description %></button>' +
+			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.code %>"><%= language.description %></button>' +
 		'</div>' +
 	'<% }) %>' +
 '</div>';
@@ -190,9 +191,9 @@ tgd.normalizeTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -230,9 +231,9 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
