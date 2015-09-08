@@ -116,7 +116,7 @@ tgd.defaults = {
 	tierFilter: 0,
 	typeFilter: 0,
 	dmgFilter: [],
-	activeView: isMobile ? 1 : 0,
+	activeView: 0,
 	progressFilter: 0,
 	showDuplicate: false,
 	setFilter: [],
