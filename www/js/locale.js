@@ -536,7 +536,7 @@ tgd.locale = {
         donation_title: "Spenden an Tower Ghost für Destiny!",
         donation_instructions: "Dies ist ein nicht-kommerzielles Projekt, das Destiny gewidmet ist. Wenn dir diese App gefällt, denke doch über eine Spende nach um das Projekt am Leben zu halten."
     },
-        tr: {
+    tr: {
         unable_create_loadout_for_type: "Bu öğe tipi ile teçhizat oluşturmak mümkün değil.",
         unable_to_create_loadout_for_bucket: "Bu slot içerisinde 10'dan fazla öğe ile teçhizat oluşturamazsın: ",
         unable_to_move_bucketitems: "Seçtiğin öğeler bu uygulama ile aktarılamaz.",
