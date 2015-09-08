@@ -1836,7 +1836,8 @@ var app = new(function() {
                     $ZamTooltips.hide();
                 },
                 stop: function() {
-                    $ZamTooltips.isEnabled = true;
+					if ( self.tooltipsEnabled() == true )
+	                    $ZamTooltips.isEnabled = true;
                 },
                 over: function() {
                     $(this).addClass("active");
