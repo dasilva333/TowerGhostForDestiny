@@ -67,10 +67,7 @@
         <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', refreshableSection: true">
             <span data-bind="text: $root.getBucketName(bucketType)"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
-            <!-- ko if: (bucketType == 'Mission') -->
-            (<span data-bind="text: character.get(bucketType).length"></span>/8)
-            <!--/ko  -->
-            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties' || bucketType == 'Mission') -->
+            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
             (<span data-bind="text: character.getVisible(bucketType).length + (character.itemEquippedVisible(bucketType) ? 1 : 0)"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties') -->
