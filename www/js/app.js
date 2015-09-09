@@ -994,12 +994,21 @@ var app = new(function() {
                 }
             });
             _.each(bucketSizes, function(sizes, type) {
+                // is there a vault bucket for this type
+                var doesVaultHaveBucket = self.characters().length == sizes.length;
                 //this is the max height all buckets will use
-                var maxHeight = Math.max.apply(null, sizes);
-                //this is the max height the non-vault characters will use
-                var profileSizes = sizes.slice(0);
-                profileSizes.splice(vaultPos, 1);
-                var maxProfilesHeight = Math.max.apply(null, profileSizes);
+                var maxBucketHeight = Math.max.apply(null, sizes);
+                // this is the max height the vault character will use
+                var maxVaultHeight = doesVaultHaveBucket ? sizes[vaultPos] : 0;
+                //this is the max height the non-vault characters will use                
+                var maxProfilesHeight;
+                {
+                    var profileSizes = sizes.slice(0);
+                    if (doesVaultHaveBucket) {
+                        profileSizes.splice(vaultPos, 1);
+                    }
+                    maxProfilesHeight = Math.max.apply(null, profileSizes);
+                }
                 var minNumRows = 1;
                 if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
                     minNumRows = 3;
@@ -1008,8 +1017,11 @@ var app = new(function() {
                 }
                 maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
                 var itemBuckets = buckets.filter("." + type);
-                itemBuckets.css("min-height", maxHeight);
-                itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
+                itemBuckets.css("min-height", maxBucketHeight);
+                $.each(itemBuckets, function(key, value) {
+                    // make the bucket BGs static for players but dynamic for vault, since vault buckets can expand/collapse
+                    $(value).find(".itemBucketBG").css("height", (key == vaultPos) && (itemBuckets.length == self.characters().length) ? maxVaultHeight : maxProfilesHeight);
+                });
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
