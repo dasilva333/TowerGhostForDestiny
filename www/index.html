@@ -496,6 +496,9 @@
             <div class="move-popup row no-gutter">
                 <div class="item-name col-xs-12">
                     <span data-bind="text: $root.activeText().movepopup_move"></span>: <span data-bind="text: description"></span>
+                    <!-- ko if: (bucketType !== 'Consumables' && bucketType !== 'Materials' && bucketType !== 'Messages' && bucketType !== 'Invisible' && bucketType !== 'Lost Items' && bucketType !== 'Bounties' && bucketType !== 'Mission') -->
+                    <img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, click: function(){ toggleLock() }" style="cursor:pointer;" />
+                    <!-- /ko -->
                 </div>
                 <div class="locations col-xs-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">
                     <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
