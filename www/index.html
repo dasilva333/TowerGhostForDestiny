@@ -132,7 +132,7 @@
                 <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.1.3</span></strong></a>
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
-                        <img class="mobile-characters-image" data-bind="attr: {src : imgIcon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">
+                        <img class="mobile-characters-image" data-bind="attr: {src : icon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">
                     </div>
                 </div>
             </div>
@@ -505,21 +505,21 @@
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses'">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_vault"></div>
-                                <img src="about:blank" data-bind="attr: { src : imgIcon }">
+                                <img src="about:blank" data-bind="attr: { src : icon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_store"></div>
-                                <img src="about:blank" data-bind="attr: { src : imgIcon }">
+                                <img src="about:blank" data-bind="attr: { src : icon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
                         <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_equip"></div>
-                                <img src="about:blank" data-bind="attr: { src : imgIcon }">
+                                <img src="about:blank" data-bind="attr: { src : icon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
@@ -540,7 +540,7 @@
                 <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
                     <div class="character">
                         <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.reloadBucket">
-                            <div class="emblem" data-bind="style: { backgroundImage: icon }"></div>
+                            <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
                             <div class="class" data-bind="text: classType"></div>
                             <div class="level" style="cursor:pointer;" data-bind="text: level, click: toggleStats, clickBubble: false"></div>
                             <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>
@@ -608,7 +608,7 @@
                 </controls>
                 <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
                 <!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
-                <div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: icon }">
+                <div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: iconBG }">
                     <div class="lower-left" data-bind="text: classLetter"></div>
                 </div>
                 <!--/ko  -->
