@@ -18,7 +18,7 @@ tgd.DestinyLayout = [
   { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
   { "Armor": { array: 'armor', counts: [36,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
   { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
-  { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
+  { "General": { array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
   { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
 ]
 tgd.DestinyViews = {
@@ -191,9 +191,9 @@ tgd.normalizeTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -231,9 +231,9 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
