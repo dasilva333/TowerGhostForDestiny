@@ -23,6 +23,9 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
+    this.iconBG = ko.computed(function() {
+        return app.makeBackgroundUrl(self.icon(), true);
+    });
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383];
     this.invisibleItemsHelper = [2910404660, 2537120989];
@@ -37,12 +40,11 @@ Profile.prototype = {
         if (_.isString(self.profile)) {
             self.order(parseInt(app.vaultPos()));
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
-            self.icon(app.makeBackgroundUrl("assets/vault_icon.jpg", true));
+            self.icon("assets/vault_icon.jpg");
 
             self.gender = "Tower";
             self.classType = "Vault";
             self.id = "Vault";
-            self.imgIcon = "assets/vault_icon.jpg";
 
             self.level = "";
             self.stats = "";
@@ -50,13 +52,12 @@ Profile.prototype = {
             self.race = "";
         } else {
             self.order(index);
-            self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
-            self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
+            self.background(app.makeBackgroundUrl('data' + self.profile.backgroundPath, true));
+            self.icon('data' + self.profile.emblemPath);
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
             self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
             self.id = self.profile.characterBase.characterId;
-            self.imgIcon = app.bungie.getUrl() + self.profile.emblemPath;
 
             self.level = self.profile.characterLevel;
             self.stats = self.profile.characterBase.stats;
