@@ -1400,7 +1400,7 @@ var app = new(function() {
                     //self.refresh();
                     $.toaster({
                         priority: 'success',
-                        title: 'Error:',
+                        title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
                     setTimeout(function() {
