@@ -149,6 +149,9 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.icon);
+		if (item.itemTypeName == "Emblem"){
+			queue.push(item.secondaryIcon);
+		}
 	});
 	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.js").toString("utf8").replace("_perkDefs=",""));
 	_.each(contents, function(item){

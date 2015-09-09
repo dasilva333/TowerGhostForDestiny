@@ -25,7 +25,7 @@ var Profile = function(character, items, index) {
     this.lostItems = ko.computed(this._lostItems, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
-    });	
+    });
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383];
     this.invisibleItemsHelper = [2910404660, 2537120989];
