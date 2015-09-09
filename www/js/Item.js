@@ -88,7 +88,7 @@ Item.prototype = {
                 itemObject.primaryStat(((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%");
             }
             if (item.progression) {
-                itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
+                itemObject.progression = (item.progression.currentProgress > 0);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
@@ -117,16 +117,18 @@ Item.prototype = {
                             var nodes = _.findWhere(talentGridNodes, {
                                 nodeHash: node.nodeHash
                             });
-                            var perk = nodes.steps[node.stepIndex];
-                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-                                talentPerks[perk.nodeStepName] = {
-                                    active: true,
-                                    name: perk.nodeStepName,
-                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: dataDir + perk.icon
-                                };
+                            if (nodes && nodes.steps) {
+                                var perk = nodes.steps[node.stepIndex];
+                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                    (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                    talentPerks[perk.nodeStepName] = {
+                                        active: true,
+                                        name: perk.nodeStepName,
+                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                        iconPath: dataDir + perk.icon
+                                    };
+                                }
                             }
                         }
                     });

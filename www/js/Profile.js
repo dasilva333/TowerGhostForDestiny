@@ -52,7 +52,7 @@ Profile.prototype = {
             self.race = "";
         } else {
             self.order(index);
-            self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
+            self.background(app.makeBackgroundUrl('data' + self.profile.backgroundPath, true));
             self.icon('data' + self.profile.emblemPath);
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];

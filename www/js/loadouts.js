@@ -477,7 +477,7 @@
 	                    var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
 	                    if (targetCharacter.id == "Vault") {
 	                        targetBucketSize = targetCharacter[arrayName]().length;
-	                        maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 36 : 24;
+	                        maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 72 : 36;
 	                    }
 	                    //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                    var targetMaxed = (targetBucketSize == maxBucketSize);

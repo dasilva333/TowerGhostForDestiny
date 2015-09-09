@@ -844,15 +844,11 @@ var app = new(function() {
                 self.search();
                 return
             } else if (typeof e.data == "undefined") {
-                ga('send', 'exception', {
-                    'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
-                    'exFatal': false,
-                    'appVersion': tgd.version,
-                    'hitCallback': function() {
-                        tgd.localLog("crash reported");
-                    }
-                });
-                return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                if (e && typeof e.Message != "undefined") {
+                    return BootstrapDialog.alert(e.Message);
+                } else {
+                    return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                }
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -1404,7 +1400,7 @@ var app = new(function() {
                     //self.refresh();
                     $.toaster({
                         priority: 'success',
-                        title: 'Error:',
+                        title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
                     setTimeout(function() {
@@ -1676,8 +1672,11 @@ var app = new(function() {
     }
 
     this.downloadLocale = function(locale, version) {
+        var bungie_code = _.findWhere(tgd.languages, {
+            code: locale
+        }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {
@@ -1700,7 +1699,7 @@ var app = new(function() {
         if (locale == "en") {
             self.defsLocale(locale);
         }
-        if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+        if (locale != "en" && locale != "tr" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
             tgd.localLog("downloading language pack");
             self.downloadLocale(locale, tgd.version);
         }
@@ -1835,7 +1834,8 @@ var app = new(function() {
                     $ZamTooltips.hide();
                 },
                 stop: function() {
-                    $ZamTooltips.isEnabled = true;
+                    if (self.tooltipsEnabled() == true)
+                        $ZamTooltips.isEnabled = true;
                 },
                 over: function() {
                     $(this).addClass("active");
