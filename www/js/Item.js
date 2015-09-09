@@ -117,16 +117,18 @@ Item.prototype = {
                             var nodes = _.findWhere(talentGridNodes, {
                                 nodeHash: node.nodeHash
                             });
-                            var perk = nodes.steps[node.stepIndex];
-                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-                                talentPerks[perk.nodeStepName] = {
-                                    active: true,
-                                    name: perk.nodeStepName,
-                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: dataDir + perk.icon
-                                };
+                            if (nodes && nodes.steps) {
+                                var perk = nodes.steps[node.stepIndex];
+                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                    (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                    talentPerks[perk.nodeStepName] = {
+                                        active: true,
+                                        name: perk.nodeStepName,
+                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                        iconPath: dataDir + perk.icon
+                                    };
+                                }
                             }
                         }
                     });
