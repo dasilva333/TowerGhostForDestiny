@@ -88,7 +88,7 @@ Item.prototype = {
                 itemObject.primaryStat(((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%");
             }
             if (item.progression) {
-                itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
+                itemObject.progression = (item.progression.currentProgress > 0);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
