@@ -16,7 +16,7 @@ tgd.localLog = function(msg) {
 };
 tgd.DestinyLayout = [
   { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
-  { "Armor": { array: 'armor', counts: [36,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
+  { "Armor": { array: 'armor', counts: [36,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
   { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
   { "General": { array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
   { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
@@ -65,7 +65,8 @@ tgd.DestinyBucketTypes = {
 	"2197472680": "Bounties",
 	"12345": "Post Master",
 	"2422292810": "Post Master",
-	"1367666825": "Invisible"
+	"1367666825": "Invisible",
+	"4023194814": "Ghost"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -93,10 +94,12 @@ tgd.DestinyBucketColumns = {
 	"Lost": 4,
 	"Lost Items": 4,
 	"Mission": 4,
-	"Invisible": 4
+	"Invisible": 4,
+	"Ghost": 3
 }
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
-tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
+//TODO Improve this so it depends on tgd.DestinyLayout
+tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Ghost" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
 	{ code: "en", description: "English", bungie_code: "en" },
