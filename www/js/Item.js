@@ -82,9 +82,6 @@ Item.prototype = {
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
             }
-            if (info.bucketTypeHash == "2197472680" && item.progression) {
-                itemObject.primaryStat(((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%");
-            }
             if (item.progression) {
                 itemObject.progression = (item.progression.currentProgress > 0);
             }
@@ -95,7 +92,6 @@ Item.prototype = {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
                         return {
-
                             iconPath: tgd.dataDir + p.displayIcon,
                             name: p.displayName,
                             description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
