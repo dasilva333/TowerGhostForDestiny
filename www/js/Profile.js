@@ -27,7 +27,7 @@ var Profile = function(character, items, index) {
         return app.makeBackgroundUrl(self.icon(), true);
     });
     this.container = ko.observable();
-    this.lostItemsHelper = [420519466, 1322081400, 2551875383];
+    this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
     this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(items, index);
