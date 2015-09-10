@@ -14,6 +14,7 @@ tgd.localLog = function(msg) {
 		console.log(msg);
 	}
 };
+tgd.dataDir = "data";
 tgd.DestinyLayout = [
   { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
   { "Armor": { array: 'armor', counts: [72,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },

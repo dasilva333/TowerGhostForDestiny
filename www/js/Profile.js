@@ -52,8 +52,8 @@ Profile.prototype = {
             self.race = "";
         } else {
             self.order(index);
-            self.background(app.makeBackgroundUrl('data' + self.profile.backgroundPath, true));
-            self.icon('data' + self.profile.emblemPath);
+            self.background(app.makeBackgroundUrl(tgd.dataDir + self.profile.backgroundPath, true));
+            self.icon(tgd.dataDir + self.profile.emblemPath);
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
             self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
