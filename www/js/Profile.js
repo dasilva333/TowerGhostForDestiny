@@ -81,10 +81,7 @@ Profile.prototype = {
         if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
         }
-        if (item.isEquipment) {
-            return "Lost Items";
-        }
-        if (self.lostItemsHelper.indexOf(item.itemHash) > -1) {
+        if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
         }
         if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
