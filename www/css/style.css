@@ -401,18 +401,28 @@ body {
 
 .character-box .level {
     position: absolute;
-    color: rgb(245, 220, 86);
-    top: 8px;
-    right: 7px;
-    font-weight: 200;
-    font-size: 22px;
+    top: 31px !important;
+    right: 7px !important;
 }
 
-.character-box .level:before {
+.character-box .level .light {
+	color: white;	
+    font-weight: 200;
+    font-size: 20px;
+	text-align: center;
+}
+
+.character-box .level .power {
+	color: rgb(245, 220, 86);	
+    font-weight: 200;
+    font-size: 14px;
+}
+
+.character-box .level .power:before {
     content: "\2726";
     display: inline-block;
-    vertical-align: 18%;
-    font-size: 50%;
+    vertical-align: 3%;
+    font-size: 80%;
 }
 
 .no-gutter [class*='col-'] {
