@@ -102,7 +102,7 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 			neededFiles.forEach(function(set){
 				db.all("SELECT * FROM " + set.table, function(err, rows) {
 					if (err) return; 
-					var filename = set.name + ".js";
+					var filename = set.name + ".json";
 					var patchFile = set.name + ".patch";
 					var obj = {};
 					rows.forEach(function (row) {  
@@ -146,18 +146,18 @@ if ( fs.existsSync("mobileWorldContent_en.db") ){
 		console.log(e);
 	}
 	
-	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.js").toString("utf8").replace("_itemDefs=",""));
+	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.json").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.icon);
 		if (item.itemTypeName == "Emblem"){
 			queue.push(item.secondaryIcon);
 		}
 	});
-	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.js").toString("utf8").replace("_perkDefs=",""));
+	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.json").toString("utf8").replace("_perkDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.displayIcon);
 	});
-	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.js").toString("utf8").replace("_talentGridDefs=",""));
+	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
 	_.each(contents , function(tg){
 		_.each(tg.nodes, function(node){
 			_.each( node.steps, function(step){
