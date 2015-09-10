@@ -933,6 +933,27 @@ var app = new(function() {
                         ref = null;
                     }
                     self.activeUser(user);
+					if ( user.psnId && user.gamerTag ){
+						$.toaster({
+							settings: {
+								timeout: 15 * 1000
+							}
+						});
+						$.toaster({
+							priority: 'info',
+							title: 'Info:',
+							message: "Two accounts found, <a href='' id='useOtherAccount'>use other account</a>"
+						});	
+						$("#useOtherAccount").click(function(){
+							if ( self.preferredSystem() == "XBL" ){
+								self.usePlaystationAccount();
+							}
+							else {
+								self.useXboxAccount();
+							}
+						});
+						$.toaster.reset();
+					}
                     self.locale(self.activeUser().user.locale);
                     self.loadingUser(false);
                     _.defer(function() {
