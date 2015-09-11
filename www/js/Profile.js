@@ -1,3 +1,11 @@
+function average (arr)
+{
+	return _.reduce(arr, function(memo, num)
+	{
+		return memo + num;
+	}, 0) / arr.length;
+}
+
 var Profile = function(character, items, index) {
     var self = this;
 
@@ -23,6 +31,9 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
+	/*this.powerLevel = ko.computed(function(){
+		return Math.floor(average(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() })));
+	});*/
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
