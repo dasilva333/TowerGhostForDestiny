@@ -660,6 +660,7 @@
 			var swapIds = _.pluck(_.pluck(masterSwapArray,'swapItem'),'_id');
 			html = html.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
 			html = html.prepend("<p>Tip: You may click on a swap item to cycle through alternative replacements. </p>");
+			html.find(".item").click(false);
 			html.find(".swapItem").click(function(){
 				var instanceId = $(this).attr("instanceid");
 				var item = self.findItemById(instanceId);					
@@ -685,7 +686,6 @@
 				else {
 					BootstrapDialog.alert("No swap candidates available");
 				}
-				return false;
 			});
 			return html;
 		},
