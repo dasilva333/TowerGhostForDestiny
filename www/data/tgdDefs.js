@@ -257,7 +257,7 @@ tgd.swapTemplate = '<ul class="list-group">' +
 					'<%= pair.description %>' +
 				'</div>' +
 				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' +
+					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>">' +
 						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
 					'</a>' +
 				'</div>' +
@@ -265,7 +265,7 @@ tgd.swapTemplate = '<ul class="list-group">' +
 					'<img src="<%= pair.actionIcon %>">' +
 				'</div>' +
 				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' +
+					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
 						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +
 				'</div>' +
