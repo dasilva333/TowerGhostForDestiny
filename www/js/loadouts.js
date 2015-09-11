@@ -535,7 +535,7 @@
 	                                    var candidates = _.filter(targetBucket, function(otherItem) {
 	                                        var index = sourceBucketHashes.indexOf(otherItem.id);
 	                                        tgd.localLog(index + " candidate: " + otherItem.description);
-	                                        return index == -1; // && otherItem.isEquipped() == false
+	                                        return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() == false
 	                                    });
 	                                    tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
 	                                    var swapItem = _.filter(_.where(candidates, {

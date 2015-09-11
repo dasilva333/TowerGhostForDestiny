@@ -1,5 +1,3 @@
-var dataDir = "data";
-
 var Item = function(model, profile, ignoreDups) {
     var self = this;
 
@@ -75,7 +73,7 @@ Item.prototype = {
                 typeName: itemTypeName,
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
-                icon: dataDir + info.icon,
+                icon: tgd.dataDir + info.icon,
                 isUnique: false
             };
             if (ignoreDups == undefined || ignoreDups == false) {
@@ -83,9 +81,6 @@ Item.prototype = {
             }
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
-            }
-            if (info.bucketTypeHash == "2197472680" && item.progression) {
-                itemObject.primaryStat(((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%");
             }
             if (item.progression) {
                 itemObject.progression = (item.progression.currentProgress > 0);
@@ -97,8 +92,7 @@ Item.prototype = {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
                         return {
-
-                            iconPath: dataDir + p.displayIcon,
+                            iconPath: tgd.dataDir + p.displayIcon,
                             name: p.displayName,
                             description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                             active: perk.isActive
@@ -126,7 +120,7 @@ Item.prototype = {
                                         active: true,
                                         name: perk.nodeStepName,
                                         description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                        iconPath: dataDir + perk.icon
+                                        iconPath: tgd.dataDir + perk.icon
                                     };
                                 }
                             }
