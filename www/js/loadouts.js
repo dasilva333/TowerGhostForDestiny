@@ -677,7 +677,7 @@
 				if ( candidates.length > 0 ){
 					_.each( masterSwapArray , function(pair){
 						if (pair && pair.swapItem && pair.swapItem._id == instanceId){
-							console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
+							//console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
 							pair.swapItem = candidates[_.random(0, candidates.length-1)];
 						}
 					});
