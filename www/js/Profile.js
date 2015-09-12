@@ -1,9 +1,7 @@
-function average (arr)
-{
-	return _.reduce(arr, function(memo, num)
-	{
-		return memo + num;
-	}, 0) / arr.length;
+function average(arr) {
+    return _.reduce(arr, function(memo, num) {
+        return memo + num;
+    }, 0) / arr.length;
 }
 
 var Profile = function(character, items, index) {
@@ -31,9 +29,9 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-	/*this.powerLevel = ko.computed(function(){
-		return Math.floor(average(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() })));
-	});*/
+    /*this.powerLevel = ko.computed(function(){
+    	return Math.floor(average(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() })));
+    });*/
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -123,7 +121,7 @@ Profile.prototype = {
                 done();
             } else {
                 done();
-                self.refresh();
+                app.refresh();
                 return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
             }
         }

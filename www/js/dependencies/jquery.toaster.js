@@ -90,7 +90,7 @@
 			'css'       :
 			{
 				'position' : 'fixed',
-				'top'      : '10px',
+				'top'      : '45px',
 				'right'    : '10px',
 				'width'    : '300px',
 				'zIndex'   : 50000
