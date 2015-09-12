@@ -13,6 +13,7 @@ copy js\ ..\build\branch\js\
 copy js\dependencies ..\build\branch\js\dependencies
 mkdir ..\build\branch\data\
 copy data\*.js ..\build\branch\data\
+copy data\*.json ..\build\branch\data\
 mkdir ..\build\branch\css\
 copy css\ ..\build\branch\css\
 mkdir ..\build\branch\res\icon\%1

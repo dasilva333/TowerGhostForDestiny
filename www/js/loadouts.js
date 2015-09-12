@@ -649,15 +649,51 @@
 	            self.promptUserConfirm(masterSwapArray, targetCharacterId);
 	        }
 	    },
+		generateTemplate: function(masterSwapArray, targetCharacterId){
+			var self = this;
+			var html = $(tgd.swapTemplate({
+				swapArray: masterSwapArray
+			}));
+			var targetCharacter = _.findWhere(app.characters(), {
+				id: targetCharacterId
+			});
+			var swapIds = _.pluck(_.pluck(masterSwapArray,'swapItem'),'_id');
+			html = html.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
+			html = html.prepend("<p>Tip: You may click on a swap item to cycle through alternative replacements. </p>");
+			html.find(".item").click(false);
+			html.find(".swapItem").click(function(){
+				var instanceId = $(this).attr("instanceid");
+				var item = self.findItemById(instanceId);					
+				/* When a swap item is clicked a few steps must be performed:
+					-determine bucket type
+					-determine items in that bucket
+					-exclude items already in masterSwapArray
+					-if the array is not empty then switch to the first item
+					-maintain the index so we can cycle through the whole list
+					-provide error message regarding no candidates if array is empty
+				*/
+				var items = targetCharacter.get(item.bucketType);
+				var candidates = _.filter(items, function(candidate){ return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2 });
+				if ( candidates.length > 0 ){
+					_.each( masterSwapArray , function(pair){
+						if (pair && pair.swapItem && pair.swapItem._id == instanceId){
+							//console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
+							pair.swapItem = candidates[_.random(0, candidates.length-1)];
+						}
+					});
+					self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId));
+				}
+				else {
+					BootstrapDialog.alert("No swap candidates available");
+				}
+			});
+			return html;
+		},
 	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
 	        if (masterSwapArray.length > 0) {
 	            var self = this;
-	            var $template = $(tgd.swapTemplate({
-	                swapArray: masterSwapArray
-	            }));
-	            //$template.find(".itemImage").bind("error", function(){ this.src = 'assets/panel_blank.png' });
-	            $template = $template.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
-	            (new tgd.dialog({
+	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId);
+	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
