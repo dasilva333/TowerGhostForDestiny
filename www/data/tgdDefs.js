@@ -17,7 +17,11 @@ tgd.localLog = function(msg) {
 tgd.dataDir = "data";
 tgd.DestinyLayout = [
   { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
+<<<<<<< HEAD
   { "Armor": { array: 'armor', counts: [72,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
+=======
+  { "Armor": { array: 'armor', counts: [36,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
+>>>>>>> 5ab259533e5e2562c094f1cb882ca974fdde4d37
   { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
   { "General": { array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
   { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
