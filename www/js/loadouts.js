@@ -653,12 +653,11 @@
 	        var self = this;
 	        var html = $(tgd.swapTemplate({
 	            swapArray: masterSwapArray
-	        }));
+	        }) + $(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
 	        var targetCharacter = _.findWhere(app.characters(), {
 	            id: targetCharacterId
 	        });
 	        var swapIds = _.pluck(_.pluck(masterSwapArray, 'swapItem'), '_id');
-	        html = html.append($(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
 	        html.find(".item").click(false);
 	        html.find(".swapItem").click(function() {
 	            var instanceId = $(this).attr("instanceid");
