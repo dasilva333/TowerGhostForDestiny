@@ -120,11 +120,7 @@ Item.prototype = {
                                         active: true,
                                         name: perk.nodeStepName,
                                         description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-<<<<<<< HEAD
                                         iconPath: tgd.dataDir + perk.icon
-=======
-                                        iconPath: dataDir + perk.icon
->>>>>>> 5ab259533e5e2562c094f1cb882ca974fdde4d37
                                     };
                                 }
                             }

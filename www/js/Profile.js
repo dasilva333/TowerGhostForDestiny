@@ -29,12 +29,9 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-<<<<<<< HEAD
     /*this.powerLevel = ko.computed(function(){
     	return Math.floor(average(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() })));
     });*/
-=======
->>>>>>> 5ab259533e5e2562c094f1cb882ca974fdde4d37
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -64,13 +61,8 @@ Profile.prototype = {
             self.race = "";
         } else {
             self.order(index);
-<<<<<<< HEAD
             self.background(app.makeBackgroundUrl(tgd.dataDir + self.profile.backgroundPath, true));
             self.icon(tgd.dataDir + self.profile.emblemPath);
-=======
-            self.background(app.makeBackgroundUrl('data' + self.profile.backgroundPath, true));
-            self.icon('data' + self.profile.emblemPath);
->>>>>>> 5ab259533e5e2562c094f1cb882ca974fdde4d37
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
             self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
