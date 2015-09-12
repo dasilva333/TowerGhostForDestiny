@@ -14,9 +14,10 @@ tgd.localLog = function(msg) {
 		console.log(msg);
 	}
 };
+tgd.dataDir = "data";
 tgd.DestinyLayout = [
   { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
-  { "Armor": { array: 'armor', counts: [36,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
+  { "Armor": { array: 'armor', counts: [72,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
   { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
   { "General": { array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
   { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
@@ -248,7 +249,7 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 	'</div>' +
 '</div>';
 	
-tgd.swapTemplate = '<ul class="list-group">' +
+tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through alternative replacements. </p><ul class="list-group">' +
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
@@ -256,7 +257,7 @@ tgd.swapTemplate = '<ul class="list-group">' +
 					'<%= pair.description %>' +
 				'</div>' +
 				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' +
+					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>">' +
 						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
 					'</a>' +
 				'</div>' +
@@ -264,7 +265,7 @@ tgd.swapTemplate = '<ul class="list-group">' +
 					'<img src="<%= pair.actionIcon %>">' +
 				'</div>' +
 				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' +
+					'<a class="swapItem item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
 						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +
 				'</div>' +
