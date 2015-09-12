@@ -942,7 +942,7 @@ var app = new(function() {
                         $.toaster({
                             priority: 'info',
                             title: 'Info:',
-                            message: "Two accounts found, <br><a href='' id='useOtherAccount'>click here to use the other one.</a>"
+                            message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
                         });
                         $("#useOtherAccount").click(function() {
                             if (self.preferredSystem() == "XBL") {
