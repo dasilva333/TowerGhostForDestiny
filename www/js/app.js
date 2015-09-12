@@ -80,7 +80,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (existingItem)
             app.activeLoadout().ids.remove(existingItem);
         else {
-            if (item._id == 0) {
+            if (item._id == 0 || item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning:',
@@ -250,7 +250,7 @@ ko.bindingHandlers.moveItem = {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-                    if (item._id > 0) {
+                    if (item._id > 0 && item.transferStatus < 2) {
                         if (app.dynamicMode() == false) {
                             app.dynamicMode(true);
                             app.createLoadout();
@@ -564,23 +564,35 @@ var app = new(function() {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
-            /* Weapon Perks (Pre-HoW) */
-            if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
-                $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                    perks: activeItem.perks
-                }));
-            }
-            /* Weapon Perks (Post-HoW) */
-            else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                $content.find(".destt-info").before(tgd.perksTemplate({
-                    perks: activeItem.perks
-                }));
-            }
-            /* Armor Perks */
-            else if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
-                $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                    perks: activeItem.perks
-                }));
+            if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
+                /* Weapon Perks (Pre-HoW) */
+                if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+                    $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                        perks: activeItem.perks
+                    }));
+                }
+                /* Weapon Perks (Post-HoW) */
+                else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
+                    $content.find(".destt-info").before(tgd.perksTemplate({
+                        perks: activeItem.perks
+                    }));
+                }
+            } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                /* Armor Perks */
+                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && activeItem.tierType !== 6) {
+                    /* this only applies to armor with existing perks */
+                    if ($content.find(".destt-talent").length > 0) {
+                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                    /* this applies to ghost shells, maybe re rollable armor */
+                    else {
+                        $content.find(".destt-stat").after(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                }
             }
             /* Armor Stats */
             var stats = $content.find(".destt-stat");
@@ -844,15 +856,11 @@ var app = new(function() {
                 self.search();
                 return
             } else if (typeof e.data == "undefined") {
-                ga('send', 'exception', {
-                    'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
-                    'exFatal': false,
-                    'appVersion': tgd.version,
-                    'hitCallback': function() {
-                        tgd.localLog("crash reported");
-                    }
-                });
-                return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                if (e && typeof e.Message != "undefined") {
+                    return BootstrapDialog.alert(e.Message);
+                } else {
+                    return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                }
             }
             var avatars = e.data.characters;
             total = avatars.length + 1;
@@ -925,6 +933,26 @@ var app = new(function() {
                         ref = null;
                     }
                     self.activeUser(user);
+                    if (user.psnId && user.gamerTag) {
+                        $.toaster({
+                            settings: {
+                                timeout: 10 * 1000
+                            }
+                        });
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Info:',
+                            message: "Two accounts found, <br><a href='' id='useOtherAccount'>click here to use the other one.</a>"
+                        });
+                        $("#useOtherAccount").click(function() {
+                            if (self.preferredSystem() == "XBL") {
+                                self.usePlaystationAccount();
+                            } else {
+                                self.useXboxAccount();
+                            }
+                        });
+                        $.toaster.reset();
+                    }
                     self.locale(self.activeUser().user.locale);
                     self.loadingUser(false);
                     _.defer(function() {
@@ -1404,7 +1432,7 @@ var app = new(function() {
                     //self.refresh();
                     $.toaster({
                         priority: 'success',
-                        title: 'Error:',
+                        title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
                     setTimeout(function() {
@@ -1676,8 +1704,11 @@ var app = new(function() {
     }
 
     this.downloadLocale = function(locale, version) {
+        var bungie_code = _.findWhere(tgd.languages, {
+            code: locale
+        }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {
@@ -1700,7 +1731,7 @@ var app = new(function() {
         if (locale == "en") {
             self.defsLocale(locale);
         }
-        if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+        if (locale != "en" && locale != "tr" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
             tgd.localLog("downloading language pack");
             self.downloadLocale(locale, tgd.version);
         }
@@ -1735,7 +1766,7 @@ var app = new(function() {
     }
 
     this.dndBeforeMove = function(arg) {
-        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType);
+        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
     }
 
     this.dndAfterMove = function(arg) {
@@ -1835,7 +1866,8 @@ var app = new(function() {
                     $ZamTooltips.hide();
                 },
                 stop: function() {
-                    $ZamTooltips.isEnabled = true;
+                    if (self.tooltipsEnabled() == true)
+                        $ZamTooltips.isEnabled = true;
                 },
                 over: function() {
                     $(this).addClass("active");

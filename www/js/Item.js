@@ -1,5 +1,3 @@
-var dataDir = "data";
-
 var Item = function(model, profile, ignoreDups) {
     var self = this;
 
@@ -17,14 +15,14 @@ var Item = function(model, profile, ignoreDups) {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
-            return (!self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass) ||
+            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass)
                 //if it's in another character and it's equippable
-                (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass);
+                || (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
         });
     }
     this.isStoreable = function(avatarId) {
         return ko.computed(function() {
-            return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses') ||
+            return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
                 (self.isEquipped() && self.character.id == avatarId);
         });
     }
@@ -75,7 +73,7 @@ Item.prototype = {
                 typeName: itemTypeName,
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
-                icon: dataDir + info.icon,
+                icon: tgd.dataDir + info.icon,
                 isUnique: false
             };
             if (ignoreDups == undefined || ignoreDups == false) {
@@ -84,11 +82,8 @@ Item.prototype = {
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
             }
-            if (info.bucketTypeHash == "2197472680" && item.progression) {
-                itemObject.primaryStat(((item.progression.currentProgress / item.progression.nextLevelAt) * 100).toFixed(0) + "%");
-            }
             if (item.progression) {
-                itemObject.progression = (item.progression.progressToNextLevel <= 1000 && item.progression.currentProgress > 0);
+                itemObject.progression = (item.progression.currentProgress > 0);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
@@ -97,8 +92,7 @@ Item.prototype = {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
                         return {
-
-                            iconPath: dataDir + p.displayIcon,
+                            iconPath: tgd.dataDir + p.displayIcon,
                             name: p.displayName,
                             description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                             active: perk.isActive
@@ -117,16 +111,18 @@ Item.prototype = {
                             var nodes = _.findWhere(talentGridNodes, {
                                 nodeHash: node.nodeHash
                             });
-                            var perk = nodes.steps[node.stepIndex];
-                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
-                                talentPerks[perk.nodeStepName] = {
-                                    active: true,
-                                    name: perk.nodeStepName,
-                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: dataDir + perk.icon
-                                };
+                            if (nodes && nodes.steps) {
+                                var perk = nodes.steps[node.stepIndex];
+                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                    (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                    talentPerks[perk.nodeStepName] = {
+                                        active: true,
+                                        name: perk.nodeStepName,
+                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                        iconPath: tgd.dataDir + perk.icon
+                                    };
+                                }
                             }
                         }
                     });
@@ -352,7 +348,7 @@ Item.prototype = {
                         }
                     });
                     if (self.bucketType == "Emblem") {
-                        self.character.icon(app.makeBackgroundUrl(self.icon, true));
+                        self.character.icon(self.icon);
                         self.character.background(self.backgroundPath);
                     }
                     if (callback) callback(true);
@@ -712,15 +708,19 @@ Item.prototype = {
             //this condition only applies to armor/weapons until loadouts can support mats
             else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
-                var adhoc = new Loadout();
-                adhoc.addItem({
-                    id: self._id,
-                    bucketType: self.bucketType,
-                    doEquip: false
-                });
-                var msa = adhoc.transfer(targetCharacterId, true);
-                adhoc.swapItems(msa, targetCharacterId, function() {
-                    if (cb) cb(y, x);
+                x._reloadBucket(self.bucketType, undefined, function() {
+                    y._reloadBucket(self.bucketType, undefined, function() {
+                        var adhoc = new Loadout();
+                        adhoc.addItem({
+                            id: self._id,
+                            bucketType: self.bucketType,
+                            doEquip: false
+                        });
+                        var msa = adhoc.transfer(targetCharacterId, true);
+                        adhoc.swapItems(msa, targetCharacterId, function() {
+                            if (cb) cb(y, x);
+                        });
+                    });
                 });
             } else if (result && result.Message) {
                 $.toaster({
@@ -774,7 +774,7 @@ Item.prototype = {
                                     if (callback) callback(self.character);
                                 } else {
                                     //tgd.localLog("taking the short route " + self.description);
-                                    self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                                    self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
                                 }
                             }));
                         }
@@ -792,7 +792,7 @@ Item.prototype = {
                 });
             } else {
                 tgd.localLog("from vault to character");
-                self.transfer("Vault", targetCharacterId, transferAmount, callback);
+                self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
             }
         }
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
@@ -1003,7 +1003,7 @@ Item.prototype = {
                                     return memo + i.primaryStat();
                                 },
                                 0);
-                            c = c + ct;
+                            c = c + parseInt(ct);
                         }
                     }
                     return c;

@@ -14,11 +14,12 @@ tgd.localLog = function(msg) {
 		console.log(msg);
 	}
 };
+tgd.dataDir = "data";
 tgd.DestinyLayout = [
-  { "Weapons": { array: 'weapons', counts: [36,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
-  { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
+  { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
+  { "Armor": { array: 'armor', counts: [72,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
   { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
-  { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
+  { "General": { array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
   { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
 ]
 tgd.DestinyViews = {
@@ -65,7 +66,8 @@ tgd.DestinyBucketTypes = {
 	"2197472680": "Bounties",
 	"12345": "Post Master",
 	"2422292810": "Post Master",
-	"1367666825": "Invisible"
+	"1367666825": "Invisible",
+	"4023194814": "Ghost"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -93,10 +95,12 @@ tgd.DestinyBucketColumns = {
 	"Lost": 4,
 	"Lost Items": 4,
 	"Mission": 4,
-	"Invisible": 4
+	"Invisible": 4,
+	"Ghost": 3
 }
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
-tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
+//TODO Improve this so it depends on tgd.DestinyLayout
+tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Ghost" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
 	{ code: "en", description: "English", bungie_code: "en" },
@@ -105,7 +109,8 @@ tgd.languages = [
 	{ code: "de", description: "German", bungie_code: "de" },
 	{ code: "ja", description: "Japanese", bungie_code: "ja" },
 	{ code: "pt", description: "Portuguese", bungie_code: "pt-br" },
-	{ code: "fr", description: "French", bungie_code: "fr" }	
+	{ code: "fr", description: "French", bungie_code: "fr" },
+	{ code: "tr", description: "Turkish", bungie_code: "en" }
 ];
 
 tgd.defaults = {
@@ -115,7 +120,7 @@ tgd.defaults = {
 	tierFilter: 0,
 	typeFilter: 0,
 	dmgFilter: [],
-	activeView: isMobile ? 1 : 0,
+	activeView: 0,
 	progressFilter: 0,
 	showDuplicate: false,
 	setFilter: [],
@@ -159,7 +164,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
 		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +
-			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.bungie_code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.bungie_code %>"><%= language.description %></button>' +
+			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.code %>"><%= language.description %></button>' +
 		'</div>' +
 	'<% }) %>' +
 '</div>';
@@ -190,9 +195,9 @@ tgd.normalizeTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -230,9 +235,9 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -244,7 +249,7 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 	'</div>' +
 '</div>';
 	
-tgd.swapTemplate = '<ul class="list-group">' +
+tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through alternative replacements. </p><ul class="list-group">' +
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
@@ -252,7 +257,7 @@ tgd.swapTemplate = '<ul class="list-group">' +
 					'<%= pair.description %>' +
 				'</div>' +
 				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>" id="<%= pair.targetItem && pair.targetItem._id %>">' +
+					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>">' +
 						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
 					'</a>' +
 				'</div>' +
@@ -260,7 +265,7 @@ tgd.swapTemplate = '<ul class="list-group">' +
 					'<img src="<%= pair.actionIcon %>">' +
 				'</div>' +
 				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
-					'<a class="item" href="<%= pair.swapItem && pair.swapItem.href %>" id="<%= pair.swapItem && pair.swapItem._id %>">' +
+					'<a class="swapItem item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
 						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +
 				'</div>' +
