@@ -80,7 +80,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (existingItem)
             app.activeLoadout().ids.remove(existingItem);
         else {
-            if (item._id == 0) {
+            if (item._id == 0 || item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning:',
@@ -250,7 +250,7 @@ ko.bindingHandlers.moveItem = {
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-                    if (item._id > 0) {
+                    if (item._id > 0 && item.transferStatus < 2) {
                         if (app.dynamicMode() == false) {
                             app.dynamicMode(true);
                             app.createLoadout();
@@ -936,13 +936,13 @@ var app = new(function() {
                     if (user.psnId && user.gamerTag) {
                         $.toaster({
                             settings: {
-                                timeout: 15 * 1000
+                                timeout: 10 * 1000
                             }
                         });
                         $.toaster({
                             priority: 'info',
                             title: 'Info:',
-                            message: "Two accounts found, <a href='' id='useOtherAccount'>use other account</a>"
+                            message: "Two accounts found, <br><a href='' id='useOtherAccount'>click here to use the other one.</a>"
                         });
                         $("#useOtherAccount").click(function() {
                             if (self.preferredSystem() == "XBL") {
@@ -1766,7 +1766,7 @@ var app = new(function() {
     }
 
     this.dndBeforeMove = function(arg) {
-        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType);
+        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
     }
 
     this.dndAfterMove = function(arg) {

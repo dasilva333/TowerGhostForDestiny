@@ -249,7 +249,7 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 	'</div>' +
 '</div>';
 	
-tgd.swapTemplate = '<ul class="list-group">' +
+tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through alternative replacements. </p><ul class="list-group">' +
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
