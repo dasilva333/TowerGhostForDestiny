@@ -562,3 +562,4 @@ li a {
 		-webkit-font-smoothing: antialiased;
 	}	
 }
+.help strong { font-size: 1.1em; }
