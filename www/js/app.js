@@ -452,7 +452,7 @@ var app = new(function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title("Help").content($("#help").html()).show();
+        (new tgd.dialog).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
     }
 
     this.showLanguageSettings = function() {
@@ -1337,7 +1337,10 @@ var app = new(function() {
     }
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(self.activeText().whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        var container = $("<div></div>")
+        container.attr("style", "overflow-y: scroll; height: 480px");
+        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        (new tgd.dialog).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         })
     }

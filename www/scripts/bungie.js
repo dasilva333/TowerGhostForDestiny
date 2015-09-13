@@ -297,15 +297,17 @@ var bungie = (function(cookieString, complete) {
                 route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
                 method: 'GET',
                 complete: function(membership) {
-                    if (membership == 0) {
+                    if (membership > 0) {
                         //console.log('error finding bungie account!', membership)
+                        active.membership = membership;
+                        self.account(callback);
+                    } else {
                         callback({
                             error: true
                         })
                         return;
                     }
-                    active.membership = membership;
-                    self.account(callback);
+
                 }
             });
         } else {
@@ -315,14 +317,12 @@ var bungie = (function(cookieString, complete) {
 
     this.account = function(callback) {
         tgd.localLog(active.type + " log request to " + JSON.stringify(active.membership));
-        if (active.membership > 0) {
-            self.request({
-                route: '/Destiny/' + active.type +
-                    '/Account/' + active.membership + '/',
-                method: 'GET',
-                complete: callback
-            });
-        }
+        self.request({
+            route: '/Destiny/' + active.type +
+                '/Account/' + active.membership + '/',
+            method: 'GET',
+            complete: callback
+        });
     }
 
     this.flattenItemArray = function(buckets) {

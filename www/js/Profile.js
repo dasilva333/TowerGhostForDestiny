@@ -87,6 +87,9 @@ Profile.prototype = {
     },
     getBucketTypeHelper: function(item, info) {
         var self = this;
+        if (typeof info == "undefined") {
+            return "";
+        }
         if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
         }
