@@ -183,25 +183,30 @@
 	            //now that they are both in the vault transfer them to their respective location
 	            var transferTargetItemToVault = function(complete) {
 	                targetItem = self.findReference(pair.targetItem);
-	                targetOwner = targetItem.character.id;
-	                tgd.localLog(" transferTargetItemToVault " + targetItem.description);
-	                if (targetOwner == "Vault") {
-	                    complete();
-	                } else {
-	                    var originalCharacterId = targetItem.character.id;
-	                    targetItem.store("Vault", function(profile) {
-	                        if (profile.id == originalCharacterId) {
-	                            $.toaster({
-	                                priority: 'danger',
-	                                title: 'Error:',
-	                                message: "Unable to unequip " + targetItem.description + " while playing in game"
-	                            });
-	                            complete();
-	                        } else {
-	                            complete();
-	                        }
-	                    });
-	                }
+					if (typeof targetItem != "undefined"){
+		                targetOwner = targetItem.character.id;
+		                tgd.localLog(" transferTargetItemToVault " + targetItem.description);
+		                if (targetOwner == "Vault") {
+		                    complete();
+		                } else {
+		                    var originalCharacterId = targetItem.character.id;
+		                    targetItem.store("Vault", function(profile) {
+		                        if (profile.id == originalCharacterId) {
+		                            $.toaster({
+		                                priority: 'danger',
+		                                title: 'Error:',
+		                                message: "Unable to unequip " + targetItem.description + " while playing in game"
+		                            });
+		                            complete();
+		                        } else {
+		                            complete();
+		                        }
+		                    });
+		                }					
+					}
+					else {
+						complete();
+					}
 	            }
 	            var transferSwapItemToVault = function(complete) {
 	                swapItem = self.findReference(pair.swapItem);
@@ -448,6 +453,9 @@
 	        var targetCharacter = _.findWhere(app.characters(), {
 	            id: targetCharacterId
 	        });
+			if (typeof targetCharacter == "undefined"){				
+				return BootstrapDialog.alert("Target character not found");
+			}
 	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
 	            //tgd.localLog(itemFound + " getFirstItem: " + sourceBucketIds);
@@ -489,11 +497,7 @@
 	                        tgd.localLog("using swap strategy");
 	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                        swapArray = _.map(sourceBucket, function(item) {
-	                            //var cantMove = self.cantMove(item, key, targetMaxed);
 	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
-	                            /*if (cantMove) {
-	                                return cantMove;
-	                            }*/
 	                            /* if the item is already in the targetBucket */
 	                            if (_.findWhere(targetBucket, {
 	                                    _id: item._id
@@ -585,10 +589,6 @@
 	                        /* do a clean move by returning a swap object without a swapItem */
 	                        swapArray = _.map(sourceBucket, function(item) {
 	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
-	                            var cantMove = self.cantMove(item, key, targetMaxed);
-	                            if (cantMove) {
-	                                return cantMove;
-	                            }
 	                            /* if the item is already in the targetBucket */
 	                            if (_.findWhere(targetBucket, {
 	                                    _id: item._id
@@ -726,69 +726,5 @@
 	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
 	        }
-	    },
-	    /* hold on there cowboy can't make a promise we can't keep 
-		this pieces needs to have all the /existing logic/ that comprises that sum of Item.store/transfer/equip/unquip
-		The first absolute no go siutation (cant xfer wo going outside of character) is 
-		(rules #1-3 only apply to actual characters not the vault)
-		1. only one weapon equipped no subsitute available
-		2. weapon being moved is non-exotic and there is an exotic equipped with no other weapons
-		3. weapon being moved is non-exotic and there is an exotic equipped with only other exotics
-		4. the target bucket has the max number of weapons so the transfer of that one item cant completely finished on its own
-	*/
-	    cantMove: function(item, key, maxBucketSize) {
-	        //fix to exclude subclasses
-	        if (item.armorIndex == -1 && item.weaponIndex == -1) return;
-	        var ownerIcon = item.character.icon().replace('url("', "").replace('")', '');
-	        /*if (maxBucketSize) {
-	            return {
-	                description: item.description + app.activeText().loadouts_outofspace + key,
-	                targetIcon: item.icon,
-	                actionIcon: "assets/no-transfer.png",
-	                swapIcon: ownerIcon
-	            }
-	        }*/
-	        var ownerBucket = item.character.get(key);
-	        var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
-	        otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex, 1);
-	        var cantMoveEquipped;
-	        _.each(otherBucketTypes, function(bucketType) {
-	            var bucketItems = item.character.get(bucketType),
-	                onlyExotics = _.where(bucketItems, {
-	                    tierType: 6
-	                }).length == bucketItems.length;
-	            //TypeError: null is not an object (evaluating 'item.character.itemEquipped(bucketType).tierType')	
-	            try {
-	                if (item.character.id !== "Vault" && item.character.itemEquipped(bucketType).tierType == 6 && (bucketItems.length == 0 || onlyExotics)) {
-	                    cantMoveEquipped = {
-	                        description: item.description + app.activeText().loadouts_invalidbucket + bucketType,
-	                        targetIcon: item.icon,
-	                        actionIcon: "assets/cant-transfer.png",
-	                        swapIcon: ownerIcon
-	                    }
-	                }
-	            } catch (e) {
-	                ga('send', 'exception', {
-	                    'exDescription': "tierType is missing > " + e.toString() + " " + bucketType,
-	                    'exFatal': false,
-	                    'appVersion': tgd.version,
-	                    'hitCallback': function() {
-	                        tgd.localLog("crash reported");
-	                    }
-	                });
-	            }
-	        });
-	        if (cantMoveEquipped) {
-	            return cantMoveEquipped;
-	        }
-	        if (ownerBucket.length == 0) {
-	            return {
-	                description: item.description + app.activeText().loadouts_no_replacement,
-	                targetIcon: item.icon,
-	                actionIcon: "assets/cant-transfer.png",
-	                swapIcon: ownerIcon
-	            }
-	        }
 	    }
-
 	}

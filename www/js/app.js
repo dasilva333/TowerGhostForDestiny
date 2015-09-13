@@ -249,26 +249,29 @@ ko.bindingHandlers.moveItem = {
                 tgd.localLog("item.doubletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
-                    var item = ko.contextFor(target).$data;
-                    if (item._id > 0 && item.transferStatus < 2) {
-                        if (app.dynamicMode() == false) {
-                            app.dynamicMode(true);
-                            app.createLoadout();
-                        }
-                        tgd.localLog("double tap");
-                        tgd.localLog(item);
-                        app.activeLoadout().addItem({
-                            id: item._id,
-                            bucketType: item.bucketType,
-                            doEquip: false
-                        });
-                    } else {
-                        $.toaster({
-                            priority: 'danger',
-                            title: 'Warning:',
-                            message: app.activeText().unable_create_loadout_for_type
-                        });
-                    }
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+	                    if (item._id > 0 && item.transferStatus < 2) {
+	                        if (app.dynamicMode() == false) {
+	                            app.dynamicMode(true);
+	                            app.createLoadout();
+	                        }
+	                        tgd.localLog("double tap");
+	                        tgd.localLog(item);
+	                        app.activeLoadout().addItem({
+	                            id: item._id,
+	                            bucketType: item.bucketType,
+	                            doEquip: false
+	                        });
+	                    } else {
+	                        $.toaster({
+	                            priority: 'danger',
+	                            title: 'Warning:',
+	                            message: app.activeText().unable_create_loadout_for_type
+	                        });
+	                    }
+					}	
                 }
             })
             // press is actually hold 
@@ -1146,7 +1149,7 @@ var app = new(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
                         if (!isMobile && !isChrome) {
-                            toaster({
+                            $.toaster({
                                 priority: 'success',
                                 title: 'Loading:',
                                 message: "Please wait while Firefox acquires your arsenal"
@@ -1766,7 +1769,9 @@ var app = new(function() {
     }
 
     this.dndBeforeMove = function(arg) {
-        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
+		if (arg && arg.targetParent && arg.targetParent.length > 0){
+	        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
+		}
     }
 
     this.dndAfterMove = function(arg) {

@@ -70,7 +70,7 @@ _ga = new(function() {
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
             ga('send', 'exception', {
-                'exDescription': "ajax error at " + settings.url + " " + settings.data + " " + err,
+                'exDescription': request.status + "ajax error at " + settings.url + " " + settings.data + " " + err,
                 'exFatal': true,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
