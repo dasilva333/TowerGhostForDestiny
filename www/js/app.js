@@ -652,7 +652,6 @@ var app = new(function() {
             self.padBucketHeight(true);
             location.reload();
         }
-        self.bucketSizeHandler();
     }
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
@@ -1009,6 +1008,8 @@ var app = new(function() {
         var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
             var bucketSizes = {};
+			
+			console.log(buckets);
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
             vaultPos = (vaultPos < 0) ? 0 : vaultPos;
@@ -1028,6 +1029,7 @@ var app = new(function() {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
+			console.log(bucketSizes);
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
                 var maxHeight = Math.max.apply(null, sizes);
@@ -1438,9 +1440,6 @@ var app = new(function() {
                         title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
-                    setTimeout(function() {
-                        self.bucketSizeHandler();
-                    }, 1000);
                 }
                 if (callback !== undefined) {
                     callback();
@@ -1557,9 +1556,6 @@ var app = new(function() {
                         title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
-                    setTimeout(function() {
-                        self.bucketSizeHandler();
-                    }, 1000);
                     return;
                 }
 

@@ -625,13 +625,15 @@ Item.prototype = {
 
                             idx = idx + 1;
                         }
-                    }
+                    }					
+					setTimeout(function(){ app.bucketSizeHandler(); },600);
                     tgd.localLog("---------------------");
                 } else {
                     x.items.remove(self);
                     self.characterId = targetCharacterId
                     self.character = y;
                     y.items.push(self);
+					setTimeout(function(){ app.bucketSizeHandler(); },600);
                 }
                 //not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
                 setTimeout(function() {

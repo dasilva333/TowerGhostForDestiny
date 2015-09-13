@@ -165,9 +165,6 @@ Profile.prototype = {
                 self.reloadingBucket = false;
                 if (element) {
                     element.removeClass("fa-spin");
-                    setTimeout(function() {
-                        app.bucketSizeHandler();
-                    }, 1000);
                 }
             }
 
