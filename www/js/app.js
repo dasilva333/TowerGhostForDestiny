@@ -80,16 +80,22 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (existingItem)
             app.activeLoadout().ids.remove(existingItem);
         else {
-            if (item._id == 0 || item.transferStatus >= 2) {
+            if (item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning:',
                     message: app.activeText().unable_create_loadout_for_type
                 });
+            } else if (item._id == 0) {
+                app.activeLoadout().addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    primaryStat: item.primaryStat()
+                });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
                 }).length < 10) {
-                app.activeLoadout().addItem({
+                app.activeLoadout().addUniqueItem({
                     id: item._id,
                     bucketType: item.bucketType,
                     doEquip: false
@@ -252,18 +258,25 @@ ko.bindingHandlers.moveItem = {
                     var context = ko.contextFor(target);
                     if (context && "$data" in context) {
                         var item = context.$data;
-                        if (item._id > 0 && item.transferStatus < 2) {
+                        if (item.transferStatus < 2) {
                             if (app.dynamicMode() == false) {
                                 app.dynamicMode(true);
                                 app.createLoadout();
                             }
                             tgd.localLog("double tap");
-                            tgd.localLog(item);
-                            app.activeLoadout().addItem({
-                                id: item._id,
-                                bucketType: item.bucketType,
-                                doEquip: false
-                            });
+                            if (item._id > 0) {
+                                app.activeLoadout().addUniqueItem({
+                                    id: item._id,
+                                    bucketType: item.bucketType,
+                                    doEquip: false
+                                });
+                            } else {
+                                app.activeLoadout().addGenericItem({
+                                    hash: item.id,
+                                    bucketType: item.bucketType,
+                                    primaryStat: item.primaryStat()
+                                });
+                            }
                         } else {
                             $.toaster({
                                 priority: 'danger',

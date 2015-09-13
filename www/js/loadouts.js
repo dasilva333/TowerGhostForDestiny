@@ -4,7 +4,8 @@
 	    _.each(model, function(value, key) {
 	        self[key] = value;
 	    });
-	    this.doEquip = ko.observable((self.doEquip && self.doEquip.toString() == "true") || false);
+	    var _doEquip = (typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
+	    this.doEquip = ko.observable(_doEquip);
 	}
 
 	var Loadout = function(model) {
@@ -15,16 +16,29 @@
 	    });
 	    this.name = self.name || "";
 	    this.ids = ko.observableArray();
+	    this.generics = ko.observableArray();
 	    this.items = ko.computed(function() {
 	        var _items = [];
 	        _.each(self.ids(), function(equip) {
-	            var itemFound = self.findItemById(equip.id);
+	            if (equip) {
+	                var itemFound = self.findItemById(equip.id);
+	                if (itemFound) {
+	                    itemFound.doEquip = equip.doEquip;
+	                    itemFound.markAsEquip = self.markAsEquip;
+	                    _items.push(itemFound);
+	                } else {
+	                    self.ids.remove(equip);
+	                }
+	            }
+	        });
+	        _.each(self.generics(), function(item) {
+	            var itemFound = self.findItemByHash(item.hash);
 	            if (itemFound) {
-	                itemFound.doEquip = equip.doEquip;
+	                itemFound.doEquip = item.doEquip;
 	                itemFound.markAsEquip = self.markAsEquip;
 	                _items.push(itemFound);
 	            } else {
-	                self.ids.remove(equip.id);
+	                self.generics.remove(item);
 	            }
 	        });
 	        return _items.sort(function(a, b) {
@@ -134,8 +148,21 @@
 	        app.loadouts.push(this);
 	        app.saveLoadouts();
 	    },
-	    addItem: function(obj) {
+	    addUniqueItem: function(obj) {
 	        this.ids.push(new LoadoutItem(obj));
+	    },
+	    addGenericItem: function(obj) {
+	        this.generics.push(new LoadoutItem(obj));
+	    },
+	    findItemByHash: function(hash) {
+	        var itemFound;
+	        app.characters().forEach(function(character) {
+	            var match = _.findWhere(character.items(), {
+	                id: hash
+	            });
+	            if (match) itemFound = _.clone(match);
+	        });
+	        return itemFound;
 	    },
 	    findItemById: function(id) {
 	        var itemFound;
@@ -479,161 +506,172 @@
 	                var targetBucket = targetGroups[key];
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
-	                    var maxBucketSize = 10;
-	                    var targetBucketSize = targetBucket.length;
-	                    var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
-	                    if (targetCharacter.id == "Vault") {
-	                        targetBucketSize = targetCharacter[arrayName]().length;
-	                        maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 72 : 36;
-	                    }
-	                    //tgd.localLog("the current bucket size is " + targetBucketSize);
-	                    var targetMaxed = (targetBucketSize == maxBucketSize);
-	                    tgd.localLog(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
-	                    tgd.localLog("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
-	                    /* use the swap item strategy */
-	                    /* by finding a random item in the targetBucket that isnt part of sourceBucket */
-	                    if (sourceBucket.length + targetBucketSize > maxBucketSize) {
-	                        tgd.localLog("using swap strategy");
-	                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
-	                        swapArray = _.map(sourceBucket, function(item) {
-	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
-	                            /* if the item is already in the targetBucket */
-	                            if (_.findWhere(targetBucket, {
-	                                    _id: item._id
-	                                })) {
-	                                /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-	                                if (item.doEquip() == true) {
-	                                    return {
-	                                        targetItem: item,
-	                                        description: item.description + app.activeText().loadouts_to_equip,
-	                                        actionIcon: "assets/to-equip.png",
-	                                        swapIcon: targetCharacterIcon
-	                                    }
-	                                }
-	                                /* then return an object indicating to do nothing */
-	                                else {
-	                                    return {
-	                                        description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
-	                                        targetIcon: item.icon,
-	                                        actionIcon: "assets/no-transfer.png",
-	                                        swapIcon: ownerIcon
-	                                    }
-	                                }
-	                            } else {
-	                                var itemFound = false;
-	                                if (item.bucketType == "Shader") {
-	                                    var swapItem = _.filter(targetBucket, function(otherItem) {
-	                                        return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader" && sourceBucketIds.indexOf(otherItem._id) == -1;
-	                                    })[0];
-	                                } else {
-	                                    /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
-											e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
-										*/
-	                                    tgd.localLog("looking for a swap item for " + item.description);
-	                                    var sourceBucketHashes = _.pluck(_.where(item.character.items(), {
-	                                        bucketType: item.bucketType
-	                                    }), 'id');
-	                                    tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
-	                                    tgd.localLog("the target where this is going has these many items " + targetBucket.length);
-	                                    var candidates = _.filter(targetBucket, function(otherItem) {
-	                                        var index = sourceBucketHashes.indexOf(otherItem.id);
-	                                        tgd.localLog(index + " candidate: " + otherItem.description);
-	                                        return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() == false
-	                                    });
-	                                    tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
-	                                    var swapItem = _.filter(_.where(candidates, {
-	                                        type: item.type
-	                                    }), getFirstItem(sourceBucketIds, itemFound));
-	                                    tgd.localLog("1.swapItem: " + swapItem.length);
-	                                    if (swapItem.length == 0) {
-	                                        //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
-	                                        tgd.localLog(targetBucket);
-	                                    }
-	                                    swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
-	                                    /* if there is still no swapItem at this point I have to break the original rule the prevents duplicates*/
-	                                    if (!swapItem) {
-	                                        swapItem = _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
-	                                    }
-	                                }
-	                                if (swapItem) {
-	                                    tgd.localLog("2.swapItem: " + swapItem.description);
-	                                    targetBucket.splice(targetBucket.indexOf(swapItem), 1);
-	                                    //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
-	                                    if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+	                    if (tgd.DestinyWeaponPieces.indexOf(key) > -1 || tgd.DestinyWeaponPieces.indexOf(key) > -1) {
+	                        var maxBucketSize = 10;
+	                        var targetBucketSize = targetBucket.length;
+	                        var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
+	                        if (targetCharacter.id == "Vault") {
+	                            targetBucketSize = targetCharacter[arrayName]().length;
+	                            maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 72 : 36;
+	                        }
+	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
+	                        var targetMaxed = (targetBucketSize == maxBucketSize);
+	                        tgd.localLog(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
+	                        tgd.localLog("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
+	                        /* use the swap item strategy */
+	                        /* by finding a random item in the targetBucket that isnt part of sourceBucket */
+	                        if (sourceBucket.length + targetBucketSize > maxBucketSize) {
+	                            tgd.localLog("using swap strategy");
+	                            var sourceBucketIds = _.pluck(sourceBucket, "_id");
+	                            swapArray = _.map(sourceBucket, function(item) {
+	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                /* if the item is already in the targetBucket */
+	                                if (_.findWhere(targetBucket, {
+	                                        _id: item._id
+	                                    })) {
+	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+	                                    if (item.doEquip() == true) {
 	                                        return {
-	                                            description: item.description + app.activeText().loadouts_no_transfer,
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_equip,
+	                                            actionIcon: "assets/to-equip.png",
+	                                            swapIcon: targetCharacterIcon
+	                                        }
+	                                    }
+	                                    /* then return an object indicating to do nothing */
+	                                    else {
+	                                        return {
+	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
 	                                        }
 	                                    }
-	                                    return {
-	                                        targetItem: item,
-	                                        swapItem: swapItem,
-	                                        description: item.description + app.activeText().loadouts_swap + swapItem.description,
-	                                        actionIcon: "assets/swap.png"
-	                                    }
 	                                } else {
-	                                    tgd.localLog("to transfer: " + item.description);
-	                                    return {
-	                                        targetItem: item,
-	                                        description: item.description + app.activeText().loadouts_to_transfer,
-	                                        swapIcon: targetCharacterIcon,
-	                                        actionIcon: "assets/to-transfer.png"
+	                                    var itemFound = false;
+	                                    if (item.bucketType == "Shader") {
+	                                        var swapItem = _.filter(targetBucket, function(otherItem) {
+	                                            return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader" && sourceBucketIds.indexOf(otherItem._id) == -1;
+	                                        })[0];
+	                                    } else {
+	                                        /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
+												e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
+											*/
+	                                        tgd.localLog("looking for a swap item for " + item.description);
+	                                        var sourceBucketHashes = _.pluck(_.where(item.character.items(), {
+	                                            bucketType: item.bucketType
+	                                        }), 'id');
+	                                        tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
+	                                        tgd.localLog("the target where this is going has these many items " + targetBucket.length);
+	                                        var candidates = _.filter(targetBucket, function(otherItem) {
+	                                            var index = sourceBucketHashes.indexOf(otherItem.id);
+	                                            tgd.localLog(index + " candidate: " + otherItem.description);
+	                                            return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() == false
+	                                        });
+	                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+	                                        var swapItem = _.filter(_.where(candidates, {
+	                                            type: item.type
+	                                        }), getFirstItem(sourceBucketIds, itemFound));
+	                                        tgd.localLog("1.swapItem: " + swapItem.length);
+	                                        if (swapItem.length == 0) {
+	                                            //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+	                                            tgd.localLog(targetBucket);
+	                                        }
+	                                        swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
+	                                        /* if there is still no swapItem at this point I have to break the original rule the prevents duplicates*/
+	                                        if (!swapItem) {
+	                                            swapItem = _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
+	                                        }
+	                                    }
+	                                    if (swapItem) {
+	                                        tgd.localLog("2.swapItem: " + swapItem.description);
+	                                        targetBucket.splice(targetBucket.indexOf(swapItem), 1);
+	                                        //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
+	                                        if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+	                                            return {
+	                                                description: item.description + app.activeText().loadouts_no_transfer,
+	                                                targetIcon: item.icon,
+	                                                actionIcon: "assets/no-transfer.png",
+	                                                swapIcon: ownerIcon
+	                                            }
+	                                        }
+	                                        return {
+	                                            targetItem: item,
+	                                            swapItem: swapItem,
+	                                            description: item.description + app.activeText().loadouts_swap + swapItem.description,
+	                                            actionIcon: "assets/swap.png"
+	                                        }
+	                                    } else {
+	                                        tgd.localLog("to transfer: " + item.description);
+	                                        return {
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_transfer,
+	                                            swapIcon: targetCharacterIcon,
+	                                            actionIcon: "assets/to-transfer.png"
+	                                        }
 	                                    }
 	                                }
-	                            }
-	                        });
-	                    } else {
-	                        /* do a clean move by returning a swap object without a swapItem */
-	                        swapArray = _.map(sourceBucket, function(item) {
-	                            var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
-	                            /* if the item is already in the targetBucket */
-	                            if (_.findWhere(targetBucket, {
-	                                    _id: item._id
-	                                })) {
-	                                /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-	                                if (item.doEquip() == true) {
-	                                    return {
-	                                        targetItem: item,
-	                                        description: item.description + app.activeText().loadouts_to_equip,
-	                                        actionIcon: "assets/to-equip.png",
-	                                        swapIcon: targetCharacterIcon
+	                            });
+	                        } else {
+	                            /* do a clean move by returning a swap object without a swapItem */
+	                            swapArray = _.map(sourceBucket, function(item) {
+	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                /* if the item is already in the targetBucket */
+	                                if (_.findWhere(targetBucket, {
+	                                        _id: item._id
+	                                    })) {
+	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+	                                    if (item.doEquip() == true) {
+	                                        return {
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_equip,
+	                                            actionIcon: "assets/to-equip.png",
+	                                            swapIcon: targetCharacterIcon
+	                                        }
 	                                    }
-	                                }
-	                                /* then return an object indicating to do nothing */
-	                                else {
+	                                    /* then return an object indicating to do nothing */
+	                                    else {
+	                                        return {
+	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
+	                                            targetIcon: item.icon,
+	                                            actionIcon: "assets/no-transfer.png",
+	                                            swapIcon: ownerIcon
+	                                        }
+	                                    }
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
 	                                    return {
-	                                        description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
+	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
 	                                    }
-	                                }
-	                            } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
-	                                return {
-	                                    description: item.description + app.activeText().loadouts_no_transfer,
-	                                    targetIcon: item.icon,
-	                                    actionIcon: "assets/no-transfer.png",
-	                                    swapIcon: ownerIcon
-	                                }
-	                            } else {
-	                                if (item.doEquip() == true) {
-	                                    return {
-	                                        targetItem: item,
-	                                        description: item.description + app.activeText().loadouts_to_moveequip,
-	                                        actionIcon: "assets/to-equip.png",
-	                                        swapIcon: targetCharacterIcon
-	                                    }
 	                                } else {
-	                                    tgd.localLog("loadouts_to_transfer: " + item.description);
-	                                    return {
-	                                        targetItem: item,
-	                                        description: item.description + app.activeText().loadouts_to_transfer,
-	                                        actionIcon: "assets/to-transfer.png",
-	                                        swapIcon: targetCharacterIcon
+	                                    if (item.doEquip() == true) {
+	                                        return {
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_moveequip,
+	                                            actionIcon: "assets/to-equip.png",
+	                                            swapIcon: targetCharacterIcon
+	                                        }
+	                                    } else {
+	                                        tgd.localLog("loadouts_to_transfer: " + item.description);
+	                                        return {
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_transfer,
+	                                            actionIcon: "assets/to-transfer.png",
+	                                            swapIcon: targetCharacterIcon
+	                                        }
 	                                    }
 	                                }
+	                            });
+	                        }
+	                    } else {
+	                        swapArray = _.map(sourceBucket, function(item) {
+	                            return {
+	                                targetItem: item,
+	                                description: item.description + app.activeText().loadouts_to_transfer,
+	                                actionIcon: "assets/to-transfer.png",
+	                                swapIcon: targetCharacterIcon
 	                            }
 	                        });
 	                    }
@@ -697,8 +735,11 @@
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
+	                        var ats = app.autoTransferStacks();
+	                        app.autoTransferStacks(true);
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
 	                            tgd.localLog("swapItems finished");
+	                            app.autoTransferStacks(ats);
 	                            $.toaster({
 	                                settings: {
 	                                    timeout: 15 * 1000

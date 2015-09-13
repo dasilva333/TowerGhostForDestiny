@@ -723,7 +723,7 @@ Item.prototype = {
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         var adhoc = new Loadout();
-                        adhoc.addItem({
+                        adhoc.addUniqueItem({
                             id: self._id,
                             bucketType: self.bucketType,
                             doEquip: false
@@ -927,7 +927,7 @@ Item.prototype = {
             }
         } else {
             var adhoc = new Loadout();
-            adhoc.addItem({
+            adhoc.addUniqueItem({
                 id: self._id,
                 bucketType: self.bucketType,
                 doEquip: false

@@ -314,12 +314,15 @@ var bungie = (function(cookieString, complete) {
     }
 
     this.account = function(callback) {
-        self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership + '/',
-            method: 'GET',
-            complete: callback
-        });
+        tgd.localLog(active.type + " log request to " + JSON.stringify(active.membership));
+        if (active.membership > 0) {
+            self.request({
+                route: '/Destiny/' + active.type +
+                    '/Account/' + active.membership + '/',
+                method: 'GET',
+                complete: callback
+            });
+        }
     }
 
     this.flattenItemArray = function(buckets) {
