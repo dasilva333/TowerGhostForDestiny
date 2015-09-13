@@ -999,7 +999,7 @@ var app = new(function() {
         }
         if (self.doRefresh() == 1 && self.loadoutMode() == false) {
             self.refreshInterval = setInterval(function() {
-                self.loadData()
+                self.search()
             }, self.refreshSeconds() * 1000);
         }
     }
