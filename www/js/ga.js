@@ -74,7 +74,7 @@ _ga = new(function() {
                 'exFatal': true,
                 'appVersion': tgd.version,
                 'hitCallback': function() {
-                    console.log("ajax error " + settings.url);
+                    console.log(request.status + "ajax error at " + settings.url + " " + settings.data + " " + err);
                 }
             });
         });

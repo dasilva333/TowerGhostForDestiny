@@ -259,6 +259,7 @@ Item.prototype = {
                         if (_.isUndefined(item)) {
                             if (callback) callback(false);
                             else {
+								tgd.localLog("transfer error 5");
                                 $.toaster({
                                     priority: 'danger',
                                     title: 'Error:',
@@ -306,6 +307,7 @@ Item.prototype = {
                                 }
                                 //unequip failed
                                 else {
+									tgd.localLog("transfer error 6");
                                     $.toaster({
                                         priority: 'danger',
                                         title: 'Error:',
@@ -356,6 +358,7 @@ Item.prototype = {
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
                     else if (result && result.Message) {
+						tgd.localLog("transfer error 7");
                         $.toaster({
                             priority: 'info',
                             title: 'Error:',
@@ -648,6 +651,7 @@ Item.prototype = {
                 tgd.localLog(result);
                 cb(y, x, result);
             } else if (result && result.Message) {
+				tgd.localLog("transfer error 1");
                 $.toaster({
                     priority: 'info',
                     title: 'Error:',
@@ -730,14 +734,15 @@ Item.prototype = {
                         });
                     });
                 });
+            } else if (cb) {
+                cb(y, x);
             } else if (result && result.Message) {
+				tgd.localLog("transfer error 2");
                 $.toaster({
                     priority: 'info',
                     title: 'Error:',
                     message: result.Message
                 });
-            } else if (cb) {
-                cb(y, x);
             }
         }
     },
@@ -758,6 +763,7 @@ Item.prototype = {
                         if (callback) {
                             callback(self.character);
                         } else {
+							tgd.localLog("transfer error 3");
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error:',
@@ -790,6 +796,7 @@ Item.prototype = {
                         if (callback) {
                             callback(self.character);
                         } else {
+							tgd.localLog("transfer error 4");
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error:',
