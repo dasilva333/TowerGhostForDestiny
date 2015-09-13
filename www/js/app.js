@@ -998,7 +998,9 @@ var app = new(function() {
             $("body").css("padding-bottom", "80px");
         }
         if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+            tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
+                tgd.localLog("refreshing");
                 self.search()
             }, self.refreshSeconds() * 1000);
         }
@@ -1271,51 +1273,53 @@ var app = new(function() {
     }
 
     this.loadLoadouts = function() {
-        var _loadouts = window.localStorage.getItem("loadouts");
-        if (!_.isEmpty(_loadouts)) {
-            _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
-                return new Loadout(loadout);
-            })
-        } else {
-            _loadouts = [];
-        }
-        if (supportsCloudSaves == true) {
-            self.apiRequest({
-                action: "load",
-                //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),
-                locale: self.currentLocale(),
-                version: self.defLocaleVersion(),
-                /*this one applies only to your current profile
-   				accountId: self.bungie.getMemberId()*/
-            }, function(results) {
-                var _results = [];
-                if (results && results.loadouts) {
-                    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
-                    _results = _.map(_results, function(loadout) {
-                        loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-                        loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-                        loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-                        return new Loadout(loadout);
-                    });
-                }
-                /* one time migrate joins the two arrays and clears the local one */
-                if (_loadouts.length > 0) {
-                    _results = _loadouts.concat(_results);
-                    window.localStorage.setItem("loadouts", "");
-                }
-                self.loadouts(_results);
-                /* one time migrate saves the new joined array to the cloud */
-                if (_loadouts.length > 0) {
-                    self.saveLoadouts(false);
-                }
-                /*if (results && results.itemDefs) {
-                    tgd.localLog("downloading locale update");
-                    self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-                }*/
-            });
-        } else if (_loadouts.length > 0) {
-            self.loadouts(_loadouts);
+        if (self.loadouts().length == 0) {
+            var _loadouts = window.localStorage.getItem("loadouts");
+            if (!_.isEmpty(_loadouts)) {
+                _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
+                    return new Loadout(loadout);
+                })
+            } else {
+                _loadouts = [];
+            }
+            if (supportsCloudSaves == true) {
+                self.apiRequest({
+                    action: "load",
+                    //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                    membershipId: parseFloat(self.activeUser().user.membershipId),
+                    locale: self.currentLocale(),
+                    version: self.defLocaleVersion(),
+                    /*this one applies only to your current profile
+	   				accountId: self.bungie.getMemberId()*/
+                }, function(results) {
+                    var _results = [];
+                    if (results && results.loadouts) {
+                        _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
+                        _results = _.map(_results, function(loadout) {
+                            loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+                            loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+                            loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+                            return new Loadout(loadout);
+                        });
+                    }
+                    /* one time migrate joins the two arrays and clears the local one */
+                    if (_loadouts.length > 0) {
+                        _results = _loadouts.concat(_results);
+                        window.localStorage.setItem("loadouts", "");
+                    }
+                    self.loadouts(_results);
+                    /* one time migrate saves the new joined array to the cloud */
+                    if (_loadouts.length > 0) {
+                        self.saveLoadouts(false);
+                    }
+                    /*if (results && results.itemDefs) {
+                        tgd.localLog("downloading locale update");
+                        self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+                    }*/
+                });
+            } else if (_loadouts.length > 0) {
+                self.loadouts(_loadouts);
+            }
         }
     }
 
@@ -1816,6 +1820,7 @@ var app = new(function() {
         self.doRefresh.subscribe(self.refreshHandler);
         self.refreshSeconds.subscribe(self.refreshHandler);
         self.loadoutMode.subscribe(self.refreshHandler);
+        self.refreshHandler();
         self.bungie_cookies = "";
         if (window.localStorage && window.localStorage.getItem) {
             self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
