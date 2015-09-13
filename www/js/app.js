@@ -907,7 +907,11 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+						if (e && typeof e.Message != "undefined") {
+		                    return BootstrapDialog.alert(e.Message);
+		                } else {
+							return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+		                }                        
                     }
                 });
             });
