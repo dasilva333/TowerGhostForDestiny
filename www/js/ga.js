@@ -69,14 +69,18 @@ _ga = new(function() {
 
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
-            ga('send', 'exception', {
-                'exDescription': "ajax error at " + settings.url + " " + settings.data + " " + err,
-                'exFatal': true,
-                'appVersion': tgd.version,
-                'hitCallback': function() {
-                    console.log("ajax error " + settings.url);
-                }
-            });
+            if (request.status > 0) {
+                ga('send', 'exception', {
+                    'exDescription': request.status + " ajax error at " + settings.url + " " + settings.data + " " + err,
+                    'exFatal': true,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        tgd.localLog(request.status + " ajax error at " + settings.url + " " + settings.data + " " + err);
+                    }
+                });
+            } else {
+                tgd.localLog(request.status + " ajax error (code 0) at " + settings.url + " " + settings.data + " " + err);
+            }
         });
     }
 });
