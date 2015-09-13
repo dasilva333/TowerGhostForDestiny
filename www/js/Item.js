@@ -699,7 +699,9 @@ Item.prototype = {
                         tgd.localLog("retransferring");
                         //TODO move this function to a more general area for common use
                         var newItem = Loadout.prototype.findReference(self);
-                        newItem.store(targetCharacterId, cb);
+						if (newItem){
+							newItem.store(targetCharacterId, cb);
+						}                        
                     });
                 });
                 /*    }

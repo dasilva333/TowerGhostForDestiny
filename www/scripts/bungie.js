@@ -150,7 +150,7 @@ var bungie = (function(cookieString, complete) {
     }
     this.login = function(callback) {
         self.request({
-            route: url + "en/User/Profile",
+            route: url,
             method: "GET",
             complete: callback
         });

@@ -670,21 +670,23 @@
 	            	-maintain the index so we can cycle through the whole list
 	            	-provide error message regarding no candidates if array is empty
 	            */
-	            var items = targetCharacter.get(item.bucketType);
-	            var candidates = _.filter(items, function(candidate) {
-	                return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2
-	            });
-	            if (candidates.length > 0) {
-	                _.each(masterSwapArray, function(pair) {
-	                    if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
-	                        //console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
-	                        pair.swapItem = candidates[_.random(0, candidates.length - 1)];
-	                    }
-	                });
-	                self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId));
-	            } else {
-	                BootstrapDialog.alert("No swap candidates available");
-	            }
+				if (item){
+		            var items = targetCharacter.get(item.bucketType);
+		            var candidates = _.filter(items, function(candidate) {
+		                return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2
+		            });
+		            if (candidates.length > 0) {
+		                _.each(masterSwapArray, function(pair) {
+		                    if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
+		                        //console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
+		                        pair.swapItem = candidates[_.random(0, candidates.length - 1)];
+		                    }
+		                });
+		                self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId));
+		            } else {
+		                BootstrapDialog.alert("No swap candidates available");
+		            }				
+				}
 	        });
 	        return html;
 	    },
