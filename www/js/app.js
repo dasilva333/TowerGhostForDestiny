@@ -80,16 +80,22 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (existingItem)
             app.activeLoadout().ids.remove(existingItem);
         else {
-            if (item._id == 0 || item.transferStatus >= 2) {
+            if (item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning:',
                     message: app.activeText().unable_create_loadout_for_type
                 });
+            } else if (item._id == 0) {
+                app.activeLoadout().addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    primaryStat: item.primaryStat()
+                });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
                 }).length < 10) {
-                app.activeLoadout().addItem({
+                app.activeLoadout().addUniqueItem({
                     id: item._id,
                     bucketType: item.bucketType,
                     doEquip: false
@@ -249,25 +255,35 @@ ko.bindingHandlers.moveItem = {
                 tgd.localLog("item.doubletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
-                    var item = ko.contextFor(target).$data;
-                    if (item._id > 0 && item.transferStatus < 2) {
-                        if (app.dynamicMode() == false) {
-                            app.dynamicMode(true);
-                            app.createLoadout();
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item.transferStatus < 2) {
+                            if (app.dynamicMode() == false) {
+                                app.dynamicMode(true);
+                                app.createLoadout();
+                            }
+                            tgd.localLog("double tap");
+                            if (item._id > 0) {
+                                app.activeLoadout().addUniqueItem({
+                                    id: item._id,
+                                    bucketType: item.bucketType,
+                                    doEquip: false
+                                });
+                            } else {
+                                app.activeLoadout().addGenericItem({
+                                    hash: item.id,
+                                    bucketType: item.bucketType,
+                                    primaryStat: item.primaryStat()
+                                });
+                            }
+                        } else {
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Warning:',
+                                message: app.activeText().unable_create_loadout_for_type
+                            });
                         }
-                        tgd.localLog("double tap");
-                        tgd.localLog(item);
-                        app.activeLoadout().addItem({
-                            id: item._id,
-                            bucketType: item.bucketType,
-                            doEquip: false
-                        });
-                    } else {
-                        $.toaster({
-                            priority: 'danger',
-                            title: 'Warning:',
-                            message: app.activeText().unable_create_loadout_for_type
-                        });
                     }
                 }
             })
@@ -436,7 +452,7 @@ var app = new(function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title("Help").content($("#help").html()).show();
+        (new tgd.dialog).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
     }
 
     this.showLanguageSettings = function() {
@@ -649,7 +665,6 @@ var app = new(function() {
             self.padBucketHeight(true);
             location.reload();
         }
-        self.bucketSizeHandler();
     }
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
@@ -892,7 +907,11 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                        if (e && typeof e.Message != "undefined") {
+                            return BootstrapDialog.alert(e.Message);
+                        } else {
+                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                        }
                     }
                 });
             });
@@ -996,8 +1015,10 @@ var app = new(function() {
             $("body").css("padding-bottom", "80px");
         }
         if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+            tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
-                self.loadData()
+                tgd.localLog("refreshing");
+                self.search()
             }, self.refreshSeconds() * 1000);
         }
     }
@@ -1146,7 +1167,7 @@ var app = new(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
                         if (!isMobile && !isChrome) {
-                            toaster({
+                            $.toaster({
                                 priority: 'success',
                                 title: 'Loading:',
                                 message: "Please wait while Firefox acquires your arsenal"
@@ -1269,56 +1290,61 @@ var app = new(function() {
     }
 
     this.loadLoadouts = function() {
-        var _loadouts = window.localStorage.getItem("loadouts");
-        if (!_.isEmpty(_loadouts)) {
-            _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
-                return new Loadout(loadout);
-            })
-        } else {
-            _loadouts = [];
-        }
-        if (supportsCloudSaves == true) {
-            self.apiRequest({
-                action: "load",
-                //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),
-                locale: self.currentLocale(),
-                version: self.defLocaleVersion(),
-                /*this one applies only to your current profile
-   				accountId: self.bungie.getMemberId()*/
-            }, function(results) {
-                var _results = [];
-                if (results && results.loadouts) {
-                    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
-                    _results = _.map(_results, function(loadout) {
-                        loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-                        loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-                        loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-                        return new Loadout(loadout);
-                    });
-                }
-                /* one time migrate joins the two arrays and clears the local one */
-                if (_loadouts.length > 0) {
-                    _results = _loadouts.concat(_results);
-                    window.localStorage.setItem("loadouts", "");
-                }
-                self.loadouts(_results);
-                /* one time migrate saves the new joined array to the cloud */
-                if (_loadouts.length > 0) {
-                    self.saveLoadouts(false);
-                }
-                /*if (results && results.itemDefs) {
-                    tgd.localLog("downloading locale update");
-                    self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-                }*/
-            });
-        } else if (_loadouts.length > 0) {
-            self.loadouts(_loadouts);
+        if (self.loadouts().length == 0) {
+            var _loadouts = window.localStorage.getItem("loadouts");
+            if (!_.isEmpty(_loadouts)) {
+                _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
+                    return new Loadout(loadout);
+                })
+            } else {
+                _loadouts = [];
+            }
+            if (supportsCloudSaves == true) {
+                self.apiRequest({
+                    action: "load",
+                    //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                    membershipId: parseFloat(self.activeUser().user.membershipId),
+                    locale: self.currentLocale(),
+                    version: self.defLocaleVersion(),
+                    /*this one applies only to your current profile
+	   				accountId: self.bungie.getMemberId()*/
+                }, function(results) {
+                    var _results = [];
+                    if (results && results.loadouts) {
+                        _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
+                        _results = _.map(_results, function(loadout) {
+                            loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+                            loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+                            loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+                            return new Loadout(loadout);
+                        });
+                    }
+                    /* one time migrate joins the two arrays and clears the local one */
+                    if (_loadouts.length > 0) {
+                        _results = _loadouts.concat(_results);
+                        window.localStorage.setItem("loadouts", "");
+                    }
+                    self.loadouts(_results);
+                    /* one time migrate saves the new joined array to the cloud */
+                    if (_loadouts.length > 0) {
+                        self.saveLoadouts(false);
+                    }
+                    /*if (results && results.itemDefs) {
+                        tgd.localLog("downloading locale update");
+                        self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+                    }*/
+                });
+            } else if (_loadouts.length > 0) {
+                self.loadouts(_loadouts);
+            }
         }
     }
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(self.activeText().whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        var container = $("<div></div>")
+        container.attr("style", "overflow-y: scroll; height: 480px");
+        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        (new tgd.dialog).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         })
     }
@@ -1435,9 +1461,6 @@ var app = new(function() {
                         title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
-                    setTimeout(function() {
-                        self.bucketSizeHandler();
-                    }, 1000);
                 }
                 if (callback !== undefined) {
                     callback();
@@ -1554,9 +1577,6 @@ var app = new(function() {
                         title: 'Result:',
                         message: "All items normalized as best as possible"
                     });
-                    setTimeout(function() {
-                        self.bucketSizeHandler();
-                    }, 1000);
                     return;
                 }
 
@@ -1766,7 +1786,9 @@ var app = new(function() {
     }
 
     this.dndBeforeMove = function(arg) {
-        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
+        if (arg && arg.targetParent && arg.targetParent.length > 0) {
+            arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
+        }
     }
 
     this.dndAfterMove = function(arg) {
@@ -1818,6 +1840,7 @@ var app = new(function() {
         self.doRefresh.subscribe(self.refreshHandler);
         self.refreshSeconds.subscribe(self.refreshHandler);
         self.loadoutMode.subscribe(self.refreshHandler);
+        self.refreshHandler();
         self.bungie_cookies = "";
         if (window.localStorage && window.localStorage.getItem) {
             self.bungie_cookies = window.localStorage.getItem("bungie_cookies");

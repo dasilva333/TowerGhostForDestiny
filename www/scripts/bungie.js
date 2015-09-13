@@ -150,7 +150,7 @@ var bungie = (function(cookieString, complete) {
     }
     this.login = function(callback) {
         self.request({
-            route: url + "en/User/Profile",
+            route: url,
             method: "GET",
             complete: callback
         });
@@ -213,7 +213,7 @@ var bungie = (function(cookieString, complete) {
     this.account = function(callback) {
         self.request({
             route: '/Destiny/' + active.type +
-                '/Account/' + membershipId +
+                '/Account/' + active.membership +
                 '/',
             method: 'GET',
             complete: callback
@@ -263,7 +263,7 @@ var bungie = (function(cookieString, complete) {
     this.getAccountSummary = function(callback) {
         self.request({
             route: '/Destiny/' + active.type +
-                '/Account/' + membershipId +
+                '/Account/' + active.membership +
                 '/Summary/',
             method: 'GET',
             complete: callback
@@ -272,7 +272,7 @@ var bungie = (function(cookieString, complete) {
     this.getItemDetail = function(characterId, instanceId, callback) {
         self.request({
             route: '/Destiny/' + active.type +
-                '/Account/' + membershipId +
+                '/Account/' + active.membership +
                 '/Character/' + characterId +
                 '/Inventory/' + instanceId,
             method: 'GET',
@@ -282,7 +282,7 @@ var bungie = (function(cookieString, complete) {
     this.inventory = function(characterId, callback) {
         self.request({
             route: '/Destiny/' + active.type +
-                '/Account/' + membershipId +
+                '/Account/' + active.membership +
                 '/Character/' + characterId +
                 '/Inventory/',
             method: 'GET',
@@ -292,28 +292,37 @@ var bungie = (function(cookieString, complete) {
 
     this.search = function(activeSystem, callback) {
         this.setsystem(activeSystem);
-        if (active && active.type) {
+        if (active && active.type && typeof active.membership == "undefined") {
             self.request({
                 route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
                 method: 'GET',
                 complete: function(membership) {
-                    if (membership == 0) {
+                    if (membership > 0) {
                         //console.log('error finding bungie account!', membership)
+                        active.membership = membership;
+                        self.account(callback);
+                    } else {
                         callback({
                             error: true
                         })
                         return;
                     }
-                    membershipId = membership;
-                    self.request({
-                        route: '/Destiny/' + active.type +
-                            '/Account/' + membership + '/',
-                        method: 'GET',
-                        complete: callback
-                    });
+
                 }
             });
+        } else {
+            self.account(callback);
         }
+    }
+
+    this.account = function(callback) {
+        tgd.localLog(active.type + " log request to " + JSON.stringify(active.membership));
+        self.request({
+            route: '/Destiny/' + active.type +
+                '/Account/' + active.membership + '/',
+            method: 'GET',
+            complete: callback
+        });
     }
 
     this.flattenItemArray = function(buckets) {

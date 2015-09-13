@@ -146,8 +146,12 @@ Item.prototype = {
             if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
-            }
-            if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
+            } else if (itemObject.bucketType == "Bounties") {
+                var status = _.map(item.objectives, function(item) {
+                    return item.isComplete;
+                }).indexOf(false) > -1 ? "" : "100%";
+                itemObject.primaryStat(status);
+            } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
             $.extend(self, itemObject);
@@ -259,6 +263,7 @@ Item.prototype = {
                         if (_.isUndefined(item)) {
                             if (callback) callback(false);
                             else {
+                                tgd.localLog("transfer error 5");
                                 $.toaster({
                                     priority: 'danger',
                                     title: 'Error:',
@@ -306,6 +311,7 @@ Item.prototype = {
                                 }
                                 //unequip failed
                                 else {
+                                    tgd.localLog("transfer error 6");
                                     $.toaster({
                                         priority: 'danger',
                                         title: 'Error:',
@@ -356,6 +362,7 @@ Item.prototype = {
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
                     else if (result && result.Message) {
+                        tgd.localLog("transfer error 7");
                         $.toaster({
                             priority: 'info',
                             title: 'Error:',
@@ -626,12 +633,18 @@ Item.prototype = {
                             idx = idx + 1;
                         }
                     }
+                    setTimeout(function() {
+                        app.bucketSizeHandler();
+                    }, 600);
                     tgd.localLog("---------------------");
                 } else {
                     x.items.remove(self);
                     self.characterId = targetCharacterId
                     self.character = y;
                     y.items.push(self);
+                    setTimeout(function() {
+                        app.bucketSizeHandler();
+                    }, 600);
                 }
                 //not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
                 setTimeout(function() {
@@ -642,6 +655,7 @@ Item.prototype = {
                 tgd.localLog(result);
                 cb(y, x, result);
             } else if (result && result.Message) {
+                tgd.localLog("transfer error 1");
                 $.toaster({
                     priority: 'info',
                     title: 'Error:',
@@ -699,7 +713,9 @@ Item.prototype = {
                         tgd.localLog("retransferring");
                         //TODO move this function to a more general area for common use
                         var newItem = Loadout.prototype.findReference(self);
-                        newItem.store(targetCharacterId, cb);
+                        if (newItem) {
+                            newItem.store(targetCharacterId, cb);
+                        }
                     });
                 });
                 /*    }
@@ -711,7 +727,7 @@ Item.prototype = {
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         var adhoc = new Loadout();
-                        adhoc.addItem({
+                        adhoc.addUniqueItem({
                             id: self._id,
                             bucketType: self.bucketType,
                             doEquip: false
@@ -722,14 +738,15 @@ Item.prototype = {
                         });
                     });
                 });
+            } else if (cb) {
+                cb(y, x);
             } else if (result && result.Message) {
+                tgd.localLog("transfer error 2");
                 $.toaster({
                     priority: 'info',
                     title: 'Error:',
                     message: result.Message
                 });
-            } else if (cb) {
-                cb(y, x);
             }
         }
     },
@@ -750,6 +767,7 @@ Item.prototype = {
                         if (callback) {
                             callback(self.character);
                         } else {
+                            tgd.localLog("transfer error 3");
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error:',
@@ -782,6 +800,7 @@ Item.prototype = {
                         if (callback) {
                             callback(self.character);
                         } else {
+                            tgd.localLog("transfer error 4");
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error:',
@@ -912,7 +931,7 @@ Item.prototype = {
             }
         } else {
             var adhoc = new Loadout();
-            adhoc.addItem({
+            adhoc.addUniqueItem({
                 id: self._id,
                 bucketType: self.bucketType,
                 doEquip: false

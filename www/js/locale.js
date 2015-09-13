@@ -600,7 +600,7 @@ tgd.locale = {
         login_instructions: "Programı kullanabilmek için Bungie.Net hesabına giriş yapman gerekiyor:",
         login_help: "Yükleme ekranının otomatik kapanmasını bekleyiniz.Yüklendikten sonra program sizi cephanenize yönlendirecektir.",
         movepopup_move: "taşı",
-        movepopup_store: "mağaza",
+        movepopup_store: "al",
         movepopup_equip: "donan",
         movepopup_vault: "vault",
         movepopup_extras: "ekstralar",
