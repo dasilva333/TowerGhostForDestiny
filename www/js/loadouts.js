@@ -183,30 +183,29 @@
 	            //now that they are both in the vault transfer them to their respective location
 	            var transferTargetItemToVault = function(complete) {
 	                targetItem = self.findReference(pair.targetItem);
-					if (typeof targetItem != "undefined"){
-		                targetOwner = targetItem.character.id;
-		                tgd.localLog(" transferTargetItemToVault " + targetItem.description);
-		                if (targetOwner == "Vault") {
-		                    complete();
-		                } else {
-		                    var originalCharacterId = targetItem.character.id;
-		                    targetItem.store("Vault", function(profile) {
-		                        if (profile.id == originalCharacterId) {
-		                            $.toaster({
-		                                priority: 'danger',
-		                                title: 'Error:',
-		                                message: "Unable to unequip " + targetItem.description + " while playing in game"
-		                            });
-		                            complete();
-		                        } else {
-		                            complete();
-		                        }
-		                    });
-		                }					
-					}
-					else {
-						complete();
-					}
+	                if (typeof targetItem != "undefined") {
+	                    targetOwner = targetItem.character.id;
+	                    tgd.localLog(" transferTargetItemToVault " + targetItem.description);
+	                    if (targetOwner == "Vault") {
+	                        complete();
+	                    } else {
+	                        var originalCharacterId = targetItem.character.id;
+	                        targetItem.store("Vault", function(profile) {
+	                            if (profile.id == originalCharacterId) {
+	                                $.toaster({
+	                                    priority: 'danger',
+	                                    title: 'Error:',
+	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
+	                                });
+	                                complete();
+	                            } else {
+	                                complete();
+	                            }
+	                        });
+	                    }
+	                } else {
+	                    complete();
+	                }
 	            }
 	            var transferSwapItemToVault = function(complete) {
 	                swapItem = self.findReference(pair.swapItem);
@@ -453,9 +452,9 @@
 	        var targetCharacter = _.findWhere(app.characters(), {
 	            id: targetCharacterId
 	        });
-			if (typeof targetCharacter == "undefined"){				
-				return BootstrapDialog.alert("Target character not found");
-			}
+	        if (typeof targetCharacter == "undefined") {
+	            return BootstrapDialog.alert("Target character not found");
+	        }
 	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
 	            //tgd.localLog(itemFound + " getFirstItem: " + sourceBucketIds);
@@ -670,23 +669,23 @@
 	            	-maintain the index so we can cycle through the whole list
 	            	-provide error message regarding no candidates if array is empty
 	            */
-				if (item){
-		            var items = targetCharacter.get(item.bucketType);
-		            var candidates = _.filter(items, function(candidate) {
-		                return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2
-		            });
-		            if (candidates.length > 0) {
-		                _.each(masterSwapArray, function(pair) {
-		                    if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
-		                        //console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
-		                        pair.swapItem = candidates[_.random(0, candidates.length - 1)];
-		                    }
-		                });
-		                self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId));
-		            } else {
-		                BootstrapDialog.alert("No swap candidates available");
-		            }				
-				}
+	            if (item) {
+	                var items = targetCharacter.get(item.bucketType);
+	                var candidates = _.filter(items, function(candidate) {
+	                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2
+	                });
+	                if (candidates.length > 0) {
+	                    _.each(masterSwapArray, function(pair) {
+	                        if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
+	                            //console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
+	                            pair.swapItem = candidates[_.random(0, candidates.length - 1)];
+	                        }
+	                    });
+	                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId));
+	                } else {
+	                    BootstrapDialog.alert("No swap candidates available");
+	                }
+	            }
 	        });
 	        return html;
 	    },

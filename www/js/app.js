@@ -252,26 +252,26 @@ ko.bindingHandlers.moveItem = {
                     var context = ko.contextFor(target);
                     if (context && "$data" in context) {
                         var item = context.$data;
-	                    if (item._id > 0 && item.transferStatus < 2) {
-	                        if (app.dynamicMode() == false) {
-	                            app.dynamicMode(true);
-	                            app.createLoadout();
-	                        }
-	                        tgd.localLog("double tap");
-	                        tgd.localLog(item);
-	                        app.activeLoadout().addItem({
-	                            id: item._id,
-	                            bucketType: item.bucketType,
-	                            doEquip: false
-	                        });
-	                    } else {
-	                        $.toaster({
-	                            priority: 'danger',
-	                            title: 'Warning:',
-	                            message: app.activeText().unable_create_loadout_for_type
-	                        });
-	                    }
-					}	
+                        if (item._id > 0 && item.transferStatus < 2) {
+                            if (app.dynamicMode() == false) {
+                                app.dynamicMode(true);
+                                app.createLoadout();
+                            }
+                            tgd.localLog("double tap");
+                            tgd.localLog(item);
+                            app.activeLoadout().addItem({
+                                id: item._id,
+                                bucketType: item.bucketType,
+                                doEquip: false
+                            });
+                        } else {
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Warning:',
+                                message: app.activeText().unable_create_loadout_for_type
+                            });
+                        }
+                    }
                 }
             })
             // press is actually hold 
@@ -1008,8 +1008,6 @@ var app = new(function() {
         var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
         if (self.padBucketHeight() == true) {
             var bucketSizes = {};
-			
-			console.log(buckets);
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
             vaultPos = (vaultPos < 0) ? 0 : vaultPos;
@@ -1029,7 +1027,6 @@ var app = new(function() {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
-			console.log(bucketSizes);
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
                 var maxHeight = Math.max.apply(null, sizes);
@@ -1765,9 +1762,9 @@ var app = new(function() {
     }
 
     this.dndBeforeMove = function(arg) {
-		if (arg && arg.targetParent && arg.targetParent.length > 0){
-	        arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
-		}
+        if (arg && arg.targetParent && arg.targetParent.length > 0) {
+            arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
+        }
     }
 
     this.dndAfterMove = function(arg) {
