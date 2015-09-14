@@ -98,6 +98,19 @@ tgd.DestinyBucketColumns = {
 	"Invisible": 4,
 	"Ghost": 3
 }
+// TODO this needs to be updated based on the new values at level 40 
+// https://www.reddit.com/r/DestinyTheGame/comments/3kwmvh/how_overall_light_level_is_calculated/
+tgd.DestinyBucketWeights = {
+	"Primary": 13.04,
+	"Special": 13.04,
+	"Heavy": 13.04,
+	"Helmet": 10.87,
+	"Gauntlet": 10.87,
+	"Chest": 10.87,
+	"Boots": 10.87,
+	"Class Items": 8.7,
+	"Ghost": 8.7
+}
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 //TODO Improve this so it depends on tgd.DestinyLayout
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Ghost" ];

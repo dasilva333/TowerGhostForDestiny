@@ -542,7 +542,7 @@
                             <div class="class" data-bind="text: classType"></div>
                             <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false">
                                 <div class="light" data-bind="text: level"></div>
-                                <div class="power" data-bind="text: stats && stats.STAT_LIGHT && stats.STAT_LIGHT.value"></div>
+                                <div class="power" data-bind="text: character.powerLevel"></div>
                             </div>
                             <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>
                         </div>
