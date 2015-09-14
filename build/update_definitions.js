@@ -57,6 +57,9 @@ var neededFiles = [
 		delete item.statDescription;
 		delete item.icon;
 		return item;
+	}},
+	{ table: "DestinyProgressionDefinition", name: "progressDefs", key: "progressionHash", reduce: function(item){
+		return item;
 	}}
 ];
 var queue = [];
