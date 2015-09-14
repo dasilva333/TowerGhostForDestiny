@@ -66,10 +66,10 @@ _ga = new(function() {
                 });
             }
         });
-
+        var unwantedCodes = [0, 522, 524];
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
-            if (request.status > 0) {
+            if (unwantedCodes.indexOf(request.status) == -1) {
                 ga('send', 'exception', {
                     'exDescription': request.status + " ajax error at " + settings.url + " " + settings.data + " " + err,
                     'exFatal': true,

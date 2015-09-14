@@ -105,10 +105,12 @@ Profile.prototype = {
         var self = this;
         return function(item) {
             var info = window._itemDefs[item.itemHash];
-            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var itemBucketType = self.getBucketTypeHelper(item, info);
-                if (buckets.indexOf(itemBucketType) > -1) {
-                    return true;
+            if (info && info.bucketTypeHash) {
+                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                    var itemBucketType = self.getBucketTypeHelper(item, info);
+                    if (buckets.indexOf(itemBucketType) > -1) {
+                        return true;
+                    }
                 }
             }
         }
@@ -125,7 +127,7 @@ Profile.prototype = {
             } else {
                 done();
                 app.refresh();
-                return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
             }
         }
     },

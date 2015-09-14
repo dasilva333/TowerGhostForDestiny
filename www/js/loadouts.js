@@ -32,13 +32,15 @@
 	            }
 	        });
 	        _.each(self.generics(), function(item) {
-	            var itemFound = self.findItemByHash(item.hash);
-	            if (itemFound) {
-	                itemFound.doEquip = item.doEquip;
-	                itemFound.markAsEquip = self.markAsEquip;
-	                _items.push(itemFound);
-	            } else {
-	                self.generics.remove(item);
+	            if (item && item.hash) {
+	                var itemFound = self.findItemByHash(item.hash);
+	                if (itemFound) {
+	                    itemFound.doEquip = item.doEquip;
+	                    itemFound.markAsEquip = self.markAsEquip;
+	                    _items.push(itemFound);
+	                } else {
+	                    self.generics.remove(item);
+	                }
 	            }
 	        });
 	        return _items.sort(function(a, b) {
@@ -357,6 +359,9 @@
 	                /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = self.findReference(ref);
+	                if (typeof item == "undefined") {
+	                    return BootstrapDialog.alert("Item not found while attempting to transfer the item");
+	                }
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"
 	                });
@@ -719,15 +724,14 @@
 	                if (candidates.length > 0) {
 	                    _.each(masterSwapArray, function(pair) {
 	                        if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
-								var targetId = pair.targetItem._id;
-								if ( targetId in indexes && (indexes[targetId]+1 < candidates.length)){
-									indexes[targetId]++;
-								}
-								else {
-									indexes[targetId] = 0;
-								}
-								//console.log(_.pluck(candidates,'description'));
-								//console.log(indexes[targetId] + " replacing " + pair.swapItem.description + " with " + candidates[indexes[targetId]].description);
+	                            var targetId = pair.targetItem._id;
+	                            if (targetId in indexes && (indexes[targetId] + 1 < candidates.length)) {
+	                                indexes[targetId]++;
+	                            } else {
+	                                indexes[targetId] = 0;
+	                            }
+	                            //console.log(_.pluck(candidates,'description'));
+	                            //console.log(indexes[targetId] + " replacing " + pair.swapItem.description + " with " + candidates[indexes[targetId]].description);
 	                            pair.swapItem = candidates[indexes[targetId]];
 	                        }
 	                    });
@@ -742,7 +746,7 @@
 	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
 	        if (masterSwapArray.length > 0) {
 	            var self = this;
-				self.indexes = {};
+	            self.indexes = {};
 	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
 	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
