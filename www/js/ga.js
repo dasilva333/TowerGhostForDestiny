@@ -66,7 +66,7 @@ _ga = new(function() {
                 });
             }
         });
-        var unwantedCodes = [0, 522, 524];
+        var unwantedCodes = [0, 503, 504, 522, 524];
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
             if (unwantedCodes.indexOf(request.status) == -1) {
