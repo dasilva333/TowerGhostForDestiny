@@ -690,7 +690,7 @@
 	            self.promptUserConfirm(masterSwapArray, targetCharacterId);
 	        }
 	    },
-	    generateTemplate: function(masterSwapArray, targetCharacterId) {
+	    generateTemplate: function(masterSwapArray, targetCharacterId, indexes) {
 	        var self = this;
 	        var html = $(tgd.swapTemplate({
 	            swapArray: masterSwapArray
@@ -719,11 +719,19 @@
 	                if (candidates.length > 0) {
 	                    _.each(masterSwapArray, function(pair) {
 	                        if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
-	                            //console.log("replacing " + pair.swapItem.description + " with " + candidates[0].description);
-	                            pair.swapItem = candidates[_.random(0, candidates.length - 1)];
+								var targetId = pair.targetItem._id;
+								if ( targetId in indexes && (indexes[targetId]+1 < candidates.length)){
+									indexes[targetId]++;
+								}
+								else {
+									indexes[targetId] = 0;
+								}
+								//console.log(_.pluck(candidates,'description'));
+								//console.log(indexes[targetId] + " replacing " + pair.swapItem.description + " with " + candidates[indexes[targetId]].description);
+	                            pair.swapItem = candidates[indexes[targetId]];
 	                        }
 	                    });
-	                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId));
+	                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId, indexes));
 	                } else {
 	                    BootstrapDialog.alert("No swap candidates available");
 	                }
@@ -734,7 +742,8 @@
 	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
 	        if (masterSwapArray.length > 0) {
 	            var self = this;
-	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId);
+				self.indexes = {};
+	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
 	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
