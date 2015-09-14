@@ -29,8 +29,12 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    this.powerLevel = ko.computed(function(){
-    	return Math.floor(sum(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() * (tgd.DestinyBucketWeights[item.bucketType] / 100); })));
+    this.powerLevel = ko.computed(function() {
+        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
+            return item.isEquipped()
+        }), function(item) {
+            return item.primaryStat() * (tgd.DestinyBucketWeights[item.bucketType] / 100);
+        })));
     });
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
@@ -145,9 +149,7 @@ Profile.prototype = {
             buckets.push.apply(buckets, model.bucketTypes);
         } else if (model instanceof Profile) {
             _.each(tgd.DestinyLayout, function(layout) {
-                _.each(layout, function(l) {
-                    buckets.push.apply(buckets, l.bucketTypes);
-                });
+                buckets.push.apply(buckets, layout.bucketTypes);
             });
         }
 

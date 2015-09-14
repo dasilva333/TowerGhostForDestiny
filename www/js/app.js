@@ -1,13 +1,12 @@
 var Layout = function(layout) {
     var self = this;
 
-    self.name = Object.keys(layout)[0];
-    var data = layout[self.name];
-    self.id = data.view;
-    self.bucketTypes = data.bucketTypes;
-    self.headerText = data.headerText;
-    self.array = data.array;
-    self.counts = data.counts;
+    self.name = layout.name;
+    self.id = layout.view;
+    self.bucketTypes = layout.bucketTypes;
+    self.headerText = layout.headerText;
+    self.array = layout.array;
+    self.counts = layout.counts;
     self.countText = function(character) {
         return ko.computed(function() {
             var text = "";
@@ -404,13 +403,9 @@ var app = new(function() {
         }
     });
     this.activeLayouts = ko.computed(function() {
-        var layouts = [];
-        _.each(self.allLayouts(), function(layout) {
-            if (self.activeView() == layout.id || self.activeView() == 0) {
-                layouts.push(layout);
-            }
-        });
-        return layouts;
+        return _.filter(self.allLayouts(), function(layout) {
+            return (self.activeView() == layout.id || self.activeView() == 0);
+        });;
     });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -1816,8 +1811,8 @@ var app = new(function() {
 
     this.init = function() {
 
-        _.each(tgd.DestinyLayout, function(object) {
-            self.allLayouts.push(new Layout(object));
+        _.each(tgd.DestinyLayout, function(layout) {
+            self.allLayouts.push(new Layout(layout));
         });
 
 

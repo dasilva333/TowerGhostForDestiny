@@ -98,11 +98,11 @@ var bungie = (function(cookieString, complete) {
                 complete: function(xhr, status) {
                     var response;
                     if (xhr.status >= 200 && xhr.status < 400) {
-						try {
-							response = JSON.parse(xhr.responseText);
-						} catch (e) {
-							//console.log("error parsing responseText: " + xhr.responseText);
-						}					
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            //console.log("error parsing responseText: " + xhr.responseText);
+                        }
                         if (response && response.ErrorCode && response.ErrorCode === 36) {
                             setTimeout(function() {
                                 self.request(opts);
@@ -114,25 +114,23 @@ var bungie = (function(cookieString, complete) {
                             opts.complete(obj, response);
                         }
                     } else {
-						if (opts.retries){
-							if (opts.retries > 3){
-								opts.complete({
-									error: 'network error:' + this.status
-								}, response);
-							}
-							else {
-								opts.retries++;
-								setTimeout(function() {
-									self.request(opts);
-								}, 1000 * opts.retries);
-							}
-						}
-                        else {
-							opts.retries = 0;
-							setTimeout(function() {
+                        if (opts.retries) {
+                            if (opts.retries > 3) {
+                                opts.complete({
+                                    error: 'network error:' + this.status
+                                }, response);
+                            } else {
+                                opts.retries++;
+                                setTimeout(function() {
+                                    self.request(opts);
+                                }, 1000 * opts.retries);
+                            }
+                        } else {
+                            opts.retries = 0;
+                            setTimeout(function() {
                                 self.request(opts);
                             }, 2000);
-						}
+                        }
                     }
                 }
             });
