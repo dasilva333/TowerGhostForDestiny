@@ -12,7 +12,8 @@
     "js-beautify": "^1.5.5",
     "lodash": "3.7.0",
     "node-zip": "~1.1.0",
-    "sqlite3": "~3.0.5"
+    "q": "^1.4.1",
+    "sqlite3": "^3.0.10"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
