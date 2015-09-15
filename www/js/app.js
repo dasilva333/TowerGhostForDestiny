@@ -1937,10 +1937,22 @@ var app = new(function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
-		var weaponKeys = _.filter(_.map( tgd.DestinyBucketTypes , function(name, key){ if (tgd.DestinyWeaponPieces.indexOf(name) > -1) return parseInt(key); }), function(key){ return key > 0 }); 
-		_collections['exoticWeapons'] = _.pluck(_.filter( _itemDefs, function(item) { return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)  }),'itemHash');
-		var armorKeys = _.filter(_.map( tgd.DestinyBucketTypes , function(name, key){ if (tgd.DestinyArmorPieces.indexOf(name) > -1) return parseInt(key); }), function(key){ return key > 0 }); 
-		_collections['exoticArmor'] = _.pluck(_.filter( _itemDefs, function(item) { return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)  }),'itemHash'); 
+        var weaponKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyWeaponPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
+        var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyArmorPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
         ko.applyBindings(self);
     }
 });
