@@ -29,13 +29,7 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    this.powerLevel = ko.computed(function() {
-        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
-            return item.isEquipped()
-        }), function(item) {
-            return item.primaryStat() * (tgd.DestinyBucketWeights[item.bucketType] / 100);
-        })));
-    });
+    this.powerLevel = ko.computed(this._powerLevel, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -134,6 +128,17 @@ Profile.prototype = {
                 return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
             }
         }
+    },
+	_powerLevel: function() {
+		var self = this;
+		var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
+		var weights = tgd.DestinyBucketWeights[index];	
+        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
+            return item.isEquipped()
+        }), function(item) {
+			var value = item.primaryStat() * (weights[item.bucketType] / 100);
+            return value;
+        })));
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,

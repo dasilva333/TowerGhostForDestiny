@@ -104,7 +104,7 @@ tgd.DestinyBucketColumns = {
 }
 // TODO this needs to be updated based on the new values at level 40 
 // https://www.reddit.com/r/DestinyTheGame/comments/3kwmvh/how_overall_light_level_is_calculated/
-tgd.DestinyBucketWeights = {
+tgd.DestinyBucketWeights = [{
 	"Primary": 13.04,
 	"Special": 13.04,
 	"Heavy": 13.04,
@@ -114,7 +114,18 @@ tgd.DestinyBucketWeights = {
 	"Boots": 10.87,
 	"Class Items": 8.7,
 	"Ghost": 8.7
-}
+},{
+	"Primary": 12,
+	"Special": 12,
+	"Heavy": 12,
+	"Helmet": 10,
+	"Gauntlet": 10,
+	"Chest": 10,
+	"Boots": 10,
+	"Class Items": 8,
+	"Ghost": 8,
+	"Artifact": 8 
+}];
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.languages = [
 	{ code: "en", description: "English", bungie_code: "en" },
