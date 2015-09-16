@@ -83,7 +83,9 @@ Item.prototype = {
                 itemObject.primaryStat(item.primaryStat.value);
             }
             if (item.progression) {
-                itemObject.progression = (item.progression.currentProgress > 0);
+                var progress = _progressDefs[item.progression.progressionHash];
+                var progressTotal = Math.max.apply(null, _.pluck(progress.steps, 'progressTotal'));
+                itemObject.progression = (item.progression.currentProgress > 0 && item.progression.currentProgress >= progressTotal);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);

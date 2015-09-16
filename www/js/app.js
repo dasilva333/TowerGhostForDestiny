@@ -1,13 +1,12 @@
 var Layout = function(layout) {
     var self = this;
 
-    self.name = Object.keys(layout)[0];
-    var data = layout[self.name];
-    self.id = data.view;
-    self.bucketTypes = data.bucketTypes;
-    self.headerText = data.headerText;
-    self.array = data.array;
-    self.counts = data.counts;
+    self.name = layout.name;
+    self.id = layout.view;
+    self.bucketTypes = layout.bucketTypes;
+    self.headerText = layout.headerText;
+    self.array = layout.array;
+    self.counts = layout.counts;
     self.countText = function(character) {
         return ko.computed(function() {
             var text = "";
@@ -404,13 +403,9 @@ var app = new(function() {
         }
     });
     this.activeLayouts = ko.computed(function() {
-        var layouts = [];
-        _.each(self.allLayouts(), function(layout) {
-            if (self.activeView() == layout.id || self.activeView() == 0) {
-                layouts.push(layout);
-            }
-        });
-        return layouts;
+        return _.filter(self.allLayouts(), function(layout) {
+            return (self.activeView() == layout.id || self.activeView() == 0);
+        });;
     });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -1816,8 +1811,8 @@ var app = new(function() {
 
     this.init = function() {
 
-        _.each(tgd.DestinyLayout, function(object) {
-            self.allLayouts.push(new Layout(object));
+        _.each(tgd.DestinyLayout, function(layout) {
+            self.allLayouts.push(new Layout(layout));
         });
 
 
@@ -1942,6 +1937,22 @@ var app = new(function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
+        var weaponKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyWeaponPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
+        var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyArmorPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
         ko.applyBindings(self);
     }
 });

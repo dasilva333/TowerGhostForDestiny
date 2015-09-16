@@ -97,12 +97,12 @@ var bungie = (function(cookieString, complete) {
                 data: data,
                 complete: function(xhr, status) {
                     var response;
-                    try {
-                        response = JSON.parse(xhr.responseText);
-                    } catch (e) {
-                        //console.log("error parsing responseText: " + xhr.responseText);
-                    }
                     if (xhr.status >= 200 && xhr.status < 400) {
+                        try {
+                            response = JSON.parse(xhr.responseText);
+                        } catch (e) {
+                            //console.log("error parsing responseText: " + xhr.responseText);
+                        }
                         if (response && response.ErrorCode && response.ErrorCode === 36) {
                             setTimeout(function() {
                                 self.request(opts);
@@ -114,9 +114,23 @@ var bungie = (function(cookieString, complete) {
                             opts.complete(obj, response);
                         }
                     } else {
-                        opts.complete({
-                            error: 'network error:' + this.status
-                        }, response);
+                        if (opts.retries) {
+                            if (opts.retries > 3) {
+                                opts.complete({
+                                    error: 'network error:' + this.status
+                                }, response);
+                            } else {
+                                opts.retries++;
+                                setTimeout(function() {
+                                    self.request(opts);
+                                }, 1000 * opts.retries);
+                            }
+                        } else {
+                            opts.retries = 0;
+                            setTimeout(function() {
+                                self.request(opts);
+                            }, 2000);
+                        }
                     }
                 }
             });
@@ -160,7 +174,7 @@ var bungie = (function(cookieString, complete) {
     }
 
     this.setsystem = function(type) {
-        active = self.systemIds.xbl
+        active = self.systemIds.xbl;
         if (type === 'PSN')
             active = self.systemIds.psn;
     }
@@ -292,26 +306,28 @@ var bungie = (function(cookieString, complete) {
 
     this.search = function(activeSystem, callback) {
         this.setsystem(activeSystem);
-        if (active && active.type && typeof active.membership == "undefined") {
-            self.request({
-                route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
-                method: 'GET',
-                complete: function(membership) {
-                    if (membership > 0) {
-                        //console.log('error finding bungie account!', membership)
-                        active.membership = membership;
-                        self.account(callback);
-                    } else {
-                        callback({
-                            error: true
-                        })
-                        return;
-                    }
+        if (active && active.type) {
+            if (typeof active.membership == "undefined") {
+                self.request({
+                    route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
+                    method: 'GET',
+                    complete: function(membership) {
+                        if (membership > 0) {
+                            //console.log('error finding bungie account!', membership)
+                            active.membership = membership;
+                            self.account(callback);
+                        } else {
+                            callback({
+                                error: true
+                            })
+                            return;
+                        }
 
-                }
-            });
-        } else {
-            self.account(callback);
+                    }
+                });
+            } else {
+                self.account(callback);
+            }
         }
     }
 

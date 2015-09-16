@@ -1,7 +1,7 @@
-function average(arr) {
+function sum(arr) {
     return _.reduce(arr, function(memo, num) {
         return memo + num;
-    }, 0) / arr.length;
+    }, 0);
 }
 
 var Profile = function(character, items, index) {
@@ -29,9 +29,7 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    /*this.powerLevel = ko.computed(function(){
-    	return Math.floor(average(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() })));
-    });*/
+    this.powerLevel = ko.computed(this._powerLevel, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -105,10 +103,12 @@ Profile.prototype = {
         var self = this;
         return function(item) {
             var info = window._itemDefs[item.itemHash];
-            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var itemBucketType = self.getBucketTypeHelper(item, info);
-                if (buckets.indexOf(itemBucketType) > -1) {
-                    return true;
+            if (info && info.bucketTypeHash) {
+                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                    var itemBucketType = self.getBucketTypeHelper(item, info);
+                    if (buckets.indexOf(itemBucketType) > -1) {
+                        return true;
+                    }
                 }
             }
         }
@@ -125,9 +125,20 @@ Profile.prototype = {
             } else {
                 done();
                 app.refresh();
-                return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
             }
         }
+    },
+    _powerLevel: function() {
+        var self = this;
+        var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
+        var weights = tgd.DestinyBucketWeights[index];
+        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
+            return item.isEquipped()
+        }), function(item) {
+            var value = item.primaryStat() * (weights[item.bucketType] / 100);
+            return value;
+        })));
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -143,9 +154,7 @@ Profile.prototype = {
             buckets.push.apply(buckets, model.bucketTypes);
         } else if (model instanceof Profile) {
             _.each(tgd.DestinyLayout, function(layout) {
-                _.each(layout, function(l) {
-                    buckets.push.apply(buckets, l.bucketTypes);
-                });
+                buckets.push.apply(buckets, layout.bucketTypes);
             });
         }
 
@@ -183,8 +192,8 @@ Profile.prototype = {
                         reallyDone();
                     } else {
                         reallyDone();
-                        self.refresh();
-                        return BootstrapDialog.alert("Code 40: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                        app.refresh();
+                        return BootstrapDialog.alert("Code 40: " + app.activeText().error_loading_inventory + JSON.stringify(response));
                     }
                 });
             } else {

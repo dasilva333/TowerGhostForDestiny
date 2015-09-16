@@ -15,12 +15,14 @@ tgd.localLog = function(msg) {
 	}
 };
 tgd.dataDir = "data";
+tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Ghost", "Artifact" ];
+tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyLayout = [
-  { "Weapons": { array: 'weapons', counts: [72,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
-  { "Armor": { array: 'armor', counts: [72,60], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items','Ghost'], view: 2, headerText: 'inventory_armor' } },
-  { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
-  { "General": { array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
-  { "Post Master": { array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
+  { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
+  { name: "Armor", array: 'armor', counts: [72,70], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
+  { name: "Sub Classes", array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' },
+  { name: "General", array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' },
+  { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' }
 ]
 tgd.DestinyViews = {
 	"0": "All",
@@ -67,7 +69,8 @@ tgd.DestinyBucketTypes = {
 	"12345": "Post Master",
 	"2422292810": "Post Master",
 	"1367666825": "Invisible",
-	"4023194814": "Ghost"
+	"4023194814": "Ghost",
+	"434908299": "Artifact"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -96,12 +99,34 @@ tgd.DestinyBucketColumns = {
 	"Lost Items": 4,
 	"Mission": 4,
 	"Invisible": 4,
-	"Ghost": 3
+	"Ghost": 3,
+	"Artifact": 3
 }
+// TODO this needs to be updated based on the new values at level 40 
+// https://www.reddit.com/r/DestinyTheGame/comments/3kwmvh/how_overall_light_level_is_calculated/
+tgd.DestinyBucketWeights = [{
+	"Primary": 13.04,
+	"Special": 13.04,
+	"Heavy": 13.04,
+	"Helmet": 10.87,
+	"Gauntlet": 10.87,
+	"Chest": 10.87,
+	"Boots": 10.87,
+	"Class Items": 8.7,
+	"Ghost": 8.7
+},{
+	"Primary": 12,
+	"Special": 12,
+	"Heavy": 12,
+	"Helmet": 10,
+	"Gauntlet": 10,
+	"Chest": 10,
+	"Boots": 10,
+	"Class Items": 8,
+	"Ghost": 8,
+	"Artifact": 8 
+}];
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
-//TODO Improve this so it depends on tgd.DestinyLayout
-tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Ghost" ];
-tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
 	{ code: "en", description: "English", bungie_code: "en" },
 	{ code: "es", description: "Spanish", bungie_code: "es" },
