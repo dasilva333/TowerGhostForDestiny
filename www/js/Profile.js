@@ -33,6 +33,7 @@ var Profile = function(character, items, index) {
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
+	this.equipHighest = function(){}
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
     this.invisibleItemsHelper = [2910404660, 2537120989];
@@ -129,14 +130,14 @@ Profile.prototype = {
             }
         }
     },
-	_powerLevel: function() {
-		var self = this;
-		var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
-		var weights = tgd.DestinyBucketWeights[index];	
+    _powerLevel: function() {
+        var self = this;
+        var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
+        var weights = tgd.DestinyBucketWeights[index];
         return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
             return item.isEquipped()
         }), function(item) {
-			var value = item.primaryStat() * (weights[item.bucketType] / 100);
+            var value = item.primaryStat() * (weights[item.bucketType] / 100);
             return value;
         })));
     },
