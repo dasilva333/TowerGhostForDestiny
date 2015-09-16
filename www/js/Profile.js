@@ -33,7 +33,43 @@ var Profile = function(character, items, index) {
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
-	this.equipHighest = function(){}
+	this.equipHighest = function(type){
+		var character = this;
+		return function(){
+			if (self.id == "Vault") return;
+
+			var items = character.items();
+			var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
+			_.each( buckets, function(bucket){
+				var primaryStats, candidates = _.where( items, { bucketType: bucket });
+				if (type == "Light"){
+					primaryStats = _.map( candidates, function(item){ return item.primaryStat() });
+				}
+				else {
+					primaryStats = _.map( candidates, function(item){ return item.stats[type] });
+				}
+				var equipped =  items.filter(character.filterItemByType(bucket, true));
+				if (equipped.length > 0){
+					if (type == "Light"){
+						equipped = equipped[0].primaryStat();
+					}
+					else {
+						equipped = equipped[0].stats[type];
+					}
+					var maxCandidate = Math.max.apply(null, primaryStats);
+					if (maxCandidate > equipped){
+						var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+						$.toaster({
+							priority: 'info',
+							title: 'Equip:',
+							message: bucket + " can have a better item with " + candidate.description
+						});
+						candidate.equip( character.id );
+					}
+				}
+			});
+		}
+	}
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
     this.invisibleItemsHelper = [2910404660, 2537120989];
