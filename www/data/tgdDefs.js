@@ -1,17 +1,28 @@
 window.ua = navigator.userAgent;
 window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
-window.isMobile = (/ios|iphone|ipod|ipad|android|iemobile/i.test(ua));
+window.isIOS = (/ios|iphone|ipod|ipad/i.test(ua));
+window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
+window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
+tgd.localLogging = false;
+tgd.localLog = function(msg) {
+	if (tgd.localLogging) {
+		console.log(msg);
+	}
+};
+tgd.dataDir = "data";
+tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Ghost", "Artifact" ];
+tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyLayout = [
-  { "Weapons": { array: 'weapons', counts: [36,30], bucketTypes: ['Primary','Special','Heavy'], view: 1, headerText: 'inventory_weapons' } },
-  { "Armor": { array: 'armor', counts: [24,50], bucketTypes: ['Helmet','Gauntlet','Chest', 'Boots','Class Items'], view: 2, headerText: 'inventory_armor' } },
-  { "Sub Classes": { array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' } },
-  { "General": { array: 'general', counts: [24,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' } },
-  { "Post Master": { array: 'postmaster', counts: [40,40], bucketTypes: ['Messages','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' } }
+  { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
+  { name: "Armor", array: 'armor', counts: [72,70], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
+  { name: "Sub Classes", array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' },
+  { name: "General", array: 'general', counts: [36,70], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' },
+  { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' }
 ]
 tgd.DestinyViews = {
 	"0": "All",
@@ -56,7 +67,10 @@ tgd.DestinyBucketTypes = {
 	"375726501": "Mission",
 	"2197472680": "Bounties",
 	"12345": "Post Master",
-	"2422292810": "Post Master"
+	"2422292810": "Post Master",
+	"1367666825": "Invisible",
+	"4023194814": "Ghost",
+	"434908299": "Artifact"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -83,11 +97,36 @@ tgd.DestinyBucketColumns = {
 	"Messages": 4,
 	"Lost": 4,
 	"Lost Items": 4,
-	"Mission": 4
+	"Mission": 4,
+	"Invisible": 4,
+	"Ghost": 3,
+	"Artifact": 3
 }
+// TODO this needs to be updated based on the new values at level 40 
+// https://www.reddit.com/r/DestinyTheGame/comments/3kwmvh/how_overall_light_level_is_calculated/
+tgd.DestinyBucketWeights = [{
+	"Primary": 13.04,
+	"Special": 13.04,
+	"Heavy": 13.04,
+	"Helmet": 10.87,
+	"Gauntlet": 10.87,
+	"Chest": 10.87,
+	"Boots": 10.87,
+	"Class Items": 8.7,
+	"Ghost": 8.7
+},{
+	"Primary": 12,
+	"Special": 12,
+	"Heavy": 12,
+	"Helmet": 10,
+	"Gauntlet": 10,
+	"Chest": 10,
+	"Boots": 10,
+	"Class Items": 8,
+	"Ghost": 8,
+	"Artifact": 8 
+}];
 tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
-tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items" ];
-tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.languages = [
 	{ code: "en", description: "English", bungie_code: "en" },
 	{ code: "es", description: "Spanish", bungie_code: "es" },
@@ -95,12 +134,13 @@ tgd.languages = [
 	{ code: "de", description: "German", bungie_code: "de" },
 	{ code: "ja", description: "Japanese", bungie_code: "ja" },
 	{ code: "pt", description: "Portuguese", bungie_code: "pt-br" },
-	{ code: "fr", description: "French", bungie_code: "fr" }	
+	{ code: "fr", description: "French", bungie_code: "fr" },
+	{ code: "tr", description: "Turkish", bungie_code: "en" }
 ];
 
 tgd.defaults = {
 	searchKeyword: "",
-	doRefresh: false,
+	doRefresh: isMobile ? false : "true",
 	refreshSeconds: 300,
 	tierFilter: 0,
 	typeFilter: 0,
@@ -112,9 +152,10 @@ tgd.defaults = {
 	shareView: false,
 	shareUrl: "",
 	showMissing: false,
-	tooltipsEnabled: true,
+	tooltipsEnabled: isMobile ? false : "true",
 	autoTransferStacks: false,
-	padBucketHeight: true,
+	padBucketHeight: isMobile ? false : "true",
+	dragAndDrop: false,
 	xsColumn: 12,
 	smColumn: 6,
 	mdColumn: 4,
@@ -148,20 +189,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
 		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +
-			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.bungie_code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.bungie_code %>"><%= language.description %></button>' +
-		'</div>' +
-	'<% }) %>' +
-'</div>';
-
-tgd.statsTemplate = '<div class="row">' +
-	'<% stats.forEach(function(stat){ %>' +
-		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3">' +
-			'<div class="col-xs-9 text-right">' +
-				'<strong><%= stat.name %></strong>' +
-			'</div>' +
-			'<div class="col-xs-3">' +
-				'<%= stat.value %>' +
-			'</div>' +
+			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.code %>"><%= language.description %></button>' +
 		'</div>' +
 	'<% }) %>' +
 '</div>';
@@ -192,9 +220,9 @@ tgd.normalizeTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -232,9 +260,9 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:3px solid yellow" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
-									'<img src="<%= characters[i].imgIcon %>" style="border:none" id="char<%= i %>img">' +
+									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
 								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
 							'</div>' +
@@ -245,3 +273,28 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 		'</div>' +
 	'</div>' +
 '</div>';
+	
+tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through alternative replacements. </p><ul class="list-group">' +
+	'<% swapArray.forEach(function(pair){ %>' +
+		'<li class="list-group-item">' +
+			'<div class="row">' +
+				'<div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
+					'<%= pair.description %>' +
+				'</div>' +
+				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>">' +
+						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
+					'</a>' +
+				'</div>' +
+				'<div class="text-center col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
+					'<img src="<%= pair.actionIcon %>">' +
+				'</div>' +
+				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+					'<a class="swapItem item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
+						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
+					'</a>' +
+				'</div>' +
+			'</div>' +
+		'</li>' +
+	'<% }) %>' +
+'</ul>';

@@ -6,7 +6,6 @@ _ga = new(function() {
     var self = this;
 
     this.init = function() {
-        self.loadLib();
         var ga_options = {
             'cookieDomain': 'none'
         };
@@ -38,22 +37,6 @@ _ga = new(function() {
         self.loadListeners();
     }
 
-    this.loadLib = function() {
-        //Tracking for Universal Analytics
-        (function(i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function() {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://ssl.google-analytics.com/analytics.js', 'ga'); //analytics_debug.js to debug
-
-    }
-
     this.loadListeners = function() {
         // Track basic JavaScript errors
         window.addEventListener('error', function(e) {
@@ -77,22 +60,27 @@ _ga = new(function() {
                     'appName': e.filename + ':  ' + e.lineno,
                     'appVersion': tgd.version,
                     'hitCallback': function() {
-                        console.log("crash reported");
+                        console.log("crash reported " + e.message);
+                        console.log(e);
                     }
                 });
             }
         });
-
+        var unwantedCodes = [0, 503, 504, 522, 524];
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
-            ga('send', 'exception', {
-                'exDescription': "ajax error at " + settings.url + " " + settings.data + " " + err,
-                'exFatal': true,
-                'appVersion': tgd.version,
-                'hitCallback': function() {
-                    console.log("ajax error " + settings.url);
-                }
-            });
+            if (unwantedCodes.indexOf(request.status) == -1) {
+                ga('send', 'exception', {
+                    'exDescription': request.status + " ajax error at " + settings.url + " " + settings.data + " " + err,
+                    'exFatal': true,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        tgd.localLog(request.status + " ajax error at " + settings.url + " " + settings.data + " " + err);
+                    }
+                });
+            } else {
+                tgd.localLog(request.status + " ajax error (code 0) at " + settings.url + " " + settings.data + " " + err);
+            }
         });
     }
 });

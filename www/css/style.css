@@ -1,7 +1,14 @@
 @-ms-viewport {
     width: device-width;
 }
-
+.item-placeholder {
+    box-shadow:0 0 2px #000;
+	width: 54px;
+	height: 54px;
+	margin: 2px;
+	border: 1px solid white;
+	display: inline-block;
+}
 body {
     font-size: 1em;
     margin: 0 auto;
@@ -48,6 +55,13 @@ body {
     left: -220px;
     z-index: 2;
     cursor: pointer;
+}
+
+#move-popup.mobile .attkIcon {
+    height: 65px;
+}
+#move-popup.mobile .locations img {
+	height: 100%;
 }
 
 .desktop .move-popup {
@@ -246,12 +260,12 @@ body {
     width: 48px;
 }
 
-.itemImage {}
-
-.itemBucket {
-    /* border: 1px solid white; */
-    
+.itemBucket .itemBucketBG {
     background: rgba(255, 255, 255, .1);
+}
+
+.itemBucket .itemBucketBG.active {
+    background: rgba(255, 255, 255, .5);
 }
 
 .icon {
@@ -281,6 +295,16 @@ body {
     float: right;
 }
 
+/*.container .emblemRefresh {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 100px;
+}*/
+
+.container .emblemHover {
+    background: rgba(18, 21, 20, .5);
+}
+
 .container .title2 {
     text-transform: uppercase;
     position: relative;
@@ -294,6 +318,7 @@ body {
     background: rgba(18, 21, 20, .7);
     padding-left: 5px;
 }
+.title2 .label { padding: 0.1em; }
 
 .complete .itemImage {
     border-color: #f5dc56;
@@ -309,10 +334,25 @@ body {
 .character {
 	margin-bottom: 47px;
 }
+.character .stats {
+	position: absolute; top: 51px; left: 20px; background: rgba(18, 21, 20, .8); z-index: 2; width: 96%;
+}
+.character .stats div {
+	font-size: 15px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+.character .stats span {
+	font-size: 16px;
+    font-weight: bold;
+}
+.character .stats img {
+	height: 24px;
+}
 
 .character-box {
     position: fixed;
-	top: 47px;
+	/*top: 47px;*/
     display: inline-block;
     height: 43px;
     padding: 0 0 0 50px;
@@ -323,9 +363,13 @@ body {
     text-decoration: none;
     background-size: cover;
 	z-index: 1003;
+	width: 95%;
 }
 .character-box.active {
-	position: relative;
+	top: 47px;
+}
+.character-box.not-active {
+	position: absolute;
 }
 
 .character-box  .progression {
@@ -357,18 +401,28 @@ body {
 
 .character-box .level {
     position: absolute;
-    color: rgb(245, 220, 86);
-    top: 8px;
-    right: 7px;
-    font-weight: 200;
-    font-size: 22px;
+    top: 31px !important;
+    right: 7px !important;
 }
 
-.character-box .level:before {
+.character-box .level .light {
+	color: white;	
+    font-weight: 200;
+    font-size: 20px;
+	text-align: right;
+}
+
+.character-box .level .power {
+	color: rgb(245, 220, 86);	
+    font-weight: 200;
+    font-size: 14px;
+}
+
+.character-box .level .power:before {
     content: "\2726";
     display: inline-block;
-    vertical-align: 18%;
-    font-size: 50%;
+    vertical-align: 3%;
+    font-size: 80%;
 }
 
 .no-gutter [class*='col-'] {
@@ -494,3 +548,18 @@ li a {
 .alignright {
 	float: right;
 }
+@media (max-width: 1024px) {
+	.navbar-collapse.collapse.in:after {
+		content: "\f078";
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		text-align: center;
+		font: normal normal normal 14px/1 FontAwesome;
+		font-size: inherit;
+		text-rendering: auto;
+		-webkit-font-smoothing: antialiased;
+	}	
+}
+.help strong { font-size: 1.1em; }
