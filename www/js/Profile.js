@@ -39,34 +39,62 @@ var Profile = function(character, items, index) {
 			if (self.id == "Vault") return;
 
 			var items = character.items();
+			var sets = [];
+			var backups = [];
+
 			var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
 			_.each( buckets, function(bucket){
-				var primaryStats, candidates = _.where( items, { bucketType: bucket });
-				if (type == "Light"){
-					primaryStats = _.map( candidates, function(item){ return item.primaryStat() });
+				var candidates = _.where( items, { bucketType: bucket });
+                _.each(candidates, function(candidate){
+                     if ( candidate.stats[type] > 0 ){
+                          (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                     }
+                 });
+			});
+			
+			backups = _.flatten(backups);
+			
+			_.each( backups, function(spare){
+				var candidates = _.filter( backups, function(item){
+					 return item.bucketType == spare.bucketType && item._id != spare._id;
+				});
+				primaryStats = _.map( candidates, function(item){ return (type == "Light") ? item.primaryStat() : item.stats[type] });
+				var maxCandidate = Math.max.apply(null, primaryStats);
+				if (maxCandidate < ((type == "Light") ? spare.primaryStat() : spare.stats[type])){
+					sets.push([spare]);
 				}
-				else {
-					primaryStats = _.map( candidates, function(item){ return item.stats[type] });
-				}
-				var equipped =  items.filter(character.filterItemByType(bucket, true));
-				if (equipped.length > 0){
-					if (type == "Light"){
-						equipped = equipped[0].primaryStat();
+			});
+
+			_.each( sets, function(set){
+			   var exotic = set[0];
+			   _.each( buckets, function(bucket){
+					if (bucket != exotic.bucketType){
+						var candidates = _.where( backups, { bucketType: bucket});
+						if (candidates.length > 0){
+						   primaryStats = _.map( candidates, function(item){ return (type == "Light") ? item.primaryStat() : item.stats[type] });
+						   var maxCandidate = Math.max.apply(null, primaryStats);
+						   var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+						   set.push(candidate);
+						}
 					}
-					else {
-						equipped = equipped[0].stats[type];
-					}
-					var maxCandidate = Math.max.apply(null, primaryStats);
-					if (maxCandidate > equipped){
-						var candidate = candidates[primaryStats.indexOf(maxCandidate)];
-						$.toaster({
-							priority: 'info',
-							title: 'Equip:',
-							message: bucket + " can have a better item with " + candidate.description
-						});
-						candidate.equip( character.id );
-					}
-				}
+			   });
+			});
+			var sumSets = _.map( sets, function(set){
+				return sum(_.map( set, function(item){
+					  return (type == "Light") ? item.primaryStat() : item.stats[type];
+				 }));
+			});
+			
+			var highestSet = Math.max.apply(null, sumSets);
+			highestSet = sets[sumSets.indexOf(highestSet)];
+
+			_.each(highestSet, function(candidate){
+				$.toaster({
+					priority: 'info',
+					title: 'Equip:',
+					message: candidate.bucketType + " can have a better item with " + candidate.description
+				});
+				candidate.equip( character.id );
 			});
 		}
 	}
