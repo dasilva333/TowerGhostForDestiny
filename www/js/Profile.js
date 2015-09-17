@@ -43,6 +43,7 @@ var Profile = function(character, items, index) {
             var backups = [];
 
             var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
+            buckets.push("Ghost");
             _.each(buckets, function(bucket) {
                 var candidates = _.where(items, {
                     bucketType: bucket
@@ -225,8 +226,8 @@ Profile.prototype = {
         var self = this;
         var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
         var weights = tgd.DestinyBucketWeights[index];
-        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
-            return item.isEquipped()
+        return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
+            return item.isEquipped() && item.bucketType in weights;
         }), function(item) {
             var value = item.primaryStat() * (weights[item.bucketType] / 100);
             return value;
