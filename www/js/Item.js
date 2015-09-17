@@ -740,6 +740,16 @@ Item.prototype = {
                         });
                     });
                 });
+			}	
+			else if (result && result.ErrorCode && result.ErrorCode == 1648) {
+				var vaultItems = _.findWhere( app.characters(), { id: "Vault" }).items();
+				var targetItem = _.where( vaultItems, { id: self.id });
+				if (targetItem.length > 0){
+					targetItem[0].store( targetCharacterId, function(){
+						self.character.id = targetCharacterId;
+						self.store("Vault", cb);
+					});
+				}
             } else if (cb) {
                 cb(y, x);
             } else if (result && result.Message) {
