@@ -46,7 +46,7 @@ var Profile = function(character, items, index) {
 			_.each( buckets, function(bucket){
 				var candidates = _.where( items, { bucketType: bucket });
                 _.each(candidates, function(candidate){
-                     if ( candidate.stats[type] > 0 ){
+                     if ( type == "Light" || (type != "Light" && candidate.stats[type] > 0) ){
                           (candidate.tierType == 6 ? sets : backups).push([candidate]);
                      }
                  });
