@@ -15,7 +15,7 @@ var Item = function(model, profile, ignoreDups) {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
-            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass)
+            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass)
                 //if it's in another character and it's equippable
                 || (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
         });
@@ -740,6 +740,19 @@ Item.prototype = {
                         });
                     });
                 });
+            } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
+                var vaultItems = _.findWhere(app.characters(), {
+                    id: "Vault"
+                }).items();
+                var targetItem = _.where(vaultItems, {
+                    id: self.id
+                });
+                if (targetItem.length > 0) {
+                    targetItem[0].store(targetCharacterId, function() {
+                        self.character.id = targetCharacterId;
+                        self.store("Vault", cb);
+                    });
+                }
             } else if (cb) {
                 cb(y, x);
             } else if (result && result.Message) {

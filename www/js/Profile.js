@@ -133,8 +133,8 @@ Profile.prototype = {
         var self = this;
         var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
         var weights = tgd.DestinyBucketWeights[index];
-        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
-            return item.isEquipped()
+        return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
+            return item.isEquipped() && item.bucketType in weights;
         }), function(item) {
             var value = item.primaryStat() * (weights[item.bucketType] / 100);
             return value;
@@ -282,5 +282,98 @@ Profile.prototype = {
     },
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
+    },
+    equipHighest: function(type) {
+        var character = this;
+        return function() {
+            if (character.id == "Vault") return;
+
+            var items = character.items();
+            var sets = [];
+            var backups = [];
+
+            var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
+            buckets.push("Ghost");
+            _.each(buckets, function(bucket) {
+                var candidates = _.where(items, {
+                    bucketType: bucket
+                });
+                _.each(candidates, function(candidate) {
+                    if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
+                        (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                    }
+                });
+            });
+
+            backups = _.flatten(backups);
+
+            _.each(backups, function(spare) {
+                var candidates = _.filter(backups, function(item) {
+                    return item.bucketType == spare.bucketType && item._id != spare._id;
+                });
+                primaryStats = _.map(candidates, function(item) {
+                    return (type == "Light") ? item.primaryStat() : item.stats[type]
+                });
+                var maxCandidate = Math.max.apply(null, primaryStats);
+                if (maxCandidate < ((type == "Light") ? spare.primaryStat() : spare.stats[type])) {
+                    sets.push([spare]);
+                }
+            });
+
+            _.each(sets, function(set) {
+                var exotic = set[0];
+                _.each(buckets, function(bucket) {
+                    if (bucket != exotic.bucketType) {
+                        var candidates = _.where(backups, {
+                            bucketType: bucket
+                        });
+                        if (candidates.length > 0) {
+                            primaryStats = _.map(candidates, function(item) {
+                                return (type == "Light") ? item.primaryStat() : item.stats[type]
+                            });
+                            var maxCandidate = Math.max.apply(null, primaryStats);
+                            var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+                            set.push(candidate);
+                        }
+                    }
+                });
+            });
+            var sumSets = _.map(sets, function(set) {
+                return sum(_.map(set, function(item) {
+                    return (type == "Light") ? item.primaryStat() : item.stats[type];
+                }));
+            });
+
+            var highestSet = Math.max.apply(null, sumSets);
+            if (type != "Light") {
+                $.toaster({
+                    priority: 'success',
+                    title: 'Result:',
+                    message: " The highest set available for " + type + "  is  " + highestSet
+                });
+            }
+            highestSet = sets[sumSets.indexOf(highestSet)];
+            var count = 0;
+            var done = function() {
+                count++;
+                if (count == highestSet.length && type != "Light") {
+                    app.refresh();
+                }
+            }
+            _.each(highestSet, function(candidate) {
+                if (character.itemEquipped(candidate.bucketType)._id !== candidate._id) {
+                    candidate.equip(character.id, function() {
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Equip:',
+                            message: candidate.bucketType + " can have a better item with " + candidate.description
+                        });
+                        done();
+                    });
+                } else {
+                    done();
+                }
+            });
+        }
     }
 }

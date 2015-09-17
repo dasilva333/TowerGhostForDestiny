@@ -111,7 +111,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
                 title: 'Error:',
@@ -1696,7 +1696,7 @@ var app = new(function() {
     }
 
     this.generateStatic = function() {
-        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
+        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background", "stats"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
             "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
             "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
