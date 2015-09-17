@@ -86,15 +86,35 @@ var Profile = function(character, items, index) {
 			});
 			
 			var highestSet = Math.max.apply(null, sumSets);
-			highestSet = sets[sumSets.indexOf(highestSet)];
-
-			_.each(highestSet, function(candidate){
+			if (type != "Light"){
 				$.toaster({
-					priority: 'info',
-					title: 'Equip:',
-					message: candidate.bucketType + " can have a better item with " + candidate.description
+					priority: 'success',
+					title: 'Result:',
+					message: " The highest set available for " + type + "  is  " + highestSet
 				});
-				candidate.equip( character.id );
+			}
+			highestSet = sets[sumSets.indexOf(highestSet)];
+			var count = 0;
+			var done = function(){
+				count++;
+				if (count == highestSet.length && type != "Light"){
+					app.refresh();
+				}
+			}
+			_.each(highestSet, function(candidate){
+				if ( character.itemEquipped( candidate.bucketType )._id !== candidate._id ){
+					candidate.equip( character.id , function(){
+						$.toaster({
+							priority: 'info',
+							title: 'Equip:',
+							message: candidate.bucketType + " can have a better item with " + candidate.description
+						});
+						done();
+					});				
+				}
+				else {
+					done();
+				}
 			});
 		}
 	}
