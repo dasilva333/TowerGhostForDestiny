@@ -146,6 +146,7 @@ tgd.defaults = {
 	typeFilter: 0,
 	dmgFilter: [],
 	activeView: 0,
+	activeSort: 0,
 	progressFilter: 0,
 	showDuplicate: false,
 	setFilter: [],

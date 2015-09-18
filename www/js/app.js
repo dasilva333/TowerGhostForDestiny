@@ -370,6 +370,7 @@ var app = new(function() {
     this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
     this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
+    this.activeSort = ko.computed(new tgd.StoreObj("activeSort"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
     this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
@@ -531,6 +532,7 @@ var app = new(function() {
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
+        self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
@@ -724,6 +726,10 @@ var app = new(function() {
             self.setFilter([]);
             self.showMissing(false);
         }
+    }
+    this.setSort = function(model, event) {
+        self.toggleBootstrapMenu();
+        self.activeSort($(event.target).closest('li').attr("value"));
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
