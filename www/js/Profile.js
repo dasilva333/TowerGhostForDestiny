@@ -262,11 +262,41 @@ Profile.prototype = {
         }
     },
     get: function(type) {
-        return _.sortBy(_.sortBy(this.items().filter(this.filterItemByType(type, false)), function(item) {
-            return item.type;
-        }), function(item) {
-            return item.tierType * -1;
-        });
+        var items = this.items().filter(this.filterItemByType(type, false));
+        /* Tier, Type */
+        if (app.activeSort() == 0) {
+            items = _.sortBy(_.sortBy(items, function(item) {
+                return item.type;
+            }), function(item) {
+                return item.tierType * -1;
+            });
+        }
+        /* Type */
+        else if (app.activeSort() == 1) {
+            items = _.sortBy(items, function(item) {
+                return item.type;
+            });
+        }
+        /* Light */
+        else if (app.activeSort() == 2) {
+            items = _.sortBy(items, function(item) {
+                return item.primaryStat() * -1;
+            });
+        }
+        /* Damage */
+        else if (app.activeSort() == 3) {
+            items = _.sortBy(items, function(item) {
+                return item.damageType;
+            });
+        }
+        /* Name */
+        else if (app.activeSort() == 4) {
+            items = _.sortBy(items, function(item) {
+                return item.description;
+            });
+        }
+
+        return items;
     },
     getVisible: function(type) {
         return _.filter(this.get(type), function(item) {

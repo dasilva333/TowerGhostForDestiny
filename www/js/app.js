@@ -370,6 +370,7 @@ var app = new(function() {
     this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
     this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
+    this.activeSort = ko.computed(new tgd.StoreObj("activeSort"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
     this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
@@ -531,6 +532,7 @@ var app = new(function() {
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
+        self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
@@ -590,7 +592,7 @@ var app = new(function() {
                 }
             } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                 /* Armor Perks */
-                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && activeItem.tierType !== 6) {
+                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     /* this only applies to armor with existing perks */
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
@@ -724,6 +726,10 @@ var app = new(function() {
             self.setFilter([]);
             self.showMissing(false);
         }
+    }
+    this.setSort = function(model, event) {
+        self.toggleBootstrapMenu();
+        self.activeSort($(event.target).closest('li').attr("value"));
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
@@ -902,10 +908,10 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        if (e && typeof e.Message != "undefined") {
-                            return BootstrapDialog.alert(e.Message);
+                        if (response && typeof response.Message != "undefined") {
+                            return BootstrapDialog.alert(response.Message);
                         } else {
-                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                         }
                     }
                 });
