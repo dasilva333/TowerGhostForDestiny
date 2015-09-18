@@ -804,17 +804,17 @@ h1,h2,h3,h4,h5,h6
 }
 .attkIcon>div
 {
-	border-radius: 3px 0 0 0;
+	border-radius: 1px 0 0 0;
 	bottom: 2px;
 	color: #333;
-	font-size: 0.85em;
+	font-size: 0.8em;
 	font-weight: bold;
 	line-height: 1;
-	padding: 2px 1px 1px 4px;
+	padding: 1px;
 	pointer-events: none;
 	position: absolute;
 	right: 2px;
-	webkit-border-radius: 3px 0 0 0;
+	webkit-border-radius: 1px 0 0 0;
 }
 @media (max-width: 1020px)
 {
@@ -825,23 +825,23 @@ h1,h2,h3,h4,h5,h6
 }
 .attkIcon .None
 {
-	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.6);
 }
 .attkIcon .Kinetic
 {
-	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.6);
 }
 .attkIcon .Arc
 {
-	background-color: #85C5EC;
+	background-color: rgba(133, 197, 236, 0.6);
 }
 .attkIcon .Solar
 {
-	background-color: #C48A01;
+	background-color: rgba(196, 138, 1, 0.6);
 }
 .attkIcon .Void
 {
-	background-color: #B184C5;
+	background-color: rgba(177, 132, 197, 0.6);
 }
 .move-popup .item-name
 {
