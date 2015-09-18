@@ -64,6 +64,9 @@ var neededFiles = [
 	}},
 	{ table: "DestinyProgressionDefinition", name: "progressDefs", key: "progressionHash", reduce: function(item){
 		return item;
+	}},
+	{ table: "DestinyObjectiveDefinition", name: "objectiveDefs", key: "objectiveHash", reduce: function(item){
+		return item;
 	}}
 ];
 

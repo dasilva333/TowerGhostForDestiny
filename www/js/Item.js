@@ -1,3 +1,9 @@
+function average(arr) {
+    return _.reduce(arr, function(memo, num) {
+        return memo + num;
+    }, 0) / arr.length;
+}
+
 var Item = function(model, profile, ignoreDups) {
     var self = this;
 
@@ -142,17 +148,20 @@ Item.prototype = {
                     }
                 });
             }
+			if (item.objectives.length > 0) {
+				var progress = (average(_.map( item.objectives , function(objective){
+					return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+				})) * 100).toFixed(0) + "%";
+				var primaryStat = ( itemObject.primaryStat() == "" ) ? progress : itemObject.primaryStat() + "/" + progress;
+				itemObject.primaryStat(primaryStat);
+			}
+			
             if (itemObject.typeName && itemObject.typeName == "Emblem") {
                 itemObject.backgroundPath = app.makeBackgroundUrl(info.secondaryIcon);
             }
             if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
-            } else if (itemObject.bucketType == "Bounties") {
-                var status = _.map(item.objectives, function(item) {
-                    return item.isComplete;
-                }).indexOf(false) > -1 ? "" : "100%";
-                itemObject.primaryStat(status);
             } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
