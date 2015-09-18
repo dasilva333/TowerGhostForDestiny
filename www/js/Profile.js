@@ -280,7 +280,7 @@ Profile.prototype = {
         /* Light */
         else if (app.activeSort() == 2) {
             items = _.sortBy(items, function(item) {
-                return item.primaryStat();
+                return item.primaryStat() * -1;
             });
         }
         /* Damage */
