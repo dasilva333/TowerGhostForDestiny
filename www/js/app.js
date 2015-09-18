@@ -590,7 +590,7 @@ var app = new(function() {
                 }
             } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                 /* Armor Perks */
-                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && activeItem.tierType !== 6) {
+                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     /* this only applies to armor with existing perks */
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
