@@ -109,7 +109,6 @@ var downloadDatabase = function(callback){
 }
 
 var extractData = function(callback){
-	return callback();
 	var dbFiles = fs.readdirSync(".").filter(function(file){
 		return file.indexOf("mobileWorldContent") > -1;
 	});
