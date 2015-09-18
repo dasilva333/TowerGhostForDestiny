@@ -66,7 +66,8 @@ var neededFiles = [
 		return item;
 	}},
 	{ table: "DestinyObjectiveDefinition", name: "objectiveDefs", key: "objectiveHash", reduce: function(item){
-		return item;
+		var obj = { objectiveHash: item.objectiveHash, completionValue: item.completionValue };
+		return obj;
 	}}
 ];
 
