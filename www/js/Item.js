@@ -16,6 +16,7 @@ var Item = function(model, profile, ignoreDups) {
     this.init(model, ignoreDups);
 
     this.isVisible = ko.computed(this._isVisible, this);
+    this.primaryStatValue = ko.computed(this._primaryStatValue, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
             //rules for how subclasses can be equipped
@@ -148,14 +149,14 @@ Item.prototype = {
                     }
                 });
             }
-			if (item.objectives.length > 0) {
-				var progress = (average(_.map( item.objectives , function(objective){
-					return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
-				})) * 100).toFixed(0) + "%";
-				var primaryStat = ( itemObject.primaryStat() == "" ) ? progress : itemObject.primaryStat() + "/" + progress;
-				itemObject.primaryStat(primaryStat);
-			}
-			
+            if (item.objectives.length > 0) {
+                var progress = (average(_.map(item.objectives, function(objective) {
+                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                })) * 100).toFixed(0) + "%";
+                var primaryStat = (itemObject.primaryStat() == "") ? progress : itemObject.primaryStat() + "/" + progress;
+                itemObject.primaryStat(primaryStat);
+            }
+
             if (itemObject.typeName && itemObject.typeName == "Emblem") {
                 itemObject.backgroundPath = app.makeBackgroundUrl(info.secondaryIcon);
             }
@@ -215,6 +216,15 @@ Item.prototype = {
             }
         } else {
             return false;
+        }
+    },
+    _primaryStatValue: function() {
+        if (this.primaryStat) {
+            var primaryStat = this.primaryStat();
+            if (this.objectives && typeof primaryStat == "string") {
+                primaryStat = primaryStat.split("/")[0];
+            }
+            return primaryStat;
         }
     },
     _isVisible: function() {

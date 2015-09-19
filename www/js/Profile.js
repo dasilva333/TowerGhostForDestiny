@@ -136,11 +136,7 @@ Profile.prototype = {
         return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
             return item.isEquipped() && item.bucketType in weights;
         }), function(item) {
-            var primaryStat = item.primaryStat();
-            if (item.objectives && typeof primaryStat == "string") {
-                primaryStat = primaryStat.split("/")[0];
-            }
-            var value = primaryStat * (weights[item.bucketType] / 100);
+            var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
             return value;
         })));
     },
@@ -284,11 +280,7 @@ Profile.prototype = {
         /* Light */
         else if (app.activeSort() == 2) {
             items = _.sortBy(items, function(item) {
-                var primaryStat = item.primaryStat();
-                if (item.objectives && typeof primaryStat == "string") {
-                    primaryStat = primaryStat.split("/")[0];
-                }
-                return primaryStat * -1;
+                return item.primaryStatValue() * -1;
             });
         }
         /* Damage */
@@ -350,10 +342,10 @@ Profile.prototype = {
                     return item.bucketType == spare.bucketType && item._id != spare._id;
                 });
                 primaryStats = _.map(candidates, function(item) {
-                    return (type == "Light") ? item.primaryStat() : item.stats[type]
+                    return (type == "Light") ? item.primaryStatValue() : item.stats[type]
                 });
                 var maxCandidate = Math.max.apply(null, primaryStats);
-                if (maxCandidate < ((type == "Light") ? spare.primaryStat() : spare.stats[type])) {
+                if (maxCandidate < ((type == "Light") ? spare.primaryStatValue() : spare.stats[type])) {
                     sets.push([spare]);
                 }
             });
@@ -367,7 +359,7 @@ Profile.prototype = {
                         });
                         if (candidates.length > 0) {
                             primaryStats = _.map(candidates, function(item) {
-                                return (type == "Light") ? item.primaryStat() : item.stats[type]
+                                return (type == "Light") ? item.primaryStatValue() : item.stats[type]
                             });
                             var maxCandidate = Math.max.apply(null, primaryStats);
                             var candidate = candidates[primaryStats.indexOf(maxCandidate)];
@@ -378,7 +370,7 @@ Profile.prototype = {
             });
             var sumSets = _.map(sets, function(set) {
                 return sum(_.map(set, function(item) {
-                    return (type == "Light") ? item.primaryStat() : item.stats[type];
+                    return (type == "Light") ? item.primaryStatValue() : item.stats[type];
                 }));
             });
 
