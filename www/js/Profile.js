@@ -136,7 +136,11 @@ Profile.prototype = {
         return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
             return item.isEquipped() && item.bucketType in weights;
         }), function(item) {
-            var value = item.primaryStat() * (weights[item.bucketType] / 100);
+            var primaryStat = item.primaryStat();
+            if (item.objectives && typeof primaryStat == "string") {
+                primaryStat = primaryStat.split("/")[0];
+            }
+            var value = primaryStat * (weights[item.bucketType] / 100);
             return value;
         })));
     },
@@ -280,7 +284,11 @@ Profile.prototype = {
         /* Light */
         else if (app.activeSort() == 2) {
             items = _.sortBy(items, function(item) {
-                return item.primaryStat() * -1;
+                var primaryStat = item.primaryStat();
+                if (item.objectives && typeof primaryStat == "string") {
+                    primaryStat = primaryStat.split("/")[0];
+                }
+                return primaryStat * -1;
             });
         }
         /* Damage */
