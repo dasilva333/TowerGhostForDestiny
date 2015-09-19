@@ -321,12 +321,11 @@ Profile.prototype = {
             var items = character.items();
             var sets = [];
             var backups = [];
-
             var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
             buckets.push("Ghost");
             _.each(buckets, function(bucket) {
-                var candidates = _.where(items, {
-                    bucketType: bucket
+                var candidates = _.filter(items, function(item){
+                    return item.bucketType == bucket && item.equipRequiredLevel <= character.level;
                 });
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
