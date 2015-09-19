@@ -2,7 +2,7 @@ tgd.locale = {
     en: {
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
-        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
+        unable_to_move_bucketitems: "This item cannot be transferred with the API.",
         this_icon: "This icon is ",
         pick_a_set: "Please pick a Set before selecting this option",
         error_loading_inventory: "Error loading inventory ",
