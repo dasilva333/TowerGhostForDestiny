@@ -324,7 +324,7 @@ Profile.prototype = {
             var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
             buckets.push("Ghost");
             _.each(buckets, function(bucket) {
-                var candidates = _.filter(items, function(item){
+                var candidates = _.filter(items, function(item) {
                     return item.bucketType == bucket && item.equipRequiredLevel <= character.level;
                 });
                 _.each(candidates, function(candidate) {
