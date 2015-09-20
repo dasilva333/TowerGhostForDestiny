@@ -97,7 +97,7 @@
                 <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
 
-                        <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+                        <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level || character.id == 'Vault') ? 1 : 0.3 }">
 
                             <img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
 
