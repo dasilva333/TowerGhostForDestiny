@@ -624,6 +624,9 @@ var app = new(function() {
                 );
             }
             $content.find(".destt-primary-min").html(activeItem.primaryStat());
+            if (activeItem.equipRequiredLevel) {
+                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + '</span></span>');
+            }
         }
         var width = $(window).width();
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen

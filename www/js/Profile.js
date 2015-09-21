@@ -318,15 +318,20 @@ Profile.prototype = {
         return function() {
             if (character.id == "Vault") return;
 
-            var items = character.items();
+            var items = _.flatten(_.map(app.characters(), function(avatar) {
+                return avatar.items()
+            }));
             var sets = [];
             var backups = [];
 
-            var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
-            buckets.push("Ghost");
+            //TODO add support for global armor buckets so I can store armor in the vault and have it xfered on demand
+            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces);
+            var buckets = [].concat(globalBuckets).concat(tgd.DestinyArmorPieces);
+
             _.each(buckets, function(bucket) {
-                var candidates = _.where(items, {
-                    bucketType: bucket
+                var candidates = _.filter(items, function(item) {
+                    return item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
+                        (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1);
                 });
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
@@ -382,7 +387,9 @@ Profile.prototype = {
                     message: " The highest set available for " + type + "  is  " + highestSet
                 });
             }
-            highestSet = sets[sumSets.indexOf(highestSet)];
+            highestSet = _.sortBy(sets[sumSets.indexOf(highestSet)], function(item) {
+                return item.tierType;
+            });
             var count = 0;
             var done = function() {
                 count++;

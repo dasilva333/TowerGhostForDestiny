@@ -515,7 +515,7 @@
 	                var targetBucket = targetGroups[key];
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
-	                    if (tgd.DestinyWeaponPieces.indexOf(key) > -1 || tgd.DestinyWeaponPieces.indexOf(key) > -1) {
+	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
 	                        var maxBucketSize = 10;
 	                        var targetBucketSize = targetBucket.length;
 	                        var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
