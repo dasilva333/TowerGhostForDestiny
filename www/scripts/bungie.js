@@ -86,13 +86,13 @@ var bungie = (function(cookieString, complete) {
                 },
                 beforeSend: function(xhr) {
                     /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload*/
-                    if (isMobile && typeof cookieString == "string" && navigator.userAgent.indexOf("CPU OS 9_0") == -1) {
+                    /*if (isMobile && typeof cookieString == "string" && navigator.userAgent.indexOf("CPU OS 9_0") == -1) {
                         _.each(cookieString.split(";"), function(cookie) {
                             try {
                                 xhr.setRequestHeader('Cookie', cookie);
                             } catch (e) {}
                         });
-                    }
+                    }*/
                 },
                 data: data,
                 complete: function(xhr, status) {
