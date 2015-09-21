@@ -75,6 +75,7 @@ Item.prototype = {
                 locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
+                classType: info.classType,
                 bucketType: self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
@@ -88,11 +89,6 @@ Item.prototype = {
             }
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
-            }
-            if (item.progression) {
-                var progress = _progressDefs[item.progression.progressionHash];
-                var progressTotal = Math.max.apply(null, _.pluck(progress.steps, 'progressTotal'));
-                itemObject.progression = (item.progression.currentProgress > 0 && item.progression.currentProgress >= progressTotal);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
@@ -139,6 +135,9 @@ Item.prototype = {
                         itemObject.perks.push(perk);
                     });
                 }
+            }
+            if (item.progression) {
+                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
@@ -200,11 +199,11 @@ Item.prototype = {
     hashProgress: function(state) {
         var self = this;
         if (typeof self.progression !== "undefined") {
-            /* Missing XP */
+            /* Missing Perks */
             if (state == 1 && self.progression == false) {
                 return true;
             }
-            /* Full XP  but not maxed out */
+            /* Filled perks but not maxed out */
             else if (state == 2 && self.progression == true && self.isGridComplete == false) {
                 return true
             }
