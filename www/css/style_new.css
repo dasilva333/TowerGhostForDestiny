@@ -369,7 +369,12 @@ h1,h2,h3,h4,h5,h6
 {
 	clear: both;
 }
-#charactersContainer .profile .character-box div
+#charactersContainer .profile .character-box div.emblem,
+#charactersContainer .profile .character-box div.class,
+#charactersContainer .profile .character-box div.level,
+#charactersContainer .profile .character-box div.light,
+#charactersContainer .profile .character-box div.power,
+#charactersContainer .profile .character-box div.progression
 {
 	height: 36px;
 	line-height: 36px;
@@ -807,7 +812,7 @@ h1,h2,h3,h4,h5,h6
 	border-radius: 1px 0 0 0;
 	bottom: 2px;
 	color: #333;
-	font-size: 0.8em;
+	font-size: 0.85em;
 	font-weight: bold;
 	line-height: 1;
 	padding: 1px;

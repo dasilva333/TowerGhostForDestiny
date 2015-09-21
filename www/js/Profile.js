@@ -136,7 +136,7 @@ Profile.prototype = {
         return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
             return item.isEquipped() && item.bucketType in weights;
         }), function(item) {
-            var value = item.primaryStat() * (weights[item.bucketType] / 100);
+            var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
             return value;
         })));
     },
@@ -280,7 +280,7 @@ Profile.prototype = {
         /* Light */
         else if (app.activeSort() == 2) {
             items = _.sortBy(items, function(item) {
-                return item.primaryStat() * -1;
+                return item.primaryStatValue() * -1;
             });
         }
         /* Damage */
@@ -321,12 +321,11 @@ Profile.prototype = {
             var items = character.items();
             var sets = [];
             var backups = [];
-
             var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
             buckets.push("Ghost");
             _.each(buckets, function(bucket) {
-                var candidates = _.where(items, {
-                    bucketType: bucket
+                var candidates = _.filter(items, function(item) {
+                    return item.bucketType == bucket && item.equipRequiredLevel <= character.level;
                 });
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
@@ -342,10 +341,10 @@ Profile.prototype = {
                     return item.bucketType == spare.bucketType && item._id != spare._id;
                 });
                 primaryStats = _.map(candidates, function(item) {
-                    return (type == "Light") ? item.primaryStat() : item.stats[type]
+                    return (type == "Light") ? item.primaryStatValue() : item.stats[type]
                 });
                 var maxCandidate = Math.max.apply(null, primaryStats);
-                if (maxCandidate < ((type == "Light") ? spare.primaryStat() : spare.stats[type])) {
+                if (maxCandidate < ((type == "Light") ? spare.primaryStatValue() : spare.stats[type])) {
                     sets.push([spare]);
                 }
             });
@@ -359,7 +358,7 @@ Profile.prototype = {
                         });
                         if (candidates.length > 0) {
                             primaryStats = _.map(candidates, function(item) {
-                                return (type == "Light") ? item.primaryStat() : item.stats[type]
+                                return (type == "Light") ? item.primaryStatValue() : item.stats[type]
                             });
                             var maxCandidate = Math.max.apply(null, primaryStats);
                             var candidate = candidates[primaryStats.indexOf(maxCandidate)];
@@ -370,7 +369,7 @@ Profile.prototype = {
             });
             var sumSets = _.map(sets, function(set) {
                 return sum(_.map(set, function(item) {
-                    return (type == "Light") ? item.primaryStat() : item.stats[type];
+                    return (type == "Light") ? item.primaryStatValue() : item.stats[type];
                 }));
             });
 
