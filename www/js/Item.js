@@ -75,6 +75,7 @@ Item.prototype = {
                 locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
+				classType: info.classType,
                 bucketType: self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,

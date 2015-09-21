@@ -324,14 +324,13 @@ Profile.prototype = {
             var sets = [];
             var backups = [];
 
-            //TODO add support for global armor buckets so I can store armor in the vault and have it xfered on demand
-            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces);
-            var buckets = [].concat(globalBuckets).concat(tgd.DestinyArmorPieces);
+            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
+            var buckets = [].concat(globalBuckets);
 
             _.each(buckets, function(bucket) {
                 var candidates = _.filter(items, function(item) {
                     return item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
-                        (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1);
+                        (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType))
                 });
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
