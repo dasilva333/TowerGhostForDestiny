@@ -1,3 +1,9 @@
+function average(arr) {
+    return _.reduce(arr, function(memo, num) {
+        return memo + num;
+    }, 0) / arr.length;
+}
+
 var Item = function(model, profile, ignoreDups) {
     var self = this;
 
@@ -10,12 +16,13 @@ var Item = function(model, profile, ignoreDups) {
     this.init(model, ignoreDups);
 
     this.isVisible = ko.computed(this._isVisible, this);
+    this.primaryStatValue = ko.computed(this._primaryStatValue, this);
     this.isEquippable = function(avatarId) {
         return ko.computed(function() {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
-            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass)
+            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass)
                 //if it's in another character and it's equippable
                 || (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
         });
@@ -83,7 +90,9 @@ Item.prototype = {
                 itemObject.primaryStat(item.primaryStat.value);
             }
             if (item.progression) {
-                itemObject.progression = (item.progression.currentProgress > 0);
+                var progress = _progressDefs[item.progression.progressionHash];
+                var progressTotal = Math.max.apply(null, _.pluck(progress.steps, 'progressTotal'));
+                itemObject.progression = (item.progression.currentProgress > 0 && item.progression.currentProgress >= progressTotal);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
@@ -140,17 +149,20 @@ Item.prototype = {
                     }
                 });
             }
+            if (item.objectives.length > 0) {
+                var progress = (average(_.map(item.objectives, function(objective) {
+                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                })) * 100).toFixed(0) + "%";
+                var primaryStat = (itemObject.primaryStat() == "") ? progress : itemObject.primaryStat() + "/" + progress;
+                itemObject.primaryStat(primaryStat);
+            }
+
             if (itemObject.typeName && itemObject.typeName == "Emblem") {
                 itemObject.backgroundPath = app.makeBackgroundUrl(info.secondaryIcon);
             }
             if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
-            } else if (itemObject.bucketType == "Bounties") {
-                var status = _.map(item.objectives, function(item) {
-                    return item.isComplete;
-                }).indexOf(false) > -1 ? "" : "100%";
-                itemObject.primaryStat(status);
             } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
@@ -204,6 +216,15 @@ Item.prototype = {
             }
         } else {
             return false;
+        }
+    },
+    _primaryStatValue: function() {
+        if (this.primaryStat) {
+            var primaryStat = this.primaryStat();
+            if (this.objectives && typeof primaryStat == "string") {
+                primaryStat = primaryStat.split("/")[0];
+            }
+            return primaryStat;
         }
     },
     _isVisible: function() {
@@ -738,6 +759,19 @@ Item.prototype = {
                         });
                     });
                 });
+            } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
+                var vaultItems = _.findWhere(app.characters(), {
+                    id: "Vault"
+                }).items();
+                var targetItem = _.where(vaultItems, {
+                    id: self.id
+                });
+                if (targetItem.length > 0) {
+                    targetItem[0].store(targetCharacterId, function() {
+                        self.character.id = targetCharacterId;
+                        self.store("Vault", cb);
+                    });
+                }
             } else if (cb) {
                 cb(y, x);
             } else if (result && result.Message) {

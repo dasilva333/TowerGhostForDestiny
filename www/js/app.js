@@ -1,13 +1,12 @@
 var Layout = function(layout) {
     var self = this;
 
-    self.name = Object.keys(layout)[0];
-    var data = layout[self.name];
-    self.id = data.view;
-    self.bucketTypes = data.bucketTypes;
-    self.headerText = data.headerText;
-    self.array = data.array;
-    self.counts = data.counts;
+    self.name = layout.name;
+    self.id = layout.view;
+    self.bucketTypes = layout.bucketTypes;
+    self.headerText = layout.headerText;
+    self.array = layout.array;
+    self.counts = layout.counts;
     self.countText = function(character) {
         return ko.computed(function() {
             var text = "";
@@ -112,7 +111,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
                 title: 'Error:',
@@ -371,6 +370,7 @@ var app = new(function() {
     this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
     this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
+    this.activeSort = ko.computed(new tgd.StoreObj("activeSort"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
     this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
     this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
@@ -404,13 +404,9 @@ var app = new(function() {
         }
     });
     this.activeLayouts = ko.computed(function() {
-        var layouts = [];
-        _.each(self.allLayouts(), function(layout) {
-            if (self.activeView() == layout.id || self.activeView() == 0) {
-                layouts.push(layout);
-            }
-        });
-        return layouts;
+        return _.filter(self.allLayouts(), function(layout) {
+            return (self.activeView() == layout.id || self.activeView() == 0);
+        });;
     });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -536,6 +532,7 @@ var app = new(function() {
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
+        self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
@@ -595,7 +592,7 @@ var app = new(function() {
                 }
             } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                 /* Armor Perks */
-                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && activeItem.tierType !== 6) {
+                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     /* this only applies to armor with existing perks */
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
@@ -627,6 +624,9 @@ var app = new(function() {
                 );
             }
             $content.find(".destt-primary-min").html(activeItem.primaryStat());
+            if (activeItem.equipRequiredLevel) {
+                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + '</span></span>');
+            }
         }
         var width = $(window).width();
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen
@@ -729,6 +729,10 @@ var app = new(function() {
             self.setFilter([]);
             self.showMissing(false);
         }
+    }
+    this.setSort = function(model, event) {
+        self.toggleBootstrapMenu();
+        self.activeSort($(event.target).closest('li').attr("value"));
     }
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
@@ -907,10 +911,10 @@ var app = new(function() {
                     } else {
                         loadingData = false;
                         self.refresh();
-                        if (e && typeof e.Message != "undefined") {
-                            return BootstrapDialog.alert(e.Message);
+                        if (response && typeof response.Message != "undefined") {
+                            return BootstrapDialog.alert(response.Message);
                         } else {
-                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
                         }
                     }
                 });
@@ -1701,7 +1705,7 @@ var app = new(function() {
     }
 
     this.generateStatic = function() {
-        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
+        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background", "stats"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
             "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
             "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
@@ -1816,8 +1820,8 @@ var app = new(function() {
 
     this.init = function() {
 
-        _.each(tgd.DestinyLayout, function(object) {
-            self.allLayouts.push(new Layout(object));
+        _.each(tgd.DestinyLayout, function(layout) {
+            self.allLayouts.push(new Layout(layout));
         });
 
 
@@ -1942,6 +1946,22 @@ var app = new(function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
+        var weaponKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyWeaponPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
+        var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyArmorPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
         ko.applyBindings(self);
     }
 });

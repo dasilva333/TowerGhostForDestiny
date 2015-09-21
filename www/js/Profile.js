@@ -1,7 +1,7 @@
-function average(arr) {
+function sum(arr) {
     return _.reduce(arr, function(memo, num) {
         return memo + num;
-    }, 0) / arr.length;
+    }, 0);
 }
 
 var Profile = function(character, items, index) {
@@ -29,9 +29,7 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    /*this.powerLevel = ko.computed(function(){
-    	return Math.floor(average(_.map(_.filter( self.armor().concat(self.weapons()) , function(item){ return item.isEquipped() }), function(item){ return item.primaryStat() })));
-    });*/
+    this.powerLevel = ko.computed(this._powerLevel, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -105,10 +103,12 @@ Profile.prototype = {
         var self = this;
         return function(item) {
             var info = window._itemDefs[item.itemHash];
-            if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                var itemBucketType = self.getBucketTypeHelper(item, info);
-                if (buckets.indexOf(itemBucketType) > -1) {
-                    return true;
+            if (info && info.bucketTypeHash) {
+                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                    var itemBucketType = self.getBucketTypeHelper(item, info);
+                    if (buckets.indexOf(itemBucketType) > -1) {
+                        return true;
+                    }
                 }
             }
         }
@@ -125,9 +125,20 @@ Profile.prototype = {
             } else {
                 done();
                 app.refresh();
-                return BootstrapDialog.alert("Code 20: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
             }
         }
+    },
+    _powerLevel: function() {
+        var self = this;
+        var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
+        var weights = tgd.DestinyBucketWeights[index];
+        return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
+            return item.isEquipped() && item.bucketType in weights;
+        }), function(item) {
+            var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
+            return value;
+        })));
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -143,9 +154,7 @@ Profile.prototype = {
             buckets.push.apply(buckets, model.bucketTypes);
         } else if (model instanceof Profile) {
             _.each(tgd.DestinyLayout, function(layout) {
-                _.each(layout, function(l) {
-                    buckets.push.apply(buckets, l.bucketTypes);
-                });
+                buckets.push.apply(buckets, layout.bucketTypes);
             });
         }
 
@@ -183,8 +192,8 @@ Profile.prototype = {
                         reallyDone();
                     } else {
                         reallyDone();
-                        self.refresh();
-                        return BootstrapDialog.alert("Code 40: " + self.activeText().error_loading_inventory + JSON.stringify(response));
+                        app.refresh();
+                        return BootstrapDialog.alert("Code 40: " + app.activeText().error_loading_inventory + JSON.stringify(response));
                     }
                 });
             } else {
@@ -253,11 +262,41 @@ Profile.prototype = {
         }
     },
     get: function(type) {
-        return _.sortBy(_.sortBy(this.items().filter(this.filterItemByType(type, false)), function(item) {
-            return item.type;
-        }), function(item) {
-            return item.tierType * -1;
-        });
+        var items = this.items().filter(this.filterItemByType(type, false));
+        /* Tier, Type */
+        if (app.activeSort() == 0) {
+            items = _.sortBy(_.sortBy(items, function(item) {
+                return item.type;
+            }), function(item) {
+                return item.tierType * -1;
+            });
+        }
+        /* Type */
+        else if (app.activeSort() == 1) {
+            items = _.sortBy(items, function(item) {
+                return item.type;
+            });
+        }
+        /* Light */
+        else if (app.activeSort() == 2) {
+            items = _.sortBy(items, function(item) {
+                return item.primaryStatValue() * -1;
+            });
+        }
+        /* Damage */
+        else if (app.activeSort() == 3) {
+            items = _.sortBy(items, function(item) {
+                return item.damageType;
+            });
+        }
+        /* Name */
+        else if (app.activeSort() == 4) {
+            items = _.sortBy(items, function(item) {
+                return item.description;
+            });
+        }
+
+        return items;
     },
     getVisible: function(type) {
         return _.filter(this.get(type), function(item) {
@@ -273,5 +312,105 @@ Profile.prototype = {
     },
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
+    },
+    equipHighest: function(type) {
+        var character = this;
+        return function() {
+            if (character.id == "Vault") return;
+
+            var items = _.flatten(_.map(app.characters(), function(avatar) {
+                return avatar.items()
+            }));
+            var sets = [];
+            var backups = [];
+
+            //TODO add support for global armor buckets so I can store armor in the vault and have it xfered on demand
+            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces);
+            var buckets = [].concat(globalBuckets).concat(tgd.DestinyArmorPieces);
+
+            _.each(buckets, function(bucket) {
+                var candidates = _.filter(items, function(item) {
+                    return item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
+                        (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1);
+                });
+                _.each(candidates, function(candidate) {
+                    if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
+                        (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                    }
+                });
+            });
+
+            backups = _.flatten(backups);
+
+            _.each(backups, function(spare) {
+                var candidates = _.filter(backups, function(item) {
+                    return item.bucketType == spare.bucketType && item._id != spare._id;
+                });
+                primaryStats = _.map(candidates, function(item) {
+                    return (type == "Light") ? item.primaryStatValue() : item.stats[type]
+                });
+                var maxCandidate = Math.max.apply(null, primaryStats);
+                if (maxCandidate < ((type == "Light") ? spare.primaryStatValue() : spare.stats[type])) {
+                    sets.push([spare]);
+                }
+            });
+
+            _.each(sets, function(set) {
+                var exotic = set[0];
+                _.each(buckets, function(bucket) {
+                    if (bucket != exotic.bucketType) {
+                        var candidates = _.where(backups, {
+                            bucketType: bucket
+                        });
+                        if (candidates.length > 0) {
+                            primaryStats = _.map(candidates, function(item) {
+                                return (type == "Light") ? item.primaryStatValue() : item.stats[type]
+                            });
+                            var maxCandidate = Math.max.apply(null, primaryStats);
+                            var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+                            set.push(candidate);
+                        }
+                    }
+                });
+            });
+            var sumSets = _.map(sets, function(set) {
+                return sum(_.map(set, function(item) {
+                    return (type == "Light") ? item.primaryStatValue() : item.stats[type];
+                }));
+            });
+
+            var highestSet = Math.max.apply(null, sumSets);
+            if (type != "Light") {
+                $.toaster({
+                    priority: 'success',
+                    title: 'Result:',
+                    message: " The highest set available for " + type + "  is  " + highestSet
+                });
+            }
+            highestSet = _.sortBy(sets[sumSets.indexOf(highestSet)], function(item) {
+                return item.tierType;
+            });
+            var count = 0;
+            var done = function() {
+                count++;
+                if (count == highestSet.length && type != "Light") {
+                    app.refresh();
+                }
+            }
+            _.each(highestSet, function(candidate) {
+                if (character.itemEquipped(candidate.bucketType)._id !== candidate._id) {
+                    candidate.equip(character.id, function() {
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Equip:',
+                            message: candidate.bucketType + " can have a better item with " + candidate.description
+                        });
+                        done();
+                    });
+                } else {
+                    done();
+                }
+            });
+        }
     }
 }
