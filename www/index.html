@@ -78,9 +78,6 @@
             (<span data-bind="text: character.get(bucketType).length"></span>/20)
             <!--/ko  -->
             <!--/ko  -->
-            <!-- ko if: ( character.id == 'Vault' ) -->
-            (<span data-bind="text: character.getVisible(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
-            <!--/ko  -->
             <div class="titleRefresh" data-bind="visible: isMobile">
                 <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables') -->
                 <i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
