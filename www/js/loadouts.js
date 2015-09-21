@@ -518,10 +518,9 @@
 	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
 	                        var maxBucketSize = 10;
 	                        var targetBucketSize = targetBucket.length;
-	                        var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
 	                        if (targetCharacter.id == "Vault") {
-	                            targetBucketSize = targetCharacter[arrayName]().length;
-	                            maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 72 : 36;
+	                            targetBucketSize = _.where( targetCharacter.items(), { bucketType: key }).length;
+	                            maxBucketSize = _.filter( tgd.DestinyLayout, function(layout){ return layout.bucketTypes.indexOf(key) > -1 })[0].counts[0];
 	                        }
 	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                        var targetMaxed = (targetBucketSize == maxBucketSize);
