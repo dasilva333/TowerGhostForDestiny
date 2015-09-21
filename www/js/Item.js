@@ -75,7 +75,7 @@ Item.prototype = {
                 locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
-				classType: info.classType,
+                classType: info.classType,
                 bucketType: self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
@@ -136,7 +136,7 @@ Item.prototype = {
                     });
                 }
             }
-			if (item.progression) {
+            if (item.progression) {
                 itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1
             }
             if (item.stats.length > 0) {
