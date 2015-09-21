@@ -8,7 +8,7 @@ window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-tgd.localLogging = true;
+tgd.localLogging = false;
 tgd.localLog = function(msg) {
 	if (tgd.localLogging) {
 		console.log(msg);
@@ -17,6 +17,7 @@ tgd.localLog = function(msg) {
 tgd.dataDir = "data";
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
+tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
 tgd.DestinyLayout = [
   { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
   { name: "Armor", array: 'armor', counts: [72,60], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
