@@ -61,10 +61,10 @@ var neededFiles = [
 		delete item.statDescription;
 		delete item.icon;
 		return item;
-	}},
+	}}/*,
 	{ table: "DestinyProgressionDefinition", name: "progressDefs", key: "progressionHash", reduce: function(item){
 		return item;
-	}},
+	}}*/,
 	{ table: "DestinyObjectiveDefinition", name: "objectiveDefs", key: "objectiveHash", reduce: function(item){
 		var obj = { objectiveHash: item.objectiveHash, completionValue: item.completionValue };
 		return obj;

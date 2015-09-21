@@ -35,7 +35,6 @@
     <script type="text/javascript" src="data/talentGridDefs.json"></script>
     <script type="text/javascript" src="data/raceDefs.json"></script>
     <script type="text/javascript" src="data/setDefs.json"></script>
-    <script type="text/javascript" src="data/progressDefs.json"></script>
     <script type="text/javascript" src="data/objectiveDefs.json"></script>
     <script type="text/javascript" src="data/tgdDefs.js"></script>
     <script type="text/javascript" src="js/buy.js"></script>
@@ -368,16 +367,20 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="0">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
                             </li>
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="1">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 1 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_progress_1">Missing XP</span>								</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 1 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_progress_1">Missing XP</span>								</a>
                             </li>
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="2">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_progress_2">Full XP</span>								</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_progress_2">Full XP</span>								</a>
                             </li>
                             <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="3">
-                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_progress_3">Maxed</span>								</a>
+                                <a href="#"><i class="fa" data-bind="css: progressFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_progress_3">Maxed</span>								</a>
                             </li>
                         </ul>
                     </li>
@@ -751,7 +754,7 @@
             <li>Equipping items & transferring items across characters</li>
             <li>Specify amounts of consumables/materials to transfer</li>
             <li>Filter by Perk Name, Description, Gun Name</li>
-            <li>Filter by gun progress (Maxed (gold border), Full XP, Missing XP)</li>
+            <li>Filter by item progress</li>
             <li>Filter by burn (Kinetic, Arc, Solar, Void)</li>
             <li>Filter by weapon type (Scout, Auto, Hand Cannon, etc...)</li>
             <li>Filter by Tier (Exotic, Legendary, Rare, etc...)</li>
@@ -816,8 +819,8 @@
             <li><strong>Tier</strong> Filter by the rarity of the item (rare, legendary, exotic) </li>
             <li><strong>Set</strong> Preset collections from various activiies in Destiny for an easy to filter list </li>
             <li><strong>Show Missing Items</strong> When a Set is enabled use this to show you what items you're missing from that set.</li>
-            <li><strong>Progress</strong> <em>Missing XP:</em> Items that do not have their circles completely filled in with XP.</li>
-            <li><strong>Progress</strong> <em>Full XP:</em> Items that have been completely filled with XP but is missing the gold border.</li>
+            <li><strong>Progress</strong> <em>Missing Perks:</em> Items that do not have their perks completely filled.</li>
+            <li><strong>Progress</strong> <em>Missing XP:</em> Items that have been completely filled with perks but are missing the gold border.</li>
             <li><strong>Progress</strong> <em>Maxed:</em> Items that have gold borders only.</li>
             <li><strong>Damage</strong> Filter by burn type, kinetic is the default burn applied to all weapons if it's not arc, void or solar.</li>
             <li><strong>Weapon</strong> Filter by type of weapon, this list will only show types you have in your inventory.</li>
