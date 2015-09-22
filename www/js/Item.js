@@ -218,7 +218,7 @@ Item.prototype = {
         }
     },
     _primaryStatValue: function() {
-        if (this.primaryStat) {
+        if (this.primaryStat && typeof this.primaryStat == "function") {
             var primaryStat = this.primaryStat();
             if (this.objectives && typeof primaryStat == "string") {
                 primaryStat = primaryStat.split("/")[0];
