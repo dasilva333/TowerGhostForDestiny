@@ -6,6 +6,7 @@ var jag = require("jag"),
 	_ = require("lodash");
 
 var jsonPath = "../www/data/";
+var imgPath = "/common/destiny_content/icons/";
 var bungieURL = "http://www.bungie.net";
 var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
 var neededFiles = [
@@ -170,27 +171,42 @@ var extractData = function(callback){
 		db.close();
 	});
 }
+var queue = [];
+
+var removeOrphans = function(callback){
+	var files = fs.readdirSync(jsonPath + imgPath);
+	var orphans = _.difference( files, queue );
+	
+	console.log("queue length: " + queue.length);
+	console.log("orphans length: " + orphans.length);
+	console.log("files length: " + files.length);
+	
+	_.each( orphans, function(file){
+		fs.unlinkSync(jsonPath + imgPath + file);
+	});
+	callback();
+}
 
 var queueImages = function(callback){
 	console.log("first queue");
 	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.json").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
-		queue.push(item.icon);
+		queue.push(item.icon.replace(imgPath,''));
 		if (item.itemTypeName == "Emblem"){
-			queue.push(item.secondaryIcon);
+			queue.push(item.secondaryIcon.replace(imgPath,''));
 		}
 	});
 	console.log("2nd queue");
 	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.json").toString("utf8").replace("_perkDefs=",""));
 	_.each(contents, function(item){
-		queue.push(item.displayIcon);
+		queue.push(item.displayIcon.replace(imgPath,''));
 	});
 	console.log("3rd queue");
 	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
 	_.each(contents , function(tg){
 		_.each(tg.nodes, function(node){
 			_.each( node.steps, function(step){
-				queue.push(step.icon);
+				queue.push(step.icon.replace(imgPath,''));
 			});
 		});
 	});
@@ -200,13 +216,15 @@ var queueImages = function(callback){
 	callback();
 }
 
-var queue = [];
+
 var cacheIcons = function(){
 	var icon = queue.pop();
 	console.log("check if icon exists " + icon);
-	if ( !fs.existsSync(jsonPath + icon) ){
-		console.log("downloading icon " + (bungieURL + icon));
-		http.get(bungieURL + icon, function(res) {
+	var physicalPath = jsonPath + imgPath + icon;
+	if ( !fs.existsSync(physicalPath) ){
+		var dlPath = bungieURL + imgPath + icon;
+		console.log("downloading icon " + dlPath);
+		http.get(dlPath, function(res) {
 			if (res.statusCode != 200){
 				console.log(res.statusCode + " status code for icon " + icon);
 				if (queue.length > 0)
@@ -219,7 +237,7 @@ var cacheIcons = function(){
 					data.push(chunk); // Append Buffer object
 				});
 				res.on("end", function() {
-					fs.writeFileSync(jsonPath + icon, Buffer.concat(data));
+					fs.writeFileSync(physicalPath, Buffer.concat(data));
 					if (queue.length > 0)
 						cacheIcons();
 				});			
@@ -236,8 +254,11 @@ downloadDatabase(function(){
 	extractData(function(){
 		console.log("queuing images");
 		queueImages(function(){
-			console.log("caching icons");
-			cacheIcons();
+			console.log("removing orphans");
+			removeOrphans(function(){
+				console.log("caching icons");
+				cacheIcons();
+			});
 		});
 	});
 });
