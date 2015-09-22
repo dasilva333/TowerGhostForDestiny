@@ -185,19 +185,19 @@
 	            //tgd.localLog("querying with character id " + item.character.id);
 	            //tgd.localLog(c.uniqueName);
 	            //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-				if (c && c.items){
-					var query = item._id == 0 ? {
-						id: item.id
-					} : {
-						_id: item._id
-					};
-					//tgd.localLog("querying with " + JSON.stringify(query));
-					var x = _.findWhere(c.items(), query);
-					//tgd.localLog(x);
-					return x;
-				} else {
-					return null;
-				}
+	            if (c && c.items) {
+	                var query = item._id == 0 ? {
+	                    id: item.id
+	                } : {
+	                    _id: item._id
+	                };
+	                //tgd.localLog("querying with " + JSON.stringify(query));
+	                var x = _.findWhere(c.items(), query);
+	                //tgd.localLog(x);
+	                return x;
+	            } else {
+	                return null;
+	            }
 	        } else {
 	            return null;
 	        }
