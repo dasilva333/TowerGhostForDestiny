@@ -38,12 +38,24 @@ var Item = function(model, profile, ignoreDups) {
 Item.prototype = {
     init: function(item, ignoreDups) {
         var self = this;
-        if (!(item.itemHash in _itemDefs)) {
+        /*if (!(item.itemHash in _itemDefs)) {
             tgd.localLog("found an item without a definition! " + JSON.stringify(item));
             tgd.localLog(item.itemHash);
             return;
+        }*/
+        var info = {};
+        if (item.itemHash in _itemDefs) {
+            info = _itemDefs[item.itemHash];
+        } else {
+            /* Classified Items */
+            info = {
+                bucketTypeHash: "1498876634",
+                itemName: "Classified",
+                tierTypeName: "Exotic",
+                icon: "/img/misc/missing_icon.png",
+                itemTypeName: "Classified"
+            }
         }
-        var info = _itemDefs[item.itemHash];
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             var description, tierTypeName, itemDescription, itemTypeName;
             try {
@@ -75,6 +87,7 @@ Item.prototype = {
                 locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
+                classType: info.classType,
                 bucketType: self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
@@ -88,11 +101,6 @@ Item.prototype = {
             }
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
-            }
-            if (item.progression) {
-                var progress = _progressDefs[item.progression.progressionHash];
-                var progressTotal = Math.max.apply(null, _.pluck(progress.steps, 'progressTotal'));
-                itemObject.progression = (item.progression.currentProgress > 0 && item.progression.currentProgress >= progressTotal);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
@@ -139,6 +147,9 @@ Item.prototype = {
                         itemObject.perks.push(perk);
                     });
                 }
+            }
+            if (item.progression) {
+                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
@@ -200,11 +211,11 @@ Item.prototype = {
     hashProgress: function(state) {
         var self = this;
         if (typeof self.progression !== "undefined") {
-            /* Missing XP */
+            /* Missing Perks */
             if (state == 1 && self.progression == false) {
                 return true;
             }
-            /* Full XP  but not maxed out */
+            /* Filled perks but not maxed out */
             else if (state == 2 && self.progression == true && self.isGridComplete == false) {
                 return true
             }
@@ -219,8 +230,8 @@ Item.prototype = {
         }
     },
     _primaryStatValue: function() {
-        if (this.primaryStat) {
-            var primaryStat = this.primaryStat();
+        if (this.primaryStat && typeof this.primaryStat == "function") {
+            var primaryStat = ko.unwrap(this.primaryStat());
             if (this.objectives && typeof primaryStat == "string") {
                 primaryStat = primaryStat.split("/")[0];
             }

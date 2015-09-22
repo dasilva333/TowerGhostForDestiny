@@ -4,7 +4,7 @@
 	    _.each(model, function(value, key) {
 	        self[key] = value;
 	    });
-	    var _doEquip = (typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
+	    var _doEquip = (model && model.hash) ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
 	    this.doEquip = ko.observable(_doEquip);
 	}
 
@@ -185,15 +185,19 @@
 	            //tgd.localLog("querying with character id " + item.character.id);
 	            //tgd.localLog(c.uniqueName);
 	            //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-	            var query = item._id == 0 ? {
-	                id: item.id
-	            } : {
-	                _id: item._id
-	            };
-	            //tgd.localLog("querying with " + JSON.stringify(query));
-	            var x = _.findWhere(c.items(), query);
-	            //tgd.localLog(x);
-	            return x;
+	            if (c && c.items) {
+	                var query = item._id == 0 ? {
+	                    id: item.id
+	                } : {
+	                    _id: item._id
+	                };
+	                //tgd.localLog("querying with " + JSON.stringify(query));
+	                var x = _.findWhere(c.items(), query);
+	                //tgd.localLog(x);
+	                return x;
+	            } else {
+	                return null;
+	            }
 	        } else {
 	            return null;
 	        }
@@ -367,14 +371,16 @@
 	                });
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
-	                var arrayName = (item.weaponIndex > -1 ? "weapons" : "armor");
-	                var layout = _.findWhere(app.allLayouts(), {
-	                    array: arrayName
-	                });
+	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
+	                    return layout.bucketTypes.indexOf(bucketType) > -1
+	                })[0];
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
-	                var spaceUsedInVault = vault[arrayName]().length;
-	                tgd.localLog("spaceNeededInVault: " + spaceNeededInVault);
-	                tgd.localLog(arrayName + " space used: " + spaceUsedInVault);
+	                var spaceUsedInVault = _.filter(vault.items(), function(item) {
+	                    return layout.bucketTypes.indexOf(bucketType) > -1;
+	                }).length;
+
+	                tgd.localLog(bucketType + " spaceNeededInVault: " + spaceNeededInVault);
+	                tgd.localLog(bucketType + " spaceUsedInVault: " + spaceUsedInVault);
 
 	                if (spaceUsedInVault <= spaceNeededInVault) { // || targetCharacterId == "Vault"
 	                    tgd.localLog("vault has at least 2 slots to make xfer");
@@ -387,31 +393,34 @@
 	                        tmpIds = [];
 	                    var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
 	                    tgd.localLog("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
-	                    var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
-	                    otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex, 1);
+	                    otherBucketTypes = [].concat(layout.bucketTypes);
+	                    otherBucketTypes.splice(otherBucketTypes.indexOf(bucketType), 1);
+	                    tgd.localLog("other bucket types: " + otherBucketTypes);
 	                    tgd.localLog(otherBucketTypes + " being checked in other characters");
 	                    _.each(otherBucketTypes, function(bucketType) {
-	                        _.each(app.characters(), function(character) {
-	                            if (freeSpaceNeeded > 0 && character.id != "Vault") {
-	                                tgd.localLog("checking " + character.uniqueName);
-	                                var freeSpace = maxFreeSpace - character.get(bucketType).length;
-	                                if (freeSpace > 0) {
-	                                    tgd.localLog(bucketType + " found with free space: " + freeSpace);
-	                                    var itemsToMove = vault.get(bucketType);
-	                                    _.each(itemsToMove, function(item) {
-	                                        if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
-	                                            tmpItems.push({
-	                                                item: item,
-	                                                character: character
-	                                            });
-	                                            tmpIds.push(item._id);
-	                                            freeSpaceNeeded = freeSpaceNeeded - 1;
-	                                            freeSpace = freeSpace - 1;
-	                                        }
-	                                    });
+	                        if (tgd.DestinyNonUniqueBuckets.indexOf(bucketType) == -1) {
+	                            _.each(app.characters(), function(character) {
+	                                if (freeSpaceNeeded > 0 && character.id != "Vault") {
+	                                    tgd.localLog("checking " + character.uniqueName);
+	                                    var freeSpace = maxFreeSpace - character.get(bucketType).length;
+	                                    if (freeSpace > 0) {
+	                                        tgd.localLog(bucketType + " found with free space: " + freeSpace);
+	                                        var itemsToMove = vault.get(bucketType);
+	                                        _.each(itemsToMove, function(item) {
+	                                            if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
+	                                                tmpItems.push({
+	                                                    item: item,
+	                                                    character: character
+	                                                });
+	                                                tmpIds.push(item._id);
+	                                                freeSpaceNeeded = freeSpaceNeeded - 1;
+	                                                freeSpace = freeSpace - 1;
+	                                            }
+	                                        });
+	                                    }
 	                                }
-	                            }
-	                        });
+	                            });
+	                        }
 	                    });
 	                    tgd.localLog("so the plan is to move these from the vault ");
 	                    tgd.localLog(tmpItems);
@@ -518,10 +527,13 @@
 	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
 	                        var maxBucketSize = 10;
 	                        var targetBucketSize = targetBucket.length;
-	                        var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
 	                        if (targetCharacter.id == "Vault") {
-	                            targetBucketSize = targetCharacter[arrayName]().length;
-	                            maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 72 : 36;
+	                            targetBucketSize = _.where(targetCharacter.items(), {
+	                                bucketType: key
+	                            }).length;
+	                            maxBucketSize = _.filter(tgd.DestinyLayout, function(layout) {
+	                                return layout.bucketTypes.indexOf(key) > -1
+	                            })[0].counts[0];
 	                        }
 	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                        var targetMaxed = (targetBucketSize == maxBucketSize);
