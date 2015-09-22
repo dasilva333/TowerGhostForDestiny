@@ -133,12 +133,16 @@ Profile.prototype = {
         var self = this;
         var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
         var weights = tgd.DestinyBucketWeights[index];
-        return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
-            return item.isEquipped() && item.bucketType in weights;
-        }), function(item) {
-            var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
-            return value;
-        })));
+        if (weights) {
+            return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
+                return item.isEquipped() && item.bucketType in weights;
+            }), function(item) {
+                var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
+                return value;
+            })));
+        } else {
+            return 0;
+        }
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -324,14 +328,13 @@ Profile.prototype = {
             var sets = [];
             var backups = [];
 
-            //TODO add support for global armor buckets so I can store armor in the vault and have it xfered on demand
-            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces);
-            var buckets = [].concat(globalBuckets).concat(tgd.DestinyArmorPieces);
+            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
+            var buckets = [].concat(globalBuckets);
 
             _.each(buckets, function(bucket) {
                 var candidates = _.filter(items, function(item) {
                     return item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
-                        (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1);
+                        (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType))
                 });
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
@@ -388,7 +391,7 @@ Profile.prototype = {
                 });
             }
             highestSet = _.sortBy(sets[sumSets.indexOf(highestSet)], function(item) {
-                return item.tierType;
+                return item.tierType * -1;
             });
             var count = 0;
             var done = function() {
@@ -398,7 +401,8 @@ Profile.prototype = {
                 }
             }
             _.each(highestSet, function(candidate) {
-                if (character.itemEquipped(candidate.bucketType)._id !== candidate._id) {
+                var itemEquipped = character.itemEquipped(candidate.bucketType);
+                if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
                     candidate.equip(character.id, function() {
                         $.toaster({
                             priority: 'info',
