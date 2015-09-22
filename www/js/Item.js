@@ -38,12 +38,24 @@ var Item = function(model, profile, ignoreDups) {
 Item.prototype = {
     init: function(item, ignoreDups) {
         var self = this;
-        if (!(item.itemHash in _itemDefs)) {
+        /*if (!(item.itemHash in _itemDefs)) {
             tgd.localLog("found an item without a definition! " + JSON.stringify(item));
             tgd.localLog(item.itemHash);
             return;
+        }*/
+        var info = {};
+        if (item.itemHash in _itemDefs) {
+            info = _itemDefs[item.itemHash];
+        } else {
+            /* Classified Items */
+            info = {
+                bucketTypeHash: "1498876634",
+                itemName: "Classified",
+                tierTypeName: "Exotic",
+                icon: "/img/misc/missing_icon.png",
+                itemTypeName: "Classified"
+            }
         }
-        var info = _itemDefs[item.itemHash];
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             var description, tierTypeName, itemDescription, itemTypeName;
             try {
@@ -218,8 +230,8 @@ Item.prototype = {
         }
     },
     _primaryStatValue: function() {
-        if (this.primaryStat) {
-            var primaryStat = this.primaryStat();
+        if (this.primaryStat && typeof this.primaryStat == "function") {
+            var primaryStat = ko.unwrap(this.primaryStat());
             if (this.objectives && typeof primaryStat == "string") {
                 primaryStat = primaryStat.split("/")[0];
             }
