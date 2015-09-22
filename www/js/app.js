@@ -1826,7 +1826,7 @@ var app = new(function() {
 
 
         self.initLocale();
-        if (_.isUndefined(window._itemDefs)) {
+        if (_.isUndefined(window._itemDefs) || _.isUndefined(window._perkDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
         self.initItemDefs();

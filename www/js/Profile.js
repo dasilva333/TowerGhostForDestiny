@@ -133,12 +133,17 @@ Profile.prototype = {
         var self = this;
         var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
         var weights = tgd.DestinyBucketWeights[index];
-        return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
-            return item.isEquipped() && item.bucketType in weights;
-        }), function(item) {
-            var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
-            return value;
-        })));
+		if (weights){
+			return Math.floor(sum(_.map(_.filter(self.items(), function(item) {
+				return item.isEquipped() && item.bucketType in weights;
+			}), function(item) {
+				var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
+				return value;
+			})));		
+		}
+		else {
+			return 0;
+		}
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -387,7 +392,7 @@ Profile.prototype = {
                 });
             }
             highestSet = _.sortBy(sets[sumSets.indexOf(highestSet)], function(item) {
-                return item.tierType;
+                return item.tierType * -1;
             });
             var count = 0;
             var done = function() {
@@ -397,7 +402,8 @@ Profile.prototype = {
                 }
             }
             _.each(highestSet, function(candidate) {
-                if (character.itemEquipped(candidate.bucketType)._id !== candidate._id) {
+				var itemEquipped = character.itemEquipped(candidate.bucketType);
+                if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
                     candidate.equip(character.id, function() {
                         $.toaster({
                             priority: 'info',
