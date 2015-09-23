@@ -335,7 +335,8 @@ Profile.prototype = {
             _.each(buckets, function(bucket) {
                 var candidates = _.filter(items, function(item) {
                     return item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
-                        (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType))
+						 item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType &&
+                        (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1)
                 });
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
@@ -404,7 +405,8 @@ Profile.prototype = {
                     _.each(buckets, function(bucket) {
                         var candidates = _.filter(items, function(item) {
                             return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
-                                (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType))
+                                (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1) && 
+								item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType;
                         });
                         tgd.localLog("candidates considering " + candidates.length);
                         _.each(candidates, function(candidate) {
@@ -417,7 +419,6 @@ Profile.prototype = {
                         });
                     });
                     tgd.localLog("full sets considering " + fullSets.length);
-                    window.f0 = _.clone(fullSets, true);
                     //tgd.localLog( fullSets );
                     var statAlternatives = _.flatten(fullSets);
                     tgd.localLog("full sets considering " + fullSets.length);
