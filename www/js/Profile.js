@@ -386,7 +386,12 @@ Profile.prototype = {
 			
             var highestSetValue = Math.max.apply(null, sumSets);
 			
-            if (type != "Light") {
+            if (type == "Light"){
+				highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
+					return item.tierType * -1;
+				});
+			}
+			else if (type != "Light") {
 				tgd.localLog("type changed is not light");
 				if ( highestSetValue < maxCap ){
 					tgd.localLog("highest set is below max cap");
