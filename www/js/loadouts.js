@@ -4,7 +4,7 @@
 	    _.each(model, function(value, key) {
 	        self[key] = value;
 	    });
-	    var _doEquip = (model && model.hash) ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
+	    var _doEquip = (model && typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
 	    this.doEquip = ko.observable(_doEquip);
 	}
 
@@ -545,7 +545,7 @@
 	                            tgd.localLog("using swap strategy");
 	                            var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                            swapArray = _.map(sourceBucket, function(item) {
-	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                var ownerIcon = item.character.icon();
 	                                /* if the item is already in the targetBucket */
 	                                if (_.findWhere(targetBucket, {
 	                                        _id: item._id
@@ -636,12 +636,13 @@
 	                        } else {
 	                            /* do a clean move by returning a swap object without a swapItem */
 	                            swapArray = _.map(sourceBucket, function(item) {
-	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                var ownerIcon = item.character.icon();
 	                                /* if the item is already in the targetBucket */
 	                                if (_.findWhere(targetBucket, {
 	                                        _id: item._id
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+	                                    tgd.localLog(item.description + " doEquip? " + item.doEquip());
 	                                    if (item.doEquip() == true) {
 	                                        return {
 	                                            targetItem: item,
