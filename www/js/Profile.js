@@ -513,21 +513,28 @@ Profile.prototype = {
             var count = 0;
             var done = function() {
                 count++;
-                if (count == highestSet.length && type != "Light") {
-                    app.refresh();
+                if (count == highestSet.length) {
+					var msa = adhoc.transfer(character.id, true);
+					adhoc.swapItems(msa, character.id, function() {
+						console.log("xfer complete");
+					});
                 }
             }
+			var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
                 var itemEquipped = character.itemEquipped(candidate.bucketType);
                 if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
-                    candidate.equip(character.id, function() {
-                        $.toaster({
-                            priority: 'info',
-                            title: 'Equip:',
-                            message: candidate.bucketType + " can have a better item with " + candidate.description
-                        });
-                        done();
-                    });
+					adhoc.addUniqueItem({
+						id: candidate._id,
+						bucketType: candidate.bucketType,
+						doEquip: true
+					});
+                    $.toaster({
+						priority: 'info',
+						title: 'Equip:',
+						message: candidate.bucketType + " can have a better item with " + candidate.description
+					});
+					done();
                 } else {
                     done();
                 }

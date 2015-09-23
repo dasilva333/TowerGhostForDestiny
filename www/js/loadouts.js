@@ -375,8 +375,8 @@
 	                    return layout.bucketTypes.indexOf(bucketType) > -1
 	                })[0];
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
-	                var spaceUsedInVault = _.filter(vault.items(), function(item) {
-	                    return layout.bucketTypes.indexOf(bucketType) > -1;
+	                var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
+	                    return layout.bucketTypes.indexOf(otherItem.bucketType) > -1;
 	                }).length;
 
 	                tgd.localLog(bucketType + " spaceNeededInVault: " + spaceNeededInVault);
@@ -500,7 +500,7 @@
 	        if (typeof targetCharacter == "undefined") {
 	            return BootstrapDialog.alert("Target character not found");
 	        }
-	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
+	        var targetCharacterIcon = targetCharacter.icon();
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
 	            //tgd.localLog(itemFound + " getFirstItem: " + sourceBucketIds);
 	            return function(otherItem) {
@@ -608,7 +608,7 @@
 	                                        tgd.localLog("2.swapItem: " + swapItem.description);
 	                                        targetBucket.splice(targetBucket.indexOf(swapItem), 1);
 	                                        //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
-	                                        if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+	                                        if (swapItem.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType) {
 	                                            return {
 	                                                description: item.description + app.activeText().loadouts_no_transfer,
 	                                                targetIcon: item.icon,
@@ -659,7 +659,7 @@
 	                                            swapIcon: ownerIcon
 	                                        }
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType)) {
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
