@@ -377,11 +377,11 @@ Item.prototype = {
             tgd.localLog("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
-                    //tgd.localLog("result was OKed");
-                    //tgd.localLog(result);
+                    tgd.localLog("result was OKed for " + self.description);
+                    tgd.localLog(result);
                     self.isEquipped(true);
                     self.character.items().forEach(function(item) {
-                        if (item != self && item.bucketType == self.bucketType) {
+                        if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
                             item.isEquipped(false);
                         }
                     });
