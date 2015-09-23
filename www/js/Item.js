@@ -1134,5 +1134,18 @@ Item.prototype = {
                 self.locked(newState);
             }
         });
-    }
+    },
+	getValue: function(type){
+		var value;
+		if (type == "Light"){
+			value = this.primaryStatValue();
+		}
+		else if (type == "All"){
+			value = sum(_.values(this.stats));
+		}
+		else {
+			value = item.stats[type];
+		}
+		return value;
+	}
 }
