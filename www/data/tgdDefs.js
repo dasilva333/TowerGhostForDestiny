@@ -8,7 +8,7 @@ window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-tgd.localLogging = false;
+tgd.localLogging = true;
 tgd.localLog = function(msg) {
 	if (tgd.localLogging) {
 		console.log(msg);
@@ -183,6 +183,19 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 			'</div>' +
 			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
 				'<%= perk.description %>' +
+			'</div>' +
+		'</div>' +
+	'<% }) %>' +
+'</div>';
+
+tgd.statsTemplate = '<div class="destt-stat">' +
+	'<% Object.keys(stats).forEach(function(key){ %>' +
+		'<div class="stat-bar">' +
+			'<div class="stat-bar-label">' +
+				'<%= key %>' +
+			'</div>' +
+			'<div class="stat-bar-static-value">' +
+				'<%= stats[key] %>' +
 			'</div>' +
 		'</div>' +
 	'<% }) %>' +

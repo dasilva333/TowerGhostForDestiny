@@ -377,11 +377,11 @@ Item.prototype = {
             tgd.localLog("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
-                    //tgd.localLog("result was OKed");
-                    //tgd.localLog(result);
+                    tgd.localLog("result was OKed for " + self.description);
+                    tgd.localLog(result);
                     self.isEquipped(true);
                     self.character.items().forEach(function(item) {
-                        if (item != self && item.bucketType == self.bucketType) {
+                        if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
                             item.isEquipped(false);
                         }
                     });
@@ -391,10 +391,10 @@ Item.prototype = {
                     }
                     if (callback) callback(true);
                 } else {
+                    tgd.localLog("transfer error 7 " + result);
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
                     else if (result && result.Message) {
-                        tgd.localLog("transfer error 7");
                         $.toaster({
                             priority: 'info',
                             title: 'Error:',
@@ -403,7 +403,7 @@ Item.prototype = {
                     }
                     //TODO perhaps log this condition and determine the cause
                     else {
-                        BootstrapDialog.alert(app.activeText().cannot_equip + (result && result.error) ? result.error : "");
+                        BootstrapDialog.alert(self.description + ":" + app.activeText().cannot_equip + (result && result.error) ? result.error : "");
                     }
                 }
             });
@@ -1134,5 +1134,16 @@ Item.prototype = {
                 self.locked(newState);
             }
         });
+    },
+    getValue: function(type) {
+        var value;
+        if (type == "Light") {
+            value = this.primaryStatValue();
+        } else if (type == "All") {
+            value = sum(_.values(this.stats));
+        } else {
+            value = item.stats[type];
+        }
+        return value;
     }
 }
