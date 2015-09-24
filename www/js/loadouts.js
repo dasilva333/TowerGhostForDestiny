@@ -178,27 +178,33 @@
 	    },
 	    /* the object with the .store function has to be the one in app.characters not this copy */
 	    findReference: function(item) {
+			//console.log("findReference " + item.description);
 	        if (item && item.character && item.character.id) {
 	            var c = _.findWhere(app.characters(), {
 	                id: item.character.id
 	            });
-	            //tgd.localLog("querying with character id " + item.character.id);
-	            //tgd.localLog(c.uniqueName);
+				//console.log(c);
+				//console.log(c.items().length);
+				//console.log(c.items());
+	            tgd.localLog("querying with character id " + item.character.id);
+	            tgd.localLog(c.uniqueName);
 	            //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-	            if (c && c.items) {
+	            if (c && c.items) {					
 	                var query = item._id == 0 ? {
 	                    id: item.id
 	                } : {
 	                    _id: item._id
 	                };
-	                //tgd.localLog("querying with " + JSON.stringify(query));
+	                tgd.localLog("querying with " + JSON.stringify(query));
 	                var x = _.findWhere(c.items(), query);
-	                //tgd.localLog(x);
+	                tgd.localLog(x);
 	                return x;
 	            } else {
 	                return null;
 	            }
 	        } else {
+				//console.log(item);
+				//console.log(item.character);
 	            return null;
 	        }
 	    },
@@ -219,7 +225,7 @@
 	            loader.width(progressValue + "%");
 	            //now that they are both in the vault transfer them to their respective location
 	            var transferTargetItemToVault = function(complete) {
-	                targetItem = self.findReference(pair.targetItem);
+	                targetItem = pair.targetItem;
 	                if (typeof targetItem != "undefined") {
 	                    targetOwner = targetItem.character.id;
 	                    tgd.localLog(" transferTargetItemToVault " + targetItem.description);
@@ -245,7 +251,7 @@
 	                }
 	            }
 	            var transferSwapItemToVault = function(complete) {
-	                swapItem = self.findReference(pair.swapItem);
+	                swapItem =pair.swapItem;
 	                tgd.localLog("^^^^^^^^^^" + swapItem.character.id + " transferSwapItemToVault " + swapItem.description);
 	                if (swapItem.character.id == "Vault") {
 	                    complete();
@@ -299,7 +305,7 @@
 	            }
 	            var transferTargetItemToDestination = function(complete) {
 	                if (typeof targetItem == "undefined" && pair.targetItem)
-	                    targetItem = self.findReference(pair.targetItem);
+	                    targetItem = pair.targetItem;
 	                if (targetItem) {
 	                    var action = (_.where(self.ids(), {
 	                        id: targetItem._id
@@ -329,7 +335,7 @@
 	            }
 	            var transferSwapItemToDestination = function(complete) {
 	                    if (typeof swapItem == "undefined" && pair.swapItem)
-	                        swapItem = self.findReference(pair.swapItem);
+	                        swapItem = pair.swapItem;
 	                    if (swapItem) {
 	                        tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
 	                        if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
@@ -362,9 +368,10 @@
 	                }
 	                /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
-	                var item = self.findReference(ref);
+	                var item = ref;
 	                if (typeof item == "undefined") {
-	                    return BootstrapDialog.alert("Item not found while attempting to transfer the item");
+						console.log(ref);
+	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
 	                }
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"

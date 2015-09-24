@@ -403,7 +403,7 @@ Item.prototype = {
                     }
                     //TODO perhaps log this condition and determine the cause
                     else {
-                        BootstrapDialog.alert(app.activeText().cannot_equip + (result && result.error) ? result.error : "");
+                        BootstrapDialog.alert(self.description + ":" + app.activeText().cannot_equip + (result && result.error) ? result.error : "");
                     }
                 }
             });
