@@ -391,7 +391,7 @@ Item.prototype = {
                     }
                     if (callback) callback(true);
                 } else {
-					tgd.localLog("transfer error 7 " + result);
+                    tgd.localLog("transfer error 7 " + result);
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
                     else if (result && result.Message) {
@@ -1135,17 +1135,15 @@ Item.prototype = {
             }
         });
     },
-	getValue: function(type){
-		var value;
-		if (type == "Light"){
-			value = this.primaryStatValue();
-		}
-		else if (type == "All"){
-			value = sum(_.values(this.stats));
-		}
-		else {
-			value = item.stats[type];
-		}
-		return value;
-	}
+    getValue: function(type) {
+        var value;
+        if (type == "Light") {
+            value = this.primaryStatValue();
+        } else if (type == "All") {
+            value = sum(_.values(this.stats));
+        } else {
+            value = item.stats[type];
+        }
+        return value;
+    }
 }
