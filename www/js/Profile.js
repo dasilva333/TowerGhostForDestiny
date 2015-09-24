@@ -339,7 +339,11 @@ Profile.prototype = {
                 //console.log(bucket + ":" + _.pluck(candidates,'bucketType'));
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                        (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                        if (candidate.isEquipped()) {
+                            (candidate.tierType == 6 ? sets : backups).unshift([candidate]);
+                        } else {
+                            (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                        }
                     }
                 });
             });
