@@ -564,8 +564,21 @@ var app = new(function() {
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
+            /* Add Required Level if provided */
+            if (activeItem.equipRequiredLevel) {
+                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + '</span></span>');
+            }
             /* Type using locale */
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
+            /* Primary Stat and Stat Type */
+            var primaryStatMin = $content.find(".destt-primary-min");
+            if (primaryStatMin.length == 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1)) {
+                var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
+                var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
+                $content.find(".destt-desc").before(statBlock);
+            } else {
+                primaryStatMin.html(activeItem.primaryStat());
+            }
             /* Description using locale */
             $content.find(".destt-desc").text(activeItem.itemDescription);
             /* Remove Emblem Text */
@@ -576,6 +589,29 @@ var app = new(function() {
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
+            }
+            /* Armor Stats */
+            if (_.isObject(activeItem.stats)) {
+                var stats = $content.find(".destt-stat");
+                if (stats.length > 0) {
+                    stats.html(
+                        stats.find(".stat-bar").map(function(index, stat) {
+                            var $stat = $("<div>" + stat.outerHTML + "</div>"),
+                                label = $stat.find(".stat-bar-label"),
+                                labelText = $.trim(label.text());
+                            if (labelText in activeItem.stats) {
+                                label.text(labelText + ": " + activeItem.stats[labelText]);
+                                $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+                            }
+                            return $stat.html();
+                        }).get().join("")
+                    );
+                } else {
+                    console.log("***patching**");
+                    $content.find(".destt-desc").after(tgd.statsTemplate({
+                        stats: activeItem.stats
+                    }));
+                }
             }
             if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
                 /* Weapon Perks (Pre-HoW) */
@@ -592,7 +628,7 @@ var app = new(function() {
                 }
             } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                 /* Armor Perks */
-                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                if (activeItem.perks.length > 0) {
                     /* this only applies to armor with existing perks */
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
@@ -606,26 +642,6 @@ var app = new(function() {
                         }));
                     }
                 }
-            }
-            /* Armor Stats */
-            var stats = $content.find(".destt-stat");
-            if (activeItem.stats && stats.length > 0) {
-                stats.html(
-                    stats.find(".stat-bar").map(function(index, stat) {
-                        var $stat = $("<div>" + stat.outerHTML + "</div>"),
-                            label = $stat.find(".stat-bar-label"),
-                            labelText = $.trim(label.text());
-                        if (labelText in activeItem.stats) {
-                            label.text(labelText + ": " + activeItem.stats[labelText]);
-                            $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
-                        }
-                        return $stat.html();
-                    }).get().join("")
-                );
-            }
-            $content.find(".destt-primary-min").html(activeItem.primaryStat());
-            if (activeItem.equipRequiredLevel) {
-                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + '</span></span>');
             }
         }
         var width = $(window).width();
@@ -1831,6 +1847,7 @@ var app = new(function() {
         }
         self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
+        tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.swapTemplate = _.template(tgd.swapTemplate);
