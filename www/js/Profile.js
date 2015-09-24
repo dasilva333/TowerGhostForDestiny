@@ -1,4 +1,5 @@
 function cartesianProductOf(x) {
+	return [];
     return _.reduce(x, function(a, b) {
         return _.flatten(_.map(a, function(x) {
             return _.map(b, function(y) {
@@ -345,6 +346,7 @@ Profile.prototype = {
 			if (type == "Best"){
 				var bestSets = [];
 				
+				console.time("finding candidates");
 				_.each(buckets, function(bucket) {
 					var candidates = _.filter(items, function(item) {
 						return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
@@ -355,18 +357,23 @@ Profile.prototype = {
 				});
 
 				backups = _.flatten(sets);
-
-				_.each(sets , function(set){
-				   var mainPiece = set[0], stats = mainPiece.stats, subSets = [ [mainPiece] ];
+				console.timeEnd("finding candidates");
+				
+				_.each([sets[0]] , function(set){
+					console.time("processing a set");
+				   var mainPiece = set[0], subSets = [ [mainPiece] ];
 				   var candidates = _.groupBy(_.filter(backups, function(item){
 					  return item.bucketType != mainPiece.bucketType 
-						&& ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) 
+						//&& ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) 
 						&& mainPiece._id != item._id;
 				   }),'bucketType');
 				   _.each(candidates, function(items){
 					 subSets.push(items);
-				   });
+				   });				   
+				   console.time("cartesian product of a set");
 				   var combos = cartesianProductOf(subSets);
+				   console.timeEnd("cartesian product of a set");
+				   console.time("sums of a set");
 				   var sums = _.map( combos, function(combo){
 						 var stats =  _.map( combo, function(item){ return item.stats });
 						 var tmp = {};
@@ -378,13 +385,16 @@ Profile.prototype = {
 						 });
 						var score = [];
 						_.each(tmp, function(value, key){
-						   score.push( (value / 300) > 1 ? 1.05 : (value / 300) )
+							var result = (value / 300);
+						    score.push( result > 1 ? 1.05 : result )
 						 });
 						return average(score);
 				   });
 				   var highestScore = Math.max.apply(null, sums);
 				   var highestScoringSet = combos[sums.indexOf(highestScore)];
+				   console.timeEnd("sums of a set");
 				   bestSets.push({ score: highestScore, set: highestScoringSet });
+				   console.timeEnd("processing a set");
 				});
 				var bestSets = _.sortBy(bestSets, 'score');
 				highestSet = bestSets[bestSets.length-1].set;
