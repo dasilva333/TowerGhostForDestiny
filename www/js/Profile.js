@@ -318,7 +318,6 @@ Profile.prototype = {
         this.statsShowing(!this.statsShowing());
     },
     equipHighest: function(type) {
-        //type is value to aim for. Light, int, dis, str
         var character = this;
         return function() {
             if (character.id == "Vault") return;
