@@ -8,7 +8,8 @@ var jag = require("jag"),
 var jsonPath = "../www/data/";
 var imgPath = "/common/destiny_content/icons/";
 var bungieURL = "http://www.bungie.net";
-var manifestURL = bungieURL+ "/Platform/Destiny/Manifest/";
+var manifestURL = "/Platform/Destiny/Manifest/";
+var apikey = '5cae9cdee67a42848025223b4e61f929';
 var neededFiles = [
 	{ table: "DestinySandboxPerkDefinition", name: "perkDefs", key: "perkHash", reduce: function(item){
 		return item;
@@ -77,7 +78,9 @@ var downloadDatabase = function(callback){
 		return callback();
 	}
 	var count = 0;
-	http.get(manifestURL, function(res) {
+	var options = { method: 'GET', hostname: 'www.bungie.net', path: manifestURL, headers: { 'X-API-Key':  apikey } };
+	console.log('making request ' + JSON.stringify(options));
+	var req = http.request(options, function(res) {
 		console.log("querying manifest");
 		var data = []; // List of Buffer objects
 		res.on("data", function(chunk) {
@@ -110,7 +113,8 @@ var downloadDatabase = function(callback){
 				})
 			});
 		});
-	})
+	});
+	req.end();
 }
 
 var extractData = function(callback){
