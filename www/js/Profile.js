@@ -318,6 +318,7 @@ Profile.prototype = {
         this.statsShowing(!this.statsShowing());
     },
     equipHighest: function(type) {
+        //type is value to aim for. Light, int, dis, str
         var character = this;
         return function() {
             if (character.id == "Vault") return;
@@ -342,11 +343,15 @@ Profile.prototype = {
 				//console.log(bucket + ":" + _.pluck(candidates,'bucketType'));
                 _.each(candidates, function(candidate) {
                     if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0) ) {
-                        (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                        if (candidate.isEquipped()) {
+                            (candidate.tierType == 6 ? sets : backups).unshift([candidate]);
+                        } else {
+                            (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                        }
                     }
                 });
             });
-							
+
             backups = _.flatten(backups);
 
             _.each(backups, function(spare) {
