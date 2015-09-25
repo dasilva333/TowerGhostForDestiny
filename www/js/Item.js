@@ -744,7 +744,7 @@ Item.prototype = {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         tgd.localLog("retransferring");
                         //TODO move this function to a more general area for common use
-                        var newItem = Loadout.prototype.findReference(self);
+                        var newItem = app.findReference(self);
                         if (newItem) {
                             newItem.store(targetCharacterId, cb);
                         }
