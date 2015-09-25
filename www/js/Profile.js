@@ -1,5 +1,4 @@
 function cartesianProductOf(x) {
-    return [];
     return _.reduce(x, function(a, b) {
         return _.flatten(_.map(a, function(x) {
             return _.map(b, function(y) {
@@ -342,16 +341,15 @@ Profile.prototype = {
             var sets = [];
             var backups = [];
             var highestSet;
-            var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
-            var buckets = [].concat(globalBuckets);
 
             if (type == "Best") {
+                var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
                 var bestSets = [];
 
                 console.time("finding candidates");
                 _.each(buckets, function(bucket) {
                     var candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && ((item.bucketType != "Ghost" && tgd.DestinyClass[item.classType] == character.classType) || (item.bucketType == "Ghost"))
                     });
                     _.each(candidates, function(candidate) {
                         sets.push([candidate]);
@@ -365,7 +363,7 @@ Profile.prototype = {
                     console.time("processing a set");
                     var mainPiece = set[0],
                         subSets = [
-                            [mainPiece._id]
+                            [mainPiece]
                         ];
                     var candidates = _.groupBy(_.filter(backups, function(item) {
                         return item.bucketType != mainPiece.bucketType
@@ -373,32 +371,25 @@ Profile.prototype = {
                             && mainPiece._id != item._id;
                     }), 'bucketType');
                     _.each(candidates, function(items) {
-                        subSets.push(_.map(items, function(item) {
-                            return item._id
-                        }));
+                        subSets.push(items);
                     });
                     console.time("cartesian product of a set");
-                    console.log(subSets);
                     var combos = cartesianProductOf(subSets);
                     console.timeEnd("cartesian product of a set");
                     console.time("sums of a set");
                     var sums = _.map(combos, function(combo) {
-                        var stats = _.map(combo, function(item) {
-                            return item.stats
-                        });
                         var tmp = {};
-                        _.each(stats, function(stat) {
-                            _.each(stat, function(value, key) {
+                        _.each(combo, function(item) {
+                            _.each(item.stats, function(value, key) {
                                 if (!(key in tmp)) tmp[key] = 0;
                                 tmp[key] += value;
                             });
                         });
-                        var score = [];
-                        _.each(tmp, function(value, key) {
+                        var score = average(_.map(tmp, function(value, key) {
                             var result = (value / 300);
-                            score.push(result > 1 ? 1.05 : result)
-                        });
-                        return average(score);
+                            return (result > 1) ? 1.05 : result;
+                        }));
+                        return score;
                     });
                     var highestScore = Math.max.apply(null, sums);
                     var highestScoringSet = combos[sums.indexOf(highestScore)];
@@ -412,6 +403,8 @@ Profile.prototype = {
                 var bestSets = _.sortBy(bestSets, 'score');
                 highestSet = bestSets[bestSets.length - 1].set;
             } else {
+                var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
+                var buckets = [].concat(globalBuckets);
                 _.each(buckets, function(bucket) {
                     var candidates = _.filter(items, function(item) {
                         return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
