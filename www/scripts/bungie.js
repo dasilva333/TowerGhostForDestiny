@@ -119,7 +119,7 @@ var bungie = (function(cookieString, complete) {
                 data: data,
                 complete: function(xhr, status) {
                     var response;
-                    if (xhr.status >= 200 && xhr.status < 400) {
+                    if (xhr.status >= 200 && xhr.status <= 409) {
                         try {
                             response = JSON.parse(xhr.responseText);
                         } catch (e) {
