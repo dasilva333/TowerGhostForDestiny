@@ -8,6 +8,8 @@ window.addEventListener("request-cookie", function(event) {
     self.port.emit("request-cookie");
 });
 
+var apikey = '5cae9cdee67a42848025223b4e61f929';
+
 window.addEventListener("request-message", function(event) {
     try {
         var request = event.detail;
@@ -16,6 +18,7 @@ window.addEventListener("request-message", function(event) {
         var opts = request.opts;
         var xhr = new XMLHttpRequest();
         xhr.open(opts.method, opts.route, true);
+        xhr.setRequestHeader('X-API-Key', apikey);
         xhr.setRequestHeader('x-csrf', window.activeCookie);
         xhr.onload = function() {
             var reply = {
