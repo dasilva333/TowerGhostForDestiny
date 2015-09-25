@@ -68,6 +68,26 @@ var bungie = (function(cookieString, complete) {
         }
     }
 
+    this.retryRequest = function(opts) {
+        if (opts.retries) {
+            if (opts.retries > 3) {
+                opts.complete({
+                    error: 'network error:' + this.status
+                }, response);
+            } else {
+                opts.retries++;
+                setTimeout(function() {
+                    self.request(opts);
+                }, 1000 * opts.retries);
+            }
+        } else {
+            opts.retries = 0;
+            setTimeout(function() {
+                self.request(opts);
+            }, 2000);
+        }
+    }
+
     this.request = function(opts) {
         if (opts.route.indexOf("http") == -1)
             opts.route = url + "Platform" + opts.route;
@@ -105,10 +125,8 @@ var bungie = (function(cookieString, complete) {
                         } catch (e) {
                             //console.log("error parsing responseText: " + xhr.responseText);
                         }
-                        if (response && response.ErrorCode && response.ErrorCode === 36) {
-                            setTimeout(function() {
-                                self.request(opts);
-                            }, 1000);
+                        if (response && response.ErrorCode && (response.ErrorCode == 36 || response.ErrorCode == 1652 || response.ErrorCode == 1651)) {
+                            self.retryRequest(opts);
                         } else {
                             var obj = response;
                             if (typeof obj == "object" && "Response" in obj)
@@ -116,23 +134,7 @@ var bungie = (function(cookieString, complete) {
                             opts.complete(obj, response);
                         }
                     } else {
-                        if (opts.retries) {
-                            if (opts.retries > 3) {
-                                opts.complete({
-                                    error: 'network error:' + this.status
-                                }, response);
-                            } else {
-                                opts.retries++;
-                                setTimeout(function() {
-                                    self.request(opts);
-                                }, 1000 * opts.retries);
-                            }
-                        } else {
-                            opts.retries = 0;
-                            setTimeout(function() {
-                                self.request(opts);
-                            }, 2000);
-                        }
+                        self.retryRequest(opts);
                     }
                 }
             });

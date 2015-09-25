@@ -232,8 +232,8 @@ Item.prototype = {
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {
             var primaryStat = ko.unwrap(this.primaryStat());
-            if (this.objectives && typeof primaryStat == "string") {
-                primaryStat = primaryStat.split("/")[0];
+            if (this.objectives && typeof primaryStat == "string" && primaryStat.indexOf("/") > -1) {
+                primaryStat = parseInt(primaryStat.split("/")[0]);
             }
             return primaryStat;
         }
@@ -1141,8 +1141,10 @@ Item.prototype = {
             value = this.primaryStatValue();
         } else if (type == "All") {
             value = sum(_.values(this.stats));
+        } else if (_.isObject(item.stats) && type in item.stats) {
+            value = parseInt(item.stats[type]);
         } else {
-            value = item.stats[type];
+            value = 0;
         }
         return value;
     }

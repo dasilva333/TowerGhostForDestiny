@@ -607,7 +607,6 @@ var app = new(function() {
                         }).get().join("")
                     );
                 } else {
-                    console.log("***patching**");
                     $content.find(".destt-desc").after(tgd.statsTemplate({
                         stats: activeItem.stats
                     }));
