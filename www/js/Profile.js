@@ -339,248 +339,256 @@ Profile.prototype = {
             var maxCap = 300;
             var sets = [];
             var backups = [];
-			var highestSet;
+            var highestSet;
             var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
             var buckets = [].concat(globalBuckets);
 
-			if (type == "Best"){
-				var bestSets = [];
-				
-				console.time("finding candidates");
-				_.each(buckets, function(bucket) {
-					var candidates = _.filter(items, function(item) {
-						return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
-					});
-					_.each(candidates, function(candidate) {
-						sets.push([candidate]);
-					});
-				});
+            if (type == "Best") {
+                var bestSets = [];
 
-				backups = _.flatten(sets);
-				console.timeEnd("finding candidates");
-				
-				_.each([sets[0]] , function(set){
-					console.time("processing a set");
-				   var mainPiece = set[0], subSets = [ [mainPiece] ];
-				   var candidates = _.groupBy(_.filter(backups, function(item){
-					  return item.bucketType != mainPiece.bucketType 
-						//&& ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) 
-						&& mainPiece._id != item._id;
-				   }),'bucketType');
-				   _.each(candidates, function(items){
-					 subSets.push(items);
-				   });				   
-				   console.time("cartesian product of a set");
-				   var combos = cartesianProductOf(subSets);
-				   console.timeEnd("cartesian product of a set");
-				   console.time("sums of a set");
-				   var sums = _.map( combos, function(combo){
-						 var stats =  _.map( combo, function(item){ return item.stats });
-						 var tmp = {};
-						 _.each(stats, function(stat){
-							   _.each(stat, function(value, key){
-								 if ( !(key in tmp) ) tmp[key] = 0;
-								 tmp[key] += value;
-							   });
-						 });
-						var score = [];
-						_.each(tmp, function(value, key){
-							var result = (value / 300);
-						    score.push( result > 1 ? 1.05 : result )
-						 });
-						return average(score);
-				   });
-				   var highestScore = Math.max.apply(null, sums);
-				   var highestScoringSet = combos[sums.indexOf(highestScore)];
-				   console.timeEnd("sums of a set");
-				   bestSets.push({ score: highestScore, set: highestScoringSet });
-				   console.timeEnd("processing a set");
-				});
-				var bestSets = _.sortBy(bestSets, 'score');
-				highestSet = bestSets[bestSets.length-1].set;
-			}
-			else {
-				_.each(buckets, function(bucket) {
-					var candidates = _.filter(items, function(item) {
-						return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
-					});
-					_.each(candidates, function(candidate) {
-						if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-							(candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
-						}
-					});
-				});
+                console.time("finding candidates");
+                _.each(buckets, function(bucket) {
+                    var candidates = _.filter(items, function(item) {
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
+                    });
+                    _.each(candidates, function(candidate) {
+                        sets.push([candidate]);
+                    });
+                });
 
-				backups = _.flatten(backups);
+                backups = _.flatten(sets);
+                console.timeEnd("finding candidates");
 
-				_.each(backups, function(spare) {
-					var candidates = _.filter(backups, function(item) {
-						return item.bucketType == spare.bucketType 
-							&& ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) 
-							&& item._id != spare._id;
-					});
-					primaryStats = _.map(candidates, function(item) {
-						return item.getValue(type);
-					});
-					var maxCandidate = Math.max.apply(null, primaryStats);
-					if (maxCandidate < spare.getValue(type)) {
-						sets.push([spare]);
-					}
-				});
+                _.each(sets, function(set) {
+                    console.time("processing a set");
+                    var mainPiece = set[0],
+                        subSets = [
+                            [mainPiece._id]
+                        ];
+                    var candidates = _.groupBy(_.filter(backups, function(item) {
+                        return item.bucketType != mainPiece.bucketType
+                            //&& ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) 
+                            && mainPiece._id != item._id;
+                    }), 'bucketType');
+                    _.each(candidates, function(items) {
+                        subSets.push(_.map(items, function(item) {
+                            return item._id
+                        }));
+                    });
+                    console.time("cartesian product of a set");
+                    console.log(subSets);
+                    var combos = cartesianProductOf(subSets);
+                    console.timeEnd("cartesian product of a set");
+                    console.time("sums of a set");
+                    var sums = _.map(combos, function(combo) {
+                        var stats = _.map(combo, function(item) {
+                            return item.stats
+                        });
+                        var tmp = {};
+                        _.each(stats, function(stat) {
+                            _.each(stat, function(value, key) {
+                                if (!(key in tmp)) tmp[key] = 0;
+                                tmp[key] += value;
+                            });
+                        });
+                        var score = [];
+                        _.each(tmp, function(value, key) {
+                            var result = (value / 300);
+                            score.push(result > 1 ? 1.05 : result)
+                        });
+                        return average(score);
+                    });
+                    var highestScore = Math.max.apply(null, sums);
+                    var highestScoringSet = combos[sums.indexOf(highestScore)];
+                    console.timeEnd("sums of a set");
+                    bestSets.push({
+                        score: highestScore,
+                        set: highestScoringSet
+                    });
+                    console.timeEnd("processing a set");
+                });
+                var bestSets = _.sortBy(bestSets, 'score');
+                highestSet = bestSets[bestSets.length - 1].set;
+            } else {
+                _.each(buckets, function(bucket) {
+                    var candidates = _.filter(items, function(item) {
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && (item.character.id == character.id || (globalBuckets.indexOf(bucket) > -1 && item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType)) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
+                    });
+                    _.each(candidates, function(candidate) {
+                        if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
+                            (candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+                        }
+                    });
+                });
 
-				_.each(sets, function(set) {
-					var main = set[0];
-					_.each(buckets, function(bucket) {
-						if (bucket != main.bucketType) {
-							/* TODO: Investigate if it's possible to generate a set w 2 exotics w/o adding a filter here */
-							var candidates = _.where(backups, {
-								bucketType: bucket
-							});
-							if (candidates.length > 0) {
-								primaryStats = _.map(candidates, function(item) {
-									return item.getValue(type);
-								});
-								var maxCandidate = Math.max.apply(null, primaryStats);
-								var candidate = candidates[primaryStats.indexOf(maxCandidate)];
-								set.push(candidate);
-							}
-						}
-					});
-				});
-				var sumSets = _.map(sets, function(set) {
-					return sum(_.map(set, function(item) {
-						return item.getValue(type);
-					}));
-				});
+                backups = _.flatten(backups);
 
-				var highestSetValue = Math.max.apply(null, sumSets);
+                _.each(backups, function(spare) {
+                    var candidates = _.filter(backups, function(item) {
+                        return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
+                    });
+                    primaryStats = _.map(candidates, function(item) {
+                        return item.getValue(type);
+                    });
+                    var maxCandidate = Math.max.apply(null, primaryStats);
+                    if (maxCandidate < spare.getValue(type)) {
+                        sets.push([spare]);
+                    }
+                });
 
-				if (type == "Light" || type == "All") {
-					highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
-						return item.tierType * -1;
-					});
-				} else if (type != "Light") {
-					tgd.localLog("type changed is not light");
-					if (highestSetValue < maxCap) {
-						tgd.localLog("highest set is below max cap");
-						highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
-							return item.tierType * -1;
-						});
-					} else {
-						tgd.localLog("highest set is above max cap");
-						var fullSets = [];
-						var alternatives = [];
-						_.each(buckets, function(bucket) {
-							var candidates = _.filter(items, function(item) {
-								return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
-									(item.character.id == character.id || globalBuckets.indexOf(bucket) > -1) &&
-									item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType;
-							});
-							tgd.localLog("candidates considering " + candidates.length);
-							_.each(candidates, function(candidate) {
-								if (candidate.stats[type] > 0) {
-									tgd.localLog(candidate);
-									fullSets.push([candidate]);
-								} else {
-									alternatives.push([candidate]);
-								}
-							});
-						});
-						tgd.localLog("full sets considering " + fullSets.length);
-						//tgd.localLog( fullSets );
-						var statAlternatives = _.flatten(fullSets);
-						tgd.localLog("full sets considering " + fullSets.length);
-						_.each(fullSets, function(set) {
-							var mainItem = set[0];
-							var currentStat = mainItem.stats[type];
-							tgd.localLog(currentStat + " for main item: " + mainItem.description);
-							_.each(buckets, function(bucket) {
-								if (bucket != mainItem.bucketType) {
-									if (currentStat < maxCap) {
-										var candidates = _.filter(statAlternatives, function(item) {
-											return item.bucketType == bucket &&
-												((item.tierType != 6 && mainItem.tierType == 6) || (item.tierType == 6 && mainItem.tierType != 6));
-										});
-										if (candidates.length > 0) {
-											var primaryStats = _.map(candidates, function(item) {
-												return item.stats[type]
-											});
-											tgd.localLog(bucket + " choices are " + primaryStats);
-											var maxCandidateValue = Math.max.apply(null, primaryStats);
-											maxCandidate = candidates[primaryStats.indexOf(maxCandidateValue)];
-											var deltas = {};
-											_.each(candidates, function(candidate, index) {
-												tgd.localLog(candidate.description + " considering candidate currentStat " + candidate.stats[type]);
-												var delta = ((currentStat + candidate.stats[type]) - maxCap);
-												if (delta >= 0) {
-													var allStatsSummed = ((currentStat + sum(_.values(candidate.stats))) - candidate.stats[type] - maxCap);
-													if (allStatsSummed >= 0) {
-														deltas[index] = allStatsSummed;
-													}
-												}
-												//tgd.localLog("new currentStat is " + currentStat);
+                _.each(sets, function(set) {
+                    var main = set[0];
+                    _.each(buckets, function(bucket) {
+                        if (bucket != main.bucketType) {
+                            /* TODO: Investigate if it's possible to generate a set w 2 exotics w/o adding a filter here */
+                            var candidates = _.where(backups, {
+                                bucketType: bucket
+                            });
+                            if (candidates.length > 0) {
+                                primaryStats = _.map(candidates, function(item) {
+                                    return item.getValue(type);
+                                });
+                                var maxCandidate = Math.max.apply(null, primaryStats);
+                                var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+                                set.push(candidate);
+                            }
+                        }
+                    });
+                });
+                var sumSets = _.map(sets, function(set) {
+                    return sum(_.map(set, function(item) {
+                        return item.getValue(type);
+                    }));
+                });
 
-											});
-											var values = _.values(deltas),
-												keys = _.keys(deltas);
-											if (values.length > 0) {
-												maxCandidate = candidates[keys[values.indexOf(Math.max.apply(null, values))]];
-												tgd.localLog(" new max candidate is " + maxCandidate.description);
-											}
-											currentStat += maxCandidate.stats[type];
-											tgd.localLog("new currentStat is " + currentStat);
-											set.push(maxCandidate);
-										}
-									} else {
-										tgd.localLog("adding alternative maxCap is full on this set");
-										var candidates = _.filter(alternatives, function(item) {
-											return item.bucketType == bucket;
-										});
-										if (candidates.length > 0) {
-											set.push(candidates[0]);
-										}
-									}
-								}
-							});
-						});
-						var availableSets = [],
-							availableSumSets = [];
-						_.map(fullSets, function(set) {
-							var arrStats = _.pluck(set, 'stats');
-							var sumSet = _.reduce(arrStats, function(memo, stat) {
-								var tmp = _.extend({}, memo);
-								//tgd.localLog("old memo " + JSON.stringify(tmp));
-								_.each(stat, function(value, key) {
-									//tgd.localLog(key + " value: " + value);
-									tmp[key] = parseInt(memo[key]) + parseInt(value);
-								});
-								_.each(tmp, function(value, key) {
-										if (!(value >= 0)) tmp[key] = 0;
-									})
-									//tgd.localLog("new memo " + JSON.stringify(tmp));
-								return tmp;
-							});
-							if (sumSet[type] > maxCap) {
-								availableSumSets.push(sumSet);
-								availableSets.push(set);
-							}
-							tgd.localLog(sumSet);
-						});
-						var sumSetValues = _.map(availableSumSets, function(set) {
-							return sum(_.values(set))
-						});
-						highestSetValue = Math.max.apply(null, sumSetValues);
-						highestSet = availableSets[sumSetValues.indexOf(highestSetValue)];
-					}
-				}
-			}
-			
-			$.toaster({
-				priority: 'success',
-				title: 'Result:',
-				message: " The highest set available for " + type + "  is  " + highestSetValue
-			});
-			
+                var highestSetValue = Math.max.apply(null, sumSets);
+
+                if (type == "Light" || type == "All") {
+                    highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
+                        return item.tierType * -1;
+                    });
+                } else if (type != "Light") {
+                    tgd.localLog("type changed is not light");
+                    if (highestSetValue < maxCap) {
+                        tgd.localLog("highest set is below max cap");
+                        highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
+                            return item.tierType * -1;
+                        });
+                    } else {
+                        tgd.localLog("highest set is above max cap");
+                        var fullSets = [];
+                        var alternatives = [];
+                        _.each(buckets, function(bucket) {
+                            var candidates = _.filter(items, function(item) {
+                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
+                                    (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1) &&
+                                    item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType;
+                            });
+                            tgd.localLog("candidates considering " + candidates.length);
+                            _.each(candidates, function(candidate) {
+                                if (candidate.stats[type] > 0) {
+                                    tgd.localLog(candidate);
+                                    fullSets.push([candidate]);
+                                } else {
+                                    alternatives.push([candidate]);
+                                }
+                            });
+                        });
+                        tgd.localLog("full sets considering " + fullSets.length);
+                        //tgd.localLog( fullSets );
+                        var statAlternatives = _.flatten(fullSets);
+                        tgd.localLog("full sets considering " + fullSets.length);
+                        _.each(fullSets, function(set) {
+                            var mainItem = set[0];
+                            var currentStat = mainItem.stats[type];
+                            tgd.localLog(currentStat + " for main item: " + mainItem.description);
+                            _.each(buckets, function(bucket) {
+                                if (bucket != mainItem.bucketType) {
+                                    if (currentStat < maxCap) {
+                                        var candidates = _.filter(statAlternatives, function(item) {
+                                            return item.bucketType == bucket &&
+                                                ((item.tierType != 6 && mainItem.tierType == 6) || (item.tierType == 6 && mainItem.tierType != 6));
+                                        });
+                                        if (candidates.length > 0) {
+                                            var primaryStats = _.map(candidates, function(item) {
+                                                return item.stats[type]
+                                            });
+                                            tgd.localLog(bucket + " choices are " + primaryStats);
+                                            var maxCandidateValue = Math.max.apply(null, primaryStats);
+                                            maxCandidate = candidates[primaryStats.indexOf(maxCandidateValue)];
+                                            var deltas = {};
+                                            _.each(candidates, function(candidate, index) {
+                                                tgd.localLog(candidate.description + " considering candidate currentStat " + candidate.stats[type]);
+                                                var delta = ((currentStat + candidate.stats[type]) - maxCap);
+                                                if (delta >= 0) {
+                                                    var allStatsSummed = ((currentStat + sum(_.values(candidate.stats))) - candidate.stats[type] - maxCap);
+                                                    if (allStatsSummed >= 0) {
+                                                        deltas[index] = allStatsSummed;
+                                                    }
+                                                }
+                                                //tgd.localLog("new currentStat is " + currentStat);
+
+                                            });
+                                            var values = _.values(deltas),
+                                                keys = _.keys(deltas);
+                                            if (values.length > 0) {
+                                                maxCandidate = candidates[keys[values.indexOf(Math.max.apply(null, values))]];
+                                                tgd.localLog(" new max candidate is " + maxCandidate.description);
+                                            }
+                                            currentStat += maxCandidate.stats[type];
+                                            tgd.localLog("new currentStat is " + currentStat);
+                                            set.push(maxCandidate);
+                                        }
+                                    } else {
+                                        tgd.localLog("adding alternative maxCap is full on this set");
+                                        var candidates = _.filter(alternatives, function(item) {
+                                            return item.bucketType == bucket;
+                                        });
+                                        if (candidates.length > 0) {
+                                            set.push(candidates[0]);
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                        var availableSets = [],
+                            availableSumSets = [];
+                        _.map(fullSets, function(set) {
+                            var arrStats = _.pluck(set, 'stats');
+                            var sumSet = _.reduce(arrStats, function(memo, stat) {
+                                var tmp = _.extend({}, memo);
+                                //tgd.localLog("old memo " + JSON.stringify(tmp));
+                                _.each(stat, function(value, key) {
+                                    //tgd.localLog(key + " value: " + value);
+                                    tmp[key] = parseInt(memo[key]) + parseInt(value);
+                                });
+                                _.each(tmp, function(value, key) {
+                                        if (!(value >= 0)) tmp[key] = 0;
+                                    })
+                                    //tgd.localLog("new memo " + JSON.stringify(tmp));
+                                return tmp;
+                            });
+                            if (sumSet[type] > maxCap) {
+                                availableSumSets.push(sumSet);
+                                availableSets.push(set);
+                            }
+                            tgd.localLog(sumSet);
+                        });
+                        var sumSetValues = _.map(availableSumSets, function(set) {
+                            return sum(_.values(set))
+                        });
+                        highestSetValue = Math.max.apply(null, sumSetValues);
+                        highestSet = availableSets[sumSetValues.indexOf(highestSetValue)];
+                    }
+                }
+            }
+
+            $.toaster({
+                priority: 'success',
+                title: 'Result:',
+                message: " The highest set available for " + type + "  is  " + highestSetValue
+            });
+
             var count = 0;
             var done = function() {
                 count++;
