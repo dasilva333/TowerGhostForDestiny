@@ -26,8 +26,6 @@
 	                    itemFound.doEquip = equip.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
 	                    _items.push(itemFound);
-	                } else {
-	                    self.ids.remove(equip);
 	                }
 	            }
 	        });
@@ -38,8 +36,6 @@
 	                    itemFound.doEquip = item.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
 	                    _items.push(itemFound);
-	                } else {
-	                    self.generics.remove(item);
 	                }
 	            }
 	        });
