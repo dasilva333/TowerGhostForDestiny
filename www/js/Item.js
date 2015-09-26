@@ -744,7 +744,7 @@ Item.prototype = {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         tgd.localLog("retransferring");
                         //TODO move this function to a more general area for common use
-                        var newItem = Loadout.prototype.findReference(self);
+                        var newItem = app.findReference(self);
                         if (newItem) {
                             newItem.store(targetCharacterId, cb);
                         }
@@ -1141,8 +1141,8 @@ Item.prototype = {
             value = this.primaryStatValue();
         } else if (type == "All") {
             value = sum(_.values(this.stats));
-        } else if (_.isObject(item.stats) && type in item.stats) {
-            value = parseInt(item.stats[type]);
+        } else if (_.isObject(this.stats) && type in this.stats) {
+            value = parseInt(this.stats[type]);
         } else {
             value = 0;
         }
