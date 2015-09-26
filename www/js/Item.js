@@ -38,12 +38,24 @@ var Item = function(model, profile, ignoreDups) {
 Item.prototype = {
     init: function(item, ignoreDups) {
         var self = this;
-        if (!(item.itemHash in _itemDefs)) {
+        /*if (!(item.itemHash in _itemDefs)) {
             tgd.localLog("found an item without a definition! " + JSON.stringify(item));
             tgd.localLog(item.itemHash);
             return;
+        }*/
+        var info = {};
+        if (item.itemHash in _itemDefs) {
+            info = _itemDefs[item.itemHash];
+        } else {
+            /* Classified Items */
+            info = {
+                bucketTypeHash: "1498876634",
+                itemName: "Classified",
+                tierTypeName: "Exotic",
+                icon: "/img/misc/missing_icon.png",
+                itemTypeName: "Classified"
+            }
         }
-        var info = _itemDefs[item.itemHash];
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             var description, tierTypeName, itemDescription, itemTypeName;
             try {
@@ -75,6 +87,7 @@ Item.prototype = {
                 locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
+                classType: info.classType,
                 bucketType: self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
@@ -88,11 +101,6 @@ Item.prototype = {
             }
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
-            }
-            if (item.progression) {
-                var progress = _progressDefs[item.progression.progressionHash];
-                var progressTotal = Math.max.apply(null, _.pluck(progress.steps, 'progressTotal'));
-                itemObject.progression = (item.progression.currentProgress > 0 && item.progression.currentProgress >= progressTotal);
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
@@ -139,6 +147,9 @@ Item.prototype = {
                         itemObject.perks.push(perk);
                     });
                 }
+            }
+            if (item.progression) {
+                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
@@ -200,11 +211,11 @@ Item.prototype = {
     hashProgress: function(state) {
         var self = this;
         if (typeof self.progression !== "undefined") {
-            /* Missing XP */
+            /* Missing Perks */
             if (state == 1 && self.progression == false) {
                 return true;
             }
-            /* Full XP  but not maxed out */
+            /* Filled perks but not maxed out */
             else if (state == 2 && self.progression == true && self.isGridComplete == false) {
                 return true
             }
@@ -219,10 +230,10 @@ Item.prototype = {
         }
     },
     _primaryStatValue: function() {
-        if (this.primaryStat) {
-            var primaryStat = this.primaryStat();
-            if (this.objectives && typeof primaryStat == "string") {
-                primaryStat = primaryStat.split("/")[0];
+        if (this.primaryStat && typeof this.primaryStat == "function") {
+            var primaryStat = ko.unwrap(this.primaryStat());
+            if (this.objectives && typeof primaryStat == "string" && primaryStat.indexOf("/") > -1) {
+                primaryStat = parseInt(primaryStat.split("/")[0]);
             }
             return primaryStat;
         }
@@ -366,11 +377,11 @@ Item.prototype = {
             tgd.localLog("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
-                    //tgd.localLog("result was OKed");
-                    //tgd.localLog(result);
+                    tgd.localLog("result was OKed for " + self.description);
+                    tgd.localLog(result);
                     self.isEquipped(true);
                     self.character.items().forEach(function(item) {
-                        if (item != self && item.bucketType == self.bucketType) {
+                        if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
                             item.isEquipped(false);
                         }
                     });
@@ -380,10 +391,10 @@ Item.prototype = {
                     }
                     if (callback) callback(true);
                 } else {
+                    tgd.localLog("transfer error 7 " + result);
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
                     else if (result && result.Message) {
-                        tgd.localLog("transfer error 7");
                         $.toaster({
                             priority: 'info',
                             title: 'Error:',
@@ -392,7 +403,7 @@ Item.prototype = {
                     }
                     //TODO perhaps log this condition and determine the cause
                     else {
-                        BootstrapDialog.alert(app.activeText().cannot_equip + (result && result.error) ? result.error : "");
+                        BootstrapDialog.alert(self.description + ":" + app.activeText().cannot_equip + (result && result.error) ? result.error : "");
                     }
                 }
             });
@@ -733,7 +744,7 @@ Item.prototype = {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         tgd.localLog("retransferring");
                         //TODO move this function to a more general area for common use
-                        var newItem = Loadout.prototype.findReference(self);
+                        var newItem = app.findReference(self);
                         if (newItem) {
                             newItem.store(targetCharacterId, cb);
                         }
@@ -1123,5 +1134,18 @@ Item.prototype = {
                 self.locked(newState);
             }
         });
+    },
+    getValue: function(type) {
+        var value;
+        if (type == "Light") {
+            value = this.primaryStatValue();
+        } else if (type == "All") {
+            value = sum(_.values(this.stats));
+        } else if (_.isObject(this.stats) && type in this.stats) {
+            value = parseInt(this.stats[type]);
+        } else {
+            value = 0;
+        }
+        return value;
     }
 }
