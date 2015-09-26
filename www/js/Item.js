@@ -232,8 +232,13 @@ Item.prototype = {
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {
             var primaryStat = ko.unwrap(this.primaryStat());
+<<<<<<< HEAD
             if (this.objectives && typeof primaryStat == "string" && primaryStat.indexOf("/") > -1) {
                 primaryStat = parseInt(primaryStat.split("/")[0]);
+=======
+            if (this.objectives && typeof primaryStat == "string") {
+                primaryStat = primaryStat.split("/")[0];
+>>>>>>> 88db21c1fd21321884eea728aac91c9523e4e723
             }
             return primaryStat;
         }
@@ -1141,10 +1146,15 @@ Item.prototype = {
             value = this.primaryStatValue();
         } else if (type == "All") {
             value = sum(_.values(this.stats));
+<<<<<<< HEAD
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);
         } else {
             value = 0;
+=======
+        } else {
+            value = item.stats[type];
+>>>>>>> 88db21c1fd21321884eea728aac91c9523e4e723
         }
         return value;
     }
