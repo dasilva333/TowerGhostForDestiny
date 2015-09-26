@@ -607,10 +607,6 @@ var app = new(function() {
                         }).get().join("")
                     );
                 } else {
-<<<<<<< HEAD
-=======
-                    console.log("***patching**");
->>>>>>> 88db21c1fd21321884eea728aac91c9523e4e723
                     $content.find(".destt-desc").after(tgd.statsTemplate({
                         stats: activeItem.stats
                     }));
