@@ -1141,8 +1141,8 @@ Item.prototype = {
             value = this.primaryStatValue();
         } else if (type == "All") {
             value = sum(_.values(this.stats));
-        } else if (_.isObject(item.stats) && type in item.stats) {
-            value = parseInt(item.stats[type]);
+        } else if (_.isObject(this.stats) && type in this.stats) {
+            value = parseInt(this.stats[type]);
         } else {
             value = 0;
         }
