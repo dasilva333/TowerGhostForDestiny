@@ -188,6 +188,19 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 	'<% }) %>' +
 '</div>';
 
+tgd.statsTemplate = '<div class="destt-stat">' +
+	'<% Object.keys(stats).forEach(function(key){ %>' +
+		'<div class="stat-bar">' +
+			'<div class="stat-bar-label">' +
+				'<%= key %>' +
+			'</div>' +
+			'<div class="stat-bar-static-value">' +
+				'<%= stats[key] %>' +
+			'</div>' +
+		'</div>' +
+	'<% }) %>' +
+'</div>';
+
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
 		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +

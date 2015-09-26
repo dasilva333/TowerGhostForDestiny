@@ -4,7 +4,7 @@
 	    _.each(model, function(value, key) {
 	        self[key] = value;
 	    });
-	    var _doEquip = (typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
+	    var _doEquip = (model && typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
 	    this.doEquip = ko.observable(_doEquip);
 	}
 
@@ -26,8 +26,6 @@
 	                    itemFound.doEquip = equip.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
 	                    _items.push(itemFound);
-	                } else {
-	                    self.ids.remove(equip);
 	                }
 	            }
 	        });
@@ -38,8 +36,6 @@
 	                    itemFound.doEquip = item.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
 	                    _items.push(itemFound);
-	                } else {
-	                    self.generics.remove(item);
 	                }
 	            }
 	        });
@@ -176,28 +172,6 @@
 	        });
 	        return itemFound;
 	    },
-	    /* the object with the .store function has to be the one in app.characters not this copy */
-	    findReference: function(item) {
-	        if (item && item.character && item.character.id) {
-	            var c = _.findWhere(app.characters(), {
-	                id: item.character.id
-	            });
-	            //tgd.localLog("querying with character id " + item.character.id);
-	            //tgd.localLog(c.uniqueName);
-	            //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-	            var query = item._id == 0 ? {
-	                id: item.id
-	            } : {
-	                _id: item._id
-	            };
-	            //tgd.localLog("querying with " + JSON.stringify(query));
-	            var x = _.findWhere(c.items(), query);
-	            //tgd.localLog(x);
-	            return x;
-	        } else {
-	            return null;
-	        }
-	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {
 	        var self = this;
 	        var onlyEquipped = function(item) {
@@ -215,7 +189,7 @@
 	            loader.width(progressValue + "%");
 	            //now that they are both in the vault transfer them to their respective location
 	            var transferTargetItemToVault = function(complete) {
-	                targetItem = self.findReference(pair.targetItem);
+	                targetItem = pair.targetItem;
 	                if (typeof targetItem != "undefined") {
 	                    targetOwner = targetItem.character.id;
 	                    tgd.localLog(" transferTargetItemToVault " + targetItem.description);
@@ -241,7 +215,7 @@
 	                }
 	            }
 	            var transferSwapItemToVault = function(complete) {
-	                swapItem = self.findReference(pair.swapItem);
+	                swapItem = pair.swapItem;
 	                tgd.localLog("^^^^^^^^^^" + swapItem.character.id + " transferSwapItemToVault " + swapItem.description);
 	                if (swapItem.character.id == "Vault") {
 	                    complete();
@@ -295,7 +269,7 @@
 	            }
 	            var transferTargetItemToDestination = function(complete) {
 	                if (typeof targetItem == "undefined" && pair.targetItem)
-	                    targetItem = self.findReference(pair.targetItem);
+	                    targetItem = pair.targetItem;
 	                if (targetItem) {
 	                    var action = (_.where(self.ids(), {
 	                        id: targetItem._id
@@ -325,7 +299,7 @@
 	            }
 	            var transferSwapItemToDestination = function(complete) {
 	                    if (typeof swapItem == "undefined" && pair.swapItem)
-	                        swapItem = self.findReference(pair.swapItem);
+	                        swapItem = pair.swapItem;
 	                    if (swapItem) {
 	                        tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
 	                        if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
@@ -358,9 +332,10 @@
 	                }
 	                /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
-	                var item = self.findReference(ref);
+	                var item = ref;
 	                if (typeof item == "undefined") {
-	                    return BootstrapDialog.alert("Item not found while attempting to transfer the item");
+	                    console.log(ref);
+	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
 	                }
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"
@@ -371,8 +346,8 @@
 	                    return layout.bucketTypes.indexOf(bucketType) > -1
 	                })[0];
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
-	                var spaceUsedInVault = _.filter(vault.items(), function(item) {
-	                    return layout.bucketTypes.indexOf(bucketType) > -1;
+	                var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
+	                    return layout.bucketTypes.indexOf(otherItem.bucketType) > -1;
 	                }).length;
 
 	                tgd.localLog(bucketType + " spaceNeededInVault: " + spaceNeededInVault);
@@ -496,7 +471,7 @@
 	        if (typeof targetCharacter == "undefined") {
 	            return BootstrapDialog.alert("Target character not found");
 	        }
-	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
+	        var targetCharacterIcon = targetCharacter.icon();
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
 	            //tgd.localLog(itemFound + " getFirstItem: " + sourceBucketIds);
 	            return function(otherItem) {
@@ -541,7 +516,7 @@
 	                            tgd.localLog("using swap strategy");
 	                            var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                            swapArray = _.map(sourceBucket, function(item) {
-	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                var ownerIcon = item.character.icon();
 	                                /* if the item is already in the targetBucket */
 	                                if (_.findWhere(targetBucket, {
 	                                        _id: item._id
@@ -604,7 +579,7 @@
 	                                        tgd.localLog("2.swapItem: " + swapItem.description);
 	                                        targetBucket.splice(targetBucket.indexOf(swapItem), 1);
 	                                        //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
-	                                        if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+	                                        if (swapItem.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType) {
 	                                            return {
 	                                                description: item.description + app.activeText().loadouts_no_transfer,
 	                                                targetIcon: item.icon,
@@ -632,12 +607,13 @@
 	                        } else {
 	                            /* do a clean move by returning a swap object without a swapItem */
 	                            swapArray = _.map(sourceBucket, function(item) {
-	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                var ownerIcon = item.character.icon();
 	                                /* if the item is already in the targetBucket */
 	                                if (_.findWhere(targetBucket, {
 	                                        _id: item._id
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+	                                    tgd.localLog(item.description + " doEquip? " + item.doEquip());
 	                                    if (item.doEquip() == true) {
 	                                        return {
 	                                            targetItem: item,
@@ -655,7 +631,7 @@
 	                                            swapIcon: ownerIcon
 	                                        }
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType)) {
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
