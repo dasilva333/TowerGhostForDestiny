@@ -144,8 +144,8 @@
                         <ul class="dropdown-menu" role="menu">
 
                             <li><a href="#" data-bind="fastclick: logout">Logout</a></li>
-                            <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
-                            <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
+                            <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'PSN')"><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
+                            <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'XBL')"><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
                             <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
                             <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
                             <li class="divider"></li>

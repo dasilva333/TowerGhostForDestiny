@@ -613,7 +613,7 @@
 	                                        _id: item._id
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-	                                    tgd.localLog(item.description + " doEquip? " + item.doEquip());
+	                                    tgd.localLog(item.description + " item is already in target bucket, doEquip? " + item.doEquip());
 	                                    if (item.doEquip() == true) {
 	                                        return {
 	                                            targetItem: item,
@@ -631,8 +631,10 @@
 	                                            swapIcon: ownerIcon
 	                                        }
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType)) {
-	                                    return {
+	                                } 
+									else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType && targetCharacterId != "Vault")) {
+	                                    tgd.localLog(item.description + " wont transfer sub classes ");
+										return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
