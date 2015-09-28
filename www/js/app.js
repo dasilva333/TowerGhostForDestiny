@@ -621,7 +621,7 @@ var app = new(function() {
                 }
                 /* Weapon Perks (Post-HoW) */
                 else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                    $content.find(".destt-info").before(tgd.perksTemplate({
+                    $content.find(".destt-info:last").before(tgd.perksTemplate({
                         perks: activeItem.perks
                     }));
                 }
