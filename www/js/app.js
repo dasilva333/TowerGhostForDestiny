@@ -566,7 +566,8 @@ var app = new(function() {
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
-                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + '</span></span>');
+                var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
+                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + classType + '</span></span>');
             }
             /* Type using locale */
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
@@ -621,7 +622,7 @@ var app = new(function() {
                 }
                 /* Weapon Perks (Post-HoW) */
                 else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                    $content.find(".destt-info").before(tgd.perksTemplate({
+                    $content.find(".destt-info:last").before(tgd.perksTemplate({
                         perks: activeItem.perks
                     }));
                 }
