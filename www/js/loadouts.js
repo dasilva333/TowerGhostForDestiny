@@ -631,10 +631,9 @@
 	                                            swapIcon: ownerIcon
 	                                        }
 	                                    }
-	                                } 
-									else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType && targetCharacterId != "Vault")) {
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType && targetCharacterId != "Vault")) {
 	                                    tgd.localLog(item.description + " wont transfer sub classes ");
-										return {
+	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
