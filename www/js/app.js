@@ -566,7 +566,7 @@ var app = new(function() {
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
-				var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
+                var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
                 $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + classType + '</span></span>');
             }
             /* Type using locale */

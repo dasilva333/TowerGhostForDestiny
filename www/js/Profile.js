@@ -141,31 +141,31 @@ Profile.prototype = {
             }
         }
     },
-	calculatePowerLevelWithItems: function(items){
-		if (items.length == 0){
-			return 0;
-		}
-		var index = items.filter(this.filterItemByType("Artifact", true)).length;
+    calculatePowerLevelWithItems: function(items) {
+        if (items.length == 0) {
+            return 0;
+        }
+        var index = items.filter(this.filterItemByType("Artifact", true)).length;
         var weights = tgd.DestinyBucketWeights[index];
         if (weights) {
-			var eligibleGear = _.filter(items, function(item) {
+            var eligibleGear = _.filter(items, function(item) {
                 return item.bucketType in weights;
             });
-			var primaryStatsGear = _.map(eligibleGear, function(item) {
+            var primaryStatsGear = _.map(eligibleGear, function(item) {
                 var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
                 return value;
             });
-			var sumLightGear = sum(primaryStatsGear);
-			var powerLevel = Math.floor(sumLightGear);
+            var sumLightGear = sum(primaryStatsGear);
+            var powerLevel = Math.floor(sumLightGear);
             return powerLevel;
         } else {
             return 0;
         }
-	},
+    },
     _powerLevel: function() {
-		var equippedGear = _.filter(this.items(), function(item) {
-			return item.isEquipped();
-		});
+        var equippedGear = _.filter(this.items(), function(item) {
+            return item.isEquipped();
+        });
         return this.calculatePowerLevelWithItems(equippedGear);
     },
     _reloadBucket: function(model, event, callback) {
@@ -417,11 +417,7 @@ Profile.prototype = {
                 var buckets = [].concat(globalBuckets);
                 _.each(buckets, function(bucket) {
                     var candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket 
-							&& item.equipRequiredLevel <= character.level 
-							&& item.canEquip == true
-							&& ( (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || item.classType == 3 ) 
-							&& ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip == true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || item.classType == 3) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
                     });
                     _.each(candidates, function(candidate) {
                         if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
@@ -592,22 +588,22 @@ Profile.prototype = {
                 }
             }
 
-			if (type == "Light"){
-				highestSetValue = character.calculatePowerLevelWithItems(highestSet);
-			}
-			
-			$.toaster({
-				priority: 'success',
-				title: 'Result:',
-				message: " The highest set available for " + type + "  is  " + highestSetValue
-			});
-			
+            if (type == "Light") {
+                highestSetValue = character.calculatePowerLevelWithItems(highestSet);
+            }
+
+            $.toaster({
+                priority: 'success',
+                title: 'Result:',
+                message: " The highest set available for " + type + "  is  " + highestSetValue
+            });
+
             var count = 0;
             var done = function() {
                 count++;
                 if (count == highestSet.length) {
                     var msa = adhoc.transfer(character.id, true);
-					tgd.localLog(msa);
+                    tgd.localLog(msa);
                     adhoc.swapItems(msa, character.id, function() {
                         tgd.localLog("xfer complete");
                     });
