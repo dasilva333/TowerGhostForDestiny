@@ -273,14 +273,14 @@ Item.prototype = {
     /* helper function that unequips the current item in favor of anything else */
     unequip: function(callback, excludeExotic) {
         var self = this;
-        //tgd.localLog('trying to unequip too!');
+        tgd.localLog('trying to unequip too!');
         if (self.isEquipped() == true) {
-            //tgd.localLog("and its actually equipped");
+            tgd.localLog("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
                 otherItems = [];
             self.character.items().forEach(function(item) {
-                if (item != self && item.bucketType == self.bucketType) {
+                if (item._id != self._id && item.bucketType == self.bucketType) {
                     otherItems.push(item);
                 }
             });
@@ -356,18 +356,18 @@ Item.prototype = {
                         }
                     });
                     if (!otherItemUnequipped) {
-                        //tgd.localLog("no other exotic equipped, safe to equip");
+                        tgd.localLog("no other exotic equipped, safe to equip");
                         tryNextItem();
                     }
                 } else {
                     tryNextItem();
                 }
             } else {
-                //tgd.localLog("refused to unequip");
+                tgd.localLog("refused to unequip");
                 callback(false);
             }
         } else {
-            //tgd.localLog("but not equipped");
+            tgd.localLog("but not equipped");
             callback(true);
         }
     },
@@ -800,12 +800,12 @@ Item.prototype = {
         var self = this;
         var sourceCharacterId = self.character.id,
             transferAmount = 1;
-        //tgd.localLog("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
+        tgd.localLog("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
         var done = function() {
             if (targetCharacterId == "Vault") {
-                //tgd.localLog("*******from character to vault " + self.description);
+                tgd.localLog("*******from character to vault " + self.description);
                 self.unequip(function(result) {
-                    //tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
+                    tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
                     if (result == true) {
                         self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback));
                     } else {
