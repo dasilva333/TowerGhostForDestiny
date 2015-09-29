@@ -594,24 +594,24 @@ var app = new(function() {
             /* Armor Stats */
             if (_.isObject(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
-                if (stats.length > 0) {
-                    stats.html(
-                        stats.find(".stat-bar").map(function(index, stat) {
-                            var $stat = $("<div>" + stat.outerHTML + "</div>"),
-                                label = $stat.find(".stat-bar-label"),
-                                labelText = $.trim(label.text());
-                            if (labelText in activeItem.stats) {
-                                label.text(labelText + ": " + activeItem.stats[labelText]);
-                                $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
-                            }
-                            return $stat.html();
-                        }).get().join("")
-                    );
-                } else {
+                if (stats.length == 0) {
                     $content.find(".destt-desc").after(tgd.statsTemplate({
                         stats: activeItem.stats
                     }));
+                    stats = $content.find(".destt-stat");
                 }
+                stats.html(
+                    stats.find(".stat-bar").map(function(index, stat) {
+                        var $stat = $("<div>" + stat.outerHTML + "</div>"),
+                            label = $stat.find(".stat-bar-label"),
+                            labelText = $.trim(label.text());
+                        if (labelText in activeItem.stats) {
+                            label.text(labelText + ": " + activeItem.stats[labelText]);
+                            $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+                        }
+                        return $stat.html();
+                    }).get().join("")
+                );
             }
             if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
                 /* Weapon Perks (Pre-HoW) */

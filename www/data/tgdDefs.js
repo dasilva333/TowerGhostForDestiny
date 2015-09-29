@@ -197,6 +197,10 @@ tgd.statsTemplate = '<div class="destt-stat">' +
 			'<div class="stat-bar-static-value">' +
 				'<%= stats[key] %>' +
 			'</div>' +
+			'<div class="stat-bar-empty"><div style="width:<%= stats[key] %>%" class="stat-bar-fill"></div></div>'+
+			'<div class="stat-bar-value">' +
+				'<%= stats[key] %>' +
+			'</div>' +
 		'</div>' +
 	'<% }) %>' +
 '</div>';
