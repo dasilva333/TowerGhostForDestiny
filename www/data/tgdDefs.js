@@ -127,7 +127,7 @@ tgd.DestinyBucketWeights = [{
 	"Ghost": 8,
 	"Artifact": 8 
 }];
-tgd.DestinyUnwantedNodes = ["Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
+tgd.DestinyUnwantedNodes = ["Infuse","Upgrade Damage","Upgrade Defense","Arc Damage","Void Damage","Solar Damage","Kinetic Damage","Ascend","Reforge Ready"]
 tgd.languages = [
 	{ code: "en", description: "English", bungie_code: "en" },
 	{ code: "es", description: "Spanish", bungie_code: "es" },
@@ -195,6 +195,10 @@ tgd.statsTemplate = '<div class="destt-stat">' +
 				'<%= key %>' +
 			'</div>' +
 			'<div class="stat-bar-static-value">' +
+				'<%= stats[key] %>' +
+			'</div>' +
+			'<div class="stat-bar-empty"><div style="width:<%= stats[key] %>%" class="stat-bar-fill"></div></div>'+
+			'<div class="stat-bar-value">' +
 				'<%= stats[key] %>' +
 			'</div>' +
 		'</div>' +
