@@ -594,7 +594,7 @@ Profile.prototype = {
 
             $.toaster({
                 priority: 'success',
-                title: 'Result:',
+                title: 'Result',
                 message: " The highest set available for " + type + "  is  " + highestSetValue
             });
 
@@ -620,7 +620,7 @@ Profile.prototype = {
                     });
                     $.toaster({
                         priority: 'info',
-                        title: 'Equip:',
+                        title: 'Equip',
                         message: candidate.bucketType + " can have a better item with " + candidate.description
                     });
                     done();

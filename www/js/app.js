@@ -82,7 +82,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             if (item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
-                    title: 'Warning:',
+                    title: 'Warning',
                     message: app.activeText().unable_create_loadout_for_type
                 });
             } else if (item._id == 0) {
@@ -102,7 +102,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             } else {
                 $.toaster({
                     priority: 'danger',
-                    title: 'Error:',
+                    title: 'Error',
                     message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
                 });
             }
@@ -114,7 +114,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
-                title: 'Error:',
+                title: 'Error',
                 message: app.activeText().unable_to_move_bucketitems
             });
             return;
@@ -223,7 +223,7 @@ window.ko.bindingHandlers.scrollToView = {
             .on("press", function() {
                 $.toaster({
                     priority: 'info',
-                    title: 'Info:',
+                    title: 'Info',
                     message: app.activeText().this_icon + viewModel.uniqueName
                 });
             });
@@ -279,7 +279,7 @@ ko.bindingHandlers.moveItem = {
                         } else {
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Warning:',
+                                title: 'Warning',
                                 message: app.activeText().unable_create_loadout_for_type
                             });
                         }
@@ -717,7 +717,7 @@ var app = new(function() {
         if (self.setFilter().length == 0) {
             $.toaster({
                 priority: 'danger',
-                title: 'Warning:',
+                title: 'Warning',
                 message: self.activeText().pick_a_set
             });
         } else {
@@ -980,7 +980,7 @@ var app = new(function() {
                         });
                         $.toaster({
                             priority: 'info',
-                            title: 'Info:',
+                            title: 'Info',
                             message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
                         });
                         $("#useOtherAccount").click(function() {
@@ -1223,7 +1223,7 @@ var app = new(function() {
                         if (!isMobile && !isChrome) {
                             $.toaster({
                                 priority: 'success',
-                                title: 'Loading:',
+                                title: 'Loading',
                                 message: "Please wait while Firefox acquires your arsenal"
                             });
                             var event = document.createEvent('CustomEvent');
@@ -1262,7 +1262,7 @@ var app = new(function() {
         self.scrollTo($(".profile:eq(" + index + ")").position().top - 50, function() {
             $.toaster({
                 priority: 'info',
-                title: 'View:',
+                title: 'View',
                 message: tgd.DestinyViews[newIndex]
             });
         });
@@ -1328,7 +1328,7 @@ var app = new(function() {
                         if (results.success) {
                             $.toaster({
                                 priority: 'success',
-                                title: 'Saved:',
+                                title: 'Saved',
                                 message: "Loadouts saved to the cloud"
                             });
                         } else BootstrapDialog.alert("Error has occurred saving loadouts");
@@ -1441,7 +1441,7 @@ var app = new(function() {
             if (usingbatchMode == false) {
                 $.toaster({
                     priority: 'danger',
-                    title: 'Warning:',
+                    title: 'Warning',
                     message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
                 });
             }
@@ -1482,7 +1482,7 @@ var app = new(function() {
             if (usingbatchMode == false) {
                 $.toaster({
                     priority: 'success',
-                    title: 'Result:',
+                    title: 'Result',
                     message: description + " already normalized as best as possible."
                 });
             }
@@ -1512,7 +1512,7 @@ var app = new(function() {
                     //self.refresh();
                     $.toaster({
                         priority: 'success',
-                        title: 'Result:',
+                        title: 'Result',
                         message: "All items normalized as best as possible"
                     });
                 }
@@ -1628,7 +1628,7 @@ var app = new(function() {
                 if (description == undefined) {
                     $.toaster({
                         priority: 'success',
-                        title: 'Result:',
+                        title: 'Result',
                         message: "All items normalized as best as possible"
                     });
                     return;
@@ -1860,7 +1860,7 @@ var app = new(function() {
                 var action = destination.isEquipped() ? "equip" : "store";
                 $.toaster({
                     priority: 'info',
-                    title: 'Transfer:',
+                    title: 'Transfer',
                     message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
                 });
                 arg.item[action](destination.character.id);

@@ -201,7 +201,7 @@
 	                            if (profile.id == originalCharacterId) {
 	                                $.toaster({
 	                                    priority: 'danger',
-	                                    title: 'Error:',
+	                                    title: 'Error',
 	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
 	                                });
 	                                complete();
@@ -254,7 +254,7 @@
 	                            } else {
 	                                $.toaster({
 	                                    priority: 'danger',
-	                                    title: 'Error:',
+	                                    title: 'Error',
 	                                    message: "Unable to unequip " + equippedItem.description + " while playing in game"
 	                                });
 	                                pair.swapItem = pair.targetItem = targetItem = swapItem = null;
@@ -284,7 +284,7 @@
 	                            if (profile.id == originalCharacterId) {
 	                                $.toaster({
 	                                    priority: 'danger',
-	                                    title: 'Error:',
+	                                    title: 'Error',
 	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
 	                                });
 	                                complete();
@@ -749,7 +749,7 @@
 	                            });
 	                            $.toaster({
 	                                priority: 'success',
-	                                title: 'Success:',
+	                                title: 'Success',
 	                                message: app.activeText().loadouts_transferred
 	                            });
 	                            $.toaster.reset();
