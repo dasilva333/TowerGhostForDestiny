@@ -1068,11 +1068,11 @@ var app = new(function() {
             });
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
-                var maxHeight = Math.max.apply(null, sizes);
+                var maxHeight = _.max(sizes);
                 //this is the max height the non-vault characters will use
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
-                var maxProfilesHeight = Math.max.apply(null, profileSizes);
+                var maxProfilesHeight = _.max(profileSizes);
                 var minNumRows = 1;
                 if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
                     minNumRows = 3;
