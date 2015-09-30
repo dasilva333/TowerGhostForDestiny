@@ -539,7 +539,7 @@ Profile.prototype = {
                                     if (currentStat < maxCap) {
                                         var candidates = _.filter(statAlternatives, function(item) {
                                             return item.bucketType == bucket &&
-                                                ((item.tierType != 6 && mainItem.tierType == 6) || (item.tierType == 6 && mainItem.tierType != 6));
+                                                ((item.tierType != 6 && mainItem.tierType == 6) || (mainItem.tierType != 6));
                                         });
                                         if (candidates.length > 0) {
                                             var primaryStats = _.map(candidates, function(item) {
@@ -553,7 +553,7 @@ Profile.prototype = {
                                                 tgd.localLog(candidate.description + " considering candidate currentStat " + candidate.stats[type]);
                                                 var delta = ((currentStat + candidate.stats[type]) - maxCap);
                                                 if (delta >= 0) {
-                                                    var allStatsSummed = ((currentStat + sum(_.values(candidate.stats))) - candidate.stats[type] - maxCap);
+                                                    var allStatsSummed = ((currentStat + candidate.getValue("All")) - candidate.stats[type] - maxCap);
                                                     if (allStatsSummed >= 0) {
                                                         deltas[index] = allStatsSummed;
                                                     }
@@ -572,13 +572,13 @@ Profile.prototype = {
                                             set.push(maxCandidate);
                                         }
                                     } else {
-                                        tgd.localLog("adding alternative maxCap is full on this set");
+                                        tgd.localLog("adding alternative, maxCap is full on this set");
                                         var candidates = _.filter(alternatives, function(item) {
                                             return item.bucketType == bucket;
                                         });
                                         if (candidates.length > 0) {
                                             var primaryStats = _.map(candidates, function(item) {
-                                                return sum(_.values(item.stats))
+                                                return item.getValue("All");
                                             });
                                             set.push(candidates[primaryStats.indexOf(_.max(primaryStats))]);
                                         }
@@ -630,16 +630,16 @@ Profile.prototype = {
 
             var count = 0;
             var done = function() {
-                    count++;
-                    if (count == highestSet.length) {
-                        var msa = adhoc.transfer(character.id, true);
-                        tgd.localLog(msa);
-                        adhoc.swapItems(msa, character.id, function() {
-                            tgd.localLog("xfer complete");
-                        });
-                    }
-                }
-                //console.log(highestSet);
+				count++;
+				if (count == highestSet.length) {
+					var msa = adhoc.transfer(character.id, true);
+					tgd.localLog(msa);
+					adhoc.swapItems(msa, character.id, function() {
+						tgd.localLog("xfer complete");
+					});
+				}
+			}
+			//console.log(highestSet); abort;
 
             var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
