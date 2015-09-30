@@ -271,63 +271,58 @@ Item.prototype = {
         return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
     },
     /* helper function that unequips the current item in favor of anything else */
-    unequip: function(callback, excludeExotic) {
+    unequip: function(callback) {
         var self = this;
-        //tgd.localLog('trying to unequip too!');
+        tgd.localLog('trying to unequip too!');
         if (self.isEquipped() == true) {
-            //tgd.localLog("and its actually equipped");
+            tgd.localLog("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
-                otherItems = [];
-            self.character.items().forEach(function(item) {
-                if (item != self && item.bucketType == self.bucketType) {
-                    otherItems.push(item);
-                }
-            });
-            otherItems = _.filter(otherItems, function(item) {
-                return (!excludeExotic || excludeExotic && item.tierType !== 6);
-            });
+                otherItems = _.filter( self.character.items(), function(item) {
+					return (item._id != self._id && item.bucketType == self.bucketType);
+				});
+			console.log("other items: " + _.pluck(otherItems,'description'));
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
                 var tryNextItem = function() {
-                        var item = otherItems[++itemIndex];
-                        if (_.isUndefined(item)) {
-                            if (callback) callback(false);
-                            else {
-                                tgd.localLog("transfer error 5");
-                                $.toaster({
-                                    priority: 'danger',
-                                    title: 'Error:',
-                                    message: app.activeText().cannot_unequip + self.description
-                                });
-                            }
-                            return;
-                        }
-                        //tgd.localLog(item.description);
-                        /* still haven't found a match */
-                        if (otherEquipped == false) {
-                            if (item != self && item.equip) {
-                                //tgd.localLog("trying to equip " + item.description);
-                                item.equip(self.characterId, function(isEquipped, result) {
-                                    //tgd.localLog( item.description + " result was " + isEquipped);
-                                    if (isEquipped == true) {
-                                        otherEquipped = true;
-                                        callback(true);
-                                    } else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634) {
-                                        callback(false);
-                                    } else {
-                                        tryNextItem(); /*tgd.localLog("tryNextItem")*/
-                                    }
-                                });
-                            } else {
-                                tryNextItem()
-                                    //tgd.localLog("tryNextItem")
-                            }
-                        }
-                    }
-                    //tgd.localLog("tryNextItem")
-                    //tgd.localLog("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+					var item = otherItems[++itemIndex];
+					if (_.isUndefined(item)) {
+						if (callback) callback(false);
+						else {
+							tgd.localLog("transfer error 5");
+							$.toaster({
+								priority: 'danger',
+								title: 'Error:',
+								message: app.activeText().cannot_unequip + self.description
+							});
+						}
+						return;
+					}
+					tgd.localLog(item.description);
+					/* still haven't found a match */
+					if (otherEquipped == false) {
+						if (item != self && item.equip) {
+							tgd.localLog("trying to equip " + item.description);
+							item.equip(self.characterId, function(isEquipped, result) {
+								tgd.localLog( item.description + " result was " + isEquipped);
+								if (isEquipped == true) {
+									otherEquipped = true;
+									callback(true);
+								} else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634) {
+									callback(false);
+								} else {
+									tryNextItem(); tgd.localLog("tryNextItem")
+								}
+							});
+						} else {
+							tryNextItem()
+							tgd.localLog("tryNextItem")
+						}
+					}
+				}
+                tgd.localLog("tryNextItem")
+                tgd.localLog("trying to unequip item, the min tier of the items I can equip is: " + minTier);
                 if (minTier == 6) {
                     var otherItemUnequipped = false;
                     var otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
@@ -335,7 +330,7 @@ Item.prototype = {
                     _.each(otherBucketTypes, function(bucketType) {
                         var itemEquipped = self.character.itemEquipped(bucketType);
                         if (itemEquipped && itemEquipped.tierType && itemEquipped.tierType == 6) {
-                            //tgd.localLog("going to unequip " + itemEquipped.description);
+                            tgd.localLog("going to unequip " + itemEquipped.description);
                             itemEquipped.unequip(function(result) {
                                 //unequip was successful
                                 if (result) {
@@ -351,23 +346,23 @@ Item.prototype = {
                                     });
                                     callback(false);
                                 }
-                            }, false, true);
+                            });
                             otherItemUnequipped = true;
                         }
                     });
                     if (!otherItemUnequipped) {
-                        //tgd.localLog("no other exotic equipped, safe to equip");
+                        tgd.localLog("no other exotic equipped, safe to equip");
                         tryNextItem();
                     }
                 } else {
                     tryNextItem();
                 }
             } else {
-                //tgd.localLog("refused to unequip");
+                tgd.localLog("refused to unequip");
                 callback(false);
             }
         } else {
-            //tgd.localLog("but not equipped");
+            tgd.localLog("but not equipped");
             callback(true);
         }
     },
@@ -822,21 +817,21 @@ Item.prototype = {
                     }
                 });
             } else if (sourceCharacterId !== "Vault") {
-                //tgd.localLog("from character to vault to character " + self.description);
+                tgd.localLog("from character to vault to character " + self.description);
                 self.unequip(function(result) {
                     if (result == true) {
                         if (self.bucketType == "Subclasses") {
                             if (callback)
                                 callback(self.character);
                         } else {
-                            //tgd.localLog("xfering item to Vault " + self.description);
+                            tgd.localLog("xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
-                                //tgd.localLog("xfered item to vault and now to " + targetCharacterId);
+                                tgd.localLog("xfered item to vault and now to " + targetCharacterId);
                                 if (self.character.id == targetCharacterId) {
-                                    //tgd.localLog("took the long route ending it short " + self.description);
+                                    tgd.localLog("took the long route ending it short " + self.description);
                                     if (callback) callback(self.character);
                                 } else {
-                                    //tgd.localLog("taking the short route " + self.description);
+                                    tgd.localLog("taking the short route " + self.description);
                                     self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
                                 }
                             }));

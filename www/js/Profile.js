@@ -361,7 +361,15 @@ Profile.prototype = {
                 console.time("finding candidates");
                 _.each(buckets, function(bucket) {
                     var candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && ((item.bucketType != "Ghost" && tgd.DestinyClass[item.classType] == character.classType) || (item.bucketType == "Ghost"))
+                        return item.bucketType == bucket 
+							&& item.equipRequiredLevel <= character.level 
+							&& item.canEquip == true 
+							&& (
+								(item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) 
+								|| (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1)
+								|| (item.weaponIndex > -1)
+								|| (item.bucketType == "Ghost")
+							)
                     });
                     _.each(candidates, function(candidate) {
                         sets.push([candidate]);
@@ -369,24 +377,25 @@ Profile.prototype = {
                 });
 
                 backups = _.flatten(sets);
-                console.timeEnd("finding candidates");
-
-                _.each(sets, function(set) {
-                    console.time("processing a set");
+                
+				_.each(sets, function(set) {
+                    //console.time("processing a set");
                     var mainPiece = set[0],
                         subSets = [
                             [mainPiece]
                         ];
                     var candidates = _.groupBy(_.filter(backups, function(item) {
-                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                        return item.bucketType != mainPiece.bucketType 
+							&& ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) 
+							&& mainPiece._id != item._id;
                     }), 'bucketType');
                     _.each(candidates, function(items) {
                         subSets.push(items);
                     });
-                    console.time("cartesian product of a set");
+                    //console.time("cartesian product of a set");
                     var combos = cartesianProductOf(subSets);
-                    console.timeEnd("cartesian product of a set");
-                    console.time("sums of a set");
+                    //console.timeEnd("cartesian product of a set");
+                    //console.time("sums of a set");
                     var sums = _.map(combos, function(combo) {
                         var tmp = {};
                         _.each(combo, function(item) {
@@ -395,13 +404,16 @@ Profile.prototype = {
                                 tmp[key] += value;
                             });
                         });
-                        var score = average(_.map(tmp, function(value, key) {
-                            var result = (value / 300);
-                            return (result > 1) ? 1.05 : result;
+                        var score = sum(_.map(tmp, function(value, key) {
+                            //var result = (value / 300);
+                            //return (result > 1) ? 1.05 : result;
+							var result = Math.floor(value / 60);
+							return result > 5 ? 5 : result;
                         }));
-                        return score;
+						var subScore = (sum(_.values(tmp)) / 1000);
+                        return score + subScore;
                     });
-                    var highestScore = Math.max.apply(null, sums);
+                    var highestScore = _.max(sums);
                     var highestScoringSet = combos[sums.indexOf(highestScore)];
                     console.timeEnd("sums of a set");
                     bestSets.push({
@@ -410,15 +422,29 @@ Profile.prototype = {
                     });
                     console.timeEnd("processing a set");
                 });
-                var bestSets = _.sortBy(bestSets, 'score');
+				//console.timeEnd("finding candidates");
+				var bestSets = _.sortBy(bestSets, 'score');
                 highestSet = bestSets[bestSets.length - 1].set;
+				//console.log(bestSets);
+				//console.log(highestSet);
             } else {
                 var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
                 var buckets = [].concat(globalBuckets);
                 _.each(buckets, function(bucket) {
                     var candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip == true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || item.classType == 3) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
+                        return item.bucketType == bucket 
+							&& item.equipRequiredLevel <= character.level 
+							&& item.canEquip == true 
+							&& (
+								(item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) 
+								|| (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1)
+								|| (item.weaponIndex > -1)
+								|| (item.bucketType == "Ghost")
+							)
+							&& ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
                     });
+					//console.log("bucket: " + bucket);
+					//console.log(candidates);
                     _.each(candidates, function(candidate) {
                         if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
                             (candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
@@ -428,6 +454,9 @@ Profile.prototype = {
 
                 backups = _.flatten(backups);
 
+				//console.log("backups");
+				//console.log(backups);
+				
                 _.each(backups, function(spare) {
                     var candidates = _.filter(backups, function(item) {
                         return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
@@ -435,43 +464,58 @@ Profile.prototype = {
                     primaryStats = _.map(candidates, function(item) {
                         return item.getValue(type);
                     });
-                    var maxCandidate = Math.max.apply(null, primaryStats);
+                    var maxCandidate = _.max(primaryStats);
                     if (maxCandidate < spare.getValue(type)) {
+						//console.log("adding backup " + spare.description);
                         sets.push([spare]);
                     }
                 });
 
+				//console.log("sets");
+				//console.log(sets);
+				
                 _.each(sets, function(set) {
                     var main = set[0];
-                    _.each(buckets, function(bucket) {
-                        if (bucket != main.bucketType) {
-                            /* TODO: Investigate if it's possible to generate a set w 2 exotics w/o adding a filter here */
-                            var candidates = _.where(backups, {
-                                bucketType: bucket
-                            });
-                            if (candidates.length > 0) {
-                                primaryStats = _.map(candidates, function(item) {
-                                    return item.getValue(type);
-                                });
-                                var maxCandidate = Math.max.apply(null, primaryStats);
-                                var candidate = candidates[primaryStats.indexOf(maxCandidate)];
-                                set.push(candidate);
-                            }
-                        }
-                    });
+					//console.log("main set item " + main.description);
+					_.each(buckets, function(bucket) {
+						if (bucket != main.bucketType) {
+							console.log("best candidate for bucket: " + bucket);
+							var candidates = _.where(backups, {
+								bucketType: bucket
+							});
+							//console.log("candidates: " + _.pluck(candidates,'description'));
+							if (candidates.length > 0) {
+								primaryStats = _.map(candidates, function(item) {
+									return item.getValue(type);
+								});
+								//console.log(primaryStats);
+								var maxCandidate = _.max(primaryStats);
+								var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+								//console.log("winner: " + candidate.description);
+								set.push(candidate);
+							}
+						}
+					});
                 });
+				
+				//console.log(sets);
+				
                 var sumSets = _.map(sets, function(set) {
                     return sum(_.map(set, function(item) {
                         return item.getValue(type);
                     }));
                 });
+				
+				console.log(sumSets);
 
-                var highestSetValue = Math.max.apply(null, sumSets);
-
+                var highestSetValue = _.max(sumSets);
+				//console.log(highestSetValue);
+				
                 if (type == "Light" || type == "All") {
                     highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
                         return item.tierType * -1;
                     });
+					//console.log(highestSet);
                 } else if (type != "Light") {
                     tgd.localLog("type changed is not light");
                     if (highestSetValue < maxCap) {
@@ -485,9 +529,16 @@ Profile.prototype = {
                         var alternatives = [];
                         _.each(buckets, function(bucket) {
                             var candidates = _.filter(items, function(item) {
-                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level &&
-                                    (item.character.id == character.id || globalBuckets.indexOf(bucket) > -1) &&
-                                    item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType;
+                                return _.isObject(item.stats) 
+									&& item.bucketType == bucket 
+									&& item.equipRequiredLevel <= character.level 
+									&& item.canEquip == true 
+									&& (
+										(item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) 
+										|| (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1)
+										|| (item.weaponIndex > -1)
+										|| (item.bucketType == "Ghost")
+									)
                             });
                             tgd.localLog("candidates considering " + candidates.length);
                             _.each(candidates, function(candidate) {
@@ -550,7 +601,8 @@ Profile.prototype = {
                                             return item.bucketType == bucket;
                                         });
                                         if (candidates.length > 0) {
-                                            set.push(candidates[0]);
+											var primaryStats = _.map(candidates, function(item){ return sum(_.values(item.stats)) });
+                                            set.push(candidates[primaryStats.indexOf(_.max(primaryStats))]);
                                         }
                                     }
                                 }
@@ -591,7 +643,7 @@ Profile.prototype = {
             if (type == "Light") {
                 highestSetValue = character.calculatePowerLevelWithItems(highestSet);
             }
-
+			
             $.toaster({
                 priority: 'success',
                 title: 'Result:',
@@ -609,6 +661,8 @@ Profile.prototype = {
                     });
                 }
             }
+			//console.log(highestSet);
+			
             var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
                 var itemEquipped = character.itemEquipped(candidate.bucketType);
@@ -618,10 +672,12 @@ Profile.prototype = {
                         bucketType: candidate.bucketType,
                         doEquip: true
                     });
+					var message = candidate.bucketType + " can have a better item with " + candidate.description;
+					tgd.localLog(message);
                     $.toaster({
                         priority: 'info',
                         title: 'Equip:',
-                        message: candidate.bucketType + " can have a better item with " + candidate.description
+                        message: message
                     });
                     done();
                 } else {
