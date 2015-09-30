@@ -546,7 +546,7 @@ Profile.prototype = {
                                                 return item.stats[type]
                                             });
                                             tgd.localLog(bucket + " choices are " + primaryStats);
-                                            var maxCandidateValue = Math.max.apply(null, primaryStats);
+                                            var maxCandidateValue = _.max(primaryStats);
                                             maxCandidate = candidates[primaryStats.indexOf(maxCandidateValue)];
                                             var deltas = {};
                                             _.each(candidates, function(candidate, index) {
@@ -564,7 +564,7 @@ Profile.prototype = {
                                             var values = _.values(deltas),
                                                 keys = _.keys(deltas);
                                             if (values.length > 0) {
-                                                maxCandidate = candidates[keys[values.indexOf(Math.max.apply(null, values))]];
+                                                maxCandidate = candidates[keys[values.indexOf(_.max(values))]];
                                                 tgd.localLog(" new max candidate is " + maxCandidate.description);
                                             }
                                             currentStat += maxCandidate.stats[type];
@@ -612,7 +612,7 @@ Profile.prototype = {
                         var sumSetValues = _.map(availableSumSets, function(set) {
                             return sum(_.values(set))
                         });
-                        highestSetValue = Math.max.apply(null, sumSetValues);
+                        highestSetValue = _.max(sumSetValues);
                         highestSet = availableSets[sumSetValues.indexOf(highestSetValue)];
                     }
                 }
