@@ -278,49 +278,50 @@ Item.prototype = {
             tgd.localLog("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
-                otherItems = _.filter( self.character.items(), function(item) {
-					return (item._id != self._id && item.bucketType == self.bucketType);
-				});
-			console.log("other items: " + _.pluck(otherItems,'description'));
+                otherItems = _.filter(self.character.items(), function(item) {
+                    return (item._id != self._id && item.bucketType == self.bucketType);
+                });
+            //console.log("other items: " + _.pluck(otherItems, 'description'));
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
                 var tryNextItem = function() {
-					var item = otherItems[++itemIndex];
-					if (_.isUndefined(item)) {
-						if (callback) callback(false);
-						else {
-							tgd.localLog("transfer error 5");
-							$.toaster({
-								priority: 'danger',
-								title: 'Error:',
-								message: app.activeText().cannot_unequip + self.description
-							});
-						}
-						return;
-					}
-					tgd.localLog(item.description);
-					/* still haven't found a match */
-					if (otherEquipped == false) {
-						if (item != self && item.equip) {
-							tgd.localLog("trying to equip " + item.description);
-							item.equip(self.characterId, function(isEquipped, result) {
-								tgd.localLog( item.description + " result was " + isEquipped);
-								if (isEquipped == true) {
-									otherEquipped = true;
-									callback(true);
-								} else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634) {
-									callback(false);
-								} else {
-									tryNextItem(); tgd.localLog("tryNextItem")
-								}
-							});
-						} else {
-							tryNextItem()
-							tgd.localLog("tryNextItem")
-						}
-					}
-				}
+                    var item = otherItems[++itemIndex];
+                    if (_.isUndefined(item)) {
+                        if (callback) callback(false);
+                        else {
+                            tgd.localLog("transfer error 5");
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Error:',
+                                message: app.activeText().cannot_unequip + self.description
+                            });
+                        }
+                        return;
+                    }
+                    tgd.localLog(item.description);
+                    /* still haven't found a match */
+                    if (otherEquipped == false) {
+                        if (item != self && item.equip) {
+                            tgd.localLog("trying to equip " + item.description);
+                            item.equip(self.characterId, function(isEquipped, result) {
+                                tgd.localLog(item.description + " result was " + isEquipped);
+                                if (isEquipped == true) {
+                                    otherEquipped = true;
+                                    callback(true);
+                                } else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634) {
+                                    callback(false);
+                                } else {
+                                    tryNextItem();
+                                    tgd.localLog("tryNextItem")
+                                }
+                            });
+                        } else {
+                            tryNextItem()
+                            tgd.localLog("tryNextItem")
+                        }
+                    }
+                }
                 tgd.localLog("tryNextItem")
                 tgd.localLog("trying to unequip item, the min tier of the items I can equip is: " + minTier);
                 if (minTier == 6) {
