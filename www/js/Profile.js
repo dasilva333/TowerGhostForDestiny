@@ -341,6 +341,16 @@ Profile.prototype = {
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
     },
+	joinStats: function(arrItems){
+		var tmp = {};
+		_.each(arrItems, function(item) {
+			_.each(item.stats, function(value, key) {
+				if (!(key in tmp)) tmp[key] = 0;
+				tmp[key] += value;
+			});
+		});
+		return tmp;
+	},
     equipHighest: function(type) {
         var character = this;
         return function() {
@@ -389,16 +399,8 @@ Profile.prototype = {
                     //console.timeEnd("cartesian product of a set");
                     //console.time("sums of a set");
                     var sums = _.map(combos, function(combo) {
-                        var tmp = {};
-                        _.each(combo, function(item) {
-                            _.each(item.stats, function(value, key) {
-                                if (!(key in tmp)) tmp[key] = 0;
-                                tmp[key] += value;
-                            });
-                        });
+                        var tmp = character.joinStats(combo);
                         var score = sum(_.map(tmp, function(value, key) {
-                            //var result = (value / 300);
-                            //return (result > 1) ? 1.05 : result;
                             var result = Math.floor(value / 60);
                             return result > 5 ? 5 : result;
                         }));
@@ -519,7 +521,7 @@ Profile.prototype = {
                             tgd.localLog("candidates considering " + candidates.length);
                             _.each(candidates, function(candidate) {
                                 if (candidate.stats[type] > 0) {
-                                    tgd.localLog(candidate);
+                                    //tgd.localLog(candidate);
                                     fullSets.push([candidate]);
                                 } else {
                                     alternatives.push([candidate]);
@@ -564,7 +566,7 @@ Profile.prototype = {
                                             var values = _.values(deltas),
                                                 keys = _.keys(deltas);
                                             if (values.length > 0) {
-                                                maxCandidate = candidates[keys[values.indexOf(_.max(values))]];
+                                                maxCandidate = candidates[keys[values.indexOf(_.min(values))]];
                                                 tgd.localLog(" new max candidate is " + maxCandidate.description);
                                             }
                                             currentStat += maxCandidate.stats[type];
@@ -586,34 +588,27 @@ Profile.prototype = {
                                 }
                             });
                         });
-                        var availableSets = [],
-                            availableSumSets = [];
+                        var availableSets = [];
                         _.map(fullSets, function(set) {
-                            var arrStats = _.pluck(set, 'stats');
-                            var sumSet = _.reduce(arrStats, function(memo, stat) {
-                                var tmp = _.extend({}, memo);
-                                //tgd.localLog("old memo " + JSON.stringify(tmp));
-                                _.each(stat, function(value, key) {
-                                    //tgd.localLog(key + " value: " + value);
-                                    tmp[key] = parseInt(memo[key]) + parseInt(value);
-                                });
-                                _.each(tmp, function(value, key) {
-                                        if (!(value >= 0)) tmp[key] = 0;
-                                    })
-                                    //tgd.localLog("new memo " + JSON.stringify(tmp));
-                                return tmp;
-                            });
-                            if (sumSet[type] > maxCap) {
-                                availableSumSets.push(sumSet);
-                                availableSets.push(set);
+                            var sumSet = character.joinStats(set);
+                            if (sumSet[type] >= maxCap) {
+                                availableSets.push({ set: set, sumSet: sumSet });
+								tgd.localLog(sumSet);
                             }
-                            tgd.localLog(sumSet);
                         });
-                        var sumSetValues = _.map(availableSumSets, function(set) {
-                            return sum(_.values(set))
-                        });
-                        highestSetValue = _.max(sumSetValues);
-                        highestSet = availableSets[sumSetValues.indexOf(highestSetValue)];
+						var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
+							var score = sum(_.map(combo.sumSet, function(value, key) {
+								var result = Math.floor(value / 60);
+								return result > 5 ? 5 : result;
+							}));
+							combo.sum = sum(_.values(combo.sumSet));
+							var subScore = (combo.sum / 1000);
+							combo.score =  score + subScore;
+							return combo;;
+						}),'score');
+						var highestSetObj = sumSetValues[sumSetValues.length-1];
+                        highestSetValue = highestSetObj.sum;
+                        highestSet = highestSetObj.set;
                     }
                 }
             }
