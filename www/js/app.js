@@ -1005,6 +1005,7 @@ var app = new(function() {
     }
 
     this.logout = function() {
+		self.clearCookies();
         self.bungie.logout(function() {
             window.location.reload();
         });
@@ -1152,10 +1153,12 @@ var app = new(function() {
     }
 
     this.clearCookies = function() {
-        window.cookies.clear(function() {
-            window.localStorage.setItem("bungie_cookies", "");
-            tgd.localLog("Cookies cleared");
-        });
+		window.localStorage.setItem("bungie_cookies", "");
+		try {
+			window.cookies.clear(function() {
+				tgd.localLog("Cookies cleared");
+			});
+		}catch(e){}
     }
 
     this.openBungieWindow = function(type) {
