@@ -627,6 +627,11 @@ Profile.prototype = {
                 highestSetValue = character.calculatePowerLevelWithItems(highestSet);
             }
 
+			$.toaster({
+				settings: {
+					timeout: 10 * 1000
+				}
+			});
             $.toaster({
                 priority: 'success',
                 title: 'Result',
@@ -635,16 +640,21 @@ Profile.prototype = {
 
             var count = 0;
             var done = function() {
-                    count++;
-                    if (count == highestSet.length) {
-                        var msa = adhoc.transfer(character.id, true);
-                        tgd.localLog(msa);
-                        adhoc.swapItems(msa, character.id, function() {
-                            tgd.localLog("xfer complete");
-                        });
-                    }
-                }
-                //console.log(highestSet); abort;
+				count++;
+				if (count == highestSet.length) {
+					var msa = adhoc.transfer(character.id, true);
+					tgd.localLog(msa);
+					adhoc.swapItems(msa, character.id, function() {
+						$.toaster({
+							priority: 'success',
+							title: 'Result',
+							message: " Completed equipping the set: " + type + "  at  " + highestSetValue
+						});
+						$.toaster.reset();
+					});
+				}
+			}
+			//console.log(highestSet); abort;
 
             var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
