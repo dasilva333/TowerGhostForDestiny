@@ -629,7 +629,7 @@ Profile.prototype = {
 
             $.toaster({
                 priority: 'success',
-                title: 'Result:',
+                title: 'Result',
                 message: " The highest set available for " + type + "  is  " + highestSetValue
             });
 
@@ -659,7 +659,7 @@ Profile.prototype = {
                     tgd.localLog(message);
                     $.toaster({
                         priority: 'info',
-                        title: 'Equip:',
+                        title: 'Equip',
                         message: message
                     });
                     done();

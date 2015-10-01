@@ -293,7 +293,7 @@ Item.prototype = {
                             tgd.localLog("transfer error 5");
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Error:',
+                                title: 'Error',
                                 message: app.activeText().cannot_unequip + self.description
                             });
                         }
@@ -342,7 +342,7 @@ Item.prototype = {
                                     tgd.localLog("transfer error 6");
                                     $.toaster({
                                         priority: 'danger',
-                                        title: 'Error:',
+                                        title: 'Error',
                                         message: app.activeText().unable_unequip + itemEquipped.description
                                     });
                                     callback(false);
@@ -393,7 +393,7 @@ Item.prototype = {
                     else if (result && result.Message) {
                         $.toaster({
                             priority: 'info',
-                            title: 'Error:',
+                            title: 'Error',
                             message: result.Message
                         });
                     }
@@ -691,7 +691,7 @@ Item.prototype = {
                 tgd.localLog("transfer error 1");
                 $.toaster({
                     priority: 'info',
-                    title: 'Error:',
+                    title: 'Error',
                     message: result.Message
                 });
             }
@@ -796,7 +796,7 @@ Item.prototype = {
                 tgd.localLog("transfer error 2");
                 $.toaster({
                     priority: 'info',
-                    title: 'Error:',
+                    title: 'Error',
                     message: result.Message
                 });
             }
@@ -822,7 +822,7 @@ Item.prototype = {
                             tgd.localLog("transfer error 3");
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Error:',
+                                title: 'Error',
                                 message: "Unable to unequip " + self.description
                             });
                         }
@@ -855,7 +855,7 @@ Item.prototype = {
                             tgd.localLog("transfer error 4");
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Error:',
+                                title: 'Error',
                                 message: "Unable to unequip " + self.description
                             });
                         }
