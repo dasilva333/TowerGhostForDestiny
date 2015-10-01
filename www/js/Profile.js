@@ -473,7 +473,7 @@ Profile.prototype = {
                     //console.log("main set item " + main.description);
                     _.each(buckets, function(bucket) {
                         if (bucket != main.bucketType) {
-                            console.log("best candidate for bucket: " + bucket);
+                            tgd.localLog("best candidate for bucket: " + bucket);
                             var candidates = _.where(backups, {
                                 bucketType: bucket
                             });
