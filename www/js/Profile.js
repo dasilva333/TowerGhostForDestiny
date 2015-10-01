@@ -41,7 +41,9 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
-    this.powerLevel = ko.computed(this._powerLevel, this);
+    this.equippedGear = ko.computed(this._equippedGear, this);
+	this.equippedStats = ko.computed(this._equippedStats, this);
+	this.powerLevel = ko.computed(this._powerLevel, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -162,11 +164,16 @@ Profile.prototype = {
             return 0;
         }
     },
-    _powerLevel: function() {
-        var equippedGear = _.filter(this.items(), function(item) {
+	_equippedGear: function() {        
+        return _.filter(this.items(), function(item) {
             return item.isEquipped();
         });
-        return this.calculatePowerLevelWithItems(equippedGear);
+    },
+	_equippedStats: function(){
+		return this.joinStats(this.equippedGear());
+	},
+    _powerLevel: function() {
+		return this.calculatePowerLevelWithItems(this.equippedGear());
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
