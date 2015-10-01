@@ -765,7 +765,7 @@ Item.prototype = {
 							});
 						}
 						else {
-							adhoc.addUniqueItem({
+							adhoc.addGenericItem({
 								hash: self.id,
 								bucketType: self.bucketType,
 								primaryStat: self.primaryStat()
