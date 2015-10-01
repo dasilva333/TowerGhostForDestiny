@@ -521,14 +521,6 @@ var app = new(function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
-    this.incrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
-    }
-
-    this.decrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
-    }
-
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
@@ -1034,13 +1026,13 @@ var app = new(function() {
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+        /*if (self.doRefresh() == 1 && self.loadoutMode() == false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
                 self.search()
             }, self.refreshSeconds() * 1000);
-        }
+        }*/
     }
 
     this.bucketSizeHandler = function() {
