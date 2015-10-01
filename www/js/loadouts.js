@@ -177,6 +177,8 @@
 	        var onlyEquipped = function(item) {
 	            return item.doEquip() == true;
 	        }
+	        var ats = app.autoTransferStacks();
+	        app.autoTransferStacks(true);
 	        var itemIndex = -1,
 	            increments = parseInt(Math.round(95 / (1.0 * swapArray.length))),
 	            progressValue = 5;
@@ -201,7 +203,7 @@
 	                            if (profile.id == originalCharacterId) {
 	                                $.toaster({
 	                                    priority: 'danger',
-	                                    title: 'Error:',
+	                                    title: 'Error',
 	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
 	                                });
 	                                complete();
@@ -254,7 +256,7 @@
 	                            } else {
 	                                $.toaster({
 	                                    priority: 'danger',
-	                                    title: 'Error:',
+	                                    title: 'Error',
 	                                    message: "Unable to unequip " + equippedItem.description + " while playing in game"
 	                                });
 	                                pair.swapItem = pair.targetItem = targetItem = swapItem = null;
@@ -284,7 +286,7 @@
 	                            if (profile.id == originalCharacterId) {
 	                                $.toaster({
 	                                    priority: 'danger',
-	                                    title: 'Error:',
+	                                    title: 'Error',
 	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
 	                                });
 	                                complete();
@@ -372,11 +374,12 @@
 	                        if (tgd.DestinyNonUniqueBuckets.indexOf(bucketType) == -1) {
 	                            _.each(app.characters(), function(character) {
 	                                if (freeSpaceNeeded > 0 && character.id != "Vault") {
-	                                    tgd.localLog("checking " + character.uniqueName);
+	                                    tgd.localLog("checking " + character.uniqueName + " the " + bucketType);
 	                                    var freeSpace = maxFreeSpace - character.get(bucketType).length;
 	                                    if (freeSpace > 0) {
 	                                        tgd.localLog(bucketType + " found with free space: " + freeSpace);
 	                                        var itemsToMove = vault.get(bucketType);
+	                                        tgd.localLog("vault has these many of those items to move " + itemsToMove.length);
 	                                        _.each(itemsToMove, function(item) {
 	                                            if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
 	                                                tmpItems.push({
@@ -440,6 +443,7 @@
 	                }
 	            } else {
 	                tgd.localLog("pair is not defined, calling callback");
+	                app.autoTransferStacks(ats);
 	                if (callback)
 	                    callback();
 	            }
@@ -613,7 +617,7 @@
 	                                        _id: item._id
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-	                                    tgd.localLog(item.description + " doEquip? " + item.doEquip());
+	                                    tgd.localLog(item.description + " item is already in target bucket, doEquip? " + item.doEquip());
 	                                    if (item.doEquip() == true) {
 	                                        return {
 	                                            targetItem: item,
@@ -631,7 +635,8 @@
 	                                            swapIcon: ownerIcon
 	                                        }
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType)) {
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType && targetCharacterId != "Vault")) {
+	                                    tgd.localLog(item.description + " wont transfer sub classes ");
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
@@ -736,11 +741,7 @@
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
-	                        var ats = app.autoTransferStacks();
-	                        app.autoTransferStacks(true);
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            tgd.localLog("swapItems finished");
-	                            app.autoTransferStacks(ats);
 	                            $.toaster({
 	                                settings: {
 	                                    timeout: 15 * 1000
@@ -748,7 +749,7 @@
 	                            });
 	                            $.toaster({
 	                                priority: 'success',
-	                                title: 'Success:',
+	                                title: 'Success',
 	                                message: app.activeText().loadouts_transferred
 	                            });
 	                            $.toaster.reset();
