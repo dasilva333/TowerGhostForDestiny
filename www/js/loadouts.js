@@ -372,11 +372,12 @@
 	                        if (tgd.DestinyNonUniqueBuckets.indexOf(bucketType) == -1) {
 	                            _.each(app.characters(), function(character) {
 	                                if (freeSpaceNeeded > 0 && character.id != "Vault") {
-	                                    tgd.localLog("checking " + character.uniqueName);
+	                                    tgd.localLog("checking " + character.uniqueName + " the " + bucketType);
 	                                    var freeSpace = maxFreeSpace - character.get(bucketType).length;
 	                                    if (freeSpace > 0) {
 	                                        tgd.localLog(bucketType + " found with free space: " + freeSpace);
 	                                        var itemsToMove = vault.get(bucketType);
+											tgd.localLog("vault has these many of those items to move " + itemsToMove.length);
 	                                        _.each(itemsToMove, function(item) {
 	                                            if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
 	                                                tmpItems.push({

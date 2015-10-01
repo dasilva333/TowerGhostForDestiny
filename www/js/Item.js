@@ -666,10 +666,13 @@ Item.prototype = {
                     }, 600);
                     tgd.localLog("---------------------");
                 } else {
-                    x.items.remove(self);
+					tgd.localLog("removing " + self.description + " from " + x.uniqueName + " currently at " + x.items().length);
+                    x.items.remove(function(item){ return item._id == self._id });
+					console.log("after removal " + x.items().length);
                     self.characterId = targetCharacterId
                     self.character = y;
                     y.items.push(self);
+					console.log("adding " + self.description + " to " + y.uniqueName);
                     setTimeout(function() {
                         app.bucketSizeHandler();
                     }, 600);
@@ -749,21 +752,29 @@ Item.prototype = {
                 /*    }
                 });*/
             }
-            //this condition only applies to armor/weapons until loadouts can support mats
-            else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
+            else if (result && result.ErrorCode && result.ErrorCode == 1642) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
-                        var adhoc = new Loadout();
-                        adhoc.addUniqueItem({
-                            id: self._id,
-                            bucketType: self.bucketType,
-                            doEquip: false
-                        });
-                        var msa = adhoc.transfer(targetCharacterId, true);
-                        adhoc.swapItems(msa, targetCharacterId, function() {
-                            if (cb) cb(y, x);
-                        });
+						var adhoc = new Loadout();
+						if (  self._id > 0 ){
+							adhoc.addUniqueItem({
+								id: self._id,
+								bucketType: self.bucketType,
+								doEquip: false
+							});
+						}
+						else {
+							adhoc.addUniqueItem({
+								hash: self.id,
+								bucketType: self.bucketType,
+								primaryStat: self.primaryStat()
+							});
+						}
+						var msa = adhoc.transfer(targetCharacterId, true);
+						adhoc.swapItems(msa, targetCharacterId, function() {
+							if (cb) cb(y, x);
+						});
                     });
                 });
             } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
@@ -825,9 +836,9 @@ Item.prototype = {
                             if (callback)
                                 callback(self.character);
                         } else {
-                            tgd.localLog("xfering item to Vault " + self.description);
+                            tgd.localLog(self.character.uniqueName + " xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
-                                tgd.localLog("xfered item to vault and now to " + targetCharacterId);
+                                tgd.localLog(self.character.id + " xfered item to vault and now to " + targetCharacterId);
                                 if (self.character.id == targetCharacterId) {
                                     tgd.localLog("took the long route ending it short " + self.description);
                                     if (callback) callback(self.character);
