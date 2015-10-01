@@ -341,16 +341,16 @@ Profile.prototype = {
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
     },
-	joinStats: function(arrItems){
-		var tmp = {};
-		_.each(arrItems, function(item) {
-			_.each(item.stats, function(value, key) {
-				if (!(key in tmp)) tmp[key] = 0;
-				tmp[key] += value;
-			});
-		});
-		return tmp;
-	},
+    joinStats: function(arrItems) {
+        var tmp = {};
+        _.each(arrItems, function(item) {
+            _.each(item.stats, function(value, key) {
+                if (!(key in tmp)) tmp[key] = 0;
+                tmp[key] += value;
+            });
+        });
+        return tmp;
+    },
     equipHighest: function(type) {
         var character = this;
         return function() {
@@ -592,21 +592,24 @@ Profile.prototype = {
                         _.map(fullSets, function(set) {
                             var sumSet = character.joinStats(set);
                             if (sumSet[type] >= maxCap) {
-                                availableSets.push({ set: set, sumSet: sumSet });
-								tgd.localLog(sumSet);
+                                availableSets.push({
+                                    set: set,
+                                    sumSet: sumSet
+                                });
+                                tgd.localLog(sumSet);
                             }
                         });
-						var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
-							var score = sum(_.map(combo.sumSet, function(value, key) {
-								var result = Math.floor(value / 60);
-								return result > 5 ? 5 : result;
-							}));
-							combo.sum = sum(_.values(combo.sumSet));
-							var subScore = (combo.sum / 1000);
-							combo.score =  score + subScore;
-							return combo;;
-						}),'score');
-						var highestSetObj = sumSetValues[sumSetValues.length-1];
+                        var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
+                            var score = sum(_.map(combo.sumSet, function(value, key) {
+                                var result = Math.floor(value / 60);
+                                return result > 5 ? 5 : result;
+                            }));
+                            combo.sum = sum(_.values(combo.sumSet));
+                            var subScore = (combo.sum / 1000);
+                            combo.score = score + subScore;
+                            return combo;;
+                        }), 'score');
+                        var highestSetObj = sumSetValues[sumSetValues.length - 1];
                         highestSetValue = highestSetObj.sum;
                         highestSet = highestSetObj.set;
                     }
@@ -625,16 +628,16 @@ Profile.prototype = {
 
             var count = 0;
             var done = function() {
-				count++;
-				if (count == highestSet.length) {
-					var msa = adhoc.transfer(character.id, true);
-					tgd.localLog(msa);
-					adhoc.swapItems(msa, character.id, function() {
-						tgd.localLog("xfer complete");
-					});
-				}
-			}
-			//console.log(highestSet); abort;
+                    count++;
+                    if (count == highestSet.length) {
+                        var msa = adhoc.transfer(character.id, true);
+                        tgd.localLog(msa);
+                        adhoc.swapItems(msa, character.id, function() {
+                            tgd.localLog("xfer complete");
+                        });
+                    }
+                }
+                //console.log(highestSet); abort;
 
             var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {

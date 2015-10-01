@@ -1005,7 +1005,7 @@ var app = new(function() {
     }
 
     this.logout = function() {
-		self.clearCookies();
+        self.clearCookies();
         self.bungie.logout(function() {
             window.location.reload();
         });
@@ -1142,23 +1142,25 @@ var app = new(function() {
 
     this.findReference = function(item) {
         if (item && item.id > 0) {
-			return _.findWhere( _.flatten( _.map( app.characters(), function(character){
-				return character.items()
-			})), { _id: item._id });
-		} else {
-			//console.log(item);
-			//console.log(item.character);
-			return null;
-		}
+            return _.findWhere(_.flatten(_.map(app.characters(), function(character) {
+                return character.items()
+            })), {
+                _id: item._id
+            });
+        } else {
+            //console.log(item);
+            //console.log(item.character);
+            return null;
+        }
     }
 
     this.clearCookies = function() {
-		window.localStorage.setItem("bungie_cookies", "");
-		try {
-			window.cookies.clear(function() {
-				tgd.localLog("Cookies cleared");
-			});
-		}catch(e){}
+        window.localStorage.setItem("bungie_cookies", "");
+        try {
+            window.cookies.clear(function() {
+                tgd.localLog("Cookies cleared");
+            });
+        } catch (e) {}
     }
 
     this.openBungieWindow = function(type) {

@@ -666,13 +666,15 @@ Item.prototype = {
                     }, 600);
                     tgd.localLog("---------------------");
                 } else {
-					tgd.localLog("removing " + self.description + " from " + x.uniqueName + " currently at " + x.items().length);
-                    x.items.remove(function(item){ return item._id == self._id });
-					console.log("after removal " + x.items().length);
+                    tgd.localLog("removing " + self.description + " from " + x.uniqueName + " currently at " + x.items().length);
+                    x.items.remove(function(item) {
+                        return item._id == self._id
+                    });
+                    tgd.localLog("after removal " + x.items().length);
                     self.characterId = targetCharacterId
                     self.character = y;
                     y.items.push(self);
-					console.log("adding " + self.description + " to " + y.uniqueName);
+                    tgd.localLog("adding " + self.description + " to " + y.uniqueName);
                     setTimeout(function() {
                         app.bucketSizeHandler();
                     }, 600);
@@ -751,30 +753,28 @@ Item.prototype = {
                 });
                 /*    }
                 });*/
-            }
-            else if (result && result.ErrorCode && result.ErrorCode == 1642) {
+            } else if (result && result.ErrorCode && result.ErrorCode == 1642) {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
-						var adhoc = new Loadout();
-						if (  self._id > 0 ){
-							adhoc.addUniqueItem({
-								id: self._id,
-								bucketType: self.bucketType,
-								doEquip: false
-							});
-						}
-						else {
-							adhoc.addGenericItem({
-								hash: self.id,
-								bucketType: self.bucketType,
-								primaryStat: self.primaryStat()
-							});
-						}
-						var msa = adhoc.transfer(targetCharacterId, true);
-						adhoc.swapItems(msa, targetCharacterId, function() {
-							if (cb) cb(y, x);
-						});
+                        var adhoc = new Loadout();
+                        if (self._id > 0) {
+                            adhoc.addUniqueItem({
+                                id: self._id,
+                                bucketType: self.bucketType,
+                                doEquip: false
+                            });
+                        } else {
+                            adhoc.addGenericItem({
+                                hash: self.id,
+                                bucketType: self.bucketType,
+                                primaryStat: self.primaryStat()
+                            });
+                        }
+                        var msa = adhoc.transfer(targetCharacterId, true);
+                        adhoc.swapItems(msa, targetCharacterId, function() {
+                            if (cb) cb(y, x);
+                        });
                     });
                 });
             } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
