@@ -82,7 +82,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             if (item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
-                    title: 'Warning:',
+                    title: 'Warning',
                     message: app.activeText().unable_create_loadout_for_type
                 });
             } else if (item._id == 0) {
@@ -102,7 +102,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             } else {
                 $.toaster({
                     priority: 'danger',
-                    title: 'Error:',
+                    title: 'Error',
                     message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
                 });
             }
@@ -114,7 +114,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
-                title: 'Error:',
+                title: 'Error',
                 message: app.activeText().unable_to_move_bucketitems
             });
             return;
@@ -223,7 +223,7 @@ window.ko.bindingHandlers.scrollToView = {
             .on("press", function() {
                 $.toaster({
                     priority: 'info',
-                    title: 'Info:',
+                    title: 'Info',
                     message: app.activeText().this_icon + viewModel.uniqueName
                 });
             });
@@ -279,7 +279,7 @@ ko.bindingHandlers.moveItem = {
                         } else {
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Warning:',
+                                title: 'Warning',
                                 message: app.activeText().unable_create_loadout_for_type
                             });
                         }
@@ -521,14 +521,6 @@ var app = new(function() {
         (new tgd.dialog).title("About").content($("#about").html()).show();
     }
 
-    this.incrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
-    }
-
-    this.decrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
-    }
-
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
@@ -717,7 +709,7 @@ var app = new(function() {
         if (self.setFilter().length == 0) {
             $.toaster({
                 priority: 'danger',
-                title: 'Warning:',
+                title: 'Warning',
                 message: self.activeText().pick_a_set
             });
         } else {
@@ -980,7 +972,7 @@ var app = new(function() {
                         });
                         $.toaster({
                             priority: 'info',
-                            title: 'Info:',
+                            title: 'Info',
                             message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
                         });
                         $("#useOtherAccount").click(function() {
@@ -1013,6 +1005,7 @@ var app = new(function() {
     }
 
     this.logout = function() {
+        self.clearCookies();
         self.bungie.logout(function() {
             window.location.reload();
         });
@@ -1034,13 +1027,13 @@ var app = new(function() {
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+        /*if (self.doRefresh() == 1 && self.loadoutMode() == false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
                 self.search()
             }, self.refreshSeconds() * 1000);
-        }
+        }*/
     }
 
     this.bucketSizeHandler = function() {
@@ -1068,11 +1061,11 @@ var app = new(function() {
             });
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
-                var maxHeight = Math.max.apply(null, sizes);
+                var maxHeight = _.max(sizes);
                 //this is the max height the non-vault characters will use
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
-                var maxProfilesHeight = Math.max.apply(null, profileSizes);
+                var maxProfilesHeight = _.max(profileSizes);
                 var minNumRows = 1;
                 if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
                     minNumRows = 3;
@@ -1148,44 +1141,26 @@ var app = new(function() {
     }
 
     this.findReference = function(item) {
-        //console.log("findReference " + item.description);
-        setTimeout(function() {
-            if (item && item.character && item.character.id) {
-                var c = _.findWhere(self.characters(), {
-                    id: item.character.id
-                });
-                //console.log(c);
-                //console.log(c.items().length);
-                //console.log(c.items());
-                //tgd.localLog("querying with character id " + item.character.id);
-                //tgd.localLog(c.uniqueName);
-                //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
-                if (c && c.items) {
-                    var query = item._id == 0 ? {
-                        id: item.id
-                    } : {
-                        _id: item._id
-                    };
-                    tgd.localLog("querying with " + JSON.stringify(query));
-                    var x = _.findWhere(c.items(), query);
-                    tgd.localLog(x);
-                    return x;
-                } else {
-                    return null;
-                }
-            } else {
-                //console.log(item);
-                //console.log(item.character);
-                return null;
-            }
-        }, 1000);
+        if (item && item.id > 0) {
+            return _.findWhere(_.flatten(_.map(app.characters(), function(character) {
+                return character.items()
+            })), {
+                _id: item._id
+            });
+        } else {
+            //console.log(item);
+            //console.log(item.character);
+            return null;
+        }
     }
 
     this.clearCookies = function() {
-        window.cookies.clear(function() {
-            window.localStorage.setItem("bungie_cookies", "");
-            tgd.localLog("Cookies cleared");
-        });
+        window.localStorage.setItem("bungie_cookies", "");
+        try {
+            window.cookies.clear(function() {
+                tgd.localLog("Cookies cleared");
+            });
+        } catch (e) {}
     }
 
     this.openBungieWindow = function(type) {
@@ -1223,7 +1198,7 @@ var app = new(function() {
                         if (!isMobile && !isChrome) {
                             $.toaster({
                                 priority: 'success',
-                                title: 'Loading:',
+                                title: 'Loading',
                                 message: "Please wait while Firefox acquires your arsenal"
                             });
                             var event = document.createEvent('CustomEvent');
@@ -1262,7 +1237,7 @@ var app = new(function() {
         self.scrollTo($(".profile:eq(" + index + ")").position().top - 50, function() {
             $.toaster({
                 priority: 'info',
-                title: 'View:',
+                title: 'View',
                 message: tgd.DestinyViews[newIndex]
             });
         });
@@ -1328,7 +1303,7 @@ var app = new(function() {
                         if (results.success) {
                             $.toaster({
                                 priority: 'success',
-                                title: 'Saved:',
+                                title: 'Saved',
                                 message: "Loadouts saved to the cloud"
                             });
                         } else BootstrapDialog.alert("Error has occurred saving loadouts");
@@ -1441,7 +1416,7 @@ var app = new(function() {
             if (usingbatchMode == false) {
                 $.toaster({
                     priority: 'danger',
-                    title: 'Warning:',
+                    title: 'Warning',
                     message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
                 });
             }
@@ -1482,7 +1457,7 @@ var app = new(function() {
             if (usingbatchMode == false) {
                 $.toaster({
                     priority: 'success',
-                    title: 'Result:',
+                    title: 'Result',
                     message: description + " already normalized as best as possible."
                 });
             }
@@ -1512,7 +1487,7 @@ var app = new(function() {
                     //self.refresh();
                     $.toaster({
                         priority: 'success',
-                        title: 'Result:',
+                        title: 'Result',
                         message: "All items normalized as best as possible"
                     });
                 }
@@ -1628,7 +1603,7 @@ var app = new(function() {
                 if (description == undefined) {
                     $.toaster({
                         priority: 'success',
-                        title: 'Result:',
+                        title: 'Result',
                         message: "All items normalized as best as possible"
                     });
                     return;
@@ -1860,7 +1835,7 @@ var app = new(function() {
                 var action = destination.isEquipped() ? "equip" : "store";
                 $.toaster({
                     priority: 'info',
-                    title: 'Transfer:',
+                    title: 'Transfer',
                     message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
                 });
                 arg.item[action](destination.character.id);
