@@ -648,7 +648,7 @@ Profile.prototype = {
 						$.toaster({
 							priority: 'success',
 							title: 'Result',
-							message: " Completed equipping the set: " + type + "  at  " + highestSetValue
+							message: " Completed equipping the highest " + type + " set at " + highestSetValue
 						});
 						$.toaster.reset();
 					});
