@@ -82,6 +82,7 @@
 	            });
 	        }
 	        if (item.doEquip()) {
+				//TODO: TypeError: undefined is not an object (evaluating '_.findWhere(self.ids(), { id: item._id }).doEquip')
 	            _.findWhere(self.ids(), {
 	                id: item._id
 	            }).doEquip(true);
@@ -348,6 +349,7 @@
 	                    return layout.bucketTypes.indexOf(bucketType) > -1
 	                })[0];
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
+					//TODO: TypeError: undefined is not an object (evaluating 'vault.items')
 	                var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
 	                    return layout.bucketTypes.indexOf(otherItem.bucketType) > -1;
 	                }).length;

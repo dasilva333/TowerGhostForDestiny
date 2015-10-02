@@ -778,6 +778,7 @@ Item.prototype = {
                     });
                 });
             } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
+				//TODO: TypeError: 'undefined' is not an object (evaluating '_.findWhere(app.characters(), { id: "Vault" }).items')
                 var vaultItems = _.findWhere(app.characters(), {
                     id: "Vault"
                 }).items();

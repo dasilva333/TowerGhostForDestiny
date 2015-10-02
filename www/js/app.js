@@ -1483,7 +1483,7 @@ var app = new(function() {
                 description: description
             });
             var surplusItem = surplusItems[0];
-
+			//TODO: TypeError: undefined is not an object (evaluating 'surplusItem.primaryStat')
             var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
