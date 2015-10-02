@@ -1262,59 +1262,38 @@ var app = new(function() {
     var id = -1;
     this.apiRequest = function(params, callback) {
         var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
-        if (isChrome || isMobile) {
-            $.ajax({
-                url: apiURL,
-                data: params,
-                type: "POST",
-                success: function(data) {
-                    var response = (typeof data == "string") ? JSON.parse(data) : data;
-                    callback(response);
-                }
-            });
-        } else {
-            var event = document.createEvent('CustomEvent');
-            var opts = {
-                route: apiURL,
-                payload: params,
-                method: "POST",
-                complete: callback
+        $.ajax({
+            url: apiURL,
+            data: params,
+            type: "POST",
+            success: function(data) {
+                var response = (typeof data == "string") ? JSON.parse(data) : data;
+                callback(response);
             }
-            event.initCustomEvent("api-request-message", true, true, {
-                id: ++id,
-                opts: opts
-            });
-            self.requests[id] = opts;
-            document.documentElement.dispatchEvent(event);
-        }
+        });
     }
 
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-        if (supportsCloudSaves == true) {
-            if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
-                var params = {
-                    action: "save",
-                    membershipId: parseFloat(self.activeUser().user.membershipId),
-                    loadouts: ko.toJSON(self.loadouts())
-                }
-                self.apiRequest(params, function(results) {
-                    if (_includeMessage == true) {
-                        if (results.success) {
-                            $.toaster({
-                                priority: 'success',
-                                title: 'Saved',
-                                message: "Loadouts saved to the cloud"
-                            });
-                        } else BootstrapDialog.alert("Error has occurred saving loadouts");
-                    }
-                });
-            } else {
-                BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
+        if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
+            var params = {
+                action: "save",
+                membershipId: parseFloat(self.activeUser().user.membershipId),
+                loadouts: ko.toJSON(self.loadouts())
             }
+            self.apiRequest(params, function(results) {
+                if (_includeMessage == true) {
+                    if (results.success) {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Saved',
+                            message: "Loadouts saved to the cloud"
+                        });
+                    } else BootstrapDialog.alert("Error has occurred saving loadouts");
+                }
+            });
         } else {
-            var loadouts = ko.toJSON(self.loadouts());
-            window.localStorage.setItem("loadouts", loadouts);
+            BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
         }
     }
 
@@ -1328,44 +1307,40 @@ var app = new(function() {
             } else {
                 _loadouts = [];
             }
-            if (supportsCloudSaves == true) {
-                self.apiRequest({
-                    action: "load",
-                    //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                    membershipId: parseFloat(self.activeUser().user.membershipId),
-                    locale: self.currentLocale(),
-                    version: self.defLocaleVersion(),
-                    /*this one applies only to your current profile
-	   				accountId: self.bungie.getMemberId()*/
-                }, function(results) {
-                    var _results = [];
-                    if (results && results.loadouts) {
-                        _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
-                        _results = _.map(_results, function(loadout) {
-                            loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-                            loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-                            loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-                            return new Loadout(loadout);
-                        });
-                    }
-                    /* one time migrate joins the two arrays and clears the local one */
-                    if (_loadouts.length > 0) {
-                        _results = _loadouts.concat(_results);
-                        window.localStorage.setItem("loadouts", "");
-                    }
-                    self.loadouts(_results);
-                    /* one time migrate saves the new joined array to the cloud */
-                    if (_loadouts.length > 0) {
-                        self.saveLoadouts(false);
-                    }
-                    /*if (results && results.itemDefs) {
-                        tgd.localLog("downloading locale update");
-                        self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-                    }*/
-                });
-            } else if (_loadouts.length > 0) {
-                self.loadouts(_loadouts);
-            }
+            self.apiRequest({
+                action: "load",
+                //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                membershipId: parseFloat(self.activeUser().user.membershipId),
+                locale: self.currentLocale(),
+                version: self.defLocaleVersion(),
+                /*this one applies only to your current profile
+				accountId: self.bungie.getMemberId()*/
+            }, function(results) {
+                var _results = [];
+                if (results && results.loadouts) {
+                    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
+                    _results = _.map(_results, function(loadout) {
+                        loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+                        loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+                        loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+                        return new Loadout(loadout);
+                    });
+                }
+                /* one time migrate joins the two arrays and clears the local one */
+                if (_loadouts.length > 0) {
+                    _results = _loadouts.concat(_results);
+                    window.localStorage.setItem("loadouts", "");
+                }
+                self.loadouts(_results);
+                /* one time migrate saves the new joined array to the cloud */
+                if (_loadouts.length > 0) {
+                    self.saveLoadouts(false);
+                }
+                /*if (results && results.itemDefs) {
+					tgd.localLog("downloading locale update");
+					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+				}*/
+            });
         }
     }
 

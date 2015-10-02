@@ -42,8 +42,8 @@ var Profile = function(character, items, index) {
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
     this.equippedGear = ko.computed(this._equippedGear, this);
-	this.equippedStats = ko.computed(this._equippedStats, this);
-	this.powerLevel = ko.computed(this._powerLevel, this);
+    this.equippedStats = ko.computed(this._equippedStats, this);
+    this.powerLevel = ko.computed(this._powerLevel, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -164,16 +164,16 @@ Profile.prototype = {
             return 0;
         }
     },
-	_equippedGear: function() {        
+    _equippedGear: function() {
         return _.filter(this.items(), function(item) {
             return item.isEquipped();
         });
     },
-	_equippedStats: function(){
-		return this.joinStats(this.equippedGear());
-	},
+    _equippedStats: function() {
+        return this.joinStats(this.equippedGear());
+    },
     _powerLevel: function() {
-		return this.calculatePowerLevelWithItems(this.equippedGear());
+        return this.calculatePowerLevelWithItems(this.equippedGear());
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -370,8 +370,8 @@ Profile.prototype = {
             var sets = [];
             var backups = [];
             var highestSet;
-			var highestSetValue;
-			
+            var highestSetValue;
+
             if (type == "Best") {
                 var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
                 var bestSets = [];
@@ -427,7 +427,7 @@ Profile.prototype = {
                 //console.timeEnd("finding candidates");
                 var bestSets = _.sortBy(bestSets, 'score');
                 highestSet = bestSets[bestSets.length - 1].set;
-				highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
+                highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
                 //console.log(bestSets);
                 //console.log(highestSet);
             } else {
@@ -629,11 +629,11 @@ Profile.prototype = {
                 highestSetValue = character.calculatePowerLevelWithItems(highestSet);
             }
 
-			$.toaster({
-				settings: {
-					timeout: 10 * 1000
-				}
-			});
+            $.toaster({
+                settings: {
+                    timeout: 10 * 1000
+                }
+            });
             $.toaster({
                 priority: 'success',
                 title: 'Result',
@@ -642,21 +642,21 @@ Profile.prototype = {
 
             var count = 0;
             var done = function() {
-				count++;
-				if (count == highestSet.length) {
-					var msa = adhoc.transfer(character.id, true);
-					tgd.localLog(msa);
-					adhoc.swapItems(msa, character.id, function() {
-						$.toaster({
-							priority: 'success',
-							title: 'Result',
-							message: " Completed equipping the highest " + type + " set at " + highestSetValue
-						});
-						$.toaster.reset();
-					});
-				}
-			}
-			//console.log(highestSet); abort;
+                    count++;
+                    if (count == highestSet.length) {
+                        var msa = adhoc.transfer(character.id, true);
+                        tgd.localLog(msa);
+                        adhoc.swapItems(msa, character.id, function() {
+                            $.toaster({
+                                priority: 'success',
+                                title: 'Result',
+                                message: " Completed equipping the highest " + type + " set at " + highestSetValue
+                            });
+                            $.toaster.reset();
+                        });
+                    }
+                }
+                //console.log(highestSet); abort;
 
             var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
