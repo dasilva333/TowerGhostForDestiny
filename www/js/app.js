@@ -1295,8 +1295,8 @@ var app = new(function() {
             if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
                 var params = {
                     action: "save",
-                    membershipId: parseFloat(app.activeUser().user.membershipId),
-                    loadouts: JSON.stringify(self.loadouts())
+                    membershipId: parseFloat(self.activeUser().user.membershipId),
+                    loadouts: ko.toJSON(self.loadouts())
                 }
                 self.apiRequest(params, function(results) {
                     if (_includeMessage == true) {

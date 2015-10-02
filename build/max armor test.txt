@@ -1,0 +1,4 @@
+tgd.DestinyArmorPieces.push("Ghost");
+armor = _.groupBy( _.filter( _itemDefs , function(key, value){ var isArmor = tgd.DestinyArmorPieces.indexOf(tgd.DestinyBucketTypes[key.bucketTypeHash]) > -1; return isArmor }),'bucketTypeHash');
+hashes =  [1735777505,4244567218,144602215];
+maxValues = _.map( armor, function(o, key){ return _.max(_.map(o, function(item){ return _.max(_.pluck(_.filter(item.stats,function(stat){ return hashes.indexOf(stat.statHash) > -1  }),'maximum')) })) + '/' + tgd.DestinyBucketTypes[key]; });
