@@ -370,7 +370,8 @@ Profile.prototype = {
             var sets = [];
             var backups = [];
             var highestSet;
-
+			var highestSetValue;
+			
             if (type == "Best") {
                 var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
                 var bestSets = [];
@@ -426,6 +427,7 @@ Profile.prototype = {
                 //console.timeEnd("finding candidates");
                 var bestSets = _.sortBy(bestSets, 'score');
                 highestSet = bestSets[bestSets.length - 1].set;
+				highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
                 //console.log(bestSets);
                 //console.log(highestSet);
             } else {
@@ -500,7 +502,7 @@ Profile.prototype = {
                     }));
                 });
 
-                var highestSetValue = _.max(sumSets);
+                highestSetValue = _.max(sumSets);
                 //console.log(highestSetValue);
 
                 if (type == "Light" || type == "All") {
