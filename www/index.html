@@ -380,25 +380,60 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="dropdown">
+                    <li class="dropdown" data-bind="visible: activeView() == 1">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <span data-bind="text: $root.activeText().menu_weapons">Damage</span>
+                            <span data-bind="text: $root.activeText().menu_view_weapons">Weapons</span>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li data-bind="css: typeFilter() == $($element).attr('value') ? 'active' : '', fastclick: setTypeFilter({ name: 0 })">
+                            <li data-bind="css: weaponFilter() == $($element).attr('value') ? 'active' : '', fastclick: setWeaponFilter({ name: 0 })">
                                 <a href="#">
-                                    <i class="fa" data-bind="css: typeFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                    <i class="fa" data-bind="css: weaponFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
                                     <span data-bind="text: $root.activeText().menu_all">All</span>
                                 </a>
                             </li>
                             <!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
-                            <li data-bind="css: $parent.typeFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setTypeFilter(weaponType)">
-                                <a href="#"><i class="fa" data-bind="css: $parent.typeFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
+                            <li data-bind="css: $parent.weaponFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setWeaponFilter(weaponType)">
+                                <a href="#"><i class="fa" data-bind="css: $parent.weaponFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
 									<span data-bind="text: weaponType.name">All</span>
 								</a>
                             </li>
                             <!--/ko  -->
+                        </ul>
+                    </li>
+					<li class="dropdown" data-bind="visible: activeView() == 2">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <span data-bind="text: $root.activeText().menu_view_armor">Armor</span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li data-bind="css: armorFilter() == $($element).attr('value') ? 'active' : '', fastclick: setArmorFilter({ name: 0 })">
+                                <a href="#">
+                                    <i class="fa" data-bind="css: armorFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                    <span data-bind="text: $root.activeText().menu_all">All</span>
+                                </a>
+                            </li>
+                            <!-- ko foreach: { data: tgd.DestinyArmorPieces, as: 'armorType' } -->
+                            <li data-bind="css: $parent.armorFilter() == armorType ? 'active' : '', fastclick: $parent.setArmorFilter(armorType)">
+                                <a href="#"><i class="fa" data-bind="css: $parent.armorFilter() == armorType ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: armorType"></span>
+								</a>
+                            </li>
+                            <!--/ko  -->
+                        </ul>
+                    </li>
+					<li class="dropdown" data-bind="visible: activeView() == 3">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <span data-bind="text: $root.activeText().menu_view_general">General</span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li data-bind="css: generalFilter() == $($element).attr('value') ? 'active' : '', fastclick: setGeneralFilter({ name: 0 })">
+                                <a href="#">
+                                    <i class="fa" data-bind="css: generalFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                    <span data-bind="text: $root.activeText().menu_all">All</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
