@@ -373,19 +373,31 @@ Item.prototype = {
             tgd.localLog("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
-                    tgd.localLog("result was OKed for " + self.description);
-                    tgd.localLog(result);
-                    self.isEquipped(true);
-                    self.character.items().forEach(function(item) {
-                        if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
-                            item.isEquipped(false);
+                    var done = function() {
+                        tgd.localLog(self);
+                        tgd.localLog("result was OKed for " + self.description);
+                        tgd.localLog(result);
+                        self.isEquipped(true);
+                        self.character.items().forEach(function(item) {
+                            if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
+                                item.isEquipped(false);
+                            }
+                        });
+                        if (self.bucketType == "Emblem") {
+                            self.character.icon(self.icon);
+                            self.character.background(self.backgroundPath);
                         }
-                    });
-                    if (self.bucketType == "Emblem") {
-                        self.character.icon(self.icon);
-                        self.character.background(self.backgroundPath);
+                        if (callback) callback(true);
                     }
-                    if (callback) callback(true);
+                    if (!(self instanceof Item)) {
+                        app.findReference(self, function(item) {
+                            self = item;
+                            done();
+                        });
+                        tgd.localLog("changing reference of self to actual item");
+                    } else {
+                        done();
+                    }
                 } else {
                     tgd.localLog("transfer error 7 " + result);
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
@@ -744,11 +756,9 @@ Item.prototype = {
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         tgd.localLog("retransferring");
-                        //TODO move this function to a more general area for common use
-                        var newItem = app.findReference(self);
-                        if (newItem) {
+                        app.findReference(self, function(newItem) {
                             newItem.store(targetCharacterId, cb);
-                        }
+                        });
                     });
                 });
                 /*    }
@@ -778,7 +788,7 @@ Item.prototype = {
                     });
                 });
             } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
-				//TODO: TypeError: 'undefined' is not an object (evaluating '_.findWhere(app.characters(), { id: "Vault" }).items')
+                //TODO: TypeError: 'undefined' is not an object (evaluating '_.findWhere(app.characters(), { id: "Vault" }).items')
                 var vaultItems = _.findWhere(app.characters(), {
                     id: "Vault"
                 }).items();

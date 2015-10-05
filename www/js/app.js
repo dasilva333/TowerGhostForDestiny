@@ -1140,17 +1140,25 @@ var app = new(function() {
         });
     }
 
-    this.findReference = function(item) {
+    this.findReference = function(item, callback) {
         if (item && item.id > 0) {
-            return _.findWhere(_.flatten(_.map(app.characters(), function(character) {
+            var subscriptions = [];
+            var newItemHandler = function(items) {
+                var foundItem = _.where(items, {
+                    _id: item._id
+                });
+                if (foundItem.length > 0) {
+                    _.each(subscriptions, function(sub) {
+                        sub.dispose();
+                    });
+                    callback(foundItem[0]);
+                }
+            }
+            var allItems = _.flatten(_.map(app.characters(), function(character) {
+                subscriptions.push(character.items.subscribe(newItemHandler));
                 return character.items()
-            })), {
-                _id: item._id
-            });
-        } else {
-            //console.log(item);
-            //console.log(item.character);
-            return null;
+            }));
+            newItemHandler(allItems);
         }
     }
 
@@ -1483,7 +1491,7 @@ var app = new(function() {
                 description: description
             });
             var surplusItem = surplusItems[0];
-			//TODO: TypeError: undefined is not an object (evaluating 'surplusItem.primaryStat')
+            //TODO: TypeError: undefined is not an object (evaluating 'surplusItem.primaryStat')
             var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
