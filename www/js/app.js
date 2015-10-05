@@ -847,7 +847,7 @@ var app = new(function() {
         var total = 0,
             count = 0,
             profiles = [];
-        /* TODO: implement a better loading bar by using the counts and this: #loadingBar */
+
         function done(profile) {
             profiles.push(profile);
             count++;

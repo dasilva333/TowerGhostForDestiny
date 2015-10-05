@@ -480,18 +480,8 @@ Item.prototype = {
         var ids = _.pluck(characters, 'id');
         x = characters[ids.indexOf(sourceCharacterId)];
         y = characters[ids.indexOf(targetCharacterId)];
-        //TODO: This only seems to be happening now for people whose Vault profile didnt load
         if (_.isUndefined(y)) {
-            /*ga('send', 'exception', {
-                'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
-                'exFatal': false,
-                'appVersion': tgd.version,
-                'hitCallback': function() {
-                    tgd.localLog("crash reported");
-                }
-            });*/
-            app.refresh();
-            return BootstrapDialog.alert("Error has occured, please report this issue to my Github. Target character not found " + targetCharacterId);
+            return app.refresh();
         }
         //tgd.localLog( self.description );
         app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result) {
