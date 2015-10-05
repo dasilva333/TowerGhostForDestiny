@@ -407,7 +407,7 @@
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu">
-                            <li data-bind="css: armorFilter() == $($element).attr('value') ? 'active' : '', fastclick: setArmorFilter({ name: 0 })">
+                            <li data-bind="css: armorFilter() == $($element).attr('value') ? 'active' : '', fastclick: setArmorFilter(0)">
                                 <a href="#">
                                     <i class="fa" data-bind="css: armorFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
                                     <span data-bind="text: $root.activeText().menu_all">All</span>
@@ -510,7 +510,11 @@
     </div>
     <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
         <strong data-bind="text: $root.activeText().missing_items">Missing Items</strong>
-        <span data-bind="foreach: { data: missingSets }">			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }"><img src="about:blank" data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48"></a>		</span>
+        <span data-bind="foreach: { data: missingSets }">			
+			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }">
+				<img src="about:blank" data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48">
+			</a>
+		</span>
     </div>
     <div data-bind="with: $root.activeUser()" style="">
         <div data-bind="visible: typeof error !== 'undefined'" style="display:none;">
