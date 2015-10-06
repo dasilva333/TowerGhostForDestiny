@@ -831,7 +831,7 @@ var app = new(function() {
 
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
-            if (item.tierTypeName && _.where(self.tierTypes(), {
+            if (item.tierTypeName && item.tierType > 0 && _.where(self.tierTypes(), {
                     name: item.tierTypeName
                 }).length == 0) {
                 self.tierTypes.push({
