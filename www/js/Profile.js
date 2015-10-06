@@ -101,14 +101,11 @@ Profile.prototype = {
         var self = this;
         if (typeof info == "undefined") {
             return "";
-        }
-        else if (item.location !== 4) {
+        } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
-        }
-        else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
-        }
-        else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";

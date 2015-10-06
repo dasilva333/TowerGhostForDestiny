@@ -575,17 +575,17 @@ var app = new(function() {
                 $content.find(".destt-desc").before(statBlock);
             } else {
                 primaryStatMin.html(activeItem.primaryStat());
-            /* Description using locale */
+                /* Description using locale */
             }
             $content.find(".destt-desc").text(activeItem.itemDescription);
             /* Remove Emblem Text */
             if ($content.find(".fhtt-emblem").length > 0) {
                 $content.find("span").remove();
             }
-			/* Add Emblem Icon */
-			if ($content.find(".fhtt-emblem-icon").length > 0){
-				$content.find(".fhtt-emblem-icon").html( $("<img>").attr("src", activeItem.icon) );
-			}
+            /* Add Emblem Icon */
+            if ($content.find(".fhtt-emblem-icon").length > 0) {
+                $content.find(".fhtt-emblem-icon").html($("<img>").attr("src", activeItem.icon));
+            }
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
