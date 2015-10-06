@@ -82,6 +82,7 @@
 	            });
 	        }
 	        if (item.doEquip()) {
+	            //TODO: TypeError: undefined is not an object (evaluating '_.findWhere(self.ids(), { id: item._id }).doEquip')
 	            _.findWhere(self.ids(), {
 	                id: item._id
 	            }).doEquip(true);
@@ -177,8 +178,7 @@
 	        var onlyEquipped = function(item) {
 	            return item.doEquip() == true;
 	        }
-	        var ats = app.autoTransferStacks();
-	        app.autoTransferStacks(true);
+	        tgd.autoTransferStacks = true;
 	        var itemIndex = -1,
 	            increments = parseInt(Math.round(95 / (1.0 * swapArray.length))),
 	            progressValue = 5;
@@ -348,6 +348,7 @@
 	                    return layout.bucketTypes.indexOf(bucketType) > -1
 	                })[0];
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
+	                //TODO: TypeError: undefined is not an object (evaluating 'vault.items')
 	                var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
 	                    return layout.bucketTypes.indexOf(otherItem.bucketType) > -1;
 	                }).length;
@@ -443,7 +444,7 @@
 	                }
 	            } else {
 	                tgd.localLog("pair is not defined, calling callback");
-	                app.autoTransferStacks(ats);
+	                tgd.autoTransferStacks = false;
 	                if (callback)
 	                    callback();
 	            }

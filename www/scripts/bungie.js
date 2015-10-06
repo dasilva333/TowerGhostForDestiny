@@ -30,7 +30,7 @@ var bungie = (function(cookieString, complete) {
     }
 
     function readCookie(cname) {
-        //console.log("trying to read cookie passed " + savedCookie);
+        //tgd.localLog("trying to read cookie passed " + savedCookie);
         var name = cname + "=";
         var ca = (cookieString || "").toString().split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -38,10 +38,17 @@ var bungie = (function(cookieString, complete) {
             while (c.charAt(0) == ' ') c = c.substring(1);
             if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
         }
-        //console.log("found no match");
+        //tgd.localLog("found no match");
         return "";
     }
 
+    this.requestCookie = function(callback) {
+        tgd.localLog("sending request-cookie-from-ps");
+        var event = document.createEvent('CustomEvent');
+        event.initCustomEvent("request-cookie-from-ps", true, true, {});
+        document.documentElement.dispatchEvent(event);
+        self.requestCookieCB = callback;
+    }
 
     this.getCookie = function(name, callback) {
         if (isChrome) {
@@ -56,13 +63,7 @@ var bungie = (function(cookieString, complete) {
                 callback(c ? c.value : null);
             });
         } else if (!isChrome && !isMobile) {
-            console.log("sent getCookie request");
-            var event = document.createEvent('CustomEvent');
-            event.initCustomEvent("request-cookie", true, true, {});
-            document.documentElement.dispatchEvent(event);
-            setTimeout(function() {
-                callback("firefox");
-            }, 5000);
+            self.requestCookie(callback);
         } else {
             callback(readCookie('bungled'));
         }
@@ -93,62 +94,52 @@ var bungie = (function(cookieString, complete) {
             opts.route = url + "Platform" + opts.route;
 
         var data;
-        if (opts.payload)
+        if (opts.payload) {
             data = JSON.stringify(opts.payload);
+        }
 
-        if (isChrome || isMobile) {
-            $.ajax({
-                url: opts.route,
-                type: opts.method,
-                headers: {
-                    'X-API-Key': apikey,
-                    'x-csrf': self.bungled
-                },
-                beforeSend: function(xhr) {
-                    /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload,
-					IOS 9 detection has provded difficult, disabling this for all IOS users until I can figure out a better fix
-					*/
-                    if (isMobile && typeof cookieString == "string" && isIOS == false) {
-                        _.each(cookieString.split(";"), function(cookie) {
-                            try {
-                                xhr.setRequestHeader('Cookie', cookie);
-                            } catch (e) {}
-                        });
-                    }
-                },
-                data: data,
-                complete: function(xhr, status) {
-                    var response;
-                    if (xhr.status >= 200 && xhr.status <= 409) {
+        $.ajax({
+            url: opts.route,
+            type: opts.method,
+            headers: {
+                'X-API-Key': apikey,
+                'x-csrf': self.bungled
+            },
+            beforeSend: function(xhr) {
+                /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload,
+				IOS 9 detection has provded difficult, disabling this for all IOS users until I can figure out a better fix
+				*/
+                if (isMobile && typeof cookieString == "string" && isIOS == false) {
+                    _.each(cookieString.split(";"), function(cookie) {
                         try {
-                            response = JSON.parse(xhr.responseText);
-                        } catch (e) {
-                            //console.log("error parsing responseText: " + xhr.responseText);
-                        }
-                        if (response && response.ErrorCode && (response.ErrorCode == 36 || response.ErrorCode == 1652 || response.ErrorCode == 1651)) {
-                            self.retryRequest(opts);
-                        } else {
-                            var obj = response;
-                            if (typeof obj == "object" && "Response" in obj)
-                                obj = response.Response;
-                            opts.complete(obj, response);
-                        }
-                    } else {
-                        self.retryRequest(opts);
-                    }
+                            xhr.setRequestHeader('Cookie', cookie);
+                        } catch (e) {}
+                    });
                 }
-            });
-        }
-        //This piece is for Firefox
-        else {
-            var event = document.createEvent('CustomEvent');
-            event.initCustomEvent("request-message", true, true, {
-                id: ++id,
-                opts: opts
-            });
-            self.requests[id] = opts;
-            document.documentElement.dispatchEvent(event);
-        }
+            },
+            data: data,
+            complete: function(xhr, status) {
+                tgd.localLog("ajax complete");
+                var response;
+                if (xhr.status >= 200 && xhr.status <= 409) {
+                    try {
+                        response = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        //tgd.localLog("error parsing responseText: " + xhr.responseText);
+                    }
+                    if (response && response.ErrorCode && (response.ErrorCode == 36 || response.ErrorCode == 1652 || response.ErrorCode == 1651)) {
+                        self.retryRequest(opts);
+                    } else {
+                        var obj = response;
+                        if (typeof obj == "object" && "Response" in obj)
+                            obj = response.Response;
+                        opts.complete(obj, response);
+                    }
+                } else {
+                    self.retryRequest(opts);
+                }
+            }
+        });
     }
 
     this.vault = function(callback) {
@@ -167,6 +158,7 @@ var bungie = (function(cookieString, complete) {
         });
     }
     this.login = function(callback) {
+        tgd.localLog("bungie.login");
         self.request({
             route: url,
             method: "GET",
@@ -317,7 +309,7 @@ var bungie = (function(cookieString, complete) {
                     method: 'GET',
                     complete: function(membership) {
                         if (membership > 0) {
-                            //console.log('error finding bungie account!', membership)
+                            //tgd.localLog('error finding bungie account!', membership)
                             active.membership = membership;
                             self.account(callback);
                         } else {
@@ -368,44 +360,22 @@ var bungie = (function(cookieString, complete) {
 
     this.init = function() {
         if (!isChrome && !isMobile) {
-            var event = document.createEvent('CustomEvent');
-            event.initCustomEvent("request-cookie", true, true, {});
-            document.documentElement.dispatchEvent(event);
-
-            window.addEventListener("message", function(event) {
-                console.log("received a firefox response");
-                var reply = event.data;
-                var response;
-                try {
-                    response = JSON.parse(reply.response);
-                } catch (e) {
-                    response = reply.response;
-                }
-                var opts = self.requests[reply.id];
-                if (response.ErrorCode === 36) {
-                    console.log("throttle retrying");
-                    opts.route = opts.route.replace(url + "Platform", '');
-                    setTimeout(function() {
-                        self.requests[id + 1] = opts;
-                        self.request(opts);
-                    }, 1000);
-                } else {
-                    try {
-                        console.log("calling complete for id " + reply.idclea);
-                        opts.complete(response.Response, response);
-                        /* for some unknown reason window.postMessage is causing this to execute twice */
-                        delete self.requests[reply.id];
-                    } catch (e) {
-                        //console.log(e);
-                    }
-                }
-            }, false);
+            $.ajaxSetup({
+                xhr: function() {
+                    return firefoxXHR();
+                },
+            });
+            window.addEventListener("response-cookie-from-cs", function(event) {
+                tgd.localLog("response-cookie-from-cs: " + event.detail);
+                self.requestCookieCB(event.detail);
+            });
         }
-
+        tgd.localLog("bungie.init");
         self.login(function() {
+            tgd.localLog("bungie.login.complete, now getCookie");
             self.getCookie('bungled', function(token) {
-                self.bungled = token;
                 tgd.localLog("bungied started with token " + token);
+                self.bungled = token;
                 complete(token);
             });
         });

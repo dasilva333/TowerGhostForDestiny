@@ -6,7 +6,6 @@ window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
-window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
 tgd.localLogging = false;
 tgd.localLog = function(msg) {
@@ -15,6 +14,10 @@ tgd.localLog = function(msg) {
 	}
 };
 tgd.dataDir = "data";
+tgd.autoTransferStacks = false;
+//Network Keys, Axiomatic Beads, House Banners, Silken Codex
+tgd.DestinyGlimmerConsumables = [3632619276,269776572,2904517731,1932910919];
+tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Mats", "Glimmer Consumables", "Telemetries" ];
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
@@ -144,7 +147,9 @@ tgd.defaults = {
 	doRefresh: isMobile ? false : "true",
 	refreshSeconds: 300,
 	tierFilter: 0,
-	typeFilter: 0,
+	weaponFilter: 0,
+	armorFilter: 0,
+	generalFilter: 0,
 	dmgFilter: [],
 	activeView: 0,
 	activeSort: 0,
@@ -155,7 +160,7 @@ tgd.defaults = {
 	shareUrl: "",
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : "true",
-	autoTransferStacks: false,
+	autoXferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
 	dragAndDrop: false,
 	xsColumn: 12,
