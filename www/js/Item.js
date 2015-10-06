@@ -229,6 +229,35 @@ Item.prototype = {
             return false;
         }
     },
+    hasGeneral: function(type) {
+        if (type == "Synths" && [211861343, 928169143, 2180254632].indexOf(this.id) > -1) {
+            return true;
+        } else if (type == "Parts" && this.id == 1898539128) {
+            return true;
+        } else if (type == "Motes" && this.id == 937555249) {
+            return true;
+        }
+        //Passage Coins, Strange Coins, 3 of Coins
+        else if (type == "Coins" && [417308266, 1738186005, 605475555].indexOf(this.id) > -1) {
+            return true;
+        }
+        //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
+        else if (type == "Runes" && [1565194903, 2620224196, 1556533319, 1314217221, 2906158273].indexOf(this.id) > -1) {
+            return true;
+        }
+        //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
+        else if (type == "Planetary Mats" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
+            return true;
+        }
+        //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
+        else if (type == "Glimmer Consumables" && [3446457162, 1043138475, 1772853454, 3783295803].indexOf(this.id) > -1) {
+            return true;
+        } else if (type == "Telemetries" && [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091].indexOf(this.id) > -1) {
+            return true;
+        } else {
+            return false;
+        }
+    },
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {
             var primaryStat = ko.unwrap(this.primaryStat());
@@ -247,28 +276,48 @@ Item.prototype = {
         }
         var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
             ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
-        var dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
-        var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
         var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
-        var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
-        var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.typeName;
-        var dupes = _.filter(tgd.duplicates(), function(id) {
+
+        var dmgFilter = true;
+        var progressFilter = true;
+        var weaponFilter = true;
+        var armorFilter = true;;
+        var generalFilter = true;
+        var showDuplicate = true;
+        var setFilter = true;
+        if (self.armorIndex > -1 || self.weaponIndex > -1) {
+            setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
+            if (self.weaponIndex > -1) {
+                dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+                weaponFilter = $parent.weaponFilter() == 0 || $parent.weaponFilter() == self.typeName;
+            } else {
+                var types = _.map(_.pluck(self.perks, 'name'), function(name) {
+                    return name.split(" ")[0];
+                });
+                dmgFilter = $parent.dmgFilter().length == 0 || _.intersection($parent.dmgFilter(), types).length > 0;
+                armorFilter = $parent.armorFilter() == 0 || $parent.armorFilter() == self.bucketType;
+            }
+            progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
+        } else {
+            generalFilter = $parent.generalFilter() == 0 || self.hasGeneral($parent.generalFilter());
+        }
+        dupes = _.filter(tgd.duplicates(), function(id) {
             return id == self.id
         }).length;
-        var showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
+        showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
         /*tgd.localLog( "searchFilter: " + searchFilter);
 		tgd.localLog( "dmgFilter: " + dmgFilter);
 		tgd.localLog( "setFilter: " + setFilter);
 		tgd.localLog( "tierFilter: " + tierFilter);
 		tgd.localLog( "progressFilter: " + progressFilter);
-		tgd.localLog( "typeFilter: " + typeFilter);
+		tgd.localLog( "weaponFilter: " + weaponFilter);
 		tgd.localLog("keyword is: " + $parent.searchKeyword());
 		tgd.localLog("keyword is empty " + ($parent.searchKeyword() == ''));
 		tgd.localLog("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
 		tgd.localLog("perks are " + JSON.stringify(self.perks));
 		tgd.localLog("description is " + self.description);
 		tgd.localLog("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
+        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
     },
     /* helper function that unequips the current item in favor of anything else */
     unequip: function(callback) {
@@ -293,7 +342,7 @@ Item.prototype = {
                             tgd.localLog("transfer error 5");
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Error:',
+                                title: 'Error',
                                 message: app.activeText().cannot_unequip + self.description
                             });
                         }
@@ -342,7 +391,7 @@ Item.prototype = {
                                     tgd.localLog("transfer error 6");
                                     $.toaster({
                                         priority: 'danger',
-                                        title: 'Error:',
+                                        title: 'Error',
                                         message: app.activeText().unable_unequip + itemEquipped.description
                                     });
                                     callback(false);
@@ -373,19 +422,31 @@ Item.prototype = {
             tgd.localLog("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
-                    tgd.localLog("result was OKed for " + self.description);
-                    tgd.localLog(result);
-                    self.isEquipped(true);
-                    self.character.items().forEach(function(item) {
-                        if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
-                            item.isEquipped(false);
+                    var done = function() {
+                        tgd.localLog(self);
+                        tgd.localLog("result was OKed for " + self.description);
+                        tgd.localLog(result);
+                        self.isEquipped(true);
+                        self.character.items().forEach(function(item) {
+                            if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
+                                item.isEquipped(false);
+                            }
+                        });
+                        if (self.bucketType == "Emblem") {
+                            self.character.icon(self.icon);
+                            self.character.background(self.backgroundPath);
                         }
-                    });
-                    if (self.bucketType == "Emblem") {
-                        self.character.icon(self.icon);
-                        self.character.background(self.backgroundPath);
+                        if (callback) callback(true);
                     }
-                    if (callback) callback(true);
+                    if (!(self instanceof Item)) {
+                        app.findReference(self, function(item) {
+                            self = item;
+                            done();
+                        });
+                        tgd.localLog("changing reference of self to actual item");
+                    } else {
+                        done();
+                    }
                 } else {
                     tgd.localLog("transfer error 7 " + result);
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
@@ -393,7 +454,7 @@ Item.prototype = {
                     else if (result && result.Message) {
                         $.toaster({
                             priority: 'info',
-                            title: 'Error:',
+                            title: 'Error',
                             message: result.Message
                         });
                     }
@@ -468,18 +529,8 @@ Item.prototype = {
         var ids = _.pluck(characters, 'id');
         x = characters[ids.indexOf(sourceCharacterId)];
         y = characters[ids.indexOf(targetCharacterId)];
-        //TODO: This only seems to be happening now for people whose Vault profile didnt load
         if (_.isUndefined(y)) {
-            /*ga('send', 'exception', {
-                'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
-                'exFatal': false,
-                'appVersion': tgd.version,
-                'hitCallback': function() {
-                    tgd.localLog("crash reported");
-                }
-            });*/
-            app.refresh();
-            return BootstrapDialog.alert("Error has occured, please report this issue to my Github. Target character not found " + targetCharacterId);
+            return app.refresh();
         }
         //tgd.localLog( self.description );
         app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result) {
@@ -691,7 +742,7 @@ Item.prototype = {
                 tgd.localLog("transfer error 1");
                 $.toaster({
                     priority: 'info',
-                    title: 'Error:',
+                    title: 'Error',
                     message: result.Message
                 });
             }
@@ -744,11 +795,9 @@ Item.prototype = {
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
                         tgd.localLog("retransferring");
-                        //TODO move this function to a more general area for common use
-                        var newItem = app.findReference(self);
-                        if (newItem) {
+                        app.findReference(self, function(newItem) {
                             newItem.store(targetCharacterId, cb);
-                        }
+                        });
                     });
                 });
                 /*    }
@@ -778,6 +827,7 @@ Item.prototype = {
                     });
                 });
             } else if (result && result.ErrorCode && result.ErrorCode == 1648) {
+                //TODO: TypeError: 'undefined' is not an object (evaluating '_.findWhere(app.characters(), { id: "Vault" }).items')
                 var vaultItems = _.findWhere(app.characters(), {
                     id: "Vault"
                 }).items();
@@ -796,7 +846,7 @@ Item.prototype = {
                 tgd.localLog("transfer error 2");
                 $.toaster({
                     priority: 'info',
-                    title: 'Error:',
+                    title: 'Error',
                     message: result.Message
                 });
             }
@@ -822,7 +872,7 @@ Item.prototype = {
                             tgd.localLog("transfer error 3");
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Error:',
+                                title: 'Error',
                                 message: "Unable to unequip " + self.description
                             });
                         }
@@ -855,7 +905,7 @@ Item.prototype = {
                             tgd.localLog("transfer error 4");
                             $.toaster({
                                 priority: 'danger',
-                                title: 'Error:',
+                                title: 'Error',
                                 message: "Unable to unequip " + self.description
                             });
                         }
@@ -869,7 +919,7 @@ Item.prototype = {
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
             if (self.primaryStat() == 1) {
                 done();
-            } else if (app.autoTransferStacks() == true) {
+            } else if (app.autoXferStacks() == true || tgd.autoTransferStacks == true) {
                 transferAmount = self.primaryStat();
                 done();
             } else {
@@ -903,6 +953,7 @@ Item.prototype = {
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
                                 '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -943,6 +994,9 @@ Item.prototype = {
                             };
                             $content.find('#consolidate').click(function() {
                                 handleCheckChanged(this.checked);
+                            });
+                            $content.find('#neverAsk').click(function() {
+                                app.autoXferStacks(true);
                             });
                             return $content;
                         },
