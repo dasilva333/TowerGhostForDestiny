@@ -756,7 +756,6 @@ var app = new(function() {
     }
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
-        self.activeView(1);
         var dmgType = $(event.target).closest('li').attr("value");
         self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
     }

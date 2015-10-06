@@ -256,6 +256,9 @@ Item.prototype = {
         else if (type == "Telemetries" && [4159731660,729893597,3371478409,927802664,4141501356,323927027,3036931873,2610276738,705234570,1485751393,2929837733,846470091].indexOf(this.id) > -1) {
             return true;
         }
+		else {
+			return false;
+		}
     },
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {
@@ -286,17 +289,23 @@ Item.prototype = {
         var setFilter = true;
         if (self.armorIndex > -1 || self.weaponIndex > -1) {
             setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
-            dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+			if ( self.weaponIndex > -1 ){
+				dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+				weaponFilter = $parent.weaponFilter() == 0 || $parent.weaponFilter() == self.typeName;
+			}
+			else {
+				var types = _.map(_.pluck(self.perks,'name'), function(name){ return name.split(" ")[0]; });
+				dmgFilter = $parent.dmgFilter().length == 0 || _.intersection($parent.dmgFilter(), types).length > 0;
+				armorFilter = $parent.armorFilter() == 0 || $parent.armorFilter() == self.bucketType;
+			}
             progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
-            weaponFilter = $parent.weaponFilter() == 0 || $parent.weaponFilter() == self.typeName;
-            armorFilter = $parent.armorFilter() == 0 || $parent.armorFilter() == self.bucketType;
-            dupes = _.filter(tgd.duplicates(), function(id) {
-                return id == self.id
-            }).length;
-            showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
         } else {
             generalFilter = $parent.generalFilter() == 0 || self.hasGeneral($parent.generalFilter());
         }
+		dupes = _.filter(tgd.duplicates(), function(id) {
+			return id == self.id
+		}).length;
+		showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
         /*tgd.localLog( "searchFilter: " + searchFilter);
 		tgd.localLog( "dmgFilter: " + dmgFilter);
 		tgd.localLog( "setFilter: " + setFilter);
