@@ -102,13 +102,13 @@ Profile.prototype = {
         if (typeof info == "undefined") {
             return "";
         }
-        if (item.location !== 4) {
+        else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
         }
-        if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
         }
-        if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";

@@ -575,20 +575,24 @@ var app = new(function() {
                 $content.find(".destt-desc").before(statBlock);
             } else {
                 primaryStatMin.html(activeItem.primaryStat());
-            }
             /* Description using locale */
+            }
             $content.find(".destt-desc").text(activeItem.itemDescription);
             /* Remove Emblem Text */
             if ($content.find(".fhtt-emblem").length > 0) {
                 $content.find("span").remove();
             }
+			/* Add Emblem Icon */
+			if ($content.find(".fhtt-emblem-icon").length > 0){
+				$content.find(".fhtt-emblem-icon").html( $("<img>").attr("src", activeItem.icon) );
+			}
             /* Damage Colors */
             if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
             /* Armor Stats */
-            if (_.isObject(activeItem.stats)) {
+            if (!_.isEmpty(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
                 if (stats.length == 0) {
                     $content.find(".destt-desc").after(tgd.statsTemplate({
@@ -611,26 +615,26 @@ var app = new(function() {
             }
             if (activeItem.perks.length > 0) {
                 if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
-                    /* Weapon Perks (Pre-HoW) */
+                    // Weapon Perks (Pre-HoW) 
                     if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                             perks: activeItem.perks
                         }));
                     }
-                    /* Weapon Perks (Post-HoW) */
+                    // Weapon Perks (Post-HoW)
                     else if ($content.find(".destt-talent").length == 0) {
                         $content.find(".destt-stat").after(tgd.perksTemplate({
                             perks: activeItem.perks
                         }));
                     }
                 } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
-                    /* Armor Perks: this only applies to armor with existing perks */
+                    // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                             perks: activeItem.perks
                         }));
                     }
-                    /* this applies to ghost shells, maybe re rollable armor */
+                    // this applies to ghost shells, maybe re rollable armor
                     else {
                         $content.find(".destt-stat").after(tgd.perksTemplate({
                             perks: activeItem.perks
