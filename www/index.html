@@ -580,6 +580,9 @@
             <div class="move-popup row no-gutter">
                 <div class="item-name col-xs-12">
                     <span data-bind="text: $root.activeText().movepopup_move"></span>: <span data-bind="text: description"></span>
+					<!-- ko if: (bucketType == 'Consumables' && tgd.DestinyGlimmerConsumables.indexOf(id) > -1) -->
+						<span data-bind="text: 'valued at: ' + (primaryStat() * 200)"></span>
+					<!-- /ko -->
                     <!-- ko if: (bucketType !== 'Consumables' && bucketType !== 'Materials' && bucketType !== 'Messages' && bucketType !== 'Invisible' && bucketType !== 'Lost Items' && bucketType !== 'Bounties' && bucketType !== 'Mission') -->
                     <img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, click: function(){ toggleLock() }" style="cursor:pointer;" />
                     <!-- /ko -->
