@@ -41,6 +41,8 @@ var Profile = function(character, items, index) {
     this.messages = ko.computed(this._messages, this);
     this.invisible = ko.computed(this._invisible, this);
     this.lostItems = ko.computed(this._lostItems, this);
+    this.equippedGear = ko.computed(this._equippedGear, this);
+    this.equippedStats = ko.computed(this._equippedStats, this);
     this.powerLevel = ko.computed(this._powerLevel, this);
     this.iconBG = ko.computed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
@@ -99,14 +101,11 @@ Profile.prototype = {
         var self = this;
         if (typeof info == "undefined") {
             return "";
-        }
-        if (item.location !== 4) {
+        } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
-        }
-        if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
-        }
-        if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";
@@ -162,11 +161,16 @@ Profile.prototype = {
             return 0;
         }
     },
-    _powerLevel: function() {
-        var equippedGear = _.filter(this.items(), function(item) {
+    _equippedGear: function() {
+        return _.filter(this.items(), function(item) {
             return item.isEquipped();
         });
-        return this.calculatePowerLevelWithItems(equippedGear);
+    },
+    _equippedStats: function() {
+        return this.joinStats(this.equippedGear());
+    },
+    _powerLevel: function() {
+        return this.calculatePowerLevelWithItems(this.equippedGear());
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -363,6 +367,7 @@ Profile.prototype = {
             var sets = [];
             var backups = [];
             var highestSet;
+            var highestSetValue;
 
             if (type == "Best") {
                 var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
@@ -419,6 +424,7 @@ Profile.prototype = {
                 //console.timeEnd("finding candidates");
                 var bestSets = _.sortBy(bestSets, 'score');
                 highestSet = bestSets[bestSets.length - 1].set;
+                highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
                 //console.log(bestSets);
                 //console.log(highestSet);
             } else {
@@ -466,7 +472,7 @@ Profile.prototype = {
                     //console.log("main set item " + main.description);
                     _.each(buckets, function(bucket) {
                         if (bucket != main.bucketType) {
-                            console.log("best candidate for bucket: " + bucket);
+                            tgd.localLog("best candidate for bucket: " + bucket);
                             var candidates = _.where(backups, {
                                 bucketType: bucket
                             });
@@ -493,7 +499,7 @@ Profile.prototype = {
                     }));
                 });
 
-                var highestSetValue = _.max(sumSets);
+                highestSetValue = _.max(sumSets);
                 //console.log(highestSetValue);
 
                 if (type == "Light" || type == "All") {
@@ -621,8 +627,13 @@ Profile.prototype = {
             }
 
             $.toaster({
+                settings: {
+                    timeout: 10 * 1000
+                }
+            });
+            $.toaster({
                 priority: 'success',
-                title: 'Result:',
+                title: 'Result',
                 message: " The highest set available for " + type + "  is  " + highestSetValue
             });
 
@@ -633,7 +644,12 @@ Profile.prototype = {
                         var msa = adhoc.transfer(character.id, true);
                         tgd.localLog(msa);
                         adhoc.swapItems(msa, character.id, function() {
-                            tgd.localLog("xfer complete");
+                            $.toaster({
+                                priority: 'success',
+                                title: 'Result',
+                                message: " Completed equipping the highest " + type + " set at " + highestSetValue
+                            });
+                            $.toaster.reset();
                         });
                     }
                 }
@@ -652,7 +668,7 @@ Profile.prototype = {
                     tgd.localLog(message);
                     $.toaster({
                         priority: 'info',
-                        title: 'Equip:',
+                        title: 'Equip',
                         message: message
                     });
                     done();
