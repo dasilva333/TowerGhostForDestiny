@@ -372,7 +372,7 @@ var app = new(function() {
     this.activeView = ko.computed(new tgd.StoreObj("activeView"));
     this.activeSort = ko.computed(new tgd.StoreObj("activeSort"));
     this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
-    this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
+    this.autoXferStacks = ko.computed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.computed(new tgd.StoreObj("dragAndDrop", "true"));
     this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
@@ -680,7 +680,7 @@ var app = new(function() {
     }
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
-        self.autoTransferStacks(!self.autoTransferStacks());
+        self.autoXferStacks(!self.autoXferStacks());
     }
     this.toggleDestinyDbMode = function() {
         self.toggleBootstrapMenu();

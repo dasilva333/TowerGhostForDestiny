@@ -879,7 +879,7 @@ Item.prototype = {
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
             if (self.primaryStat() == 1) {
                 done();
-            } else if (app.autoTransferStacks() == true) {
+            } else if (app.autoXferStacks() == true || tgd.autoTransferStacks == true) {
                 transferAmount = self.primaryStat();
                 done();
             } else {
@@ -913,6 +913,7 @@ Item.prototype = {
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
                                 '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
+								'<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -953,6 +954,9 @@ Item.prototype = {
                             };
                             $content.find('#consolidate').click(function() {
                                 handleCheckChanged(this.checked);
+                            });
+							$content.find('#neverAsk').click(function() {
+                                app.autoXferStacks(this.checked);
                             });
                             return $content;
                         },

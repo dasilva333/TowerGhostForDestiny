@@ -178,8 +178,7 @@
 	        var onlyEquipped = function(item) {
 	            return item.doEquip() == true;
 	        }
-	        var ats = app.autoTransferStacks();
-	        app.autoTransferStacks(true);
+	        tgd.autoTransferStacks = true;
 	        var itemIndex = -1,
 	            increments = parseInt(Math.round(95 / (1.0 * swapArray.length))),
 	            progressValue = 5;
@@ -445,7 +444,7 @@
 	                }
 	            } else {
 	                tgd.localLog("pair is not defined, calling callback");
-	                app.autoTransferStacks(ats);
+	                tgd.autoTransferStacks = false;
 	                if (callback)
 	                    callback();
 	            }

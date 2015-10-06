@@ -14,6 +14,7 @@ tgd.localLog = function(msg) {
 	}
 };
 tgd.dataDir = "data";
+tgd.autoTransferStacks = false;
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
@@ -156,7 +157,7 @@ tgd.defaults = {
 	shareUrl: "",
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : "true",
-	autoTransferStacks: false,
+	autoXferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
 	dragAndDrop: false,
 	xsColumn: 12,
