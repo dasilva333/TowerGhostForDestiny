@@ -241,8 +241,8 @@ Item.prototype = {
         else if (type == "Coins" && [417308266, 1738186005, 605475555].indexOf(this.id) > -1) {
             return true;
         }
-        //Argonarch Rune, Stolen Rune can be xfered
-        else if (type == "Runes" && [1565194903, 2620224196].indexOf(this.id) > -1) {
+        //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
+        else if (type == "Runes" && [1565194903, 2620224196, 1556533319, 1314217221, 2906158273].indexOf(this.id) > -1) {
             return true;
         }
         //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
