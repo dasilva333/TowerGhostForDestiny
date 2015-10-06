@@ -381,8 +381,8 @@ var app = new(function() {
     this.refreshSeconds = ko.computed(new tgd.StoreObj("refreshSeconds"));
     this.tierFilter = ko.computed(new tgd.StoreObj("tierFilter"));
     this.weaponFilter = ko.observable(tgd.defaults.weaponFilter);
-	this.armorFilter = ko.observable(tgd.defaults.armorFilter);
-	this.generalFilter = ko.observable(tgd.defaults.generalFilter);
+    this.armorFilter = ko.observable(tgd.defaults.armorFilter);
+    this.generalFilter = ko.observable(tgd.defaults.generalFilter);
     this.dmgFilter = ko.observableArray(tgd.defaults.dmgFilter);
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
@@ -532,8 +532,8 @@ var app = new(function() {
         self.refreshSeconds(tgd.defaults.refreshSeconds);
         self.tierFilter(tgd.defaults.tierFilter);
         self.weaponFilter(tgd.defaults.weaponFilter);
-		self.armorFilter(tgd.defaults.armorFilter);
-		self.generalFilter(tgd.defaults.generalFilter);
+        self.armorFilter(tgd.defaults.armorFilter);
+        self.generalFilter(tgd.defaults.generalFilter);
         self.dmgFilter([]);
         self.progressFilter(tgd.defaults.progressFilter);
         self.setFilter([]);
@@ -734,12 +734,12 @@ var app = new(function() {
                 self.showMissing(false);
             } else if (collection.indexOf("Weapons") > -1) {
                 self.activeView(1);
-				self.armorFilter(0);
-				self.generalFilter(0);
+                self.armorFilter(0);
+                self.generalFilter(0);
             } else if (collection.indexOf("Armor") > -1) {
                 self.activeView(2);
-				self.weaponFilter(0);
-				self.generalFilter(0);
+                self.weaponFilter(0);
+                self.generalFilter(0);
             }
         } else {
             self.setFilter([]);
@@ -773,7 +773,7 @@ var app = new(function() {
             self.weaponFilter(type);
         }
     }
-	this.setArmorFilter = function(armorType) {
+    this.setArmorFilter = function(armorType) {
         return function() {
             self.toggleBootstrapMenu();
             self.activeView(2);
@@ -781,13 +781,11 @@ var app = new(function() {
             self.armorFilter(armorType);
         }
     }
-	this.setGeneralFilter = function(weaponType) {
+    this.setGeneralFilter = function(searchType) {
         return function() {
             self.toggleBootstrapMenu();
             self.activeView(3);
-            /*var type = weaponType.name;
-            tgd.localLog("type: " + type);
-            self.weaponFilter(type);*/
+            self.generalFilter(searchType);
         }
     }
     this.setProgressFilter = function(model, event) {
@@ -795,26 +793,26 @@ var app = new(function() {
         self.progressFilter($(event.target).closest('li').attr("value"));
     }
     this.missingSets = ko.computed(function() {
-		var allItemNames = _.pluck(_.flatten(_.map(self.characters(), function(character){
-			return character.items()
-		})),'description');
-		var armorFilter = ko.unwrap(self.armorFilter);
-		var weaponFilter = ko.unwrap(self.weaponFilter);
-        var missingIds = _.filter(self.setFilter(), function(id){
-			var isMissing = true;
-			var isVisible = false;
-			if ( id in _itemDefs ){
-				var info = _itemDefs[id];
-				var description = decodeURIComponent(info.itemName);
-				isMissing = allItemNames.indexOf(description) == -1;
-				if ( info.bucketTypeHash in tgd.DestinyBucketTypes ){
-					var bucketType = tgd.DestinyBucketTypes[info.bucketTypeHash];
-					var typeName = decodeURIComponent(info.itemTypeName);					
-					isVisible = ( self.armorFilter() == 0 || armorFilter == bucketType) && (self.weaponFilter() == 0 || weaponFilter == typeName );
-				}
-			}
-			return isMissing && isVisible;
-		});
+        var allItemNames = _.pluck(_.flatten(_.map(self.characters(), function(character) {
+            return character.items()
+        })), 'description');
+        var armorFilter = ko.unwrap(self.armorFilter);
+        var weaponFilter = ko.unwrap(self.weaponFilter);
+        var missingIds = _.filter(self.setFilter(), function(id) {
+            var isMissing = true;
+            var isVisible = false;
+            if (id in _itemDefs) {
+                var info = _itemDefs[id];
+                var description = decodeURIComponent(info.itemName);
+                isMissing = allItemNames.indexOf(description) == -1;
+                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                    var bucketType = tgd.DestinyBucketTypes[info.bucketTypeHash];
+                    var typeName = decodeURIComponent(info.itemTypeName);
+                    isVisible = (self.armorFilter() == 0 || armorFilter == bucketType) && (self.weaponFilter() == 0 || weaponFilter == typeName);
+                }
+            }
+            return isMissing && isVisible;
+        });
         return missingIds;
     })
 

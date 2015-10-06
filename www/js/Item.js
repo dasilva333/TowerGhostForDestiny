@@ -229,6 +229,31 @@ Item.prototype = {
             return false;
         }
     },
+    hasGeneral: function(type) {
+        if (type == "Synths" && [211861343, 928169143, 2180254632].indexOf(this.id) > -1) {
+            return true;
+        } else if (type == "Parts" && this.id == 1898539128) {
+            return true;
+        } else if (type == "Motes" && this.id == 937555249) {
+            return true;
+        }
+        //Passage Coins, Strange Coins, 3 of Coins
+        else if (type == "Coins" && [417308266, 1738186005, 605475555].indexOf(this.id) > -1) {
+            return true;
+        }
+        //Argonarch Rune, Stolen Rune can be xfered
+        else if (type == "Runes" && [1565194903, 2620224196].indexOf(this.id) > -1) {
+            return true;
+        }
+        //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
+        else if (type == "Planetary Mats" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
+            return true;
+        }
+        //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
+        else if (type == "Glimmer Consumables" && [3446457162, 1043138475, 1772853454, 3783295803].indexOf(this.id) > -1) {
+            return true;
+        }
+    },
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {
             var primaryStat = ko.unwrap(this.primaryStat());
@@ -247,24 +272,28 @@ Item.prototype = {
         }
         var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
             ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
-        var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
         var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
-		
-		var dmgFilter = true;
-		var progressFilter = true;
-		var weaponFilter = true;
-		var armorFilter = true;;
-		var showDuplicate = true;
-		if ( self.armorIndex > -1 || self.weaponIndex > -1 ){
-			dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
-			progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
-			weaponFilter = $parent.weaponFilter() == 0 || $parent.weaponFilter() == self.typeName;
-			armorFilter = $parent.armorFilter() == 0 || $parent.armorFilter() == self.bucketType;
-			dupes = _.filter(tgd.duplicates(), function(id) {
-				return id == self.id
-			}).length;
-			showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
-		}
+
+        var dmgFilter = true;
+        var progressFilter = true;
+        var weaponFilter = true;
+        var armorFilter = true;;
+        var generalFilter = true;
+        var showDuplicate = true;
+        var setFilter = true;
+        if (self.armorIndex > -1 || self.weaponIndex > -1) {
+            setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
+            dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+            progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
+            weaponFilter = $parent.weaponFilter() == 0 || $parent.weaponFilter() == self.typeName;
+            armorFilter = $parent.armorFilter() == 0 || $parent.armorFilter() == self.bucketType;
+            dupes = _.filter(tgd.duplicates(), function(id) {
+                return id == self.id
+            }).length;
+            showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
+        } else {
+            generalFilter = $parent.generalFilter() == 0 || self.hasGeneral($parent.generalFilter());
+        }
         /*tgd.localLog( "searchFilter: " + searchFilter);
 		tgd.localLog( "dmgFilter: " + dmgFilter);
 		tgd.localLog( "setFilter: " + setFilter);
@@ -277,7 +306,7 @@ Item.prototype = {
 		tgd.localLog("perks are " + JSON.stringify(self.perks));
 		tgd.localLog("description is " + self.description);
 		tgd.localLog("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (showDuplicate);
+        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
     },
     /* helper function that unequips the current item in favor of anything else */
     unequip: function(callback) {
@@ -913,7 +942,7 @@ Item.prototype = {
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
                                 '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
-								'<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -955,8 +984,8 @@ Item.prototype = {
                             $content.find('#consolidate').click(function() {
                                 handleCheckChanged(this.checked);
                             });
-							$content.find('#neverAsk').click(function() {
-                                app.autoXferStacks(this.checked);
+                            $content.find('#neverAsk').click(function() {
+                                app.autoXferStacks(true);
                             });
                             return $content;
                         },

@@ -15,6 +15,7 @@ tgd.localLog = function(msg) {
 };
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
+tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Mats", "Glimmer Consumables" ];
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
