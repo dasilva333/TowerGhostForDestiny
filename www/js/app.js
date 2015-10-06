@@ -609,23 +609,22 @@ var app = new(function() {
                     }).get().join("")
                 );
             }
-            if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
-                /* Weapon Perks (Pre-HoW) */
-                if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
-                    $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                        perks: activeItem.perks
-                    }));
-                }
-                /* Weapon Perks (Post-HoW) */
-                else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                    $content.find(".destt-stat").after(tgd.perksTemplate({
-                        perks: activeItem.perks
-                    }));
-                }
-            } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
-                /* Armor Perks */
-                if (activeItem.perks.length > 0) {
-                    /* this only applies to armor with existing perks */
+            if (activeItem.perks.length > 0) {
+                if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
+                    /* Weapon Perks (Pre-HoW) */
+                    if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                    /* Weapon Perks (Post-HoW) */
+                    else if ($content.find(".destt-talent").length == 0) {
+                        $content.find(".destt-stat").after(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                    /* Armor Perks: this only applies to armor with existing perks */
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
                             perks: activeItem.perks
