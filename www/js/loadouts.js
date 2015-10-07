@@ -17,7 +17,7 @@
 	    this.name = self.name || "";
 	    this.ids = ko.observableArray();
 	    this.generics = ko.observableArray();
-	    this.items = ko.computed(function() {
+	    this.items = ko.pureComputed(function() {
 	        var _items = [];
 	        _.each(self.ids(), function(equip) {
 	            if (equip) {

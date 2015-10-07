@@ -15,10 +15,10 @@ var Item = function(model, profile, ignoreDups) {
 
     this.init(model, ignoreDups);
 
-    this.isVisible = ko.computed(this._isVisible, this);
-    this.primaryStatValue = ko.computed(this._primaryStatValue, this);
+    this.isVisible = ko.pureComputed(this._isVisible, this);
+    this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.isEquippable = function(avatarId) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
@@ -28,7 +28,7 @@ var Item = function(model, profile, ignoreDups) {
         });
     }
     this.isStoreable = function(avatarId) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
                 (self.isEquipped() && self.character.id == avatarId);
         });

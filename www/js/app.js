@@ -8,7 +8,7 @@ var Layout = function(layout) {
     self.array = layout.array;
     self.counts = layout.counts;
     self.countText = function(character) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             var text = "";
             if (self.array != "") {
                 var currentAmount = character[self.array]().length;
@@ -22,7 +22,7 @@ var Layout = function(layout) {
         });
     }
     self.isVisible = function(character) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             return ((character.id == "Vault" && (self.name !== "Post Master")) || character.id !== "Vault");
         });
     }
@@ -358,28 +358,28 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-    this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
-    this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
-    this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
-    this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.locale = ko.computed(new tgd.StoreObj("locale"));
-    this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
-    this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
-    this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
-    this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
-    this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
-    this.activeView = ko.computed(new tgd.StoreObj("activeView"));
-    this.activeSort = ko.computed(new tgd.StoreObj("activeSort"));
-    this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
-    this.autoXferStacks = ko.computed(new tgd.StoreObj("autoXferStacks", "true"));
-    this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
-    this.dragAndDrop = ko.computed(new tgd.StoreObj("dragAndDrop", "true"));
-    this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
+    this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
+    this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
+    this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
+    this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
+    this.vaultPos = ko.pureComputed(new tgd.StoreObj("vaultPos"));
+    this.xsColumn = ko.pureComputed(new tgd.StoreObj("xsColumn"));
+    this.smColumn = ko.pureComputed(new tgd.StoreObj("smColumn"));
+    this.mdColumn = ko.pureComputed(new tgd.StoreObj("mdColumn"));
+    this.lgColumn = ko.pureComputed(new tgd.StoreObj("lgColumn"));
+    this.activeView = ko.pureComputed(new tgd.StoreObj("activeView"));
+    this.activeSort = ko.pureComputed(new tgd.StoreObj("activeSort"));
+    this.doRefresh = ko.pureComputed(new tgd.StoreObj("doRefresh", "true"));
+    this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
+    this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
+    this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
-    this.refreshSeconds = ko.computed(new tgd.StoreObj("refreshSeconds"));
-    this.tierFilter = ko.computed(new tgd.StoreObj("tierFilter"));
+    this.refreshSeconds = ko.pureComputed(new tgd.StoreObj("refreshSeconds"));
+    this.tierFilter = ko.pureComputed(new tgd.StoreObj("tierFilter"));
     this.weaponFilter = ko.observable(tgd.defaults.weaponFilter);
     this.armorFilter = ko.observable(tgd.defaults.armorFilter);
     this.generalFilter = ko.observable(tgd.defaults.generalFilter);
@@ -391,7 +391,7 @@ var app = new(function() {
     this.showMissing = ko.observable(tgd.defaults.showMissing);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
 
-    this.sortedLoadouts = ko.computed(function() {
+    this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
             return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
         });
@@ -405,7 +405,7 @@ var app = new(function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.activeLayouts = ko.computed(function() {
+    this.activeLayouts = ko.pureComputed(function() {
         return _.filter(self.allLayouts(), function(layout) {
             return (self.activeView() == layout.id || self.activeView() == 0);
         });;
@@ -418,19 +418,19 @@ var app = new(function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.orderedCharacters = ko.computed(function() {
+    this.orderedCharacters = ko.pureComputed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
         });
     });
-    this.currentLocale = ko.computed(function() {
+    this.currentLocale = ko.pureComputed(function() {
         var locale = self.locale();
         if (self.appLocale() != "") {
             locale = self.appLocale();
         }
         return locale;
     });
-    this.activeText = ko.computed(function() {
+    this.activeText = ko.pureComputed(function() {
         return tgd.locale[self.currentLocale()];
     });
     this.createLoadout = function() {
@@ -794,7 +794,7 @@ var app = new(function() {
         self.toggleBootstrapMenu();
         self.progressFilter($(event.target).closest('li').attr("value"));
     }
-    this.missingSets = ko.computed(function() {
+    this.missingSets = ko.pureComputed(function() {
         var allItemNames = _.pluck(_.flatten(_.map(self.characters(), function(character) {
             return character.items()
         })), 'description');
@@ -1701,7 +1701,7 @@ var app = new(function() {
     }
 
     this.isVaultAt = function(pos) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             var vault = _.findWhere(self.characters(), {
                 id: "Vault"
             });
@@ -1719,7 +1719,7 @@ var app = new(function() {
         });
     }
 
-    this.columnMode = ko.computed(function() {
+    this.columnMode = ko.pureComputed(function() {
         return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
     });
 
@@ -1730,7 +1730,7 @@ var app = new(function() {
     }
 
     this.btnActive = function(type, input) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
         });
     };
