@@ -1062,13 +1062,13 @@ var app = new(function() {
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        /*if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+        if (self.doRefresh() == 1 && self.loadoutMode() == false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
-                self.search()
+                self.refresh()
             }, self.refreshSeconds() * 1000);
-        }*/
+        }
     }
 
     this.bucketSizeHandler = function() {

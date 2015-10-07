@@ -22,6 +22,14 @@ var neededFiles = [
 		obj.itemTypeName = encodeURIComponent(obj.itemTypeName);
 		//TODO use the information in obj.stats to supplement missing data in DestinyDB tooltips for min/max
 		delete obj.stats;
+		delete obj.hasAction;
+		delete obj.instanced;
+		delete obj.setItemHashes;
+		delete obj.questlineItemHash;
+		delete obj.objectiveHashes;
+		delete obj.needsFullCompletion;
+		delete obj.itemCategoryHashes;
+		delete obj.itemIndex;
 		delete obj.values;
 		delete obj.sources;
 		delete obj.itemLevels;
@@ -63,6 +71,8 @@ var neededFiles = [
 	{ table: "DestinyStatDefinition", name: "statDefs", key: "statHash", reduce: function(item){
 		delete item.statDescription;
 		delete item.icon;
+		delete item.statIdentifier;
+		delete item.interpolate;
 		return item;
 	}}/*,
 	{ table: "DestinyProgressionDefinition", name: "progressDefs", key: "progressionHash", reduce: function(item){
