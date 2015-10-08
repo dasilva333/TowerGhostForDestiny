@@ -16,11 +16,12 @@ function sum(arr) {
     }, 0);
 }
 
-var Profile = function(character, items, index) {
+var Profile = function(character) {
     var self = this;
 
     this.profile = character;
-    this.order = ko.observable();
+	this.id = self.profile.characterBase.characterId;
+    this.order = ko.observable(character.index);
     this.icon = ko.observable("");
     this.background = ko.observable("");
     this.items = ko.observableArray().extend({
@@ -51,34 +52,31 @@ var Profile = function(character, items, index) {
     this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
     this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
-    this.init(items, index);
+    this.init(character.items);
 }
 
 Profile.prototype = {
-    init: function(rawItems, index) {
+    init: function(rawItems) {
         var self = this;
 
-        if (_.isString(self.profile)) {
-            self.order(parseInt(app.vaultPos()));
+        if (self.id == "Vault") {
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
             self.icon("assets/vault_icon.jpg");
 
             self.gender = "Tower";
             self.classType = "Vault";
-            self.id = "Vault";
 
             self.level = "";
             self.stats = "";
             self.percentToNextLevel = "";
             self.race = "";
         } else {
-            self.order(index);
             self.background(app.makeBackgroundUrl(tgd.dataDir + self.profile.backgroundPath, true));
             self.icon(tgd.dataDir + self.profile.emblemPath);
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
             self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
-            self.id = self.profile.characterBase.characterId;
+            
 
             self.level = self.profile.characterLevel;
             self.stats = self.profile.characterBase.stats;
@@ -88,14 +86,17 @@ Profile.prototype = {
             self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
         }
         self.classLetter = self.classType[0].toUpperCase();
-        self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType
-
-        var processedItems = [];
-        _.each(rawItems, function(item) {
+        self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
+		
+		 var processedItems = [];
+        _.each(self.profile.items, function(item) {
             var processedItem = new Item(item, self);
             if ("id" in processedItem) processedItems.push(processedItem);
         });
         self.items(processedItems);
+		if ( self.id != "Vault" ){
+			self._reloadBucket(self);
+		}
     },
     getBucketTypeHelper: function(item, info) {
         var self = this;
@@ -188,6 +189,7 @@ Profile.prototype = {
             _.each(tgd.DestinyLayout, function(layout) {
                 buckets.push.apply(buckets, layout.bucketTypes);
             });
+			buckets.splice(buckets.indexOf("Invisible"), 1)
         }
 
         self.reloadingBucket = true;

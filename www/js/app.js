@@ -925,43 +925,28 @@ var app = new(function() {
                 }
             }
             var avatars = e.data.characters;
-            total = avatars.length + 1;
-
-            var items = self.bungie.flattenItemArray(e.data.inventory.buckets);
-            var vaultItems = _.where(items, function(item) {
-                    return item.bucketName != "Invisible";
-                }),
-                globalItems = _.where(items, {
-                    bucketName: "Invisible"
-                });
-            var profile = new Profile("Vault", vaultItems);
-            self.addTierTypes(profile.items());
-            self.addWeaponTypes(profile.weapons());
-            done(profile);
-            var characterIds = _.sortBy(_.map(avatars, function(character) {
+			var characterIds = _.sortBy(_.map(avatars, function(character) {
                 return character.characterBase.characterId;
             }));
-            //console.time("avatars.forEach");
-            avatars.forEach(function(character) {
-                self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (response && response.data && response.data.buckets) {
-                        var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
-                        var index = characterIds.indexOf(character.characterBase.characterId);
-                        var profile = new Profile(character, items, index + 1);
-                        self.addTierTypes(profile.items());
-                        self.addWeaponTypes(profile.items());
-                        done(profile);
-                    } else {
-                        loadingData = false;
-                        self.refresh();
-                        if (response && typeof response.Message != "undefined") {
-                            return BootstrapDialog.alert(response.Message);
-                        } else {
-                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                        }
-                    }
-                });
-            });
+			var items = self.bungie.flattenItemArray(e.data.inventory.buckets);
+            var vaultItems = _.where(items, function(item) {
+				return item.bucketName != "Invisible";
+			}),
+			globalItems = _.where(items, {
+				bucketName: "Invisible"
+			});
+			_.each(avatars, function(avatar){
+				avatar.index = characterIds.indexOf(avatar.characterBase.characterId) + 1;
+				avatar.items = globalItems;
+			});
+            avatars.push({ characterBase: { characterId: "Vault" }, items: vaultItems, index: parseInt(self.vaultPos()) });
+			total = avatars.length;
+			_.map( avatars, function(avatar){
+				var profile = new Profile(avatar);
+				self.addTierTypes(profile.items());
+				self.addWeaponTypes(profile.weapons());
+				done(profile);
+			});
         });
     }
 
@@ -1047,9 +1032,9 @@ var app = new(function() {
     }
 
     this.refresh = function() {
-        self.loadingUser(true);
-        self.characters.removeAll();
-        self.search();
+        _.each( self.characters(), function(character){
+			character._reloadBucket(character);
+		});
     }
 
     this.refreshHandler = function() {
