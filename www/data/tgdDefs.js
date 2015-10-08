@@ -15,6 +15,7 @@ tgd.localLog = function(msg) {
 };
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
+tgd.activeElement = null;
 //Network Keys, Axiomatic Beads, House Banners, Silken Codex
 tgd.DestinyGlimmerConsumables = [3632619276,269776572,2904517731,1932910919];
 tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Mats", "Glimmer Consumables", "Telemetries" ];

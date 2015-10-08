@@ -22,19 +22,19 @@ var ffXHR = function() {
             password: password,
             headers: []
         };
-    }
+    };
     this.abort = function() {
 
-    }
+    };
     this.setRequestHeader = function(key, value) {
         self.request.headers.push({
             key: key,
             value: value
         });
-    }
+    };
     this.getAllResponseHeaders = function() {
         return "";
-    }
+    };
     this.send = function(payload) {
         //console.log("send request to " + self.request.url);
         if (payload)
@@ -42,10 +42,10 @@ var ffXHR = function() {
         var event = document.createEvent('CustomEvent');
         event.initCustomEvent("xhr-request", true, true, self.request);
         document.documentElement.dispatchEvent(event);
-    }
+    };
     this.onreadystatechange = function() {
         //console.log("state changed");
-    }
+    };
     window.addEventListener("xhr-reply", function(event) {
         //console.log("xhr-reply! " + self.request.url);
         var xhr = event.detail;
@@ -62,4 +62,4 @@ var ffXHR = function() {
 
 var firefoxXHR = function() {
     return new ffXHR();
-}
+};

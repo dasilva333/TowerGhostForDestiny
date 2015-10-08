@@ -8,7 +8,7 @@ function cartesianProductOf(x) {
     }, [
         []
     ]);
-};
+}
 
 function sum(arr) {
     return _.reduce(arr, function(memo, num) {
@@ -16,11 +16,11 @@ function sum(arr) {
     }, 0);
 }
 
-var Profile = function(character) {
+function Profile(character) {
     var self = this;
 
     this.profile = character;
-	this.id = self.profile.characterBase.characterId;
+    this.id = self.profile.characterBase.characterId;
     this.order = ko.observable(character.index);
     this.icon = ko.observable("");
     this.background = ko.observable("");
@@ -76,7 +76,7 @@ Profile.prototype = {
 
             self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
             self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
-            
+
 
             self.level = self.profile.characterLevel;
             self.stats = self.profile.characterBase.stats;
@@ -87,16 +87,16 @@ Profile.prototype = {
         }
         self.classLetter = self.classType[0].toUpperCase();
         self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-		
-		 var processedItems = [];
+
+        var processedItems = [];
         _.each(self.profile.items, function(item) {
             var processedItem = new Item(item, self);
             if ("id" in processedItem) processedItems.push(processedItem);
         });
         self.items(processedItems);
-		if ( self.id != "Vault" ){
-			self._reloadBucket(self);
-		}
+        if (self.id != "Vault") {
+            self._reloadBucket(self);
+        }
     },
     getBucketTypeHelper: function(item, info) {
         var self = this;
@@ -123,7 +123,7 @@ Profile.prototype = {
                     }
                 }
             }
-        }
+        };
     },
     reloadBucketHandler: function(buckets, done) {
         var self = this;
@@ -139,10 +139,10 @@ Profile.prototype = {
                 app.refresh();
                 return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
             }
-        }
+        };
     },
     calculatePowerLevelWithItems: function(items) {
-        if (items.length == 0) {
+        if (items.length === 0) {
             return 0;
         }
         var index = items.filter(this.filterItemByType("Artifact", true)).length;
@@ -189,15 +189,15 @@ Profile.prototype = {
             _.each(tgd.DestinyLayout, function(layout) {
                 buckets.push.apply(buckets, layout.bucketTypes);
             });
-			buckets.splice(buckets.indexOf("Invisible"), 1)
+            buckets.splice(buckets.indexOf("Invisible"), 1);
         }
 
         self.reloadingBucket = true;
         if (typeof event !== "undefined") {
             element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
-            if (element.is(".fa") == false) {
+            if (element.is(".fa") === false) {
                 element = $(event.target).is(".emblem") ? $(event.target) : $(event.target).find(".emblem");
-                if (element.is(".emblem") == false) {
+                if (element.is(".emblem") === false) {
                     element = $(event.target).parent().find(".emblem");
                 }
             }
@@ -293,12 +293,12 @@ Profile.prototype = {
     filterItemByType: function(type, isEquipped) {
         return function(item) {
             return (item.bucketType == type && item.isEquipped() == isEquipped);
-        }
+        };
     },
     get: function(type) {
         var items = this.items().filter(this.filterItemByType(type, false));
         /* Tier, Type */
-        if (app.activeSort() == 0) {
+        if (app.activeSort() === 0) {
             items = _.sortBy(_.sortBy(items, function(item) {
                 return item.type;
             }), function(item) {
@@ -342,7 +342,7 @@ Profile.prototype = {
     },
     itemEquippedVisible: function(type) {
         var ie = this.itemEquipped(type);
-        return ie == undefined ? false : ie.isVisible();
+        return (typeof ie === "undefined") ? false : ie.isVisible();
     },
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
@@ -363,24 +363,28 @@ Profile.prototype = {
             if (character.id == "Vault") return;
 
             var items = _.flatten(_.map(app.characters(), function(avatar) {
-                return avatar.items()
+                return avatar.items();
             }));
             var maxCap = 300;
             var sets = [];
             var backups = [];
             var highestSet;
             var highestSetValue;
+            var primaryStats;
+            var candidates;
+            var buckets;
+            var bestSets;
 
             if (type == "Best") {
-                var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
-                var bestSets = [];
+                buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
+                bestSets = [];
 
                 console.time("finding candidates");
                 _.each(buckets, function(bucket) {
-                    var candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip == true && (
+                    candidates = _.filter(items, function(item) {
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip === true && (
                             (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
-                        )
+                        );
                     });
                     _.each(candidates, function(candidate) {
                         sets.push([candidate]);
@@ -395,7 +399,7 @@ Profile.prototype = {
                         subSets = [
                             [mainPiece]
                         ];
-                    var candidates = _.groupBy(_.filter(backups, function(item) {
+                    candidates = _.groupBy(_.filter(backups, function(item) {
                         return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
                     }), 'bucketType');
                     _.each(candidates, function(items) {
@@ -424,19 +428,19 @@ Profile.prototype = {
                     console.timeEnd("processing a set");
                 });
                 //console.timeEnd("finding candidates");
-                var bestSets = _.sortBy(bestSets, 'score');
+                bestSets = _.sortBy(bestSets, 'score');
                 highestSet = bestSets[bestSets.length - 1].set;
                 highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
                 //console.log(bestSets);
                 //console.log(highestSet);
             } else {
                 var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
-                var buckets = [].concat(globalBuckets);
+                buckets = [].concat(globalBuckets);
                 _.each(buckets, function(bucket) {
-                    var candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip == true && (
+                    candidates = _.filter(items, function(item) {
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip === true && (
                             (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
-                        ) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All")
+                        ) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All");
                     });
                     //console.log("bucket: " + bucket);
                     //console.log(candidates);
@@ -453,7 +457,7 @@ Profile.prototype = {
                 //console.log(backups);
 
                 _.each(backups, function(spare) {
-                    var candidates = _.filter(backups, function(item) {
+                    candidates = _.filter(backups, function(item) {
                         return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
                     });
                     primaryStats = _.map(candidates, function(item) {
@@ -475,7 +479,7 @@ Profile.prototype = {
                     _.each(buckets, function(bucket) {
                         if (bucket != main.bucketType) {
                             tgd.localLog("best candidate for bucket: " + bucket);
-                            var candidates = _.where(backups, {
+                            candidates = _.where(backups, {
                                 bucketType: bucket
                             });
                             //console.log("candidates: " + _.pluck(candidates,'description'));
@@ -521,10 +525,10 @@ Profile.prototype = {
                         var fullSets = [];
                         var alternatives = [];
                         _.each(buckets, function(bucket) {
-                            var candidates = _.filter(items, function(item) {
-                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip == true && (
-                                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
-                                )
+                            candidates = _.filter(items, function(item) {
+                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip === true && (
+                                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+                                );
                             });
                             tgd.localLog("candidates considering " + candidates.length);
                             _.each(candidates, function(candidate) {
@@ -547,13 +551,13 @@ Profile.prototype = {
                             _.each(buckets, function(bucket) {
                                 if (bucket != mainItem.bucketType) {
                                     if (currentStat < maxCap) {
-                                        var candidates = _.filter(statAlternatives, function(item) {
+                                        candidates = _.filter(statAlternatives, function(item) {
                                             return item.bucketType == bucket &&
                                                 ((item.tierType != 6 && mainItem.tierType == 6) || (mainItem.tierType != 6));
                                         });
                                         if (candidates.length > 0) {
-                                            var primaryStats = _.map(candidates, function(item) {
-                                                return item.stats[type]
+                                            primaryStats = _.map(candidates, function(item) {
+                                                return item.stats[type];
                                             });
                                             tgd.localLog(bucket + " choices are " + primaryStats);
                                             var maxCandidateValue = _.max(primaryStats);
@@ -583,11 +587,11 @@ Profile.prototype = {
                                         }
                                     } else {
                                         tgd.localLog("adding alternative, maxCap is full on this set");
-                                        var candidates = _.filter(alternatives, function(item) {
+                                        candidates = _.filter(alternatives, function(item) {
                                             return item.bucketType == bucket;
                                         });
                                         if (candidates.length > 0) {
-                                            var primaryStats = _.map(candidates, function(item) {
+                                            primaryStats = _.map(candidates, function(item) {
                                                 return item.getValue("All");
                                             });
                                             set.push(candidates[primaryStats.indexOf(_.max(primaryStats))]);
@@ -615,7 +619,7 @@ Profile.prototype = {
                             combo.sum = sum(_.values(combo.sumSet));
                             var subScore = (combo.sum / 1000);
                             combo.score = score + subScore;
-                            return combo;;
+                            return combo;
                         }), 'score');
                         var highestSetObj = sumSetValues[sumSetValues.length - 1];
                         highestSetValue = highestSetObj.sum;
@@ -641,21 +645,21 @@ Profile.prototype = {
 
             var count = 0;
             var done = function() {
-                    count++;
-                    if (count == highestSet.length) {
-                        var msa = adhoc.transfer(character.id, true);
-                        tgd.localLog(msa);
-                        adhoc.swapItems(msa, character.id, function() {
-                            $.toaster({
-                                priority: 'success',
-                                title: 'Result',
-                                message: " Completed equipping the highest " + type + " set at " + highestSetValue
-                            });
-                            $.toaster.reset();
+                count++;
+                if (count == highestSet.length) {
+                    var msa = adhoc.transfer(character.id, true);
+                    tgd.localLog(msa);
+                    adhoc.swapItems(msa, character.id, function() {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Result',
+                            message: " Completed equipping the highest " + type + " set at " + highestSetValue
                         });
-                    }
+                        $.toaster.reset();
+                    });
                 }
-                //console.log(highestSet); abort;
+            };
+            //console.log(highestSet); abort;
 
             var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
@@ -678,6 +682,6 @@ Profile.prototype = {
                     done();
                 }
             });
-        }
+        };
     }
-}
+};
