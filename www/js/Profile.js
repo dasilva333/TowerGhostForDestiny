@@ -297,8 +297,9 @@ Profile.prototype = {
     },
     get: function(type) {
         var items = this.items().filter(this.filterItemByType(type, false));
+        var activeSort = parseInt(app.activeSort());
         /* Tier, Type */
-        if (app.activeSort() === 0) {
+        if (activeSort === 0) {
             items = _.sortBy(_.sortBy(items, function(item) {
                 return item.type;
             }), function(item) {
@@ -306,25 +307,25 @@ Profile.prototype = {
             });
         }
         /* Type */
-        else if (app.activeSort() == 1) {
+        else if (activeSort === 1) {
             items = _.sortBy(items, function(item) {
                 return item.type;
             });
         }
         /* Light */
-        else if (app.activeSort() == 2) {
+        else if (activeSort === 2) {
             items = _.sortBy(items, function(item) {
                 return item.primaryStatValue() * -1;
             });
         }
         /* Damage */
-        else if (app.activeSort() == 3) {
+        else if (activeSort === 3) {
             items = _.sortBy(items, function(item) {
                 return item.damageType;
             });
         }
         /* Name */
-        else if (app.activeSort() == 4) {
+        else if (activeSort === 4) {
             items = _.sortBy(items, function(item) {
                 return item.description;
             });
@@ -342,7 +343,7 @@ Profile.prototype = {
     },
     itemEquippedVisible: function(type) {
         var ie = this.itemEquipped(type);
-        return (typeof ie === "undefined") ? false : ie.isVisible();
+        return _.isEmpty(ie) ? false : ie.isVisible();
     },
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());

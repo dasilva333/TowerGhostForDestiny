@@ -407,7 +407,7 @@ var app = function() {
     });
     this.activeLayouts = ko.pureComputed(function() {
         return _.filter(self.allLayouts(), function(layout) {
-            return (self.activeView() == layout.id || self.activeView() === 0);
+            return (self.activeView() == layout.id || self.activeView() == "0");
         });
     });
     this.tierTypes = ko.observableArray();

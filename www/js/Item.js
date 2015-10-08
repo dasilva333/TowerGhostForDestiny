@@ -274,7 +274,7 @@ Item.prototype = {
         }
         var searchFilter = $parent.searchKeyword() === '' || self.hasPerkSearch($parent.searchKeyword()) ||
             ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
-        var tierFilter = $parent.tierFilter() === 0 || $parent.tierFilter() == self.tierType;
+        var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
         var dmgFilter = true;
         var progressFilter = true;
@@ -303,19 +303,20 @@ Item.prototype = {
             return id == self.id;
         }).length;
         showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && dupes > 1);
-        /*tgd.localLog( "searchFilter: " + searchFilter);
-		tgd.localLog( "dmgFilter: " + dmgFilter);
-		tgd.localLog( "setFilter: " + setFilter);
-		tgd.localLog( "tierFilter: " + tierFilter);
-		tgd.localLog( "progressFilter: " + progressFilter);
-		tgd.localLog( "weaponFilter: " + weaponFilter);
-		tgd.localLog("keyword is: " + $parent.searchKeyword());
-		tgd.localLog("keyword is empty " + ($parent.searchKeyword() == ''));
-		tgd.localLog("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
-		tgd.localLog("perks are " + JSON.stringify(self.perks));
-		tgd.localLog("description is " + self.description);
-		tgd.localLog("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
+
+        var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
+        /*if ( self.description == "Red Death") {
+			tgd.localLog( "searchFilter: " + searchFilter);
+			tgd.localLog( "dmgFilter: " + dmgFilter);
+			tgd.localLog( "setFilter: " + setFilter);
+			tgd.localLog( "tierFilter: " + tierFilter);
+			tgd.localLog( "progressFilter: " + progressFilter);
+			tgd.localLog( "weaponFilter: " + weaponFilter);
+			tgd.localLog( "armorFilter: " + armorFilter);
+			tgd.localLog( "generalFilter: " + generalFilter);
+			tgd.localLog( "showDuplicate: " + showDuplicate);
+		}*/
+        return isVisible;
     },
     /* helper function that unequips the current item in favor of anything else */
     unequip: function(callback) {
@@ -1073,7 +1074,7 @@ Item.prototype = {
 
         var nextTransfer = function(callback) {
             var theStack = getNextStack();
-            if (typeof theStack === "undefined") {
+            if (typeof theStack == "undefined") {
                 //tgd.localLog("all items consolidated");
                 if (callback !== undefined) {
                     callback();
