@@ -1,79 +1,72 @@
-'use strict';
+/**
+ * Gruntfile
+ *
+ * This Node script is executed when you run `grunt`.
+ * It's purpose is to load the Grunt tasks in your project's `tasks`
+ * folder, and allow you to add and remove tasks as you see fit.
+ *
+ * WARNING:
+ * Unless you know what you're doing, you shouldn't change this file.
+ * Check out the `tasks` directory instead.
+ */
 
 module.exports = function(grunt) {
 
-	grunt.initConfig({
 
-		pkg: grunt.file.readJSON('package.json'),
+	// Load the include-all library in order to require all of our grunt
+	// configurations and task registrations dynamically.
+	var includeAll;
+	try {
+		includeAll = require('include-all');
+	} catch (e0) {
+		console.error('Could not find `include-all` module.');
+		console.error('Skipping grunt tasks...');
+		console.error('To fix this, please run:');
+		console.error('npm install include-all --save`');
+		console.error();
 
-		project: {
-			app: ['../www'],
-			gen_css: ['<%= project.app %>/css/style_new.css'],
-			css: ['<%= project.app %>/scss/style_new.scss']
-		},
+		grunt.registerTask('default', []);
+		return;
+	}
 
-		sass: {
-			dev: {
-				options: {
-					style: 'compressed',
-					compass: false
-				},
-				files: {
-					'<%= project.app %>/css/style_new.css':'<%= project.css %>'
-				}
-			},
-			prod: {
-				options: {
-					style: 'compressed',
-					compass: false,
-					sourcemap: 'none'
-				},
-				files: {
-					'<%= project.app %>/css/style_new.css':'<%= project.css %>'
-				}
-			}
-		},
 
-		watch: {
-			sass: {
-				files: '<%= project.app %>/scss/{,*/}*.{scss,sass}',
-				tasks: ['sass:dev', 'autoprefixer:dev']
-			}
-		},
+	/**
+	 * Loads Grunt configuration modules from the specified
+	 * relative path. These modules should export a function
+	 * that, when run, should either load/configure or register
+	 * a Grunt task.
+	 */
+	function loadTasks(relPath) {
+		return includeAll({
+			dirname: require('path').resolve(__dirname, relPath),
+			filter: /(.+)\.js$/,
+			excludeDirs: /^\.(git|svn)$/
+		}) || {};
+	}
 
-		autoprefixer: {
-			dev: {
-				options: {
-					map: true,
-					browsers: ['> 5%', 'last 20 versions', 'Firefox ESR', 'Opera 12.1', 'ie 9', 'ie 10', 'ie 7']
-				},
-				src: '../www/css/style_new.css',
-				dest: '../www/css/style_new.css'
-			},
-			prod: {
-				options: {
-					map: false,
-					browsers: ['> 5%', 'last 20 versions', 'Firefox ESR', 'Opera 12.1', 'ie 9', 'ie 10', 'ie 7']
-				},
-				src: '../www/css/style_new.css',
-				dest: '../www/css/style_new.css'
+	/**
+	 * Invokes the function from a Grunt configuration module with
+	 * a single argument - the `grunt` object.
+	 */
+	function invokeConfigFn(tasks) {
+		for (var taskName in tasks) {
+			if (tasks.hasOwnProperty(taskName)) {
+				tasks[taskName](grunt);
 			}
 		}
+	}
 
-	});
+	// Load task functions
+	var taskConfigurations = loadTasks('./tasks/config'),
+		registerDefinitions = loadTasks('./tasks/register');
 
-	grunt.loadNpmTasks('grunt-contrib-sass');
-	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-autoprefixer');
+	// (ensure that a default task exists)
+	if (!registerDefinitions.default) {
+		registerDefinitions.default = function (grunt) { grunt.registerTask('default', []); };
+	}
 
-	// Just output some sort of documentation menu
-	grunt.registerTask('default','Output a basic help menu', function() {
-		grunt.log.writeln('Grunt Build Process');
-		grunt.log.writeln('* grunt prod: Builds everything needed for production');
-		grunt.log.writeln('* grunt dev: Creates a watch on a majority of the scss files (use for developing)');
-	});
-
-	grunt.registerTask('prod', ['sass:prod', 'autoprefixer:prod']);
-	grunt.registerTask('dev', ['watch']);
+	// Run task functions to configure Grunt.
+	invokeConfigFn(taskConfigurations);
+	invokeConfigFn(registerDefinitions);
 
 };
