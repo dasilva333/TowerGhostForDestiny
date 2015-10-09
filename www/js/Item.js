@@ -1,9 +1,3 @@
-function average(arr) {
-    return _.reduce(arr, function(memo, num) {
-        return memo + num;
-    }, 0) / arr.length;
-}
-
 var Item = function(model, profile, ignoreDups) {
     var self = this;
 
@@ -15,25 +9,24 @@ var Item = function(model, profile, ignoreDups) {
 
     this.init(model, ignoreDups);
 
-    this.isVisible = ko.computed(this._isVisible, this);
-    this.primaryStatValue = ko.computed(this._primaryStatValue, this);
+    this.isDuplicate = ko.observable(false);
+    this.isVisible = ko.pureComputed(this._isVisible, this);
+    this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.isEquippable = function(avatarId) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
-            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass)
-                //if it's in another character and it's equippable
-                || (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
         });
-    }
+    };
     this.isStoreable = function(avatarId) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
                 (self.isEquipped() && self.character.id == avatarId);
         });
-    }
-}
+    };
+};
 
 Item.prototype = {
     init: function(item, ignoreDups) {
@@ -54,7 +47,7 @@ Item.prototype = {
                 tierTypeName: "Exotic",
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Classified"
-            }
+            };
         }
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             var description, tierTypeName, itemDescription, itemTypeName;
@@ -70,7 +63,7 @@ Item.prototype = {
                 itemTypeName = info.itemTypeName;
             }
             //some weird stuff shows up under this bucketType w/o this filter
-            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction == false) {
+            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
             var itemObject = {
@@ -96,9 +89,6 @@ Item.prototype = {
                 icon: tgd.dataDir + info.icon,
                 isUnique: false
             };
-            if (ignoreDups == undefined || ignoreDups == false) {
-                tgd.duplicates.push(item.itemHash);
-            }
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
             }
@@ -113,7 +103,7 @@ Item.prototype = {
                             name: p.displayName,
                             description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                             active: perk.isActive
-                        }
+                        };
                     } else {
                         return perk;
                     }
@@ -124,7 +114,7 @@ Item.prototype = {
                         talentPerks = {};
                     var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
                     _.each(item.nodes, function(node) {
-                        if (node.isActivated && node.hidden == false) {
+                        if (node.isActivated && node.hidden === false) {
                             var nodes = _.findWhere(talentGridNodes, {
                                 nodeHash: node.nodeHash
                             });
@@ -132,7 +122,7 @@ Item.prototype = {
                                 var perk = nodes.steps[node.stepIndex];
                                 if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
                                     (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                    (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                    (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
                                     talentPerks[perk.nodeStepName] = {
                                         active: true,
                                         name: perk.nodeStepName,
@@ -149,7 +139,7 @@ Item.prototype = {
                 }
             }
             if (item.progression) {
-                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1
+                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1;
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
@@ -161,10 +151,10 @@ Item.prototype = {
                 });
             }
             if (item.objectives.length > 0) {
-                var progress = (average(_.map(item.objectives, function(objective) {
+                var progress = (tgd.average(_.map(item.objectives, function(objective) {
                     return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
                 })) * 100).toFixed(0) + "%";
-                var primaryStat = (itemObject.primaryStat() == "") ? progress : itemObject.primaryStat() + "/" + progress;
+                var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
             }
 
@@ -212,15 +202,15 @@ Item.prototype = {
         var self = this;
         if (typeof self.progression !== "undefined") {
             /* Missing Perks */
-            if (state == 1 && self.progression == false) {
+            if (state === 1 && self.progression === false) {
                 return true;
             }
             /* Filled perks but not maxed out */
-            else if (state == 2 && self.progression == true && self.isGridComplete == false) {
-                return true
+            else if (state === 2 && self.progression === true && self.isGridComplete === false) {
+                return true;
             }
             /* Maxed weapons (Gold Borders only) */
-            else if (state == 3 && self.progression == true && self.isGridComplete == true) {
+            else if (state === 3 && self.progression === true && self.isGridComplete === true) {
                 return true;
             } else {
                 return false;
@@ -246,7 +236,7 @@ Item.prototype = {
             return true;
         }
         //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
-        else if (type == "Planetary Mats" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
+        else if (type == "Planetary Resources" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
             return true;
         }
         //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
@@ -271,59 +261,59 @@ Item.prototype = {
         var $parent = app,
             self = this;
 
+        //console.time("isVisible");
         if (typeof self.id == "undefined") {
             return false;
         }
-        var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
-            ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
-        var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
+        var searchFilter = $parent.searchKeyword() === '' || ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
+        var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
         var dmgFilter = true;
         var progressFilter = true;
         var weaponFilter = true;
-        var armorFilter = true;;
+        var armorFilter = true;
         var generalFilter = true;
         var showDuplicate = true;
         var setFilter = true;
         if (self.armorIndex > -1 || self.weaponIndex > -1) {
-            setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
+            setFilter = $parent.setFilter().length === 0 || $parent.setFilter().indexOf(self.id) > -1;
+            searchFilter = searchFilter || self.hasPerkSearch($parent.searchKeyword());
             if (self.weaponIndex > -1) {
-                dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
-                weaponFilter = $parent.weaponFilter() == 0 || $parent.weaponFilter() == self.typeName;
+                dmgFilter = $parent.dmgFilter().length === 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+                weaponFilter = $parent.weaponFilter() === 0 || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
                     return name.split(" ")[0];
                 });
-                dmgFilter = $parent.dmgFilter().length == 0 || _.intersection($parent.dmgFilter(), types).length > 0;
-                armorFilter = $parent.armorFilter() == 0 || $parent.armorFilter() == self.bucketType;
+                dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
+                armorFilter = $parent.armorFilter() === 0 || $parent.armorFilter() == self.bucketType;
             }
-            progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
+            progressFilter = $parent.progressFilter() === 0 || self.hashProgress($parent.progressFilter());
         } else {
-            generalFilter = $parent.generalFilter() == 0 || self.hasGeneral($parent.generalFilter());
+            generalFilter = $parent.generalFilter() === 0 || self.hasGeneral($parent.generalFilter());
         }
-        dupes = _.filter(tgd.duplicates(), function(id) {
-            return id == self.id
-        }).length;
-        showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
-        /*tgd.localLog( "searchFilter: " + searchFilter);
-		tgd.localLog( "dmgFilter: " + dmgFilter);
-		tgd.localLog( "setFilter: " + setFilter);
-		tgd.localLog( "tierFilter: " + tierFilter);
-		tgd.localLog( "progressFilter: " + progressFilter);
-		tgd.localLog( "weaponFilter: " + weaponFilter);
-		tgd.localLog("keyword is: " + $parent.searchKeyword());
-		tgd.localLog("keyword is empty " + ($parent.searchKeyword() == ''));
-		tgd.localLog("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
-		tgd.localLog("perks are " + JSON.stringify(self.perks));
-		tgd.localLog("description is " + self.description);
-		tgd.localLog("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
-        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
+        showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
+
+        var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
+        //console.timeEnd("isVisible");
+        /*if ( self.description == "Red Death") {
+			tgd.localLog( "searchFilter: " + searchFilter);
+			tgd.localLog( "dmgFilter: " + dmgFilter);
+			tgd.localLog( "setFilter: " + setFilter);
+			tgd.localLog( "tierFilter: " + tierFilter);
+			tgd.localLog( "progressFilter: " + progressFilter);
+			tgd.localLog( "weaponFilter: " + weaponFilter);
+			tgd.localLog( "armorFilter: " + armorFilter);
+			tgd.localLog( "generalFilter: " + generalFilter);
+			tgd.localLog( "showDuplicate: " + showDuplicate);
+		}*/
+        return isVisible;
     },
     /* helper function that unequips the current item in favor of anything else */
     unequip: function(callback) {
         var self = this;
         tgd.localLog('trying to unequip too!');
-        if (self.isEquipped() == true) {
+        if (self.isEquipped() === true) {
             tgd.localLog("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
@@ -350,28 +340,28 @@ Item.prototype = {
                     }
                     tgd.localLog(item.description);
                     /* still haven't found a match */
-                    if (otherEquipped == false) {
+                    if (otherEquipped === false) {
                         if (item != self && item.equip) {
                             tgd.localLog("trying to equip " + item.description);
                             item.equip(self.characterId, function(isEquipped, result) {
                                 tgd.localLog(item.description + " result was " + isEquipped);
-                                if (isEquipped == true) {
+                                if (isEquipped === true) {
                                     otherEquipped = true;
                                     callback(true);
-                                } else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634) {
+                                } else if (isEquipped === false && result && result.ErrorCode && result.ErrorCode === 1634) {
                                     callback(false);
                                 } else {
                                     tryNextItem();
-                                    tgd.localLog("tryNextItem")
+                                    tgd.localLog("tryNextItem");
                                 }
                             });
                         } else {
-                            tryNextItem()
-                            tgd.localLog("tryNextItem")
+                            tryNextItem();
+                            tgd.localLog("tryNextItem");
                         }
                     }
-                }
-                tgd.localLog("tryNextItem")
+                };
+                tgd.localLog("tryNextItem");
                 tgd.localLog("trying to unequip item, the min tier of the items I can equip is: " + minTier);
                 if (minTier == 6) {
                     var otherItemUnequipped = false;
@@ -428,7 +418,7 @@ Item.prototype = {
                         tgd.localLog(result);
                         self.isEquipped(true);
                         self.character.items().forEach(function(item) {
-                            if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() == true) {
+                            if (item._id != self._id && item.bucketType == self.bucketType && item.isEquipped() === true) {
                                 item.isEquipped(false);
                             }
                         });
@@ -437,7 +427,7 @@ Item.prototype = {
                             self.character.background(self.backgroundPath);
                         }
                         if (callback) callback(true);
-                    }
+                    };
                     if (!(self instanceof Item)) {
                         app.findReference(self, function(item) {
                             self = item;
@@ -464,7 +454,7 @@ Item.prototype = {
                     }
                 }
             });
-        }
+        };
         var sourceCharacterId = self.characterId;
         tgd.localLog("equip called from " + sourceCharacterId + " to " + targetCharacterId);
         if (targetCharacterId == sourceCharacterId) {
@@ -490,12 +480,12 @@ Item.prototype = {
                         otherExotic[0].unequip(done);
                     }
                 });
-                if (otherExoticFound == false) {
+                if (otherExoticFound === false) {
                     done();
                 }
             } else {
                 //tgd.localLog("request is not part of a loadout");
-                done()
+                done();
             }
         } else {
             tgd.localLog("item is NOT already in the character");
@@ -512,7 +502,7 @@ Item.prototype = {
         //tgd.localLog(arguments);
         var self = this,
             x, y, characters = app.characters();
-        if (characters.length == 0) {
+        if (characters.length === 0) {
             /*ga('send', 'exception', {
                 'exDescription': "No characters found to transfer with " + JSON.stringify(app.activeUser()),
                 'exFatal': false,
@@ -569,8 +559,9 @@ Item.prototype = {
                             return i.primaryStat() < i.maxStackSize;
                         });
 
+                    var theClone;
                     var remainder = self.primaryStat() - amount;
-                    var isOverflow = existingItem == undefined ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
+                    var isOverflow = (typeof existingItem == "undefined") ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
                     tgd.localLog("[remainder: " + remainder + "] [overflow: " + isOverflow + "] [underflow: " + (remainder < 0) + "]");
 
                     var tmpAmount = 0;
@@ -598,7 +589,7 @@ Item.prototype = {
                     // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
                     if (remainder > 0) {
                         tgd.localLog("[remainder: " + remainder + "] [clone on source: " + remainder + "]");
-                        var theClone = self.clone();
+                        theClone = self.clone();
                         theClone.characterId = sourceCharacterId;
                         theClone.character = x;
                         theClone.primaryStat(remainder);
@@ -629,7 +620,7 @@ Item.prototype = {
                     } else {
                         tgd.localLog("no remainder, no clone");
                     }
-                    var idxExistingItem = undefined;
+                    var idxExistingItem;
                     var newAmount;
                     if (existingItem !== undefined) {
                         if (!isOverflow) {
@@ -671,7 +662,7 @@ Item.prototype = {
                             var extraAmount = self.primaryStat() - self.maxStackSize;
                             idxSelf = y.items.indexOf(self);
                             // put clone at self index keeping self to the 'right'
-                            var theClone = self.clone();
+                            theClone = self.clone();
                             theClone.characterId = targetCharacterId;
                             theClone.character = y;
                             theClone.primaryStat(self.maxStackSize);
@@ -701,7 +692,7 @@ Item.prototype = {
                                 var howMuch = Math.min(cur.maxStackSize - cur.primaryStat(), next.primaryStat());
                                 tgd.localLog("shifting left...");
 
-                                cur.primaryStat(cur.primaryStat() + howMuch)
+                                cur.primaryStat(cur.primaryStat() + howMuch);
                                 next.primaryStat(next.primaryStat() - howMuch);
                                 if (next.primaryStat() <= 0) {
                                     tgd.localLog("drained a stack in cleanup");
@@ -719,10 +710,10 @@ Item.prototype = {
                 } else {
                     tgd.localLog("removing " + self.description + " from " + x.uniqueName + " currently at " + x.items().length);
                     x.items.remove(function(item) {
-                        return item._id == self._id
+                        return item._id == self._id;
                     });
                     tgd.localLog("after removal " + x.items().length);
-                    self.characterId = targetCharacterId
+                    self.characterId = targetCharacterId;
                     self.character = y;
                     y.items.push(self);
                     tgd.localLog("adding " + self.description + " to " + y.uniqueName);
@@ -850,7 +841,7 @@ Item.prototype = {
                     message: result.Message
                 });
             }
-        }
+        };
     },
     store: function(targetCharacterId, callback) {
         //tgd.localLog(arguments);
@@ -863,7 +854,7 @@ Item.prototype = {
                 //tgd.localLog("*******from character to vault " + self.description);
                 self.unequip(function(result) {
                     //tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
-                    if (result == true) {
+                    if (result === true) {
                         self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback));
                     } else {
                         if (callback) {
@@ -881,7 +872,7 @@ Item.prototype = {
             } else if (sourceCharacterId !== "Vault") {
                 tgd.localLog("from character to vault to character " + self.description);
                 self.unequip(function(result) {
-                    if (result == true) {
+                    if (result === true) {
                         if (self.bucketType == "Subclasses") {
                             if (callback)
                                 callback(self.character);
@@ -915,11 +906,11 @@ Item.prototype = {
                 tgd.localLog("from vault to character");
                 self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
             }
-        }
+        };
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
             if (self.primaryStat() == 1) {
                 done();
-            } else if (app.autoXferStacks() == true || tgd.autoTransferStacks == true) {
+            } else if (app.autoXferStacks() === true || tgd.autoTransferStacks === true) {
                 transferAmount = self.primaryStat();
                 done();
             } else {
@@ -1026,13 +1017,13 @@ Item.prototype = {
                                 BootstrapDialog.alert(app.activeText().invalid_transfer_amount + transferAmount);
                             }
                         }
-                    }
+                    };
                 setTimeout(function() {
                     $("#materialsAmount").select().bind("keyup", function(e) {
                         if (e.keyCode == 13) {
                             finishTransfer(false);
                         }
-                    })
+                    });
                 }, 500);
             }
         } else {
@@ -1074,7 +1065,7 @@ Item.prototype = {
 
         var nextTransfer = function(callback) {
             var theStack = getNextStack();
-            if (theStack == undefined) {
+            if (typeof theStack == "undefined") {
                 //tgd.localLog("all items consolidated");
                 if (callback !== undefined) {
                     callback();
@@ -1119,7 +1110,7 @@ Item.prototype = {
                     var c = 0;
                     var totalSelectedItemCount = 0;
                     for (i = 0; i < app.orderedCharacters().length; i++) {
-                        if (selectedStatus[(app.orderedCharacters()[i]).id] == true) {
+                        if (selectedStatus[(app.orderedCharacters()[i]).id] === true) {
                             var ct = _.reduce(
                                 _.filter(app.orderedCharacters()[i].items(), {
                                     description: self.description
@@ -1144,7 +1135,7 @@ Item.prototype = {
                 var charButtonClicked = function(self, id) {
                     selectedStatus[id] = !selectedStatus[id];
                     $content.find('#total').text(getTotalSelectedItemCount());
-                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                    self.find('img').css('border', (selectedStatus[id] === true) ? "solid 3px yellow" : "none");
                 };
 
                 $.each(app.orderedCharacters(), function(i, val) {
@@ -1161,7 +1152,7 @@ Item.prototype = {
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
                     var characters = _.filter(app.orderedCharacters(), function(c) {
-                        return selectedStatus[c.id] == true;
+                        return selectedStatus[c.id] === true;
                     });
                     if (characters.length <= 1) {
                         BootstrapDialog.alert("Need to select two or more characters.");
@@ -1209,4 +1200,4 @@ Item.prototype = {
         }
         return value;
     }
-}
+};
