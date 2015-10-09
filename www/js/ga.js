@@ -2,7 +2,7 @@
     trace: true
 };*/
 
-_ga = new(function() {
+_ga = (function() {
     var self = this;
 
     this.init = function() {
@@ -14,7 +14,7 @@ _ga = new(function() {
             ga_options = {
                 'storage': 'none',
                 'clientId': device.uuid
-            }
+            };
         }
 
         ga('create', 'UA-61575166-1', ga_options);
@@ -35,7 +35,7 @@ _ga = new(function() {
         });
         ga('send', 'pageview');
         self.loadListeners();
-    }
+    };
 
     this.loadListeners = function() {
         // Track basic JavaScript errors
@@ -82,7 +82,7 @@ _ga = new(function() {
                 tgd.localLog(request.status + " ajax error (code 0) at " + settings.url + " " + settings.data + " " + err);
             }
         });
-    }
+    };
 });
 
 if (isMobile) {
