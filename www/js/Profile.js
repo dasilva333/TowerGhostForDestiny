@@ -377,7 +377,8 @@ Profile.prototype = {
         });
         return tmp;
     },
-	reduceMaxSkill: function(){
+	reduceMaxSkill: function(type, buckets, items){
+		var character = this;
 		tgd.localLog("highest set is above max cap");
 		var fullSets = [];
 		var alternatives = [];
@@ -407,7 +408,7 @@ Profile.prototype = {
 			tgd.localLog(currentStat + " for main item: " + mainItem.description);
 			_.each(buckets, function(bucket) {
 				if (bucket != mainItem.bucketType) {
-					if (currentStat < maxCap) {
+					if (currentStat < tgd.DestinySkillCap) {
 						candidates = _.filter(statAlternatives, function(item) {
 							return item.bucketType == bucket &&
 								((item.tierType != 6 && mainItem.tierType == 6) || (mainItem.tierType != 6));
@@ -422,9 +423,9 @@ Profile.prototype = {
 							var deltas = {};
 							_.each(candidates, function(candidate, index) {
 								tgd.localLog(candidate.description + " considering candidate currentStat " + candidate.stats[type]);
-								var delta = ((currentStat + candidate.stats[type]) - maxCap);
+								var delta = ((currentStat + candidate.stats[type]) - tgd.DestinySkillCap);
 								if (delta >= 0) {
-									var allStatsSummed = ((currentStat + candidate.getValue("All")) - candidate.stats[type] - maxCap);
+									var allStatsSummed = ((currentStat + candidate.getValue("All")) - candidate.stats[type] - tgd.DestinySkillCap);
 									if (allStatsSummed >= 0) {
 										deltas[index] = allStatsSummed;
 									}
@@ -460,7 +461,7 @@ Profile.prototype = {
 		var availableSets = [];
 		_.map(fullSets, function(set) {
 			var sumSet = character.joinStats(set);
-			if (sumSet[type] >= maxCap) {
+			if (sumSet[type] >= tgd.DestinySkillCap) {
 				availableSets.push({
 					set: set,
 					sumSet: sumSet
@@ -479,8 +480,7 @@ Profile.prototype = {
 			return combo;
 		}), 'score');
 		var highestSetObj = sumSetValues[sumSetValues.length - 1];
-		highestSetValue = highestSetObj.sum;
-		highestSet = highestSetObj.set;	
+		return [ highestSetObj.sum, highestSetObj.set ];
 	},
 	findBestArmorSet: function(items){
 		var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
@@ -608,7 +608,7 @@ Profile.prototype = {
 		highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
 			return item.tierType * -1;
 		});
-		return highestSet;
+		return [ highestSetValue, highestSet ];
 	},
     equipHighest: function(type) {
         var character = this;
@@ -620,38 +620,41 @@ Profile.prototype = {
             var items = _.flatten(_.map(app.characters(), function(avatar) {
                 return avatar.items();
             }));
-            var maxCap = 300;
+
             var highestSet;
             var highestSetValue;
             var primaryStats;
-            var candidates;
             var buckets;
 
             if (type == "Best") {
                 var bestSets = character.findBestArmorSet(items);
                 highestSet = bestSets[bestSets.length - 1].set;
-                highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
+                highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
             } 
 			else if (type == "Light"){
-				var bestArmorSets = character.findHighestItemBy("Light", armor, items);
+				var bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];
 				tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets,'description'));
-				var bestWeaponSets = character.findHighestItemBy("Light", weapons, items);
+				var bestWeaponSets = character.findHighestItemBy("Light", weapons, items)[1];
 				tgd.localLog("bestWeaponSets: " + _.pluck(bestWeaponSets,'description'));
                 highestSet = bestArmorSets.concat(bestWeaponSets);
 				tgd.localLog("highestSet: " + _.pluck(highestSet,'description'));
 				highestSetValue = character.calculatePowerLevelWithItems(highestSet);
 			}	
 			else if (type == "All"){
-			
-				highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
-					return item.tierType * -1;
-				});
+				var bestArmorSets = character.findHighestItemBy("All", armor, items);
+				tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets,'description'));
+				highestSet = bestArmorSets[1];
+				highestSetValue = bestArmorSets[0];
 			}
 			else {
-				var highestSet = character.findHighestItemBy(type, armor, items);
-				highestSetValue = character.calculatePowerLevelWithItems(highestSet);
-				if (highestSetValue < maxCap) {
-				   self.highestSet = self.reduceMaxSkill();
+				var bestArmorSets = character.findHighestItemBy(type, armor, items);
+				if (bestArmorSets[0] < tgd.DestinySkillCap) {
+					highestSetValue = bestArmorSets[0];
+					highestSet = bestArmorSets[1];
+				} else {
+					var bestArmorSets = character.reduceMaxSkill(type, armor, items);
+					highestSetValue = bestArmorSets[0];
+					highestSet = bestArmorSets[1];
 				}
 			}
 

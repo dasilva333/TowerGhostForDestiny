@@ -7,7 +7,7 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.tgd = {};
-tgd.localLogging = true;
+tgd.localLogging = false;
 tgd.localLog = function(msg) {
 	if (tgd.localLogging) {
 		console.log(msg);
@@ -15,6 +15,7 @@ tgd.localLog = function(msg) {
 };
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
+tgd.DestinySkillCap = 300;
 tgd.activeElement = null;
 //Network Keys, Axiomatic Beads, House Banners, Silken Codex
 tgd.DestinyGlimmerConsumables = [3632619276,269776572,2904517731,1932910919];
