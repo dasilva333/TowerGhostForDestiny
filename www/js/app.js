@@ -1,4 +1,4 @@
-var Layout = function(layout) {
+function Layout(layout) {
     var self = this;
 
     self.name = layout.name;
@@ -8,9 +8,9 @@ var Layout = function(layout) {
     self.array = layout.array;
     self.counts = layout.counts;
     self.countText = function(character) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             var text = "";
-            if (self.array != "") {
+            if (self.array !== "") {
                 var currentAmount = character[self.array]().length;
                 var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
                 text = "(" + currentAmount + "/" + totalAmount + ")";
@@ -20,33 +20,34 @@ var Layout = function(layout) {
             }
             return text;
         });
-    }
+    };
     self.isVisible = function(character) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             return ((character.id == "Vault" && (self.name !== "Post Master")) || character.id !== "Vault");
         });
-    }
+    };
 }
+
 tgd.dialog = (function(options) {
     var self = this;
 
-    this.modal;
+    this.modal = null;
 
     this.title = function(title) {
         self.modal = new BootstrapDialog(options);
         self.modal.setTitle(title);
         return self;
-    }
+    };
 
     this.content = function(content) {
         self.modal.setMessage(content);
         return self;
-    }
+    };
 
     this.buttons = function(buttons) {
         self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
         return self;
-    }
+    };
 
     this.show = function(excludeClick, onHide, onShown) {
         self.modal.open();
@@ -59,19 +60,18 @@ tgd.dialog = (function(options) {
         mdl.on("hide.bs.modal", onHide);
         mdl.on("shown.bs.modal", onShown);
         return self;
-    }
+    };
 
     return self.modal;
 });
 
-tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
-    if (app.destinyDbMode() == true) {
+    if (app.destinyDbMode() === true) {
         tgd.localLog("destinyDbMode");
         window.open(item.href, "_system");
         return false;
-    } else if (app.loadoutMode() == true) {
+    } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
         var existingItem = _.findWhere(app.activeLoadout().ids(), {
             id: item._id
@@ -85,7 +85,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                     title: 'Warning',
                     message: app.activeText().unable_create_loadout_for_type
                 });
-            } else if (item._id == 0) {
+            } else if (item._id === "0") {
                 app.activeLoadout().addGenericItem({
                     hash: item.id,
                     bucketType: item.bucketType,
@@ -153,7 +153,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     }
-}
+};
 
 window.ko.bindingHandlers.refreshableSection = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -258,7 +258,7 @@ ko.bindingHandlers.moveItem = {
                     if (context && "$data" in context) {
                         var item = context.$data;
                         if (item.transferStatus < 2) {
-                            if (app.dynamicMode() == false) {
+                            if (app.dynamicMode() === false) {
                                 app.dynamicMode(true);
                                 app.createLoadout();
                             }
@@ -294,7 +294,7 @@ ko.bindingHandlers.moveItem = {
                     var context = ko.contextFor(target);
                     if (context && "$data" in context) {
                         var item = context.$data;
-                        if (item && item.doEquip && app.loadoutMode() == true) {
+                        if (item && item.doEquip && app.loadoutMode() === true) {
                             item.doEquip(!item.doEquip());
                             item.markAsEquip(item, {
                                 target: target
@@ -321,7 +321,7 @@ tgd.getEventDelegate = function(target, selector) {
         target = target.parentNode;
     }
     return undefined;
-}
+};
 
 tgd.getStoredValue = function(key) {
     var saved = "";
@@ -330,23 +330,23 @@ tgd.getStoredValue = function(key) {
     if (_.isEmpty(saved)) {
         return tgd.defaults[key];
     } else {
-        return saved
+        return saved;
     }
-}
+};
 
 tgd.StoreObj = function(key, compare, writeCallback) {
     var value = ko.observable(compare ? tgd.getStoredValue(key) == compare : tgd.getStoredValue(key));
     this.read = function() {
         return value();
-    }
+    };
     this.write = function(newValue) {
         window.localStorage.setItem(key, newValue);
         value(newValue);
         if (writeCallback) writeCallback(newValue);
-    }
-}
+    };
+};
 
-var app = new(function() {
+var app = function() {
     var self = this;
 
     this.retryCount = ko.observable(0);
@@ -358,28 +358,28 @@ var app = new(function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-    this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
-    this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
-    this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
-    this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.locale = ko.computed(new tgd.StoreObj("locale"));
-    this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
-    this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
-    this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
-    this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
-    this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
-    this.activeView = ko.computed(new tgd.StoreObj("activeView"));
-    this.activeSort = ko.computed(new tgd.StoreObj("activeSort"));
-    this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
-    this.autoXferStacks = ko.computed(new tgd.StoreObj("autoXferStacks", "true"));
-    this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
-    this.dragAndDrop = ko.computed(new tgd.StoreObj("dragAndDrop", "true"));
-    this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
+    this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
+    this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
+    this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
+    this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
+    this.vaultPos = ko.pureComputed(new tgd.StoreObj("vaultPos"));
+    this.xsColumn = ko.pureComputed(new tgd.StoreObj("xsColumn"));
+    this.smColumn = ko.pureComputed(new tgd.StoreObj("smColumn"));
+    this.mdColumn = ko.pureComputed(new tgd.StoreObj("mdColumn"));
+    this.lgColumn = ko.pureComputed(new tgd.StoreObj("lgColumn"));
+    this.activeView = ko.pureComputed(new tgd.StoreObj("activeView"));
+    this.activeSort = ko.pureComputed(new tgd.StoreObj("activeSort"));
+    this.doRefresh = ko.pureComputed(new tgd.StoreObj("doRefresh", "true"));
+    this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
+    this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
+    this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
-    this.refreshSeconds = ko.computed(new tgd.StoreObj("refreshSeconds"));
-    this.tierFilter = ko.computed(new tgd.StoreObj("tierFilter"));
+    this.refreshSeconds = ko.pureComputed(new tgd.StoreObj("refreshSeconds"));
+    this.tierFilter = ko.pureComputed(new tgd.StoreObj("tierFilter"));
     this.weaponFilter = ko.observable(tgd.defaults.weaponFilter);
     this.armorFilter = ko.observable(tgd.defaults.armorFilter);
     this.generalFilter = ko.observable(tgd.defaults.generalFilter);
@@ -391,7 +391,7 @@ var app = new(function() {
     this.showMissing = ko.observable(tgd.defaults.showMissing);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
 
-    this.sortedLoadouts = ko.computed(function() {
+    this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
             return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
         });
@@ -405,10 +405,10 @@ var app = new(function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.activeLayouts = ko.computed(function() {
+    this.activeLayouts = ko.pureComputed(function() {
         return _.filter(self.allLayouts(), function(layout) {
-            return (self.activeView() == layout.id || self.activeView() == 0);
-        });;
+            return (self.activeView() == layout.id || self.activeView() == "0");
+        });
     });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -418,40 +418,40 @@ var app = new(function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.orderedCharacters = ko.computed(function() {
+    this.orderedCharacters = ko.pureComputed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
         });
     });
-    this.currentLocale = ko.computed(function() {
+    this.currentLocale = ko.pureComputed(function() {
         var locale = self.locale();
-        if (self.appLocale() != "") {
+        if (self.appLocale() !== "") {
             locale = self.appLocale();
         }
         return locale;
     });
-    this.activeText = ko.computed(function() {
+    this.activeText = ko.pureComputed(function() {
         return tgd.locale[self.currentLocale()];
     });
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new Loadout());
-    }
+    };
     this.cancelLoadout = function() {
         self.loadoutMode(false);
         self.dynamicMode(false);
         self.activeLoadout(new Loadout());
-    }
+    };
 
     this.startMultiSelect = function() {
         self.dynamicMode(true);
         self.createLoadout();
-    }
+    };
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
-    }
+        (new tgd.dialog()).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
+    };
 
     this.showLanguageSettings = function() {
         self.toggleBootstrapMenu();
@@ -468,7 +468,7 @@ var app = new(function() {
                 $(this).addClass("btn-primary");
             });
         });
-    }
+    };
 
     this.handleGoogleResponse = function(data) {
         if (data && data.response) {
@@ -482,19 +482,19 @@ var app = new(function() {
         } else {
             BootstrapDialog.alert("No response returned");
         }
-    }
+    };
 
     this.showDonate = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+        (new tgd.dialog()).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
             $("a.donatePaypal").click(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
             });
-            $("div.supportsIAB").toggle(isChrome == true || isAndroid == true || isIOS == true);
-            $("div.chromeWallet").toggle(isChrome == true);
-            $("div.googlePlay").toggle(isAndroid == true);
-            $("div.appleIAP").toggle(isIOS == true);
+            $("div.supportsIAB").toggle(isChrome === true || isAndroid === true || isIOS === true);
+            $("div.chromeWallet").toggle(isChrome === true);
+            $("div.googlePlay").toggle(isAndroid === true);
+            $("div.appleIAP").toggle(isIOS === true);
             $("a.donate").bind("click", function() {
                 if (isChrome) {
                     google.payments.inapp.buy({
@@ -516,12 +516,12 @@ var app = new(function() {
                 }
             });
         });
-    }
+    };
 
     this.showAbout = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title("About").content($("#about").html()).show();
-    }
+        (new tgd.dialog()).title("About").content($("#about").html()).show();
+    };
 
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
@@ -543,9 +543,10 @@ var app = new(function() {
         self.showDuplicate(tgd.defaults.showDuplicate);
         $(element.target).removeClass("active");
         return false;
-    }
+    };
+
     this.renderCallback = function(context, content, element, callback) {
-        if (element) lastElement = element
+        if (element) lastElement = element;
         content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, $content = $("<div>" + content + "</div>");
@@ -569,7 +570,7 @@ var app = new(function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Primary Stat and Stat Type */
             var primaryStatMin = $content.find(".destt-primary-min");
-            if (primaryStatMin.length == 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1)) {
+            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1)) {
                 var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
                 var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
                 $content.find(".destt-desc").before(statBlock);
@@ -587,14 +588,14 @@ var app = new(function() {
                 $content.find(".fhtt-emblem-icon").html($("<img>").attr("src", activeItem.icon));
             }
             /* Damage Colors */
-            if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
+            if ($content.find("[class*='destt-damage-color-']").length === 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
             /* Armor Stats */
             if (!_.isEmpty(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
-                if (stats.length == 0) {
+                if (stats.length === 0) {
                     $content.find(".destt-desc").after(tgd.statsTemplate({
                         stats: activeItem.stats
                     }));
@@ -622,7 +623,7 @@ var app = new(function() {
                         }));
                     }
                     // Weapon Perks (Post-HoW)
-                    else if ($content.find(".destt-talent").length == 0) {
+                    else if ($content.find(".destt-talent").length === 0) {
                         $content.find(".destt-stat").after(tgd.perksTemplate({
                             perks: activeItem.perks
                         }));
@@ -650,7 +651,7 @@ var app = new(function() {
             $content.find(".stat-bar-empty").css("width", "125px");
         }
         callback($content.html());
-    }
+    };
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
@@ -663,36 +664,36 @@ var app = new(function() {
             $(".character").css("margin", '');
             $(".character-box").css("position", 'fixed');
         }
-    }
+    };
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
         self.doRefresh(!self.doRefresh());
-    }
+    };
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
         self.bucketSizeHandler();
-    }
+    };
     this.toggleDragAndDrop = function() {
         self.toggleBootstrapMenu();
         self.dragAndDrop(!self.dragAndDrop());
-        if (self.dragAndDrop() == true) {
+        if (self.dragAndDrop() === true) {
             self.padBucketHeight(true);
             location.reload();
         }
-    }
+    };
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
         self.autoXferStacks(!self.autoXferStacks());
-    }
+    };
     this.toggleDestinyDbMode = function() {
         self.toggleBootstrapMenu();
         self.destinyDbMode(!self.destinyDbMode());
-    }
+    };
     this.toggleDestinyDbTooltips = function() {
         self.toggleBootstrapMenu();
         self.tooltipsEnabled(!self.tooltipsEnabled());
-    }
+    };
     this.toggleShareView = function() {
         self.toggleBootstrapMenu();
         if (!self.shareView()) {
@@ -706,14 +707,26 @@ var app = new(function() {
                 self.shareView(!self.shareView());
             });
         }
-    }
+    };
     this.toggleDuplicates = function(model, event) {
         self.toggleBootstrapMenu();
         self.showDuplicate(!self.showDuplicate());
-    }
+        if (self.showDuplicate()) {
+            var items = _.flatten(_.map(app.characters(), function(avatar) {
+                return avatar.items();
+            }));
+            var ids = _.pluck(items, 'id');
+            _.each(items, function(item) {
+                var itemCount = _.filter(ids, function(id) {
+                    return id == item.id;
+                }).length;
+                item.isDuplicate(itemCount > 1);
+            });
+        }
+    };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
-        if (self.setFilter().length == 0) {
+        if (self.setFilter().length === 0) {
             $.toaster({
                 priority: 'danger',
                 title: 'Warning',
@@ -722,12 +735,12 @@ var app = new(function() {
         } else {
             self.showMissing(!self.showMissing());
         }
-    }
+    };
     this.openStatusReport = function() {
         self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
-    }
+    };
     this.setSetFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var collection = $(event.target).closest('li').attr("value");
@@ -748,24 +761,28 @@ var app = new(function() {
             self.setFilter([]);
             self.showMissing(false);
         }
-    }
+    };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
         self.activeSort($(event.target).closest('li').attr("value"));
-    }
+    };
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
         self.activeView($(event.target).closest('li').attr("value"));
-    }
+    };
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var dmgType = $(event.target).closest('li').attr("value");
-        self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
-    }
+        if (self.dmgFilter.indexOf(dmgType) == -1) {
+            self.dmgFilter.push(dmgType);
+        } else {
+            self.dmgFilter.remove(dmgType);
+        }
+    };
     this.setTierFilter = function(model, event) {
         self.toggleBootstrapMenu();
         self.tierFilter(model.tier);
-    }
+    };
     this.setWeaponFilter = function(weaponType) {
         return function() {
             self.toggleBootstrapMenu();
@@ -773,30 +790,30 @@ var app = new(function() {
             var type = weaponType.name;
             tgd.localLog("weapon type: " + type);
             self.weaponFilter(type);
-        }
-    }
+        };
+    };
     this.setArmorFilter = function(armorType) {
         return function() {
             self.toggleBootstrapMenu();
             self.activeView(2);
             tgd.localLog("armor type: " + armorType);
             self.armorFilter(armorType);
-        }
-    }
+        };
+    };
     this.setGeneralFilter = function(searchType) {
         return function() {
             self.toggleBootstrapMenu();
             self.activeView(3);
             self.generalFilter(searchType);
-        }
-    }
+        };
+    };
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
         self.progressFilter($(event.target).closest('li').attr("value"));
-    }
-    this.missingSets = ko.computed(function() {
+    };
+    this.missingSets = ko.pureComputed(function() {
         var allItemNames = _.pluck(_.flatten(_.map(self.characters(), function(character) {
-            return character.items()
+            return character.items();
         })), 'description');
         var armorFilter = ko.unwrap(self.armorFilter);
         var weaponFilter = ko.unwrap(self.weaponFilter);
@@ -810,48 +827,48 @@ var app = new(function() {
                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
                     var bucketType = tgd.DestinyBucketTypes[info.bucketTypeHash];
                     var typeName = decodeURIComponent(info.itemTypeName);
-                    isVisible = (self.armorFilter() == 0 || armorFilter == bucketType) && (self.weaponFilter() == 0 || weaponFilter == typeName);
+                    isVisible = (self.armorFilter() === 0 || armorFilter == bucketType) && (self.weaponFilter() === 0 || weaponFilter == typeName);
                 }
             }
             return isMissing && isVisible;
         });
         return missingIds;
-    })
+    });
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
+            if (item.isEquipment === true && item.type > 1 && _.where(self.weaponTypes(), {
                     name: item.typeName
-                }).length == 0) {
+                }).length === 0) {
                 self.weaponTypes.push({
                     name: item.typeName,
                     type: item.type
                 });
             }
         });
-    }
+    };
 
 
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
             if (item.tierTypeName && item.tierType > 0 && _.where(self.tierTypes(), {
                     name: item.tierTypeName
-                }).length == 0) {
+                }).length === 0) {
                 self.tierTypes.push({
                     name: item.tierTypeName,
                     tier: item.tierType
                 });
             }
         });
-    }
+    };
 
     this.makeBackgroundUrl = function(path, excludeDomain) {
         return 'url("' + (excludeDomain ? "" : self.bungie.getUrl()) + path + '")';
-    }
+    };
 
     this.hasBothAccounts = function() {
         return !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
-    }
+    };
 
     this.useXboxAccount = function() {
         self.toggleBootstrapMenu();
@@ -859,7 +876,7 @@ var app = new(function() {
         self.characters.removeAll();
         self.loadingUser(true);
         self.search();
-    }
+    };
 
     this.usePlaystationAccount = function() {
         self.toggleBootstrapMenu();
@@ -867,14 +884,14 @@ var app = new(function() {
         self.characters.removeAll();
         self.loadingUser(true);
         self.search();
-    }
+    };
 
     var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
             return;
         }
-        if (loadingData == true) {
+        if (loadingData === true) {
             return;
         }
         loadingData = true;
@@ -900,14 +917,13 @@ var app = new(function() {
                         return -1;
                     }
                     return 0;
-                })
+                });
                 setTimeout(self.bucketSizeHandler, 1000);
                 setTimeout(self.quickIconHighlighter, 1000);
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
-
         }
         self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {
@@ -916,7 +932,7 @@ var app = new(function() {
                 /* if the first account fails retry the next one*/
                 self.preferredSystem(self.preferredSystem() == "PSN" ? "XBL" : "PSN");
                 self.search();
-                return
+                return;
             } else if (typeof e.data == "undefined") {
                 if (e && typeof e.Message != "undefined") {
                     return BootstrapDialog.alert(e.Message);
@@ -925,8 +941,9 @@ var app = new(function() {
                 }
             }
             var avatars = e.data.characters;
-            total = avatars.length + 1;
-
+            var characterIds = _.sortBy(_.map(avatars, function(character) {
+                return character.characterBase.characterId;
+            }));
             var items = self.bungie.flattenItemArray(e.data.inventory.buckets);
             var vaultItems = _.where(items, function(item) {
                     return item.bucketName != "Invisible";
@@ -934,39 +951,29 @@ var app = new(function() {
                 globalItems = _.where(items, {
                     bucketName: "Invisible"
                 });
-            var profile = new Profile("Vault", vaultItems);
-            self.addTierTypes(profile.items());
-            self.addWeaponTypes(profile.weapons());
-            done(profile);
-            var characterIds = _.sortBy(_.map(avatars, function(character) {
-                return character.characterBase.characterId;
-            }));
-            //console.time("avatars.forEach");
-            avatars.forEach(function(character) {
-                self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (response && response.data && response.data.buckets) {
-                        var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
-                        var index = characterIds.indexOf(character.characterBase.characterId);
-                        var profile = new Profile(character, items, index + 1);
-                        self.addTierTypes(profile.items());
-                        self.addWeaponTypes(profile.items());
-                        done(profile);
-                    } else {
-                        loadingData = false;
-                        self.refresh();
-                        if (response && typeof response.Message != "undefined") {
-                            return BootstrapDialog.alert(response.Message);
-                        } else {
-                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                        }
-                    }
-                });
+            _.each(avatars, function(avatar) {
+                avatar.index = characterIds.indexOf(avatar.characterBase.characterId) + 1;
+                avatar.items = globalItems;
+            });
+            avatars.push({
+                characterBase: {
+                    characterId: "Vault"
+                },
+                items: vaultItems,
+                index: parseInt(self.vaultPos())
+            });
+            total = avatars.length;
+            _.map(avatars, function(avatar) {
+                var profile = new Profile(avatar);
+                self.addTierTypes(profile.items());
+                self.addWeaponTypes(profile.weapons());
+                done(profile);
             });
         });
-    }
+    };
 
     this.loadData = function(ref) {
-        if (self.loadingUser() == false || self.hiddenWindowOpen() == true) {
+        if (self.loadingUser() === false || self.hiddenWindowOpen() === true) {
             //window.t = (new Date());
             self.loadingUser(true);
             self.bungie = new bungie(self.bungie_cookies, function() {
@@ -979,7 +986,7 @@ var app = new(function() {
                             return self.logout();
                         }
                         if (isMobile) {
-                            if (self.hiddenWindowOpen() == false) {
+                            if (self.hiddenWindowOpen() === false) {
                                 self.hiddenWindowOpen(true);
                                 self.openHiddenBungieWindow();
                             } else {
@@ -991,7 +998,7 @@ var app = new(function() {
                             self.activeUser(user);
                             self.loadingUser(false);
                         }
-                        return
+                        return;
                     }
                     if (ref && ref.close) {
                         ref.close();
@@ -1027,53 +1034,62 @@ var app = new(function() {
                 });
             });
         }
-    }
+    };
 
     this.toggleBootstrapMenu = function() {
         if ($(".navbar-toggle").is(":visible"))
             $(".navbar-toggle").click();
-    }
+    };
 
     this.refreshButton = function() {
         self.toggleBootstrapMenu();
         self.refresh();
-    }
+    };
 
     this.logout = function() {
         self.clearCookies();
         self.bungie.logout(function() {
             window.location.reload();
         });
-    }
+    };
 
     this.refresh = function() {
-        self.loadingUser(true);
-        self.characters.removeAll();
-        self.search();
-    }
+        self.bungie.account(function(result) {
+            var characters = result.data.characters;
+            _.each(self.characters(), function(character) {
+                if (character.id != "Vault") {
+                    var result = _.filter(characters, function(avatar) {
+                        return avatar.characterBase.characterId == character.id;
+                    })[0];
+                    character.updateCharacter(result);
+                }
+                character._reloadBucket(character);
+            });
+        });
+    };
 
     this.refreshHandler = function() {
         clearInterval(self.refreshInterval);
-        if (self.loadoutMode() == true) {
-            if (self.dynamicMode() == false) {
+        if (self.loadoutMode() === true) {
+            if (self.dynamicMode() === false) {
                 self.toggleBootstrapMenu();
             }
             $("body").css("padding-bottom", "260px");
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        /*if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+        if (self.doRefresh() == 1 && self.loadoutMode() === false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
-                self.search()
+                self.refresh();
             }, self.refreshSeconds() * 1000);
-        }*/
-    }
+        }
+    };
 
     this.bucketSizeHandler = function() {
         var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
-        if (self.padBucketHeight() == true) {
+        if (self.padBucketHeight() === true) {
             var bucketSizes = {};
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
@@ -1118,15 +1134,14 @@ var app = new(function() {
             vaultSubClass.css("min-height", notVaultSubClass.height());
             vaultSubClass.css("visibility", "hidden");
         }
-    }
+    };
 
     this.globalClickHandler = function(e) {
         if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
             $("#move-popup").hide();
             tgd.activeElement = null;
         }
-    }
-
+    };
 
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
@@ -1145,7 +1160,7 @@ var app = new(function() {
                 width: $characterBox.parent().width() + 'px'
             });
         });
-    }
+    };
 
     this.readBungieCookie = function(ref, loop) {
         //tgd.localLog( typeof ref.executeScript );
@@ -1164,8 +1179,7 @@ var app = new(function() {
         } catch (e) {
             tgd.localLog(e);
         }
-
-    }
+    };
 
     this.openHiddenBungieWindow = function() {
         window.ref = window.open("https://www.bungie.net/en/User/Profile", '_blank', 'location=no,hidden=yes');
@@ -1173,7 +1187,7 @@ var app = new(function() {
             //BootstrapDialog.alert("loadstop hidden");
             self.readBungieCookie(ref, 1);
         });
-    }
+    };
 
     this.findReference = function(item, callback) {
         if (item && item.id > 0) {
@@ -1188,14 +1202,14 @@ var app = new(function() {
                     });
                     callback(foundItem[0]);
                 }
-            }
+            };
             var allItems = _.flatten(_.map(app.characters(), function(character) {
                 subscriptions.push(character.items.subscribe(newItemHandler));
-                return character.items()
+                return character.items();
             }));
             newItemHandler(allItems);
         }
-    }
+    };
 
     this.clearCookies = function() {
         window.localStorage.setItem("bungie_cookies", "");
@@ -1204,7 +1218,7 @@ var app = new(function() {
                 tgd.localLog("Cookies cleared");
             });
         } catch (e) {}
-    }
+    };
 
     this.openBungieWindow = function(type) {
         return function() {
@@ -1257,8 +1271,8 @@ var app = new(function() {
                     }
                 }, 100);
             }
-        }
-    }
+        };
+    };
 
     this.scrollTo = function(distance, callback) {
         if (isWindowsPhone) {
@@ -1269,13 +1283,13 @@ var app = new(function() {
                 scrollTop: distance
             }, 300, "swing", callback);
         }
-    }
+    };
 
     this.scrollToActiveIndex = function(newIndex) {
         var index = $(".quickScrollView img").filter(function() {
-            var className = $(this).attr("class"),
-                className = _.isUndefined(className) ? "" : className;
-            return className.indexOf("activeProfile") > -1
+            var classAttr = $(this).attr("class"),
+                className = _.isUndefined(classAttr) ? "" : classAttr;
+            return className.indexOf("activeProfile") > -1;
         }).index(".quickScrollView img");
         self.scrollTo($(".profile:eq(" + index + ")").position().top - 50, function() {
             $.toaster({
@@ -1284,22 +1298,21 @@ var app = new(function() {
                 message: tgd.DestinyViews[newIndex]
             });
         });
-
-    }
+    };
 
     this.shiftViewLeft = function() {
         var newIndex = parseInt(self.activeView()) - 1;
         if (newIndex < 0) newIndex = 3;
         self.activeView(newIndex);
         self.scrollToActiveIndex(newIndex);
-    }
+    };
 
     this.shiftViewRight = function() {
         var newIndex = parseInt(self.activeView()) + 1;
         if (newIndex == 4) newIndex = 0;
         self.activeView(newIndex);
         self.scrollToActiveIndex(newIndex);
-    }
+    };
 
     this.requests = {};
     var id = -1;
@@ -1314,7 +1327,7 @@ var app = new(function() {
                 callback(response);
             }
         });
-    }
+    };
 
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
@@ -1323,9 +1336,9 @@ var app = new(function() {
                 action: "save",
                 membershipId: parseFloat(self.activeUser().user.membershipId),
                 loadouts: ko.toJSON(self.loadouts())
-            }
+            };
             self.apiRequest(params, function(results) {
-                if (_includeMessage == true) {
+                if (_includeMessage === true) {
                     if (results.success) {
                         $.toaster({
                             priority: 'success',
@@ -1338,15 +1351,15 @@ var app = new(function() {
         } else {
             BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
         }
-    }
+    };
 
     this.loadLoadouts = function() {
-        if (self.loadouts().length == 0) {
+        if (self.loadouts().length === 0) {
             var _loadouts = window.localStorage.getItem("loadouts");
             if (!_.isEmpty(_loadouts)) {
                 _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
                     return new Loadout(loadout);
-                })
+                });
             } else {
                 _loadouts = [];
             }
@@ -1385,16 +1398,16 @@ var app = new(function() {
 				}*/
             });
         }
-    }
+    };
 
     this.showWhatsNew = function(callback) {
-        var container = $("<div></div>")
+        var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
         container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
-        (new tgd.dialog).title(self.activeText().whats_new_title).content(container).show(false, function() {
+        (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
-        })
-    }
+        });
+    };
 
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
@@ -1406,7 +1419,7 @@ var app = new(function() {
                 });
             }
         }
-    }
+    };
 
     this.normalizeSingle = function(description, characters, usingbatchMode, callback) {
         var itemTotal = 0;
@@ -1431,7 +1444,7 @@ var app = new(function() {
         //tgd.localLog(characterStatus);
 
         if (itemTotal < characterStatus.length) {
-            if (usingbatchMode == false) {
+            if (usingbatchMode === false) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
@@ -1457,7 +1470,7 @@ var app = new(function() {
             return function() {
                 return _.filter(characterStatus, function(c) {
                     return c.needed < 0;
-                })[0]
+                })[0];
             };
         })();
 
@@ -1470,16 +1483,16 @@ var app = new(function() {
         })();
 
         /* bail early conditions */
-        if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)) {
+        if ((typeof getNextSurplusCharacter() === "undefined") || (typeof getNextShortageCharacter() === "undefined")) {
             //tgd.localLog("all items normalized as best as possible");
-            if (usingbatchMode == false) {
+            if (usingbatchMode === false) {
                 $.toaster({
                     priority: 'success',
                     title: 'Result',
                     message: description + " already normalized as best as possible."
                 });
             }
-            if (callback !== undefined) {
+            if (typeof callback !== "undefined") {
                 callback();
             }
             return;
@@ -1499,9 +1512,9 @@ var app = new(function() {
             var surplusCharacter = getNextSurplusCharacter();
             var shortageCharacter = getNextShortageCharacter();
 
-            if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
+            if ((typeof surplusCharacter === "undefined") || (typeof shortageCharacter === "undefined")) {
                 //tgd.localLog("all items normalized as best as possible");
-                if (usingbatchMode == false) {
+                if (usingbatchMode === false) {
                     //self.refresh();
                     $.toaster({
                         priority: 'success',
@@ -1554,7 +1567,7 @@ var app = new(function() {
                     });
                 });
             }
-        }
+        };
 
         var messageStr = "<div><div>Normalize " + description + "</div><ul>";
         for (i = 0; i < characterStatus.length; i++) {
@@ -1564,7 +1577,7 @@ var app = new(function() {
         }
         messageStr = messageStr.concat("</ul></div>");
 
-        if (usingbatchMode == false) {
+        if (usingbatchMode === false) {
             var dialogItself = (new tgd.dialog({
                 message: messageStr,
                 buttons: [{
@@ -1584,7 +1597,7 @@ var app = new(function() {
         } else {
             nextTransfer(callback);
         }
-    }
+    };
 
     this.normalizeAll = function(bucketType) {
         //tgd.localLog("normalizeAll(" + bucketType + ")");
@@ -1608,7 +1621,7 @@ var app = new(function() {
             var nextNormalize = function() {
                 var description = getNextDescription();
 
-                while (description !== undefined) {
+                while (typeof description !== "undefined") {
                     if ((description !== "Hadronic Essence") &&
                         (description !== "Sapphire Wire") &&
                         (description !== "Plasteel Plating")) {
@@ -1618,7 +1631,7 @@ var app = new(function() {
                     }
                 }
 
-                if (description == undefined) {
+                if (typeof description === "undefined") {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
@@ -1629,13 +1642,13 @@ var app = new(function() {
 
                 // normalizeSingle = function(description, characters, usingbatchMode, callback)
                 self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
-            }
+            };
 
             nextNormalize();
-        }
+        };
 
         this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
-    }
+    };
 
     this.selectMultiCharacters = function(title, description, callback) {
         var selectedStatus = [];
@@ -1652,7 +1665,7 @@ var app = new(function() {
                 }));
                 var charButtonClicked = function(self, id) {
                     selectedStatus[id] = !selectedStatus[id];
-                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                    self.find('img').css('border', (selectedStatus[id] === true) ? "solid 3px yellow" : "none");
                 };
                 $.each(app.orderedCharacters(), function(i, val) {
                     var id = val.id;
@@ -1668,7 +1681,7 @@ var app = new(function() {
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
                     var characters = _.filter(app.orderedCharacters(), function(c) {
-                        return selectedStatus[c.id] == true;
+                        return selectedStatus[c.id] === true;
                     });
                     if (characters.length <= 1) {
                         BootstrapDialog.alert("Need to select two or more characters.");
@@ -1684,7 +1697,7 @@ var app = new(function() {
                 }
             }]
         })).title(title).show(true);
-    }
+    };
 
     this.setVaultTo = function(pos) {
         return function() {
@@ -1697,11 +1710,11 @@ var app = new(function() {
             } else {
                 return false;
             }
-        }
-    }
+        };
+    };
 
     this.isVaultAt = function(pos) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             var vault = _.findWhere(self.characters(), {
                 id: "Vault"
             });
@@ -1717,20 +1730,20 @@ var app = new(function() {
                 method: "notifyWhenChangesStop"
             }
         });
-    }
+    };
 
-    this.columnMode = ko.computed(function() {
+    this.columnMode = ko.pureComputed(function() {
         return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
     });
 
     this.setColumns = function(type, input) {
         return function() {
             self[type + "Column"](12 / input.value);
-        }
-    }
+        };
+    };
 
     this.btnActive = function(type, input) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
         });
     };
@@ -1745,14 +1758,14 @@ var app = new(function() {
                 self.itemDefs("");
             }
         }
-    }
+    };
 
     this.generateStatic = function() {
         var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background", "stats"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
             "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
             "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
-        ]
+        ];
         var profiles = _.map(self.characters(), function(profile) {
             var newProfile = {};
             _.each(profileKeys, function(key) {
@@ -1768,7 +1781,7 @@ var app = new(function() {
             return newProfile;
         });
         return JSON.stringify(profiles);
-    }
+    };
 
     this.downloadLocale = function(locale, version) {
         var bungie_code = _.findWhere(tgd.languages, {
@@ -1790,7 +1803,7 @@ var app = new(function() {
                 window._itemDefs = data;
             }
         });
-    }
+    };
 
     this.onLocaleChange = function() {
         var locale = self.currentLocale();
@@ -1802,7 +1815,7 @@ var app = new(function() {
             tgd.localLog("downloading language pack");
             self.downloadLocale(locale, tgd.version);
         }
-    }
+    };
 
     this.initLocale = function(callback) {
         self.locale.subscribe(self.onLocaleChange);
@@ -1821,7 +1834,7 @@ var app = new(function() {
                 }
             });
         }
-    }
+    };
 
     /* This function can be used in the future to localize header names */
     this.getBucketName = function(bucketType) {
@@ -1830,19 +1843,19 @@ var app = new(function() {
         } else {
             return bucketType;
         }
-    }
+    };
 
     this.dndBeforeMove = function(arg) {
         if (arg && arg.targetParent && arg.targetParent.length > 0) {
             arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
         }
-    }
+    };
 
     this.dndAfterMove = function(arg) {
         var destination = _.filter(arg.targetParent, function(item) {
             return item.character.id != arg.item.character.id;
         });
-        if (destination.length == 0) {
+        if (destination.length === 0) {
             destination = _.filter(arg.targetParent, function(item) {
                 return item._id != arg.item._id;
             });
@@ -1859,15 +1872,19 @@ var app = new(function() {
                 arg.item[action](destination.character.id);
             }
         }
-    }
+    };
 
     this.init = function() {
-
+        $.idleTimer(1000 * 60 * 30);
+        $(document).on("idle.idleTimer", function(event, elem, obj) {
+            clearInterval(self.refreshInterval);
+        });
+        $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
+            self.refreshHandler();
+        });
         _.each(tgd.DestinyLayout, function(layout) {
             self.allLayouts.push(new Layout(layout));
         });
-
-
         self.initLocale();
         if (_.isUndefined(window._itemDefs) || _.isUndefined(window._perkDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
@@ -1925,7 +1942,7 @@ var app = new(function() {
             }
         }
 
-        var dragAndDropEnabled = self.padBucketHeight() == true && self.dragAndDrop() == true;
+        var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
         ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
         ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
         if (dragAndDropEnabled) {
@@ -1937,7 +1954,7 @@ var app = new(function() {
                     $ZamTooltips.hide();
                 },
                 stop: function() {
-                    if (self.tooltipsEnabled() == true)
+                    if (self.tooltipsEnabled() === true)
                         $ZamTooltips.isEnabled = true;
                 },
                 over: function() {
@@ -1965,7 +1982,7 @@ var app = new(function() {
                 },
                 cursor: "pointer",
                 appendTo: "body"
-            }
+            };
         }
 
         if (isMobile && isEmptyCookie) {
@@ -1977,7 +1994,7 @@ var app = new(function() {
             });
         } else {
             setTimeout(function() {
-                self.loadData()
+                self.loadData();
             }, isChrome || isMobile ? 1 : 5000);
         }
         $("form").bind("submit", false);
@@ -1993,22 +2010,24 @@ var app = new(function() {
         var weaponKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
             if (tgd.DestinyWeaponPieces.indexOf(name) > -1) return parseInt(key);
         }), function(key) {
-            return key > 0
+            return key > 0;
         });
         _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
-            return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+            return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
         var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
             if (tgd.DestinyArmorPieces.indexOf(name) > -1) return parseInt(key);
         }), function(key) {
-            return key > 0
+            return key > 0;
         });
         _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
-            return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+            return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
         ko.applyBindings(self);
-    }
-});
+    };
+};
+
+window.app = new app();
 
 window.zam_tooltips = {
     addIcons: false,

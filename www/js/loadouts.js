@@ -6,7 +6,7 @@
 	    });
 	    var _doEquip = (model && typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
 	    this.doEquip = ko.observable(_doEquip);
-	}
+	};
 
 	var Loadout = function(model) {
 	    var self = this;
@@ -17,7 +17,7 @@
 	    this.name = self.name || "";
 	    this.ids = ko.observableArray();
 	    this.generics = ko.observableArray();
-	    this.items = ko.computed(function() {
+	    this.items = ko.pureComputed(function() {
 	        var _items = [];
 	        _.each(self.ids(), function(equip) {
 	            if (equip) {
@@ -61,9 +61,9 @@
 	            if (!foundItem) return false;
 
 	            if (item.bucketType == "Subclasses" || foundItem.armorIndex != -1) {
-	                return item.doEquip() == true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
+	                return item.doEquip() === true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
 	            }
-	            return item.doEquip() == true && item._id != loadoutItem.id;
+	            return item.doEquip() === true && item._id != loadoutItem.id;
 	        });
 	        /* if the item being equipped is an exotic then the other exotics become unequipped */
 	        if (item.tierType == 6 && item.doEquip()) {
@@ -88,7 +88,7 @@
 	            }).doEquip(true);
 	        }
 	        return true;
-	    }
+	    };
 
 	    /* loader/migrate code */
 	    if (model && model.ids && model.ids.length > 0) {
@@ -118,7 +118,7 @@
 	        }
 	    }
 
-	}
+	};
 
 	Loadout.prototype = {
 	    toJSON: function() {
@@ -176,8 +176,8 @@
 	    swapItems: function(swapArray, targetCharacterId, callback) {
 	        var self = this;
 	        var onlyEquipped = function(item) {
-	            return item.doEquip() == true;
-	        }
+	            return item.doEquip() === true;
+	        };
 	        tgd.autoTransferStacks = true;
 	        var itemIndex = -1,
 	            increments = parseInt(Math.round(95 / (1.0 * swapArray.length))),
@@ -215,7 +215,7 @@
 	                } else {
 	                    complete();
 	                }
-	            }
+	            };
 	            var transferSwapItemToVault = function(complete) {
 	                swapItem = pair.swapItem;
 	                tgd.localLog("^^^^^^^^^^" + swapItem.character.id + " transferSwapItemToVault " + swapItem.description);
@@ -233,9 +233,9 @@
 	                            var swapAndTargetIDs = _.flatten(_.map(swapArray, function(pair) {
 	                                var tmp = [];
 	                                if (pair.swapItem)
-	                                    tmp.push(pair.swapItem._id)
+	                                    tmp.push(pair.swapItem._id);
 	                                if (pair.targetItem)
-	                                    tmp.push(pair.targetItem._id)
+	                                    tmp.push(pair.targetItem._id);
 	                                return tmp;
 	                            }));
 	                            tgd.localLog("swapAndTargetIDs: " + swapAndTargetIDs);
@@ -268,14 +268,14 @@
 	                        }
 	                    });
 	                }
-	            }
+	            };
 	            var transferTargetItemToDestination = function(complete) {
 	                if (typeof targetItem == "undefined" && pair.targetItem)
 	                    targetItem = pair.targetItem;
 	                if (targetItem) {
 	                    var action = (_.where(self.ids(), {
 	                        id: targetItem._id
-	                    }).filter(onlyEquipped).length == 0) ? "store" : "equip";
+	                    }).filter(onlyEquipped).length === 0) ? "store" : "equip";
 	                    tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
 	                    if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
 	                        tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
@@ -298,41 +298,41 @@
 	                } else {
 	                    complete();
 	                }
-	            }
+	            };
 	            var transferSwapItemToDestination = function(complete) {
-	                    if (typeof swapItem == "undefined" && pair.swapItem)
-	                        swapItem = pair.swapItem;
-	                    if (swapItem) {
-	                        tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
-	                        if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
-	                            tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
-	                            complete();
-	                        } else {
-	                            swapItem.store(targetOwner, complete);
-	                        }
-	                    } else {
+	                if (typeof swapItem == "undefined" && pair.swapItem)
+	                    swapItem = pair.swapItem;
+	                if (swapItem) {
+	                    tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+	                    if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
+	                        tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
 	                        complete();
+	                    } else {
+	                        swapItem.store(targetOwner, complete);
 	                    }
+	                } else {
+	                    complete();
 	                }
-	                /* this assumes there is a swap item and a target item*/
+	            };
+	            /* this assumes there is a swap item and a target item*/
 	            var startSwapping = function(finish) {
-	                    tgd.localLog("startSwapping ");
-	                    transferTargetItemToVault(function() {
-	                        tgd.localLog("finished transferTargetItemToVault at ");
-	                        transferSwapItemToVault(function() {
-	                            tgd.localLog("finished transferSwapItemToVault at ");
-	                            transferTargetItemToDestination(function() {
-	                                tgd.localLog("finished transferTargetItemToDestination item to vault at ");
-	                                transferSwapItemToDestination(function() {
-	                                    tgd.localLog("*********finished transferSwapItemToDestination swap items **************");
-	                                    if (finish) finish();
-	                                    else transferNextItem();
-	                                });
+	                tgd.localLog("startSwapping ");
+	                transferTargetItemToVault(function() {
+	                    tgd.localLog("finished transferTargetItemToVault at ");
+	                    transferSwapItemToVault(function() {
+	                        tgd.localLog("finished transferSwapItemToVault at ");
+	                        transferTargetItemToDestination(function() {
+	                            tgd.localLog("finished transferTargetItemToDestination item to vault at ");
+	                            transferSwapItemToDestination(function() {
+	                                tgd.localLog("*********finished transferSwapItemToDestination swap items **************");
+	                                if (finish) finish();
+	                                else transferNextItem();
 	                            });
 	                        });
 	                    });
-	                }
-	                /* this assumes there is a swap item and a target item*/
+	                });
+	            };
+	            /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
 	                if (typeof item == "undefined") {
@@ -345,7 +345,7 @@
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
-	                    return layout.bucketTypes.indexOf(bucketType) > -1
+	                    return layout.bucketTypes.indexOf(bucketType) > -1;
 	                })[0];
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
 	                //TODO: TypeError: undefined is not an object (evaluating 'vault.items')
@@ -407,7 +407,7 @@
 	                            tgd.localLog("********* temp items moved back, finished, transferNextItem ********* ");
 	                            transferNextItem();
 	                        }
-	                    }
+	                    };
 	                    var done = function() {
 	                        preCount++;
 	                        tgd.localLog("current: " + preCount + " total: " + tmpItems.length + " vault size: ");
@@ -420,13 +420,12 @@
 	                                });
 	                            });
 	                        }
-	                    }
+	                    };
 	                    _.each(tmpItems, function(pair) {
 	                        pair.item.store(pair.character.id, done);
 	                    });
 	                }
-
-	            }
+	            };
 	            if (pair) {
 	                if (typeof pair.swapItem !== "undefined") {
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
@@ -448,7 +447,7 @@
 	                if (callback)
 	                    callback();
 	            }
-	        }
+	        };
 	        app.activeLoadout(new Loadout());
 	        app.loadoutMode(false);
 	        transferNextItem();
@@ -457,7 +456,7 @@
 	transfer: function(targetCharacterId){
 		var self = this;		
 		var subscription = app.loadingUser.subscribe(function(newValue){
-			if (newValue == false){
+			if (newValue === false){
 				self.move( targetCharacterId );
 				subscription.dispose();
 			}
@@ -482,20 +481,21 @@
 	            return function(otherItem) {
 	                /* if the otherItem is not part of the sourceBucket then it can go */
 	                //tgd.localLog(otherItem.description + " is in " + sourceBucketIds);
-	                if (sourceBucketIds.indexOf(otherItem._id) == -1 && itemFound == false) {
+	                if (sourceBucketIds.indexOf(otherItem._id) == -1 && itemFound === false) {
 	                    itemFound = true;
 	                    sourceBucketIds.push(otherItem._id);
 	                    return otherItem;
 	                }
-	            }
+	            };
 	        };
 	        var masterSwapArray = [],
+	            swapItem,
 	            sourceItems = self.items();
 	        if (sourceItems.length > 0) {
 	            var targetList = targetCharacter.items();
 	            var sourceGroups = _.groupBy(sourceItems, 'bucketType');
 	            var targetGroups = _.groupBy(targetList, 'bucketType');
-	            var masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key) {
+	            masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key) {
 	                var sourceBucket = sourceGroups[key];
 	                var targetBucket = targetGroups[key];
 	                var swapArray = [];
@@ -508,7 +508,7 @@
 	                                bucketType: key
 	                            }).length;
 	                            maxBucketSize = _.filter(tgd.DestinyLayout, function(layout) {
-	                                return layout.bucketTypes.indexOf(key) > -1
+	                                return layout.bucketTypes.indexOf(key) > -1;
 	                            })[0].counts[0];
 	                        }
 	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
@@ -527,13 +527,13 @@
 	                                        _id: item._id
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
-	                                    if (item.doEquip() == true) {
+	                                    if (item.doEquip() === true) {
 	                                        return {
 	                                            targetItem: item,
 	                                            description: item.description + app.activeText().loadouts_to_equip,
 	                                            actionIcon: "assets/to-equip.png",
 	                                            swapIcon: targetCharacterIcon
-	                                        }
+	                                        };
 	                                    }
 	                                    /* then return an object indicating to do nothing */
 	                                    else {
@@ -542,12 +542,12 @@
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
-	                                        }
+	                                        };
 	                                    }
 	                                } else {
 	                                    var itemFound = false;
 	                                    if (item.bucketType == "Shader") {
-	                                        var swapItem = _.filter(targetBucket, function(otherItem) {
+	                                        swapItem = _.filter(targetBucket, function(otherItem) {
 	                                            return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader" && sourceBucketIds.indexOf(otherItem._id) == -1;
 	                                        })[0];
 	                                    } else {
@@ -563,14 +563,14 @@
 	                                        var candidates = _.filter(targetBucket, function(otherItem) {
 	                                            var index = sourceBucketHashes.indexOf(otherItem.id);
 	                                            tgd.localLog(index + " candidate: " + otherItem.description);
-	                                            return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() == false
+	                                            return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() === false
 	                                        });
 	                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
-	                                        var swapItem = _.filter(_.where(candidates, {
+	                                        swapItem = _.filter(_.where(candidates, {
 	                                            type: item.type
 	                                        }), getFirstItem(sourceBucketIds, itemFound));
 	                                        tgd.localLog("1.swapItem: " + swapItem.length);
-	                                        if (swapItem.length == 0) {
+	                                        if (swapItem.length === 0) {
 	                                            //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
 	                                            tgd.localLog(targetBucket);
 	                                        }
@@ -590,14 +590,14 @@
 	                                                targetIcon: item.icon,
 	                                                actionIcon: "assets/no-transfer.png",
 	                                                swapIcon: ownerIcon
-	                                            }
+	                                            };
 	                                        }
 	                                        return {
 	                                            targetItem: item,
 	                                            swapItem: swapItem,
 	                                            description: item.description + app.activeText().loadouts_swap + swapItem.description,
 	                                            actionIcon: "assets/swap.png"
-	                                        }
+	                                        };
 	                                    } else {
 	                                        tgd.localLog("to transfer: " + item.description);
 	                                        return {
@@ -605,7 +605,7 @@
 	                                            description: item.description + app.activeText().loadouts_to_transfer,
 	                                            swapIcon: targetCharacterIcon,
 	                                            actionIcon: "assets/to-transfer.png"
-	                                        }
+	                                        };
 	                                    }
 	                                }
 	                            });
@@ -619,13 +619,13 @@
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
 	                                    tgd.localLog(item.description + " item is already in target bucket, doEquip? " + item.doEquip());
-	                                    if (item.doEquip() == true) {
+	                                    if (item.doEquip() === true) {
 	                                        return {
 	                                            targetItem: item,
 	                                            description: item.description + app.activeText().loadouts_to_equip,
 	                                            actionIcon: "assets/to-equip.png",
 	                                            swapIcon: targetCharacterIcon
-	                                        }
+	                                        };
 	                                    }
 	                                    /* then return an object indicating to do nothing */
 	                                    else {
@@ -634,7 +634,7 @@
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
-	                                        }
+	                                        };
 	                                    }
 	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType && targetCharacterId != "Vault")) {
 	                                    tgd.localLog(item.description + " wont transfer sub classes ");
@@ -643,15 +643,15 @@
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
-	                                    }
+	                                    };
 	                                } else {
-	                                    if (item.doEquip() == true) {
+	                                    if (item.doEquip() === true) {
 	                                        return {
 	                                            targetItem: item,
 	                                            description: item.description + app.activeText().loadouts_to_moveequip,
 	                                            actionIcon: "assets/to-equip.png",
 	                                            swapIcon: targetCharacterIcon
-	                                        }
+	                                        };
 	                                    } else {
 	                                        tgd.localLog("loadouts_to_transfer: " + item.description);
 	                                        return {
@@ -659,7 +659,7 @@
 	                                            description: item.description + app.activeText().loadouts_to_transfer,
 	                                            actionIcon: "assets/to-transfer.png",
 	                                            swapIcon: targetCharacterIcon
-	                                        }
+	                                        };
 	                                    }
 	                                }
 	                            });
@@ -671,7 +671,7 @@
 	                                description: item.description + app.activeText().loadouts_to_transfer,
 	                                actionIcon: "assets/to-transfer.png",
 	                                swapIcon: targetCharacterIcon
-	                            }
+	                            };
 	                        });
 	                    }
 	                }
@@ -709,7 +709,7 @@
 	            if (item) {
 	                var items = targetCharacter.get(item.bucketType);
 	                var candidates = _.filter(items, function(candidate) {
-	                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2
+	                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2;
 	                });
 	                if (candidates.length > 0) {
 	                    _.each(masterSwapArray, function(pair) {
@@ -758,16 +758,16 @@
 	                                $(".donateLink").click(app.showDonate);
 	                            }, 1000);
 	                            app.dynamicMode(false);
-	                            dialog.close()
+	                            dialog.close();
 	                        });
 	                    }
 	                }, {
 	                    label: app.activeText().cancel,
 	                    action: function(dialog) {
-	                        dialog.close()
+	                        dialog.close();
 	                    }
 	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
 	        }
 	    }
-	}
+	};

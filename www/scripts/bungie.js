@@ -3,6 +3,7 @@ var bungie = (function(cookieString, complete) {
 
     var _token,
         id = 0,
+        active,
         domain = 'bungie.net',
         url = 'https://www.' + domain + '/',
         apikey = '5cae9cdee67a42848025223b4e61f929'; //this one is linked to dasilva333
@@ -299,7 +300,15 @@ var bungie = (function(cookieString, complete) {
             complete: callback
         });
     }
-
+    this.character = function(characterId, callback) {
+        self.request({
+            route: '/Destiny/' + active.type +
+                '/Account/' + active.membership +
+                '/Character/' + characterId,
+            method: 'GET',
+            complete: callback
+        });
+    }
     this.search = function(activeSystem, callback) {
         this.setsystem(activeSystem);
         if (active && active.type) {
