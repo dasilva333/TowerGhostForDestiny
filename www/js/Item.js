@@ -236,7 +236,7 @@ Item.prototype = {
             return true;
         }
         //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
-        else if (type == "Planetary Mats" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
+        else if (type == "Planetary Resources" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
             return true;
         }
         //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
