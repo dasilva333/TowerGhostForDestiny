@@ -1,9 +1,3 @@
-function average(arr) {
-    return _.reduce(arr, function(memo, num) {
-        return memo + num;
-    }, 0) / arr.length;
-}
-
 var Item = function(model, profile, ignoreDups) {
     var self = this;
 
@@ -15,6 +9,7 @@ var Item = function(model, profile, ignoreDups) {
 
     this.init(model, ignoreDups);
 
+    this.isDuplicate = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.isEquippable = function(avatarId) {
@@ -94,9 +89,6 @@ Item.prototype = {
                 icon: tgd.dataDir + info.icon,
                 isUnique: false
             };
-            if (ignoreDups == "undefined" || ignoreDups === false) {
-                tgd.duplicates.push(item.itemHash);
-            }
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
             }
@@ -159,7 +151,7 @@ Item.prototype = {
                 });
             }
             if (item.objectives.length > 0) {
-                var progress = (average(_.map(item.objectives, function(objective) {
+                var progress = (tgd.average(_.map(item.objectives, function(objective) {
                     return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
@@ -269,11 +261,11 @@ Item.prototype = {
         var $parent = app,
             self = this;
 
+        //console.time("isVisible");
         if (typeof self.id == "undefined") {
             return false;
         }
-        var searchFilter = $parent.searchKeyword() === '' || self.hasPerkSearch($parent.searchKeyword()) ||
-            ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
+        var searchFilter = $parent.searchKeyword() === '' || ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
         var dmgFilter = true;
@@ -285,6 +277,7 @@ Item.prototype = {
         var setFilter = true;
         if (self.armorIndex > -1 || self.weaponIndex > -1) {
             setFilter = $parent.setFilter().length === 0 || $parent.setFilter().indexOf(self.id) > -1;
+            searchFilter = searchFilter || self.hasPerkSearch($parent.searchKeyword());
             if (self.weaponIndex > -1) {
                 dmgFilter = $parent.dmgFilter().length === 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
                 weaponFilter = $parent.weaponFilter() === 0 || $parent.weaponFilter() == self.typeName;
@@ -299,12 +292,10 @@ Item.prototype = {
         } else {
             generalFilter = $parent.generalFilter() === 0 || self.hasGeneral($parent.generalFilter());
         }
-        dupes = _.filter(tgd.duplicates(), function(id) {
-            return id == self.id;
-        }).length;
-        showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && dupes > 1);
+        showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
 
         var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
+        //console.timeEnd("isVisible");
         /*if ( self.description == "Red Death") {
 			tgd.localLog( "searchFilter: " + searchFilter);
 			tgd.localLog( "dmgFilter: " + dmgFilter);

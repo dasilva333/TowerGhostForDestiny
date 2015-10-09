@@ -711,6 +711,18 @@ var app = function() {
     this.toggleDuplicates = function(model, event) {
         self.toggleBootstrapMenu();
         self.showDuplicate(!self.showDuplicate());
+        if (self.showDuplicate()) {
+            var items = _.flatten(_.map(app.characters(), function(avatar) {
+                return avatar.items();
+            }));
+            var ids = _.pluck(items, 'id');
+            _.each(items, function(item) {
+                var itemCount = _.filter(ids, function(id) {
+                    return id == item.id;
+                }).length;
+                item.isDuplicate(itemCount > 1);
+            });
+        }
     };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();

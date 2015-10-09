@@ -3,6 +3,7 @@ var bungie = (function(cookieString, complete) {
 
     var _token,
         id = 0,
+        active,
         domain = 'bungie.net',
         url = 'https://www.' + domain + '/',
         apikey = '5cae9cdee67a42848025223b4e61f929'; //this one is linked to dasilva333

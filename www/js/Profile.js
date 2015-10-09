@@ -1,26 +1,7 @@
-function cartesianProductOf(x) {
-    return _.reduce(x, function(a, b) {
-        return _.flatten(_.map(a, function(x) {
-            return _.map(b, function(y) {
-                return x.concat([y]);
-            });
-        }), true);
-    }, [
-        []
-    ]);
-}
-
-function sum(arr) {
-    return _.reduce(arr, function(memo, num) {
-        return memo + num;
-    }, 0);
-}
-
 function Profile(character) {
     var self = this;
 
-    this.profile = character;
-    this.id = self.profile.characterBase.characterId;
+    this.id = character.characterBase.characterId;
     this.order = ko.observable(character.index);
     this.icon = ko.observable("");
     this.gender = ko.observable("");
@@ -60,11 +41,11 @@ function Profile(character) {
     this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
     this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
-    this.init(character.items);
+    this.init(character);
 }
 
 Profile.prototype = {
-    init: function(rawItems) {
+    init: function(profile) {
         var self = this;
 
         if (self.id == "Vault") {
@@ -73,10 +54,10 @@ Profile.prototype = {
             self.gender("Tower");
             self.classType("Vault");
         } else {
-            self.updateCharacter(self.profile);
+            self.updateCharacter(profile);
         }
         var processedItems = [];
-        _.each(self.profile.items, function(item) {
+        _.each(profile.items, function(item) {
             var processedItem = new Item(item, self);
             if ("id" in processedItem) processedItems.push(processedItem);
         });
@@ -168,7 +149,7 @@ Profile.prototype = {
                 var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
                 return value;
             });
-            var sumLightGear = sum(primaryStatsGear);
+            var sumLightGear = tgd.sum(primaryStatsGear);
             var powerLevel = Math.floor(sumLightGear);
             return powerLevel;
         } else {
@@ -470,11 +451,11 @@ Profile.prototype = {
             }
         });
         var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
-            var score = sum(_.map(combo.sumSet, function(value, key) {
+            var score = tgd.sum(_.map(combo.sumSet, function(value, key) {
                 var result = Math.floor(value / 60);
                 return result > 5 ? 5 : result;
             }));
-            combo.sum = sum(_.values(combo.sumSet));
+            combo.sum = tgd.sum(_.values(combo.sumSet));
             var subScore = (combo.sum / 1000);
             combo.score = score + subScore;
             return combo;
@@ -486,7 +467,8 @@ Profile.prototype = {
         var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
         var sets = [],
             bestSets = [],
-            backups = [];
+            backups = [],
+            candidates;
         var character = this;
 
         console.time("finding candidates");
@@ -514,14 +496,14 @@ Profile.prototype = {
             _.each(candidates, function(items) {
                 subSets.push(items);
             });
-            var combos = cartesianProductOf(subSets);
+            var combos = tgd.cartesianProductOf(subSets);
             var sums = _.map(combos, function(combo) {
                 var tmp = character.joinStats(combo);
-                var score = sum(_.map(tmp, function(value, key) {
+                var score = tgd.sum(_.map(tmp, function(value, key) {
                     var result = Math.floor(value / 60);
                     return result > 5 ? 5 : result;
                 }));
-                var subScore = (sum(_.values(tmp)) / 1000);
+                var subScore = (tgd.sum(_.values(tmp)) / 1000);
                 return score + subScore;
             });
             var highestScore = _.max(sums);
@@ -538,6 +520,8 @@ Profile.prototype = {
         var character = this;
         var sets = [];
         var backups = [];
+        var primaryStats;
+        var candidates;
 
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
@@ -601,7 +585,7 @@ Profile.prototype = {
             });
         });
         var sumSets = _.map(sets, function(set) {
-            return sum(_.map(set, function(item) {
+            return tgd.sum(_.map(set, function(item) {
                 return item.getValue(type);
             }));
         });
