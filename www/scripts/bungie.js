@@ -299,7 +299,15 @@ var bungie = (function(cookieString, complete) {
             complete: callback
         });
     }
-
+    this.character = function(characterId, callback) {
+        self.request({
+            route: '/Destiny/' + active.type +
+                '/Account/' + active.membership +
+                '/Character/' + characterId,
+            method: 'GET',
+            complete: callback
+        });
+    }
     this.search = function(activeSystem, callback) {
         this.setsystem(activeSystem);
         if (active && active.type) {

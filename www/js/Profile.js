@@ -23,6 +23,12 @@ function Profile(character) {
     this.id = self.profile.characterBase.characterId;
     this.order = ko.observable(character.index);
     this.icon = ko.observable("");
+    this.gender = ko.observable("");
+    this.classType = ko.observable("");
+    this.level = ko.observable("");
+    this.stats = ko.observable("");
+    this.race = ko.observable("");
+    this.percentToNextLevel = ko.observable("");
     this.background = ko.observable("");
     this.items = ko.observableArray().extend({
         rateLimit: {
@@ -32,7 +38,7 @@ function Profile(character) {
     });
     this.uniqueName = "";
     this.classLetter = "";
-    this.race = "";
+
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
     this.weapons = ko.pureComputed(this._weapons, this);
@@ -45,6 +51,8 @@ function Profile(character) {
     this.equippedGear = ko.pureComputed(this._equippedGear, this);
     this.equippedStats = ko.pureComputed(this._equippedStats, this);
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
+    this.classLetter = ko.pureComputed(this._classLetter, this);
+    this.uniqueName = ko.pureComputed(this._uniqueName, this);
     this.iconBG = ko.pureComputed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
@@ -62,32 +70,11 @@ Profile.prototype = {
         if (self.id == "Vault") {
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
             self.icon("assets/vault_icon.jpg");
-
-            self.gender = "Tower";
-            self.classType = "Vault";
-
-            self.level = "";
-            self.stats = "";
-            self.percentToNextLevel = "";
-            self.race = "";
+            self.gender("Tower");
+            self.classType("Vault");
         } else {
-            self.background(app.makeBackgroundUrl(tgd.dataDir + self.profile.backgroundPath, true));
-            self.icon(tgd.dataDir + self.profile.emblemPath);
-
-            self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
-            self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
-
-
-            self.level = self.profile.characterLevel;
-            self.stats = self.profile.characterBase.stats;
-            if (!("STAT_LIGHT" in self.stats))
-                self.stats.STAT_LIGHT = 0;
-            self.percentToNextLevel = self.profile.percentToNextLevel;
-            self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
+            self.updateCharacter(self.profile);
         }
-        self.classLetter = self.classType[0].toUpperCase();
-        self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
-
         var processedItems = [];
         _.each(self.profile.items, function(item) {
             var processedItem = new Item(item, self);
@@ -96,6 +83,32 @@ Profile.prototype = {
         self.items(processedItems);
         if (self.id != "Vault") {
             self._reloadBucket(self);
+        }
+    },
+    updateCharacter: function(profile) {
+        var self = this;
+        self.background(app.makeBackgroundUrl(tgd.dataDir + profile.backgroundPath, true));
+        self.icon(tgd.dataDir + profile.emblemPath);
+        self.gender(tgd.DestinyGender[profile.characterBase.genderType]);
+        self.classType(tgd.DestinyClass[profile.characterBase.classType]);
+        self.level(profile.characterLevel);
+        self.stats(profile.characterBase.stats);
+        if (!("STAT_LIGHT" in self.stats()))
+            self.stats()['STAT_LIGHT'] = 0;
+        self.percentToNextLevel(profile.percentToNextLevel);
+        self.race(_raceDefs[profile.characterBase.raceHash].raceName);
+    },
+    refresh: function() {
+        var self = this;
+        if (self.id == "Vault") {
+            self._reloadBucket(self);
+        } else {
+            app.bungie.character(self.id, function(result) {
+                if (result && result.data) {
+                    self.updateCharacter(result.data);
+                    self._reloadBucket(self);
+                }
+            });
         }
     },
     getBucketTypeHelper: function(item, info) {
@@ -169,6 +182,12 @@ Profile.prototype = {
     },
     _equippedStats: function() {
         return this.joinStats(this.equippedGear());
+    },
+    _classLetter: function() {
+        return this.classType()[0].toUpperCase();
+    },
+    _uniqueName: function() {
+        return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
     },
     _powerLevel: function() {
         return this.calculatePowerLevelWithItems(this.equippedGear());
@@ -383,8 +402,8 @@ Profile.prototype = {
                 console.time("finding candidates");
                 _.each(buckets, function(bucket) {
                     candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip === true && (
-                            (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+                            (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
                         );
                     });
                     _.each(candidates, function(candidate) {
@@ -439,8 +458,8 @@ Profile.prototype = {
                 buckets = [].concat(globalBuckets);
                 _.each(buckets, function(bucket) {
                     candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip === true && (
-                            (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+                            (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
                         ) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All");
                     });
                     //console.log("bucket: " + bucket);
@@ -527,8 +546,8 @@ Profile.prototype = {
                         var alternatives = [];
                         _.each(buckets, function(bucket) {
                             candidates = _.filter(items, function(item) {
-                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level && item.canEquip === true && (
-                                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+                                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
                                 );
                             });
                             tgd.localLog("candidates considering " + candidates.length);

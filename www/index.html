@@ -45,6 +45,7 @@
     <script type="text/javascript" src="js/dependencies/jquery-ui.js"></script>
     <script type="text/javascript" src="js/dependencies/jquery-ui.touchpunch.js"></script>
     <script type="text/javascript" src="js/dependencies/jquery.toaster.js"></script>
+    <script type="text/javascript" src="js/dependencies/idle-timer.min.js"></script>
     <script type="text/javascript" src="js/dependencies/hammer.js"></script>
     <script type="text/javascript" src="js/dependencies/bootstrap.js"></script>
     <script type="text/javascript" src="js/dependencies/bootstrap-dialog.js"></script>
@@ -93,7 +94,7 @@
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
-                        <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level || character.id == 'Vault') ? 1 : 0.3 }">
+                        <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level() || character.id == 'Vault') ? 1 : 0.3 }">
                             <img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
                         </a>
                         <div class="lockIcon" data-bind="if: item.locked()">
@@ -624,14 +625,14 @@
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
                 <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
                     <div class="character">
-                        <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.reloadBucket">
+                        <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
                             <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
                             <div class="class" data-bind="text: classType"></div>
                             <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false">
                                 <div class="light" data-bind="text: level"></div>
                                 <div class="power" data-bind="text: character.powerLevel"></div>
                             </div>
-                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>
+                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                             <div class="row stats" data-bind="with: stats, visible: statsShowing">
                                 <div class="col-xs-5">
                                     Armor <span data-bind="text: STAT_ARMOR.value"></span>

@@ -912,7 +912,6 @@ var app = function() {
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
-
         }
         self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {
@@ -1043,8 +1042,17 @@ var app = function() {
     };
 
     this.refresh = function() {
-        _.each(self.characters(), function(character) {
-            character._reloadBucket(character);
+        self.bungie.account(function(result) {
+            var characters = result.data.characters;
+            _.each(self.characters(), function(character) {
+                if (character.id != "Vault") {
+                    var result = _.filter(characters, function(avatar) {
+                        return avatar.characterBase.characterId == character.id;
+                    })[0];
+                    character.updateCharacter(result);
+                }
+                character._reloadBucket(character);
+            });
         });
     };
 
@@ -1855,6 +1863,13 @@ var app = function() {
     };
 
     this.init = function() {
+        $.idleTimer(1000 * 60 * 30);
+        $(document).on("idle.idleTimer", function(event, elem, obj) {
+            clearInterval(self.refreshInterval);
+        });
+        $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
+            self.refreshHandler();
+        });
         _.each(tgd.DestinyLayout, function(layout) {
             self.allLayouts.push(new Layout(layout));
         });
