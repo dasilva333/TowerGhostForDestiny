@@ -98,15 +98,15 @@ Profile.prototype = {
         self.percentToNextLevel(profile.percentToNextLevel);
         self.race(_raceDefs[profile.characterBase.raceHash].raceName);
     },
-    refresh: function() {
+    refresh: function(profile, event) {
         var self = this;
         if (self.id == "Vault") {
-            self._reloadBucket(self);
+            self._reloadBucket(self, event);
         } else {
             app.bungie.character(self.id, function(result) {
                 if (result && result.data) {
                     self.updateCharacter(result.data);
-                    self._reloadBucket(self);
+                    self._reloadBucket(self, event);
                 }
             });
         }
@@ -377,286 +377,290 @@ Profile.prototype = {
         });
         return tmp;
     },
+	reduceMaxSkill: function(){
+		tgd.localLog("highest set is above max cap");
+		var fullSets = [];
+		var alternatives = [];
+		_.each(buckets, function(bucket) {
+			candidates = _.filter(items, function(item) {
+				return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+					(item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+				);
+			});
+			tgd.localLog("candidates considering " + candidates.length);
+			_.each(candidates, function(candidate) {
+				if (candidate.stats[type] > 0) {
+					//tgd.localLog(candidate);
+					fullSets.push([candidate]);
+				} else {
+					alternatives.push([candidate]);
+				}
+			});
+		});
+		tgd.localLog("full sets considering " + fullSets.length);
+		//tgd.localLog( fullSets );
+		var statAlternatives = _.flatten(fullSets);
+		tgd.localLog("full sets considering " + fullSets.length);
+		_.each(fullSets, function(set) {
+			var mainItem = set[0];
+			var currentStat = mainItem.stats[type];
+			tgd.localLog(currentStat + " for main item: " + mainItem.description);
+			_.each(buckets, function(bucket) {
+				if (bucket != mainItem.bucketType) {
+					if (currentStat < maxCap) {
+						candidates = _.filter(statAlternatives, function(item) {
+							return item.bucketType == bucket &&
+								((item.tierType != 6 && mainItem.tierType == 6) || (mainItem.tierType != 6));
+						});
+						if (candidates.length > 0) {
+							primaryStats = _.map(candidates, function(item) {
+								return item.stats[type];
+							});
+							tgd.localLog(bucket + " choices are " + primaryStats);
+							var maxCandidateValue = _.max(primaryStats);
+							maxCandidate = candidates[primaryStats.indexOf(maxCandidateValue)];
+							var deltas = {};
+							_.each(candidates, function(candidate, index) {
+								tgd.localLog(candidate.description + " considering candidate currentStat " + candidate.stats[type]);
+								var delta = ((currentStat + candidate.stats[type]) - maxCap);
+								if (delta >= 0) {
+									var allStatsSummed = ((currentStat + candidate.getValue("All")) - candidate.stats[type] - maxCap);
+									if (allStatsSummed >= 0) {
+										deltas[index] = allStatsSummed;
+									}
+								}
+								//tgd.localLog("new currentStat is " + currentStat);
+
+							});
+							var values = _.values(deltas),
+								keys = _.keys(deltas);
+							if (values.length > 0) {
+								maxCandidate = candidates[keys[values.indexOf(_.min(values))]];
+								tgd.localLog(" new max candidate is " + maxCandidate.description);
+							}
+							currentStat += maxCandidate.stats[type];
+							tgd.localLog("new currentStat is " + currentStat);
+							set.push(maxCandidate);
+						}
+					} else {
+						tgd.localLog("adding alternative, maxCap is full on this set");
+						candidates = _.filter(alternatives, function(item) {
+							return item.bucketType == bucket;
+						});
+						if (candidates.length > 0) {
+							primaryStats = _.map(candidates, function(item) {
+								return item.getValue("All");
+							});
+							set.push(candidates[primaryStats.indexOf(_.max(primaryStats))]);
+						}
+					}
+				}
+			});
+		});
+		var availableSets = [];
+		_.map(fullSets, function(set) {
+			var sumSet = character.joinStats(set);
+			if (sumSet[type] >= maxCap) {
+				availableSets.push({
+					set: set,
+					sumSet: sumSet
+				});
+				tgd.localLog(sumSet);
+			}
+		});
+		var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
+			var score = sum(_.map(combo.sumSet, function(value, key) {
+				var result = Math.floor(value / 60);
+				return result > 5 ? 5 : result;
+			}));
+			combo.sum = sum(_.values(combo.sumSet));
+			var subScore = (combo.sum / 1000);
+			combo.score = score + subScore;
+			return combo;
+		}), 'score');
+		var highestSetObj = sumSetValues[sumSetValues.length - 1];
+		highestSetValue = highestSetObj.sum;
+		highestSet = highestSetObj.set;	
+	},
+	findBestArmorSet: function(items){
+		var buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
+		var sets = [], bestSets = [], backups = [];
+		var character = this;
+		
+		console.time("finding candidates");
+		_.each(buckets, function(bucket) {
+			candidates = _.filter(items, function(item) {
+				return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+					(item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+				);
+			});
+			_.each(candidates, function(candidate) {
+				sets.push([candidate]);
+			});
+		});
+
+		backups = _.flatten(sets);
+
+		_.each(sets, function(set) {
+			var mainPiece = set[0],
+				subSets = [
+					[mainPiece]
+				];
+			candidates = _.groupBy(_.filter(backups, function(item) {
+				return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+			}), 'bucketType');
+			_.each(candidates, function(items) {
+				subSets.push(items);
+			});
+			var combos = cartesianProductOf(subSets);
+			var sums = _.map(combos, function(combo) {
+				var tmp = character.joinStats(combo);
+				var score = sum(_.map(tmp, function(value, key) {
+					var result = Math.floor(value / 60);
+					return result > 5 ? 5 : result;
+				}));
+				var subScore = (sum(_.values(tmp)) / 1000);
+				return score + subScore;
+			});
+			var highestScore = _.max(sums);
+			var highestScoringSet = combos[sums.indexOf(highestScore)];
+			bestSets.push({
+				score: highestScore,
+				set: highestScoringSet
+			});
+		});	
+		
+		return _.sortBy(bestSets, 'score');
+	},
+	findHighestItemBy: function(type, buckets, items){
+		var character = this;
+		var sets = [];
+		var backups = [];
+		
+		_.each(buckets, function(bucket) {
+			candidates = _.filter(items, function(item) {
+				return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+					(item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
+				) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All");
+			});
+			//console.log("bucket: " + bucket);
+			//console.log(candidates);
+			_.each(candidates, function(candidate) {
+				if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
+					(candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+				}
+			});
+		});
+
+		backups = _.flatten(backups);
+
+		//console.log("backups");
+		//console.log(backups);
+
+		_.each(backups, function(spare) {
+			candidates = _.filter(backups, function(item) {
+				return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
+			});
+			primaryStats = _.map(candidates, function(item) {
+				return item.getValue(type);
+			});
+			var maxCandidate = _.max(primaryStats);
+			if (maxCandidate < spare.getValue(type)) {
+				//console.log("adding backup " + spare.description);
+				sets.push([spare]);
+			}
+		});
+
+		//console.log("sets");
+		//console.log(sets);
+		
+		_.each(sets, function(set) {
+			var main = set[0];
+			console.log("main set item " + main.description);
+
+			_.each(buckets, function(bucket) {
+				if (bucket != main.bucketType) {
+					candidates = _.where(backups, {
+						bucketType: bucket
+					});
+					tgd.localLog(candidates.length + " best candidate for bucket: " + bucket);
+					//console.log("candidates: " + _.pluck(candidates,'description'));
+					if (candidates.length > 0) {
+						primaryStats = _.map(candidates, function(item) {
+							return item.getValue(type);
+						});
+						//console.log(primaryStats);
+						var maxCandidate = _.max(primaryStats);
+						var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+						console.log("winner: " + candidate.description);
+						set.push(candidate);
+					}
+				}
+			});
+		});	
+		var sumSets = _.map(sets, function(set) {
+			return sum(_.map(set, function(item) {
+				return item.getValue(type);
+			}));
+		});
+
+		highestSetValue = _.max(sumSets);		
+		highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
+			return item.tierType * -1;
+		});
+		return highestSet;
+	},
     equipHighest: function(type) {
         var character = this;
         return function() {
             if (character.id == "Vault") return;
 
+			var armor = ["Ghost"].concat(tgd.DestinyArmorPieces);
+			var weapons = tgd.DestinyWeaponPieces;			
             var items = _.flatten(_.map(app.characters(), function(avatar) {
                 return avatar.items();
             }));
             var maxCap = 300;
-            var sets = [];
-            var backups = [];
             var highestSet;
             var highestSetValue;
             var primaryStats;
             var candidates;
             var buckets;
-            var bestSets;
 
             if (type == "Best") {
-                buckets = ["Ghost"].concat(tgd.DestinyArmorPieces);
-                bestSets = [];
-
-                console.time("finding candidates");
-                _.each(buckets, function(bucket) {
-                    candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                            (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
-                        );
-                    });
-                    _.each(candidates, function(candidate) {
-                        sets.push([candidate]);
-                    });
-                });
-
-                backups = _.flatten(sets);
-
-                _.each(sets, function(set) {
-                    //console.time("processing a set");
-                    var mainPiece = set[0],
-                        subSets = [
-                            [mainPiece]
-                        ];
-                    candidates = _.groupBy(_.filter(backups, function(item) {
-                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
-                    }), 'bucketType');
-                    _.each(candidates, function(items) {
-                        subSets.push(items);
-                    });
-                    //console.time("cartesian product of a set");
-                    var combos = cartesianProductOf(subSets);
-                    //console.timeEnd("cartesian product of a set");
-                    //console.time("sums of a set");
-                    var sums = _.map(combos, function(combo) {
-                        var tmp = character.joinStats(combo);
-                        var score = sum(_.map(tmp, function(value, key) {
-                            var result = Math.floor(value / 60);
-                            return result > 5 ? 5 : result;
-                        }));
-                        var subScore = (sum(_.values(tmp)) / 1000);
-                        return score + subScore;
-                    });
-                    var highestScore = _.max(sums);
-                    var highestScoringSet = combos[sums.indexOf(highestScore)];
-                    console.timeEnd("sums of a set");
-                    bestSets.push({
-                        score: highestScore,
-                        set: highestScoringSet
-                    });
-                    console.timeEnd("processing a set");
-                });
-                //console.timeEnd("finding candidates");
-                bestSets = _.sortBy(bestSets, 'score');
+                var bestSets = character.findBestArmorSet(items);
                 highestSet = bestSets[bestSets.length - 1].set;
                 highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15";
-                //console.log(bestSets);
-                //console.log(highestSet);
-            } else {
-                var globalBuckets = ["Ghost"].concat(tgd.DestinyWeaponPieces).concat(tgd.DestinyArmorPieces);
-                buckets = [].concat(globalBuckets);
-                _.each(buckets, function(bucket) {
-                    candidates = _.filter(items, function(item) {
-                        return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                            (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
-                        ) && ((type == "All" && (item.armorIndex > -1 || item.bucketType == 'Ghost')) || type != "All");
-                    });
-                    //console.log("bucket: " + bucket);
-                    //console.log(candidates);
-                    _.each(candidates, function(candidate) {
-                        if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                            (candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
-                        }
-                    });
-                });
-
-                backups = _.flatten(backups);
-
-                //console.log("backups");
-                //console.log(backups);
-
-                _.each(backups, function(spare) {
-                    candidates = _.filter(backups, function(item) {
-                        return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
-                    });
-                    primaryStats = _.map(candidates, function(item) {
-                        return item.getValue(type);
-                    });
-                    var maxCandidate = _.max(primaryStats);
-                    if (maxCandidate < spare.getValue(type)) {
-                        //console.log("adding backup " + spare.description);
-                        sets.push([spare]);
-                    }
-                });
-
-                //console.log("sets");
-                //console.log(sets);
-
-                _.each(sets, function(set) {
-                    var main = set[0];
-                    //console.log("main set item " + main.description);
-                    _.each(buckets, function(bucket) {
-                        if (bucket != main.bucketType) {
-                            tgd.localLog("best candidate for bucket: " + bucket);
-                            candidates = _.where(backups, {
-                                bucketType: bucket
-                            });
-                            //console.log("candidates: " + _.pluck(candidates,'description'));
-                            if (candidates.length > 0) {
-                                primaryStats = _.map(candidates, function(item) {
-                                    return item.getValue(type);
-                                });
-                                //console.log(primaryStats);
-                                var maxCandidate = _.max(primaryStats);
-                                var candidate = candidates[primaryStats.indexOf(maxCandidate)];
-                                //console.log("winner: " + candidate.description);
-                                set.push(candidate);
-                            }
-                        }
-                    });
-                });
-
-                //console.log(sets);
-
-                var sumSets = _.map(sets, function(set) {
-                    return sum(_.map(set, function(item) {
-                        return item.getValue(type);
-                    }));
-                });
-
-                highestSetValue = _.max(sumSets);
-                //console.log(highestSetValue);
-
-                if (type == "Light" || type == "All") {
-                    highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
-                        return item.tierType * -1;
-                    });
-                    //console.log(highestSet);
-                } else if (type != "Light") {
-                    tgd.localLog("type changed is not light");
-                    if (highestSetValue < maxCap) {
-                        tgd.localLog("highest set is below max cap");
-                        highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
-                            return item.tierType * -1;
-                        });
-                    } else {
-                        tgd.localLog("highest set is above max cap");
-                        var fullSets = [];
-                        var alternatives = [];
-                        _.each(buckets, function(bucket) {
-                            candidates = _.filter(items, function(item) {
-                                return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || (item.bucketType == "Ghost")
-                                );
-                            });
-                            tgd.localLog("candidates considering " + candidates.length);
-                            _.each(candidates, function(candidate) {
-                                if (candidate.stats[type] > 0) {
-                                    //tgd.localLog(candidate);
-                                    fullSets.push([candidate]);
-                                } else {
-                                    alternatives.push([candidate]);
-                                }
-                            });
-                        });
-                        tgd.localLog("full sets considering " + fullSets.length);
-                        //tgd.localLog( fullSets );
-                        var statAlternatives = _.flatten(fullSets);
-                        tgd.localLog("full sets considering " + fullSets.length);
-                        _.each(fullSets, function(set) {
-                            var mainItem = set[0];
-                            var currentStat = mainItem.stats[type];
-                            tgd.localLog(currentStat + " for main item: " + mainItem.description);
-                            _.each(buckets, function(bucket) {
-                                if (bucket != mainItem.bucketType) {
-                                    if (currentStat < maxCap) {
-                                        candidates = _.filter(statAlternatives, function(item) {
-                                            return item.bucketType == bucket &&
-                                                ((item.tierType != 6 && mainItem.tierType == 6) || (mainItem.tierType != 6));
-                                        });
-                                        if (candidates.length > 0) {
-                                            primaryStats = _.map(candidates, function(item) {
-                                                return item.stats[type];
-                                            });
-                                            tgd.localLog(bucket + " choices are " + primaryStats);
-                                            var maxCandidateValue = _.max(primaryStats);
-                                            maxCandidate = candidates[primaryStats.indexOf(maxCandidateValue)];
-                                            var deltas = {};
-                                            _.each(candidates, function(candidate, index) {
-                                                tgd.localLog(candidate.description + " considering candidate currentStat " + candidate.stats[type]);
-                                                var delta = ((currentStat + candidate.stats[type]) - maxCap);
-                                                if (delta >= 0) {
-                                                    var allStatsSummed = ((currentStat + candidate.getValue("All")) - candidate.stats[type] - maxCap);
-                                                    if (allStatsSummed >= 0) {
-                                                        deltas[index] = allStatsSummed;
-                                                    }
-                                                }
-                                                //tgd.localLog("new currentStat is " + currentStat);
-
-                                            });
-                                            var values = _.values(deltas),
-                                                keys = _.keys(deltas);
-                                            if (values.length > 0) {
-                                                maxCandidate = candidates[keys[values.indexOf(_.min(values))]];
-                                                tgd.localLog(" new max candidate is " + maxCandidate.description);
-                                            }
-                                            currentStat += maxCandidate.stats[type];
-                                            tgd.localLog("new currentStat is " + currentStat);
-                                            set.push(maxCandidate);
-                                        }
-                                    } else {
-                                        tgd.localLog("adding alternative, maxCap is full on this set");
-                                        candidates = _.filter(alternatives, function(item) {
-                                            return item.bucketType == bucket;
-                                        });
-                                        if (candidates.length > 0) {
-                                            primaryStats = _.map(candidates, function(item) {
-                                                return item.getValue("All");
-                                            });
-                                            set.push(candidates[primaryStats.indexOf(_.max(primaryStats))]);
-                                        }
-                                    }
-                                }
-                            });
-                        });
-                        var availableSets = [];
-                        _.map(fullSets, function(set) {
-                            var sumSet = character.joinStats(set);
-                            if (sumSet[type] >= maxCap) {
-                                availableSets.push({
-                                    set: set,
-                                    sumSet: sumSet
-                                });
-                                tgd.localLog(sumSet);
-                            }
-                        });
-                        var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
-                            var score = sum(_.map(combo.sumSet, function(value, key) {
-                                var result = Math.floor(value / 60);
-                                return result > 5 ? 5 : result;
-                            }));
-                            combo.sum = sum(_.values(combo.sumSet));
-                            var subScore = (combo.sum / 1000);
-                            combo.score = score + subScore;
-                            return combo;
-                        }), 'score');
-                        var highestSetObj = sumSetValues[sumSetValues.length - 1];
-                        highestSetValue = highestSetObj.sum;
-                        highestSet = highestSetObj.set;
-                    }
-                }
-            }
-
-            if (type == "Light") {
-                highestSetValue = character.calculatePowerLevelWithItems(highestSet);
-            }
+            } 
+			else if (type == "Light"){
+				var bestArmorSets = character.findHighestItemBy("Light", armor, items);
+				tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets,'description'));
+				var bestWeaponSets = character.findHighestItemBy("Light", weapons, items);
+				tgd.localLog("bestWeaponSets: " + _.pluck(bestWeaponSets,'description'));
+                highestSet = bestArmorSets.concat(bestWeaponSets);
+				tgd.localLog("highestSet: " + _.pluck(highestSet,'description'));
+				highestSetValue = character.calculatePowerLevelWithItems(highestSet);
+			}	
+			else if (type == "All"){
+			
+				highestSet = _.sortBy(sets[sumSets.indexOf(highestSetValue)], function(item) {
+					return item.tierType * -1;
+				});
+			}
+			else {
+				var highestSet = character.findHighestItemBy(type, armor, items);
+				highestSetValue = character.calculatePowerLevelWithItems(highestSet);
+				if (highestSetValue < maxCap) {
+				   self.highestSet = self.reduceMaxSkill();
+				}
+			}
 
             $.toaster({
                 settings: {
                     timeout: 10 * 1000
                 }
             });
+			
             $.toaster({
                 priority: 'success',
                 title: 'Result',
