@@ -224,7 +224,7 @@ window.ko.bindingHandlers.scrollToView = {
                 $.toaster({
                     priority: 'info',
                     title: 'Info',
-                    message: app.activeText().this_icon + viewModel.uniqueName
+                    message: app.activeText().this_icon + viewModel.uniqueName()
                 });
             });
     }
@@ -1867,7 +1867,7 @@ var app = function() {
                 $.toaster({
                     priority: 'info',
                     title: 'Transfer',
-                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName()
                 });
                 arg.item[action](destination.character.id);
             }
