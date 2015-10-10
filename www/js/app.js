@@ -563,7 +563,7 @@ var app = function() {
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
-                var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
+                var classType = (activeItem.classType() == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType()]);
                 $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + classType + '</span></span>');
             }
             /* Type using locale */
@@ -1571,7 +1571,7 @@ var app = function() {
 
         var messageStr = "<div><div>Normalize " + description + "</div><ul>";
         for (i = 0; i < characterStatus.length; i++) {
-            messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
+            messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType() + ": " +
                 (characterStatus[i].needed > 0 ? "+" : "") +
                 characterStatus[i].needed + "</li>");
         }

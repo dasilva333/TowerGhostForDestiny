@@ -1,4 +1,4 @@
-var Item = function(model, profile, ignoreDups) {
+var Item = function(model, profile) {
     var self = this;
 
     _.each(model, function(value, key) {
@@ -7,7 +7,7 @@ var Item = function(model, profile, ignoreDups) {
 
     this.character = profile;
 
-    this.init(model, ignoreDups);
+    this.init(model);
 
     this.isDuplicate = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
@@ -29,13 +29,13 @@ var Item = function(model, profile, ignoreDups) {
 };
 
 Item.prototype = {
-    init: function(item, ignoreDups) {
+    init: function(item) {
         var self = this;
-        /*if (!(item.itemHash in _itemDefs)) {
+        if (!(item.itemHash in _itemDefs)) {
             tgd.localLog("found an item without a definition! " + JSON.stringify(item));
             tgd.localLog(item.itemHash);
             return;
-        }*/
+        }
         var info = {};
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
@@ -202,15 +202,15 @@ Item.prototype = {
         var self = this;
         if (typeof self.progression !== "undefined") {
             /* Missing Perks */
-            if (state === 1 && self.progression === false) {
+            if (state == "1" && self.progression === false) {
                 return true;
             }
             /* Filled perks but not maxed out */
-            else if (state === 2 && self.progression === true && self.isGridComplete === false) {
+            else if (state == "2" && self.progression === true && self.isGridComplete === false) {
                 return true;
             }
             /* Maxed weapons (Gold Borders only) */
-            else if (state === 3 && self.progression === true && self.isGridComplete === true) {
+            else if (state == "3" && self.progression === true && self.isGridComplete === true) {
                 return true;
             } else {
                 return false;
@@ -280,17 +280,17 @@ Item.prototype = {
             searchFilter = searchFilter || self.hasPerkSearch($parent.searchKeyword());
             if (self.weaponIndex > -1) {
                 dmgFilter = $parent.dmgFilter().length === 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
-                weaponFilter = $parent.weaponFilter() === 0 || $parent.weaponFilter() == self.typeName;
+                weaponFilter = $parent.weaponFilter() == "0" || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
                     return name.split(" ")[0];
                 });
                 dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
-                armorFilter = $parent.armorFilter() === 0 || $parent.armorFilter() == self.bucketType;
+                armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
             }
-            progressFilter = $parent.progressFilter() === 0 || self.hashProgress($parent.progressFilter());
+            progressFilter = $parent.progressFilter() == "0" || self.hashProgress($parent.progressFilter());
         } else {
-            generalFilter = $parent.generalFilter() === 0 || self.hasGeneral($parent.generalFilter());
+            generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
         }
         showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
 
@@ -708,7 +708,7 @@ Item.prototype = {
                     }, 600);
                     tgd.localLog("---------------------");
                 } else {
-                    tgd.localLog("removing " + self.description + " from " + x.uniqueName + " currently at " + x.items().length);
+                    tgd.localLog("removing " + self.description + " from " + x.uniqueName() + " currently at " + x.items().length);
                     x.items.remove(function(item) {
                         return item._id == self._id;
                     });
@@ -716,7 +716,7 @@ Item.prototype = {
                     self.characterId = targetCharacterId;
                     self.character = y;
                     y.items.push(self);
-                    tgd.localLog("adding " + self.description + " to " + y.uniqueName);
+                    tgd.localLog("adding " + self.description + " to " + y.uniqueName());
                     setTimeout(function() {
                         app.bucketSizeHandler();
                     }, 600);
@@ -877,7 +877,7 @@ Item.prototype = {
                             if (callback)
                                 callback(self.character);
                         } else {
-                            tgd.localLog(self.character.uniqueName + " xfering item to Vault " + self.description);
+                            tgd.localLog(self.character.uniqueName() + " xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
                                 tgd.localLog(self.character.id + " xfered item to vault and now to " + targetCharacterId);
                                 if (self.character.id == targetCharacterId) {
@@ -1192,7 +1192,7 @@ Item.prototype = {
         if (type == "Light") {
             value = this.primaryStatValue();
         } else if (type == "All") {
-            value = sum(_.values(this.stats));
+            value = tgd.sum(_.values(this.stats));
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);
         } else {

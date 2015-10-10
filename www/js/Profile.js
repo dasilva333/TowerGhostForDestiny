@@ -17,9 +17,6 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
-    this.uniqueName = "";
-    this.classLetter = "";
-
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
     this.weapons = ko.pureComputed(this._weapons, this);
