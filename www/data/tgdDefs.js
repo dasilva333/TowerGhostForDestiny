@@ -6,15 +6,20 @@ window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
-window.supportsCloudSaves = window.isChrome || window.isMobile;
 window.tgd = {};
-tgd.localLogging = false;
+tgd.localLogging = true;
 tgd.localLog = function(msg) {
 	if (tgd.localLogging) {
 		console.log(msg);
 	}
 };
 tgd.dataDir = "data";
+tgd.autoTransferStacks = false;
+tgd.DestinySkillCap = 300;
+tgd.activeElement = null;
+//Network Keys, Axiomatic Beads, House Banners, Silken Codex
+tgd.DestinyGlimmerConsumables = [3632619276,269776572,2904517731,1932910919];
+tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries" ];
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
@@ -144,7 +149,9 @@ tgd.defaults = {
 	doRefresh: isMobile ? false : "true",
 	refreshSeconds: 300,
 	tierFilter: 0,
-	typeFilter: 0,
+	weaponFilter: 0,
+	armorFilter: 0,
+	generalFilter: 0,
 	dmgFilter: [],
 	activeView: 0,
 	activeSort: 0,
@@ -155,7 +162,7 @@ tgd.defaults = {
 	shareUrl: "",
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : "true",
-	autoTransferStacks: false,
+	autoXferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
 	dragAndDrop: false,
 	xsColumn: 12,
@@ -237,13 +244,13 @@ tgd.normalizeTemplate = '<div id="menu">' +
 					'<% for (i = 0; i < characters.length; i++){ %>' +
 						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
 							'<div class="attkIcon">' +
-								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
+								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
-								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
+								'<div class="lower-left"><%= characters[i].classLetter() %></div>' +
 							'</div>' +
 						'</div>' +
 					'<% } %>' +
@@ -277,13 +284,13 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 					'<% for (i = 0; i < characters.length; i++){ %>' +
 						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
 							'<div class="attkIcon">' +
-								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
+								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
-								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
+								'<div class="lower-left"><%= characters[i].classLetter() %></div>' +
 							'</div>' +
 						'</div>' +
 					'<% } %>' +
