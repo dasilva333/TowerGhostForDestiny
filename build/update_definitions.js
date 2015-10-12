@@ -49,6 +49,7 @@ var neededFiles = [
 	}},
 	{ table: "DestinyTalentGridDefinition", name: "talentGridDefs", key: "gridHash", reduce: function(item){
 		var obj = {};
+		obj.exclusiveSets = _.flatten(_.map(item.exclusiveSets, function(o){ return o.nodeIndexes }));
 		obj.nodes = _.map(item.nodes, function(node){
 			return {
 				nodeHash: node.nodeHash,
