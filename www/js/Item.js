@@ -95,54 +95,54 @@ Item.prototype = {
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
             if (item.perks.length > 0) {
-				var talentGrid = _talentGridDefs[item.talentGridHash];
+                var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
-				_.each(item.perks, function(perk) {
+                _.each(item.perks, function(perk) {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
-						var nodeIndex = talentGrid.nodes.indexOf(
-							_.filter(talentGrid.nodes, function(o){ 
-								return _.pluck(o.steps,'nodeStepName').indexOf(p.displayName) > -1; 
-							})[0]
-						);
-						var isExclusive = talentGrid.exclusiveSets.indexOf(nodeIndex) > -1;
-						if ( isExclusive && perk.isActive || !isExclusive){
-							itemObject.perks.push({
-								iconPath: tgd.dataDir + p.displayIcon,
-								name: p.displayName,
-								description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-								active: perk.isActive
-							});
-						}
+                        var nodeIndex = talentGrid.nodes.indexOf(
+                            _.filter(talentGrid.nodes, function(o) {
+                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+                            })[0]
+                        );
+                        var isExclusive = talentGrid.exclusiveSets.indexOf(nodeIndex) > -1;
+                        if (isExclusive && perk.isActive || !isExclusive) {
+                            itemObject.perks.push({
+                                iconPath: tgd.dataDir + p.displayIcon,
+                                name: p.displayName,
+                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                                active: perk.isActive
+                            });
+                        }
                     }
                 });
-				var perkHashes = _.pluck(item.perks, 'perkHash'),
-					perkNames = _.pluck(itemObject.perks, 'name'),
-					talentPerks = {};
-				var talentGridNodes = talentGrid.nodes;
-				_.each(item.nodes, function(node) {
-					if (node.isActivated && node.hidden === false) {
-						var nodes = _.findWhere(talentGridNodes, {
-							nodeHash: node.nodeHash
-						});
-						if (nodes && nodes.steps) {
-							var perk = nodes.steps[node.stepIndex];
-							if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-								(perkNames.indexOf(perk.nodeStepName) == -1) &&
-								(perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
-								talentPerks[perk.nodeStepName] = {
-									active: true,
-									name: perk.nodeStepName,
-									description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-									iconPath: tgd.dataDir + perk.icon
-								};
-							}
-						}
-					}
-				});
-				_.each(talentPerks, function(perk) {
-					itemObject.perks.push(perk);
-				});
+                var perkHashes = _.pluck(item.perks, 'perkHash'),
+                    perkNames = _.pluck(itemObject.perks, 'name'),
+                    talentPerks = {};
+                var talentGridNodes = talentGrid.nodes;
+                _.each(item.nodes, function(node) {
+                    if (node.isActivated && node.hidden === false) {
+                        var nodes = _.findWhere(talentGridNodes, {
+                            nodeHash: node.nodeHash
+                        });
+                        if (nodes && nodes.steps) {
+                            var perk = nodes.steps[node.stepIndex];
+                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
+                                talentPerks[perk.nodeStepName] = {
+                                    active: true,
+                                    name: perk.nodeStepName,
+                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                    iconPath: tgd.dataDir + perk.icon
+                                };
+                            }
+                        }
+                    }
+                });
+                _.each(talentPerks, function(perk) {
+                    itemObject.perks.push(perk);
+                });
             }
             if (item.progression) {
                 itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1;
