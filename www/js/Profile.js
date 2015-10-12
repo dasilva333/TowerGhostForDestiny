@@ -562,7 +562,7 @@ Profile.prototype = {
 
         _.each(sets, function(set) {
             var main = set[0];
-            console.log("main set item " + main.description);
+            //console.log("main set item " + main.description);
 
             _.each(buckets, function(bucket) {
                 if (bucket != main.bucketType) {
@@ -578,7 +578,7 @@ Profile.prototype = {
                         //console.log(primaryStats);
                         var maxCandidate = _.max(primaryStats);
                         var candidate = candidates[primaryStats.indexOf(maxCandidate)];
-                        console.log("winner: " + candidate.description);
+                        //console.log("winner: " + candidate.description);
                         set.push(candidate);
                     }
                 }
