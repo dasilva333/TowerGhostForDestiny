@@ -549,18 +549,25 @@ var app = function() {
         if (element) lastElement = element;
         content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
-            activeItem, $content = $("<div>" + content + "</div>");
+            activeItem, query, $content = $("<div>" + content + "</div>");
         if (instanceId > 0) {
-            self.characters().forEach(function(character) {
-                var item = _.findWhere(character.items(), {
-                    '_id': instanceId
-                });
-                if (item) activeItem = item;
-            });
+            query = { '_id': instanceId };
         }
+		else {
+			var id = $(lastElement).attr("href");
+			query = { id: parseInt(id.split("/")[id.split("/").length-1]) };
+		}
+		self.characters().forEach(function(character) {
+			var item = _.findWhere(character.items(), query);
+			if (item) activeItem = item;
+		});
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
+			/* Sub title for materials and consumables */
+			if ( tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1 ){
+				$content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
+			}
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
                 var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
