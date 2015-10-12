@@ -211,6 +211,11 @@ Profile.prototype = {
                 self.reloadingBucket = false;
                 if (element) {
                     element.removeClass("fa-spin");
+				   $.toaster({
+					   priority: 'info',
+					   title: 'Success',
+					   message: 'Refresh completed'
+				   });
                 }
             }
 

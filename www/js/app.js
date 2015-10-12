@@ -1611,14 +1611,13 @@ var app = function() {
         //tgd.localLog("normalizeAll(" + bucketType + ")");
 
         var done = function(onlyCharacters) {
-            var selector = function(i) {
-                return i.bucketType == bucketType;
-            };
-
-            /* gather all consumable and/or material descriptions from all characters */
-            var descriptions = _.union(
-                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
-
+            
+			var descriptions = _.uniq(_.flatten(_.map(onlyCharacters, function(character){
+				return _.pluck(_.filter(character.items(), function(item){
+					return item.bucketType == bucketType && item.transferStatus < 2;
+				}),'description');
+			})));
+			
             var getNextDescription = (function() {
                 var i = 0;
                 return function() {
@@ -1628,16 +1627,6 @@ var app = function() {
 
             var nextNormalize = function() {
                 var description = getNextDescription();
-
-                while (typeof description !== "undefined") {
-                    if ((description !== "Hadronic Essence") &&
-                        (description !== "Sapphire Wire") &&
-                        (description !== "Plasteel Plating")) {
-                        break;
-                    } else {
-                        description = getNextDescription();
-                    }
-                }
 
                 if (typeof description === "undefined") {
                     $.toaster({
