@@ -1611,13 +1611,13 @@ var app = function() {
         //tgd.localLog("normalizeAll(" + bucketType + ")");
 
         var done = function(onlyCharacters) {
-            
-			var descriptions = _.uniq(_.flatten(_.map(onlyCharacters, function(character){
-				return _.pluck(_.filter(character.items(), function(item){
-					return item.bucketType == bucketType && item.transferStatus < 2;
-				}),'description');
-			})));
-			
+
+            var descriptions = _.uniq(_.flatten(_.map(onlyCharacters, function(character) {
+                return _.pluck(_.filter(character.items(), function(item) {
+                    return item.bucketType == bucketType && item.transferStatus < 2;
+                }), 'description');
+            })));
+
             var getNextDescription = (function() {
                 var i = 0;
                 return function() {

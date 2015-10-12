@@ -1,6 +1,6 @@
 {
-  "node": true,
-  "browser": false,
+  "node": false,
+  "browser": true,
   "indent": 2,
   "strict": false,
   "loopfunc": true,
@@ -8,13 +8,6 @@
   "sub": true,
   "multistr": true,
   "globals": {
-    "describe": false,
-    "_": false,
-    "sails": false,    
-    "it": false,
-    "before": false,
-    "beforeEach": false,
-    "after": false,
-    "afterEach": false
+    "_": false
   }
 }
