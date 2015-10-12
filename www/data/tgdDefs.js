@@ -7,7 +7,7 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.tgd = {};
-tgd.localLogging = true;
+tgd.localLogging = false;
 tgd.localLog = function(msg) {
 	if (tgd.localLogging) {
 		console.log(msg);
@@ -27,8 +27,8 @@ tgd.DestinyLayout = [
   { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
   { name: "Armor", array: 'armor', counts: [72,60], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
   { name: "Sub Classes", array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' },
-  { name: "General", array: 'general', counts: [36,80], bucketTypes: ['Ghost', 'Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' },
-  { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' }
+  { name: "General", array: 'general', counts: [36,80], bucketTypes: ['Ghost', 'Consumables','Materials', 'Shader','Emblem','Ship','Sparrow','Emote'], view: 3, headerText: 'inventory_general' },
+  { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Quests','Mission'], view: 3, headerText: 'inventory_postmaster' }
 ]
 tgd.DestinyViews = {
 	"0": "All",
@@ -76,7 +76,9 @@ tgd.DestinyBucketTypes = {
 	"2422292810": "Post Master",
 	"1367666825": "Invisible",
 	"4023194814": "Ghost",
-	"434908299": "Artifact"
+	"434908299": "Artifact",
+	"3054419239": "Emote",
+	"1801258597": "Quests"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -106,10 +108,10 @@ tgd.DestinyBucketColumns = {
 	"Mission": 4,
 	"Invisible": 4,
 	"Ghost": 3,
-	"Artifact": 3
+	"Artifact": 3,
+	"Quests": 4,
+	"Emote": 3
 }
-// TODO this needs to be updated based on the new values at level 40 
-// https://www.reddit.com/r/DestinyTheGame/comments/3kwmvh/how_overall_light_level_is_calculated/
 tgd.DestinyBucketWeights = [{
 	"Primary": 13.04,
 	"Special": 13.04,

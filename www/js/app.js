@@ -111,7 +111,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+        if (item.transferStatus == 2 || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
@@ -642,6 +642,14 @@ var app = function() {
                         }));
                     }
                 }
+            }
+            if (activeItem.objectives.length > 0) {
+                _.each(activeItem.objectives, function(objective) {
+                    var info = _objectiveDefs[objective.objectiveHash];
+                    var label = "<strong>" + info.displayDescription + "</strong>";
+                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    $content.find(".destt-desc").after(label + ":" + value + "<br>");
+                });
             }
         }
         var width = $(window).width();

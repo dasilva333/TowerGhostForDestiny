@@ -113,6 +113,9 @@ Profile.prototype = {
                         return true;
                     }
                 }
+                /*else {
+					console.log( unescape(info.itemName) + " " + info.bucketTypeHash );
+				}*/
             }
         };
     },
