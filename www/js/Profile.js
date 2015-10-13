@@ -17,9 +17,6 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
-    this.uniqueName = "";
-    this.classLetter = "";
-
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
     this.weapons = ko.pureComputed(this._weapons, this);
@@ -116,6 +113,9 @@ Profile.prototype = {
                         return true;
                     }
                 }
+                /*else {
+					console.log( unescape(info.itemName) + " " + info.bucketTypeHash );
+				}*/
             }
         };
     },
@@ -211,6 +211,11 @@ Profile.prototype = {
                 self.reloadingBucket = false;
                 if (element) {
                     element.removeClass("fa-spin");
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Success',
+                        message: 'Refresh completed'
+                    });
                 }
             }
 
@@ -562,7 +567,7 @@ Profile.prototype = {
 
         _.each(sets, function(set) {
             var main = set[0];
-            console.log("main set item " + main.description);
+            //console.log("main set item " + main.description);
 
             _.each(buckets, function(bucket) {
                 if (bucket != main.bucketType) {
@@ -578,7 +583,7 @@ Profile.prototype = {
                         //console.log(primaryStats);
                         var maxCandidate = _.max(primaryStats);
                         var candidate = candidates[primaryStats.indexOf(maxCandidate)];
-                        console.log("winner: " + candidate.description);
+                        //console.log("winner: " + candidate.description);
                         set.push(candidate);
                     }
                 }

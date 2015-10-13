@@ -239,7 +239,7 @@
 	                                return tmp;
 	                            }));
 	                            tgd.localLog("swapAndTargetIDs: " + swapAndTargetIDs);
-	                            tgd.localLog("targetItem character is " + targetItem.character.uniqueName);
+	                            tgd.localLog("targetItem character is " + targetItem.character.uniqueName());
 	                            var candidates = _.filter(swapItem.character.get(swapItem.bucketType), function(item) {
 	                                var isCandidate = swapAndTargetIDs.indexOf(item._id) == -1;
 	                                tgd.localLog(item.description + " is part of the swap and target ids? " + isCandidate);
@@ -248,7 +248,7 @@
 	                            tgd.localLog(candidates.length + " candidates: " + _.pluck(candidates, 'description'));
 	                            if (candidates.length > 0) {
 	                                swapItem = candidates[0];
-	                                tgd.localLog("candidate is " + swapItem._id + " and is currently sitting in " + swapItem.character.uniqueName);
+	                                tgd.localLog("candidate is " + swapItem._id + " and is currently sitting in " + swapItem.character.uniqueName());
 	                                swapItem.store("Vault", function() {
 	                                    tgd.localLog("^^^^^^^ xfered new candidate to vault");
 	                                    complete();
@@ -375,7 +375,7 @@
 	                        if (tgd.DestinyNonUniqueBuckets.indexOf(bucketType) == -1) {
 	                            _.each(app.characters(), function(character) {
 	                                if (freeSpaceNeeded > 0 && character.id != "Vault") {
-	                                    tgd.localLog("checking " + character.uniqueName + " the " + bucketType);
+	                                    tgd.localLog("checking " + character.uniqueName() + " the " + bucketType);
 	                                    var freeSpace = maxFreeSpace - character.get(bucketType).length;
 	                                    if (freeSpace > 0) {
 	                                        tgd.localLog(bucketType + " found with free space: " + freeSpace);
