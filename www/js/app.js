@@ -111,7 +111,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+        if (item.transferStatus == 2 || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
@@ -549,18 +549,28 @@ var app = function() {
         if (element) lastElement = element;
         content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
-            activeItem, $content = $("<div>" + content + "</div>");
+            activeItem, query, $content = $("<div>" + content + "</div>");
         if (instanceId > 0) {
-            self.characters().forEach(function(character) {
-                var item = _.findWhere(character.items(), {
-                    '_id': instanceId
-                });
-                if (item) activeItem = item;
-            });
+            query = {
+                '_id': instanceId
+            };
+        } else {
+            var id = $(lastElement).attr("href");
+            query = {
+                id: parseInt(id.split("/")[id.split("/").length - 1])
+            };
         }
+        self.characters().forEach(function(character) {
+            var item = _.findWhere(character.items(), query);
+            if (item) activeItem = item;
+        });
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
+            /* Sub title for materials and consumables */
+            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
+                $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
+            }
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
                 var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
@@ -642,6 +652,14 @@ var app = function() {
                         }));
                     }
                 }
+            }
+            if (activeItem.objectives.length > 0) {
+                _.each(activeItem.objectives, function(objective) {
+                    var info = _objectiveDefs[objective.objectiveHash];
+                    var label = "<strong>" + info.displayDescription + "</strong>";
+                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    $content.find(".destt-desc").after(label + ":" + value + "<br>");
+                });
             }
         }
         var width = $(window).width();
@@ -741,25 +759,26 @@ var app = function() {
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     };
-    this.setSetFilter = function(model, event) {
-        self.toggleBootstrapMenu();
-        var collection = $(event.target).closest('li').attr("value");
-        if (collection in _collections || collection == "All") {
-            self.setFilter(collection == "All" ? [] : _collections[collection]);
-            if (collection == "All") {
+    this.setSetFilter = function(collection) {
+        return function() {
+            self.toggleBootstrapMenu();
+            if (collection in _collections || collection == "All") {
+                self.setFilter(collection == "All" ? [] : _collections[collection]);
+                if (collection == "All") {
+                    self.showMissing(false);
+                } else if (collection.indexOf("Weapons") > -1) {
+                    self.activeView(1);
+                    self.armorFilter(0);
+                    self.generalFilter(0);
+                } else if (collection.indexOf("Armor") > -1) {
+                    self.activeView(2);
+                    self.weaponFilter(0);
+                    self.generalFilter(0);
+                }
+            } else {
+                self.setFilter([]);
                 self.showMissing(false);
-            } else if (collection.indexOf("Weapons") > -1) {
-                self.activeView(1);
-                self.armorFilter(0);
-                self.generalFilter(0);
-            } else if (collection.indexOf("Armor") > -1) {
-                self.activeView(2);
-                self.weaponFilter(0);
-                self.generalFilter(0);
             }
-        } else {
-            self.setFilter([]);
-            self.showMissing(false);
         }
     };
     this.setSort = function(model, event) {
@@ -1603,13 +1622,12 @@ var app = function() {
         //tgd.localLog("normalizeAll(" + bucketType + ")");
 
         var done = function(onlyCharacters) {
-            var selector = function(i) {
-                return i.bucketType == bucketType;
-            };
 
-            /* gather all consumable and/or material descriptions from all characters */
-            var descriptions = _.union(
-                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
+            var descriptions = _.uniq(_.flatten(_.map(onlyCharacters, function(character) {
+                return _.pluck(_.filter(character.items(), function(item) {
+                    return item.bucketType == bucketType && item.transferStatus < 2;
+                }), 'description');
+            })));
 
             var getNextDescription = (function() {
                 var i = 0;
@@ -1620,16 +1638,6 @@ var app = function() {
 
             var nextNormalize = function() {
                 var description = getNextDescription();
-
-                while (typeof description !== "undefined") {
-                    if ((description !== "Hadronic Essence") &&
-                        (description !== "Sapphire Wire") &&
-                        (description !== "Plasteel Plating")) {
-                        break;
-                    } else {
-                        description = getNextDescription();
-                    }
-                }
 
                 if (typeof description === "undefined") {
                     $.toaster({
@@ -2012,7 +2020,7 @@ var app = function() {
         }), function(key) {
             return key > 0;
         });
-        _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
+        _collections['Exotic Weapons'] = _.pluck(_.filter(_itemDefs, function(item) {
             return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
         var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
@@ -2020,9 +2028,10 @@ var app = function() {
         }), function(key) {
             return key > 0;
         });
-        _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
+        _collections['Exotic Armor'] = _.pluck(_.filter(_itemDefs, function(item) {
             return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
+        self.collectionSets = _.sortBy(Object.keys(_collections));
         ko.applyBindings(self);
     };
 };
