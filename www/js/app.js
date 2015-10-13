@@ -1074,16 +1074,21 @@ var app = function() {
 
     this.refresh = function() {
         self.bungie.account(function(result) {
-            var characters = result.data.characters;
-            _.each(self.characters(), function(character) {
-                if (character.id != "Vault") {
-                    var result = _.filter(characters, function(avatar) {
-                        return avatar.characterBase.characterId == character.id;
-                    })[0];
-                    character.updateCharacter(result);
-                }
-                character._reloadBucket(character);
-            });
+			if (result && result.data && result.data.characters){
+				var characters = result.data.characters;
+				_.each(self.characters(), function(character) {
+					if (character.id != "Vault") {
+						var result = _.filter(characters, function(avatar) {
+							return avatar.characterBase.characterId == character.id;
+						})[0];
+						character.updateCharacter(result);
+					}
+					character._reloadBucket(character);
+				});			
+			}
+			else {
+				tgd.localLog(result);
+			}
         });
     };
 
