@@ -1,3 +1,5 @@
+var purgeCache = (process.argv.length == 3 && process.argv[2] == "true")
+
 var jag = require("jag"),
 	http = require("http"),
 	sqlite3 = require('sqlite3').verbose(),
@@ -86,7 +88,7 @@ var neededFiles = [
 ];
 
 var downloadDatabase = function(callback){
-	if ( fs.existsSync("mobileWorldContent_en.db") ){
+	if ( fs.existsSync("mobileWorldContent_en.db") && !purgeCache ){
 		return callback();
 	}
 	var count = 0;
