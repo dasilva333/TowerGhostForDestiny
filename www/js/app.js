@@ -551,23 +551,26 @@ var app = function() {
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, query, $content = $("<div>" + content + "</div>");
         if (instanceId > 0) {
-            query = { '_id': instanceId };
+            query = {
+                '_id': instanceId
+            };
+        } else {
+            var id = $(lastElement).attr("href");
+            query = {
+                id: parseInt(id.split("/")[id.split("/").length - 1])
+            };
         }
-		else {
-			var id = $(lastElement).attr("href");
-			query = { id: parseInt(id.split("/")[id.split("/").length-1]) };
-		}
-		self.characters().forEach(function(character) {
-			var item = _.findWhere(character.items(), query);
-			if (item) activeItem = item;
-		});
+        self.characters().forEach(function(character) {
+            var item = _.findWhere(character.items(), query);
+            if (item) activeItem = item;
+        });
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
-			/* Sub title for materials and consumables */
-			if ( tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1 ){
-				$content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
-			}
+            /* Sub title for materials and consumables */
+            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
+                $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
+            }
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
                 var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
@@ -757,26 +760,26 @@ var app = function() {
         return false;
     };
     this.setSetFilter = function(collection) {
-		return function(){
-			self.toggleBootstrapMenu();
-			if (collection in _collections || collection == "All") {
-				self.setFilter(collection == "All" ? [] : _collections[collection]);
-				if (collection == "All") {
-					self.showMissing(false);
-				} else if (collection.indexOf("Weapons") > -1) {
-					self.activeView(1);
-					self.armorFilter(0);
-					self.generalFilter(0);
-				} else if (collection.indexOf("Armor") > -1) {
-					self.activeView(2);
-					self.weaponFilter(0);
-					self.generalFilter(0);
-				}
-			} else {
-				self.setFilter([]);
-				self.showMissing(false);
-			}		
-		}
+        return function() {
+            self.toggleBootstrapMenu();
+            if (collection in _collections || collection == "All") {
+                self.setFilter(collection == "All" ? [] : _collections[collection]);
+                if (collection == "All") {
+                    self.showMissing(false);
+                } else if (collection.indexOf("Weapons") > -1) {
+                    self.activeView(1);
+                    self.armorFilter(0);
+                    self.generalFilter(0);
+                } else if (collection.indexOf("Armor") > -1) {
+                    self.activeView(2);
+                    self.weaponFilter(0);
+                    self.generalFilter(0);
+                }
+            } else {
+                self.setFilter([]);
+                self.showMissing(false);
+            }
+        }
     };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
@@ -2028,7 +2031,7 @@ var app = function() {
         _collections['Exotic Armor'] = _.pluck(_.filter(_itemDefs, function(item) {
             return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
-		self.collectionSets = _.sortBy(Object.keys(_collections));
+        self.collectionSets = _.sortBy(Object.keys(_collections));
         ko.applyBindings(self);
     };
 };
