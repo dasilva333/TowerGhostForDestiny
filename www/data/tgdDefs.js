@@ -15,9 +15,11 @@ tgd.localLog = function(msg) {
 };
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
+tgd.DestinySkillCap = 300;
+tgd.activeElement = null;
 //Network Keys, Axiomatic Beads, House Banners, Silken Codex
 tgd.DestinyGlimmerConsumables = [3632619276,269776572,2904517731,1932910919];
-tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Mats", "Glimmer Consumables", "Telemetries" ];
+tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries" ];
 tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
@@ -25,8 +27,8 @@ tgd.DestinyLayout = [
   { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
   { name: "Armor", array: 'armor', counts: [72,60], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
   { name: "Sub Classes", array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' },
-  { name: "General", array: 'general', counts: [36,80], bucketTypes: ['Ghost', 'Consumables','Materials', 'Shader','Emblem','Ship','Sparrow'], view: 3, headerText: 'inventory_general' },
-  { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Mission'], view: 3, headerText: 'inventory_postmaster' }
+  { name: "General", array: 'general', counts: [36,80], bucketTypes: ['Ghost', 'Consumables','Materials', 'Shader','Emblem','Ship','Sparrow','Emote'], view: 3, headerText: 'inventory_general' },
+  { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Quests','Mission'], view: 3, headerText: 'inventory_postmaster' }
 ]
 tgd.DestinyViews = {
 	"0": "All",
@@ -74,7 +76,9 @@ tgd.DestinyBucketTypes = {
 	"2422292810": "Post Master",
 	"1367666825": "Invisible",
 	"4023194814": "Ghost",
-	"434908299": "Artifact"
+	"434908299": "Artifact",
+	"3054419239": "Emote",
+	"1801258597": "Quests"
 }
 tgd.DestinyBucketColumns = {
 	"Post Master": 4, 
@@ -104,10 +108,10 @@ tgd.DestinyBucketColumns = {
 	"Mission": 4,
 	"Invisible": 4,
 	"Ghost": 3,
-	"Artifact": 3
+	"Artifact": 3,
+	"Quests": 4,
+	"Emote": 3
 }
-// TODO this needs to be updated based on the new values at level 40 
-// https://www.reddit.com/r/DestinyTheGame/comments/3kwmvh/how_overall_light_level_is_calculated/
 tgd.DestinyBucketWeights = [{
 	"Primary": 13.04,
 	"Special": 13.04,
@@ -242,13 +246,13 @@ tgd.normalizeTemplate = '<div id="menu">' +
 					'<% for (i = 0; i < characters.length; i++){ %>' +
 						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
 							'<div class="attkIcon">' +
-								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
+								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
-								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
+								'<div class="lower-left"><%= characters[i].classLetter() %></div>' +
 							'</div>' +
 						'</div>' +
 					'<% } %>' +
@@ -282,13 +286,13 @@ tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 					'<% for (i = 0; i < characters.length; i++){ %>' +
 						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
 							'<div class="attkIcon">' +
-								'<div class="icon-banner"><%= characters[i].classType %></div>' +								
+								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
 								'<% } else { %>' +
 									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
 								'<% } %>' +
-								'<div class="lower-left"><%= characters[i].classLetter %></div>' +
+								'<div class="lower-left"><%= characters[i].classLetter() %></div>' +
 							'</div>' +
 						'</div>' +
 					'<% } %>' +
