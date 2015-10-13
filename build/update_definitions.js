@@ -209,7 +209,8 @@ var queueImages = function(callback){
 	console.log("first queue");
 	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.json").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
-		queue.push(item.icon.replace(imgPath,''));
+		var icon = item.icon.replace(imgPath,'');
+		if (icon != "") queue.push(icon);
 		if (item.itemTypeName == "Emblem"){
 			queue.push(item.secondaryIcon.replace(imgPath,''));
 		}
@@ -237,10 +238,11 @@ var queueImages = function(callback){
 
 var cacheIcons = function(){
 	var icon = queue.pop();
-	console.log("check if icon exists " + icon);
-	var physicalPath = jsonPath + imgPath + icon;
+	//console.log("check if icon exists " + icon);
+	var iconPath = (icon.indexOf("/") > -1 ? icon : (imgPath + icon));
+	var physicalPath = jsonPath + iconPath;
 	if ( !fs.existsSync(physicalPath) ){
-		var dlPath = bungieURL + imgPath + icon;
+		var dlPath = bungieURL + iconPath;
 		console.log("downloading icon " + dlPath);
 		http.get(dlPath, function(res) {
 			if (res.statusCode != 200){
