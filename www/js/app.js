@@ -756,26 +756,27 @@ var app = function() {
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     };
-    this.setSetFilter = function(model, event) {
-        self.toggleBootstrapMenu();
-        var collection = $(event.target).closest('li').attr("value");
-        if (collection in _collections || collection == "All") {
-            self.setFilter(collection == "All" ? [] : _collections[collection]);
-            if (collection == "All") {
-                self.showMissing(false);
-            } else if (collection.indexOf("Weapons") > -1) {
-                self.activeView(1);
-                self.armorFilter(0);
-                self.generalFilter(0);
-            } else if (collection.indexOf("Armor") > -1) {
-                self.activeView(2);
-                self.weaponFilter(0);
-                self.generalFilter(0);
-            }
-        } else {
-            self.setFilter([]);
-            self.showMissing(false);
-        }
+    this.setSetFilter = function(collection) {
+		return function(){
+			self.toggleBootstrapMenu();
+			if (collection in _collections || collection == "All") {
+				self.setFilter(collection == "All" ? [] : _collections[collection]);
+				if (collection == "All") {
+					self.showMissing(false);
+				} else if (collection.indexOf("Weapons") > -1) {
+					self.activeView(1);
+					self.armorFilter(0);
+					self.generalFilter(0);
+				} else if (collection.indexOf("Armor") > -1) {
+					self.activeView(2);
+					self.weaponFilter(0);
+					self.generalFilter(0);
+				}
+			} else {
+				self.setFilter([]);
+				self.showMissing(false);
+			}		
+		}
     };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
@@ -2016,7 +2017,7 @@ var app = function() {
         }), function(key) {
             return key > 0;
         });
-        _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
+        _collections['Exotic Weapons'] = _.pluck(_.filter(_itemDefs, function(item) {
             return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
         var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
@@ -2024,9 +2025,10 @@ var app = function() {
         }), function(key) {
             return key > 0;
         });
-        _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
+        _collections['Exotic Armor'] = _.pluck(_.filter(_itemDefs, function(item) {
             return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType === 6 && item.equippable === true);
         }), 'itemHash');
+		self.collectionSets = _.sortBy(Object.keys(_collections));
         ko.applyBindings(self);
     };
 };
