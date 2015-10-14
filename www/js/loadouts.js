@@ -61,7 +61,7 @@
 	            if (!foundItem) return false;
 
 	            if (item.bucketType == "Subclasses" || foundItem.armorIndex != -1) {
-	                return item.doEquip() === true && item._id != loadoutItem.id && item.character.classType == foundItem.character.classType;
+	                return item.doEquip() === true && item._id != loadoutItem.id && item.character.classType() == foundItem.character.classType();
 	            }
 	            return item.doEquip() === true && item._id != loadoutItem.id;
 	        });
@@ -538,7 +538,7 @@
 	                                    /* then return an object indicating to do nothing */
 	                                    else {
 	                                        return {
-	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
+	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType() + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
@@ -584,7 +584,7 @@
 	                                        tgd.localLog("2.swapItem: " + swapItem.description);
 	                                        targetBucket.splice(targetBucket.indexOf(swapItem), 1);
 	                                        //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
-	                                        if (swapItem.armorIndex != -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType) {
+	                                        if (swapItem.armorIndex != -1 && item.character.id != "Vault" && item.character.classType() != targetCharacter.classType()) {
 	                                            return {
 	                                                description: item.description + app.activeText().loadouts_no_transfer,
 	                                                targetIcon: item.icon,
@@ -630,13 +630,13 @@
 	                                    /* then return an object indicating to do nothing */
 	                                    else {
 	                                        return {
-	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
+	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType() + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
 	                                        };
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType != targetCharacter.classType && targetCharacterId != "Vault")) {
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType() != targetCharacter.classType() && targetCharacterId != "Vault")) {
 	                                    tgd.localLog(item.description + " wont transfer sub classes ");
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
