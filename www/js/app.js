@@ -656,10 +656,10 @@ var app = function() {
             if (activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
-					var label = "";
-					if ( info.displayDescription ){
-						label = "<strong>" + info.displayDescription + "</strong>:";
-					}
+                    var label = "";
+                    if (info.displayDescription) {
+                        label = "<strong>" + info.displayDescription + "</strong>:";
+                    }
                     var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
                     $content.find(".destt-desc").after(label + value + "<br>");
                 });
@@ -782,7 +782,7 @@ var app = function() {
                 self.setFilter([]);
                 self.showMissing(false);
             }
-        }
+        };
     };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
@@ -1077,21 +1077,20 @@ var app = function() {
 
     this.refresh = function() {
         self.bungie.account(function(result) {
-			if (result && result.data && result.data.characters){
-				var characters = result.data.characters;
-				_.each(self.characters(), function(character) {
-					if (character.id != "Vault") {
-						var result = _.filter(characters, function(avatar) {
-							return avatar.characterBase.characterId == character.id;
-						})[0];
-						character.updateCharacter(result);
-					}
-					character._reloadBucket(character);
-				});			
-			}
-			else {
-				tgd.localLog(result);
-			}
+            if (result && result.data && result.data.characters) {
+                var characters = result.data.characters;
+                _.each(self.characters(), function(character) {
+                    if (character.id != "Vault") {
+                        var result = _.filter(characters, function(avatar) {
+                            return avatar.characterBase.characterId == character.id;
+                        })[0];
+                        character.updateCharacter(result);
+                    }
+                    character._reloadBucket(character);
+                });
+            } else {
+                tgd.localLog(result);
+            }
         });
     };
 
