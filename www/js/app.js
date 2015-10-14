@@ -638,7 +638,7 @@ var app = function() {
                             perks: activeItem.perks
                         }));
                     }
-                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 || activeItem.bucketType == "Ghost") {
                     // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
@@ -656,9 +656,12 @@ var app = function() {
             if (activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
-                    var label = "<strong>" + info.displayDescription + "</strong>";
+					var label = "";
+					if ( info.displayDescription ){
+						label = "<strong>" + info.displayDescription + "</strong>:";
+					}
                     var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
-                    $content.find(".destt-desc").after(label + ":" + value + "<br>");
+                    $content.find(".destt-desc").after(label + value + "<br>");
                 });
             }
         }

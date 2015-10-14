@@ -135,15 +135,20 @@ var extractData = function(callback){
 	var dbFiles = fs.readdirSync(".").filter(function(file){
 		return file.indexOf("mobileWorldContent") > -1;
 	});
-	
 	var count = 0;
 	_.each(dbFiles, function(file){
 		var locale = file.split("_")[1].split(".")[0];
 		var db = new sqlite3.Database(file);
 		neededFiles.forEach(function(set){
 			count++;
+			//console.log("1.count " + count);
 			db.all("SELECT * FROM " + set.table, function(err, rows) {
-				if (err) return; 
+				count--;
+				if (err){
+					console.log(file);
+					console.log(err);
+					return; 
+				}
 				var filename = set.name + ".json";
 				var patchFile = set.name + ".patch";
 				var obj = {};
@@ -180,7 +185,7 @@ var extractData = function(callback){
 						
 					}
 				}
-				count--;
+				//console.log("2.count " + count);
 				if (count == 0){
 					callback();
 				}
