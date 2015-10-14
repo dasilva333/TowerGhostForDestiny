@@ -20,14 +20,14 @@ tgd.activeElement = null;
 //Network Keys, Axiomatic Beads, House Banners, Silken Codex
 tgd.DestinyGlimmerConsumables = [3632619276,269776572,2904517731,1932910919];
 tgd.DestinyGeneralSearches = [ "Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries" ];
-tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
+tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
 tgd.DestinyLayout = [
   { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
   { name: "Armor", array: 'armor', counts: [72,60], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
   { name: "Sub Classes", array: '', counts: [0,0], bucketTypes: ['Subclasses'], view: 3, headerText: 'inventory_subclasses' },
-  { name: "General", array: 'general', counts: [36,80], bucketTypes: ['Ghost', 'Consumables','Materials', 'Shader','Emblem','Ship','Sparrow','Emote'], view: 3, headerText: 'inventory_general' },
+  { name: "General", array: 'general', counts: [36,80], bucketTypes: ['Consumables','Materials', 'Shader','Emblem','Ship','Sparrow','Emote'], view: 3, headerText: 'inventory_general' },
   { name: "Post Master", array: 'postmaster', counts: [60,60], bucketTypes: ['Messages','Invisible','Lost Items','Bounties','Quests','Mission'], view: 3, headerText: 'inventory_postmaster' }
 ]
 tgd.DestinyViews = {

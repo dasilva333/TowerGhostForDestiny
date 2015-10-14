@@ -85,7 +85,7 @@ extractItems(function(_itemDefs){
 			return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_CROTAS_END.sourceHash) > -1);
 		}), 'itemHash');
 		setDefs['CE Weapons'] = _.pluck(_.filter(_itemDefs, function(item) {
-			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_CROTAS_END.sourceHash) > -1);
+			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && ((item.sourceHashes.indexOf(rewardSources.SOURCE_CROTAS_END.sourceHash) > -1 && item.tierType !== 6) || item.itemHash == 2809229973) && item.sourceHashes.indexOf(rewardSources.SOURCE_NIGHTFALL.sourceHash) == -1 && item.sourceHashes.indexOf(rewardSources.SOURCE_VENDOR_BLACK_MARKET.sourceHash) == -1);
 		}), 'itemHash');
 		
 		/* Iron Banner */
@@ -101,7 +101,7 @@ extractItems(function(_itemDefs){
 			return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_VAULT_OF_GLASS.sourceHash) > -1);
 		}), 'itemHash');
 		setDefs['VoG Weapons'] = _.pluck(_.filter(_itemDefs, function(item) {
-			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_VAULT_OF_GLASS.sourceHash) > -1);
+			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_VAULT_OF_GLASS.sourceHash) > -1 && item.sourceHashes.indexOf(rewardSources.SOURCE_NIGHTFALL.sourceHash) == -1 && item.sourceHashes.indexOf(rewardSources.SOURCE_VENDOR_BLACK_MARKET.sourceHash) == -1);
 		}), 'itemHash');
 		
 		/* Trials of Osiris */
@@ -111,13 +111,20 @@ extractItems(function(_itemDefs){
 		setDefs['ToO Weapons'] = _.pluck(_.filter(_itemDefs, function(item) {
 			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.equippable === true && ( item.sourceHashes.indexOf(rewardSources.SOURCE_VENDOR_OSIRIS.sourceHash) > -1 || item.itemName.indexOf("Adept") > -1 ));
 		}), 'itemHash');
-
+		var poeNames = ["Kellbreaker's","Kellslayer's","Kellhunter's"];
 		/* Prison of Elders */
 		setDefs['PoE Armor'] = _.pluck(_.filter(_itemDefs, function(item) {
-			return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 5 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_PRISON_ELDERS.sourceHash) > -1);
+			var isPOE = false;
+			if (item.itemName){
+				_.each(poeNames, function(name){
+					if (isPOE == false)
+						isPOE = item.itemName.indexOf(name) > -1;
+				});
+			}
+			return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 5 && item.equippable === true && isPOE);
 		}), 'itemHash');
 		setDefs['PoE Weapons'] = _.pluck(_.filter(_itemDefs, function(item) {
-			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 5 && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_PRISON_ELDERS.sourceHash) > -1);
+			return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && ( item.tierType == 5 || item.tierType == 6 ) && item.equippable === true && item.sourceHashes.indexOf(rewardSources.SOURCE_PRISON_ELDERS.sourceHash) > -1 && item.sourceHashes.indexOf(rewardSources.SOURCE_STRIKE.sourceHash) == -1 && item.sourceHashes.indexOf(rewardSources.SOURCE_VENDOR_BLACK_MARKET.sourceHash) == -1);
 		}), 'itemHash');
 		
 		/* King's Fall */
