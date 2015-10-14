@@ -10,7 +10,7 @@ function Layout(layout) {
     self.countText = function(character) {
         return ko.pureComputed(function() {
             var text = "";
-            if (self.array !== "") {
+            if (self.array !== "" && character.id == 'Vault') {
                 var currentAmount = character[self.array]().length;
                 var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
                 text = "(" + currentAmount + "/" + totalAmount + ")";
@@ -23,7 +23,7 @@ function Layout(layout) {
     };
     self.isVisible = function(character) {
         return ko.pureComputed(function() {
-            return ((character.id == "Vault" && (self.name !== "Post Master")) || character.id !== "Vault");
+            return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
     };
 }
@@ -638,7 +638,7 @@ var app = function() {
                             perks: activeItem.perks
                         }));
                     }
-                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 || activeItem.bucketType == "Ghost") {
+                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
