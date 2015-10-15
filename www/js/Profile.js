@@ -518,11 +518,7 @@ Profile.prototype = {
             candidates = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
                     (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1)
-<<<<<<< HEAD
                 ) && ((type == "All" && item.armorIndex > -1) || type != "All");
-=======
-                ) && ((type == "All" && item.armorIndex > -1) || type != "All")
->>>>>>> 3d13d2683d463adbb34cabf231ee2115a837effa
             });
             //console.log("bucket: " + bucket);
             //console.log(candidates);
