@@ -1425,7 +1425,7 @@ var app = function() {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
         container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
-        (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
+        window.whatsNew = (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
     };
@@ -1933,10 +1933,10 @@ var app = function() {
                 cContainer.on("swipeRight", self.shiftViewRight)
                 cContainer.on("touch", self.globalClickHandler);
 
-            if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                StatusBar.overlaysWebView(false);
-            }
             if (typeof StatusBar !== "undefined") {
+				if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+					StatusBar.overlaysWebView(false);
+				}
                 StatusBar.styleBlackOpaque();
                 StatusBar.backgroundColorByHexString("#272B30");
             }
