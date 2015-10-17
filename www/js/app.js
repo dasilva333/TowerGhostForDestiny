@@ -209,8 +209,8 @@ window.ko.bindingHandlers.logger = {
 
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var elem = $$(element)
-		elem.on("touch", function() {
+        var elem = $(element)
+		elem.on("singleTap", function() {
 			var index = $(element).index('.mobile-characters-image'),
 				distance = $(".profile:eq(" + index + ")");
 			if (distance.length > 0) {
@@ -237,8 +237,8 @@ window.ko.bindingHandlers.fastclick = {
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var elem = $$(element);
-		elem.on("touch", function(ev) {
+        var elem = $(element);
+		elem.on("singleTap", function(ev) {
 			tgd.localLog("item.tap");
 			var target = tgd.getEventDelegate(ev.target, ".itemLink");
 			if (target) {
@@ -1928,10 +1928,10 @@ var app = function() {
         }
 
         if (isMobile) {
-				var cContainer = $$(document.getElementById('charactersContainer'))
+				var cContainer = $(document.getElementById('charactersContainer'))
 				cContainer.on("swipeLeft", self.shiftViewLeft)
                 cContainer.on("swipeRight", self.shiftViewRight)
-                cContainer.on("touch", self.globalClickHandler);
+                cContainer.on("singleTap", self.globalClickHandler);
 
             if (window.device && device.platform === "iOS" && device.version >= 7.0) {
                 StatusBar.overlaysWebView(false);

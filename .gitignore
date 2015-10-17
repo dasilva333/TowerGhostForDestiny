@@ -12,3 +12,4 @@ node_modules
 .sass-cache
 *.map
 *.db
+/build/npm-debug.log
