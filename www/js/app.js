@@ -209,24 +209,22 @@ window.ko.bindingHandlers.logger = {
 
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        Hammer(element, {
-                time: 2000
-            })
-            .on("tap", function() {
-                var index = $(element).index('.mobile-characters-image'),
-                    distance = $(".profile:eq(" + index + ")");
-                if (distance.length > 0) {
-                    distance = distance.position().top - 50;
-                    app.scrollTo(distance);
-                }
-            })
-            .on("press", function() {
-                $.toaster({
-                    priority: 'info',
-                    title: 'Info',
-                    message: app.activeText().this_icon + viewModel.uniqueName()
-                });
+        var elem = $(element);
+        elem.on(isMobile ? "singleTap" : "click", function() {
+            var index = $(element).index('.mobile-characters-image'),
+                distance = $(".profile:eq(" + index + ")");
+            if (distance.length > 0) {
+                distance = distance.position().top - 50;
+                app.scrollTo(distance);
+            }
+        });
+        elem.on("hold", function() {
+            $.toaster({
+                priority: 'info',
+                title: 'Info',
+                message: app.activeText().this_icon + viewModel.uniqueName()
             });
+        });
     }
 };
 
@@ -239,75 +237,72 @@ window.ko.bindingHandlers.fastclick = {
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        Hammer(element, {
-                time: 2000
-            })
-            .on("tap", function(ev) {
-                tgd.localLog("item.tap");
-                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                if (target) {
-                    var item = ko.contextFor(target).$data;
-                    tgd.moveItemPositionHandler(target, item);
-                }
-            })
-            .on("doubletap", function(ev) {
-                tgd.localLog("item.doubletap");
-                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                if (target) {
-                    var context = ko.contextFor(target);
-                    if (context && "$data" in context) {
-                        var item = context.$data;
-                        if (item.transferStatus < 2) {
-                            if (app.dynamicMode() === false) {
-                                app.dynamicMode(true);
-                                app.createLoadout();
-                            }
-                            tgd.localLog("double tap");
-                            if (item._id > 0) {
-                                app.activeLoadout().addUniqueItem({
-                                    id: item._id,
-                                    bucketType: item.bucketType,
-                                    doEquip: false
-                                });
-                            } else {
-                                app.activeLoadout().addGenericItem({
-                                    hash: item.id,
-                                    bucketType: item.bucketType,
-                                    primaryStat: item.primaryStat()
-                                });
-                            }
+        var elem = $(element);
+        elem.on(isMobile ? "singleTap" : "click", function(ev) {
+            tgd.localLog("item.tap");
+            var target = tgd.getEventDelegate(ev.target, ".itemLink");
+            if (target) {
+                var item = ko.contextFor(target).$data;
+                tgd.moveItemPositionHandler(target, item);
+            }
+        });
+        elem.on("doubleTap dblclick", function(ev) {
+            tgd.localLog("item.doubletap");
+            var target = tgd.getEventDelegate(ev.target, ".itemLink");
+            if (target) {
+                var context = ko.contextFor(target);
+                if (context && "$data" in context) {
+                    var item = context.$data;
+                    if (item.transferStatus < 2) {
+                        if (app.dynamicMode() === false) {
+                            app.dynamicMode(true);
+                            app.createLoadout();
+                        }
+                        tgd.localLog("double tap");
+                        if (item._id > 0) {
+                            app.activeLoadout().addUniqueItem({
+                                id: item._id,
+                                bucketType: item.bucketType,
+                                doEquip: false
+                            });
                         } else {
-                            $.toaster({
-                                priority: 'danger',
-                                title: 'Warning',
-                                message: app.activeText().unable_create_loadout_for_type
+                            app.activeLoadout().addGenericItem({
+                                hash: item.id,
+                                bucketType: item.bucketType,
+                                primaryStat: item.primaryStat()
                             });
                         }
+                    } else {
+                        $.toaster({
+                            priority: 'danger',
+                            title: 'Warning',
+                            message: app.activeText().unable_create_loadout_for_type
+                        });
                     }
                 }
-            })
-            // press is actually hold 
-            .on("press", function(ev) {
-                tgd.localLog("item.press");
-                var target = tgd.getEventDelegate(ev.target, ".itemLink");
-                if (target) {
-                    var context = ko.contextFor(target);
-                    if (context && "$data" in context) {
-                        var item = context.$data;
-                        if (item && item.doEquip && app.loadoutMode() === true) {
-                            item.doEquip(!item.doEquip());
-                            item.markAsEquip(item, {
-                                target: target
-                            });
-                        } else if (!isMobile) {
-                            tgd.moveItemPositionHandler(target, item);
-                        } else {
-                            $ZamTooltips.lastElement = target;
-                            $ZamTooltips.show("destinydb", "items", item.id, target);
-                        }
+            }
+        });
+        elem.on("hold", function(ev) {
+            tgd.localLog("item.press");
+            var target = tgd.getEventDelegate(ev.target, ".itemLink");
+            if (target) {
+                var context = ko.contextFor(target);
+                if (context && "$data" in context) {
+                    var item = context.$data;
+                    if (item && item.doEquip && app.loadoutMode() === true) {
+                        item.doEquip(!item.doEquip());
+                        item.markAsEquip(item, {
+                            target: target
+                        });
+                    } else if (!isMobile) {
+                        tgd.moveItemPositionHandler(target, item);
+                    } else {
+                        $ZamTooltips.lastElement = target;
+                        $ZamTooltips.show("destinydb", "items", item.id, target);
                     }
                 }
-            });
+            }
+        });
     }
 };
 
@@ -1933,14 +1928,10 @@ var app = function() {
         }
 
         if (isMobile) {
-            Hammer(document.getElementById('charactersContainer'), {
-                    drag_min_distance: 1,
-                    swipe_velocity: 0.1,
-                    drag_horizontal: true,
-                    drag_vertical: false
-                }).on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight)
-                .on("tap", self.globalClickHandler);
+            var cContainer = $(document.getElementById('charactersContainer'));
+            cContainer.on("swipeLeft", self.shiftViewLeft);
+            cContainer.on("swipeRight", self.shiftViewRight);
+            cContainer.on(isMobile ? "singleTap" : "click", self.globalClickHandler);
 
             if (window.device && device.platform === "iOS" && device.version >= 7.0) {
                 StatusBar.overlaysWebView(false);
