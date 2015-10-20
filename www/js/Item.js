@@ -63,7 +63,7 @@ Item.prototype = {
                 itemTypeName = info.itemTypeName;
             }
             //some weird stuff shows up under this bucketType w/o this filter
-            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
+            if ((info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) || info.icon == "") {
                 return;
             }
             var itemObject = {
