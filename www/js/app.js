@@ -425,7 +425,7 @@ var app = function() {
             return a.order() - b.order();
         });
     });
-    this.currentLocale = ko.pureComputed(function() {
+    this.currentLocale = ko.computed(function() {
         var locale = self.locale();
         if (self.appLocale() !== "") {
             locale = self.appLocale();
