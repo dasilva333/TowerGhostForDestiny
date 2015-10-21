@@ -182,7 +182,11 @@ tgd.defaults = {
 	defLocaleVersion: "2.7.0",
 	vaultPos: 0,
 	itemDefs: "",
-	preferredSystem: "PSN"
+	preferredSystem: "PSN",
+	ccWidth: "",
+	layoutMode: "even",
+	vaultColumns: 3,
+	vaultWidth: 3
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +

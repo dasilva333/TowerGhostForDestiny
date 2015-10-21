@@ -97,7 +97,7 @@
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
                 <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
-                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
+                    <span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
                         <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level() || character.id == 'Vault') ? 1 : 0.3 }">
                             <img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
                         </a>
@@ -422,7 +422,39 @@
         <div class="container-fluid">
             <form class="form-horizontal">
                 <fieldset>
-                    <div class="form-group">
+					<div class="form-group">
+                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_container_width">Container Width</label>
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="btn-group">
+							  <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '' ? 'btn-active': 'btn-default'" href="#">Default</a>
+							  <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '60%' ? 'btn-active': 'btn-default'" href="#">60%</a>
+							  <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '70%' ? 'btn-active': 'btn-default'" href="#">70%</a>
+							  <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '80%' ? 'btn-active': 'btn-default'" href="#">80%</a>
+							  <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '90%' ? 'btn-active': 'btn-default'" href="#">90%</a>
+							  <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '100%' ? 'btn-active': 'btn-default'" href="#">100%</a>
+							</div>
+                        </div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_layout_mode">Layout Mode</label>
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="btn-group">
+								  <div class="radio">
+									<label>
+									  <input name="optionsRadios" value="even" type="radio" data-bind="checked: layoutMode">
+									  Even Columns
+									</label>
+								  </div>
+								  <div class="radio">
+									<label>
+									  <input name="optionsRadios" value="uneven" type="radio" data-bind="checked: layoutMode">
+									  Uneven Columns
+									</label>
+								  </div>
+							</div>
+                        </div>
+                    </div>
+                    <div class="form-group" data-bind="visible: layoutMode() == 'even'">
                         <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_number_of_columns"># of Columns</label>
                         <div class="col-xs-12 col-sm-9">
                             <div class="row">
@@ -461,6 +493,27 @@
                                     <input type="Button" class="btn" value="4" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
                                 </div>
                             </div>
+                        </div>
+                    </div>
+					<div class="form-group" data-bind="visible: layoutMode() == 'uneven'">
+                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_vault_width">Vault Width</label>
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="btn-group">
+							  <a class="btn" data-bind="click: setVaultWidth(3), css: vaultWidth() == '3' ? 'btn-active': 'btn-default'" href="#">25%</a>
+							  <a class="btn" data-bind="click: setVaultWidth(4), css: vaultWidth() == '4' ? 'btn-active': 'btn-default'" href="#">33%</a>
+							  <a class="btn" data-bind="click: setVaultWidth(5), css: vaultWidth() == '5' ? 'btn-active': 'btn-default'" href="#">42%</a>
+							  <a class="btn" data-bind="click: setVaultWidth(6), css: vaultWidth() == '6' ? 'btn-active': 'btn-default'" href="#">50%</a>
+							</div>
+                        </div>
+                    </div>
+					<div class="form-group">
+                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_vault_columns">Vault Columns</label>
+                        <div class="col-xs-12 col-sm-9">
+                            <div class="btn-group">
+							  <a class="btn" data-bind="click: setVaultColumns(1), css: vaultColumns() == '1' ? 'btn-active': 'btn-default'" href="#">12</a>
+							  <a class="btn" data-bind="click: setVaultColumns(2), css: vaultColumns() == '2' ? 'btn-active': 'btn-default'" href="#">6</a>
+							  <a class="btn" data-bind="click: setVaultColumns(3), css: vaultColumns() == '3' ? 'btn-active': 'btn-default'" href="#">4</a>
+							</div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -590,10 +643,10 @@
             </div>
         </div>
     </nav>
-    <div class="container">
+    <div class="container" id="charactersContainerParent" data-bind="style: { width: ccWidth }">
         <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0">
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-                <div class="profile" data-bind="css: $parent.columnMode, attr:{id: character.id}">
+                <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                     <div class="character">
                         <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
                             <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>

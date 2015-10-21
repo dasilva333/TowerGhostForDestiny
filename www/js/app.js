@@ -366,6 +366,10 @@ var app = function() {
     this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
     this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
+	this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
+	this.ccWidth = ko.pureComputed(new tgd.StoreObj("ccWidth"));
+	this.vaultColumns = ko.pureComputed(new tgd.StoreObj("vaultColumns"));
+	this.vaultWidth = ko.pureComputed(new tgd.StoreObj("vaultWidth"));
     this.vaultPos = ko.pureComputed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.pureComputed(new tgd.StoreObj("xsColumn"));
     this.smColumn = ko.pureComputed(new tgd.StoreObj("smColumn"));
@@ -764,6 +768,21 @@ var app = function() {
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     };
+	this.setVaultColumns = function(columns){
+		return function(){
+			self.vaultColumns(columns);
+		}
+	}
+	this.setVaultWidth = function(width){
+		return function(){
+			self.vaultWidth(width);
+		}
+	}
+	this.setCCWidth = function(model, evt){
+		var width = $(evt.target).text();
+		width = (width == "Default") ? "" : width;
+		self.ccWidth(width);
+	}
     this.setSetFilter = function(collection) {
         return function() {
             self.toggleBootstrapMenu();
@@ -1749,9 +1768,21 @@ var app = function() {
         });
     };
 
-    this.columnMode = ko.pureComputed(function() {
-        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
-    });
+    this.columnMode = function(character){
+		return ko.pureComputed(function() {
+			var totalCharacters = 3, 
+				totalColumns = 12, 
+				vaultColumns = self.vaultWidth(), 
+				characterColumns = Math.floor((totalColumns - vaultColumns)  / totalCharacters);
+				
+			if (character.id == "Vault"){
+				return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+			}
+			else {
+				return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+			}			
+		});
+	}
 
     this.setColumns = function(type, input) {
         return function() {

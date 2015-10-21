@@ -12,6 +12,22 @@ var Item = function(model, profile) {
     this.isDuplicate = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
+	this.columnMode = ko.computed(function(){
+		var className = "";
+		if ( self.character.id == 'Vault' ){
+			className = 'col-xs-' + app.vaultColumns();
+		}
+		else if ( tgd.DestinyBucketColumns[self.bucketType] == 4 ){
+			className = 'col-xs-3';
+		}
+		else {
+			className = 'col-xs-4';
+		}
+		if ( self.isGridComplete ) {
+			className += ' complete';
+		}
+		return className;
+	});
     this.isEquippable = function(avatarId) {
         return ko.pureComputed(function() {
             //rules for how subclasses can be equipped
