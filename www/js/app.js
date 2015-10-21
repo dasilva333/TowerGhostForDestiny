@@ -771,17 +771,20 @@ var app = function() {
 	this.setVaultColumns = function(columns){
 		return function(){
 			self.vaultColumns(columns);
+			setTimeout(self.quickIconHighlighter,500);
 		}
 	}
 	this.setVaultWidth = function(width){
 		return function(){
 			self.vaultWidth(width);
+			setTimeout(self.quickIconHighlighter,500);
 		}
 	}
 	this.setCCWidth = function(model, evt){
 		var width = $(evt.target).text();
 		width = (width == "Default") ? "" : width;
 		self.ccWidth(width);
+		setTimeout(self.quickIconHighlighter,500);
 	}
     this.setSetFilter = function(collection) {
         return function() {
