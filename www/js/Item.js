@@ -82,6 +82,9 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
+			if (info.icon === ""){
+				info.icon = "/img/misc/missing_icon.png";
+			}
             var itemObject = {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -102,7 +105,7 @@ Item.prototype = {
                 typeName: itemTypeName,
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
-                icon: info.icon === "" ? "/img/misc/missing_icon.png" : (tgd.dataDir + info.icon),
+                icon: tgd.dataDir + info.icon,
                 isUnique: false
             };
             if (item.primaryStat) {
