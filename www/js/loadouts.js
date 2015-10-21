@@ -636,7 +636,9 @@
 	                                            swapIcon: ownerIcon
 	                                        };
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType() != targetCharacter.classType() && targetCharacterId != "Vault")) {
+	                                } 
+									//this condition is supposed to supress subclases and artifacts from being included but not ghosts
+									else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.classType != 3 && item.character.classType() != targetCharacter.classType() && targetCharacterId != "Vault")) {
 	                                    tgd.localLog(item.description + " wont transfer sub classes ");
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
