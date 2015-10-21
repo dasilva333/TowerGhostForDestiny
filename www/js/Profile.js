@@ -123,8 +123,8 @@ Profile.prototype = {
             if (results && results.data && results.data.buckets) {
                 var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
                 _.each(items, function(item) {
-					var processedItem = new Item(item, self);
-					if ("id" in processedItem) self.items.push(processedItem);
+                    var processedItem = new Item(item, self);
+                    if ("id" in processedItem) self.items.push(processedItem);
                 });
                 done();
             } else {

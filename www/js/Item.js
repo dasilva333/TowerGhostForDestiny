@@ -63,7 +63,7 @@ Item.prototype = {
                 itemTypeName = info.itemTypeName;
             }
             //some weird stuff shows up under this bucketType w/o this filter
-            if ((info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) || info.icon == "") {
+            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
             var itemObject = {
@@ -86,7 +86,7 @@ Item.prototype = {
                 typeName: itemTypeName,
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
-                icon: tgd.dataDir + info.icon,
+                icon: info.icon === "" ? "/img/misc/missing_icon.png" : (tgd.dataDir + info.icon),
                 isUnique: false
             };
             if (item.primaryStat) {
