@@ -1,3 +1,5 @@
+window.Hammer.Tap.prototype.defaults.threshold = 9;
+
 function Layout(layout) {
     var self = this;
 
@@ -209,22 +211,24 @@ window.ko.bindingHandlers.logger = {
 
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var elem = $(element);
-        elem.on(isMobile ? "singleTap" : "click", function() {
-            var index = $(element).index('.mobile-characters-image'),
-                distance = $(".profile:eq(" + index + ")");
-            if (distance.length > 0) {
-                distance = distance.position().top - 50;
-                app.scrollTo(distance);
-            }
-        });
-        elem.on("hold", function() {
-            $.toaster({
-                priority: 'info',
-                title: 'Info',
-                message: app.activeText().this_icon + viewModel.uniqueName()
+        Hammer(element, {
+                time: 2000
+            })
+            .on("tap", function() {
+                var index = $(element).index('.mobile-characters-image'),
+                    distance = $(".profile:eq(" + index + ")");
+                if (distance.length > 0) {
+                    distance = distance.position().top - 50;
+                    app.scrollTo(distance);
+                }
+            })
+            .on("press", function() {
+                $.toaster({
+                    priority: 'info',
+                    title: 'Info',
+                    message: app.activeText().this_icon + viewModel.uniqueName()
+                });
             });
-        });
     }
 };
 
@@ -237,72 +241,75 @@ window.ko.bindingHandlers.fastclick = {
 
 ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var elem = $(element);
-        elem.on(isMobile ? "singleTap" : "click", function(ev) {
-            tgd.localLog("item.tap");
-            var target = tgd.getEventDelegate(ev.target, ".itemLink");
-            if (target) {
-                var item = ko.contextFor(target).$data;
-                tgd.moveItemPositionHandler(target, item);
-            }
-        });
-        elem.on("doubleTap dblclick", function(ev) {
-            tgd.localLog("item.doubletap");
-            var target = tgd.getEventDelegate(ev.target, ".itemLink");
-            if (target) {
-                var context = ko.contextFor(target);
-                if (context && "$data" in context) {
-                    var item = context.$data;
-                    if (item.transferStatus < 2) {
-                        if (app.dynamicMode() === false) {
-                            app.dynamicMode(true);
-                            app.createLoadout();
-                        }
-                        tgd.localLog("double tap");
-                        if (item._id > 0) {
-                            app.activeLoadout().addUniqueItem({
-                                id: item._id,
-                                bucketType: item.bucketType,
-                                doEquip: false
-                            });
+        Hammer(element, {
+                time: 2000
+            })
+            .on("tap", function(ev) {
+                tgd.localLog("item.tap");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var item = ko.contextFor(target).$data;
+                    tgd.moveItemPositionHandler(target, item);
+                }
+            })
+            .on("doubletap", function(ev) {
+                tgd.localLog("item.doubletap");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item.transferStatus < 2) {
+                            if (app.dynamicMode() === false) {
+                                app.dynamicMode(true);
+                                app.createLoadout();
+                            }
+                            tgd.localLog("double tap");
+                            if (item._id > 0) {
+                                app.activeLoadout().addUniqueItem({
+                                    id: item._id,
+                                    bucketType: item.bucketType,
+                                    doEquip: false
+                                });
+                            } else {
+                                app.activeLoadout().addGenericItem({
+                                    hash: item.id,
+                                    bucketType: item.bucketType,
+                                    primaryStat: item.primaryStat()
+                                });
+                            }
                         } else {
-                            app.activeLoadout().addGenericItem({
-                                hash: item.id,
-                                bucketType: item.bucketType,
-                                primaryStat: item.primaryStat()
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Warning',
+                                message: app.activeText().unable_create_loadout_for_type
                             });
                         }
-                    } else {
-                        $.toaster({
-                            priority: 'danger',
-                            title: 'Warning',
-                            message: app.activeText().unable_create_loadout_for_type
-                        });
                     }
                 }
-            }
-        });
-        elem.on("hold", function(ev) {
-            tgd.localLog("item.press");
-            var target = tgd.getEventDelegate(ev.target, ".itemLink");
-            if (target) {
-                var context = ko.contextFor(target);
-                if (context && "$data" in context) {
-                    var item = context.$data;
-                    if (item && item.doEquip && app.loadoutMode() === true) {
-                        item.doEquip(!item.doEquip());
-                        item.markAsEquip(item, {
-                            target: target
-                        });
-                    } else if (!isMobile) {
-                        tgd.moveItemPositionHandler(target, item);
-                    } else {
-                        $ZamTooltips.lastElement = target;
-                        $ZamTooltips.show("destinydb", "items", item.id, target);
+            })
+            // press is actually hold 
+            .on("press", function(ev) {
+                tgd.localLog("item.press");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item && item.doEquip && app.loadoutMode() === true) {
+                            item.doEquip(!item.doEquip());
+                            item.markAsEquip(item, {
+                                target: target
+                            });
+                        } else if (!isMobile) {
+                            tgd.moveItemPositionHandler(target, item);
+                        } else {
+                            $ZamTooltips.lastElement = target;
+                            $ZamTooltips.show("destinydb", "items", item.id, target);
+                        }
                     }
                 }
-            }
-        });
+            });
     }
 };
 
@@ -359,6 +366,10 @@ var app = function() {
     this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
     this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
+    this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
+    this.ccWidth = ko.pureComputed(new tgd.StoreObj("ccWidth"));
+    this.vaultColumns = ko.pureComputed(new tgd.StoreObj("vaultColumns"));
+    this.vaultWidth = ko.pureComputed(new tgd.StoreObj("vaultWidth"));
     this.vaultPos = ko.pureComputed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.pureComputed(new tgd.StoreObj("xsColumn"));
     this.smColumn = ko.pureComputed(new tgd.StoreObj("smColumn"));
@@ -418,7 +429,7 @@ var app = function() {
             return a.order() - b.order();
         });
     });
-    this.currentLocale = ko.pureComputed(function() {
+    this.currentLocale = ko.computed(function() {
         var locale = self.locale();
         if (self.appLocale() !== "") {
             locale = self.appLocale();
@@ -688,7 +699,7 @@ var app = function() {
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
-        self.bucketSizeHandler();
+        self.redraw();
     };
     this.toggleDragAndDrop = function() {
         self.toggleBootstrapMenu();
@@ -756,6 +767,24 @@ var app = function() {
         self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
+    };
+    this.setVaultColumns = function(columns) {
+        return function() {
+            self.vaultColumns(columns);
+            self.redraw();
+        };
+    };
+    this.setVaultWidth = function(width) {
+        return function() {
+            self.vaultWidth(width);
+            self.redraw();
+        };
+    };
+    this.setCCWidth = function(model, evt) {
+        var width = $(evt.target).text();
+        width = (width == "Default") ? "" : width;
+        self.ccWidth(width);
+        self.redraw();
     };
     this.setSetFilter = function(collection) {
         return function() {
@@ -903,6 +932,11 @@ var app = function() {
         self.search();
     };
 
+    this.redraw = function() {
+        setTimeout(self.bucketSizeHandler, 1000);
+        setTimeout(self.quickIconHighlighter, 1000);
+    };
+
     var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
@@ -935,8 +969,7 @@ var app = function() {
                     }
                     return 0;
                 });
-                setTimeout(self.bucketSizeHandler, 1000);
-                setTimeout(self.quickIconHighlighter, 1000);
+                self.redraw();
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
@@ -1115,10 +1148,11 @@ var app = function() {
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
             vaultPos = (vaultPos < 0) ? 0 : vaultPos;
+            var vaultColumns = 12 / self.vaultColumns();
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var isVault = this.className.indexOf("12") > -1;
-                var columnsPerBucket = isVault ? 4 : tgd.DestinyBucketColumns[bucketType];
+                var isVault = this.className.indexOf("Vault") > -1;
+                var columnsPerBucket = isVault ? vaultColumns : tgd.DestinyBucketColumns[bucketType];
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
@@ -1742,13 +1776,31 @@ var app = function() {
         });
     };
 
-    this.columnMode = ko.pureComputed(function() {
-        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
-    });
+    this.columnMode = function(character) {
+        return ko.pureComputed(function() {
+            var totalCharacters = 3,
+                totalColumns = 12,
+                vaultColumns,
+                characterColumns;
+            if (self.layoutMode() == 'uneven') {
+                vaultColumns = self.vaultWidth(),
+                    characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
+            } else {
+                vaultColumns = self.lgColumn();
+                characterColumns = self.lgColumn();
+            }
+            if (character.id == "Vault") {
+                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+            } else {
+                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+            }
+        });
+    };
 
     this.setColumns = function(type, input) {
         return function() {
             self[type + "Column"](12 / input.value);
+            self.redraw();
         };
     };
 
@@ -1928,10 +1980,14 @@ var app = function() {
         }
 
         if (isMobile) {
-            var cContainer = $(document.getElementById('charactersContainer'));
-            cContainer.on("swipeLeft", self.shiftViewLeft);
-            cContainer.on("swipeRight", self.shiftViewRight);
-            cContainer.on(isMobile ? "singleTap" : "click", self.globalClickHandler);
+            Hammer(document.getElementById('charactersContainer'), {
+                    drag_min_distance: 1,
+                    swipe_velocity: 0.1,
+                    drag_horizontal: true,
+                    drag_vertical: false
+                }).on("swipeleft", self.shiftViewLeft)
+                .on("swiperight", self.shiftViewRight)
+                .on("tap", self.globalClickHandler);
 
             if (window.device && device.platform === "iOS" && device.version >= 7.0) {
                 StatusBar.overlaysWebView(false);
@@ -2006,9 +2062,7 @@ var app = function() {
         $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
-        self.activeView.subscribe(function() {
-            setTimeout(self.bucketSizeHandler, 500);
-        });
+        self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));

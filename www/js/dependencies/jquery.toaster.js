@@ -76,6 +76,12 @@
 					});
 				}, timeout);
 			}
+			
+			$toast.click(function(){
+				settings.toast.remove($toast, function(){
+					$toast.remove();
+				});
+			});
 		}
 	};
 
