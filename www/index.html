@@ -649,7 +649,7 @@
                         <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
                             <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
                             <div class="class" data-bind="text: classType"></div>
-                            <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false">
+                            <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false, visible: level() != ''">
                                 <div class="light" data-bind="text: level"></div>
                                 <div class="power" data-bind="text: character.powerLevel"></div>
                             </div>

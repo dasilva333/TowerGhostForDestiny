@@ -170,6 +170,7 @@ Profile.prototype = {
         return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
     },
     _powerLevel: function() {
+		if ( this.id == "Vault" ) return "";
         return this.calculatePowerLevelWithItems(this.equippedGear());
     },
     _reloadBucket: function(model, event, callback) {
