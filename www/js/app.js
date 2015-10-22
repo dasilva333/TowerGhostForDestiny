@@ -1151,7 +1151,7 @@ var app = function() {
             var vaultColumns = 12 / self.vaultColumns();
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var isVault = this.className.indexOf("12") > -1;
+                var isVault = this.className.indexOf("Vault") > -1;
                 var columnsPerBucket = isVault ? vaultColumns : tgd.DestinyBucketColumns[bucketType];
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
