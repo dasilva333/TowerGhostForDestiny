@@ -1778,18 +1778,17 @@ var app = function() {
 
     this.columnMode = function(character) {
         return ko.pureComputed(function() {
-			var totalCharacters = 3,
+            var totalCharacters = 3,
                 totalColumns = 12,
-				vaultColumns,
-				characterColumns;
-			if (self.layoutMode() == 'uneven'){
+                vaultColumns,
+                characterColumns;
+            if (self.layoutMode() == 'uneven') {
                 vaultColumns = self.vaultWidth(),
-                characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
-			}
-			else {
-				vaultColumns = self.lgColumn();
-				characterColumns = self.lgColumn();
-			}
+                    characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
+            } else {
+                vaultColumns = self.lgColumn();
+                characterColumns = self.lgColumn();
+            }
             if (character.id == "Vault") {
                 return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
             } else {
@@ -1801,7 +1800,7 @@ var app = function() {
     this.setColumns = function(type, input) {
         return function() {
             self[type + "Column"](12 / input.value);
-			self.redraw();
+            self.redraw();
         };
     };
 
