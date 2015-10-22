@@ -699,7 +699,7 @@ var app = function() {
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
-        self.bucketSizeHandler();
+        self.redraw();
     };
     this.toggleDragAndDrop = function() {
         self.toggleBootstrapMenu();
@@ -771,20 +771,20 @@ var app = function() {
 	this.setVaultColumns = function(columns){
 		return function(){
 			self.vaultColumns(columns);
-			setTimeout(self.quickIconHighlighter,500);
+			self.redraw();
 		}
 	}
 	this.setVaultWidth = function(width){
 		return function(){
 			self.vaultWidth(width);
-			setTimeout(self.quickIconHighlighter,500);
+			self.redraw();
 		}
 	}
 	this.setCCWidth = function(model, evt){
 		var width = $(evt.target).text();
 		width = (width == "Default") ? "" : width;
 		self.ccWidth(width);
-		setTimeout(self.quickIconHighlighter,500);
+		self.redraw();
 	}
     this.setSetFilter = function(collection) {
         return function() {
@@ -932,6 +932,11 @@ var app = function() {
         self.search();
     };
 
+	this.redraw = function(){
+		setTimeout(self.bucketSizeHandler, 1000);
+		setTimeout(self.quickIconHighlighter, 1000);
+	}
+	
     var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
@@ -964,8 +969,7 @@ var app = function() {
                     }
                     return 0;
                 });
-                setTimeout(self.bucketSizeHandler, 1000);
-                setTimeout(self.quickIconHighlighter, 1000);
+                self.redraw();
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
@@ -1144,10 +1148,11 @@ var app = function() {
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
             vaultPos = (vaultPos < 0) ? 0 : vaultPos;
+			var vaultColumns = 12 / self.vaultColumns();
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
                 var isVault = this.className.indexOf("12") > -1;
-                var columnsPerBucket = isVault ? 4 : tgd.DestinyBucketColumns[bucketType];
+                var columnsPerBucket = isVault ? vaultColumns : tgd.DestinyBucketColumns[bucketType];
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
@@ -2051,9 +2056,7 @@ var app = function() {
         $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
-        self.activeView.subscribe(function() {
-            setTimeout(self.bucketSizeHandler, 500);
-        });
+        self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
