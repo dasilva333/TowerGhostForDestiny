@@ -146,7 +146,7 @@ tgd.languages = [
 	{ code: "fr", description: "French", bungie_code: "fr" },
 	{ code: "tr", description: "Turkish", bungie_code: "en" }
 ];
-
+tgd.bootstrapGridColumns = 24;
 tgd.defaults = {
 	searchKeyword: "",
 	doRefresh: isMobile ? false : "true",
@@ -168,10 +168,12 @@ tgd.defaults = {
 	autoXferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
 	dragAndDrop: false,
-	xsColumn: 12,
-	smColumn: 6,
-	mdColumn: 4,
-	lgColumn: 3,
+	xsColumn: tgd.bootstrapGridColumns,
+	smColumn: tgd.bootstrapGridColumns / 2,
+	mdColumn: tgd.bootstrapGridColumns / 3,
+	lgColumn: tgd.bootstrapGridColumns / 4,
+	vaultColumns: tgd.bootstrapGridColumns / 4,
+	vaultWidth: tgd.bootstrapGridColumns / 4,
 	//device and bungie locale
 	locale: "en",
 	//user interface set locale
@@ -184,9 +186,7 @@ tgd.defaults = {
 	itemDefs: "",
 	preferredSystem: "PSN",
 	ccWidth: "",
-	layoutMode: "even",
-	vaultColumns: 3,
-	vaultWidth: 3
+	layoutMode: "even"
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
@@ -221,7 +221,7 @@ tgd.statsTemplate = '<div class="destt-stat">' +
 
 tgd.languagesTemplate = '<div class="row button-group">' +
 	'<% languages.forEach(function(language){ %>' +
-		'<div class="col-xs-6 col-sm-4 col-md-4 col-lg-3 text-center">' +
+		'<div class="col-xs-12 col-sm-8 col-md-8 col-lg-6 text-center">' +
 			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.code %>"><%= language.description %></button>' +
 		'</div>' +
 	'<% }) %>' +
@@ -230,7 +230,7 @@ tgd.languagesTemplate = '<div class="row button-group">' +
 tgd.normalizeTemplate = '<div id="menu">' +
 	'<div class="panel list-group">' +
 		'<div class="list-group-item row">' +
-			'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' + 
+			'<div class="item-name col-xs-24 col-sm-24 col-md-24 col-lg-24">' + 
 				'<!-- reenable this button if/when more options are added ' +
 				'<p class="alignright"><button class="btn btn-default" data-toggle="collapse" data-target="#opt1" data-parent="#menu">...</button></p>' +
 				'-->' +
@@ -239,17 +239,17 @@ tgd.normalizeTemplate = '<div id="menu">' +
 		'</div>' +
 		'<div id="opt1" class="collapse in">' +
 			'<div class="list-group-item row">' +
-				'<div class="locations col-xs-12 col-sm-12 col-md-12 col-lg-12">' +
-					'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
+				'<div class="locations col-xs-24 col-sm-24 col-md-24 col-lg-24">' +
+					'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">' +
 						'<div class="attkIcon">' +
 							'<!-- <div class="icon-banner"><%= item.description %></div> -->' +
 							'<img src="<%= item.icon %>">' +
 							'<div class="lower-left" id="total"><%= total %></div>' +
 						'</div>' +
 					'</div>' +
-					'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2"><!-- padding --></div>' +
+					'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4"><!-- padding --></div>' +
 					'<% for (i = 0; i < characters.length; i++){ %>' +
-						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
+						'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4" id="char<%= i %>">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
@@ -280,16 +280,16 @@ tgd.normalizeTemplate = '<div id="menu">' +
 tgd.selectMultiCharactersTemplate = '<div id="menu">' +
 	'<div class="panel list-group">' +
 		'<div class="list-group-item row">' +
-			'<div class="item-name col-xs-12 col-sm-12 col-md-12 col-lg-12">' + 				
+			'<div class="item-name col-xs-24 col-sm-24 col-md-24 col-lg-24">' + 				
 				'<p><%= description %></p>' +
 			'</div>' +
 		'</div>' +
 		'<div id="opt1" class="collapse in">' +
 			'<div class="list-group-item row">' +
-				'<div class="locations col-xs-12 col-sm-12 col-md-12 col-lg-12">' +					
-					'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2"><!-- padding --></div>' +
+				'<div class="locations col-xs-24 col-sm-24 col-md-24 col-lg-24">' +					
+					'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4"><!-- padding --></div>' +
 					'<% for (i = 0; i < characters.length; i++){ %>' +
-						'<div class="move-button col-xs-2 col-sm-2 col-md-2 col-lg-2" id="char<%= i %>">' +
+						'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4" id="char<%= i %>">' +
 							'<div class="attkIcon">' +
 								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
 								'<% if (selected[characters[i].id] == true){ %>' +
@@ -311,18 +311,18 @@ tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through altern
 	'<% swapArray.forEach(function(pair){ %>' +
 		'<li class="list-group-item">' +
 			'<div class="row">' +
-				'<div class="text-center col-xs-12 col-sm-12 col-md-12 col-lg-6">' +
+				'<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12">' +
 					'<%= pair.description %>' +
 				'</div>' +
-				'<div class="text-right col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+				'<div class="text-right col-xs-10 col-sm-10 col-md-10 col-lg-4">' +
 					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>">' +
 						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
 					'</a>' +
 				'</div>' +
-				'<div class="text-center col-xs-2 col-sm-2 col-md-2 col-lg-2">' +
+				'<div class="text-center col-xs-4 col-sm-4 col-md-4 col-lg-4">' +
 					'<img src="<%= pair.actionIcon %>">' +
 				'</div>' +
-				'<div class="text-left col-xs-5 col-sm-5 col-md-5 col-lg-2">' +
+				'<div class="text-left col-xs-10 col-sm-10 col-md-10 col-lg-4">' +
 					'<a class="swapItem item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
 						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +

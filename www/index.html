@@ -95,7 +95,7 @@
             </div>
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
-            <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType + ' ' + character.id">
+            <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-24' : 'col-xs-18') + ' ' + bucketType + ' ' + character.id">
                 <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
                         <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level() || character.id == 'Vault') ? 1 : 0.3 }">
@@ -111,8 +111,8 @@
                 </div>
             </div>
             <!-- ko with: character.itemEquipped(bucketType) -->
-            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
-                <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+            <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
+                <span class="col-xs-24" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
 						<div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
 						<div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
@@ -423,8 +423,8 @@
             <form class="form-horizontal">
                 <fieldset>
                     <div class="form-group">
-                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_container_width">Container Width</label>
-                        <div class="col-xs-12 col-sm-9">
+                        <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_container_width">Container Width</label>
+                        <div class="col-xs-24 col-sm-18">
                             <div class="btn-group">
                                 <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '' ? 'btn-active': 'btn-default'" href="#">Default</a>
                                 <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '60%' ? 'btn-active': 'btn-default'" href="#">60%</a>
@@ -436,8 +436,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_layout_mode">Layout Mode</label>
-                        <div class="col-xs-12 col-sm-9">
+                        <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_layout_mode">Layout Mode</label>
+                        <div class="col-xs-24 col-sm-18">
                             <div class="btn-group">
                                 <div class="radio">
                                     <label>
@@ -453,11 +453,11 @@
                         </div>
                     </div>
                     <div class="form-group" data-bind="visible: layoutMode() == 'even'">
-                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_number_of_columns"># of Columns</label>
-                        <div class="col-xs-12 col-sm-9">
+                        <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_number_of_columns"># of Columns</label>
+                        <div class="col-xs-24 col-sm-18">
                             <div class="row">
-                                <div class="col-xs-1">XS</div>
-                                <div class="btn-group col-xs-11">
+                                <div class="col-xs-2">XS</div>
+                                <div class="btn-group col-xs-22">
                                     <input type="Button" class="btn" value="1" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
                                     <input type="Button" class="btn" value="2" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
                                     <input type="Button" class="btn" value="3" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
@@ -465,8 +465,8 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-1">SM</div>
-                                <div class="btn-group col-xs-11">
+                                <div class="col-xs-2">SM</div>
+                                <div class="btn-group col-xs-22">
                                     <input type="Button" class="btn" value="1" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
                                     <input type="Button" class="btn" value="2" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
                                     <input type="Button" class="btn" value="3" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
@@ -474,8 +474,8 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-1">MD</div>
-                                <div class="btn-group col-xs-11">
+                                <div class="col-xs-2">MD</div>
+                                <div class="btn-group col-xs-22">
                                     <input type="Button" class="btn" value="1" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
                                     <input type="Button" class="btn" value="2" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
                                     <input type="Button" class="btn" value="3" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
@@ -483,8 +483,8 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-1">LG</div>
-                                <div class="btn-group col-xs-11">
+                                <div class="col-xs-2">LG</div>
+                                <div class="btn-group col-xs-22">
                                     <input type="Button" class="btn" value="1" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
                                     <input type="Button" class="btn" value="2" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
                                     <input type="Button" class="btn" value="3" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
@@ -494,29 +494,32 @@
                         </div>
                     </div>
                     <div class="form-group" data-bind="visible: layoutMode() == 'uneven'">
-                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_vault_width">Vault Width</label>
-                        <div class="col-xs-12 col-sm-9">
+                        <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_width">Vault Width</label>
+                        <div class="col-xs-24 col-sm-18">
                             <div class="btn-group">
-                                <a class="btn" data-bind="click: setVaultWidth(3), css: vaultWidth() == '3' ? 'btn-active': 'btn-default'" href="#">25%</a>
-                                <a class="btn" data-bind="click: setVaultWidth(4), css: vaultWidth() == '4' ? 'btn-active': 'btn-default'" href="#">33%</a>
-                                <a class="btn" data-bind="click: setVaultWidth(5), css: vaultWidth() == '5' ? 'btn-active': 'btn-default'" href="#">42%</a>
-                                <a class="btn" data-bind="click: setVaultWidth(6), css: vaultWidth() == '6' ? 'btn-active': 'btn-default'" href="#">50%</a>
+                                <a class="btn" data-bind="click: setVaultWidth(6), css: vaultWidth() == '6' ? 'btn-active': 'btn-default'" href="#">25%</a>
+								<a class="btn" data-bind="click: setVaultWidth(7), css: vaultWidth() == '7' ? 'btn-active': 'btn-default'" href="#">30%</a>
+                                <a class="btn" data-bind="click: setVaultWidth(8), css: vaultWidth() == '8' ? 'btn-active': 'btn-default'" href="#">33%</a>
+								<a class="btn" data-bind="click: setVaultWidth(9), css: vaultWidth() == '9' ? 'btn-active': 'btn-default'" href="#">37%</a>
+                                <a class="btn" data-bind="click: setVaultWidth(10), css: vaultWidth() == '10' ? 'btn-active': 'btn-default'" href="#">42%</a>
+                                <a class="btn" data-bind="click: setVaultWidth(12), css: vaultWidth() == '12' ? 'btn-active': 'btn-default'" href="#">50%</a>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_vault_columns">Vault Columns</label>
-                        <div class="col-xs-12 col-sm-9">
+                        <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_columns">Vault Columns</label>
+                        <div class="col-xs-24 col-sm-18">
                             <div class="btn-group">
-                                <a class="btn" data-bind="click: setVaultColumns(1), css: vaultColumns() == '1' ? 'btn-active': 'btn-default'" href="#">12</a>
-                                <a class="btn" data-bind="click: setVaultColumns(2), css: vaultColumns() == '2' ? 'btn-active': 'btn-default'" href="#">6</a>
-                                <a class="btn" data-bind="click: setVaultColumns(3), css: vaultColumns() == '3' ? 'btn-active': 'btn-default'" href="#">4</a>
+                                <a class="btn" data-bind="click: setVaultColumns(2), css: vaultColumns() == '2' ? 'btn-active': 'btn-default'" href="#">12</a>
+								<a class="btn" data-bind="click: setVaultColumns(3), css: vaultColumns() == '3' ? 'btn-active': 'btn-default'" href="#">8</a>
+                                <a class="btn" data-bind="click: setVaultColumns(4), css: vaultColumns() == '4' ? 'btn-active': 'btn-default'" href="#">6</a>
+                                <a class="btn" data-bind="click: setVaultColumns(6), css: vaultColumns() == '6' ? 'btn-active': 'btn-default'" href="#">4</a>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-12 col-sm-3 control-label" data-bind="text: $root.activeText().vo_vault_position">Vault Position</label>
-                        <div class="col-xs-12 col-sm-9">
+                        <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_position">Vault Position</label>
+                        <div class="col-xs-24 col-sm-18">
                             <label>
                                 <input type="Checkbox" data-bind="checked: isVaultAt(0), click: setVaultTo(0)">
                                 <span data-bind="text: $root.activeText().vo_vault_first">First/Left</span>
@@ -551,7 +554,7 @@
                 <strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
             </div>
             <div data-bind="visible: typeof code !== 'undefined' && (code == 99) || (typeof error !== 'undefined' && (error == 'network error:502' || error == 'network error:503'))">
-                <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-lg-4 col-lg-offset-4 text-center">
+                <div class="col-xs-24 col-sm-16 col-sm-offset-2 col-lg-8 col-lg-offset-4 text-center">
                     <div class="panel panel-success" id="loginForm">
                         <div class="panel-heading">
                             <h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
@@ -574,7 +577,7 @@
         </div>
     </div>
     <div style="display:none;" data-bind="visible: loadingUser() == true && hiddenWindowOpen() == false">
-        <div class="col-xs-12">
+        <div class="col-xs-24">
             <h4 data-bind="text: $root.activeText().login_loading_inventory">Please wait, loading arsenal from Bungie</h4>
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-success" style="width: 100%"></div>
@@ -582,7 +585,7 @@
         </div>
     </div>
     <div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
-        <div class="col-xs-12">
+        <div class="col-xs-24">
             <h4 data-bind="text: $root.activeText().login_authenticating_pt1">Logging into Bungie... Please be patient.</h4>
             <div class="progress progress-striped active">
                 <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
@@ -598,7 +601,7 @@
     <nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
         <div class="container-fluid">
             <div class="move-popup row no-gutter">
-                <div class="item-name col-xs-12">
+                <div class="item-name col-xs-24">
                     <span data-bind="text: $root.activeText().movepopup_move"></span>: <span data-bind="text: description"></span>
                     <!-- ko if: (bucketType == 'Consumables' && tgd.DestinyGlimmerConsumables.indexOf(id) > -1) -->
                     <span data-bind="text: 'valued at: ' + (primaryStat() * 200) + 'G'"></span>
@@ -607,23 +610,23 @@
                     <img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, click: function(){ toggleLock() }" style="cursor:pointer;" />
                     <!-- /ko -->
                 </div>
-                <div class="locations col-xs-12 col-md-10 col-md-offset-1 col-lg-9 col-lg-offset-2">
+                <div class="locations col-xs-24 col-md-20 col-md-offset-1 col-lg-28 col-lg-offset-2">
                     <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
-                        <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
+                        <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_vault"></div>
                                 <img src="about:blank" data-bind="attr: { src : icon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
-                        <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
+                        <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_store"></div>
                                 <img src="about:blank" data-bind="attr: { src : icon }">
                                 <div class="lower-left" data-bind="text: classLetter"></div>
                             </div>
                         </div>
-                        <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
+                        <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_equip"></div>
                                 <img src="about:blank" data-bind="attr: { src : icon }">
@@ -631,7 +634,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="move-button col-xs-2" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (bucketType == 'Materials' || bucketType == 'Consumables')">
+                    <div class="move-button col-xs-4" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (bucketType == 'Materials' || bucketType == 'Consumables')">
                         <div class="attkIcon">
                             <div class="icon-banner" data-bind="text: $root.activeText().movepopup_extras">extras</div>
                             <img src="assets/icon128.png">
@@ -655,25 +658,25 @@
                             </div>
                             <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                             <div class="row stats" data-bind="with: stats, visible: statsShowing">
-                                <div class="col-xs-5">
+                                <div class="col-xs-10">
                                     Armor <span data-bind="text: STAT_ARMOR.value"></span>
                                 </div>
-                                <div class="col-xs-7 text-right">
+                                <div class="col-xs-14 text-right">
                                     Intellect <span data-bind="text: character.equippedStats()['Intellect']"></span> <img src="assets/intellect.png">
                                 </div>
-                                <div class="col-xs-4">
+                                <div class="col-xs-8">
                                     Agility <span data-bind="text: STAT_AGILITY.value"></span>
                                 </div>
-                                <div class="col-xs-8 text-right">
+                                <div class="col-xs-16 text-right">
                                     Discipline <span data-bind="text: character.equippedStats()['Discipline']"></span> <img src="assets/discipline.png">
                                 </div>
-                                <div class="col-xs-5">
+                                <div class="col-xs-10">
                                     Recovery <span data-bind="text: STAT_RECOVERY.value"></span>
                                 </div>
-                                <div class="col-xs-7 text-right">
+                                <div class="col-xs-14 text-right">
                                     Strength <span data-bind="text: character.equippedStats()['Strength']"></span> <img src="assets/strength.png">
                                 </div>
-                                <div class="col-xs-12 text-center">
+                                <div class="col-xs-24 text-center">
                                     Equip Gear With Highest:
                                     <br>
                                     <a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a>

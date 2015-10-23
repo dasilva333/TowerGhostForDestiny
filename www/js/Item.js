@@ -18,9 +18,9 @@ var Item = function(model, profile) {
         if (self.characterId() == 'Vault') {
             className = 'col-xs-' + app.vaultColumns();
         } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
-            className = 'col-xs-3';
+            className = 'col-xs-' + (tgd.bootstrapGridColumns/4);
         } else {
-            className = 'col-xs-4';
+            className = 'col-xs-' + (tgd.bootstrapGridColumns/3);
         }
         if (self.isGridComplete) {
             className += ' complete';
