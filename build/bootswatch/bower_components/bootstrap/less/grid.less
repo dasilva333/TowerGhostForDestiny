@@ -62,7 +62,16 @@
 // Columns, offsets, pushes, and pulls for the small device range, from phones
 // to tablets.
 
-@media (min-width: @screen-sm-min) {
+@media (min-width: 440px) and (-webkit-device-pixel-ratio: 0.75),
+    (min-width: 470px) and (-webkit-device-pixel-ratio: 1),
+    (min-width: 776px) and (-webkit-min-device-pixel-ratio: 1.03),
+    (min-width: 560px) and (-webkit-min-device-pixel-ratio: 1.4),
+    (min-width: 640px) and (-webkit-min-device-pixel-ratio: 1.5),
+    (min-width: 380px) and (-webkit-min-device-pixel-ratio: 1.8) and (-webkit-max-device-pixel-ratio: 1.99),
+    (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2),
+    (min-width: 440px) and (-webkit-min-device-pixel-ratio: 2.3) and (-webkit-max-device-pixel-ratio: 2.49),
+    (min-width: 576px) and (-webkit-min-device-pixel-ratio: 2.5),
+    (min-width: 480px) and (-webkit-min-device-pixel-ratio: 3) {
   .make-grid(sm);
 }
 
@@ -71,7 +80,12 @@
 //
 // Columns, offsets, pushes, and pulls for the desktop device range.
 
-@media (min-width: @screen-md-min) {
+@media (min-width: @screen-md-min) and (-webkit-max-device-pixel-ratio: 1.02),
+    (min-width: 780px) and (-webkit-min-device-pixel-ratio: 1.03),
+    (min-width: 680px) and (-webkit-min-device-pixel-ratio: 1.8),
+    (min-width: 640px) and (-webkit-min-device-pixel-ratio: 2),
+    (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2.5),
+    (min-width: 730px) and (-webkit-min-device-pixel-ratio: 3) {
   .make-grid(md);
 }
 
@@ -80,6 +94,7 @@
 //
 // Columns, offsets, pushes, and pulls for the large desktop device range.
 
-@media (min-width: @screen-lg-min) {
+@media (min-width: @screen-lg-min),
+  (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3)  {
   .make-grid(lg);
 }
