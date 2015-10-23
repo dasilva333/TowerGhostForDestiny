@@ -1,0 +1,57 @@
+{
+  "name": "bootswatch",
+  "description": "Bootswatch is a collection of themes for Bootstrap.",
+  "version": "3.3.4",
+  "author": {
+    "name": "Thomas Park"
+  },
+  "homepage": "http://bootswatch.com",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thomaspark/bootswatch.git"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "bower": "~1.2.8",
+    "grunt": "~0.4.2",
+    "grunt-autoprefixer": "~1.0.1",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-connect": "~0.8.0",
+    "grunt-contrib-less": "~0.9.0",
+    "grunt-contrib-sass": "~0.7.4",
+    "grunt-contrib-watch": "~0.5.1"
+  },
+  "gitHead": "0b99e59d9ba103694240d1a1e0f9ffdfaaaea709",
+  "bugs": {
+    "url": "https://github.com/thomaspark/bootswatch/issues"
+  },
+  "_id": "bootswatch@3.3.4",
+  "scripts": {},
+  "_shasum": "316932c5832a89ff1e5f96634c3aa21d72e5659c",
+  "_from": "bootswatch@3.3.4",
+  "_npmVersion": "1.5.0-alpha-4",
+  "_npmUser": {
+    "name": "thomaspark",
+    "email": "hello@thomaspark.me"
+  },
+  "maintainers": [
+    {
+      "name": "robloach",
+      "email": "robloach@gmail.com"
+    },
+    {
+      "name": "thomaspark",
+      "email": "hello@thomaspark.me"
+    }
+  ],
+  "dist": {
+    "shasum": "316932c5832a89ff1e5f96634c3aa21d72e5659c",
+    "tarball": "http://registry.npmjs.org/bootswatch/-/bootswatch-3.3.4.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/bootswatch/-/bootswatch-3.3.4.tgz"
+}
