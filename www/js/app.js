@@ -1165,7 +1165,7 @@ var app = function() {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
-			console.log(bucketSizes);
+			//console.log(bucketSizes);
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
                 var maxHeight = _.max(sizes);
