@@ -1945,12 +1945,6 @@ var app = function() {
         $(document).on("idle.idleTimer", function(event, elem, obj) {
             clearInterval(self.refreshInterval);
         });
-		if ( self.vaultColumns() == "1" ){
-			self.vaultColumns(6);
-		}
-		if ( self.vaultWidth() == "5" ){
-			self.vaultWidth(6);
-		}
         $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
             self.refreshHandler();
         });
