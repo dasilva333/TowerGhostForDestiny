@@ -1186,6 +1186,7 @@ var app = function() {
 				}*/
                 itemBuckets.css("min-height", maxHeight);
                 itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
+				itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxProfilesHeight);
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
