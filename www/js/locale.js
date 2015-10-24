@@ -54,7 +54,7 @@ tgd.locale = {
         vo_vault_last: "Last/Right",
         vo_vault_position: "Vault Position",
         vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
+        vo_layout_mode: "Vault Mode",
         vo_vault_width: "Vault Width",
         vo_vault_columns: "Vault Columns",
         missing_items: "Missing Items",

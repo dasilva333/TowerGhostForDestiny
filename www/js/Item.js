@@ -9,7 +9,7 @@ var Item = function(model, profile) {
 
     this.init(model);
 
-	this.characterId = ko.observable(self.character.id);
+    this.characterId = ko.observable(self.character.id);
     this.isDuplicate = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
@@ -18,9 +18,9 @@ var Item = function(model, profile) {
         if (self.characterId() == 'Vault') {
             className = 'col-xs-' + app.vaultColumns();
         } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns/4);
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
         } else {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns/3);
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
         }
         if (self.isGridComplete) {
             className += ' complete';
@@ -736,7 +736,9 @@ Item.prototype = {
                     tgd.localLog("after removal " + x.items().length);
                     self.character = y;
                     y.items.push(self);
-					setTimeout(function(){ self.characterId(targetCharacterId); },500);
+                    setTimeout(function() {
+                        self.characterId(targetCharacterId);
+                    }, 500);
                     tgd.localLog("adding " + self.description + " to " + y.uniqueName());
                 }
                 //not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
