@@ -1884,8 +1884,6 @@ inherit(SwipeRecognizer, AttrRecognizer, {
  * @extends Recognizer
  */
 function TapRecognizer() {
-	console.log("TapRecognizer");
-
     Recognizer.apply(this, arguments);
 
     // previous time and center,
@@ -1918,11 +1916,8 @@ inherit(TapRecognizer, Recognizer, {
     },
 
     process: function(input) {
-		console.log("TapRecognizer: process");		
         var options = this.options;
-		console.log(options);
-		console.log(input);
-		
+
         var validPointers = input.pointers.length === options.pointers;
         var validMovement = input.distance < options.threshold;
         var validTouchTime = input.deltaTime < options.time;
@@ -1987,8 +1982,6 @@ inherit(TapRecognizer, Recognizer, {
 
     emit: function() {
         if (this.state == STATE_RECOGNIZED ) {
-			console.log(this);
-			console.log("input recognized as tap " + this.id);
             this._input.tapCount = this.count;
             this.manager.emit(this.options.event, this._input);
         }

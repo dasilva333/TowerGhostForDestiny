@@ -17,6 +17,7 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
+    this.items.subscribe(app.redraw);
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
     this.weapons = ko.pureComputed(this._weapons, this);
