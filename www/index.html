@@ -29,13 +29,21 @@
     <link rel="stylesheet" type="text/css" href="css/tooltip.css">
     <link rel="stylesheet" type="text/css" href="css/style_new.css">
     <!-- JS -->
+<<<<<<< HEAD
     <script type="text/javascript" src="data/itemDefs.json"></script>
+=======
+    <script charset="utf-8" type="text/javascript" src="data/itemDefs.json"></script>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     <script type="text/javascript" src="data/statDefs.json"></script>
     <script type="text/javascript" src="data/perkDefs.json"></script>
     <script type="text/javascript" src="data/talentGridDefs.json"></script>
     <script type="text/javascript" src="data/raceDefs.json"></script>
     <script type="text/javascript" src="data/setDefs.json"></script>
+<<<<<<< HEAD
     <script type="text/javascript" src="data/objectiveDefs.json"></script>
+=======
+    <script type="text/javascript" src="data/progressDefs.json"></script>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     <script type="text/javascript" src="data/tgdDefs.js"></script>
     <script type="text/javascript" src="js/utils.js"></script>
     <script type="text/javascript" src="js/buy.js"></script>
@@ -55,7 +63,10 @@
     <script type="text/javascript" src="js/dependencies/underscore-min.js"></script>
     <script type="text/javascript" src="js/dependencies/fastclick.js"></script>
     <script type="text/javascript" src="js/dependencies/analytics.js"></script>
+<<<<<<< HEAD
     <script type="text/javascript" src="js/firefox-xhr.js"></script>
+=======
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     <script type="text/javascript" src="scripts/bungie.js"></script>
     <script type="text/javascript" src="js/loadouts.js"></script>
     <script type="text/javascript" src="js/Profile.js"></script>
@@ -71,19 +82,32 @@
         <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', refreshableSection: true">
             <span data-bind="text: $root.getBucketName(bucketType)"></span>
             <!-- ko if: ( character.id !== 'Vault' ) -->
+<<<<<<< HEAD
             <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Quests' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
+=======
+            <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             (<span data-bind="text: character.getVisible(bucketType).length + (character.itemEquippedVisible(bucketType) ? 1 : 0)"></span>/10)
             <!--/ko  -->
             <!-- ko if: (bucketType == 'Bounties') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/16)
             <!--/ko  -->
+<<<<<<< HEAD
             <!-- ko if: (bucketType == 'Quests') -->
             (<span data-bind="text: character.get(bucketType).length"></span>/32)
             <!--/ko  -->
+=======
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             <!-- ko if: ( bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' ) -->
             (<span data-bind="text: character.get(bucketType).length"></span>/20)
             <!--/ko  -->
             <!--/ko  -->
+<<<<<<< HEAD
+=======
+            <!-- ko if: ( character.id == 'Vault' ) -->
+            (<span data-bind="text: character.getVisible(bucketType).length"></span>/<span data-bind="text: tgd.DestinyWeaponPieces.indexOf(bucketType) > -1 ? 36 : 24"></span>)
+            <!--/ko  -->
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             <div class="titleRefresh" data-bind="visible: isMobile">
                 <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables') -->
                 <i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
@@ -95,6 +119,7 @@
             </div>
         </div>
         <div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
+<<<<<<< HEAD
             <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-24' : 'col-xs-18') + ' ' + bucketType + ' ' + character.id">
                 <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
                     <span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
@@ -107,15 +132,51 @@
                         <div class="attkIcon" data-bind="visible: primaryStat() != ''">
                             <div data-bind="text: primaryStat, css: damageTypeName"></div>
                         </div>
+=======
+            <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-12' : 'col-xs-9') + ' ' + bucketType">
+                <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
+                    <span class="bucket-item" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-3' : 'col-xs-4') + (isGridComplete ? ' complete' : ''), visible: isVisible">
+
+                        <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+
+                            <img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+
+                        </a>
+
+                        <div class="lockIcon" data-bind="if: item.locked()">
+
+                            <img src="assets/lock.png" />
+
+                        </div>
+
+                        <div class="attkIcon" data-bind="visible: primaryStat() != ''">
+
+                            <div data-bind="text: primaryStat, css: damageTypeName"></div>
+
+                        </div>
+
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     </span>
                 </div>
             </div>
             <!-- ko with: character.itemEquipped(bucketType) -->
+<<<<<<< HEAD
             <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
                 <span class="col-xs-24" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
 						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
 						<div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
 						<div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+=======
+            <div style="padding-left: 4px;" class="bucket-item col-xs-3" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
+                <span class="col-xs-12" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+
+						<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
+
+						<div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
+
+						<div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 					</span>
             </div>
             <!--/ko  -->
@@ -130,7 +191,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+<<<<<<< HEAD
                 <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.4.6</span></strong></a>
+=======
+                <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.2.2</span></strong></a>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                     <div class="mobile-characters">
                         <img class="mobile-characters-image" data-bind="attr: {src : icon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">
@@ -150,8 +215,13 @@
                         <ul class="dropdown-menu" role="menu">
 
                             <li><a href="#" data-bind="fastclick: logout">Logout</a></li>
+<<<<<<< HEAD
                             <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'PSN')"><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
                             <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'XBL')"><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
+=======
+                            <li><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
+                            <li><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
                             <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
                             <li class="divider"></li>
@@ -173,8 +243,13 @@
                             <li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''">
                                 <a href="#"><i class="fa" data-bind="css: destinyDbMode() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_destinydbmode">DestinyDB Mode</span></a>
                             </li>
+<<<<<<< HEAD
                             <li data-bind="fastclick: toggleTransferStacks, css: autoXferStacks() == true ? 'active' : ''">
                                 <a href="#"><i class="fa" data-bind="css: autoXferStacks() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autotransfer">Auto Transfer Stacks</span></a>
+=======
+                            <li data-bind="fastclick: toggleTransferStacks, css: autoTransferStacks() == true ? 'active' : ''">
+                                <a href="#"><i class="fa" data-bind="css: autoTransferStacks() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autotransfer">Auto Transfer Stacks</span></a>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             </li>
                             <li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''">
                                 <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
@@ -187,6 +262,14 @@
                 </ul>
                 <form class="navbar-form navbar-right">
                     <input class="form-control" placeholder="Search" size="9" type="text" data-bind="value: searchKeyword">
+                    <div class="input-group spinner">
+                        <span class="input-group-addon" data-bind="text: $root.activeText().menu_refresh">Refresh (secs)</span>
+                        <input type="text" class="form-control" placeholder="Refresh (in seconds)" title="Refresh Automatically (in seconds)" data-bind="value: refreshSeconds">
+                        <div class="input-group-btn-vertical">
+                            <button class="btn btn-default" type="button" data-bind="click: incrementSeconds"><i class="fa fa-caret-up"></i></button>
+                            <button class="btn btn-default" type="button" data-bind="click: decrementSeconds"><i class="fa fa-caret-down"></i></button>
+                        </div>
+                    </div>
                 </form>
                 <ul class="nav navbar-nav">
                     <li class="dropdown">
@@ -274,12 +357,56 @@
                             <li data-bind="css: setFilter().length == 0 ? 'active' : '', fastclick: setSetFilter('All')">
                                 <a href="#"><i class="fa" data-bind="css: setFilter().length == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
                             </li>
+<<<<<<< HEAD
                             <!-- ko foreach: { data: collectionSets, as: 'collection' } -->
                             <li data-bind="css: $root.setFilter() == _collections[collection] ? 'active' : '', fastclick: $root.setSetFilter(collection)">
                                 <a href="#">
                                     <i class="fa" data-bind="css: $root.setFilter() == _collections[collection] ? 'fa-check-square' : 'fa-square'"></i>
                                     <span data-bind="text: collection"></span>
                                 </a>
+=======
+                            <li data-bind="css: setFilter() == _collections.crotaArmor ? 'active' : '', fastclick: setSetFilter" value="crotaArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaArmor ? 'fa-check-square' : 'fa-square'"></i>CE Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.crotaWeapons ? 'active' : '', fastclick: setSetFilter" value="crotaWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.crotaWeapons ? 'fa-check-square' : 'fa-square'"></i>CE Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.exoticArmor ? 'active' : '', fastclick: setSetFilter" value="exoticArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.exoticArmor ? 'fa-check-square' : 'fa-square'"></i>Exotic Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.exoticWeapons ? 'active' : '', fastclick: setSetFilter" value="exoticWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.exoticWeapons ? 'fa-check-square' : 'fa-square'"></i>Exotic Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.ironArmor ? 'active' : '', fastclick: setSetFilter" value="ironArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.ironArmor ? 'fa-check-square' : 'fa-square'"></i>Iron Banner Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.ironWeapons ? 'active' : '', fastclick: setSetFilter" value="ironWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.ironWeapons ? 'fa-check-square' : 'fa-square'"></i>Iron Banner Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.poeArmor ? 'active' : '', fastclick: setSetFilter" value="poeArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.poeArmor ? 'fa-check-square' : 'fa-square'"></i>PoE Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.poeWeapons ? 'active' : '', fastclick: setSetFilter" value="poeWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.poeWeapons ? 'fa-check-square' : 'fa-square'"></i>PoE Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.queensArmor ? 'active' : '', fastclick: setSetFilter" value="queensArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.queensArmor ? 'fa-check-square' : 'fa-square'"></i>QW Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.queensWeapons ? 'active' : '', fastclick: setSetFilter" value="queensWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.queensWeapons ? 'fa-check-square' : 'fa-square'"></i>QW Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.tooArmor ? 'active' : '', fastclick: setSetFilter" value="tooArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooArmor ? 'fa-check-square' : 'fa-square'"></i>ToO Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.tooWeapons ? 'active' : '', fastclick: setSetFilter" value="tooWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.tooWeapons ? 'fa-check-square' : 'fa-square'"></i>ToO Weapons</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.vaultArmor ? 'active' : '', fastclick: setSetFilter" value="vaultArmor">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultArmor ? 'fa-check-square' : 'fa-square'"></i>VoG Armor</a>
+                            </li>
+                            <li data-bind="css: setFilter() == _collections.vaultWeapons ? 'active' : '', fastclick: setSetFilter" value="vaultWeapons">
+                                <a href="#"><i class="fa" data-bind="css: setFilter() == _collections.vaultWeapons ? 'fa-check-square' : 'fa-square'"></i>VoG Weapons</a>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             </li>
                             <!--/ko  -->
                             <li class="divider"></li>
@@ -364,9 +491,16 @@
                                 </a>
                             </li>
                             <!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
+<<<<<<< HEAD
                             <li data-bind="css: $parent.weaponFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setWeaponFilter(weaponType)">
                                 <a href="#"><i class="fa" data-bind="css: $parent.weaponFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
+=======
+                            <li data-bind="css: $parent.typeFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setTypeFilter(weaponType)">
+                                <a href="#"><i class="fa" data-bind="css: $parent.typeFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
+
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 									<span data-bind="text: weaponType.name">All</span>
+
 								</a>
                             </li>
                             <!--/ko  -->
@@ -591,10 +725,17 @@
                 <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
             </div>
             <div>
+<<<<<<< HEAD
                 <span data-bind="text: $root.activeText().login_authenticating_pt2">If log in screen remains for 4+ minutes, use these links for</span>
                 <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;" target="_blank">Xbox Live</a> or
                 <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;" target="_blank">Playstation Network</a>
                 <span data-bind="text: $root.activeText().login_authenticating_pt3">to retry signing in. </span>
+=======
+                <span data-bind="text: $root.activeText().login_authenticating_pt2">If log in screen remains for 2+ minutes, use these links for</span>
+                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;" target="_blank">Xbox Live</a> or
+                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;" target="_blank">Playstation Network</a>
+                <span data-bind="text: $root.activeText().login_authenticating_pt3">to retry signing in. If the problem persists, reinstall the app.</span>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             </div>
         </div>
     </div>
@@ -603,16 +744,23 @@
             <div class="move-popup row no-gutter">
                 <div class="item-name col-xs-24">
                     <span data-bind="text: $root.activeText().movepopup_move"></span>: <span data-bind="text: description"></span>
+<<<<<<< HEAD
                     <!-- ko if: (bucketType == 'Consumables' && tgd.DestinyGlimmerConsumables.indexOf(id) > -1) -->
                     <span data-bind="text: 'valued at: ' + (primaryStat() * 200) + 'G'"></span>
                     <!-- /ko -->
+=======
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     <!-- ko if: (bucketType !== 'Consumables' && bucketType !== 'Materials' && bucketType !== 'Messages' && bucketType !== 'Invisible' && bucketType !== 'Lost Items' && bucketType !== 'Bounties' && bucketType !== 'Mission') -->
                     <img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, click: function(){ toggleLock() }" style="cursor:pointer;" />
                     <!-- /ko -->
                 </div>
                 <div class="locations col-xs-24 col-md-20 col-md-offset-1 col-lg-28 col-lg-offset-2">
                     <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
+<<<<<<< HEAD
                         <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
+=======
+                        <div class="move-button col-xs-2" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             <div class="attkIcon">
                                 <div class="icon-banner" data-bind="text: $root.activeText().movepopup_vault"></div>
                                 <img src="about:blank" data-bind="attr: { src : icon }">
@@ -644,11 +792,16 @@
             </div>
         </div>
     </nav>
+<<<<<<< HEAD
     <div class="container" id="charactersContainerParent" data-bind="style: { width: ccWidth }">
+=======
+    <div class="container">
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0">
             <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
                 <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                     <div class="character">
+<<<<<<< HEAD
                         <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
                             <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
                             <div class="class" data-bind="text: classType"></div>
@@ -688,13 +841,55 @@
                                     <a data-bind="click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a>
                                 </div>
                             </div>
+=======
+                        <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.reloadBucket">
+                            <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
+                            <div class="class" data-bind="text: classType"></div>
+                            <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false">
+                                <div class="light" data-bind="text: level"></div>
+                                <div class="power" data-bind="text: character.powerLevel"></div>
+                            </div>
+                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel + '%' }">&nbsp;</div>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
+                        </div>
+                        <div class="row stats" data-bind="with: stats, visible: statsShowing">
+                            <div class="col-xs-5">
+                                Armor <span data-bind="text: STAT_ARMOR.value"></span>
+                            </div>
+                            <div class="col-xs-7 text-right">
+                                Intellect <span data-bind="text: STAT_INTELLECT.value"></span> <img src="assets/intellect.png">
+                            </div>
+                            <div class="col-xs-5">
+                                Recovery <span data-bind="text: STAT_RECOVERY.value"></span>
+                            </div>
+                            <div class="col-xs-7 text-right">
+                                Discipline <span data-bind="text: STAT_DISCIPLINE.value"></span> <img src="assets/discipline.png">
+                            </div>
+                            <div class="col-xs-5">
+                                Agility <span data-bind="text: STAT_AGILITY.value"></span>
+                            </div>
+                            <div class="col-xs-7 text-right">
+                                Strength <span data-bind="text: STAT_STRENGTH.value"></span> <img src="assets/strength.png">
+                            </div>
+                            <div class="col-xs-12 text-center">
+                                Equip Gear With Highest:
+                                <br>
+                                <a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a>
+                                <a data-bind="click: character.equipHighest('Intellect')" class="btn btn-default">Int</a>
+                                <a data-bind="click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a>
+                                <a data-bind="click: character.equipHighest('Strength')" class="btn btn-default">Str</a>
+                            </div>
                         </div>
                     </div>
                     <div class="inventory">
                         <div class="items" data-type="item">
                             <!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
+<<<<<<< HEAD
                             <!-- ko if: layout.isVisible(character)() -->
                             <div>
+=======
+                            <div data-bind="visible: layout.isVisible(character)">
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                 <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true">
                                     <strong data-bind="text: (character.id == 'Vault' && layout.name == 'Sub Classes' ? 'Vault Sub Classes' : $root.activeText()[layout.headerText])"></strong>
                                     <span data-bind="html: layout.countText(character)"></span>
@@ -789,7 +984,11 @@
     </div>
     <div id="about" style="display:none">
         <h2 style="margin-top:0;">Tower Ghost for Destiny<br>Manage your gear anywhere</h2>
+<<<<<<< HEAD
         <p><strong>Version: <span class="version">3.4.6</span></strong></p>
+=======
+        <p><strong>Version: <span class="version">3.2.2</span></strong></p>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
             <input type="hidden" name="cmd" value="_s-xclick">
@@ -826,6 +1025,7 @@
     <div id="help" style="display:none">
         <h2>Usage Guides</h2>
 
+<<<<<<< HEAD
         <ul>
             <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irno8/feature_sharing_and_viewing_arsenal_online/">Sharing and Viewing Arsenal Online</a></li>
             <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3inqkh/feature_transferring_items_with_tower_ghost/">Transferring Items</a></li>
@@ -837,6 +1037,24 @@
 
         <h2>Definitions</h2>
         <ul>
+=======
+        <ul>
+            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irno8/feature_sharing_and_viewing_arsenal_online/">Sharing and Viewing Arsenal Online</a>
+                <br>
+            </li>
+            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3inqkh/feature_transferring_items_with_tower_ghost/">Transferring Items</a>
+                <br>
+            </li>
+            <li><a href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irm1y/feature_transfer_methods_available_in_tower_ghost/">Transfer Methods Available</a></li>
+            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3imt9m/feature_tower_ghost_for_destiny_tooltips/">Understanding the Tooltips</a>
+                <br>
+            </li>
+            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irqst/feature_using_the_filters_quickly_and_effectively/">Using the filters quickly and effectively</a></li>
+        </ul>
+
+        <h2>Definitions</h2>
+        <ul>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             <li>
                 <h3>Account Options</h3></li>
             <li><strong>Logout</strong> Logs you out of Bungie.net allowing you to view your arsenal with a different account.</li>
@@ -868,8 +1086,13 @@
             <li><strong>Tier</strong> Filter by the rarity of the item (rare, legendary, exotic) </li>
             <li><strong>Set</strong> Preset collections from various activiies in Destiny for an easy to filter list </li>
             <li><strong>Show Missing Items</strong> When a Set is enabled use this to show you what items you're missing from that set.</li>
+<<<<<<< HEAD
             <li><strong>Progress</strong> <em>Missing Perks:</em> Items that do not have their perks completely filled.</li>
             <li><strong>Progress</strong> <em>Missing XP:</em> Items that have been completely filled with perks but are missing the gold border.</li>
+=======
+            <li><strong>Progress</strong> <em>Missing XP:</em> Items that do not have their circles completely filled in with XP.</li>
+            <li><strong>Progress</strong> <em>Full XP:</em> Items that have been completely filled with XP but is missing the gold border.</li>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             <li><strong>Progress</strong> <em>Maxed:</em> Items that have gold borders only.</li>
             <li><strong>Damage</strong> Filter by burn type, kinetic is the default burn applied to all weapons if it's not arc, void or solar.</li>
             <li><strong>Weapon</strong> Filter by type of weapon, this list will only show types you have in your inventory.</li>
@@ -888,7 +1111,11 @@
         </ul>
     </div>
     <div id="showwhatsnew" style="display:none;">true</div>
+<<<<<<< HEAD
     <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20a%20missing%20icon%20to%20any%20items%20that%20doesn%27t%20provide%20a%20default%20icon%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20choose%20Even%20or%20Uneven%20layouts%20to%20make%20the%20vault%20wider%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20adjust%20the%20amount%20of%20columns%20used%20in%20the%20vault%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20option%20to%20adjust%20the%20container%20width%20of%20the%20entire%20app%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThere%20is%20a%20known%20issue%20with%20transferring%20class%20specific%20weapons%20using%20Equip%20with%20Highest%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20problem%20with%20setting%20your%20Language%20would%20not%20always%20register%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20problem%20with%20Equip%20with%20Highest%20light%20not%20using%20the%20Ghost%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EReverted%20the%20library%20used%20for%20gestures%20until%20I%20can%20find%20a%20solution%20compatible%20with%20all%20platforms.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EGhost%20and%20Artifacts%20now%20exist%20under%20the%20Armor%20view%20and%20are%20stored%20under%20General%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20Sets%20filter%20to%20automatically%20stay%20up%20to%20date%20with%20Destiny%20changes%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EGhosts%20now%20properly%20displays%20all%20perks%20available%20in%20the%20tooltips%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ESleeper%20Simulant%20is%20now%20officially%20supported%20by%20the%20app%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20King%27s%20Fall%20weapons%20and%20armor%20Sets%20to%20the%20filter%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20an%20Emote%20section%20to%20the%20app%2C%20you%20may%20find%20them%20under%20General%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20Quests%20to%20the%20app%2C%20shows%20under%20General%20with%20%25%20completion%20and%20shows%20quests%20details%20in%20the%20tooltips%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20tooltips%20to%20only%20display%20the%20selected%20perks%20instead%20of%20all%20the%20available%20perks%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproving%20Progress%20Filter%20so%20it%20properly%20shows%20items%20with%20Missing%20Perks%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20auto%20refresh%20functionality%20so%20it%27s%20stops%20polling%20on%20idle%2C%20fixed%20a%20memory%20leak%20with%20refreshes%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EEquip%20Gear%20with%20Highest%20Light%20will%20now%20properly%20handle%20the%20equipping%20of%20the%20highest%20exotics%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ETooltips%20for%20emblems%20now%20properly%20displays%20the%20background%20and%20the%20icon%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EMove%20pop%20up%20now%20displays%20the%20value%20of%20your%20Glimmer%20consumables%20when%20opened%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDamage%20filter%20now%20applies%20to%20Weapon%20burn%20and%20Armor%20Resistance%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20a%20new%20Armor%20and%20General%20filter%20when%20set%20to%20that%20View%20for%20easier%20filtering%20of%20common%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDisabled%20Auto%20Transfer%20Stacks%20for%20everyone%2C%20also%20added%20an%20option%20to%20enable%20it%20from%20within%20the%20transfer%20prompt%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Help%20guide%20to%20include%20new%20Equip%20Gear%20with%20Highest%20documentation%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ELoadouts%20are%20now%20saved%20and%20loaded%20from%20the%20cloud%20for%20all%20desktop%20platforms%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfer%20algorithm%20to%20better%20handle%20items%20in%20the%20General%20section%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20the%20Logout%20button%20so%20it%20works%20properly%20in%20all%20mobile%20platforms%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EVarious%20fixes%20to%20the%20tooltips%20to%20improve%20the%20perks%20shown%2C%20the%20stats%2C%20and%20various%20other%20aspects%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EEquip%20Gear%20with%20Highest%20Light%20will%20now%20display%20the%20highest%20power%20level%20prior%20to%20equipping%20it%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20Class%20%28Hunter%2C%20Titan%2C%20Warlock%29%20requirement%20next%20to%20Required%20Level%20for%20tooltips%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfer%20algorithm%20and%20handling%20of%20items%20with%20loadouts%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20problem%20in%20the%20mobile%20app%20where%20it%20wouldn%27t%20load%20past%20the%20green%20arsenal%20bar%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20a%20problem%20in%20the%20desktop%20addon%20where%20it%20wouldn%27t%20load%20returning%20an%20API%20key%20error%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20loading%20handler%20with%20the%20Bungie%20API%20to%20expect%20timed%20out%20responses%20and%20allow%20the%20ability%20to%20retry%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20database%20to%20include%20Touch%20of%20Malice%20and%20Black%20Spindle%2C%20newly%20discovered%20items%20cannot%20be%20transferred%20until%20another%20update%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20tooltips%20to%20always%20display%20main%20stat%2C%20stats%2C%20and%20perks%20for%20all%20armor%20and%20weapons%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20%27Best%20Overall%27%20option%20which%20will%20pick%20the%20armor%20with%20the%20highest%20total%20stats%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EChanging%20the%20definition%20of%20the%20Progress%20filters%20to%20accommodate%20for%20the%20limitations%20in%20the%20Bungie%20API%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EThe%20%5C%22Equip%20with%20Highest%20Light%5C%22%20option%20will%20now%20transfer%20the%20best%20Ghost%20and%20Weapons%20and%20best%20armor%20even%20in%20the%20vault.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20loadouts%20so%20that%20it%20attempts%20to%20swap%20if%20destination%20is%20too%20full%20for%20most%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20Minimum%20Required%20Level%20indicator%20to%20the%20tooltips%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EStats%20display%20view%20now%20follows%20the%20name%20plate%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20option%20to%20adjust%20the%20sorting%20under%20View%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdjusted%20Exotic%20Armor%20on%20tooltips%20to%20reflect%20the%20perks%20given%20to%20the%20item%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EFixed%20Share%20URL%2C%20try%20it%20out%20to%20share%20your%20new%20exotic%20collections%20with%20friends%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EMoved%20Ghost%20Shells%20under%20General%20to%20reflect%20the%20layout%20in%20game%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20handling%20for%20Armsday%20Order%20items%20%26amp%3B%20duplicate%20shaders%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EPower%20level%20is%20now%20correctly%20displayed%20after%20gaining%20an%20artficat%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20%27Equip%20Gear%20With%20Highest%27%20Int%2C%20Disc%2C%20Str%20and%20Light%20automatically%2C%20found%20by%20clicking%20on%20your%20level%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20items%20and%20definitions%20as%20well%20as%20the%20Exotic%20Weapons%20and%20Armor%20under%20Sets%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Help%20section%20with%20Guides%20and%20Definitions%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EMade%20various%20bug%20fixes%20and%20improvements%20throughout%20the%20app%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20support%20for%20materials%20and%20consumables%20to%20multi-select%20and%20loadouts%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfer%20handling%20for%20items%20that%20can%27t%20be%20transferred%20%28Gunsmith%20weapons%29%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20cycle%20through%20swap%20candidates%20by%20clicking%20on%20the%20icon%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ELoadouts%20and%20multi-select%20will%20not%20choose%20a%20Gunsmith%20test%20weapon%20as%20a%20swap%20candidate%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20a%20notification%20pop%20up%20to%20allow%20switching%20accounts%20easily%20when%20dual%20linked%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20Power%20Level%20to%20the%20main%20nameplate%20for%20each%20character%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20Post%20Master%20section%20with%20support%20for%20more%20items%20and%20correct%20counts%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EEmblems%20are%20now%20loaded%20from%20locally%20cached%20images%2C%20they%20are%20also%20properly%20updated%20in%20the%20app%20when%20changed%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20support%20for%20Ghost%20shells%20under%20Armor%20with%20perks%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20support%20for%202.0%20spaces%20and%20definitions%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EChanged%20various%20alert%20messages%20to%20show%20up%20as%20temporary%20timed%20notifications%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20to%20reduce%20the%20situations%20one%20would%20get%20%27No%20slots%20available%27%20error%20message%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20a%20visual%20indicator%20down%20arrow%20to%20the%20mobile%20menu%20to%20make%20it%20clear%20you%20can%20scroll%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EItems%20are%20now%20sorted%20by%20Tier%20then%20Type%20instead%20of%20Tier%20then%20Title%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUsing%20the%20Damage%20or%20Weapons%20filter%20will%20now%20switch%20to%20the%20Weapons%20view%20automatically%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20the%20drag%20and%20drop%20by%20adding%20an%20effect%20to%20indicate%20where%20it%20will%20land%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20option%20to%20enable/disable%20drag%20and%20drop%20support%2C%20disabled%20by%20default%20because%20of%20click%20issues%20for%20some%20platforms%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20the%20ability%20to%20drag%20and%20drop%20on%20mobile%20devices%20when%20enabled%20manually%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EChanged%20the%20default%20Auto%20Pad%20Height%20option%20to%20be%20enabled%20for%20desktop%20platforms%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAdded%20drag%20and%20drop%20support%20to%20desktop%20platforms%2C%20requires%20Auto%20Pad%20Height%20option%20to%20be%20enabled%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ECharacters%20are%20now%20ordered%20in%20the%20order%20in%20which%20they%20were%20created%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EIt%20is%20now%20possible%20to%20lock%20and%20unlock%20items%20from%20the%20transfer%20dialog%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EClicking%20on%20the%20emblem%20now%20refreshes%20everything%20for%20that%20character%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EAuto%20pad%20height%20is%20now%20applied%20to%20the%20Vault%20when%20enabled%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20to%20ensure%20multiple%20exotics%20are%20not%20marked%20as%20equipped%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EIt%20is%20now%20possible%20to%20initiate%20a%20multi-transfer%20request%20by%20clicking%20on%20the%20new%20icons%20in%20the%20header%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20to%20account%20for%20equipped%20weapon%20while%20in%20game%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20Set%20filter%20to%20support%20more%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EUpdated%20item%20definitions%20to%20include%20the%20new%20Nepal%20shader%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENew%20donation%20options%20have%20been%20added%20to%20mobile%20platforms%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EVarious%20minor%20fixes%20and%20tweaks%20that%20was%20causing%20the%20app%20to%20not%20load%20properly%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EMulti-select%20is%20now%20available%20for%20mobile%2C%20better%20support%20coming%20in%20the%20future%20for%20all%20devices%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EMoved%20location%20of%20login%20links%20to%20make%20them%20easier%20to%20find.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EClicking%20on%20the%20light%20level%20now%20displays%20the%20stats%20in%20a%20new%20layout%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EDesktop%20platforms%20now%20automatically%20log%20in%20on%20first%20visit%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ERevamped%20the%20transfer%20algorithm%20to%20expect%20changed%20amounts%2C%20missing%20items%2C%20full%20space%2C%20duplicate%20items%20and%20much%20more.%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3EScrolling%20and%20navigating%20the%20UI%20on%20mobile%20is%20now%20much%20smoother%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENow%20supports%20multi-select%20double%20tap%20any%20weapon/armor%20to%20quickly%20transfer%20multiple%20items%3C/li%3E%5Cr%5Cn%20%20%20%20%3Cli%3ENow%20works%20as%20a%20standalone%20app%20for%20desktop%20platforms%2C%20visit%20website%27s%20Downloads%20section%20for%20more%20information.%3C/li%3E%5Cr%5Cn%3C/ul%3E%22%7D</div>
+=======
+    <div id="whatsnew" style="display:none;">%7B%22doShow%22%3A%22true%22%2C%22content%22%3A%22%3Cul%3E%5Cn%5Ct%3Cli%3EImproved%20handling%20for%20Armsday%20Order%20items%3C/li%3E%5Cn%20%20%20%20%3Cli%3EPower%20level%20is%20now%20correctly%20displayed%20after%20gaining%20an%20artficat%3C/li%3E%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20%27Equip%20Gear%20With%20Highest%27%20Int%2C%20Disc%2C%20Str%20and%20Light%20automatically%2C%20found%20by%20clicking%20on%20your%20level%3C/li%3E%5Cn%20%20%20%20%3Cli%3EUpdated%20items%20and%20definitions%20as%20well%20as%20the%20Exotic%20Weapons%20and%20Armor%20under%20Sets%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20Help%20section%20with%20Guides%20and%20Definitions%3C/li%3E%5Cn%20%20%20%20%3Cli%3EMade%20various%20bug%20fixes%20and%20improvements%20throughout%20the%20app%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20support%20for%20materials%20and%20consumables%20to%20multi-select%20and%20loadouts%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20transfer%20handling%20for%20items%20that%20can%27t%20be%20transferred%20%28Gunsmith%20weapons%29%3C/li%3E%5Cn%20%20%20%20%3Cli%3EYou%20can%20now%20cycle%20through%20swap%20candidates%20by%20clicking%20on%20the%20icon%3C/li%3E%5Cn%20%20%20%20%3Cli%3ELoadouts%20and%20multi-select%20will%20not%20choose%20a%20Gunsmith%20test%20weapon%20as%20a%20swap%20candidate%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20a%20notification%20pop%20up%20to%20allow%20switching%20accounts%20easily%20when%20dual%20linked%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20Power%20Level%20to%20the%20main%20nameplate%20for%20each%20character%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20Post%20Master%20section%20with%20support%20for%20more%20items%20and%20correct%20counts%3C/li%3E%5Cn%20%20%20%20%3Cli%3EThe%20Progress%20filter%20now%20works%20properly%20and%20shows%20weapons%20with%20Missing%20XP%2C%20Full%20XP%20and%20Maxed%3C/li%3E%5Cn%20%20%20%20%3Cli%3EEmblems%20are%20now%20loaded%20from%20locally%20cached%20images%2C%20they%20are%20also%20properly%20updated%20in%20the%20app%20when%20changed%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20support%20for%20Ghost%20shells%20under%20Armor%20with%20perks%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20support%20for%202.0%20spaces%20and%20definitions%3C/li%3E%5Cn%20%20%20%20%3Cli%3EChanged%20various%20alert%20messages%20to%20show%20up%20as%20temporary%20timed%20notifications%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20to%20reduce%20the%20situations%20one%20would%20get%20%27No%20slots%20available%27%20error%20message%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20a%20visual%20indicator%20down%20arrow%20to%20the%20mobile%20menu%20to%20make%20it%20clear%20you%20can%20scroll%3C/li%3E%5Cn%20%20%20%20%3Cli%3EItems%20are%20now%20sorted%20by%20Tier%20then%20Type%20instead%20of%20Tier%20then%20Title%3C/li%3E%5Cn%20%20%20%20%3Cli%3EUsing%20the%20Damage%20or%20Weapons%20filter%20will%20now%20switch%20to%20the%20Weapons%20view%20automatically%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20the%20drag%20and%20drop%20by%20adding%20an%20effect%20to%20indicate%20where%20it%20will%20land%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20the%20option%20to%20enable/disable%20drag%20and%20drop%20support%2C%20disabled%20by%20default%20because%20of%20click%20issues%20for%20some%20platforms%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20the%20ability%20to%20drag%20and%20drop%20on%20mobile%20devices%20when%20enabled%20manually%3C/li%3E%5Cn%20%20%20%20%3Cli%3EChanged%20the%20default%20Auto%20Pad%20Height%20option%20to%20be%20enabled%20for%20desktop%20platforms%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20drag%20and%20drop%20support%20to%20desktop%20platforms%2C%20requires%20Auto%20Pad%20Height%20option%20to%20be%20enabled%3C/li%3E%5Cn%20%20%20%20%3Cli%3ECharacters%20are%20now%20ordered%20in%20the%20order%20in%20which%20they%20were%20created%3C/li%3E%5Cn%20%20%20%20%3Cli%3EIt%20is%20now%20possible%20to%20lock%20and%20unlock%20items%20from%20the%20transfer%20dialog%3C/li%3E%5Cn%20%20%20%20%3Cli%3EClicking%20on%20the%20emblem%20now%20refreshes%20everything%20for%20that%20character%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAuto%20pad%20height%20is%20now%20applied%20to%20the%20Vault%20when%20enabled%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20to%20ensure%20multiple%20exotics%20are%20not%20marked%20as%20equipped%3C/li%3E%5Cn%20%20%20%20%3Cli%3EIt%20is%20now%20possible%20to%20initiate%20a%20multi-transfer%20request%20by%20clicking%20on%20the%20new%20icons%20in%20the%20header%3C/li%3E%5Cn%20%20%20%20%3Cli%3EImproved%20transfers%20to%20account%20for%20equipped%20weapon%20while%20in%20game%3C/li%3E%5Cn%20%20%20%20%3Cli%3EUpdated%20Set%20filter%20to%20support%20more%20items%3C/li%3E%5Cn%20%20%20%20%3Cli%3EUpdated%20item%20definitions%20to%20include%20the%20new%20Nepal%20shader%3C/li%3E%5Cn%20%20%20%20%3Cli%3ENew%20donation%20options%20have%20been%20added%20to%20mobile%20platforms%3C/li%3E%5Cn%20%20%20%20%3Cli%3EVarious%20minor%20fixes%20and%20tweaks%20that%20was%20causing%20the%20app%20to%20not%20load%20properly%3C/li%3E%5Cn%20%20%20%20%3Cli%3EMulti-select%20is%20now%20available%20for%20mobile%2C%20better%20support%20coming%20in%20the%20future%20for%20all%20devices%3C/li%3E%5Cn%20%20%20%20%3Cli%3EMoved%20location%20of%20login%20links%20to%20make%20them%20easier%20to%20find.%3C/li%3E%5Cn%20%20%20%20%3Cli%3EClicking%20on%20the%20light%20level%20now%20displays%20the%20stats%20in%20a%20new%20layout%3C/li%3E%5Cn%20%20%20%20%3Cli%3EDesktop%20platforms%20now%20automatically%20log%20in%20on%20first%20visit%3C/li%3E%5Cn%20%20%20%20%3Cli%3ERevamped%20the%20transfer%20algorithm%20to%20expect%20changed%20amounts%2C%20missing%20items%2C%20full%20space%2C%20duplicate%20items%20and%20much%20more.%3C/li%3E%5Cn%20%20%20%20%3Cli%3EScrolling%20and%20navigating%20the%20UI%20on%20mobile%20is%20now%20much%20smoother%3C/li%3E%5Cn%20%20%20%20%3Cli%3ENow%20supports%20multi-select%20double%20tap%20any%20weapon/armor%20to%20quickly%20transfer%20multiple%20items%3C/li%3E%5Cn%20%20%20%20%3Cli%3ENow%20works%20as%20a%20standalone%20app%20for%20desktop%20platforms%2C%20visit%20website%27s%20Downloads%20section%20for%20more%20information.%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20the%20ability%20to%20refresh%20every%20section%20now%20with%20animated%20spinner%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAll%20perk%20images%20are%20now%20locally%20cached%3C/li%3E%5Cn%20%20%20%20%3Cli%3ECharacter%20emblems%20now%20follow%20you%20on%20scroll%3C/li%3E%5Cn%20%20%20%20%3Cli%3EAdded%20ability%20to%20search%20for%20items%20by%20secondary%20perks%3C/li%3E%5Cn%20%20%20%20%3Cli%3ESecondary%20perks%20are%20now%20displayed%20for%20weapons%20and%20armor%3C/li%3E%5Cn%20%20%20%20%3Cli%3EDestinyDB%20tooltips%20now%20include%20weapon%20stats%3C/li%3E%5Cn%3C/ul%3E%22%7D</div>
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 </body>
 
 </html>

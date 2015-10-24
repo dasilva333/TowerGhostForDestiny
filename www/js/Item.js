@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 var Item = function(model, profile) {
+=======
+var Item = function(model, profile, ignoreDups) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     var self = this;
 
     _.each(model, function(value, key) {
@@ -6,6 +10,7 @@ var Item = function(model, profile) {
     });
 
     this.character = profile;
+<<<<<<< HEAD
 
     this.init(model);
 
@@ -27,17 +32,47 @@ var Item = function(model, profile) {
         }
         return className;
     });
+=======
+	_.each(model, function(value, key) {
+		self[key] = value;
+	});	
+		
+	if (!("id" in model)){
+		this.init(model, ignoreDups);
+	}
+    else {
+		self.isEquipped = ko.observable(model.isEquipped);
+		self.primaryStat = ko.observable(model.primaryStat);
+		self.locked = ko.observable(model.locked);
+		this.init(model, ignoreDups);
+	}
+
+    
+
+    this.isVisible = ko.computed(this._isVisible, this);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     this.isEquippable = function(avatarId) {
         return ko.pureComputed(function() {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
+<<<<<<< HEAD
             return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+=======
+            return (self.characterId == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass)
+                //if it's in another character and it's equippable
+                || (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         });
     };
     this.isStoreable = function(avatarId) {
+<<<<<<< HEAD
         return ko.pureComputed(function() {
             return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
+=======
+        return ko.computed(function() {
+            return (self.characterId != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 (self.isEquipped() && self.character.id == avatarId);
         });
     };
@@ -110,6 +145,14 @@ Item.prototype = {
             if (item.primaryStat) {
                 itemObject.primaryStat(item.primaryStat.value);
             }
+<<<<<<< HEAD
+=======
+            if (item.progression) {
+                var progress = _progressDefs[item.progression.progressionHash];
+                var progressTotal = Math.max.apply(null, _.pluck(progress.steps, 'progressTotal'));
+                itemObject.progression = (item.progression.currentProgress > 0 && item.progression.currentProgress >= progressTotal);
+            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
             if (item.perks.length > 0) {
@@ -118,6 +161,7 @@ Item.prototype = {
                 _.each(item.perks, function(perk) {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
+<<<<<<< HEAD
                         var nodeIndex = talentGrid.nodes.indexOf(
                             _.filter(talentGrid.nodes, function(o) {
                                 return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
@@ -131,9 +175,17 @@ Item.prototype = {
                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                                 active: perk.isActive
                             });
+=======
+                        return {
+                            iconPath: tgd.dataDir + p.displayIcon,
+                            name: p.displayName,
+                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                            active: perk.isActive
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         }
                     }
                 });
+<<<<<<< HEAD
                 var perkHashes = _.pluck(item.perks, 'perkHash'),
                     perkNames = _.pluck(itemObject.perks, 'name'),
                     talentPerks = {};
@@ -154,6 +206,30 @@ Item.prototype = {
                                     description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
                                     iconPath: tgd.dataDir + perk.icon
                                 };
+=======
+                if (item.talentGridHash in _talentGridDefs) {
+                    var perkHashes = _.pluck(item.perks, 'perkHash'),
+                        perkNames = _.pluck(itemObject.perks, 'name'),
+                        talentPerks = {};
+                    var talentGridNodes = _talentGridDefs[item.talentGridHash].nodes;
+                    _.each(item.nodes, function(node) {
+                        if (node.isActivated && node.hidden == false) {
+                            var nodes = _.findWhere(talentGridNodes, {
+                                nodeHash: node.nodeHash
+                            });
+                            if (nodes && nodes.steps) {
+                                var perk = nodes.steps[node.stepIndex];
+                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                    (perk.perkHashes.length == 0 || perkHashes.indexOf(perk.perkHashes[0]) == -1)) {
+                                    talentPerks[perk.nodeStepName] = {
+                                        active: true,
+                                        name: perk.nodeStepName,
+                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                        iconPath: tgd.dataDir + perk.icon
+                                    };
+                                }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             }
                         }
                     }
@@ -188,6 +264,14 @@ Item.prototype = {
             if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
                 itemObject.primaryStat(item.stackSize);
                 itemObject.maxStackSize = info.maxStackSize;
+<<<<<<< HEAD
+=======
+            } else if (itemObject.bucketType == "Bounties") {
+                var status = _.map(item.objectives, function(item) {
+                    return item.isComplete;
+                }).indexOf(false) > -1 ? "" : "100%";
+                itemObject.primaryStat(status);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
@@ -289,6 +373,7 @@ Item.prototype = {
         if (typeof self.id == "undefined") {
             return false;
         }
+<<<<<<< HEAD
         var searchFilter = $parent.searchKeyword() === '' || ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
@@ -339,6 +424,39 @@ Item.prototype = {
         tgd.localLog('trying to unequip too!');
         if (self.isEquipped() === true) {
             tgd.localLog("and its actually equipped");
+=======
+        var searchFilter = $parent.searchKeyword() == '' || self.hasPerkSearch($parent.searchKeyword()) ||
+            ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
+        var dmgFilter = $parent.dmgFilter().length == 0 || $parent.dmgFilter().indexOf(self.damageTypeName) > -1;
+        var setFilter = $parent.setFilter().length == 0 || $parent.setFilter().indexOf(self.id) > -1;
+        var tierFilter = $parent.tierFilter() == 0 || $parent.tierFilter() == self.tierType;
+        var progressFilter = $parent.progressFilter() == 0 || self.hashProgress($parent.progressFilter());
+        var typeFilter = $parent.typeFilter() == 0 || $parent.typeFilter() == self.typeName;
+        var dupes = _.filter(tgd.duplicates(), function(id) {
+            return id == self.id
+        }).length;
+        var showDuplicate = $parent.showDuplicate() == false || ($parent.showDuplicate() == true && dupes > 1);
+        /*tgd.localLog( "searchFilter: " + searchFilter);
+		tgd.localLog( "dmgFilter: " + dmgFilter);
+		tgd.localLog( "setFilter: " + setFilter);
+		tgd.localLog( "tierFilter: " + tierFilter);
+		tgd.localLog( "progressFilter: " + progressFilter);
+		tgd.localLog( "typeFilter: " + typeFilter);
+		tgd.localLog("keyword is: " + $parent.searchKeyword());
+		tgd.localLog("keyword is empty " + ($parent.searchKeyword() == ''));
+		tgd.localLog("keyword has perk " + self.hasPerkSearch($parent.searchKeyword()));
+		tgd.localLog("perks are " + JSON.stringify(self.perks));
+		tgd.localLog("description is " + self.description);
+		tgd.localLog("keyword has description " + ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) >-1));*/
+        return (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (typeFilter) && (showDuplicate);
+    },
+    /* helper function that unequips the current item in favor of anything else */
+    unequip: function(callback, excludeExotic) {
+        var self = this;
+        //tgd.localLog('trying to unequip too!');
+        if (self.isEquipped() == true) {
+            //tgd.localLog("and its actually equipped");
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             var otherEquipped = false,
                 itemIndex = -1,
                 otherItems = _.filter(self.character.items(), function(item) {
@@ -349,6 +467,7 @@ Item.prototype = {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
                 var tryNextItem = function() {
+<<<<<<< HEAD
                     var item = otherItems[++itemIndex];
                     if (_.isUndefined(item)) {
                         if (callback) callback(false);
@@ -387,6 +506,45 @@ Item.prototype = {
                 };
                 tgd.localLog("tryNextItem");
                 tgd.localLog("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+=======
+                        var item = otherItems[++itemIndex];
+                        if (_.isUndefined(item)) {
+                            if (callback) callback(false);
+                            else {
+                                tgd.localLog("transfer error 5");
+                                $.toaster({
+                                    priority: 'danger',
+                                    title: 'Error:',
+                                    message: app.activeText().cannot_unequip + self.description
+                                });
+                            }
+                            return;
+                        }
+                        //tgd.localLog(item.description);
+                        /* still haven't found a match */
+                        if (otherEquipped == false) {
+                            if (item != self && item.equip) {
+                                //tgd.localLog("trying to equip " + item.description);
+                                item.equip(self.characterId, function(isEquipped, result) {
+                                    //tgd.localLog( item.description + " result was " + isEquipped);
+                                    if (isEquipped == true) {
+                                        otherEquipped = true;
+                                        callback(true);
+                                    } else if (isEquipped == false && result && result.ErrorCode && result.ErrorCode == 1634) {
+                                        callback(false);
+                                    } else {
+                                        tryNextItem(); /*tgd.localLog("tryNextItem")*/
+                                    }
+                                });
+                            } else {
+                                tryNextItem()
+                                    //tgd.localLog("tryNextItem")
+                            }
+                        }
+                    }
+                    //tgd.localLog("tryNextItem")
+                    //tgd.localLog("trying to unequip item, the min tier of the items I can equip is: " + minTier);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 if (minTier == 6) {
                     var otherItemUnequipped = false;
                     var otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
@@ -394,7 +552,11 @@ Item.prototype = {
                     _.each(otherBucketTypes, function(bucketType) {
                         var itemEquipped = self.character.itemEquipped(bucketType);
                         if (itemEquipped && itemEquipped.tierType && itemEquipped.tierType == 6) {
+<<<<<<< HEAD
                             tgd.localLog("going to unequip " + itemEquipped.description);
+=======
+                            //tgd.localLog("going to unequip " + itemEquipped.description);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             itemEquipped.unequip(function(result) {
                                 //unequip was successful
                                 if (result) {
@@ -405,7 +567,11 @@ Item.prototype = {
                                     tgd.localLog("transfer error 6");
                                     $.toaster({
                                         priority: 'danger',
+<<<<<<< HEAD
                                         title: 'Error',
+=======
+                                        title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                         message: app.activeText().unable_unequip + itemEquipped.description
                                     });
                                     callback(false);
@@ -415,18 +581,30 @@ Item.prototype = {
                         }
                     });
                     if (!otherItemUnequipped) {
+<<<<<<< HEAD
                         tgd.localLog("no other exotic equipped, safe to equip");
+=======
+                        //tgd.localLog("no other exotic equipped, safe to equip");
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         tryNextItem();
                     }
                 } else {
                     tryNextItem();
                 }
             } else {
+<<<<<<< HEAD
                 tgd.localLog("refused to unequip");
                 callback(false);
             }
         } else {
             tgd.localLog("but not equipped");
+=======
+                //tgd.localLog("refused to unequip");
+                callback(false);
+            }
+        } else {
+            //tgd.localLog("but not equipped");
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             callback(true);
         }
     },
@@ -436,6 +614,7 @@ Item.prototype = {
             tgd.localLog("making bungie call to equip " + self.description);
             app.bungie.equip(targetCharacterId, self._id, function(e, result) {
                 if (result && result.Message && result.Message == "Ok") {
+<<<<<<< HEAD
                     var done = function() {
                         tgd.localLog(self);
                         tgd.localLog("result was OKed for " + self.description);
@@ -460,8 +639,22 @@ Item.prototype = {
                         tgd.localLog("changing reference of self to actual item");
                     } else {
                         done();
+=======
+                    //tgd.localLog("result was OKed");
+                    //tgd.localLog(result);
+                    self.isEquipped(true);
+                    self.character.items().forEach(function(item) {
+                        if (item != self && item.bucketType == self.bucketType) {
+                            item.isEquipped(false);
+                        }
+                    });
+                    if (self.bucketType == "Emblem") {
+                        self.character.icon(self.icon);
+                        self.character.background(self.backgroundPath);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     }
                 } else {
+<<<<<<< HEAD
                     tgd.localLog("transfer error 7 " + result);
                     /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
                     if (callback) callback(false, result);
@@ -469,6 +662,15 @@ Item.prototype = {
                         $.toaster({
                             priority: 'info',
                             title: 'Error',
+=======
+                    /* this is by design if the user equips something they couldn't the app shouldn't assume a replacement unless it's via loadouts */
+                    if (callback) callback(false, result);
+                    else if (result && result.Message) {
+                        tgd.localLog("transfer error 7");
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             message: result.Message
                         });
                     }
@@ -478,8 +680,13 @@ Item.prototype = {
                     }
                 }
             });
+<<<<<<< HEAD
         };
         var sourceCharacterId = self.characterId();
+=======
+        }
+        var sourceCharacterId = self.characterId;
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         tgd.localLog("equip called from " + sourceCharacterId + " to " + targetCharacterId);
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
@@ -509,14 +716,22 @@ Item.prototype = {
                 }
             } else {
                 //tgd.localLog("request is not part of a loadout");
+<<<<<<< HEAD
                 done();
+=======
+                done()
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             }
         } else {
             tgd.localLog("item is NOT already in the character");
             self.store(targetCharacterId, function(newProfile) {
                 tgd.localLog("item is now in the target destination");
                 self.character = newProfile;
+<<<<<<< HEAD
                 self.characterId(newProfile.id);
+=======
+                self.characterId = newProfile.id;
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 self.equip(targetCharacterId, callback);
             });
         }
@@ -544,7 +759,20 @@ Item.prototype = {
         x = characters[ids.indexOf(sourceCharacterId)];
         y = characters[ids.indexOf(targetCharacterId)];
         if (_.isUndefined(y)) {
+<<<<<<< HEAD
             return app.refresh();
+=======
+            /*ga('send', 'exception', {
+                'exDescription': "Target character not found> " + targetCharacterId + " " + _.pluck(app.characters(), 'id'),
+                'exFatal': false,
+                'appVersion': tgd.version,
+                'hitCallback': function() {
+                    tgd.localLog("crash reported");
+                }
+            });*/
+            app.refresh();
+            return BootstrapDialog.alert("Error has occured, please report this issue to my Github. Target character not found " + targetCharacterId);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         }
         //tgd.localLog( self.description );
         app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result) {
@@ -585,7 +813,11 @@ Item.prototype = {
 
                     var theClone;
                     var remainder = self.primaryStat() - amount;
+<<<<<<< HEAD
                     var isOverflow = (typeof existingItem == "undefined") ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
+=======
+                    var isOverflow = existingItem == undefined ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     tgd.localLog("[remainder: " + remainder + "] [overflow: " + isOverflow + "] [underflow: " + (remainder < 0) + "]");
 
                     var tmpAmount = 0;
@@ -613,8 +845,13 @@ Item.prototype = {
                     // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
                     if (remainder > 0) {
                         tgd.localLog("[remainder: " + remainder + "] [clone on source: " + remainder + "]");
+<<<<<<< HEAD
                         theClone = self.clone();
                         theClone.characterId(sourceCharacterId);
+=======
+                        var theClone = self.clone();
+                        theClone.characterId = sourceCharacterId;
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         theClone.character = x;
                         theClone.primaryStat(remainder);
                         x.items.splice(idxSelf, 0, theClone);
@@ -727,6 +964,12 @@ Item.prototype = {
                             idx = idx + 1;
                         }
                     }
+<<<<<<< HEAD
+=======
+                    setTimeout(function() {
+                        app.bucketSizeHandler();
+                    }, 600);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     tgd.localLog("---------------------");
                 } else {
                     tgd.localLog("removing " + self.description + " from " + x.uniqueName() + " currently at " + x.items().length);
@@ -737,9 +980,14 @@ Item.prototype = {
                     self.character = y;
                     y.items.push(self);
                     setTimeout(function() {
+<<<<<<< HEAD
                         self.characterId(targetCharacterId);
                     }, 500);
                     tgd.localLog("adding " + self.description + " to " + y.uniqueName());
+=======
+                        app.bucketSizeHandler();
+                    }, 600);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 }
                 //not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
                 setTimeout(function() {
@@ -753,13 +1001,18 @@ Item.prototype = {
                 tgd.localLog("transfer error 1");
                 $.toaster({
                     priority: 'info',
+<<<<<<< HEAD
                     title: 'Error',
+=======
+                    title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     message: result.Message
                 });
             }
         });
     },
     handleTransfer: function(targetCharacterId, cb) {
+<<<<<<< HEAD
         var self = this;
         return function(y, x, result) {
             if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)) {
@@ -867,6 +1120,97 @@ Item.prototype = {
         //tgd.localLog(arguments);
         var self = this;
         var sourceCharacterId = self.characterId(),
+=======
+        var self = this;
+        return function(y, x, result) {
+            if (result && result.ErrorCode && (result.ErrorCode == 1656 || result.ErrorCode == 1623)) {
+                tgd.localLog("reloading bucket " + self.bucketType);
+                /*var characterId = app.characters()[1].id;
+				var instanceId = app.characters()[1].weapons()[0]._id;*/
+                /*app.bungie.getAccountSummary(function(results) {
+                    var characterIndex = _.findWhere(results.data.items, {
+                        itemId: self._id
+                    }).characterIndex;
+                    if (characterIndex > -1) {
+                        characterId = results.data.characters[characterIndex].characterBase.characterId;
+                    } else {
+                        characterId = "Vault";
+                    }
+                    tgd.localLog(characterId + " is where the item was found, it was supposed to be in " + self.character.id);
+                    if (characterId != self.character.id) {
+                        var character = _.findWhere(app.characters(), {
+                            id: characterId
+                        });
+                        // handle refresh of other buckets
+                        tgd.localLog("found the item elsewhere");
+                        if (characterId == targetCharacterId) {
+                            tgd.localLog("item is already where it needed to be");
+                            x.items.remove(self);
+                            self.characterId = targetCharacterId
+                            self.character = character;
+                            character.items.push(self);
+                            if (cb) cb(y, x);
+                        } else {
+                            tgd.localLog("item is not where it needs to be");
+                            x._reloadBucket(self.bucketType, undefined, function() {
+                                character._reloadBucket(self.bucketType, undefined, function() {
+                                    tgd.localLog("retransferring");
+                                    //TODO move this function to a more general area for common use
+                                    self.character.id = characterId;
+                                    var newItem = Loadout.prototype.findReference(self);
+                                    tgd.localLog(newItem.character.id + " has new reference of " + newItem.description);
+                                    newItem.store(targetCharacterId, cb);
+                                });
+                            });
+                        }
+                    } else {*/
+                x._reloadBucket(self.bucketType, undefined, function() {
+                    y._reloadBucket(self.bucketType, undefined, function() {
+                        tgd.localLog("retransferring");
+                        //TODO move this function to a more general area for common use
+                        var newItem = Loadout.prototype.findReference(self);
+                        if (newItem) {
+                            newItem.store(targetCharacterId, cb);
+                        }
+                    });
+                });
+                /*    }
+                });*/
+            }
+            //this condition only applies to armor/weapons until loadouts can support mats
+            else if (result && result.ErrorCode && result.ErrorCode == 1642 && self._id > 0 && (self.weaponIndex > -1 || self.armorIndex > -1)) {
+                tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
+                x._reloadBucket(self.bucketType, undefined, function() {
+                    y._reloadBucket(self.bucketType, undefined, function() {
+                        var adhoc = new Loadout();
+                        adhoc.addUniqueItem({
+                            id: self._id,
+                            bucketType: self.bucketType,
+                            doEquip: false
+                        });
+                        var msa = adhoc.transfer(targetCharacterId, true);
+                        adhoc.swapItems(msa, targetCharacterId, function() {
+                            if (cb) cb(y, x);
+                        });
+                    });
+                });
+            } else if (cb) {
+                cb(y, x);
+            } else if (result && result.Message) {
+                tgd.localLog("transfer error 2");
+                $.toaster({
+                    priority: 'info',
+                    title: 'Error:',
+                    message: result.Message
+                });
+            }
+        }
+    },
+    store: function(targetCharacterId, callback) {
+        //tgd.localLog(arguments);
+        var self = this;
+        var sourceCharacterId = self.character.id,
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             transferAmount = 1;
         //tgd.localLog("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
         var done = function() {
@@ -874,7 +1218,11 @@ Item.prototype = {
                 //tgd.localLog("*******from character to vault " + self.description);
                 self.unequip(function(result) {
                     //tgd.localLog("********* " + sourceCharacterId + " calling transfer from character to vault " + result);
+<<<<<<< HEAD
                     if (result === true) {
+=======
+                    if (result == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, callback));
                     } else {
                         if (callback) {
@@ -883,20 +1231,31 @@ Item.prototype = {
                             tgd.localLog("transfer error 3");
                             $.toaster({
                                 priority: 'danger',
+<<<<<<< HEAD
                                 title: 'Error',
+=======
+                                title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                 message: "Unable to unequip " + self.description
                             });
                         }
                     }
                 });
             } else if (sourceCharacterId !== "Vault") {
+<<<<<<< HEAD
                 tgd.localLog("from character to vault to character " + self.description);
                 self.unequip(function(result) {
                     if (result === true) {
+=======
+                //tgd.localLog("from character to vault to character " + self.description);
+                self.unequip(function(result) {
+                    if (result == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         if (self.bucketType == "Subclasses") {
                             if (callback)
                                 callback(self.character);
                         } else {
+<<<<<<< HEAD
                             tgd.localLog(self.character.uniqueName() + " xfering item to Vault " + self.description);
                             self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
                                 tgd.localLog(self.character.id + " xfered item to vault and now to " + targetCharacterId);
@@ -905,6 +1264,16 @@ Item.prototype = {
                                     if (callback) callback(self.character);
                                 } else {
                                     tgd.localLog("taking the short route " + self.description);
+=======
+                            //tgd.localLog("xfering item to Vault " + self.description);
+                            self.transfer(sourceCharacterId, "Vault", transferAmount, self.handleTransfer(targetCharacterId, function() {
+                                //tgd.localLog("xfered item to vault and now to " + targetCharacterId);
+                                if (self.character.id == targetCharacterId) {
+                                    //tgd.localLog("took the long route ending it short " + self.description);
+                                    if (callback) callback(self.character);
+                                } else {
+                                    //tgd.localLog("taking the short route " + self.description);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                     self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
                                 }
                             }));
@@ -916,7 +1285,11 @@ Item.prototype = {
                             tgd.localLog("transfer error 4");
                             $.toaster({
                                 priority: 'danger',
+<<<<<<< HEAD
                                 title: 'Error',
+=======
+                                title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                 message: "Unable to unequip " + self.description
                             });
                         }
@@ -1085,7 +1458,11 @@ Item.prototype = {
 
         var nextTransfer = function(callback) {
             var theStack = getNextStack();
+<<<<<<< HEAD
             if (typeof theStack == "undefined") {
+=======
+            if (theStack == undefined) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 //tgd.localLog("all items consolidated");
                 if (callback !== undefined) {
                     callback();
@@ -1192,7 +1569,11 @@ Item.prototype = {
     toggleLock: function() {
         var self = this;
         // have to use an actual character id and not the vault for lock/unlock
+<<<<<<< HEAD
         var characterId = (self.characterId() == 'Vault') ? _.find(app.orderedCharacters(), function(c) {
+=======
+        var characterId = self.character.id == 'Vault' ? _.find(app.orderedCharacters(), function(c) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             return c.id !== 'Vault';
         }).id : self.character.id;
         var newState = !self.locked();
@@ -1206,6 +1587,7 @@ Item.prototype = {
                 self.locked(newState);
             }
         });
+<<<<<<< HEAD
     },
     getValue: function(type) {
         var value;
@@ -1219,5 +1601,7 @@ Item.prototype = {
             value = 0;
         }
         return value;
+=======
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     }
 };

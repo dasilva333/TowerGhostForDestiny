@@ -222,11 +222,19 @@ tgd.locale = {
         donation_instructions: "Este es un projecto non-commercial dedicado para Destiny. Si usted disfurat esta aplicacion proveve una donacion para supportar los gastos."
     },
     fr: {
+<<<<<<< HEAD
         unable_create_loadout_for_type: "Actuellement incapable de crer loadouts avec ce type d'article",
         unable_to_create_loadout_for_bucket: "Vous ne pouvez pas crer un loadout avec plus de 10 articles dans cette fente: ",
         unable_to_move_bucketitems: "Articles matre de poste ne peuvent tre transfrs avec l'API.",
         this_icon: "Cette icne est ",
         pick_a_set: "S'il vous plat choisir un ensemble avant de choisir cette option",
+=======
+        unable_create_loadout_for_type: "Actuellement incapable de cr�er loadouts avec ce type d'article",
+        unable_to_create_loadout_for_bucket: "Vous ne pouvez pas cr�er un loadout avec plus de 10 articles dans cette fente: ",
+        unable_to_move_bucketitems: "Articles ma�tre de poste ne peuvent �tre transf�r�s avec l'API.",
+        this_icon: "Cette ic�ne est ",
+        pick_a_set: "S'il vous pla�t choisir un ensemble avant de choisir cette option",
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         error_loading_inventory: "Erreur inventaire de chargement",
         whats_new_title: "Tower Ghost for Destiny Nouvelles",
         itemDefs_undefined: "S'il vous plat signaler le problme  mon Github et assurez-vous que votre police est l'anglais.",
@@ -587,7 +595,11 @@ tgd.locale = {
         menu_view_general: "Görevler",
         menu_view_options: "Görüntüleme Ayarları",
         menu_shareurl: "URL'yi Arkadaşlarınla paylaş",
+<<<<<<< HEAD
         menu_autorefresh: "Otomatik yenileme (5 mins)",
+=======
+        menu_autorefresh: "Otomatik yenileme",
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         menu_destinydbtooltips: "DestinyDB Araçları",
         menu_destinydbmode: "DestinyDB Modu",
         menu_autotransfer: "Otomatik Transfer",
@@ -603,6 +615,7 @@ tgd.locale = {
         menu_progress_2: "Ilerlemesi Tam olan öğeler",
         menu_progress_3: "Maksimum olan öğeler",
         menu_damage: "Hasar Türü",
+<<<<<<< HEAD
         language_pack_downloaded: "Dil paketi indirildi,lütfen yenileyin ve değişikliklere göz atın.",
         vo_number_of_columns: "Columns",
         vo_vault_first: "Ilk/Sol",
@@ -612,6 +625,14 @@ tgd.locale = {
         vo_layout_mode: "Layout Mode",
         vo_vault_width: "Vault Width",
         vo_vault_columns: "Vault Columns",
+=======
+        menu_weapons: "Silahlar",
+        language_pack_downloaded: "Dil paketi indirildi,lütfen yenileyin ve değişikliklere göz atın.",
+        vo_number_of_columns: "Vault pozisyonu",
+        vo_vault_first: "Ilk/Sol",
+        vo_vault_last: "Son/Sağ",
+        vo_vault_position: "Vault pozisyonu",
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         missing_items: "Kayıp Öğeler",
         login_loading_inventory: "Lütfen Bekleyin, Cephaneniz Bungie tarafından yükleniyor",
         login_authenticating_pt1: "Bungie'ye giriş yapılıyor.. Lütfen sabırlı olun :).",

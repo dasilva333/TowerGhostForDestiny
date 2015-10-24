@@ -12,7 +12,11 @@ function Layout(layout) {
     self.countText = function(character) {
         return ko.pureComputed(function() {
             var text = "";
+<<<<<<< HEAD
             if (self.array !== "" && character.id == 'Vault') {
+=======
+            if (self.array != "") {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 var currentAmount = character[self.array]().length;
                 var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
                 text = "(" + currentAmount + "/" + totalAmount + ")";
@@ -24,8 +28,13 @@ function Layout(layout) {
         });
     };
     self.isVisible = function(character) {
+<<<<<<< HEAD
         return ko.pureComputed(function() {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
+=======
+        return ko.computed(function() {
+            return ((character.id == "Vault" && (self.name !== "Post Master")) || character.id !== "Vault");
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         });
     };
 }
@@ -69,11 +78,19 @@ tgd.dialog = (function(options) {
 
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
+<<<<<<< HEAD
     if (app.destinyDbMode() === true) {
         tgd.localLog("destinyDbMode");
         window.open(item.href, "_system");
         return false;
     } else if (app.loadoutMode() === true) {
+=======
+    if (app.destinyDbMode() == true) {
+        tgd.localLog("destinyDbMode");
+        window.open(item.href, "_system");
+        return false;
+    } else if (app.loadoutMode() == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         tgd.localLog("loadoutMode");
         var existingItem = _.findWhere(app.activeLoadout().ids(), {
             id: item._id
@@ -84,10 +101,17 @@ tgd.moveItemPositionHandler = function(element, item) {
             if (item.transferStatus >= 2) {
                 $.toaster({
                     priority: 'danger',
+<<<<<<< HEAD
                     title: 'Warning',
                     message: app.activeText().unable_create_loadout_for_type
                 });
             } else if (item._id === "0") {
+=======
+                    title: 'Warning:',
+                    message: app.activeText().unable_create_loadout_for_type
+                });
+            } else if (item._id == 0) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 app.activeLoadout().addGenericItem({
                     hash: item.id,
                     bucketType: item.bucketType,
@@ -104,7 +128,11 @@ tgd.moveItemPositionHandler = function(element, item) {
             } else {
                 $.toaster({
                     priority: 'danger',
+<<<<<<< HEAD
                     title: 'Error',
+=======
+                    title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
                 });
             }
@@ -113,10 +141,17 @@ tgd.moveItemPositionHandler = function(element, item) {
         tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
+<<<<<<< HEAD
         if (item.transferStatus == 2 || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
+=======
+        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+            $.toaster({
+                priority: 'danger',
+                title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 message: app.activeText().unable_to_move_bucketitems
             });
             return;
@@ -225,8 +260,13 @@ window.ko.bindingHandlers.scrollToView = {
             .on("press", function() {
                 $.toaster({
                     priority: 'info',
+<<<<<<< HEAD
                     title: 'Info',
                     message: app.activeText().this_icon + viewModel.uniqueName()
+=======
+                    title: 'Info:',
+                    message: app.activeText().this_icon + viewModel.uniqueName
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 });
             });
     }
@@ -250,6 +290,7 @@ ko.bindingHandlers.moveItem = {
                 if (target) {
                     var item = ko.contextFor(target).$data;
                     tgd.moveItemPositionHandler(target, item);
+<<<<<<< HEAD
                 }
             })
             .on("doubletap", function(ev) {
@@ -288,6 +329,46 @@ ko.bindingHandlers.moveItem = {
                     }
                 }
             })
+=======
+                }
+            })
+            .on("doubletap", function(ev) {
+                tgd.localLog("item.doubletap");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item.transferStatus < 2) {
+                            if (app.dynamicMode() == false) {
+                                app.dynamicMode(true);
+                                app.createLoadout();
+                            }
+                            tgd.localLog("double tap");
+                            if (item._id > 0) {
+                                app.activeLoadout().addUniqueItem({
+                                    id: item._id,
+                                    bucketType: item.bucketType,
+                                    doEquip: false
+                                });
+                            } else {
+                                app.activeLoadout().addGenericItem({
+                                    hash: item.id,
+                                    bucketType: item.bucketType,
+                                    primaryStat: item.primaryStat()
+                                });
+                            }
+                        } else {
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Warning:',
+                                message: app.activeText().unable_create_loadout_for_type
+                            });
+                        }
+                    }
+                }
+            })
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             // press is actually hold 
             .on("press", function(ev) {
                 tgd.localLog("item.press");
@@ -296,7 +377,11 @@ ko.bindingHandlers.moveItem = {
                     var context = ko.contextFor(target);
                     if (context && "$data" in context) {
                         var item = context.$data;
+<<<<<<< HEAD
                         if (item && item.doEquip && app.loadoutMode() === true) {
+=======
+                        if (item && item.doEquip && app.loadoutMode() == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             item.doEquip(!item.doEquip());
                             item.markAsEquip(item, {
                                 target: target
@@ -345,8 +430,13 @@ tgd.StoreObj = function(key, compare, writeCallback) {
         window.localStorage.setItem(key, newValue);
         value(newValue);
         if (writeCallback) writeCallback(newValue);
+<<<<<<< HEAD
     };
 };
+=======
+    }
+}
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
 var app = function() {
     var self = this;
@@ -360,6 +450,7 @@ var app = function() {
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+<<<<<<< HEAD
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
@@ -382,6 +473,25 @@ var app = function() {
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
+=======
+    this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
+    this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
+    this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+    this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
+    this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
+    this.locale = ko.computed(new tgd.StoreObj("locale"));
+    this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
+    this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
+    this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
+    this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
+    this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
+    this.activeView = ko.computed(new tgd.StoreObj("activeView"));
+    this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
+    this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
+    this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
+    this.dragAndDrop = ko.computed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         $ZamTooltips.isEnabled = newValue;
     }));
     this.refreshSeconds = ko.pureComputed(new tgd.StoreObj("refreshSeconds"));
@@ -411,10 +521,17 @@ var app = function() {
             method: "notifyWhenChangesStop"
         }
     });
+<<<<<<< HEAD
     this.activeLayouts = ko.pureComputed(function() {
         return _.filter(self.allLayouts(), function(layout) {
             return (self.activeView() == layout.id || self.activeView() == "0");
         });
+=======
+    this.activeLayouts = ko.computed(function() {
+        return _.filter(self.allLayouts(), function(layout) {
+            return (self.activeView() == layout.id || self.activeView() == 0);
+        });;
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -454,10 +571,20 @@ var app = function() {
         self.createLoadout();
     };
 
+    this.startMultiSelect = function() {
+        self.dynamicMode(true);
+        self.createLoadout();
+    }
+
     this.showHelp = function() {
         self.toggleBootstrapMenu();
+<<<<<<< HEAD
         (new tgd.dialog()).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
     };
+=======
+        (new tgd.dialog).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
     this.showLanguageSettings = function() {
         self.toggleBootstrapMenu();
@@ -497,10 +624,17 @@ var app = function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
             });
+<<<<<<< HEAD
             $("div.supportsIAB").toggle(isChrome === true || isAndroid === true || isIOS === true);
             $("div.chromeWallet").toggle(isChrome === true);
             $("div.googlePlay").toggle(isAndroid === true);
             $("div.appleIAP").toggle(isIOS === true);
+=======
+            $("div.supportsIAB").toggle(isChrome == true || isAndroid == true || isIOS == true);
+            $("div.chromeWallet").toggle(isChrome == true);
+            $("div.googlePlay").toggle(isAndroid == true);
+            $("div.appleIAP").toggle(isIOS == true);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             $("a.donate").bind("click", function() {
                 if (isChrome) {
                     google.payments.inapp.buy({
@@ -552,7 +686,11 @@ var app = function() {
     };
 
     this.renderCallback = function(context, content, element, callback) {
+<<<<<<< HEAD
         if (element) lastElement = element;
+=======
+        if (element) lastElement = element
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, query, $content = $("<div>" + content + "</div>");
@@ -608,6 +746,39 @@ var app = function() {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
+<<<<<<< HEAD
+=======
+            if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
+                /* Weapon Perks (Pre-HoW) */
+                if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+                    $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                        perks: activeItem.perks
+                    }));
+                }
+                /* Weapon Perks (Post-HoW) */
+                else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
+                    $content.find(".destt-info").before(tgd.perksTemplate({
+                        perks: activeItem.perks
+                    }));
+                }
+            } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                /* Armor Perks */
+                if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && activeItem.tierType !== 6) {
+                    /* this only applies to armor with existing perks */
+                    if ($content.find(".destt-talent").length > 0) {
+                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                    /* this applies to ghost shells, maybe re rollable armor */
+                    else {
+                        $content.find(".destt-stat").after(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                }
+            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             /* Armor Stats */
             if (!_.isEmpty(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
@@ -699,6 +870,7 @@ var app = function() {
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
+<<<<<<< HEAD
         self.redraw();
     };
     this.toggleDragAndDrop = function() {
@@ -709,6 +881,18 @@ var app = function() {
             location.reload();
         }
     };
+=======
+        self.bucketSizeHandler();
+    }
+    this.toggleDragAndDrop = function() {
+        self.toggleBootstrapMenu();
+        self.dragAndDrop(!self.dragAndDrop());
+        if (self.dragAndDrop() == true) {
+            self.padBucketHeight(true);
+            location.reload();
+        }
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
         self.autoXferStacks(!self.autoXferStacks());
@@ -753,10 +937,17 @@ var app = function() {
     };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
+<<<<<<< HEAD
         if (self.setFilter().length === 0) {
             $.toaster({
                 priority: 'danger',
                 title: 'Warning',
+=======
+        if (self.setFilter().length == 0) {
+            $.toaster({
+                priority: 'danger',
+                title: 'Warning:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 message: self.activeText().pick_a_set
             });
         } else {
@@ -818,6 +1009,7 @@ var app = function() {
     };
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
+        self.activeView(1);
         var dmgType = $(event.target).closest('li').attr("value");
         if (self.dmgFilter.indexOf(dmgType) == -1) {
             self.dmgFilter.push(dmgType);
@@ -834,6 +1026,7 @@ var app = function() {
             self.toggleBootstrapMenu();
             self.activeView(1);
             var type = weaponType.name;
+<<<<<<< HEAD
             tgd.localLog("weapon type: " + type);
             self.weaponFilter(type);
         };
@@ -853,6 +1046,12 @@ var app = function() {
             self.generalFilter(searchType);
         };
     };
+=======
+            tgd.localLog("type: " + type);
+            self.typeFilter(type);
+        }
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
         self.progressFilter($(event.target).closest('li').attr("value"));
@@ -1000,6 +1199,7 @@ var app = function() {
                 globalItems = _.where(items, {
                     bucketName: "Invisible"
                 });
+<<<<<<< HEAD
             _.each(avatars, function(avatar) {
                 avatar.index = characterIds.indexOf(avatar.characterBase.characterId) + 1;
                 avatar.items = globalItems;
@@ -1017,6 +1217,35 @@ var app = function() {
                 self.addTierTypes(profile.items());
                 self.addWeaponTypes(profile.weapons());
                 done(profile);
+=======
+            var profile = new Profile("Vault", vaultItems);
+            self.addTierTypes(profile.items());
+            self.addWeaponTypes(profile.weapons());
+            done(profile);
+            var characterIds = _.sortBy(_.map(avatars, function(character) {
+                return character.characterBase.characterId;
+            }));
+            //console.time("avatars.forEach");
+            avatars.forEach(function(character) {
+                self.bungie.inventory(character.characterBase.characterId, function(response) {
+                    if (response && response.data && response.data.buckets) {
+                        var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
+                        var index = characterIds.indexOf(character.characterBase.characterId);
+                        var profile = new Profile(character, items, index + 1);
+                        self.addTierTypes(profile.items());
+                        self.addWeaponTypes(profile.items());
+                        done(profile);
+                    } else {
+                        loadingData = false;
+                        self.refresh();
+                        if (e && typeof e.Message != "undefined") {
+                            return BootstrapDialog.alert(e.Message);
+                        } else {
+                            return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                        }
+                    }
+                });
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             });
         });
     };
@@ -1035,7 +1264,11 @@ var app = function() {
                             return self.logout();
                         }
                         if (isMobile) {
+<<<<<<< HEAD
                             if (self.hiddenWindowOpen() === false) {
+=======
+                            if (self.hiddenWindowOpen() == false) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                 self.hiddenWindowOpen(true);
                                 self.openHiddenBungieWindow();
                             } else {
@@ -1047,7 +1280,11 @@ var app = function() {
                             self.activeUser(user);
                             self.loadingUser(false);
                         }
+<<<<<<< HEAD
                         return;
+=======
+                        return
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     }
                     if (ref && ref.close) {
                         ref.close();
@@ -1063,7 +1300,11 @@ var app = function() {
                         });
                         $.toaster({
                             priority: 'info',
+<<<<<<< HEAD
                             title: 'Info',
+=======
+                            title: 'Info:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                             message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
                         });
                         $("#useOtherAccount").click(function() {
@@ -1123,35 +1364,59 @@ var app = function() {
 
     this.refreshHandler = function() {
         clearInterval(self.refreshInterval);
+<<<<<<< HEAD
         if (self.loadoutMode() === true) {
             if (self.dynamicMode() === false) {
+=======
+        if (self.loadoutMode() == true) {
+            if (self.dynamicMode() == false) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 self.toggleBootstrapMenu();
             }
             $("body").css("padding-bottom", "260px");
         } else {
             $("body").css("padding-bottom", "80px");
         }
+<<<<<<< HEAD
         if (self.doRefresh() == 1 && self.loadoutMode() === false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
                 self.refresh();
+=======
+        if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+            tgd.localLog("refresh handler enabled");
+            self.refreshInterval = setInterval(function() {
+                tgd.localLog("refreshing");
+                self.search()
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             }, self.refreshSeconds() * 1000);
         }
     };
 
     this.bucketSizeHandler = function() {
         var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
+<<<<<<< HEAD
         if (self.padBucketHeight() === true) {
+=======
+        if (self.padBucketHeight() == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             var bucketSizes = {};
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
             vaultPos = (vaultPos < 0) ? 0 : vaultPos;
+<<<<<<< HEAD
             var vaultColumns = tgd.bootstrapGridColumns / self.vaultColumns();
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
                 var isVault = this.className.indexOf("Vault") > -1;
                 var columnsPerBucket = isVault ? vaultColumns : tgd.DestinyBucketColumns[bucketType];
+=======
+            buckets.each(function() {
+                var bucketType = this.className.split(" ")[2];
+                var isVault = this.className.indexOf("12") > -1;
+                var columnsPerBucket = isVault ? 4 : tgd.DestinyBucketColumns[bucketType];
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
@@ -1167,16 +1432,25 @@ var app = function() {
             //console.log(bucketSizes);
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
+<<<<<<< HEAD
                 var maxHeight = _.max(sizes);
                 //this is the max height the non-vault characters will use
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
                 /*var maxProfilesHeight = _.max(profileSizes);
+=======
+                var maxHeight = Math.max.apply(null, sizes);
+                //this is the max height the non-vault characters will use
+                var profileSizes = sizes.slice(0);
+                profileSizes.splice(vaultPos, 1);
+                var maxProfilesHeight = Math.max.apply(null, profileSizes);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                 var minNumRows = 1;
                 if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
                     minNumRows = 3;
                 } else if (type == "Materials") {
                     minNumRows = 4;
+<<<<<<< HEAD
                 }*/
                 //maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
                 var itemBuckets = buckets.filter("." + type);
@@ -1187,6 +1461,13 @@ var app = function() {
                 itemBuckets.css("min-height", maxHeight);
                 itemBuckets.find(".itemBucketBG").css("height", maxHeight);
                 itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxHeight);
+=======
+                }
+                maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
+                var itemBuckets = buckets.filter("." + type);
+                itemBuckets.css("min-height", maxHeight);
+                itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
@@ -1272,6 +1553,7 @@ var app = function() {
     };
 
     this.clearCookies = function() {
+<<<<<<< HEAD
         window.localStorage.setItem("bungie_cookies", "");
         try {
             window.cookies.clear(function() {
@@ -1279,6 +1561,13 @@ var app = function() {
             });
         } catch (e) {}
     };
+=======
+        window.cookies.clear(function() {
+            window.localStorage.setItem("bungie_cookies", "");
+            tgd.localLog("Cookies cleared");
+        });
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
     this.openBungieWindow = function(type) {
         return function() {
@@ -1315,7 +1604,11 @@ var app = function() {
                         if (!isMobile && !isChrome) {
                             $.toaster({
                                 priority: 'success',
+<<<<<<< HEAD
                                 title: 'Loading',
+=======
+                                title: 'Loading:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                                 message: "Please wait while Firefox acquires your arsenal"
                             });
                             var event = document.createEvent('CustomEvent');
@@ -1407,18 +1700,40 @@ var app = function() {
                         });
                     } else BootstrapDialog.alert("Error has occurred saving loadouts");
                 }
+<<<<<<< HEAD
             });
+=======
+                self.apiRequest(params, function(results) {
+                    if (_includeMessage == true) {
+                        if (results.success) {
+                            $.toaster({
+                                priority: 'success',
+                                title: 'Saved:',
+                                message: "Loadouts saved to the cloud"
+                            });
+                        } else BootstrapDialog.alert("Error has occurred saving loadouts");
+                    }
+                });
+            } else {
+                BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
+            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         } else {
             BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
         }
     };
 
     this.loadLoadouts = function() {
+<<<<<<< HEAD
         if (self.loadouts().length === 0) {
+=======
+        if (self.loadouts().length == 0) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             var _loadouts = window.localStorage.getItem("loadouts");
             if (!_.isEmpty(_loadouts)) {
                 _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
                     return new Loadout(loadout);
+<<<<<<< HEAD
                 });
             } else {
                 _loadouts = [];
@@ -1457,14 +1772,65 @@ var app = function() {
 					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
 				}*/
             });
+=======
+                })
+            } else {
+                _loadouts = [];
+            }
+            if (supportsCloudSaves == true) {
+                self.apiRequest({
+                    action: "load",
+                    //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
+                    membershipId: parseFloat(self.activeUser().user.membershipId),
+                    locale: self.currentLocale(),
+                    version: self.defLocaleVersion(),
+                    /*this one applies only to your current profile
+	   				accountId: self.bungie.getMemberId()*/
+                }, function(results) {
+                    var _results = [];
+                    if (results && results.loadouts) {
+                        _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
+                        _results = _.map(_results, function(loadout) {
+                            loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+                            loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
+                            loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+                            return new Loadout(loadout);
+                        });
+                    }
+                    /* one time migrate joins the two arrays and clears the local one */
+                    if (_loadouts.length > 0) {
+                        _results = _loadouts.concat(_results);
+                        window.localStorage.setItem("loadouts", "");
+                    }
+                    self.loadouts(_results);
+                    /* one time migrate saves the new joined array to the cloud */
+                    if (_loadouts.length > 0) {
+                        self.saveLoadouts(false);
+                    }
+                    /*if (results && results.itemDefs) {
+                        tgd.localLog("downloading locale update");
+                        self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+                    }*/
+                });
+            } else if (_loadouts.length > 0) {
+                self.loadouts(_loadouts);
+            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         }
     };
 
     this.showWhatsNew = function(callback) {
+<<<<<<< HEAD
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
         container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
+=======
+        var container = $("<div></div>")
+        container.attr("style", "overflow-y: scroll; height: 480px");
+        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        (new tgd.dialog).title(self.activeText().whats_new_title).content(container).show(false, function() {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             if (_.isFunction(callback)) callback();
         });
     };
@@ -1504,10 +1870,17 @@ var app = function() {
         //tgd.localLog(characterStatus);
 
         if (itemTotal < characterStatus.length) {
+<<<<<<< HEAD
             if (usingbatchMode === false) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
+=======
+            if (usingbatchMode == false) {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
                 });
             }
@@ -1543,12 +1916,21 @@ var app = function() {
         })();
 
         /* bail early conditions */
+<<<<<<< HEAD
         if ((typeof getNextSurplusCharacter() === "undefined") || (typeof getNextShortageCharacter() === "undefined")) {
             //tgd.localLog("all items normalized as best as possible");
             if (usingbatchMode === false) {
                 $.toaster({
                     priority: 'success',
                     title: 'Result',
+=======
+        if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)) {
+            //tgd.localLog("all items normalized as best as possible");
+            if (usingbatchMode == false) {
+                $.toaster({
+                    priority: 'success',
+                    title: 'Result:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     message: description + " already normalized as best as possible."
                 });
             }
@@ -1572,6 +1954,7 @@ var app = function() {
             var surplusCharacter = getNextSurplusCharacter();
             var shortageCharacter = getNextShortageCharacter();
 
+<<<<<<< HEAD
             if ((typeof surplusCharacter === "undefined") || (typeof shortageCharacter === "undefined")) {
                 //tgd.localLog("all items normalized as best as possible");
                 if (usingbatchMode === false) {
@@ -1579,6 +1962,15 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
+=======
+            if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
+                //tgd.localLog("all items normalized as best as possible");
+                if (usingbatchMode == false) {
+                    //self.refresh();
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Result:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         message: "All items normalized as best as possible"
                     });
                 }
@@ -1680,10 +2072,27 @@ var app = function() {
             var nextNormalize = function() {
                 var description = getNextDescription();
 
+<<<<<<< HEAD
                 if (typeof description === "undefined") {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
+=======
+                while (description !== undefined) {
+                    if ((description !== "Hadronic Essence") &&
+                        (description !== "Sapphire Wire") &&
+                        (description !== "Plasteel Plating")) {
+                        break;
+                    } else {
+                        description = getNextDescription();
+                    }
+                }
+
+                if (description == undefined) {
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Result:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                         message: "All items normalized as best as possible"
                     });
                     return;
@@ -1901,7 +2310,11 @@ var app = function() {
                 }
             });
         }
+<<<<<<< HEAD
     };
+=======
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
     /* This function can be used in the future to localize header names */
     this.getBucketName = function(bucketType) {
@@ -1909,6 +2322,7 @@ var app = function() {
             return "Special Orders";
         } else {
             return bucketType;
+<<<<<<< HEAD
         }
     };
 
@@ -1947,15 +2361,169 @@ var app = function() {
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
         tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
         tgd.swapTemplate = _.template(tgd.swapTemplate);
+=======
+        }
+    }
+
+    this.dndBeforeMove = function(arg) {
+        if (arg && arg.targetParent && arg.targetParent.length > 0) {
+            arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
+        }
+    }
+
+    this.dndAfterMove = function(arg) {
+        var destination = _.filter(arg.targetParent, function(item) {
+            return item.character.id != arg.item.character.id;
+        });
+        if (destination.length == 0) {
+            destination = _.filter(arg.targetParent, function(item) {
+                return item._id != arg.item._id;
+            });
+        }
+        if (destination.length > 0) {
+            destination = destination[0];
+            if (destination.character.id != arg.item.character.id) {
+                var action = destination.isEquipped() ? "equip" : "store";
+                $.toaster({
+                    priority: 'info',
+                    title: 'Transfer:',
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName
+                });
+                arg.item[action](destination.character.id);
+            }
+        }
+    }
+	
+	this.loadStatic = function(username){
+		self.apiRequest({ 
+				username: username
+			},
+			function(staticProfiles){
+				if (staticProfiles.length == 0){
+					return BootstrapDialog.alert("There is no shared data to view for this profile");
+				}
+				if (staticProfiles && staticProfiles.Response){
+					var data = staticProfiles.Response.data;
+					//console.log("we got someone who hasnt used the app");
+					//window.d = data;
+					staticProfiles = _.map(data.characters, function(character, index){
+						var items = _.map(
+							_.filter( data.items, function(item){
+								return item.characterIndex == index;
+							}), function(item){
+							var info = _itemDefs[item.itemHash];	
+							if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+								var description, tierTypeName, itemDescription, itemTypeName;
+					            try {
+					                description = decodeURIComponent(info.itemName);
+					                tierTypeName = decodeURIComponent(info.tierTypeName);
+					                itemDescription = decodeURIComponent(info.itemDescription);
+					                itemTypeName = decodeURIComponent(info.itemTypeName);
+					            } catch (e) {
+					                description = info.itemName;
+					                tierTypeName = info.tierTypeName;
+					                itemDescription = info.itemDescription;
+					                itemTypeName = info.itemTypeName;
+					            }
+								var primaryStat = item.quantity;
+								if (item && item.primaryStat && item.primaryStat.value){
+									primaryStat = item.primaryStat.value;
+								}
+								return {
+									id: item.itemHash,
+									_id: item.itemId,
+									characterId: data.characters[item.characterIndex].characterBase.characterId,
+									damageType: item.damageType,
+	                				damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+									isEquipped: item.transferStatus == 1,
+									isGridComplete: item.isGridComplete,
+									locked: item.locked,
+									description: description,
+									itemDescription: itemDescription,
+									bucketType: getBucketTypeHelper(item, info),
+									type: info.itemSubType,
+									typeName: itemTypeName,
+									tierType: info.tierType,
+									tierTypeName: tierTypeName,
+									icon: "data" + info.icon,
+									primaryStat: primaryStat,
+									progression: false,
+									weaponIndex: tgd.DestinyWeaponPieces.indexOf(getBucketTypeHelper(item, info)),
+									armorIndex: tgd.DestinyArmorPieces.indexOf(getBucketTypeHelper(item, info)),
+									perks: [],
+									stats: [],
+									isUnique: false,
+									href: "https://destinydb.com/items/" + item.itemHash
+								}
+							}
+						});
+						
+						return {
+							items: _.filter(items, function(item){ return typeof item !== "undefined" }),
+							id: character.characterBase.characterId,
+							race: _raceDefs[character.characterBase.raceHash].raceName,
+							order: index,
+							gender: tgd.DestinyGender[character.characterBase.genderType],
+							classType: tgd.DestinyClass[character.characterBase.classType],
+							level: character.characterLevel,
+							imgIcon: self.bungie.getUrl() + character.emblemPath,
+							icon: self.makeBackgroundUrl(character.emblemPath),
+							background: self.makeBackgroundUrl(character.backgroundPath)
+						}
+					});
+				} 
+				_.each(staticProfiles, function(data, index){
+					var profile = new Profile(data.id == "Vault" ? "Vault" : data, data.items, index);
+					self.addTierTypes(profile.items());
+                    self.addWeaponTypes(profile.weapons());
+					self.characters.push(profile);
+					setTimeout(self.bucketSizeHandler, 1000);
+					setTimeout(self.quickIconHighlighter, 1000);
+				});
+			}
+		)
+	}
+
+    this.init = function() {
+        _.each(tgd.DestinyLayout, function(object) {
+            self.allLayouts.push(new Layout(object));
+        });	
+        self.initLocale();
+		self.bungie = new bungie('', function(){});
+        self.initItemDefs();
+        tgd.perksTemplate = _.template(tgd.perksTemplate);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
         self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
+<<<<<<< HEAD
     };
 };
 
 window.app = new app();
+=======
+        var weaponKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyWeaponPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticWeapons'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (weaponKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
+        var armorKeys = _.filter(_.map(tgd.DestinyBucketTypes, function(name, key) {
+            if (tgd.DestinyArmorPieces.indexOf(name) > -1) return parseInt(key);
+        }), function(key) {
+            return key > 0
+        });
+        _collections['exoticArmor'] = _.pluck(_.filter(_itemDefs, function(item) {
+            return (armorKeys.indexOf(item.bucketTypeHash) > -1 && item.tierType == 6 && item.equippable == true)
+        }), 'itemHash');
+        ko.applyBindings(self);
+    }
+});
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
 window.zam_tooltips = {
     addIcons: false,
@@ -1966,6 +2534,7 @@ window.zam_tooltips = {
 };
 BootstrapDialog.defaultOptions.nl2br = false;
 
+<<<<<<< HEAD
 if (isMobile) {
     window.addEventListener("statusTap", function() {
         var target = $("body");
@@ -1992,3 +2561,6 @@ if (isMobile) {
 } else {
     $(document).ready(app.init);
 }
+=======
+$(document).ready(app.init);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2

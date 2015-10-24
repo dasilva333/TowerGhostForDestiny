@@ -35,7 +35,11 @@ _ga = (function() {
         });
         ga('send', 'pageview');
         self.loadListeners();
+<<<<<<< HEAD
     };
+=======
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
     this.loadListeners = function() {
         // Track basic JavaScript errors

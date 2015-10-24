@@ -4,9 +4,15 @@
 	    _.each(model, function(value, key) {
 	        self[key] = value;
 	    });
+<<<<<<< HEAD
 	    var _doEquip = (model && typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
 	    this.doEquip = ko.observable(_doEquip);
 	};
+=======
+	    var _doEquip = (typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
+	    this.doEquip = ko.observable(_doEquip);
+	}
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
 	var Loadout = function(model) {
 	    var self = this;
@@ -17,7 +23,11 @@
 	    this.name = self.name || "";
 	    this.ids = ko.observableArray();
 	    this.generics = ko.observableArray();
+<<<<<<< HEAD
 	    this.items = ko.pureComputed(function() {
+=======
+	    this.items = ko.computed(function() {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	        var _items = [];
 	        _.each(self.ids(), function(equip) {
 	            if (equip) {
@@ -26,6 +36,11 @@
 	                    itemFound.doEquip = equip.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
 	                    _items.push(itemFound);
+<<<<<<< HEAD
+=======
+	                } else {
+	                    self.ids.remove(equip);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                }
 	            }
 	        });
@@ -36,6 +51,11 @@
 	                    itemFound.doEquip = item.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
 	                    _items.push(itemFound);
+<<<<<<< HEAD
+=======
+	                } else {
+	                    self.generics.remove(item);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                }
 	            }
 	        });
@@ -154,6 +174,8 @@
 	        this.generics.push(new LoadoutItem(obj));
 	    },
 	    findItemByHash: function(hash) {
+<<<<<<< HEAD
+=======
 	        var itemFound;
 	        app.characters().forEach(function(character) {
 	            var match = _.findWhere(character.items(), {
@@ -164,6 +186,18 @@
 	        return itemFound;
 	    },
 	    findItemById: function(id) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
+	        var itemFound;
+	        app.characters().forEach(function(character) {
+	            var match = _.findWhere(character.items(), {
+	                id: hash
+	            });
+	            if (match) itemFound = _.clone(match);
+	        });
+	        return itemFound;
+	    },
+<<<<<<< HEAD
+	    findItemById: function(id) {
 	        var itemFound;
 	        app.characters().forEach(function(character) {
 	            var match = _.findWhere(character.items(), {
@@ -172,6 +206,29 @@
 	            if (match) itemFound = _.clone(match);
 	        });
 	        return itemFound;
+=======
+	    /* the object with the .store function has to be the one in app.characters not this copy */
+	    findReference: function(item) {
+	        if (item && item.character && item.character.id) {
+	            var c = _.findWhere(app.characters(), {
+	                id: item.character.id
+	            });
+	            //tgd.localLog("querying with character id " + item.character.id);
+	            //tgd.localLog(c.uniqueName);
+	            //TODO need to add a way to catch c being null to prevent a crash, and need to avoid it all together if possible
+	            var query = item._id == 0 ? {
+	                id: item.id
+	            } : {
+	                _id: item._id
+	            };
+	            //tgd.localLog("querying with " + JSON.stringify(query));
+	            var x = _.findWhere(c.items(), query);
+	            //tgd.localLog(x);
+	            return x;
+	        } else {
+	            return null;
+	        }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {
 	        var self = this;
@@ -191,7 +248,11 @@
 	            loader.width(progressValue + "%");
 	            //now that they are both in the vault transfer them to their respective location
 	            var transferTargetItemToVault = function(complete) {
+<<<<<<< HEAD
 	                targetItem = pair.targetItem;
+=======
+	                targetItem = self.findReference(pair.targetItem);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                if (typeof targetItem != "undefined") {
 	                    targetOwner = targetItem.character.id;
 	                    tgd.localLog(" transferTargetItemToVault " + targetItem.description);
@@ -203,7 +264,11 @@
 	                            if (profile.id == originalCharacterId) {
 	                                $.toaster({
 	                                    priority: 'danger',
+<<<<<<< HEAD
 	                                    title: 'Error',
+=======
+	                                    title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
 	                                });
 	                                complete();
@@ -215,9 +280,15 @@
 	                } else {
 	                    complete();
 	                }
+<<<<<<< HEAD
 	            };
 	            var transferSwapItemToVault = function(complete) {
 	                swapItem = pair.swapItem;
+=======
+	            }
+	            var transferSwapItemToVault = function(complete) {
+	                swapItem = self.findReference(pair.swapItem);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                tgd.localLog("^^^^^^^^^^" + swapItem.character.id + " transferSwapItemToVault " + swapItem.description);
 	                if (swapItem.character.id == "Vault") {
 	                    complete();
@@ -233,6 +304,7 @@
 	                            var swapAndTargetIDs = _.flatten(_.map(swapArray, function(pair) {
 	                                var tmp = [];
 	                                if (pair.swapItem)
+<<<<<<< HEAD
 	                                    tmp.push(pair.swapItem._id);
 	                                if (pair.targetItem)
 	                                    tmp.push(pair.targetItem._id);
@@ -240,6 +312,15 @@
 	                            }));
 	                            tgd.localLog("swapAndTargetIDs: " + swapAndTargetIDs);
 	                            tgd.localLog("targetItem character is " + targetItem.character.uniqueName());
+=======
+	                                    tmp.push(pair.swapItem._id)
+	                                if (pair.targetItem)
+	                                    tmp.push(pair.targetItem._id)
+	                                return tmp;
+	                            }));
+	                            tgd.localLog("swapAndTargetIDs: " + swapAndTargetIDs);
+	                            tgd.localLog("targetItem character is " + targetItem.character.uniqueName);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                            var candidates = _.filter(swapItem.character.get(swapItem.bucketType), function(item) {
 	                                var isCandidate = swapAndTargetIDs.indexOf(item._id) == -1;
 	                                tgd.localLog(item.description + " is part of the swap and target ids? " + isCandidate);
@@ -248,7 +329,11 @@
 	                            tgd.localLog(candidates.length + " candidates: " + _.pluck(candidates, 'description'));
 	                            if (candidates.length > 0) {
 	                                swapItem = candidates[0];
+<<<<<<< HEAD
 	                                tgd.localLog("candidate is " + swapItem._id + " and is currently sitting in " + swapItem.character.uniqueName());
+=======
+	                                tgd.localLog("candidate is " + swapItem._id + " and is currently sitting in " + swapItem.character.uniqueName);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                swapItem.store("Vault", function() {
 	                                    tgd.localLog("^^^^^^^ xfered new candidate to vault");
 	                                    complete();
@@ -256,7 +341,11 @@
 	                            } else {
 	                                $.toaster({
 	                                    priority: 'danger',
+<<<<<<< HEAD
 	                                    title: 'Error',
+=======
+	                                    title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    message: "Unable to unequip " + equippedItem.description + " while playing in game"
 	                                });
 	                                pair.swapItem = pair.targetItem = targetItem = swapItem = null;
@@ -268,6 +357,7 @@
 	                        }
 	                    });
 	                }
+<<<<<<< HEAD
 	            };
 	            var transferTargetItemToDestination = function(complete) {
 	                if (typeof targetItem == "undefined" && pair.targetItem)
@@ -276,6 +366,16 @@
 	                    var action = (_.where(self.ids(), {
 	                        id: targetItem._id
 	                    }).filter(onlyEquipped).length === 0) ? "store" : "equip";
+=======
+	            }
+	            var transferTargetItemToDestination = function(complete) {
+	                if (typeof targetItem == "undefined" && pair.targetItem)
+	                    targetItem = self.findReference(pair.targetItem);
+	                if (targetItem) {
+	                    var action = (_.where(self.ids(), {
+	                        id: targetItem._id
+	                    }).filter(onlyEquipped).length == 0) ? "store" : "equip";
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                    tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
 	                    if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
 	                        tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
@@ -286,7 +386,11 @@
 	                            if (profile.id == originalCharacterId) {
 	                                $.toaster({
 	                                    priority: 'danger',
+<<<<<<< HEAD
 	                                    title: 'Error',
+=======
+	                                    title: 'Error:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    message: "Unable to unequip " + targetItem.description + " while playing in game"
 	                                });
 	                                complete();
@@ -298,6 +402,7 @@
 	                } else {
 	                    complete();
 	                }
+<<<<<<< HEAD
 	            };
 	            var transferSwapItemToDestination = function(complete) {
 	                if (typeof swapItem == "undefined" && pair.swapItem)
@@ -338,12 +443,54 @@
 	                if (typeof item == "undefined") {
 	                    console.log(ref);
 	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
+=======
+	            }
+	            var transferSwapItemToDestination = function(complete) {
+	                    if (typeof swapItem == "undefined" && pair.swapItem)
+	                        swapItem = self.findReference(pair.swapItem);
+	                    if (swapItem) {
+	                        tgd.localLog(targetOwner + " (targetOwner) transferSwapItemToDestination " + swapItem.description);
+	                        if (targetOwner == "Vault" && swapItem.character.id == "Vault") {
+	                            tgd.localLog("transferSwapItemToDestination: item needs to be in Vault and is already in Vault");
+	                            complete();
+	                        } else {
+	                            swapItem.store(targetOwner, complete);
+	                        }
+	                    } else {
+	                        complete();
+	                    }
+	                }
+	                /* this assumes there is a swap item and a target item*/
+	            var startSwapping = function(finish) {
+	                    tgd.localLog("startSwapping ");
+	                    transferTargetItemToVault(function() {
+	                        tgd.localLog("finished transferTargetItemToVault at ");
+	                        transferSwapItemToVault(function() {
+	                            tgd.localLog("finished transferSwapItemToVault at ");
+	                            transferTargetItemToDestination(function() {
+	                                tgd.localLog("finished transferTargetItemToDestination item to vault at ");
+	                                transferSwapItemToDestination(function() {
+	                                    tgd.localLog("*********finished transferSwapItemToDestination swap items **************");
+	                                    if (finish) finish();
+	                                    else transferNextItem();
+	                                });
+	                            });
+	                        });
+	                    });
+	                }
+	                /* this assumes there is a swap item and a target item*/
+	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
+	                var item = self.findReference(ref);
+	                if (typeof item == "undefined") {
+	                    return BootstrapDialog.alert("Item not found while attempting to transfer the item");
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                }
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"
 	                });
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
+<<<<<<< HEAD
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                    return layout.bucketTypes.indexOf(bucketType) > -1;
 	                })[0];
@@ -355,6 +502,16 @@
 
 	                tgd.localLog(bucketType + " spaceNeededInVault: " + spaceNeededInVault);
 	                tgd.localLog(bucketType + " spaceUsedInVault: " + spaceUsedInVault);
+=======
+	                var arrayName = (item.weaponIndex > -1 ? "weapons" : "armor");
+	                var layout = _.findWhere(app.allLayouts(), {
+	                    array: arrayName
+	                });
+	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
+	                var spaceUsedInVault = vault[arrayName]().length;
+	                tgd.localLog("spaceNeededInVault: " + spaceNeededInVault);
+	                tgd.localLog(arrayName + " space used: " + spaceUsedInVault);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 
 	                if (spaceUsedInVault <= spaceNeededInVault) { // || targetCharacterId == "Vault"
 	                    tgd.localLog("vault has at least 2 slots to make xfer");
@@ -367,6 +524,7 @@
 	                        tmpIds = [];
 	                    var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
 	                    tgd.localLog("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
+<<<<<<< HEAD
 	                    otherBucketTypes = [].concat(layout.bucketTypes);
 	                    otherBucketTypes.splice(otherBucketTypes.indexOf(bucketType), 1);
 	                    tgd.localLog("other bucket types: " + otherBucketTypes);
@@ -394,8 +552,60 @@
 	                                        });
 	                                    }
 	                                }
+=======
+	                    var otherBucketTypes = item.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
+	                    otherBucketTypes.splice(item.weaponIndex > -1 ? item.weaponIndex : item.armorIndex, 1);
+	                    tgd.localLog(otherBucketTypes + " being checked in other characters");
+	                    _.each(otherBucketTypes, function(bucketType) {
+	                        _.each(app.characters(), function(character) {
+	                            if (freeSpaceNeeded > 0 && character.id != "Vault") {
+	                                tgd.localLog("checking " + character.uniqueName);
+	                                var freeSpace = maxFreeSpace - character.get(bucketType).length;
+	                                if (freeSpace > 0) {
+	                                    tgd.localLog(bucketType + " found with free space: " + freeSpace);
+	                                    var itemsToMove = vault.get(bucketType);
+	                                    _.each(itemsToMove, function(item) {
+	                                        if (freeSpaceNeeded > 0 && freeSpace > 0 && tmpIds.indexOf(item._id) == -1) {
+	                                            tmpItems.push({
+	                                                item: item,
+	                                                character: character
+	                                            });
+	                                            tmpIds.push(item._id);
+	                                            freeSpaceNeeded = freeSpaceNeeded - 1;
+	                                            freeSpace = freeSpace - 1;
+	                                        }
+	                                    });
+	                                }
+	                            }
+	                        });
+	                    });
+	                    tgd.localLog("so the plan is to move these from the vault ");
+	                    tgd.localLog(tmpItems);
+	                    var preCount = 0,
+	                        postCount = 0;
+	                    var finish = function() {
+	                        postCount++;
+	                        if (postCount == tmpItems.length) {
+	                            tgd.localLog("********* temp items moved back, finished, transferNextItem ********* ");
+	                            transferNextItem();
+	                        }
+	                    }
+	                    var done = function() {
+	                        preCount++;
+	                        tgd.localLog("current: " + preCount + " total: " + tmpItems.length + " vault size: ");
+	                        if (preCount == tmpItems.length) {
+	                            tgd.localLog("moved temp items out, now start swap with callback ");
+	                            fnHasFreeSpace(function() {
+	                                //console.log("^^^^^^^^ fnHasFreeSpace released control moving items back");
+	                                _.each(tmpItems, function(pair) {
+	                                    pair.item.store("Vault", finish);
+	                                });
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                            });
 	                        }
+	                    }
+	                    _.each(tmpItems, function(pair) {
+	                        pair.item.store(pair.character.id, done);
 	                    });
 	                    tgd.localLog("so the plan is to move these from the vault ");
 	                    tgd.localLog(tmpItems);
@@ -425,7 +635,12 @@
 	                        pair.item.store(pair.character.id, done);
 	                    });
 	                }
+<<<<<<< HEAD
 	            };
+=======
+
+	            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	            if (pair) {
 	                if (typeof pair.swapItem !== "undefined") {
 	                    checkAndMakeFreeSpace(pair.swapItem, 2, startSwapping);
@@ -443,7 +658,10 @@
 	                }
 	            } else {
 	                tgd.localLog("pair is not defined, calling callback");
+<<<<<<< HEAD
 	                tgd.autoTransferStacks = false;
+=======
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                if (callback)
 	                    callback();
 	            }
@@ -475,13 +693,21 @@
 	        if (typeof targetCharacter == "undefined") {
 	            return BootstrapDialog.alert("Target character not found");
 	        }
+<<<<<<< HEAD
 	        var targetCharacterIcon = targetCharacter.icon();
+=======
+	        var targetCharacterIcon = targetCharacter.icon().replace('url("', '').replace('")', '');
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	        var getFirstItem = function(sourceBucketIds, itemFound) {
 	            //tgd.localLog(itemFound + " getFirstItem: " + sourceBucketIds);
 	            return function(otherItem) {
 	                /* if the otherItem is not part of the sourceBucket then it can go */
 	                //tgd.localLog(otherItem.description + " is in " + sourceBucketIds);
+<<<<<<< HEAD
 	                if (sourceBucketIds.indexOf(otherItem._id) == -1 && itemFound === false) {
+=======
+	                if (sourceBucketIds.indexOf(otherItem._id) == -1 && itemFound == false) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                    itemFound = true;
 	                    sourceBucketIds.push(otherItem._id);
 	                    return otherItem;
@@ -500,6 +726,7 @@
 	                var targetBucket = targetGroups[key];
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
+<<<<<<< HEAD
 	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
 	                        var maxBucketSize = 10;
 	                        var targetBucketSize = targetBucket.length;
@@ -510,6 +737,15 @@
 	                            maxBucketSize = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return layout.bucketTypes.indexOf(key) > -1;
 	                            })[0].counts[0];
+=======
+	                    if (tgd.DestinyWeaponPieces.indexOf(key) > -1 || tgd.DestinyWeaponPieces.indexOf(key) > -1) {
+	                        var maxBucketSize = 10;
+	                        var targetBucketSize = targetBucket.length;
+	                        var arrayName = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? "weapons" : "armor";
+	                        if (targetCharacter.id == "Vault") {
+	                            targetBucketSize = targetCharacter[arrayName]().length;
+	                            maxBucketSize = (tgd.DestinyWeaponPieces.indexOf(key) > -1) ? 72 : 36;
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                        }
 	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                        var targetMaxed = (targetBucketSize == maxBucketSize);
@@ -521,33 +757,57 @@
 	                            tgd.localLog("using swap strategy");
 	                            var sourceBucketIds = _.pluck(sourceBucket, "_id");
 	                            swapArray = _.map(sourceBucket, function(item) {
+<<<<<<< HEAD
 	                                var ownerIcon = item.character.icon();
+=======
+	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                /* if the item is already in the targetBucket */
 	                                if (_.findWhere(targetBucket, {
 	                                        _id: item._id
 	                                    })) {
 	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+<<<<<<< HEAD
 	                                    if (item.doEquip() === true) {
+=======
+	                                    if (item.doEquip() == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                        return {
 	                                            targetItem: item,
 	                                            description: item.description + app.activeText().loadouts_to_equip,
 	                                            actionIcon: "assets/to-equip.png",
 	                                            swapIcon: targetCharacterIcon
+<<<<<<< HEAD
 	                                        };
+=======
+	                                        }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    }
 	                                    /* then return an object indicating to do nothing */
 	                                    else {
 	                                        return {
+<<<<<<< HEAD
 	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType() + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
 	                                            targetIcon: item.icon,
 	                                            actionIcon: "assets/no-transfer.png",
 	                                            swapIcon: ownerIcon
 	                                        };
+=======
+	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
+	                                            targetIcon: item.icon,
+	                                            actionIcon: "assets/no-transfer.png",
+	                                            swapIcon: ownerIcon
+	                                        }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    }
 	                                } else {
 	                                    var itemFound = false;
 	                                    if (item.bucketType == "Shader") {
+<<<<<<< HEAD
 	                                        swapItem = _.filter(targetBucket, function(otherItem) {
+=======
+	                                        var swapItem = _.filter(targetBucket, function(otherItem) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                            return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader" && sourceBucketIds.indexOf(otherItem._id) == -1;
 	                                        })[0];
 	                                    } else {
@@ -563,6 +823,7 @@
 	                                        var candidates = _.filter(targetBucket, function(otherItem) {
 	                                            var index = sourceBucketHashes.indexOf(otherItem.id);
 	                                            tgd.localLog(index + " candidate: " + otherItem.description);
+<<<<<<< HEAD
 	                                            return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() === false
 	                                        });
 	                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
@@ -571,6 +832,16 @@
 	                                        }), getFirstItem(sourceBucketIds, itemFound));
 	                                        tgd.localLog("1.swapItem: " + swapItem.length);
 	                                        if (swapItem.length === 0) {
+=======
+	                                            return index == -1 && otherItem.transferStatus < 2; // && otherItem.isEquipped() == false
+	                                        });
+	                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+	                                        var swapItem = _.filter(_.where(candidates, {
+	                                            type: item.type
+	                                        }), getFirstItem(sourceBucketIds, itemFound));
+	                                        tgd.localLog("1.swapItem: " + swapItem.length);
+	                                        if (swapItem.length == 0) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                            //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
 	                                            tgd.localLog(targetBucket);
 	                                        }
@@ -579,6 +850,7 @@
 	                                        if (!swapItem) {
 	                                            swapItem = _.filter(targetBucket, getFirstItem(sourceBucketIds, itemFound))[0];
 	                                        }
+<<<<<<< HEAD
 	                                    }
 	                                    if (swapItem) {
 	                                        tgd.localLog("2.swapItem: " + swapItem.description);
@@ -640,20 +912,89 @@
 	                                //this condition is supposed to supress subclases and artifacts from being included but not ghosts
 	                                else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.classType != 3 && item.character.classType() != targetCharacter.classType() && targetCharacterId != "Vault")) {
 	                                    tgd.localLog(item.description + " wont transfer sub classes ");
+=======
+	                                    }
+	                                    if (swapItem) {
+	                                        tgd.localLog("2.swapItem: " + swapItem.description);
+	                                        targetBucket.splice(targetBucket.indexOf(swapItem), 1);
+	                                        //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
+	                                        if (swapItem.armorIndex != -1 && item.character.classType != targetCharacter.classType) {
+	                                            return {
+	                                                description: item.description + app.activeText().loadouts_no_transfer,
+	                                                targetIcon: item.icon,
+	                                                actionIcon: "assets/no-transfer.png",
+	                                                swapIcon: ownerIcon
+	                                            }
+	                                        }
+	                                        return {
+	                                            targetItem: item,
+	                                            swapItem: swapItem,
+	                                            description: item.description + app.activeText().loadouts_swap + swapItem.description,
+	                                            actionIcon: "assets/swap.png"
+	                                        }
+	                                    } else {
+	                                        tgd.localLog("to transfer: " + item.description);
+	                                        return {
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_transfer,
+	                                            swapIcon: targetCharacterIcon,
+	                                            actionIcon: "assets/to-transfer.png"
+	                                        }
+	                                    }
+	                                }
+	                            });
+	                        } else {
+	                            /* do a clean move by returning a swap object without a swapItem */
+	                            swapArray = _.map(sourceBucket, function(item) {
+	                                var ownerIcon = item.character.icon().replace('url("', '').replace('")', '');
+	                                /* if the item is already in the targetBucket */
+	                                if (_.findWhere(targetBucket, {
+	                                        _id: item._id
+	                                    })) {
+	                                    /* if the item is currently part of the character but it's marked as to be equipped than return the targetItem */
+	                                    if (item.doEquip() == true) {
+	                                        return {
+	                                            targetItem: item,
+	                                            description: item.description + app.activeText().loadouts_to_equip,
+	                                            actionIcon: "assets/to-equip.png",
+	                                            swapIcon: targetCharacterIcon
+	                                        }
+	                                    }
+	                                    /* then return an object indicating to do nothing */
+	                                    else {
+	                                        return {
+	                                            description: item.description + app.activeText().loadouts_alreadythere_pt1 + targetCharacter.classType + app.activeText().loadouts_alreadythere_pt2 + item.bucketType,
+	                                            targetIcon: item.icon,
+	                                            actionIcon: "assets/no-transfer.png",
+	                                            swapIcon: ownerIcon
+	                                        }
+	                                    }
+	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex != -1 && item.character.classType != targetCharacter.classType)) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
 	                                        targetIcon: item.icon,
 	                                        actionIcon: "assets/no-transfer.png",
 	                                        swapIcon: ownerIcon
+<<<<<<< HEAD
 	                                    };
 	                                } else {
 	                                    if (item.doEquip() === true) {
+=======
+	                                    }
+	                                } else {
+	                                    if (item.doEquip() == true) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                        return {
 	                                            targetItem: item,
 	                                            description: item.description + app.activeText().loadouts_to_moveequip,
 	                                            actionIcon: "assets/to-equip.png",
 	                                            swapIcon: targetCharacterIcon
+<<<<<<< HEAD
 	                                        };
+=======
+	                                        }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    } else {
 	                                        tgd.localLog("loadouts_to_transfer: " + item.description);
 	                                        return {
@@ -661,7 +1002,11 @@
 	                                            description: item.description + app.activeText().loadouts_to_transfer,
 	                                            actionIcon: "assets/to-transfer.png",
 	                                            swapIcon: targetCharacterIcon
+<<<<<<< HEAD
 	                                        };
+=======
+	                                        }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                    }
 	                                }
 	                            });
@@ -673,7 +1018,11 @@
 	                                description: item.description + app.activeText().loadouts_to_transfer,
 	                                actionIcon: "assets/to-transfer.png",
 	                                swapIcon: targetCharacterIcon
+<<<<<<< HEAD
 	                            };
+=======
+	                            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                        });
 	                    }
 	                }
@@ -711,7 +1060,11 @@
 	            if (item) {
 	                var items = targetCharacter.get(item.bucketType);
 	                var candidates = _.filter(items, function(candidate) {
+<<<<<<< HEAD
 	                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2;
+=======
+	                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                });
 	                if (candidates.length > 0) {
 	                    _.each(masterSwapArray, function(pair) {
@@ -744,7 +1097,14 @@
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
+	                        var ats = app.autoTransferStacks();
+	                        app.autoTransferStacks(true);
 	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
+<<<<<<< HEAD
+=======
+	                            tgd.localLog("swapItems finished");
+	                            app.autoTransferStacks(ats);
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                            $.toaster({
 	                                settings: {
 	                                    timeout: 15 * 1000
@@ -752,7 +1112,11 @@
 	                            });
 	                            $.toaster({
 	                                priority: 'success',
+<<<<<<< HEAD
 	                                title: 'Success',
+=======
+	                                title: 'Success:',
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                                message: app.activeText().loadouts_transferred
 	                            });
 	                            $.toaster.reset();
@@ -760,7 +1124,11 @@
 	                                $(".donateLink").click(app.showDonate);
 	                            }, 1000);
 	                            app.dynamicMode(false);
+<<<<<<< HEAD
 	                            dialog.close();
+=======
+	                            dialog.close()
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
 	                        });
 	                    }
 	                }, {
@@ -772,4 +1140,8 @@
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
 	        }
 	    }
+<<<<<<< HEAD
 	};
+=======
+	}
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2

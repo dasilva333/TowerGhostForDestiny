@@ -1,4 +1,14 @@
+<<<<<<< HEAD
 function Profile(character) {
+=======
+function sum(arr) {
+    return _.reduce(arr, function(memo, num) {
+        return memo + num;
+    }, 0);
+}
+
+var Profile = function(character, items, index) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     var self = this;
 
     this.id = character.characterBase.characterId;
@@ -20,6 +30,7 @@ function Profile(character) {
     this.items.subscribe(app.redraw);
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
+<<<<<<< HEAD
     this.weapons = ko.pureComputed(this._weapons, this);
     this.armor = ko.pureComputed(this._armor, this);
     this.general = ko.pureComputed(this._general, this);
@@ -33,6 +44,111 @@ function Profile(character) {
     this.iconBG = ko.pureComputed(function() {
         return app.makeBackgroundUrl(self.icon(), true);
     });
+=======
+    this.weapons = ko.computed(this._weapons, this);
+    this.armor = ko.computed(this._armor, this);
+    this.general = ko.computed(this._general, this);
+    this.postmaster = ko.computed(this._postmaster, this);
+    this.messages = ko.computed(this._messages, this);
+    this.invisible = ko.computed(this._invisible, this);
+    this.lostItems = ko.computed(this._lostItems, this);
+    this.powerLevel = ko.computed(this._powerLevel, this);
+    this.iconBG = ko.computed(function() {
+        return app.makeBackgroundUrl(self.icon(), true);
+    });
+    this.equipHighest = function(type) {
+        var character = this;
+        return function() {
+            if (self.id == "Vault") return;
+
+            var items = character.items();
+            var sets = [];
+            var backups = [];
+
+            var buckets = _.clone(tgd.DestinyArmorPieces).concat(tgd.DestinyWeaponPieces);
+            _.each(buckets, function(bucket) {
+                var candidates = _.where(items, {
+                    bucketType: bucket
+                });
+                _.each(candidates, function(candidate) {
+                    if (type == "Light" || (type != "Light" && candidate.stats[type] > 0)) {
+                        (candidate.tierType == 6 ? sets : backups).push([candidate]);
+                    }
+                });
+            });
+
+            backups = _.flatten(backups);
+
+            _.each(backups, function(spare) {
+                var candidates = _.filter(backups, function(item) {
+                    return item.bucketType == spare.bucketType && item._id != spare._id;
+                });
+                primaryStats = _.map(candidates, function(item) {
+                    return (type == "Light") ? item.primaryStat() : item.stats[type]
+                });
+                var maxCandidate = Math.max.apply(null, primaryStats);
+                if (maxCandidate < ((type == "Light") ? spare.primaryStat() : spare.stats[type])) {
+                    sets.push([spare]);
+                }
+            });
+
+            _.each(sets, function(set) {
+                var exotic = set[0];
+                _.each(buckets, function(bucket) {
+                    if (bucket != exotic.bucketType) {
+                        var candidates = _.where(backups, {
+                            bucketType: bucket
+                        });
+                        if (candidates.length > 0) {
+                            primaryStats = _.map(candidates, function(item) {
+                                return (type == "Light") ? item.primaryStat() : item.stats[type]
+                            });
+                            var maxCandidate = Math.max.apply(null, primaryStats);
+                            var candidate = candidates[primaryStats.indexOf(maxCandidate)];
+                            set.push(candidate);
+                        }
+                    }
+                });
+            });
+            var sumSets = _.map(sets, function(set) {
+                return sum(_.map(set, function(item) {
+                    return (type == "Light") ? item.primaryStat() : item.stats[type];
+                }));
+            });
+
+            var highestSet = Math.max.apply(null, sumSets);
+            if (type != "Light") {
+                $.toaster({
+                    priority: 'success',
+                    title: 'Result:',
+                    message: " The highest set available for " + type + "  is  " + highestSet
+                });
+            }
+            highestSet = sets[sumSets.indexOf(highestSet)];
+            var count = 0;
+            var done = function() {
+                count++;
+                if (count == highestSet.length && type != "Light") {
+                    app.refresh();
+                }
+            }
+            _.each(highestSet, function(candidate) {
+                if (character.itemEquipped(candidate.bucketType)._id !== candidate._id) {
+                    candidate.equip(character.id, function() {
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Equip:',
+                            message: candidate.bucketType + " can have a better item with " + candidate.description
+                        });
+                        done();
+                    });
+                } else {
+                    done();
+                }
+            });
+        }
+    }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     this.container = ko.observable();
     this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
     this.invisibleItemsHelper = [2910404660, 2537120989];
@@ -44,6 +160,7 @@ Profile.prototype = {
     init: function(profile) {
         var self = this;
 
+<<<<<<< HEAD
         if (self.id == "Vault") {
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
             self.icon("assets/vault_icon.jpg");
@@ -52,6 +169,62 @@ Profile.prototype = {
         } else {
             self.updateCharacter(profile);
         }
+=======
+        if (_.isString(self.profile)) {
+            self.order(parseInt(app.vaultPos()));
+            self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
+            self.icon("assets/vault_icon.jpg");
+
+            self.gender = "Tower";
+            self.classType = "Vault";
+            self.id = "Vault";
+
+            self.level = "";
+            self.stats = "";
+            self.percentToNextLevel = "";
+            self.race = "";
+        } else {
+            self.order(index);
+            /*self.background(app.makeBackgroundUrl(tgd.dataDir + self.profile.backgroundPath, true));
+            self.icon(tgd.dataDir + self.profile.emblemPath);*/
+			if ( "id" in self.profile ){
+				_.each(self.profile, function(value, key) {
+					if (!_.isFunction(self[key])){
+						self[key] = value;
+					}
+					
+				});
+				if (self.profile.stats)
+					self.stats = self.profile.stats;
+				else
+					self.stats = "";
+				self.icon(self.profile.icon);
+				self.background(self.profile.background);
+			}
+			else {
+				self.background(app.makeBackgroundUrl(self.profile.backgroundPath));
+				self.icon(app.makeBackgroundUrl(self.profile.emblemPath));
+				self.gender = tgd.DestinyGender[self.profile.characterBase.genderType];
+				self.classType = tgd.DestinyClass[self.profile.characterBase.classType];
+				self.id = self.profile.characterBase.characterId;
+				self.imgIcon = app.bungie.getUrl() + self.profile.emblemPath;
+
+				self.level = self.profile.characterLevel;
+				self.stats = self.profile.characterBase.stats;
+				self.percentToNextLevel = self.profile.percentToNextLevel;
+				self.race = _raceDefs[self.profile.characterBase.raceHash].raceName;
+				self.stats = self.profile.characterBase.stats;
+				if (!("STAT_LIGHT" in self.stats))
+					self.stats.STAT_LIGHT = 0;
+			}
+        }
+		if (typeof self.classLetter == "undefined")
+			self.classLetter = self.classType[0].toUpperCase();
+			
+		if (typeof self.uniqueName == "undefined")	
+			self.uniqueName = self.level + " " + self.race + " " + self.gender + " " + self.classType;
+
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         var processedItems = [];
         _.each(profile.items, function(item) {
             var processedItem = new Item(item, self);
@@ -92,11 +265,22 @@ Profile.prototype = {
         var self = this;
         if (typeof info == "undefined") {
             return "";
+<<<<<<< HEAD
         } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
         } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
         } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+=======
+        }
+        if (item.location !== 4) {
+            return tgd.DestinyBucketTypes[info.bucketTypeHash];
+        }
+        if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+            return "Lost Items";
+        }
+        if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             return "Invisible";
         }
         return "Messages";
@@ -156,6 +340,7 @@ Profile.prototype = {
             return 0;
         }
     },
+<<<<<<< HEAD
     _equippedGear: function() {
         return _.filter(this.items(), function(item) {
             return item.isEquipped();
@@ -173,6 +358,18 @@ Profile.prototype = {
     _powerLevel: function() {
         if (this.id == "Vault") return "";
         return this.calculatePowerLevelWithItems(this.equippedGear());
+=======
+    _powerLevel: function() {
+        var self = this;
+        var index = self.items().filter(self.filterItemByType("Artifact", true)).length;
+        var weights = tgd.DestinyBucketWeights[index];
+        return Math.floor(sum(_.map(_.filter(self.armor().concat(self.weapons()), function(item) {
+            return item.isEquipped()
+        }), function(item) {
+            var value = item.primaryStat() * (weights[item.bucketType] / 100);
+            return value;
+        })));
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     },
     _reloadBucket: function(model, event, callback) {
         var self = this,
@@ -190,15 +387,24 @@ Profile.prototype = {
             _.each(tgd.DestinyLayout, function(layout) {
                 buckets.push.apply(buckets, layout.bucketTypes);
             });
+<<<<<<< HEAD
             buckets.splice(buckets.indexOf("Invisible"), 1);
+=======
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
         }
 
         self.reloadingBucket = true;
         if (typeof event !== "undefined") {
             element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
+<<<<<<< HEAD
             if (element.is(".fa") === false) {
                 element = $(event.target).is(".emblem") ? $(event.target) : $(event.target).find(".emblem");
                 if (element.is(".emblem") === false) {
+=======
+            if (element.is(".fa") == false) {
+                element = $(event.target).is(".emblem") ? $(event.target) : $(event.target).find(".emblem");
+                if (element.is(".emblem") == false) {
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
                     element = $(event.target).parent().find(".emblem");
                 }
             }
@@ -212,6 +418,7 @@ Profile.prototype = {
                 self.reloadingBucket = false;
                 if (element) {
                     element.removeClass("fa-spin");
+<<<<<<< HEAD
                     $.toaster({
                         priority: 'info',
                         title: 'Success',
@@ -239,6 +446,30 @@ Profile.prototype = {
             } else {
                 reallyDone();
             }
+=======
+                }
+            }
+
+            if (needsInvisibleRefresh) {
+                app.bungie.account(function(results, response) {
+                    if (results && results.data && results.data.inventory && results.data.inventory.buckets && results.data.inventory.buckets.Invisible) {
+                        var invisible = results.data.inventory.buckets.Invisible;
+                        invisible.forEach(function(b) {
+                            b.items.forEach(function(item) {
+                                self.items.push(new Item(item, self, true));
+                            });
+                        });
+                        reallyDone();
+                    } else {
+                        reallyDone();
+                        app.refresh();
+                        return BootstrapDialog.alert("Code 40: " + app.activeText().error_loading_inventory + JSON.stringify(response));
+                    }
+                });
+            } else {
+                reallyDone();
+            }
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
             if (callback)
                 callback();
         }
@@ -268,7 +499,23 @@ Profile.prototype = {
     },
     _general: function() {
         return _.filter(this.items(), function(item) {
+<<<<<<< HEAD
             if ((item.armorIndex == -1 || tgd.DestinyGeneralExceptions.indexOf(item.bucketType) > -1) && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Messages" && item.bucketType !== "Invisible" && item.bucketType !== "Lost Items" && item.bucketType !== "Subclasses")
+=======
+            if (item.armorIndex == -1 && item.weaponIndex == -1 && item.bucketType !== "Post Master" && item.bucketType !== "Messages" && item.bucketType !== "Invisible" && item.bucketType !== "Lost Items" && item.bucketType !== "Subclasses")
+                return item;
+        });
+    },
+    _postmaster: function() {
+        return _.filter(this.items(), function(item) {
+            if ((item.bucketType == "Post Master") || (item.bucketType == "Messages") || (item.bucketType == "Invisible") || (item.bucketType == "Lost Items"))
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
+                return item;
+        });
+    },
+    _invisible: function() {
+        return _.filter(this.items(), function(item) {
+            if (item.bucketType == "Invisible")
                 return item;
         });
     },
@@ -290,6 +537,7 @@ Profile.prototype = {
         };
     },
     get: function(type) {
+<<<<<<< HEAD
         var items = this.items().filter(this.filterItemByType(type, false));
         var activeSort = parseInt(app.activeSort());
         /* Tier, Type */
@@ -326,6 +574,13 @@ Profile.prototype = {
         }
 
         return items;
+=======
+        return _.sortBy(_.sortBy(this.items().filter(this.filterItemByType(type, false)), function(item) {
+            return item.type;
+        }), function(item) {
+            return item.tierType * -1;
+        });
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     },
     getVisible: function(type) {
         return _.filter(this.get(type), function(item) {
@@ -342,6 +597,7 @@ Profile.prototype = {
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
     },
+<<<<<<< HEAD
     joinStats: function(arrItems) {
         var tmp = {};
         _.each(arrItems, function(item) {
@@ -685,5 +941,9 @@ Profile.prototype = {
                 }
             });
         };
+=======
+    toggleStats: function() {
+        this.statsShowing(!this.statsShowing());
+>>>>>>> 599dd4b203e711dd21139e4084279064c8c4b7d2
     }
 };
