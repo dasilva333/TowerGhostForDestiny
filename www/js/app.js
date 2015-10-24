@@ -1,48 +1,55 @@
-var Layout = function(layout) {
+window.Hammer.Tap.prototype.defaults.threshold = 9;
+
+function Layout(layout) {
     var self = this;
 
-    self.name = Object.keys(layout)[0];
-    var data = layout[self.name];
-    self.id = data.view;
-    self.bucketTypes = data.bucketTypes;
-    self.headerText = data.headerText;
-    self.array = data.array;
-    self.counts = data.counts;
+    self.name = layout.name;
+    self.id = layout.view;
+    self.bucketTypes = layout.bucketTypes;
+    self.headerText = layout.headerText;
+    self.array = layout.array;
+    self.counts = layout.counts;
     self.countText = function(character) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             var text = "";
-            if (self.array != "") {
-                text = "(" + character[self.array]().length + "/" + (character.id == 'Vault' ? self.counts[0] : self.counts[1]) + ")";
+            if (self.array !== "" && character.id == 'Vault') {
+                var currentAmount = character[self.array]().length;
+                var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
+                text = "(" + currentAmount + "/" + totalAmount + ")";
+                if (currentAmount == totalAmount) {
+                    text = "<label class='label label-danger'>" + text + "</label>";
+                }
             }
             return text;
         });
-    }
+    };
     self.isVisible = function(character) {
-        return ko.computed(function() {
-            return ((character.id == "Vault" && (self.name !== "Post Master" && self.name !== "Sub Classes")) || character.id !== "Vault");
+        return ko.pureComputed(function() {
+            return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
-    }
+    };
 }
+
 tgd.dialog = (function(options) {
     var self = this;
 
-    this.modal;
+    this.modal = null;
 
     this.title = function(title) {
         self.modal = new BootstrapDialog(options);
         self.modal.setTitle(title);
         return self;
-    }
+    };
 
     this.content = function(content) {
         self.modal.setMessage(content);
         return self;
-    }
+    };
 
     this.buttons = function(buttons) {
         self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
         return self;
-    }
+    };
 
     this.show = function(excludeClick, onHide, onShown) {
         self.modal.open();
@@ -55,56 +62,81 @@ tgd.dialog = (function(options) {
         mdl.on("hide.bs.modal", onHide);
         mdl.on("shown.bs.modal", onShown);
         return self;
-    }
+    };
 
     return self.modal;
 });
 
-tgd.activeElement;
 tgd.moveItemPositionHandler = function(element, item) {
-    app.activeItem(item);
-    if (app.destinyDbMode() == true) {
+    tgd.localLog("moveItemPositionHandler");
+    if (app.destinyDbMode() === true) {
+        tgd.localLog("destinyDbMode");
         window.open(item.href, "_system");
         return false;
-    } else if (app.loadoutMode() == true) {
+    } else if (app.loadoutMode() === true) {
+        tgd.localLog("loadoutMode");
         var existingItem = _.findWhere(app.activeLoadout().ids(), {
             id: item._id
         });
         if (existingItem)
             app.activeLoadout().ids.remove(existingItem);
         else {
-            if (item._id == 0) {
-                BootstrapDialog.alert(app.activeText().unable_create_loadout_for_type);
+            if (item.transferStatus >= 2) {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning',
+                    message: app.activeText().unable_create_loadout_for_type
+                });
+            } else if (item._id === "0") {
+                app.activeLoadout().addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    primaryStat: item.primaryStat()
+                });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
-                }).length < 9) {
-                app.activeLoadout().addItem({
+                }).length < 10) {
+                app.activeLoadout().addUniqueItem({
                     id: item._id,
                     bucketType: item.bucketType,
                     doEquip: false
                 });
             } else {
-                BootstrapDialog.alert(app.activeText().unable_to_create_loadout_for_bucket + item.bucketType);
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Error',
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                });
             }
         }
     } else {
+        tgd.localLog("else");
+        app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission") {
-            return BootstrapDialog.alert(app.activeText().unable_to_move_bucketitems);
+        if (item.transferStatus == 2 || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+            $.toaster({
+                priority: 'danger',
+                title: 'Error',
+                message: app.activeText().unable_to_move_bucketitems
+            });
+            return;
         }
         if (element == tgd.activeElement) {
             $movePopup.hide();
             tgd.activeElement = null;
+            tgd.localLog("hide");
         } else {
+            tgd.localLog("show");
             tgd.activeElement = element;
             $ZamTooltips.hide();
             if (window.isMobile) {
                 $("body").css("padding-bottom", $movePopup.height() + "px");
                 /* bringing back the delay it's sitll a problem in issue #128 */
                 setTimeout(function() {
-                    $movePopup.show();
+                    $movePopup.show().addClass("mobile");
                 }, 50);
             } else {
+                tgd.localLog("display");
                 $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
                     my: "left bottom",
                     at: "left top",
@@ -123,11 +155,11 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         }
     }
-}
+};
 
 window.ko.bindingHandlers.refreshableSection = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        //console.log(element);
+        //tgd.localLog(element);
         //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
         if (isMobile) {
             return;
@@ -144,21 +176,59 @@ window.ko.bindingHandlers.refreshableSection = {
     }
 };
 
+window.ko.bindingHandlers.refreshableEmblem = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("emblemHover");
+                //$(this).find(".emblemRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("emblemHover");
+                //$(this).find(".emblemRefresh").hide();
+            });
+    }
+};
+
+/*
+window.ko.bindingHandlers.logger = {
+    update: function(element, valueAccessor, allBindings) {
+        //store a counter with this element
+        var count = ko.utils.domData.get(element, "_ko_logger") || 0,
+            data = ko.toJS(valueAccessor() || allBindings());
+
+        ko.utils.domData.set(element, "_ko_logger", ++count);
+
+        if (window.console && tgd.localLog) {
+            tgd.localLog(count, element, data);
+        }
+    }
+};
+*/
+
 window.ko.bindingHandlers.scrollToView = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         Hammer(element, {
                 time: 2000
             })
             .on("tap", function() {
-                var index = $(".profile#" + viewModel.id).index(".profile"),
-                    distance = $(".profile:eq(" + index + ")").position().top - 50;
-                app.scrollTo(distance);
+                var index = $(element).index('.mobile-characters-image'),
+                    distance = $(".profile:eq(" + index + ")");
+                if (distance.length > 0) {
+                    distance = distance.position().top - 50;
+                    app.scrollTo(distance);
+                }
             })
             .on("press", function() {
-
-                BootstrapDialog.alert(app.activeText().this_icon + viewModel.uniqueName);
+                $.toaster({
+                    priority: 'info',
+                    title: 'Info',
+                    message: app.activeText().this_icon + viewModel.uniqueName()
+                });
             });
-        app.quickIconHighlighter();
     }
 };
 
@@ -175,13 +245,71 @@ ko.bindingHandlers.moveItem = {
                 time: 2000
             })
             .on("tap", function(ev) {
+                tgd.localLog("item.tap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
-					$ZamTooltips.lastElement = target;
-					$ZamTooltips.show("destinydb", "items", item.id, target);
+                    tgd.moveItemPositionHandler(target, item);
                 }
             })
+            .on("doubletap", function(ev) {
+                tgd.localLog("item.doubletap");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item.transferStatus < 2) {
+                            if (app.dynamicMode() === false) {
+                                app.dynamicMode(true);
+                                app.createLoadout();
+                            }
+                            tgd.localLog("double tap");
+                            if (item._id > 0) {
+                                app.activeLoadout().addUniqueItem({
+                                    id: item._id,
+                                    bucketType: item.bucketType,
+                                    doEquip: false
+                                });
+                            } else {
+                                app.activeLoadout().addGenericItem({
+                                    hash: item.id,
+                                    bucketType: item.bucketType,
+                                    primaryStat: item.primaryStat()
+                                });
+                            }
+                        } else {
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Warning',
+                                message: app.activeText().unable_create_loadout_for_type
+                            });
+                        }
+                    }
+                }
+            })
+            // press is actually hold 
+            .on("press", function(ev) {
+                tgd.localLog("item.press");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item && item.doEquip && app.loadoutMode() === true) {
+                            item.doEquip(!item.doEquip());
+                            item.markAsEquip(item, {
+                                target: target
+                            });
+                        } else if (!isMobile) {
+                            tgd.moveItemPositionHandler(target, item);
+                        } else {
+                            $ZamTooltips.lastElement = target;
+                            $ZamTooltips.show("destinydb", "items", item.id, target);
+                        }
+                    }
+                }
+            });
     }
 };
 
@@ -195,34 +323,32 @@ tgd.getEventDelegate = function(target, selector) {
         target = target.parentNode;
     }
     return undefined;
-}
+};
 
 tgd.getStoredValue = function(key) {
-    var saved = "";	
-    if (window.localStorage && window.localStorage.getItem)		
+    var saved = "";
+    if (window.localStorage && window.localStorage.getItem)
         saved = window.localStorage.getItem(key);
     if (_.isEmpty(saved)) {
         return tgd.defaults[key];
     } else {
-        return saved
+        return saved;
     }
-}
+};
 
 tgd.StoreObj = function(key, compare, writeCallback) {
-	var storedValue = tgd.getStoredValue(key).toString();
-    var value = ko.observable(compare ? storedValue == compare : storedValue);
+    var value = ko.observable(compare ? tgd.getStoredValue(key) == compare : tgd.getStoredValue(key));
     this.read = function() {
         return value();
-    }
+    };
     this.write = function(newValue) {
         window.localStorage.setItem(key, newValue);
         value(newValue);
         if (writeCallback) writeCallback(newValue);
-    }
-	this.write(value());
-}
+    };
+};
 
-var app = new(function() {
+var app = function() {
     var self = this;
 
     this.retryCount = ko.observable(0);
@@ -230,30 +356,39 @@ var app = new(function() {
     this.hiddenWindowOpen = ko.observable(false);
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
+    this.dynamicMode = ko.observable(false);
     this.activeLoadout = ko.observable(new Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-    this.preferredSystem = ko.computed(new tgd.StoreObj("preferredSystem"));
-    this.itemDefs = ko.computed(new tgd.StoreObj("itemDefs"));
-    this.defsLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.defLocaleVersion = ko.computed(new tgd.StoreObj("defLocaleVersion"));
-    this.appLocale = ko.computed(new tgd.StoreObj("defsLocale"));
-    this.locale = ko.computed(new tgd.StoreObj("locale"));
-    this.vaultPos = ko.computed(new tgd.StoreObj("vaultPos"));
-    this.xsColumn = ko.computed(new tgd.StoreObj("xsColumn"));
-    this.smColumn = ko.computed(new tgd.StoreObj("smColumn"));
-    this.mdColumn = ko.computed(new tgd.StoreObj("mdColumn"));
-    this.lgColumn = ko.computed(new tgd.StoreObj("lgColumn"));
-    this.activeView = ko.computed(new tgd.StoreObj("activeView"));
-    this.doRefresh = ko.computed(new tgd.StoreObj("doRefresh", "true"));
-    this.autoTransferStacks = ko.computed(new tgd.StoreObj("autoTransferStacks", "true"));
-    this.padBucketHeight = ko.computed(new tgd.StoreObj("padBucketHeight", "true"));
-    this.tooltipsEnabled = ko.computed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
-        //$ZamTooltips.isEnabled = newValue;
+    this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
+    this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
+    this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
+    this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
+    this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
+    this.ccWidth = ko.pureComputed(new tgd.StoreObj("ccWidth"));
+    this.vaultColumns = ko.pureComputed(new tgd.StoreObj("vaultColumns"));
+    this.vaultWidth = ko.pureComputed(new tgd.StoreObj("vaultWidth"));
+    this.vaultPos = ko.pureComputed(new tgd.StoreObj("vaultPos"));
+    this.xsColumn = ko.pureComputed(new tgd.StoreObj("xsColumn"));
+    this.smColumn = ko.pureComputed(new tgd.StoreObj("smColumn"));
+    this.mdColumn = ko.pureComputed(new tgd.StoreObj("mdColumn"));
+    this.lgColumn = ko.pureComputed(new tgd.StoreObj("lgColumn"));
+    this.activeView = ko.pureComputed(new tgd.StoreObj("activeView"));
+    this.activeSort = ko.pureComputed(new tgd.StoreObj("activeSort"));
+    this.doRefresh = ko.pureComputed(new tgd.StoreObj("doRefresh", "true"));
+    this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
+    this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
+    this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
+        $ZamTooltips.isEnabled = newValue;
     }));
-    this.refreshSeconds = ko.computed(new tgd.StoreObj("refreshSeconds"));
-    this.tierFilter = ko.computed(new tgd.StoreObj("tierFilter"));
-    this.typeFilter = ko.observable(tgd.defaults.typeFilter);
+    this.refreshSeconds = ko.pureComputed(new tgd.StoreObj("refreshSeconds"));
+    this.tierFilter = ko.pureComputed(new tgd.StoreObj("tierFilter"));
+    this.weaponFilter = ko.observable(tgd.defaults.weaponFilter);
+    this.armorFilter = ko.observable(tgd.defaults.armorFilter);
+    this.generalFilter = ko.observable(tgd.defaults.generalFilter);
     this.dmgFilter = ko.observableArray(tgd.defaults.dmgFilter);
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
@@ -262,7 +397,7 @@ var app = new(function() {
     this.showMissing = ko.observable(tgd.defaults.showMissing);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
 
-    this.sortedLoadouts = ko.computed(function() {
+    this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
             return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
         });
@@ -276,14 +411,10 @@ var app = new(function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.activeLayouts = ko.computed(function() {
-        var layouts = [];
-        _.each(self.allLayouts(), function(layout) {
-            if (self.activeView() == layout.id || self.activeView() == 0) {
-                layouts.push(layout);
-            }
+    this.activeLayouts = ko.pureComputed(function() {
+        return _.filter(self.allLayouts(), function(layout) {
+            return (self.activeView() == layout.id || self.activeView() == "0");
         });
-        return layouts;
     });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
@@ -293,34 +424,40 @@ var app = new(function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.orderedCharacters = ko.computed(function() {
+    this.orderedCharacters = ko.pureComputed(function() {
         return self.characters().sort(function(a, b) {
             return a.order() - b.order();
         });
     });
     this.currentLocale = ko.computed(function() {
         var locale = self.locale();
-        if (self.appLocale() != "") {
+        if (self.appLocale() !== "") {
             locale = self.appLocale();
         }
         return locale;
     });
-    this.activeText = ko.computed(function() {
+    this.activeText = ko.pureComputed(function() {
         return tgd.locale[self.currentLocale()];
     });
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new Loadout());
-    }
+    };
     this.cancelLoadout = function() {
         self.loadoutMode(false);
+        self.dynamicMode(false);
         self.activeLoadout(new Loadout());
-    }
+    };
+
+    this.startMultiSelect = function() {
+        self.dynamicMode(true);
+        self.createLoadout();
+    };
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title("Help").content($("#help").html()).show();
-    }
+        (new tgd.dialog()).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
+    };
 
     this.showLanguageSettings = function() {
         self.toggleBootstrapMenu();
@@ -330,14 +467,14 @@ var app = new(function() {
                 languages: tgd.languages
             })
         })).title("Set Language").show(true, function() {}, function() {
-            console.log("showed modal");
+            tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
                 self.appLocale(this.value);
                 $(".btn-setLanguage").removeClass("btn-primary");
                 $(this).addClass("btn-primary");
             });
         });
-    }
+    };
 
     this.handleGoogleResponse = function(data) {
         if (data && data.response) {
@@ -351,16 +488,19 @@ var app = new(function() {
         } else {
             BootstrapDialog.alert("No response returned");
         }
-    }
+    };
 
     this.showDonate = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+        (new tgd.dialog()).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
             $("a.donatePaypal").click(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
             });
-            $("div.chromeWallet").toggle(isChrome == true);
+            $("div.supportsIAB").toggle(isChrome === true || isAndroid === true || isIOS === true);
+            $("div.chromeWallet").toggle(isChrome === true);
+            $("div.googlePlay").toggle(isAndroid === true);
+            $("div.appleIAP").toggle(isIOS === true);
             $("a.donate").bind("click", function() {
                 if (isChrome) {
                     google.payments.inapp.buy({
@@ -371,32 +511,35 @@ var app = new(function() {
                         'success': self.handleGoogleResponse,
                         'failure': self.handleGoogleResponse
                     });
+                } else if (isAndroid || isIOS) {
+                    inappbilling.buy(
+                        function() {
+                            BootstrapDialog.alert("Donation accepted, thank you for your support");
+                        },
+                        function() {},
+                        $(this).attr("sku")
+                    );
                 }
             });
         });
-    }
+    };
 
     this.showAbout = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog).title("About").content($("#about").html()).show();
-    }
-
-    this.incrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) + 1);
-    }
-
-    this.decrementSeconds = function() {
-        self.refreshSeconds(parseInt(self.refreshSeconds()) - 1);
-    }
+        (new tgd.dialog()).title("About").content($("#about").html()).show();
+    };
 
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
+        self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
         self.tierFilter(tgd.defaults.tierFilter);
-        self.typeFilter(tgd.defaults.typeFilter);
+        self.weaponFilter(tgd.defaults.weaponFilter);
+        self.armorFilter(tgd.defaults.armorFilter);
+        self.generalFilter(tgd.defaults.generalFilter);
         self.dmgFilter([]);
         self.progressFilter(tgd.defaults.progressFilter);
         self.setFilter([]);
@@ -406,56 +549,74 @@ var app = new(function() {
         self.showDuplicate(tgd.defaults.showDuplicate);
         $(element.target).removeClass("active");
         return false;
-    }
+    };
+
     this.renderCallback = function(context, content, element, callback) {
-        if (element) lastElement = element
+        if (element) lastElement = element;
+        content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
-            activeItem, $content = $("<div>" + content + "</div>");
+            activeItem, query, $content = $("<div>" + content + "</div>");
         if (instanceId > 0) {
-            self.characters().forEach(function(character) {
-                var item = _.findWhere(character.items(), {
-                    '_id': instanceId
-                });
-                if (item) activeItem = item;
-            });
+            query = {
+                '_id': instanceId
+            };
+        } else {
+            var id = $(lastElement).attr("href");
+            query = {
+                id: parseInt(id.split("/")[id.split("/").length - 1])
+            };
         }
+        self.characters().forEach(function(character) {
+            var item = _.findWhere(character.items(), query);
+            if (item) activeItem = item;
+        });
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
+            /* Sub title for materials and consumables */
+            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
+                $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
+            }
+            /* Add Required Level if provided */
+            if (activeItem.equipRequiredLevel) {
+                var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
+                $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + classType + '</span></span>');
+            }
             /* Type using locale */
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
-            /* Description using locale */
+            /* Primary Stat and Stat Type */
+            var primaryStatMin = $content.find(".destt-primary-min");
+            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1)) {
+                var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
+                var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
+                $content.find(".destt-desc").before(statBlock);
+            } else {
+                primaryStatMin.html(activeItem.primaryStat());
+                /* Description using locale */
+            }
             $content.find(".destt-desc").text(activeItem.itemDescription);
             /* Remove Emblem Text */
             if ($content.find(".fhtt-emblem").length > 0) {
                 $content.find("span").remove();
             }
+            /* Add Emblem Icon */
+            if ($content.find(".fhtt-emblem-icon").length > 0) {
+                $content.find(".fhtt-emblem-icon").html($("<img>").attr("src", activeItem.icon));
+            }
             /* Damage Colors */
-            if ($content.find("[class*='destt-damage-color-']").length == 0 && activeItem.damageType > 1) {
+            if ($content.find("[class*='destt-damage-color-']").length === 0 && activeItem.damageType > 1) {
                 var burnIcon = $("<div></div>").addClass("destt-primary-damage-" + activeItem.damageType);
                 $content.find(".destt-primary").addClass("destt-damage-color-" + activeItem.damageType).prepend(burnIcon);
             }
-            /* Weapon Perks (Pre-HoW) */
-            if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
-                $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                    perks: activeItem.perks
-                }));
-            }
-            /* Weapon Perks (Post-HoW) */
-            else if (activeItem.perks.length > 0 && $content.find(".destt-talent").length == 0) {
-                $content.find(".destt-info").before(tgd.perksTemplate({
-                    perks: activeItem.perks
-                }));
-            }
-            /* Armor Perks */
-            else if (activeItem.perks.length > 0 && tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1 && self.tierType !== 6) {
-                $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                    perks: activeItem.perks
-                }));
-            }
             /* Armor Stats */
-            var stats = $content.find(".destt-stat");
-            if (activeItem.stats && stats.length > 0) {
+            if (!_.isEmpty(activeItem.stats)) {
+                var stats = $content.find(".destt-stat");
+                if (stats.length === 0) {
+                    $content.find(".destt-desc").after(tgd.statsTemplate({
+                        stats: activeItem.stats
+                    }));
+                    stats = $content.find(".destt-stat");
+                }
                 stats.html(
                     stats.find(".stat-bar").map(function(index, stat) {
                         var $stat = $("<div>" + stat.outerHTML + "</div>"),
@@ -469,7 +630,46 @@ var app = new(function() {
                     }).get().join("")
                 );
             }
-            $content.find(".destt-primary-min").html(activeItem.primaryStat());
+            if (activeItem.perks.length > 0) {
+                if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
+                    // Weapon Perks (Pre-HoW) 
+                    if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
+                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                    // Weapon Perks (Post-HoW)
+                    else if ($content.find(".destt-talent").length === 0) {
+                        $content.find(".destt-stat").after(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                    // Armor Perks: this only applies to armor with existing perks
+                    if ($content.find(".destt-talent").length > 0) {
+                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                    // this applies to ghost shells, maybe re rollable armor
+                    else {
+                        $content.find(".destt-stat").after(tgd.perksTemplate({
+                            perks: activeItem.perks
+                        }));
+                    }
+                }
+            }
+            if (activeItem.objectives.length > 0) {
+                _.each(activeItem.objectives, function(objective) {
+                    var info = _objectiveDefs[objective.objectiveHash];
+                    var label = "";
+                    if (info.displayDescription) {
+                        label = "<strong>" + info.displayDescription + "</strong>:";
+                    }
+                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    $content.find(".destt-desc").after(label + value + "<br>");
+                });
+            }
         }
         var width = $(window).width();
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen
@@ -478,7 +678,7 @@ var app = new(function() {
             $content.find(".stat-bar-empty").css("width", "125px");
         }
         callback($content.html());
-    }
+    };
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
@@ -491,28 +691,36 @@ var app = new(function() {
             $(".character").css("margin", '');
             $(".character-box").css("position", 'fixed');
         }
-    }
+    };
     this.toggleRefresh = function() {
         self.toggleBootstrapMenu();
         self.doRefresh(!self.doRefresh());
-    }
+    };
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
-        self.bucketSizeHandler();
-    }
+        self.redraw();
+    };
+    this.toggleDragAndDrop = function() {
+        self.toggleBootstrapMenu();
+        self.dragAndDrop(!self.dragAndDrop());
+        if (self.dragAndDrop() === true) {
+            self.padBucketHeight(true);
+            location.reload();
+        }
+    };
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
-        self.autoTransferStacks(!self.autoTransferStacks());
-    }
+        self.autoXferStacks(!self.autoXferStacks());
+    };
     this.toggleDestinyDbMode = function() {
         self.toggleBootstrapMenu();
         self.destinyDbMode(!self.destinyDbMode());
-    }
+    };
     this.toggleDestinyDbTooltips = function() {
         self.toggleBootstrapMenu();
         self.tooltipsEnabled(!self.tooltipsEnabled());
-    }
+    };
     this.toggleShareView = function() {
         self.toggleBootstrapMenu();
         if (!self.shareView()) {
@@ -526,135 +734,215 @@ var app = new(function() {
                 self.shareView(!self.shareView());
             });
         }
-    }
+    };
     this.toggleDuplicates = function(model, event) {
         self.toggleBootstrapMenu();
         self.showDuplicate(!self.showDuplicate());
-    }
+        if (self.showDuplicate()) {
+            var items = _.flatten(_.map(app.characters(), function(avatar) {
+                return avatar.items();
+            }));
+            var ids = _.pluck(items, 'id');
+            _.each(items, function(item) {
+                var itemCount = _.filter(ids, function(id) {
+                    return id == item.id;
+                }).length;
+                item.isDuplicate(itemCount > 1);
+            });
+        }
+    };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
-        if (self.setFilter().length == 0) {
-            BootstrapDialog.alert(self.activeText().pick_a_set);
+        if (self.setFilter().length === 0) {
+            $.toaster({
+                priority: 'danger',
+                title: 'Warning',
+                message: self.activeText().pick_a_set
+            });
         } else {
             self.showMissing(!self.showMissing());
         }
-    }
+    };
     this.openStatusReport = function() {
         self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
-    }
-    this.setSetFilter = function(model, event) {
-        self.toggleBootstrapMenu();
-        var collection = $(event.target).closest('li').attr("value");
-        if (collection in _collections || collection == "All") {
-            self.setFilter(collection == "All" ? [] : _collections[collection]);
-            if (collection == "All") {
+    };
+    this.setVaultColumns = function(columns) {
+        return function() {
+            self.vaultColumns(columns);
+            self.redraw();
+        };
+    };
+    this.setVaultWidth = function(width) {
+        return function() {
+            self.vaultWidth(width);
+            self.redraw();
+        };
+    };
+    this.setCCWidth = function(model, evt) {
+        var width = $(evt.target).text();
+        width = (width == "Default") ? "" : width;
+        self.ccWidth(width);
+        self.redraw();
+    };
+    this.setSetFilter = function(collection) {
+        return function() {
+            self.toggleBootstrapMenu();
+            if (collection in _collections || collection == "All") {
+                self.setFilter(collection == "All" ? [] : _collections[collection]);
+                if (collection == "All") {
+                    self.showMissing(false);
+                } else if (collection.indexOf("Weapons") > -1) {
+                    self.activeView(1);
+                    self.armorFilter(0);
+                    self.generalFilter(0);
+                } else if (collection.indexOf("Armor") > -1) {
+                    self.activeView(2);
+                    self.weaponFilter(0);
+                    self.generalFilter(0);
+                }
+            } else {
+                self.setFilter([]);
                 self.showMissing(false);
-            } else if (collection.indexOf("Weapons") > -1) {
-                self.activeView(1);
-            } else if (collection.indexOf("Armor") > -1) {
-                self.activeView(2);
             }
-        } else {
-            self.setFilter([]);
-            self.showMissing(false);
-        }
-    }
+        };
+    };
+    this.setSort = function(model, event) {
+        self.toggleBootstrapMenu();
+        self.activeSort($(event.target).closest('li').attr("value"));
+    };
     this.setView = function(model, event) {
         self.toggleBootstrapMenu();
         self.activeView($(event.target).closest('li').attr("value"));
-    }
+    };
     this.setDmgFilter = function(model, event) {
         self.toggleBootstrapMenu();
         var dmgType = $(event.target).closest('li').attr("value");
-        self.dmgFilter.indexOf(dmgType) == -1 ? self.dmgFilter.push(dmgType) : self.dmgFilter.remove(dmgType);
-    }
+        if (self.dmgFilter.indexOf(dmgType) == -1) {
+            self.dmgFilter.push(dmgType);
+        } else {
+            self.dmgFilter.remove(dmgType);
+        }
+    };
     this.setTierFilter = function(model, event) {
         self.toggleBootstrapMenu();
         self.tierFilter(model.tier);
-    }
-    this.setTypeFilter = function(weaponType) {
+    };
+    this.setWeaponFilter = function(weaponType) {
         return function() {
             self.toggleBootstrapMenu();
+            self.activeView(1);
             var type = weaponType.name;
-            console.log("type: " + type);
-            self.typeFilter(type);
-        }
-    }
+            tgd.localLog("weapon type: " + type);
+            self.weaponFilter(type);
+        };
+    };
+    this.setArmorFilter = function(armorType) {
+        return function() {
+            self.toggleBootstrapMenu();
+            self.activeView(2);
+            tgd.localLog("armor type: " + armorType);
+            self.armorFilter(armorType);
+        };
+    };
+    this.setGeneralFilter = function(searchType) {
+        return function() {
+            self.toggleBootstrapMenu();
+            self.activeView(3);
+            self.generalFilter(searchType);
+        };
+    };
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
         self.progressFilter($(event.target).closest('li').attr("value"));
-    }
-    this.missingSets = ko.computed(function() {
-        var missingIds = [];
-        self.setFilter().forEach(function(item) {
-            var itemFound = false;
-            self.characters().forEach(function(character) {
-                ['weapons', 'armor'].forEach(function(list) {
-                    if (_.pluck(character[list](), 'id').indexOf(item) > -1) itemFound = true;
-                });
-            });
-            if (!itemFound) missingIds.push(item);
+    };
+    this.missingSets = ko.pureComputed(function() {
+        var allItemNames = _.pluck(_.flatten(_.map(self.characters(), function(character) {
+            return character.items();
+        })), 'description');
+        var armorFilter = ko.unwrap(self.armorFilter);
+        var weaponFilter = ko.unwrap(self.weaponFilter);
+        var missingIds = _.filter(self.setFilter(), function(id) {
+            var isMissing = true;
+            var isVisible = false;
+            if (id in _itemDefs) {
+                var info = _itemDefs[id];
+                var description = decodeURIComponent(info.itemName);
+                isMissing = allItemNames.indexOf(description) == -1;
+                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                    var bucketType = tgd.DestinyBucketTypes[info.bucketTypeHash];
+                    var typeName = decodeURIComponent(info.itemTypeName);
+                    isVisible = (self.armorFilter() === 0 || armorFilter == bucketType) && (self.weaponFilter() === 0 || weaponFilter == typeName);
+                }
+            }
+            return isMissing && isVisible;
         });
         return missingIds;
-    })
+    });
 
     this.addWeaponTypes = function(weapons) {
         weapons.forEach(function(item) {
-            if (item.isEquipment == true && item.type > 1 && _.where(self.weaponTypes(), {
+            if (item.isEquipment === true && item.type > 1 && _.where(self.weaponTypes(), {
                     name: item.typeName
-                }).length == 0) {
+                }).length === 0) {
                 self.weaponTypes.push({
                     name: item.typeName,
                     type: item.type
                 });
             }
         });
-    }
+    };
 
 
     this.addTierTypes = function(items) {
         items.forEach(function(item) {
-            if (item.tierTypeName && _.where(self.tierTypes(), {
+            if (item.tierTypeName && item.tierType > 0 && _.where(self.tierTypes(), {
                     name: item.tierTypeName
-                }).length == 0) {
+                }).length === 0) {
                 self.tierTypes.push({
                     name: item.tierTypeName,
                     tier: item.tierType
                 });
             }
         });
-    }
+    };
 
     this.makeBackgroundUrl = function(path, excludeDomain) {
         return 'url("' + (excludeDomain ? "" : self.bungie.getUrl()) + path + '")';
-    }
+    };
 
     this.hasBothAccounts = function() {
         return !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
-    }
+    };
 
     this.useXboxAccount = function() {
+        self.toggleBootstrapMenu();
         self.preferredSystem("XBL");
         self.characters.removeAll();
         self.loadingUser(true);
         self.search();
-    }
+    };
 
     this.usePlaystationAccount = function() {
+        self.toggleBootstrapMenu();
         self.preferredSystem("PSN");
         self.characters.removeAll();
         self.loadingUser(true);
         self.search();
-    }
+    };
+
+    this.redraw = function() {
+        setTimeout(self.bucketSizeHandler, 1000);
+        setTimeout(self.quickIconHighlighter, 1000);
+    };
 
     var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
             return;
         }
-        if (loadingData == true) {
+        if (loadingData === true) {
             return;
         }
         loadingData = true;
@@ -662,7 +950,7 @@ var app = new(function() {
         var total = 0,
             count = 0,
             profiles = [];
-        /* TODO: implement a better loading bar by using the counts and this: #loadingBar */
+
         function done(profile) {
             profiles.push(profile);
             count++;
@@ -680,14 +968,11 @@ var app = new(function() {
                         return -1;
                     }
                     return 0;
-                })
-                setTimeout(self.bucketSizeHandler, 1000);
-                setTimeout(self.quickIconHighlighter, 1000);
+                });
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
             }
-
         }
         self.bungie.search(self.preferredSystem(), function(e) {
             if (e && e.error || !e) {
@@ -696,21 +981,18 @@ var app = new(function() {
                 /* if the first account fails retry the next one*/
                 self.preferredSystem(self.preferredSystem() == "PSN" ? "XBL" : "PSN");
                 self.search();
-                return
+                return;
             } else if (typeof e.data == "undefined") {
-                ga('send', 'exception', {
-                    'exDescription': "data missing in bungie.search > " + JSON.stringify(error),
-                    'exFatal': false,
-                    'appVersion': tgd.version,
-                    'hitCallback': function() {
-                        console.log("crash reported");
-                    }
-                });
-                return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                if (e && typeof e.Message != "undefined") {
+                    return BootstrapDialog.alert(e.Message);
+                } else {
+                    return BootstrapDialog.alert("Code 10: " + self.activeText().error_loading_inventory + JSON.stringify(e));
+                }
             }
             var avatars = e.data.characters;
-            total = avatars.length + 1;
-
+            var characterIds = _.sortBy(_.map(avatars, function(character) {
+                return character.characterBase.characterId;
+            }));
             var items = self.bungie.flattenItemArray(e.data.inventory.buckets);
             var vaultItems = _.where(items, function(item) {
                     return item.bucketName != "Invisible";
@@ -718,145 +1000,208 @@ var app = new(function() {
                 globalItems = _.where(items, {
                     bucketName: "Invisible"
                 });
-            var profile = new Profile("Vault", vaultItems);
-            self.addTierTypes(profile.items());
-            self.addWeaponTypes(profile.weapons());
-            done(profile);
-
-            //console.time("avatars.forEach");
-            avatars.forEach(function(character, index) {
-                self.bungie.inventory(character.characterBase.characterId, function(response) {
-                    if (response && response.data && response.data.buckets) {
-                        var items = self.bungie.flattenItemArray(response.data.buckets).concat(globalItems);
-                        var profile = new Profile(character, items, index + 1);
-                        self.addTierTypes(profile.items());
-                        self.addWeaponTypes(profile.items());
-                        done(profile);
-                    } else {
-                        loadingData = false;
-                        self.refresh();
-                        return BootstrapDialog.alert("Code 30: " + self.activeText().error_loading_inventory + JSON.stringify(response));
-                    }
-                });
+            _.each(avatars, function(avatar) {
+                avatar.index = characterIds.indexOf(avatar.characterBase.characterId) + 1;
+                avatar.items = globalItems;
+            });
+            avatars.push({
+                characterBase: {
+                    characterId: "Vault"
+                },
+                items: vaultItems,
+                index: parseInt(self.vaultPos())
+            });
+            total = avatars.length;
+            _.map(avatars, function(avatar) {
+                var profile = new Profile(avatar);
+                self.addTierTypes(profile.items());
+                self.addWeaponTypes(profile.weapons());
+                done(profile);
             });
         });
-    }
+    };
 
     this.loadData = function(ref) {
-        if (self.loadingUser() == false || self.hiddenWindowOpen() == true) {
+        if (self.loadingUser() === false || self.hiddenWindowOpen() === true) {
             //window.t = (new Date());
             self.loadingUser(true);
-            self.bungie = new bungie(self.bungie_cookies);
-            self.characters.removeAll();
-            //console.time("self.bungie.user");
-            self.bungie.user(function(user) {
-                //console.timeEnd("self.bungie.user");
-                if (user.error) {
-                    if (user.error == 'network error:502') {
-                        try {
-                            window.cookies.clear(function() {
-                                BootstrapDialog.alert('Cookies cleared!');
-                            });
-                        } catch (e) {
-                            window.ref = window.open('https://www.bungie.net/', '_blank', 'location=yes,clearsessioncache=yes');
-                            BootstrapDialog.alert('Clearing cookies not supported in this version, please contact support for more assitance.');
+            self.bungie = new bungie(self.bungie_cookies, function() {
+                self.characters.removeAll();
+                //console.time("self.bungie.user");
+                self.bungie.user(function(user) {
+                    //console.timeEnd("self.bungie.user");
+                    if (user.error) {
+                        if (user.error == 'network error:502') {
+                            return self.logout();
                         }
-                    }
-                    if (isMobile) {
-                        if (self.hiddenWindowOpen() == false) {
-                            self.hiddenWindowOpen(true);
-                            self.openHiddenBungieWindow();
+                        if (isMobile) {
+                            if (self.hiddenWindowOpen() === false) {
+                                self.hiddenWindowOpen(true);
+                                self.openHiddenBungieWindow();
+                            } else {
+                                setTimeout(function() {
+                                    self.loadData(ref);
+                                }, 1000);
+                            }
                         } else {
-                            setTimeout(function() {
-                                self.loadData(ref);
-                            }, 1000);
+                            self.activeUser(user);
+                            self.loadingUser(false);
                         }
-                    } else {
-                        self.activeUser(user);
-                        self.loadingUser(false);
+                        return;
                     }
-                    return
-                }
-                if (ref && ref.close) {
-                    ref.close();
-                    self.hiddenWindowOpen(false);
-                    ref = null;
-                }
-                self.activeUser(user);
-                self.locale(self.activeUser().user.locale);
-                self.loadingUser(false);
-                _.defer(function() {
-                    self.search();
+                    if (ref && ref.close) {
+                        ref.close();
+                        self.hiddenWindowOpen(false);
+                        ref = null;
+                    }
+                    self.activeUser(user);
+                    if (user.psnId && user.gamerTag) {
+                        $.toaster({
+                            settings: {
+                                timeout: 10 * 1000
+                            }
+                        });
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Info',
+                            message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
+                        });
+                        $("#useOtherAccount").click(function() {
+                            if (self.preferredSystem() == "XBL") {
+                                self.usePlaystationAccount();
+                            } else {
+                                self.useXboxAccount();
+                            }
+                        });
+                        $.toaster.reset();
+                    }
+                    self.locale(self.activeUser().user.locale);
+                    self.loadingUser(false);
+                    _.defer(function() {
+                        self.search();
+                    });
                 });
             });
         }
-    }
+    };
 
     this.toggleBootstrapMenu = function() {
         if ($(".navbar-toggle").is(":visible"))
             $(".navbar-toggle").click();
-    }
+    };
 
     this.refreshButton = function() {
         self.toggleBootstrapMenu();
         self.refresh();
-    }
+    };
 
     this.logout = function() {
+        self.clearCookies();
         self.bungie.logout(function() {
             window.location.reload();
         });
-    }
+    };
 
     this.refresh = function() {
-        self.loadingUser(true);
-        self.characters.removeAll();
-        self.search();
-    }
+        self.bungie.account(function(result) {
+            if (result && result.data && result.data.characters) {
+                var characters = result.data.characters;
+                _.each(self.characters(), function(character) {
+                    if (character.id != "Vault") {
+                        var result = _.filter(characters, function(avatar) {
+                            return avatar.characterBase.characterId == character.id;
+                        })[0];
+                        character.updateCharacter(result);
+                    }
+                    character._reloadBucket(character);
+                });
+            } else {
+                tgd.localLog(result);
+            }
+        });
+    };
 
     this.refreshHandler = function() {
         clearInterval(self.refreshInterval);
-        if (self.loadoutMode() == true) {
-            self.toggleBootstrapMenu();
+        if (self.loadoutMode() === true) {
+            if (self.dynamicMode() === false) {
+                self.toggleBootstrapMenu();
+            }
             $("body").css("padding-bottom", "260px");
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        if (self.doRefresh() == 1 && self.loadoutMode() == false) {
+        if (self.doRefresh() == 1 && self.loadoutMode() === false) {
+            tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
-                self.loadData()
+                tgd.localLog("refreshing");
+                self.refresh();
             }, self.refreshSeconds() * 1000);
         }
-    }
+    };
 
     this.bucketSizeHandler = function() {
-        var buckets = $("div.profile[id!='Vault'] .itemBucket:visible").css("height", "auto");
-        if (self.padBucketHeight() == true) {
+        var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
+        if (self.padBucketHeight() === true) {
             var bucketSizes = {};
+            var itemHeight = 0;
+            var vaultPos = parseInt(self.vaultPos()) - 1;
+            vaultPos = (vaultPos < 0) ? 0 : vaultPos;
+            var vaultColumns = tgd.bootstrapGridColumns / self.vaultColumns();
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var columnsPerBucket = tgd.DestinyBucketColumns[bucketType];
-                var bucketHeight = Math.ceil($(this).find(".bucket-item:visible").length / columnsPerBucket) * ($(this).find(".bucket-item:visible:eq(0)").height() + 2);
+                var isVault = this.className.indexOf("Vault") > -1;
+                var columnsPerBucket = isVault ? vaultColumns : tgd.DestinyBucketColumns[bucketType];
+                var $visibleBucketItems = $(this).find(".bucket-item:visible");
+                var visibleBucketHeight = $visibleBucketItems.eq(0).height();
+                var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
+                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight)) {
+                    itemHeight = visibleBucketHeight;
+                }
                 if (!(bucketType in bucketSizes)) {
                     bucketSizes[bucketType] = [bucketHeight];
                 } else {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
+            //console.log(bucketSizes);
             _.each(bucketSizes, function(sizes, type) {
-                var maxHeight = Math.max.apply(null, sizes);
-                buckets.filter("." + type).css("min-height", maxHeight);
+                //this is the max height all buckets will use
+                var maxHeight = _.max(sizes);
+                //this is the max height the non-vault characters will use
+                var profileSizes = sizes.slice(0);
+                profileSizes.splice(vaultPos, 1);
+                /*var maxProfilesHeight = _.max(profileSizes);
+                var minNumRows = 1;
+                if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
+                    minNumRows = 3;
+                } else if (type == "Materials") {
+                    minNumRows = 4;
+                }*/
+                //maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
+                var itemBuckets = buckets.filter("." + type);
+                /*if ( type == "Heavy") {
+                	console.log(type + " " + maxHeight);
+                	console.log(type + " " + maxProfilesHeight);
+                }*/
+                itemBuckets.css("min-height", maxHeight);
+                itemBuckets.find(".itemBucketBG").css("height", maxHeight);
+                itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxHeight);
             });
+            // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
+            var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
+            var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
+            vaultSubClass.css("min-height", notVaultSubClass.height());
+            vaultSubClass.css("visibility", "hidden");
         }
-    }
+    };
 
     this.globalClickHandler = function(e) {
         if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
             $("#move-popup").hide();
             tgd.activeElement = null;
         }
-    }
-
+    };
 
     this.quickIconHighlighter = function() {
         var scrollTop = $(window).scrollTop();
@@ -867,23 +1212,24 @@ var app = new(function() {
             var $characterBox = $(".character-box." + characterId);
             var top = $item.position().top - 55;
             var bottom = top + $item.height();
-            var isActive = scrollTop >= top && scrollTop <= bottom;
+            var isActive = scrollTop >= top && scrollTop <= bottom && scrollTop > 0;
             $quickIcon.toggleClass("activeProfile", isActive);
-            $characterBox.toggleClass("active", !isActive);
+            $characterBox.toggleClass("active", isActive);
+            $characterBox.toggleClass("not-active", !isActive);
             $characterBox.css({
                 width: $characterBox.parent().width() + 'px'
             });
         });
-    }
+    };
 
     this.readBungieCookie = function(ref, loop) {
-        //console.log( typeof ref.executeScript );
-        //console.log( Object.keys(ref) ); 
+        //tgd.localLog( typeof ref.executeScript );
+        //tgd.localLog( Object.keys(ref) ); 
         try {
             ref.executeScript({
                 code: 'document.cookie'
             }, function(result) {
-                console.log("result " + result);
+                tgd.localLog("result " + result);
                 if ((result || "").toString().indexOf("bungled") > -1) {
                     self.bungie_cookies = result;
                     window.localStorage.setItem("bungie_cookies", result);
@@ -891,10 +1237,9 @@ var app = new(function() {
                 }
             });
         } catch (e) {
-            console.log(e);
+            tgd.localLog(e);
         }
-
-    }
+    };
 
     this.openHiddenBungieWindow = function() {
         window.ref = window.open("https://www.bungie.net/en/User/Profile", '_blank', 'location=no,hidden=yes');
@@ -902,24 +1247,47 @@ var app = new(function() {
             //BootstrapDialog.alert("loadstop hidden");
             self.readBungieCookie(ref, 1);
         });
-    }
+    };
+
+    this.findReference = function(item, callback) {
+        if (item && item.id > 0) {
+            var subscriptions = [];
+            var newItemHandler = function(items) {
+                var foundItem = _.where(items, {
+                    _id: item._id
+                });
+                if (foundItem.length > 0) {
+                    _.each(subscriptions, function(sub) {
+                        sub.dispose();
+                    });
+                    callback(foundItem[0]);
+                }
+            };
+            var allItems = _.flatten(_.map(app.characters(), function(character) {
+                subscriptions.push(character.items.subscribe(newItemHandler));
+                return character.items();
+            }));
+            newItemHandler(allItems);
+        }
+    };
 
     this.clearCookies = function() {
-        window.cookies.clear(function() {
-            window.localStorage.setItem("bungie_cookies", "");
-            console.log("Cookies cleared");
-        });
-    }
+        window.localStorage.setItem("bungie_cookies", "");
+        try {
+            window.cookies.clear(function() {
+                tgd.localLog("Cookies cleared");
+            });
+        } catch (e) {}
+    };
 
     this.openBungieWindow = function(type) {
         return function() {
             var loop;
-            if (isNWJS){
-				var gui = require('nw.gui');
-				var mainwin = gui.Window.get();
-				window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
-			}
-			else if (isChrome || isMobile) {
+            if (isNWJS) {
+                var gui = require('nw.gui');
+                var mainwin = gui.Window.get();
+                window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
+            } else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
                 window.ref = window.open('about:blank');
@@ -935,24 +1303,26 @@ var app = new(function() {
                         self.readBungieCookie(ref, loop);
                     }
                 });
-			}	
-			else if (isNWJS){
-				window.ref.on('loaded', function(){
-					location.reload();
-				});
-			}
-            else {
+            } else if (isNWJS) {
+                window.ref.on('loaded', function() {
+                    location.reload();
+                });
+            } else {
                 clearInterval(loop);
                 loop = setInterval(function() {
                     if (window.ref.closed) {
                         clearInterval(loop);
                         if (!isMobile && !isChrome) {
-                            BootstrapDialog.alert("Please wait while Firefox acquires your arsenal");
+                            $.toaster({
+                                priority: 'success',
+                                title: 'Loading',
+                                message: "Please wait while Firefox acquires your arsenal"
+                            });
                             var event = document.createEvent('CustomEvent');
                             event.initCustomEvent("request-cookie", true, true, {});
                             document.documentElement.dispatchEvent(event);
                             setTimeout(function() {
-                                console.log("loadData");
+                                tgd.localLog("loadData");
                                 self.loadData();
                             }, 5000);
                         } else {
@@ -961,8 +1331,8 @@ var app = new(function() {
                     }
                 }, 100);
             }
-        }
-    }
+        };
+    };
 
     this.scrollTo = function(distance, callback) {
         if (isWindowsPhone) {
@@ -973,42 +1343,41 @@ var app = new(function() {
                 scrollTop: distance
             }, 300, "swing", callback);
         }
-    }
+    };
 
     this.scrollToActiveIndex = function(newIndex) {
         var index = $(".quickScrollView img").filter(function() {
-            var className = $(this).attr("class"),
-                className = _.isUndefined(className) ? "" : className;
-            return className.indexOf("activeProfile") > -1
+            var classAttr = $(this).attr("class"),
+                className = _.isUndefined(classAttr) ? "" : classAttr;
+            return className.indexOf("activeProfile") > -1;
         }).index(".quickScrollView img");
         self.scrollTo($(".profile:eq(" + index + ")").position().top - 50, function() {
             $.toaster({
                 priority: 'info',
-                title: 'View:',
+                title: 'View',
                 message: tgd.DestinyViews[newIndex]
             });
         });
-
-    }
+    };
 
     this.shiftViewLeft = function() {
         var newIndex = parseInt(self.activeView()) - 1;
         if (newIndex < 0) newIndex = 3;
         self.activeView(newIndex);
         self.scrollToActiveIndex(newIndex);
-    }
+    };
 
     this.shiftViewRight = function() {
         var newIndex = parseInt(self.activeView()) + 1;
         if (newIndex == 4) newIndex = 0;
         self.activeView(newIndex);
         self.scrollToActiveIndex(newIndex);
-    }
+    };
 
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
+        var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -1018,42 +1387,42 @@ var app = new(function() {
                 callback(response);
             }
         });
-    }
+    };
 
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-        if (supportsCloudSaves == true) {
-            if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
-                var params = {
-                    action: "save",
-                    membershipId: parseFloat(app.activeUser().user.membershipId),
-                    loadouts: JSON.stringify(self.loadouts())
+        if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
+            var params = {
+                action: "save",
+                membershipId: parseFloat(self.activeUser().user.membershipId),
+                loadouts: ko.toJSON(self.loadouts())
+            };
+            self.apiRequest(params, function(results) {
+                if (_includeMessage === true) {
+                    if (results.success) {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Saved',
+                            message: "Loadouts saved to the cloud"
+                        });
+                    } else BootstrapDialog.alert("Error has occurred saving loadouts");
                 }
-                self.apiRequest(params, function(results) {
-                    if (_includeMessage == true) {
-                        if (results.success) BootstrapDialog.alert("Loadouts saved to the cloud");
-                        else BootstrapDialog.alert("Error has occurred saving loadouts");
-                    }
-                });
-            } else {
-                BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
-            }
+            });
         } else {
-            var loadouts = ko.toJSON(self.loadouts());
-            window.localStorage.setItem("loadouts", loadouts);
+            BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
         }
-    }
+    };
 
     this.loadLoadouts = function() {
-        var _loadouts = window.localStorage.getItem("loadouts");
-        if (!_.isEmpty(_loadouts)) {
-            _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
-                return new Loadout(loadout);
-            })
-        } else {
-            _loadouts = [];
-        }
-        if (supportsCloudSaves == true) {
+        if (self.loadouts().length === 0) {
+            var _loadouts = window.localStorage.getItem("loadouts");
+            if (!_.isEmpty(_loadouts)) {
+                _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
+                    return new Loadout(loadout);
+                });
+            } else {
+                _loadouts = [];
+            }
             self.apiRequest({
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
@@ -1061,7 +1430,7 @@ var app = new(function() {
                 locale: self.currentLocale(),
                 version: self.defLocaleVersion(),
                 /*this one applies only to your current profile
-   				accountId: self.bungie.getMemberId()*/
+				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
                 if (results && results.loadouts) {
@@ -1084,20 +1453,21 @@ var app = new(function() {
                     self.saveLoadouts(false);
                 }
                 /*if (results && results.itemDefs) {
-                    console.log("downloading locale update");
-                    self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-                }*/
+					tgd.localLog("downloading locale update");
+					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
+				}*/
             });
-        } else if (_loadouts.length > 0) {
-            self.loadouts(_loadouts);
         }
-    }
+    };
 
     this.showWhatsNew = function(callback) {
-        (new tgd.dialog).title(self.activeText().whats_new_title).content("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content).show(false, function() {
+        var container = $("<div></div>");
+        container.attr("style", "overflow-y: scroll; height: 480px");
+        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
-        })
-    }
+        });
+    };
 
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
@@ -1109,7 +1479,7 @@ var app = new(function() {
                 });
             }
         }
-    }
+    };
 
     this.normalizeSingle = function(description, characters, usingbatchMode, callback) {
         var itemTotal = 0;
@@ -1131,11 +1501,15 @@ var app = new(function() {
                 needed: 0
             };
         });
-        //console.log(characterStatus);
+        //tgd.localLog(characterStatus);
 
         if (itemTotal < characterStatus.length) {
-            if (usingbatchMode == false) {
-                BootstrapDialog.alert("Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.");
+            if (usingbatchMode === false) {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning',
+                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
+                });
             }
             if (callback !== undefined) {
                 callback();
@@ -1144,19 +1518,19 @@ var app = new(function() {
         }
 
         var itemSplit = (itemTotal / characterStatus.length) | 0; /* round down */
-        //console.log("Each character needs " + itemSplit + " " + description);
+        //tgd.localLog("Each character needs " + itemSplit + " " + description);
 
         /* calculate how much to increment/decrement each character */
         _.each(characterStatus, function(c) {
             c.needed = itemSplit - c.current;
         });
-        //console.log(characterStatus);
+        //tgd.localLog(characterStatus);
 
         var getNextSurplusCharacter = (function() {
             return function() {
                 return _.filter(characterStatus, function(c) {
                     return c.needed < 0;
-                })[0]
+                })[0];
             };
         })();
 
@@ -1169,12 +1543,16 @@ var app = new(function() {
         })();
 
         /* bail early conditions */
-        if ((getNextSurplusCharacter() == undefined) || (getNextShortageCharacter() == undefined)) {
-            //console.log("all items normalized as best as possible");
-            if (usingbatchMode == false) {
-                BootstrapDialog.alert(description + " already normalized as best as possible.");
+        if ((typeof getNextSurplusCharacter() === "undefined") || (typeof getNextShortageCharacter() === "undefined")) {
+            //tgd.localLog("all items normalized as best as possible");
+            if (usingbatchMode === false) {
+                $.toaster({
+                    priority: 'success',
+                    title: 'Result',
+                    message: description + " already normalized as best as possible."
+                });
             }
-            if (callback !== undefined) {
+            if (typeof callback !== "undefined") {
                 callback();
             }
             return;
@@ -1183,22 +1561,26 @@ var app = new(function() {
         var adjustStateAfterTransfer = function(surplusCharacter, shortageCharacter, amountTransferred) {
             surplusCharacter.current = surplusCharacter.current - amountTransferred;
             surplusCharacter.needed = surplusCharacter.needed + amountTransferred;
-            //console.log("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
+            //tgd.localLog("[Surplus (" + surplusCharacter.character.classType + ")] current: " + surplusCharacter.current + ", needed: " + surplusCharacter.needed);
 
             shortageCharacter.needed = shortageCharacter.needed - amountTransferred;
             shortageCharacter.current = shortageCharacter.current + amountTransferred;
-            //console.log("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
+            //tgd.localLog("[Shortage (" + shortageCharacter.character.classType + ")] current: " + shortageCharacter.current + ", needed: " + shortageCharacter.needed);
         };
 
         var nextTransfer = function(callback) {
             var surplusCharacter = getNextSurplusCharacter();
             var shortageCharacter = getNextShortageCharacter();
 
-            if ((surplusCharacter == undefined) || (shortageCharacter == undefined)) {
-                //console.log("all items normalized as best as possible");
-                if (usingbatchMode == false) {
+            if ((typeof surplusCharacter === "undefined") || (typeof shortageCharacter === "undefined")) {
+                //tgd.localLog("all items normalized as best as possible");
+                if (usingbatchMode === false) {
                     //self.refresh();
-                    BootstrapDialog.alert("All items normalized as best as possible");
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Result',
+                        message: "All items normalized as best as possible"
+                    });
                 }
                 if (callback !== undefined) {
                     callback();
@@ -1206,7 +1588,7 @@ var app = new(function() {
                 return;
             }
             if (surplusCharacter.character.id == shortageCharacter.character.id) {
-                //console.log("surplusCharacter is shortageCharacter!?");
+                //tgd.localLog("surplusCharacter is shortageCharacter!?");
                 if (callback !== undefined) {
                     callback();
                 }
@@ -1217,22 +1599,22 @@ var app = new(function() {
                 description: description
             });
             var surplusItem = surplusItems[0];
-
+            //TODO: TypeError: undefined is not an object (evaluating 'surplusItem.primaryStat')
             var maxWeCanWorkWith = Math.min(surplusItem.primaryStat(), (surplusCharacter.needed * -1));
             var amountToTransfer = Math.min(maxWeCanWorkWith, shortageCharacter.needed);
 
-            //console.log("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
+            //tgd.localLog("Attempting to transfer " + description + " (" + amountToTransfer + ") from " +
             //surplusCharacter.character.id + " (" + surplusCharacter.character.classType + ") to " +
             //shortageCharacter.character.id + " (" + shortageCharacter.character.classType + ")");
 
             if (surplusCharacter.character.id == "Vault") {
-                //console.log("surplus is vault");
+                //tgd.localLog("surplus is vault");
                 surplusItem.transfer("Vault", shortageCharacter.character.id, amountToTransfer, function() {
                     adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
                     nextTransfer(callback);
                 });
             } else if (shortageCharacter.character.id == "Vault") {
-                //console.log("shortage is vault");
+                //tgd.localLog("shortage is vault");
                 surplusItem.transfer(surplusCharacter.character.id, "Vault", amountToTransfer, function() {
                     adjustStateAfterTransfer(surplusCharacter, shortageCharacter, amountToTransfer);
                     nextTransfer(callback);
@@ -1245,17 +1627,17 @@ var app = new(function() {
                     });
                 });
             }
-        }
+        };
 
         var messageStr = "<div><div>Normalize " + description + "</div><ul>";
         for (i = 0; i < characterStatus.length; i++) {
-            messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType + ": " +
+            messageStr = messageStr.concat("<li>" + characterStatus[i].character.classType() + ": " +
                 (characterStatus[i].needed > 0 ? "+" : "") +
                 characterStatus[i].needed + "</li>");
         }
         messageStr = messageStr.concat("</ul></div>");
 
-        if (usingbatchMode == false) {
+        if (usingbatchMode === false) {
             var dialogItself = (new tgd.dialog({
                 message: messageStr,
                 buttons: [{
@@ -1275,19 +1657,18 @@ var app = new(function() {
         } else {
             nextTransfer(callback);
         }
-    }
+    };
 
     this.normalizeAll = function(bucketType) {
-        //console.log("normalizeAll(" + bucketType + ")");
+        //tgd.localLog("normalizeAll(" + bucketType + ")");
 
         var done = function(onlyCharacters) {
-            var selector = function(i) {
-                return i.bucketType == bucketType;
-            };
 
-            /* gather all consumable and/or material descriptions from all characters */
-            var descriptions = _.union(
-                (onlyCharacters.length > 0 ? _.uniq(_.pluck(_.filter(onlyCharacters[0].items(), selector), "description")) : ""), (onlyCharacters.length > 1 ? _.uniq(_.pluck(_.filter(onlyCharacters[1].items(), selector), "description")) : ""), (onlyCharacters.length > 2 ? _.uniq(_.pluck(_.filter(onlyCharacters[2].items(), selector), "description")) : ""), (onlyCharacters.length > 3 ? _.uniq(_.pluck(_.filter(onlyCharacters[3].items(), selector), "description")) : ""));
+            var descriptions = _.uniq(_.flatten(_.map(onlyCharacters, function(character) {
+                return _.pluck(_.filter(character.items(), function(item) {
+                    return item.bucketType == bucketType && item.transferStatus < 2;
+                }), 'description');
+            })));
 
             var getNextDescription = (function() {
                 var i = 0;
@@ -1299,30 +1680,24 @@ var app = new(function() {
             var nextNormalize = function() {
                 var description = getNextDescription();
 
-                while (description !== undefined) {
-                    if ((description !== "Hadronic Essence") &&
-                        (description !== "Sapphire Wire") &&
-                        (description !== "Plasteel Plating")) {
-                        break;
-                    } else {
-                        description = getNextDescription();
-                    }
-                }
-
-                if (description == undefined) {
-                    BootstrapDialog.alert("All items normalized as best as possible");
+                if (typeof description === "undefined") {
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Result',
+                        message: "All items normalized as best as possible"
+                    });
                     return;
                 }
 
                 // normalizeSingle = function(description, characters, usingbatchMode, callback)
                 self.normalizeSingle(description, onlyCharacters, true, nextNormalize);
-            }
+            };
 
             nextNormalize();
-        }
+        };
 
         this.selectMultiCharacters("Normalize All " + bucketType, "Normalize: equally distribute all " + bucketType + " across the selected characters", done);
-    }
+    };
 
     this.selectMultiCharacters = function(title, description, callback) {
         var selectedStatus = [];
@@ -1339,7 +1714,7 @@ var app = new(function() {
                 }));
                 var charButtonClicked = function(self, id) {
                     selectedStatus[id] = !selectedStatus[id];
-                    self.find('img').css('border', (selectedStatus[id] == true ? "solid 3px yellow" : "none"));
+                    self.find('img').css('border', (selectedStatus[id] === true) ? "solid 3px yellow" : "none");
                 };
                 $.each(app.orderedCharacters(), function(i, val) {
                     var id = val.id;
@@ -1355,7 +1730,7 @@ var app = new(function() {
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
                     var characters = _.filter(app.orderedCharacters(), function(c) {
-                        return selectedStatus[c.id] == true;
+                        return selectedStatus[c.id] === true;
                     });
                     if (characters.length <= 1) {
                         BootstrapDialog.alert("Need to select two or more characters.");
@@ -1371,7 +1746,7 @@ var app = new(function() {
                 }
             }]
         })).title(title).show(true);
-    }
+    };
 
     this.setVaultTo = function(pos) {
         return function() {
@@ -1384,11 +1759,11 @@ var app = new(function() {
             } else {
                 return false;
             }
-        }
-    }
+        };
+    };
 
     this.isVaultAt = function(pos) {
-        return ko.computed(function() {
+        return ko.pureComputed(function() {
             var vault = _.findWhere(self.characters(), {
                 id: "Vault"
             });
@@ -1404,21 +1779,39 @@ var app = new(function() {
                 method: "notifyWhenChangesStop"
             }
         });
-    }
+    };
 
-    this.columnMode = ko.computed(function() {
-        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
-    });
+    this.columnMode = function(character) {
+        return ko.pureComputed(function() {
+            var totalCharacters = 3,
+                totalColumns = tgd.bootstrapGridColumns,
+                vaultColumns,
+                characterColumns;
+            if (self.layoutMode() == 'uneven') {
+                vaultColumns = self.vaultWidth();
+                characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
+            } else {
+                vaultColumns = self.lgColumn();
+                characterColumns = self.lgColumn();
+            }
+            if (character.id == "Vault") {
+                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+            } else {
+                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+            }
+        });
+    };
 
     this.setColumns = function(type, input) {
         return function() {
-            self[type + "Column"](12 / input.value);
-        }
-    }
+            self[type + "Column"](tgd.bootstrapGridColumns / input.value);
+            self.redraw();
+        };
+    };
 
     this.btnActive = function(type, input) {
-        return ko.computed(function() {
-            return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
+        return ko.pureComputed(function() {
+            return ((tgd.bootstrapGridColumns / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
         });
     };
 
@@ -1428,18 +1821,18 @@ var app = new(function() {
             try {
                 window._itemDefs = JSON.parse(itemDefs);
             } catch (e) {
-                console.log("invalid itemDefs");
+                tgd.localLog("invalid itemDefs");
                 self.itemDefs("");
             }
         }
-    }
+    };
 
     this.generateStatic = function() {
-        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background"];
+        var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background", "stats"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
             "description", "itemDescription", "bucketType", "type", "typeName", "tierType", "tierTypeName", "icon", "primaryStat",
             "progression", "weaponIndex", "armorIndex", "perks", "stats", "isUnique", "href"
-        ]
+        ];
         var profiles = _.map(self.characters(), function(profile) {
             var newProfile = {};
             _.each(profileKeys, function(key) {
@@ -1455,11 +1848,14 @@ var app = new(function() {
             return newProfile;
         });
         return JSON.stringify(profiles);
-    }
+    };
 
     this.downloadLocale = function(locale, version) {
+        var bungie_code = _.findWhere(tgd.languages, {
+            code: locale
+        }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + locale,
+            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {
@@ -1467,37 +1863,37 @@ var app = new(function() {
                 } catch (e) {
                     localStorage.clear();
                     localStorage.setItem("quota_error", "1");
-                    console.log("quota error");
+                    tgd.localLog("quota error");
                 }
                 self.defsLocale(locale);
                 self.defLocaleVersion(version);
                 window._itemDefs = data;
             }
         });
-    }
+    };
 
     this.onLocaleChange = function() {
         var locale = self.currentLocale();
-        console.log("locale changed to " + locale);
+        tgd.localLog("locale changed to " + locale);
         if (locale == "en") {
             self.defsLocale(locale);
         }
-        if (locale != "en" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
-            console.log("downloading language pack");
+        if (locale != "en" && locale != "tr" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
+            tgd.localLog("downloading language pack");
             self.downloadLocale(locale, tgd.version);
         }
-    }
+    };
 
     this.initLocale = function(callback) {
         self.locale.subscribe(self.onLocaleChange);
         self.appLocale.subscribe(self.onLocaleChange);
         if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
-            console.log("getting device locale internally");
+            tgd.localLog("getting device locale internally");
             navigator.globalization.getPreferredLanguage(function(a) {
                 if (a && a.value && a.value.indexOf("-") > -1) {
                     var value = a.value.split("-")[0];
                     if (_.pluck(tgd.languages, 'code').indexOf(value) > -1) {
-                        console.log("internal locale is " + value);
+                        tgd.localLog("internal locale is " + value);
                         if (value == "pt")
                             value = "pt-br";
                         self.locale(value);
@@ -1505,141 +1901,61 @@ var app = new(function() {
                 }
             });
         }
-    }
-	
-	var lostItemsHelper = [420519466, 1322081400, 2551875383];
-	var getBucketTypeHelper = function(item, info) {
-        if (item.location !== 4) {
-            return tgd.DestinyBucketTypes[info.bucketTypeHash];
+    };
+
+    /* This function can be used in the future to localize header names */
+    this.getBucketName = function(bucketType) {
+        if (bucketType == "Invisible") {
+            return "Special Orders";
+        } else {
+            return bucketType;
         }
-        if (item.isEquipment) {
-            return "Lost Items";
+    };
+
+    this.dndBeforeMove = function(arg) {
+        if (arg && arg.targetParent && arg.targetParent.length > 0) {
+            arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
         }
-        if (lostItemsHelper.indexOf(item.itemHash) > -1) {
-            return "Lost Items";
+    };
+
+    this.dndAfterMove = function(arg) {
+        var destination = _.filter(arg.targetParent, function(item) {
+            return item.character.id != arg.item.character.id;
+        });
+        if (destination.length === 0) {
+            destination = _.filter(arg.targetParent, function(item) {
+                return item._id != arg.item._id;
+            });
         }
-        return "Messages";
-    }
-	
-	this.loadStatic = function(username){
-		self.apiRequest({ 
-				username: username
-			},
-			function(staticProfiles){
-				if (staticProfiles.length == 0){
-					return BootstrapDialog.alert("There is no shared data to view for this profile");
-				}
-				if (staticProfiles && staticProfiles.Response){
-					var data = staticProfiles.Response.data;
-					//console.log("we got someone who hasnt used the app");
-					//window.d = data;
-					staticProfiles = _.map(data.characters, function(character, index){
-						var items = _.map(
-							_.filter( data.items, function(item){
-								return item.characterIndex == index;
-							}), function(item){
-							var info = _itemDefs[item.itemHash];	
-							if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-								var description, tierTypeName, itemDescription, itemTypeName;
-					            try {
-					                description = decodeURIComponent(info.itemName);
-					                tierTypeName = decodeURIComponent(info.tierTypeName);
-					                itemDescription = decodeURIComponent(info.itemDescription);
-					                itemTypeName = decodeURIComponent(info.itemTypeName);
-					            } catch (e) {
-					                description = info.itemName;
-					                tierTypeName = info.tierTypeName;
-					                itemDescription = info.itemDescription;
-					                itemTypeName = info.itemTypeName;
-					            }
-								var primaryStat = item.quantity;
-								if (item && item.primaryStat && item.primaryStat.value){
-									primaryStat = item.primaryStat.value;
-								}
-								return {
-									id: item.itemHash,
-									_id: item.itemId,
-									characterId: data.characters[item.characterIndex].characterBase.characterId,
-									damageType: item.damageType,
-	                				damageTypeName: tgd.DestinyDamageTypes[item.damageType],
-									isEquipped: item.transferStatus == 1,
-									isGridComplete: item.isGridComplete,
-									locked: item.locked,
-									description: description,
-									itemDescription: itemDescription,
-									bucketType: getBucketTypeHelper(item, info),
-									type: info.itemSubType,
-									typeName: itemTypeName,
-									tierType: info.tierType,
-									tierTypeName: tierTypeName,
-									icon: "data" + info.icon,
-									primaryStat: primaryStat,
-									progression: false,
-									weaponIndex: tgd.DestinyWeaponPieces.indexOf(getBucketTypeHelper(item, info)),
-									armorIndex: tgd.DestinyArmorPieces.indexOf(getBucketTypeHelper(item, info)),
-									perks: [],
-									stats: [],
-									isUnique: false,
-									href: "https://destinydb.com/items/" + item.itemHash
-								}
-							}
-						});
-						
-						return {
-							items: _.filter(items, function(item){ return typeof item !== "undefined" }),
-							id: character.characterBase.characterId,
-							race: _raceDefs[character.characterBase.raceHash].raceName,
-							order: index,
-							gender: tgd.DestinyGender[character.characterBase.genderType],
-							classType: tgd.DestinyClass[character.characterBase.classType],
-							level: character.characterLevel,
-							imgIcon: self.bungie.getUrl() + character.emblemPath,
-							icon: self.makeBackgroundUrl(character.emblemPath),
-							background: self.makeBackgroundUrl(character.backgroundPath)
-						}
-					});
-				} 
-				_.each(staticProfiles, function(data, index){
-					var profile = new Profile(data.id == "Vault" ? "Vault" : data, data.items, index);
-					self.addTierTypes(profile.items());
-                    self.addWeaponTypes(profile.weapons());
-					self.characters.push(profile);
-					setTimeout(self.bucketSizeHandler, 1000);
-					setTimeout(self.quickIconHighlighter, 1000);
-				});
-			}
-		)
-	}
+        if (destination.length > 0) {
+            destination = destination[0];
+            if (destination.character.id != arg.item.character.id) {
+                var action = destination.isEquipped() ? "equip" : "store";
+                $.toaster({
+                    priority: 'info',
+                    title: 'Transfer',
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName()
+                });
+                arg.item[action](destination.character.id);
+            }
+        }
+    };
 
     this.init = function() {
-        _.each(tgd.DestinyLayout, function(object) {
-            self.allLayouts.push(new Layout(object));
-        });	
-        self.initLocale();
-		self.bungie = new bungie();
-        self.initItemDefs();
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
+        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
+        tgd.swapTemplate = _.template(tgd.swapTemplate);
         tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
-        tgd.duplicates = ko.observableArray().extend({
-            rateLimit: {
-                timeout: 5000,
-                method: "notifyWhenChangesStop"
-            }
-        });
-		self.loadStatic(unescape(location.search.replace('?','')));
-        $("form").bind("submit", false);
-        $("html").click(self.globalClickHandler);
-        /* this fixes issue #16 */
-        self.activeView.subscribe(function() {
-            setTimeout(self.bucketSizeHandler, 500);
-        });
+        self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        ko.applyBindings(self);
-    }
-});
+    };
+};
+
+window.app = new app();
 
 window.zam_tooltips = {
     addIcons: false,
@@ -1650,4 +1966,29 @@ window.zam_tooltips = {
 };
 BootstrapDialog.defaultOptions.nl2br = false;
 
-$(document).ready(app.init);
+if (isMobile) {
+    window.addEventListener("statusTap", function() {
+        var target = $("body");
+
+        //disable touch scroll to kill existing inertial movement
+        target.css({
+            '-webkit-overflow-scrolling': 'auto',
+            'overflow-y': 'hidden'
+        });
+
+        //animate
+        target.animate({
+            scrollTop: 0
+        }, 300, "swing", function() {
+
+            //re-enable touch scrolling
+            target.css({
+                '-webkit-overflow-scrolling': 'touch',
+                'overflow-y': 'scroll'
+            });
+        });
+    });
+    document.addEventListener('deviceready', app.init, false);
+} else {
+    $(document).ready(app.init);
+}

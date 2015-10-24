@@ -2392,7 +2392,6 @@ function toggleCssProps(manager, add) {
  * @param {Object} data
  */
 function triggerDomEvent(event, data) {
-	//TODO: This might need fixed seems wrong according to this: http://stackoverflow.com/questions/17503963/key-event-from-firefox-addon-error-permission-denied-to-access-property-type
     var gestureEvent = document.createEvent('Event');
     gestureEvent.initEvent(event, true, true);
     gestureEvent.gesture = data;
