@@ -47,6 +47,8 @@ tgd.DestinyClass = {
     "2": "Warlock",
     "3": "Unknown"
 };
+tgd.DestinyClassNames = {}; 
+Object.keys(tgd.DestinyClass).forEach(function(key, index){ tgd.DestinyClassNames[tgd.DestinyClass[index]] = key;  });
 tgd.DestinyDamageTypes = {
     "0": "None",
     "1": "Kinetic",
