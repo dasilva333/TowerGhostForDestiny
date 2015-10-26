@@ -1014,8 +1014,8 @@ var app = function() {
             total = avatars.length;
             _.map(avatars, function(avatar) {
                 var profile = new Profile(avatar);
-                self.addTierTypes(profile.items());
-                self.addWeaponTypes(profile.weapons());
+				profile.weapons.subscribe(self.addWeaponTypes);
+				profile.items.subscribe(self.addTierTypes);
                 done(profile);
             });
         });
