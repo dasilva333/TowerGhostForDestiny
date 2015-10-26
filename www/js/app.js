@@ -1141,7 +1141,10 @@ var app = function() {
     };
 
     this.bucketSizeHandler = function() {
-        var buckets = $("div.profile .itemBucket:visible").css({ 'height': 'auto', 'min-height': 'auto' });
+        var buckets = $("div.profile .itemBucket:visible").css({
+            'height': 'auto',
+            'min-height': 'auto'
+        });
         if (self.padBucketHeight() === true) {
             var bucketSizes = {};
             var itemHeight = 0;
@@ -1193,10 +1196,9 @@ var app = function() {
             var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
             vaultSubClass.css("min-height", notVaultSubClass.height());
             vaultSubClass.css("visibility", "hidden");
+        } else {
+            buckets.find(".itemBucketBG").css("height", "auto");
         }
-		else {
-			buckets.find(".itemBucketBG").css("height", "auto");
-		}
     };
 
     this.globalClickHandler = function(e) {
@@ -1975,7 +1977,7 @@ var app = function() {
         self.doRefresh.subscribe(self.refreshHandler);
         self.refreshSeconds.subscribe(self.refreshHandler);
         self.loadoutMode.subscribe(self.refreshHandler);
-		self.padBucketHeight.subscribe(self.redraw);
+        self.padBucketHeight.subscribe(self.redraw);
         self.refreshHandler();
         self.bungie_cookies = "";
         if (window.localStorage && window.localStorage.getItem) {
