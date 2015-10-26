@@ -1158,7 +1158,7 @@ var app = function() {
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
-                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight)) {
+                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight) && !isVault) {
                     itemHeight = visibleBucketHeight;
                 }
                 if (!(bucketType in bucketSizes)) {
