@@ -1175,11 +1175,12 @@ var app = function() {
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
                 var maxProfilesHeight = _.max(profileSizes);
-                var minNumRows = 1;
-                if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
-                    minNumRows = 3;
-                } else if (type == "Materials") {
+                var minNumRows = 3;
+                if (type == "Bounties") {
                     minNumRows = 4;
+                }
+				else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
+                    minNumRows = 5;
                 }
                 maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
                 var itemBuckets = buckets.filter("." + type);
