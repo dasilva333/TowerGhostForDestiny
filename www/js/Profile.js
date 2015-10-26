@@ -17,6 +17,7 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
+    this.items.subscribe(app.redraw);
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
     this.weapons = ko.pureComputed(this._weapons, this);
@@ -123,7 +124,8 @@ Profile.prototype = {
             if (results && results.data && results.data.buckets) {
                 var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
                 _.each(items, function(item) {
-                    self.items.push(new Item(item, self, true));
+                    var processedItem = new Item(item, self);
+                    if ("id" in processedItem) self.items.push(processedItem);
                 });
                 done();
             } else {
@@ -169,6 +171,7 @@ Profile.prototype = {
         return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
     },
     _powerLevel: function() {
+        if (this.id == "Vault") return "";
         return this.calculatePowerLevelWithItems(this.equippedGear());
     },
     _reloadBucket: function(model, event, callback) {
@@ -516,9 +519,7 @@ Profile.prototype = {
 
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
-                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1)
-                ) && ((type == "All" && item.armorIndex > -1) || type != "All");
+                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1) || (item.weaponIndex > -1)) && ((type == "All" && item.armorIndex > -1) || type != "All");
             });
             //console.log("bucket: " + bucket);
             //console.log(candidates);
