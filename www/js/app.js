@@ -1014,8 +1014,8 @@ var app = function() {
             total = avatars.length;
             _.map(avatars, function(avatar) {
                 var profile = new Profile(avatar);
-                self.addTierTypes(profile.items());
-                self.addWeaponTypes(profile.weapons());
+                profile.weapons.subscribe(self.addWeaponTypes);
+                profile.items.subscribe(self.addTierTypes);
                 done(profile);
             });
         });
@@ -1141,7 +1141,10 @@ var app = function() {
     };
 
     this.bucketSizeHandler = function() {
-        var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
+        var buckets = $("div.profile .itemBucket:visible").css({
+            'height': 'auto',
+            'min-height': 'auto'
+        });
         if (self.padBucketHeight() === true) {
             var bucketSizes = {};
             var itemHeight = 0;
@@ -1155,7 +1158,7 @@ var app = function() {
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
-                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight)) {
+                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight) && !isVault) {
                     itemHeight = visibleBucketHeight;
                 }
                 if (!(bucketType in bucketSizes)) {
@@ -1171,28 +1174,31 @@ var app = function() {
                 //this is the max height the non-vault characters will use
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
-                /*var maxProfilesHeight = _.max(profileSizes);
-                var minNumRows = 1;
-                if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
-                    minNumRows = 3;
-                } else if (type == "Materials") {
+                var maxProfilesHeight = _.max(profileSizes);
+                var minNumRows = 3;
+                if (type == "Bounties") {
                     minNumRows = 4;
-                }*/
-                //maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
+                }
+				else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
+                    minNumRows = 5;
+                }
+                maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
                 var itemBuckets = buckets.filter("." + type);
                 /*if ( type == "Heavy") {
                 	console.log(type + " " + maxHeight);
                 	console.log(type + " " + maxProfilesHeight);
                 }*/
                 itemBuckets.css("min-height", maxHeight);
-                itemBuckets.find(".itemBucketBG").css("height", maxHeight);
-                itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxHeight);
+                itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
+                //itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxProfilesHeight);
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
             var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
             vaultSubClass.css("min-height", notVaultSubClass.height());
             vaultSubClass.css("visibility", "hidden");
+        } else {
+            buckets.find(".itemBucketBG").css("height", "auto");
         }
     };
 
@@ -1972,6 +1978,7 @@ var app = function() {
         self.doRefresh.subscribe(self.refreshHandler);
         self.refreshSeconds.subscribe(self.refreshHandler);
         self.loadoutMode.subscribe(self.refreshHandler);
+        self.padBucketHeight.subscribe(self.redraw);
         self.refreshHandler();
         self.bungie_cookies = "";
         if (window.localStorage && window.localStorage.getItem) {
