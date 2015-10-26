@@ -1171,22 +1171,22 @@ var app = function() {
                 //this is the max height the non-vault characters will use
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
-                /*var maxProfilesHeight = _.max(profileSizes);
+                var maxProfilesHeight = _.max(profileSizes);
                 var minNumRows = 1;
                 if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
                     minNumRows = 3;
                 } else if (type == "Materials") {
                     minNumRows = 4;
-                }*/
-                //maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
+                }
+                maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
                 var itemBuckets = buckets.filter("." + type);
                 /*if ( type == "Heavy") {
                 	console.log(type + " " + maxHeight);
                 	console.log(type + " " + maxProfilesHeight);
                 }*/
                 itemBuckets.css("min-height", maxHeight);
-                itemBuckets.find(".itemBucketBG").css("height", maxHeight);
-                itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxHeight);
+                itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
+                //itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxProfilesHeight);
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
