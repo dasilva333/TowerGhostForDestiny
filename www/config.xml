@@ -28,7 +28,7 @@
     <gap:plugin name="org.apache.cordova.globalization" />
 	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
-    <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
+    <gap:plugin name="org.apache.cordova.device" />
 	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
 	
 	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
