@@ -24,6 +24,7 @@ tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items"
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyGeneralExceptions = ["Ghost","Artifact"];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
+tgd.DestinyFiveRowBuckets = ["Materials","Consumables","Invisible","Messages","Lost"];
 tgd.DestinyLayout = [
   { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
   { name: "Armor", array: 'armor', counts: [72,50], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
@@ -47,6 +48,8 @@ tgd.DestinyClass = {
     "2": "Warlock",
     "3": "Unknown"
 };
+tgd.DestinyClassNames = {}; 
+Object.keys(tgd.DestinyClass).forEach(function(key, index){ tgd.DestinyClassNames[tgd.DestinyClass[index]] = key;  });
 tgd.DestinyDamageTypes = {
     "0": "None",
     "1": "Kinetic",
