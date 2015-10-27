@@ -1,4 +1,4 @@
-// Slate 3.3.4
+// Slate 3.3.5
 // Variables
 // --------------------------------------------------
 
@@ -87,17 +87,17 @@
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
 
-@padding-base-vertical:     4px;
-@padding-base-horizontal:   8px;
+@padding-base-vertical:     8px;
+@padding-base-horizontal:   12px;
 
-@padding-large-vertical:    10px;
-@padding-large-horizontal:  12px;
+@padding-large-vertical:    14px;
+@padding-large-horizontal:  16px;
 
-@padding-small-vertical:    3px;
-@padding-small-horizontal:  7px;
+@padding-small-vertical:    5px;
+@padding-small-horizontal:  10px;
 
 @padding-xs-vertical:       1px;
-@padding-xs-horizontal:     4px;
+@padding-xs-horizontal:     5px;
 
 @line-height-large:         1.3333333; // extra decimals for Win 8.1 Chrome
 @line-height-small:         1.5;
@@ -169,6 +169,11 @@
 @btn-danger-border:              @btn-danger-bg;
 
 @btn-link-disabled-color:        @gray-light;
+
+// Allows for customizing button radius independently from global border radius
+@btn-border-radius-base:         @border-radius-base;
+@btn-border-radius-large:        @border-radius-large;
+@btn-border-radius-small:        @border-radius-small;
 
 
 //== Forms
@@ -279,7 +284,7 @@
 
 // Extra small screen / phone
 //** Deprecated `@screen-xs` as of v3.0.1
-@screen-xs:                  0px;
+@screen-xs:                  480px;
 //** Deprecated `@screen-xs-min` as of v3.2.0
 @screen-xs-min:              @screen-xs;
 //** Deprecated `@screen-phone` as of v3.0.1
@@ -287,21 +292,21 @@
 
 // Small screen / tablet
 //** Deprecated `@screen-sm` as of v3.0.1
-@screen-sm:                  470px;
+@screen-sm:                  768px;
 @screen-sm-min:              @screen-sm;
 //** Deprecated `@screen-tablet` as of v3.0.1
 @screen-tablet:              @screen-sm-min;
 
 // Medium screen / desktop
 //** Deprecated `@screen-md` as of v3.0.1
-@screen-md:                  720px;
+@screen-md:                  992px;
 @screen-md-min:              @screen-md;
 //** Deprecated `@screen-desktop` as of v3.0.1
 @screen-desktop:             @screen-md-min;
 
 // Large screen / wide desktop
 //** Deprecated `@screen-lg` as of v3.0.1
-@screen-lg:                  1024px;
+@screen-lg:                  1200px;
 @screen-lg-min:              @screen-lg;
 //** Deprecated `@screen-lg-desktop` as of v3.0.1
 @screen-lg-desktop:          @screen-lg-min;
@@ -317,12 +322,12 @@
 //## Define your custom responsive grid.
 
 //** Number of columns in the grid.
-@grid-columns:              24;
+@grid-columns:              12;
 //** Padding between columns. Gets divided in half for the left and right.
-@grid-gutter-width:         10px;
+@grid-gutter-width:         30px;
 // Navbar collapse
 //** Point at which the navbar becomes uncollapsed.
-@grid-float-breakpoint:     @screen-lg-min;
+@grid-float-breakpoint:     @screen-sm-min;
 //** Point at which the navbar begins collapsing.
 @grid-float-breakpoint-max: (@grid-float-breakpoint - 1);
 
@@ -332,17 +337,17 @@
 //## Define the maximum width of `.container` for different screen sizes.
 
 // Small screen / tablet
-@container-tablet:             (470px + @grid-gutter-width);
+@container-tablet:             (720px + @grid-gutter-width);
 //** For `@screen-sm-min` and up.
 @container-sm:                 @container-tablet;
 
 // Medium screen / desktop
-@container-desktop:            (720px + @grid-gutter-width);
+@container-desktop:            (940px + @grid-gutter-width);
 //** For `@screen-md-min` and up.
 @container-md:                 @container-desktop;
 
 // Large screen / wide desktop
-@container-large-desktop:      (1024px);
+@container-large-desktop:      (1140px + @grid-gutter-width);
 //** For `@screen-lg-min` and up.
 @container-lg:                 @container-large-desktop;
 
@@ -383,7 +388,7 @@
 @navbar-default-toggle-border-color:       darken(@navbar-default-bg, 8%);
 
 
-// Inverted navbar
+//=== Inverted navbar
 // Reset inverted navbar basics
 @navbar-inverse-color:                      #ccc;
 @navbar-inverse-bg:                         @brand-primary;
@@ -484,6 +489,7 @@
 @jumbotron-bg:                   darken(@body-bg, 5%);
 @jumbotron-heading-color:        inherit;
 @jumbotron-font-size:            ceil((@font-size-base * 1.5));
+@jumbotron-heading-font-size:    ceil((@font-size-base * 4.5));
 
 
 //== Form states and alerts
