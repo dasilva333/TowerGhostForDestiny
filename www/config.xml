@@ -25,7 +25,7 @@
 	<preference name="android-targetSdkVersion" value="19" />
     <preference name="android-installLocation" value="auto" />
     <gap:plugin name="org.apache.cordova.globalization" />
-    <gap:plugin name="org.apache.cordova.inappbrowser" source="plugins.cordova.io" version="0.6.0" />
+	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
 	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
