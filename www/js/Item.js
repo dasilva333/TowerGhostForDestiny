@@ -46,11 +46,6 @@ var Item = function(model, profile) {
 Item.prototype = {
     init: function(item) {
         var self = this;
-        if (!(item.itemHash in _itemDefs)) {
-            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
-            tgd.localLog(item.itemHash);
-            return;
-        }
         var info = {};
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
@@ -63,6 +58,8 @@ Item.prototype = {
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Classified"
             };
+            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
+            tgd.localLog(item.itemHash);
         }
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             var description, tierTypeName, itemDescription, itemTypeName;
