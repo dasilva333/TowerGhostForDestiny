@@ -1949,6 +1949,12 @@ var app = function() {
 
     this.init = function() {
         $.idleTimer(1000 * 60 * 30);
+		if ( self.lgColumn() == "3" ||  self.mdColumn() == "4" ){
+			self.lgColumn(tgd.defaults.lgColumn);
+			self.mdColumn(tgd.defaults.mdColumn);
+			self.smColumn(tgd.defaults.smColumn);
+			self.xsColumn(tgd.defaults.xsColumn);
+		}
         $(document).on("idle.idleTimer", function(event, elem, obj) {
             clearInterval(self.refreshInterval);
         });
