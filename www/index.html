@@ -727,6 +727,7 @@
                 <controls data-bind="visible: $parent.dynamicMode() == false">
                     <input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
                     <span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
+					<span data-bind="fastclick: saveNew, text: $root.activeText().loadouts_save_new">Save as New</span>
                     <span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
                 </controls>
                 <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
