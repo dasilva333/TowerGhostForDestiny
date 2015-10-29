@@ -1178,8 +1178,7 @@ var app = function() {
                 var minNumRows = 3;
                 if (type == "Bounties") {
                     minNumRows = 4;
-                }
-				else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
+                } else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
                     minNumRows = 5;
                 }
                 maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
@@ -1949,12 +1948,12 @@ var app = function() {
 
     this.init = function() {
         $.idleTimer(1000 * 60 * 30);
-		if ( self.lgColumn() == "3" ||  self.mdColumn() == "4" ){
-			self.lgColumn(tgd.defaults.lgColumn);
-			self.mdColumn(tgd.defaults.mdColumn);
-			self.smColumn(tgd.defaults.smColumn);
-			self.xsColumn(tgd.defaults.xsColumn);
-		}
+        if (self.lgColumn() == "3" || self.mdColumn() == "4") {
+            self.lgColumn(tgd.defaults.lgColumn);
+            self.mdColumn(tgd.defaults.mdColumn);
+            self.smColumn(tgd.defaults.smColumn);
+            self.xsColumn(tgd.defaults.xsColumn);
+        }
         $(document).on("idle.idleTimer", function(event, elem, obj) {
             clearInterval(self.refreshInterval);
         });

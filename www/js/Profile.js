@@ -104,19 +104,19 @@ Profile.prototype = {
     reloadBucketFilter: function(buckets) {
         var self = this;
         return function(item) {
-	        var info = {};
-	        if (item.itemHash in _itemDefs) {
-	            info = _itemDefs[item.itemHash];
-	        } else {
-	            /* Classified Items */
-	            info = {
-	                bucketTypeHash: "1498876634",
-	                itemName: "Classified",
-	                tierTypeName: "Exotic",
-	                icon: "/img/misc/missing_icon.png",
-	                itemTypeName: "Classified"
-	            };
-	        }
+            var info = {};
+            if (item.itemHash in _itemDefs) {
+                info = _itemDefs[item.itemHash];
+            } else {
+                /* Classified Items */
+                info = {
+                    bucketTypeHash: "1498876634",
+                    itemName: "Classified",
+                    tierTypeName: "Exotic",
+                    icon: "/img/misc/missing_icon.png",
+                    itemTypeName: "Classified"
+                };
+            }
             if (info && info.bucketTypeHash) {
                 if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
                     var itemBucketType = self.getBucketTypeHelper(item, info);
