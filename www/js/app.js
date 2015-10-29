@@ -2094,6 +2094,10 @@ var app = function() {
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
+		$( document ).on( "click", "a[target='_system']", function() {
+			window.open(this.href,"_system");
+			return false;
+		});
         ko.applyBindings(self);
     };
 };

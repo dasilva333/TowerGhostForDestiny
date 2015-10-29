@@ -538,7 +538,7 @@
         </div>
     </div>
     <div class="alert alert-info" data-bind="visible: shareView" style="display:none;">
-        <span data-bind="text: $root.activeText().text_shareurl"></span>: <a target="_blank" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
+        <span data-bind="text: $root.activeText().text_shareurl"></span>: <a target="_system" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
     </div>
     <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
         <strong data-bind="text: $root.activeText().missing_items">Missing Items</strong>
@@ -563,10 +563,10 @@
                             <p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
                             <div class="btn-padding">
                                 <div class="form-group">
-                                    <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
+                                    <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
                                 </div>
                                 <div class="form-group">
-                                    <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" target="_blank" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
+                                    <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
                                 </div>
                             </div>
                             <p data-bind="text: $root.activeText().login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
@@ -592,8 +592,8 @@
             </div>
             <div>
                 <span data-bind="text: $root.activeText().login_authenticating_pt2">If log in screen remains for 4+ minutes, use these links for</span>
-                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;" target="_blank">Xbox Live</a> or
-                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;" target="_blank">Playstation Network</a>
+                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;">Xbox Live</a> or
+                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;">Playstation Network</a>
                 <span data-bind="text: $root.activeText().login_authenticating_pt3">to retry signing in. </span>
             </div>
         </div>
@@ -775,13 +775,13 @@
                         </div>
                         <hr>
                         <div class="form-group">
-                            <a target="_blank" sku="small" class="donate btn btn-secondary btn-block">Small Donation</a>
+                            <a sku="small" class="donate btn btn-secondary btn-block">Small Donation</a>
                         </div>
                         <div class="form-group">
-                            <a target="_blank" sku="medium" class="donate btn btn-secondary btn-block">Medium Donation</a>
+                            <a sku="medium" class="donate btn btn-secondary btn-block">Medium Donation</a>
                         </div>
                         <div class="form-group">
-                            <a target="_blank" sku="large" class="donate btn btn-secondary btn-block">Large Donation</a>
+                            <a sku="large" class="donate btn btn-secondary btn-block">Large Donation</a>
                         </div>
                     </div>
                 </div>
@@ -791,7 +791,7 @@
     <div id="about" style="display:none">
         <h2 style="margin-top:0;">Tower Ghost for Destiny<br>Manage your gear anywhere</h2>
         <p><strong>Version: <span class="version">3.4.8</span></strong></p>
-        <p>This is a hobby project by <a href="https://github.com/dasilva333/">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
+        <p>This is a hobby project by <a href="https://github.com/dasilva333/" target="_system">Richard Pinedo</a> and is not financed by or associated with Bungie. All information used on this app is the property of Bungie.</p>
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="margin:0; padding:0;">
             <input type="hidden" name="cmd" value="_s-xclick">
             <input type="hidden" name="hosted_button_id" value="5X265ELN4Y5FU">
@@ -800,8 +800,8 @@
         </form>
         <h3>Current Features Supported:</h3>
         <ul>
-            <li><a href="http://destinydb.com" target="_blank">DestinyDB.com</a> tooltips option now display custom stats: perks, burn, level for armor and weapons</li>
-            <li>Loadouts sync across all devices via <a href="http://www.TowerGhostForDestiny.com">www.TowerGhostForDestiny.com</a></li>
+            <li><a href="http://destinydb.com" target="_system">DestinyDB.com</a> tooltips option now display custom stats: perks, burn, level for armor and weapons</li>
+            <li>Loadouts sync across all devices via <a href="http://www.TowerGhostForDestiny.com" target="_system">www.TowerGhostForDestiny.com</a></li>
             <li>Multiple primaries, special, heavy per loadout</li>
             <li>Option to equip an item per bucket in your loadout</li>
             <li>Equipping items & transferring items across characters</li>
@@ -820,20 +820,20 @@
             <li>Move all of a consumable/material to a character (consolidate)</li>
         </ul>
         <h3>Latest News and Info</h3>
-        <a href="https://twitter.com/TowerGhostApp" target="_blank">Follow me on Twitter @TowerGhostApp</a>
+        <a href="https://twitter.com/TowerGhostApp" target="_system">Follow me on Twitter @TowerGhostApp</a>
         <h3>Support and New Issues:</h3>
-        <p><a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_blank">Github.com</a> or Contact me on via email <a href="mailto:support@towerghostfordestiny.com">support@towerghostfordestiny.com</a></p>
+        <p><a href="https://github.com/dasilva333/TowerGhostForDestiny" target="_system">Github.com</a> or Contact me on via email <a href="mailto:support@towerghostfordestiny.com">support@towerghostfordestiny.com</a></p>
     </div>
     <div id="help" style="display:none">
         <h2>Usage Guides</h2>
 
         <ul>
-            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irno8/feature_sharing_and_viewing_arsenal_online/">Sharing and Viewing Arsenal Online</a></li>
-            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3inqkh/feature_transferring_items_with_tower_ghost/">Transferring Items</a></li>
-            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irm1y/feature_transfer_methods_available_in_tower_ghost/">Transfer Methods Available</a></li>
-            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3imt9m/feature_tower_ghost_for_destiny_tooltips/">Understanding the Tooltips</a></li>
-            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irqst/feature_using_the_filters_quickly_and_effectively/">Using the filters quickly and effectively</a></li>
-            <li><a target="_blank" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3nlua1/feature_using_the_stats_tool_effectively/">Using the stats tool effectively</a></li>
+            <li><a target="_system" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irno8/feature_sharing_and_viewing_arsenal_online/">Sharing and Viewing Arsenal Online</a></li>
+            <li><a target="_system" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3inqkh/feature_transferring_items_with_tower_ghost/">Transferring Items</a></li>
+            <li><a target="_system" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irm1y/feature_transfer_methods_available_in_tower_ghost/">Transfer Methods Available</a></li>
+            <li><a target="_system" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3imt9m/feature_tower_ghost_for_destiny_tooltips/">Understanding the Tooltips</a></li>
+            <li><a target="_system" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3irqst/feature_using_the_filters_quickly_and_effectively/">Using the filters quickly and effectively</a></li>
+            <li><a target="_system" href="https://www.reddit.com/r/TowerGhostForDestiny/comments/3nlua1/feature_using_the_stats_tool_effectively/">Using the stats tool effectively</a></li>
         </ul>
 
         <h2>Definitions</h2>
