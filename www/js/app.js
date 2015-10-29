@@ -629,6 +629,15 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
+				if ( activeItem.weaponIndex > -1 ){
+					var magazineRow = stats.find(".stat-bar:last");
+					var clonedRow = magazineRow.clone();
+					var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key){  obj.name = _statDefs[key].statName; return obj });
+					var aaStat = _.findWhere( itemStats, { name: "Aim assistance" });
+					clonedRow.find(".stat-bar-label").html(aaStat.name + ":" + aaStat.value);
+					clonedRow.find(".stat-bar-static-value").html("Min/Max : " + aaStat.minimum + "/" + aaStat.maximum);
+					magazineRow.before(clonedRow);
+				}
             }
             if (activeItem.perks.length > 0) {
                 if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
