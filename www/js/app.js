@@ -381,7 +381,7 @@ var app = function() {
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
-	this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
+    this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
@@ -736,7 +736,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         self.tooltipsEnabled(!self.tooltipsEnabled());
     };
-	this.toggleAdvancedTooltips = function() {
+    this.toggleAdvancedTooltips = function() {
         self.toggleBootstrapMenu();
         self.advancedTooltips(!self.advancedTooltips());
     };
