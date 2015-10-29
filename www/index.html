@@ -554,7 +554,7 @@
                 <strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
             </div>
             <div data-bind="visible: typeof code !== 'undefined' && (code == 99) || (typeof error !== 'undefined' && (error == 'network error:502' || error == 'network error:503'))">
-                <div class="col-xs-24 col-sm-16 col-sm-offset-2 col-lg-8 col-lg-offset-4 text-center">
+                <div class="col-xs-24 col-sm-16 col-sm-offset-4 col-lg-8 col-lg-offset-8 text-center">
                     <div class="panel panel-success" id="loginForm">
                         <div class="panel-heading">
                             <h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
@@ -610,7 +610,7 @@
                     <img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, click: function(){ toggleLock() }" style="cursor:pointer;" />
                     <!-- /ko -->
                 </div>
-                <div class="locations col-xs-24 col-md-20 col-md-offset-1 col-lg-28 col-lg-offset-2">
+                <div class="locations col-xs-24 col-md-20 col-md-offset-2 col-lg-28 col-lg-offset-4">
                     <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                         <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
                             <div class="attkIcon">
