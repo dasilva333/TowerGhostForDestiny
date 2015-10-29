@@ -168,6 +168,7 @@ tgd.defaults = {
 	shareUrl: "",
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : "true",
+	advancedTooltips: isMobile ? false : "true",
 	autoXferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
 	dragAndDrop: false,

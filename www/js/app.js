@@ -381,6 +381,7 @@ var app = function() {
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
@@ -629,33 +630,47 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
+                if (self.advancedTooltips() == true && activeItem.weaponIndex > -1) {
+                    var magazineRow = stats.find(".stat-bar:last");
+                    var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key) {
+                        obj.name = _statDefs[key].statName;
+                        return obj;
+                    });
+                    var desireableStats = ["Aim assistance", "Equip Speed"];
+                    _.each(desireableStats, function(statName) {
+                        var statObj = _.findWhere(itemStats, {
+                            name: statName
+                        });
+                        var clonedRow = magazineRow.clone();
+                        clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                        magazineRow.before(clonedRow);
+                    });
+                }
             }
             if (activeItem.perks.length > 0) {
+                var activePerksTemplate = tgd.perksTemplate({
+                    perks: _.filter(activeItem.perks, function(perk) {
+                        return perk.active == true || (perk.active == false && self.advancedTooltips() == true);
+                    })
+                });
                 if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
                     // Weapon Perks (Pre-HoW) 
                     if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
-                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-talent").replaceWith(activePerksTemplate);
                     }
                     // Weapon Perks (Post-HoW)
                     else if ($content.find(".destt-talent").length === 0) {
-                        $content.find(".destt-stat").after(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
-                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-talent").replaceWith(activePerksTemplate);
                     }
                     // this applies to ghost shells, maybe re rollable armor
                     else {
-                        $content.find(".destt-stat").after(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 }
             }
@@ -720,6 +735,10 @@ var app = function() {
     this.toggleDestinyDbTooltips = function() {
         self.toggleBootstrapMenu();
         self.tooltipsEnabled(!self.tooltipsEnabled());
+    };
+    this.toggleAdvancedTooltips = function() {
+        self.toggleBootstrapMenu();
+        self.advancedTooltips(!self.advancedTooltips());
     };
     this.toggleShareView = function() {
         self.toggleBootstrapMenu();
@@ -1178,8 +1197,7 @@ var app = function() {
                 var minNumRows = 3;
                 if (type == "Bounties") {
                     minNumRows = 4;
-                }
-				else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
+                } else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
                     minNumRows = 5;
                 }
                 maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
@@ -1949,6 +1967,12 @@ var app = function() {
 
     this.init = function() {
         $.idleTimer(1000 * 60 * 30);
+        if (self.lgColumn() == "3" || self.mdColumn() == "4") {
+            self.lgColumn(tgd.defaults.lgColumn);
+            self.mdColumn(tgd.defaults.mdColumn);
+            self.smColumn(tgd.defaults.smColumn);
+            self.xsColumn(tgd.defaults.xsColumn);
+        }
         $(document).on("idle.idleTimer", function(event, elem, obj) {
             clearInterval(self.refreshInterval);
         });
@@ -2080,6 +2104,10 @@ var app = function() {
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
+        $(document).on("click", "a[target='_system']", function() {
+            window.open(this.href, "_system");
+            return false;
+        });
         ko.applyBindings(self);
     };
 };
