@@ -5,12 +5,12 @@
 @import '../../build/bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/responsive-utilities';
 
 // Vars
-$black: #000;
-$white: #fff;
-$grey: #f5f5f5;
-$green: #62c462;
-$blue-dark: rgb(30, 36, 43);
-$level_yellow: rgb(245, 220, 86);
+@black: #000;
+@white: #fff;
+@grey: #f5f5f5;
+@green: #62c462;
+@blue-dark: rgb(30, 36, 43);
+@level_yellow: rgb(245, 220, 86);
 
 // Globals
 html:not(.touch) {
@@ -35,25 +35,25 @@ h1, h2, h3, h4, h5, h6 {
 #charactersContainer {
 	
 	.profile {
-		@include clearfix;
+		.clearfix;
 
 		.character {
-			@include clearfix;
+			.clearfix;
 
 			&-box {
-				@include make-xs-column(12);
+				.make-xs-column(12);
 				display: block;
 				height: 46px;
 				overflow: hidden;
 				padding: 0 0 0 50px;
 				margin: 5px 0;
 				opacity: 1;
-				background: rgba($blue-dark, 0.5);
-				color: $grey;
+				background: rgba(@blue-dark, 0.5);
+				color: @grey;
 				text-decoration: none;
 				background-size: cover;
 				border-radius: 3px;
-				border: 1px solid rgba($black, 0.6);
+				border: 1px solid rgba(@black, 0.6);
 
 				div {
 					top: 50%;
@@ -65,22 +65,22 @@ h1, h2, h3, h4, h5, h6 {
 				.emblem {
 					position: absolute;
 					left: 2px;
-					background-color: rgba($black, .2);
+					background-color: rgba(@black, .2);
 					background-size: cover;
 				}
 				.class {
-					@include clearfix;
+					.clearfix;
 					text-transform: capitalize;
 					position: relative;
 					width: auto;
 					display: block;
 					font-size: 24px;
 					font-weight: 700;
-					text-shadow: 0 0 1px $blue-dark;
+					text-shadow: 0 0 1px @blue-dark;
 				}
 				.level {
 					position: absolute;
-					color: $level_yellow;
+					color: @level_yellow;
 					right: 7px;
 					width: auto;
 					font-weight: 200;
@@ -97,20 +97,20 @@ h1, h2, h3, h4, h5, h6 {
 			}
 		}
 		.inventory {
-			@include clearfix;
+			.clearfix;
 
 			&-items {
-				@include clearfix;
+				.clearfix;
 
 				&-section {
-					@include clearfix;
+					.clearfix;
 					margin-bottom: 10px;
 
 					.panel-heading { padding: 0; }
 					&-title {
 						text-transform: uppercase;
 						position: relative;
-						color: rgba($white, .8);
+						color: rgba(@white, .8);
 						padding: 10px;
 						font-size: 14px;
 
@@ -121,7 +121,7 @@ h1, h2, h3, h4, h5, h6 {
 							&:focus,
 							&:hover { text-decoration: none; }
 							.label {
-								@include label-variant(#2e3338);
+								.label-variant(#2e3338);
 								margin-left: 3px;
 							}
 							&:before {
@@ -149,7 +149,7 @@ h1, h2, h3, h4, h5, h6 {
 						margin: 0 0 10px 0;
 						border-top: 2px solid #3e444c;
 						padding-top: 10px;
-						color: rgba($white, .7);
+						color: rgba(@white, .7);
 						font-size: 13px;
 
 						&:first-child {
@@ -162,13 +162,13 @@ h1, h2, h3, h4, h5, h6 {
 						min-height: 130px;
 						padding: 4px;
 						margin-bottom: 15px;
-						background: rgba($white, 0.1);
+						background: rgba(@white, 0.1);
 					}
 					.bucket-title {
 						font-size: 60%;
 						text-transform: uppercase;
 						font-style: italic;
-						color: rgba($white, .55);
+						color: rgba(@white, .55);
 						margin: 0 0 5px;
 
 						@media (max-width: 1024) {
@@ -208,7 +208,7 @@ h1, h2, h3, h4, h5, h6 {
 			.level { display: none; }
 			.character-box { padding-left: 0; }
 			.class {
-				background: rgba($blue-dark, 0.7);
+				background: rgba(@blue-dark, 0.7);
 				height: 46px;
 				line-height: 46px;
 				margin-top: -23px;
@@ -222,11 +222,11 @@ h1, h2, h3, h4, h5, h6 {
 // Login
 #loginForm {
 	margin-top: 20px;
-	background: $white;
+	background: @white;
 	color: #000;
-	border-color: darken($green, 10%);
+	border-color: darken(@green, 10%);
 
-	.panel-heading { border-color: darken($green, 10%); }
+	.panel-heading { border-color: darken(@green, 10%); }
 	.btn-padding {
 		max-width: 200px;
 		margin: 0 auto;
@@ -236,7 +236,7 @@ h1, h2, h3, h4, h5, h6 {
 		text-shadow: none;
 
 		img { margin-right: 5px; max-width: 35px; }
-		&:hover { background: rgba($black, 0.05); }
+		&:hover { background: rgba(@black, 0.05); }
 	}
 }
 
@@ -254,16 +254,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 .nav > li > a { padding: 15px 10px; }
 .navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus { background: rgba($black, 0.3); }
+.navbar-default .navbar-nav > li > a:focus { background: rgba(@black, 0.3); }
 .navbar-nav > li { font-size: 0.9em; }
 .navbar { text-shadow: none; }
 .navbar-toggle {
-	background-color: #f3db55 !important;
+	background-color: #f3db55;
 
-	&:hover { background-color: darken(#f3db55, 10%) !important; }
+	&:hover { background-color: darken(#f3db55, 10%); }
 	&:active,
-	&:focus { background-color: darken(#f3db55, 20%) !important; }
-	.icon-bar { background-color: #383e43 !important; }
+	&:focus { background-color: darken(#f3db55, 20%); }
+	.icon-bar { background-color: #383e43; }
 }
 .dropdown-menu > li > a {
 	padding: 3px 20px 3px 12px;
@@ -281,8 +281,8 @@ h1, h2, h3, h4, h5, h6 {
 	margin-right: 5px;
 
 	.input-group-addon {
-		color: $input-color;
-		background: rgba($white, 0.7);
+		color: @input-color;
+		background: rgba(@white, 0.7);
 		border: 1px solid #cccccc;
 		text-shadow: none;
 	}
@@ -317,7 +317,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 }
 .quickScrollView {
-	@include clearfix;
+	.clearfix;
 	position: relative;
 	margin-top: 7px;
 	left: 5px;
@@ -332,7 +332,7 @@ h1, h2, h3, h4, h5, h6 {
 
 	&-image {
 		cursor: pointer;
-		border: 1px solid rgba($black, 0.6);
+		border: 1px solid rgba(@black, 0.6);
 		border-radius: 4px;
 		width: 36px;
 		height: 36px;
@@ -350,7 +350,7 @@ h1, h2, h3, h4, h5, h6 {
 	.nav .settings-text { display: none; }
 	.spinner {
 		.input-group-addon { display: none; }
-		.form-control { border-radius: 4px 0 0 4px !important; }
+		.form-control { border-radius: 4px 0 0 4px; }
 	}
 }
 @media (max-width: 1020px) {
@@ -368,7 +368,7 @@ h1, h2, h3, h4, h5, h6 {
 // Dialogs
 .bootstrap-dialog-header {
 	.close {
-		color: $white;
+		color: @white;
 		opacity: 1;
 
 		&:hover { opacity: 0.5; }
@@ -395,8 +395,8 @@ h1, h2, h3, h4, h5, h6 {
 			font-size: 0.75em;
 		}
 	}
-	.None { background-color: $white; }
-	.Kinetic { background-color: $white; }
+	.None { background-color: @white; }
+	.Kinetic { background-color: @white; }
 	.Arc { background-color: #85C5EC; }
 	.Solar { background-color: #C48A01; }
 	.Void { background-color: #B184C5; }
@@ -412,9 +412,9 @@ h1, h2, h3, h4, h5, h6 {
 		padding-left: 3px;
 	}
 	.attkIcon {
-		@include clearfix;
+		.clearfix;
 		display: block;
-		background: $blue-dark;
+		background: @blue-dark;
 		cursor: pointer;
 		text-shadow: none;
 
@@ -455,7 +455,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 #move-popup.desktop {
 	position: relative;
-	// width: 380px !important;
+	// width: 380px;
 }
 .desktop .move-popup {
 	position: absolute;
@@ -469,7 +469,7 @@ h1, h2, h3, h4, h5, h6 {
 
 // Label Counts
 .label._count {
-	@include label-variant( darken(#2e3338, 5%) );
+	.label-variant( darken(#2e3338, 5%) );
 	top: -2px;
 	padding: .25em .5em .35em;
 	position: relative;
