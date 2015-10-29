@@ -74,7 +74,9 @@
     (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2),
     (min-width: 440px) and (-webkit-min-device-pixel-ratio: 2.3) and (-webkit-max-device-pixel-ratio: 2.49),
     (min-width: 576px) and (-webkit-min-device-pixel-ratio: 2.5),
-    (min-width: 480px) and (-webkit-min-device-pixel-ratio: 3) {
+    (min-width: 480px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: landscape),
+    (min-width: 360px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait),
+    (min-width: 360px) and (-webkit-min-device-pixel-ratio: 4) {
   .make-grid(sm);
 }
 
@@ -89,7 +91,7 @@
     (min-width: 680px) and (-webkit-min-device-pixel-ratio: 1.8),
     (min-width: 640px) and (-webkit-min-device-pixel-ratio: 2),
     (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2.5),
-    (min-width: 730px) and (-webkit-min-device-pixel-ratio: 3) {
+    (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3) {
   .make-grid(md);
 }
 
@@ -100,6 +102,6 @@
 // These media queries are meant to capture resolutions and screens that should fit FOUR columns
 
 @media (min-width: @screen-lg-min),
-  (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3)  {
+  (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait)  {
   .make-grid(lg);
 }

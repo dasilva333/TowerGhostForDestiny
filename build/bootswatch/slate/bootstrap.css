@@ -1854,7 +1854,7 @@ address {
 .col-xs-offset-0 {
   margin-left: 0%;
 }
-@media (min-width: 440px) and (-webkit-device-pixel-ratio: 0.75), (min-width: 470px) and (-webkit-device-pixel-ratio: 1), (min-width: 776px) and (-webkit-min-device-pixel-ratio: 1.03), (min-width: 560px) and (-webkit-min-device-pixel-ratio: 1.4), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 1.5), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5) and (orientation: landscape), (min-width: 380px) and (-webkit-min-device-pixel-ratio: 1.8) and (-webkit-max-device-pixel-ratio: 1.99), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2), (min-width: 440px) and (-webkit-min-device-pixel-ratio: 2.3) and (-webkit-max-device-pixel-ratio: 2.49), (min-width: 576px) and (-webkit-min-device-pixel-ratio: 2.5), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 3) {
+@media (min-width: 440px) and (-webkit-device-pixel-ratio: 0.75), (min-width: 470px) and (-webkit-device-pixel-ratio: 1), (min-width: 776px) and (-webkit-min-device-pixel-ratio: 1.03), (min-width: 560px) and (-webkit-min-device-pixel-ratio: 1.4), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 1.5), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5) and (orientation: landscape), (min-width: 380px) and (-webkit-min-device-pixel-ratio: 1.8) and (-webkit-max-device-pixel-ratio: 1.99), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2), (min-width: 440px) and (-webkit-min-device-pixel-ratio: 2.3) and (-webkit-max-device-pixel-ratio: 2.49), (min-width: 576px) and (-webkit-min-device-pixel-ratio: 2.5), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: landscape), (min-width: 360px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait), (min-width: 360px) and (-webkit-min-device-pixel-ratio: 4) {
   .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-13, .col-sm-14, .col-sm-15, .col-sm-16, .col-sm-17, .col-sm-18, .col-sm-19, .col-sm-20, .col-sm-21, .col-sm-22, .col-sm-23, .col-sm-24 {
     float: left;
   }
@@ -2156,7 +2156,7 @@ address {
     margin-left: 0%;
   }
 }
-@media (min-width: 720px) and (-webkit-max-device-pixel-ratio: 1.02), (min-width: 780px) and (-webkit-min-device-pixel-ratio: 1.03), (min-width: 680px) and (-webkit-min-device-pixel-ratio: 1.8), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 2), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2.5), (min-width: 730px) and (-webkit-min-device-pixel-ratio: 3) {
+@media (min-width: 720px) and (-webkit-max-device-pixel-ratio: 1.02), (min-width: 780px) and (-webkit-min-device-pixel-ratio: 1.03), (min-width: 680px) and (-webkit-min-device-pixel-ratio: 1.8), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 2), (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2.5), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3) {
   .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md-13, .col-md-14, .col-md-15, .col-md-16, .col-md-17, .col-md-18, .col-md-19, .col-md-20, .col-md-21, .col-md-22, .col-md-23, .col-md-24 {
     float: left;
   }
@@ -2458,7 +2458,7 @@ address {
     margin-left: 0%;
   }
 }
-@media (min-width: 1024px), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3) {
+@media (min-width: 1024px), (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3) and (orientation: portrait) {
   .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-13, .col-lg-14, .col-lg-15, .col-lg-16, .col-lg-17, .col-lg-18, .col-lg-19, .col-lg-20, .col-lg-21, .col-lg-22, .col-lg-23, .col-lg-24 {
     float: left;
   }
