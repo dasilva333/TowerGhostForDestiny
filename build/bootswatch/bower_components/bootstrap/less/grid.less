@@ -53,6 +53,7 @@
 //
 // Columns, offsets, pushes, and pulls for extra small devices like
 // smartphones.
+// By default everything should fit in one column
 
 .make-grid(xs);
 
@@ -61,12 +62,14 @@
 //
 // Columns, offsets, pushes, and pulls for the small device range, from phones
 // to tablets.
+// These media queries are meant to capture resolutions and screens that should fit TWO columns
 
 @media (min-width: 440px) and (-webkit-device-pixel-ratio: 0.75),
     (min-width: 470px) and (-webkit-device-pixel-ratio: 1),
     (min-width: 776px) and (-webkit-min-device-pixel-ratio: 1.03),
     (min-width: 560px) and (-webkit-min-device-pixel-ratio: 1.4),
     (min-width: 640px) and (-webkit-min-device-pixel-ratio: 1.5),
+    (min-width: 480px) and (-webkit-min-device-pixel-ratio: 1.5) and (orientation: landscape),
     (min-width: 380px) and (-webkit-min-device-pixel-ratio: 1.8) and (-webkit-max-device-pixel-ratio: 1.99),
     (min-width: 480px) and (-webkit-min-device-pixel-ratio: 2),
     (min-width: 440px) and (-webkit-min-device-pixel-ratio: 2.3) and (-webkit-max-device-pixel-ratio: 2.49),
@@ -79,6 +82,7 @@
 // Medium grid
 //
 // Columns, offsets, pushes, and pulls for the desktop device range.
+// These media queries are meant to capture resolutions and screens that should fit THREE columns
 
 @media (min-width: @screen-md-min) and (-webkit-max-device-pixel-ratio: 1.02),
     (min-width: 780px) and (-webkit-min-device-pixel-ratio: 1.03),
@@ -93,6 +97,7 @@
 // Large grid
 //
 // Columns, offsets, pushes, and pulls for the large desktop device range.
+// These media queries are meant to capture resolutions and screens that should fit FOUR columns
 
 @media (min-width: @screen-lg-min),
   (min-width: 640px) and (-webkit-min-device-pixel-ratio: 3)  {
