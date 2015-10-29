@@ -124,15 +124,13 @@ Item.prototype = {
                                 return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
                             })[0]
                         );
-                        var isExclusive = talentGrid.exclusiveSets.indexOf(nodeIndex) > -1;
-                        if (isExclusive && perk.isActive || !isExclusive) {
-                            itemObject.perks.push({
-                                iconPath: tgd.dataDir + p.displayIcon,
-                                name: p.displayName,
-                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-                                active: perk.isActive
-                            });
-                        }
+                        itemObject.perks.push({
+                            iconPath: tgd.dataDir + p.displayIcon,
+                            name: p.displayName,
+                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                            active: perk.isActive,
+                            isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
+                        });
                     }
                 });
                 var perkHashes = _.pluck(item.perks, 'perkHash'),
@@ -153,7 +151,8 @@ Item.prototype = {
                                     active: true,
                                     name: perk.nodeStepName,
                                     description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: tgd.dataDir + perk.icon
+                                    iconPath: tgd.dataDir + perk.icon,
+                                    isExclusive: -1
                                 };
                             }
                         }
@@ -164,7 +163,9 @@ Item.prototype = {
                 });
             }
             if (item.progression) {
-                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1;
+                itemObject.progression = _.filter(itemObject.perks, function(perk){
+					return perk.active == true || (perk.active == false && perk.isExclusive == -1)
+				}).length > 0;
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
