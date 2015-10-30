@@ -48,7 +48,7 @@
   // Couple events:
 
   console.log("auto update 1");
-  
+  return;
   // 1. On launch
   check();
 
