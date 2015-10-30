@@ -2109,6 +2109,7 @@ var app = function() {
             return false;
         });
         ko.applyBindings(self);
+		window.BOOSTRAP_OK = true;
     };
 };
 
