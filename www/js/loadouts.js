@@ -1,3 +1,5 @@
+	tgd.loadoutId = 0;
+
 	var LoadoutItem = function(model) {
 	    var self = this;
 
@@ -14,6 +16,7 @@
 	    _.each(model, function(value, key) {
 	        self[key] = value;
 	    });
+	    this.loadoutId = tgd.loadoutId++;
 	    this.name = self.name || "";
 	    this.ids = ko.observableArray();
 	    this.generics = ko.observableArray();
@@ -130,7 +133,7 @@
 	    setActive: function() {
 	        app.loadoutMode(true);
 	        app.dynamicMode(false);
-	        app.activeLoadout(this);
+	        app.activeLoadout(_.clone(this));
 	    },
 	    remove: function() {
 	        app.loadouts.remove(this);
@@ -138,12 +141,22 @@
 	        app.saveLoadouts();
 	    },
 	    save: function() {
+	        //this is a reference to the cloned Loadout object while in use
+	        //ref is a reference to the Loadout object this came from
+	        //the reason for making a clone is to make sure the original isn't modified
 	        var ref = _.findWhere(app.loadouts(), {
-	            name: this.name
+	            loadoutId: this.loadoutId
 	        });
+	        //When saving there should always be the parent object that gets deleted in favor of this one
 	        if (ref) {
 	            app.loadouts.splice(app.loadouts().indexOf(ref), 1);
 	        }
+	        //Pushing the reference to the new object to the array
+	        app.loadouts.push(this);
+	        app.saveLoadouts();
+	    },
+	    saveNew: function() {
+	        //There's no need to find a reference to the parent to delete it if this is Save as New
 	        app.loadouts.push(this);
 	        app.saveLoadouts();
 	    },
@@ -636,7 +649,9 @@
 	                                            swapIcon: ownerIcon
 	                                        };
 	                                    }
-	                                } else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.character.classType() != targetCharacter.classType() && targetCharacterId != "Vault")) {
+	                                }
+	                                //this condition is supposed to supress subclases and artifacts from being included but not ghosts
+	                                else if (item.bucketType == "Subclasses" || (item.armorIndex > -1 && item.character.id != "Vault" && item.classType != 3 && item.character.classType() != targetCharacter.classType() && targetCharacterId != "Vault")) {
 	                                    tgd.localLog(item.description + " wont transfer sub classes ");
 	                                    return {
 	                                        description: item.description + app.activeText().loadouts_no_transfer,
