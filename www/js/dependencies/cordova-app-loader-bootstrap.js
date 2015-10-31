@@ -1,4 +1,3 @@
-(function(){
 // Retrieved and slightly modified from: https://github.com/typicode/pegasus
 // --------------------------------------------------------------------------
 //
@@ -127,4 +126,3 @@ if(!manifest){
 } else {
   loadManifest(manifest,true,s.getAttribute('timeout') || 10000);
 }
-})();
