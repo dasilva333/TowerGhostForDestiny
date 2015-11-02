@@ -44,6 +44,7 @@ window.pegasus = function pegasus(a, xhr) {
 //------------------------------------------------------------------
 // Step 2: After fetching manifest (localStorage or XHR), load it
 function loadManifest(manifest,fromLocalStorage,timeout){
+	console.log(arguments);
   // Safety timeout. If BOOTSTRAP_OK is not defined,
   // it will delete the 'localStorage' version and revert to factory settings.
   if(fromLocalStorage){

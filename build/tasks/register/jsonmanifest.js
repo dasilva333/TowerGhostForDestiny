@@ -52,20 +52,18 @@ module.exports = function (grunt) {
 			  
 				var isDir = grunt.file.isDir(path.join(options.basePath, item));
 			  
-				if (!isDir)
-						  {
+				if (!isDir){
 				  var hasher = require('crypto').createHash('sha256');
 				  var filename = encodeURI(item);
-				  var key = filename.split("-").slice(1).join('-');
+				  var key = filename.split("/")[filename.split("/").length-1];
 				  json.files[key] = {};
 				  json.files[key]['filename'] = filename;
 				  json.files[key]['version'] = hasher.update(grunt.file.read(path.join(options.basePath, item))).digest("hex");
 
-				  if(options.loadall) 
-				  {
+				  if(options.loadall){
 					json.load.push(filename);  
 				  }
-						  }
+				}
 			});
 		  }
 		  //write out the JSON to the manifest files
