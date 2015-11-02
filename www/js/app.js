@@ -2009,6 +2009,8 @@ var app = function() {
             self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
         }
         var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
+		
+		//This makes it so that the viewport width behaves like android/ios browsers
         if (isWindowsPhone) {
             var msViewportStyle = document.createElement("style");
             msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
@@ -2016,28 +2018,38 @@ var app = function() {
         }
 
         if (isMobile) {
+			//This sets up swipe left/swipe right for mobile devices
+			//TODO: Add an option to disable this for users
             Hammer(document.getElementById('charactersContainer'), {
-                    drag_min_distance: 1,
-                    swipe_velocity: 0.1,
+					//Removing these values and allowing HammerJS to figure out the best value based on the device
+                    //drag_min_distance: 1,
+                    //swipe_velocity: 0.1,
                     drag_horizontal: true,
                     drag_vertical: false
                 }).on("swipeleft", self.shiftViewLeft)
                 .on("swiperight", self.shiftViewRight)
                 .on("tap", self.globalClickHandler);
-
-            if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                StatusBar.overlaysWebView(false);
-            }
+			
+			//This ensures that the top status bar color matches the app
             if (typeof StatusBar !== "undefined") {
                 StatusBar.styleBlackOpaque();
                 StatusBar.backgroundColorByHexString("#272B30");
+				if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+					StatusBar.overlaysWebView(false);
+				}				
             }
-
+			
+			//This sets up inAppBilling donations for iOS/Android
             if (typeof inappbilling != "undefined") {
                 inappbilling.init(function() {}, function() {}, {
                     showLog: false
                 }, ['small', 'medium', 'large']);
             }
+			
+			//Prevent the user from pressing the back button to reload the app
+			document.addEventListener("backbutton", function (e) {
+				e.preventDefault();
+			}, false );
         }
 
         var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
