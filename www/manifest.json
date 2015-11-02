@@ -54,7 +54,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/dependencies/cordova-app-loader-complete.js",
-      "version": "9b4f9031864f8c9daf45e4f4823748303f8aa847590a3b2606bdbe1501b8c4a9"
+      "version": "55a282780480e759646d4af6259237b50a2b4e218f385201186fb8b8238e6581"
     },
     "underscore-min.js": {
       "filename": "js/dependencies/underscore-min.js",
