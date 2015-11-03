@@ -1,3 +1,3 @@
 module.exports = function (grunt) {
-	grunt.registerTask('default', ['sass:prod', 'autoprefixer:prod']);
+	grunt.registerTask('default', ['jshint','linktags']);
 };

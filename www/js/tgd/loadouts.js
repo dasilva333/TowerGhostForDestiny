@@ -1,6 +1,6 @@
 	tgd.loadoutId = 0;
 
-	var LoadoutItem = function(model) {
+	tgd.LoadoutItem = function(model) {
 	    var self = this;
 
 	    _.each(model, function(value, key) {
@@ -10,7 +10,7 @@
 	    this.doEquip = ko.observable(_doEquip);
 	};
 
-	var Loadout = function(model) {
+	tgd.Loadout = function(model) {
 	    var self = this;
 
 	    _.each(model, function(value, key) {
@@ -105,7 +105,7 @@
 	                });
 	                var item = self.findItemById(id);
 	                if (item)
-	                    _ids.push(new LoadoutItem({
+	                    _ids.push(new tgd.LoadoutItem({
 	                        id: id,
 	                        bucketType: equipDef ? equipDef.bucketType : item.bucketType,
 	                        doEquip: equipDef ? true : false
@@ -116,14 +116,14 @@
 	            //tgd.localLog("this model doesn't need a migration " + JSON.stringify(model));
 	            self.ids(_.map(model.ids, function(obj) {
 	                //tgd.localLog(obj);
-	                return new LoadoutItem(obj);
+	                return new tgd.LoadoutItem(obj);
 	            }));
 	        }
 	    }
 
 	};
 
-	Loadout.prototype = {
+	tgd.Loadout.prototype = {
 	    toJSON: function() {
 	        var copy = ko.toJS(this); //easy way to get a clean copy
 	        //copy.items = _.pluck(copy.items, '_id'); //strip out items metadata
@@ -161,10 +161,10 @@
 	        app.saveLoadouts();
 	    },
 	    addUniqueItem: function(obj) {
-	        this.ids.push(new LoadoutItem(obj));
+	        this.ids.push(new tgd.LoadoutItem(obj));
 	    },
 	    addGenericItem: function(obj) {
-	        this.generics.push(new LoadoutItem(obj));
+	        this.generics.push(new tgd.LoadoutItem(obj));
 	    },
 	    findItemByHash: function(hash) {
 	        var itemFound;
@@ -461,7 +461,7 @@
 	                    callback();
 	            }
 	        };
-	        app.activeLoadout(new Loadout());
+	        app.activeLoadout(new tgd.Loadout());
 	        app.loadoutMode(false);
 	        transferNextItem();
 	    },
