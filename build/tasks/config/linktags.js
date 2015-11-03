@@ -1,13 +1,3 @@
-/**
- * Clean files and folders.
- *
- * ---------------------------------------------------------------
- *
- * JSHint is a program that flags suspicious usage in programs written in JavaScript. The core project consists of a library itself as well as a CLI program distributed as a Node module.
- *
- * For usage docs see:
- * 		https://github.com/gruntjs/grunt-contrib-jshint
- */
 module.exports = function(grunt) {
 	grunt.initConfig({
 		tags: {
@@ -17,7 +7,6 @@ module.exports = function(grunt) {
 					openTag: '<!-- start script template tags -->',
 					closeTag: '<!-- end script template tags -->'
 				},
-				//cwd: '../www/',
 				src: [
 					'../www/data/definitions/*.json',
 					'../www/js/libraries/primary/*.js',
