@@ -18,7 +18,7 @@
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
-      "version": "7ab836caf7a73d722bec26d8bb661c1182f2301c60c510184c6fcfe6342d30b8"
+      "version": "ef1a88c9decc8f79678167f215953b557da459203dbe3d0b58968e51a57097d3"
     },
     "statDefs.json": {
       "filename": "data/definitions/statDefs.json",
@@ -30,11 +30,11 @@
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
-      "version": "2ecd295d295bec062cedebe177e54b9d6b19fc0a841dc5c178c654c9ccff09c0"
+      "version": "a271a3f9e3cae897ced669d6652699e947928ef095e56384c4f9dd04bbb942ec"
     },
     "knockout.js": {
       "filename": "js/libraries/primary/knockout.js",
-      "version": "43e21ee81d80adccf54b5d576da2ae4cacb595282014cf89b0f154f4c3b7aa95"
+      "version": "18547751c3c89c0c44a7970e8afe6905d86f82ffc95722e86008970ae81acce4"
     },
     "modernizr.js": {
       "filename": "js/libraries/primary/modernizr.js",
@@ -42,7 +42,7 @@
     },
     "underscore.js": {
       "filename": "js/libraries/primary/underscore.js",
-      "version": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9"
+      "version": "edcfd7dceda1409bd09945eda3a34e8faa4a94568d141ff4208de4c4be4f8d45"
     },
     "analytics.js": {
       "filename": "js/libraries/secondary/analytics.js",
@@ -50,11 +50,7 @@
     },
     "bootstrap.js": {
       "filename": "js/libraries/secondary/bootstrap.js",
-      "version": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8"
-    },
-    "cordova-app-loader-complete.js": {
-      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "d062cb9fa3fd5f617e8fbf0bb6647efd6d1bb7bd40a1f1e094e1433d39740622"
+      "version": "6447e59227786bcda7ad58ef045540cba328e5ec0e5ddbd88b4f57122feaf926"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -98,15 +94,15 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "cd2b16491f01962a1df9e5f85b8613fb5a525276135c3f6f5fafa44ed8d31f48"
+      "version": "c9b82440b8e33b914ce6753f6a845a67783458dcf0b917ee433b6f3baa7ec97a"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
-      "version": "9f469f0ee9d0933db69fec7bef67d19fc01215f1cd93a204b2ff87381e31d10b"
+      "version": "1e0640e609f2d67c1664e807e69bb167417979f860d2e388dac8b3b3fc0c7b7b"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
-      "version": "0fa7715d33d10421a6c4390933f2d840903fea2787d0f878d5d2c408c1d4ba7e"
+      "version": "5221370d75aa6415774ca9e2844a5a581597d59b26c2cf8a3f456c98bfcedfac"
     },
     "version.js": {
       "filename": "js/tgd/version.js",
@@ -114,11 +110,11 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "c369318af2ddc1a0c10b711972411feb7a7c4f2b61550b47f15238e21eb372b8"
+      "version": "9477b24e4636a634eb1a0a9108665f5bc993b9ae5314b7cf7cc0ca865bd57a08"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "81c117786807dfce1c57ad19bc4514465828c4096a5b2a7e30e97256f7538128"
+      "version": "9eaf4741abaac465560774b746e1053ad6733a7d9fa22a3543978959f7cdb60c"
     },
     "app.js": {
       "filename": "js/app/app.js",
@@ -126,35 +122,27 @@
     },
     "bungie.js": {
       "filename": "js/app/bungie.js",
-      "version": "5880dd748b7c9f2c0862a65434086170fdc23e1fb07389bd0bc2c36afba07036"
+      "version": "c971e2b72beaa5b548ea2afda5e9e57dd4cc0f5323a395ac4170a253e5132d52"
     },
     "firefox-xhr.js": {
       "filename": "js/app/firefox-xhr.js",
-      "version": "54e6d6cd7328b58a8a6ace74d1eb47ff2a7086564179ce9a5f376853593a9cbc"
+      "version": "5e9d2ae9617504dff7e5b6b9e3f369ae1ad878123312dfc0e7eb645b2a3905ac"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
-      "version": "bfc37a52616986dc7214e4d13f938ef79515adaf3946bd7be220e81194106b34"
+      "version": "786c5f66a04076a9a141c4986ba8a197102121e081381ed24f6c3f579c07622f"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
-      "version": "9abccdcdeb240e880431d2c65b5343292182e4d449d828ce2c0fcd4b54422150"
-    },
-    "chrome.js": {
-      "filename": "js/extras/chrome.js",
-      "version": "1ecb464d1c1f69a4b68e55b2664088ed34ab65f875c58883cf949743c1dc21af"
-    },
-    "firefox.js": {
-      "filename": "js/extras/firefox.js",
-      "version": "89dad1bccfd99ebf9bdedb56062c5020c7b5b308d679a1ca28758ca3d4b8c835"
+      "version": "9f9f5078601c9fe55040c6c78790dd9164bf1e651e1347b021b600244cdeb39f"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",
-      "version": "56a23b896fca21fa4b3bf15672b39b4e69f49704bce02f0448973d02f37eb1bc"
+      "version": "9176463d8871cc494901f6d8899edc6d6294c781092d5432ad306bb62ecba86a"
     },
     "bootstrap.min.css": {
       "filename": "css/bootstrap.min.css",
-      "version": "34819ff9f68074c1492a21c8cd6eef6501d16b60ff2e887e7da08e8519a66d78"
+      "version": "66487d550a92eb21855aec3826b5ea45447744dbd521b973d87fbff13ea5fc5d"
     },
     "style.css": {
       "filename": "css/style.css",
@@ -183,7 +171,6 @@
     "js/libraries/primary/underscore.js",
     "js/libraries/secondary/analytics.js",
     "js/libraries/secondary/bootstrap.js",
-    "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",
@@ -205,8 +192,6 @@
     "js/app/firefox-xhr.js",
     "js/app/tooltips.min.js",
     "js/extras/buy.js",
-    "js/extras/chrome.js",
-    "js/extras/firefox.js",
     "js/extras/ga.js",
     "css/bootstrap.min.css",
     "css/style.css",
