@@ -120,9 +120,9 @@ var bungie = (function(cookieString, complete) {
             },
             data: data,
             complete: function(xhr, status) {
-                tgd.localLog("ajax complete");
+                tgd.localLog(opts.route + " ajax complete " + xhr.status);
                 var response;
-                if (xhr.status >= 200 && xhr.status <= 409) {
+                if (xhr.status >= 200 && xhr.status <= 409 || (opts.route == url)) {
                     try {
                         response = JSON.parse(xhr.responseText);
                     } catch (e) {
@@ -136,7 +136,11 @@ var bungie = (function(cookieString, complete) {
                             obj = response.Response;
                         opts.complete(obj, response);
                     }
-                } else {
+                } 
+				else if (xhr.status == 0){
+					opts.complete({}, xhr.responseText);
+				}
+				else {
                     self.retryRequest(opts);
                 }
             }
@@ -369,11 +373,6 @@ var bungie = (function(cookieString, complete) {
 
     this.init = function() {
         if (!isChrome && !isMobile) {
-            $.ajaxSetup({
-                xhr: function() {
-                    return firefoxXHR();
-                },
-            });
             window.addEventListener("response-cookie-from-cs", function(event) {
                 tgd.localLog("response-cookie-from-cs: " + event.detail);
                 self.requestCookieCB(event.detail);

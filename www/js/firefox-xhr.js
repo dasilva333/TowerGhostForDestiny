@@ -11,7 +11,9 @@ if (!isNWJS && !isMobile && !isChrome) {
         this.statusText = "";
         this.request = {};
         this.id = tgd.ffRequestId++;
-
+		
+		this.withCredentials = true;
+		
         this.open = function(type, url, async, username, password) {
             console.log("opening a new request");
             self.request = {
