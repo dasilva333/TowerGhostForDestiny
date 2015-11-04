@@ -108,10 +108,6 @@
       "filename": "js/dependencies/analytics.js",
       "version": "79a03c07928b6f12db380a355a81231348c8565ac628a491d4ad485a9c7d3eb2"
     },
-    "firefox-xhr.js": {
-      "filename": "js/firefox-xhr.js",
-      "version": "54e6d6cd7328b58a8a6ace74d1eb47ff2a7086564179ce9a5f376853593a9cbc"
-    },
     "loadouts.js": {
       "filename": "js/loadouts.js",
       "version": "6f22860c902d89399db007a1c92187e16fdc2ce01bc363926a65bc8acfde81f2"
@@ -165,7 +161,6 @@
     "data/setDefs.json",
     "data/statDefs.json",
     "data/talentGridDefs.json",
-    "data/tgdDefs.js",
     "scripts/bungie.js",
     "js/utils.js",
     "js/buy.js",
@@ -185,7 +180,6 @@
     "js/dependencies/idle-timer.min.js",
     "js/dependencies/fastclick.js",
     "js/dependencies/analytics.js",
-    "js/firefox-xhr.js",
     "js/loadouts.js",
     "js/Profile.js",
     "js/Item.js",

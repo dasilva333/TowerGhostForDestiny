@@ -1,4 +1,5 @@
 (function() {
+	return;
     // Check for Cordova
     var isCordova = typeof cordova !== 'undefined',
         // CordovaPromiseFS

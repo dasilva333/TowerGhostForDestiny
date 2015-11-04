@@ -37,7 +37,7 @@ if (!isNWJS && !isMobile && !isChrome) {
             return "";
         };
         this.send = function(payload) {
-            //console.log("send request to " + self.request.url);
+            console.log("send request to " + self.request.url);
             if (payload)
                 self.request.payload = payload;
             var event = document.createEvent('CustomEvent');
@@ -48,7 +48,7 @@ if (!isNWJS && !isMobile && !isChrome) {
             //console.log("state changed");
         };
         window.addEventListener("xhr-reply", function(event) {
-            //console.log("xhr-reply! " + self.request.url);
+            console.log("xhr-reply! " + self.request.url);
             var xhr = event.detail;
             if (xhr.id == self.id) {
                 self.readyState = xhr.readyState;
@@ -64,5 +64,6 @@ if (!isNWJS && !isMobile && !isChrome) {
     var firefoxXHR = function() {
         return new ffXHR();
     };
+	window.XMLHttpRequest = firefoxXHR;
     tgd.localLog("init firefox xhr");
 }

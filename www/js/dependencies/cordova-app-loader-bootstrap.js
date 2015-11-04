@@ -18,8 +18,9 @@ window.pegasus = function pegasus(a, xhr) {
   // cb        placeholder to avoid using var, should not be used
   xhr.onreadystatechange = xhr.then = function(onSuccess, onError, cb) {
 
+	console.log(arguments);
     // Test if onSuccess is a function or a load event
-    if (onSuccess.call) a = [onSuccess, onError];
+    if (onSuccess && onSuccess.call) a = [onSuccess, onError];
 
     // Test if request is complete
     if (xhr.readyState == 4) {
@@ -69,11 +70,13 @@ function loadManifest(manifest,fromLocalStorage,timeout){
 
   // Load Scripts
   function loadScripts(){
+    console.log("Loading scripts: " + scripts);
     scripts.forEach(function(src) {
       if(!src) return;
       // Ensure the 'src' has no '/' (it's in the root already)
       if(src[0] === '/') src = src.substr(1);
-      src = manifest.root + src ;
+      src = manifest.root + src;
+	  console.log("loading src: " + src);
       // Load javascript
       if(src.substr(-5).indexOf(".js") > -1){
         el= document.createElement('script');
@@ -119,11 +122,15 @@ var manifest = JSON.parse(localStorage.getItem('manifest'));
 var s = document.querySelector('script[manifest]');
 // Not in localStorage? Fetch it!
 if(!manifest){
-  var url = (s? s.getAttribute('manifest'): null) || 'manifest.json';
-  // get manifest.json, then loadManifest.
-  pegasus(url).then(loadManifest,function(xhr){
-    console.error('Could not download '+url+': '+xhr.status);
-  });
+  var url = location.href.replace(location.href.split("/")[location.href.split("/").length-1],'') + ((s? s.getAttribute('manifest'): null) || 'manifest.json');
+  console.log("pegasus: " + url);
+  setTimeout(function(){
+	  // get manifest.json, then loadManifest.
+	  pegasus(url).then(loadManifest,function(xhr){
+		console.error('Could not download '+url+': '+xhr.status);
+	  });  
+  },5000);
+
 // Manifest was in localStorage. Load it immediatly.
 } else {
   loadManifest(manifest,true,s.getAttribute('timeout') || 10000);

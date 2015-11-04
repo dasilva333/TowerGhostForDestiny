@@ -31,7 +31,8 @@ window.addEventListener("xhr-request", function(event) {
             document.documentElement.dispatchEvent(event);
         }
     };
-    //console.log("firefox.js received xhr-request " + request.url);
+    console.log("firefox.js received xhr-request " + request.url);
+	console.log(request);
     xhr.open(request.type, request.url, request.async);
     request.headers.forEach(function(header) {
         xhr.setRequestHeader(header.key, header.value);
