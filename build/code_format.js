@@ -21,8 +21,8 @@ function prettify(filepath) {
 		"jslint_happy": false,
 		"space_after_anon_function": false,
 		"brace_style": "collapse",
-		"keep_array_indentation": false,
-		"keep_function_indentation": false,
+		"keep_array_indentation": true,
+		"keep_function_indentation": true,
 		"space_before_conditional": true,
 		"break_chained_methods": false,
 		"eval_code": false,
@@ -74,7 +74,9 @@ function process_directory(directory) {
 var directories = [
     '../www',
     '../www/js',
-	'../www/scripts'
+	'../www/js/app',
+	'../www/js/tgd',
+	'../www/js/extras'
 ];
 
 directories.forEach(function(value) {

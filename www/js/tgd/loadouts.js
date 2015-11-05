@@ -776,12 +776,12 @@
 	                            dialog.close();
 	                        });
 	                    }
-	                }, {
+                 }, {
 	                    label: app.activeText().cancel,
 	                    action: function(dialog) {
 	                        dialog.close();
 	                    }
-	                }]
+                 }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
 	        }
 	    }
