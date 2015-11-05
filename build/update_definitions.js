@@ -8,6 +8,7 @@ var jag = require("jag"),
 	_ = require("lodash");
 
 var jsonPath = "../www/data/";
+var definitionPath = jsonPath + "definitions/";
 var imgPath = "/common/destiny_content/icons/";
 var bungieURL = "http://www.bungie.net";
 var manifestURL = "/Platform/Destiny/Manifest/";
@@ -163,9 +164,9 @@ var extractData = function(callback){
 				}
 				if (locale == "en"){
 					console.log(locale +' writing file: ' + filename);
-					fs.writeFileSync(jsonPath + filename, "_" + set.name + "="+JSON.stringify(obj));
+					fs.writeFileSync(definitionPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 				}
-				else {
+				else if (set.name == "itemDefs") {
 					var dataPath = "./locale/" + locale + "/";
 					console.log(locale + ' saving file: ' + filename);
 					if (!fs.existsSync(dataPath)){
@@ -173,17 +174,8 @@ var extractData = function(callback){
 						fs.mkdirSync(dataPath);
 					}					
 					fs.writeFileSync(dataPath + filename, JSON.stringify(obj));				
-					if (set.name == "itemDefs"){
-						console.log(fs.existsSync(dataPath + filename) + " creating gz for " + locale);
-						try {
-							jag.pack(dataPath + filename,dataPath + filename+".gz", function(){
-								//console.log("compressed");							
-							});
-						}catch(e){
-							console.log("compress error");
-						}
-						
-					}
+					console.log(fs.existsSync(dataPath + filename) + " creating gz for " + locale);
+					jag.pack(dataPath + filename,dataPath + filename+".gz", function(){ console.log("compressed " + locale); });
 				}
 				//console.log("2.count " + count);
 				if (count == 0){
@@ -212,7 +204,7 @@ var removeOrphans = function(callback){
 
 var queueImages = function(callback){
 	console.log("first queue");
-	var contents = JSON.parse(fs.readFileSync(jsonPath + "itemDefs.json").toString("utf8").replace("_itemDefs=",""));
+	var contents = JSON.parse(fs.readFileSync(definitionPath + "itemDefs.json").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		var icon = item.icon.replace(imgPath,'');
 		if (icon != "") queue.push(icon);
@@ -221,12 +213,12 @@ var queueImages = function(callback){
 		}
 	});
 	console.log("2nd queue");
-	contents = JSON.parse(fs.readFileSync(jsonPath + "perkDefs.json").toString("utf8").replace("_perkDefs=",""));
+	contents = JSON.parse(fs.readFileSync(definitionPath + "perkDefs.json").toString("utf8").replace("_perkDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.displayIcon.replace(imgPath,''));
 	});
 	console.log("3rd queue");
-	contents = JSON.parse(fs.readFileSync(jsonPath + "talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
+	contents = JSON.parse(fs.readFileSync(definitionPath + "talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
 	_.each(contents , function(tg){
 		_.each(tg.nodes, function(node){
 			_.each( node.steps, function(step){

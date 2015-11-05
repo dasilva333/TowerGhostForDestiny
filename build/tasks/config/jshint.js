@@ -10,16 +10,23 @@
  */
 module.exports = function(grunt) {
 	grunt.config.set('jshint', {
+		js: {
 	      options: {
 	        jshintrc: '.jshintrc',
 	        "no-use-before-define": true
 	      },
 	      files: {
-	        src: ['../www/js/*.js']
+	        src: [
+				'../www/js/app/*.js',
+				'../www/js/extras/*.js',
+				'../www/js/tgd/*.js',
+				'../www/js/*.js'
+		    ]
 	      },
 	      gruntfile: {
 	        src: 'Gruntfile.js'
 	      }
+		} 
     });
 
 	grunt.loadNpmTasks('grunt-contrib-jshint');

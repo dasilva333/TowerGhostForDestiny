@@ -2,6 +2,7 @@ rmdir branch
 mkdir branch
 cd ..\www
 copy index.html ..\build\branch\
+copy manifest.json ..\build\branch\
 copy config.xml ..\build\branch\
 mkdir ..\build\branch\scripts\
 copy scripts\ ..\build\branch\scripts\

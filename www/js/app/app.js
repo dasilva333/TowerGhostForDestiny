@@ -357,7 +357,7 @@ var app = function() {
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
-    this.activeLoadout = ko.observable(new Loadout());
+    this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
@@ -442,12 +442,12 @@ var app = function() {
     });
     this.createLoadout = function() {
         self.loadoutMode(true);
-        self.activeLoadout(new Loadout());
+        self.activeLoadout(new tgd.Loadout());
     };
     this.cancelLoadout = function() {
         self.loadoutMode(false);
         self.dynamicMode(false);
-        self.activeLoadout(new Loadout());
+        self.activeLoadout(new tgd.Loadout());
     };
 
     this.startMultiSelect = function() {
@@ -1444,7 +1444,7 @@ var app = function() {
             var _loadouts = window.localStorage.getItem("loadouts");
             if (!_.isEmpty(_loadouts)) {
                 _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
-                    return new Loadout(loadout);
+                    return new tgd.Loadout(loadout);
                 });
             } else {
                 _loadouts = [];
@@ -1465,7 +1465,7 @@ var app = function() {
                         loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
                         loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
                         loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-                        return new Loadout(loadout);
+                        return new tgd.Loadout(loadout);
                     });
                 }
                 /* one time migrate joins the two arrays and clears the local one */
