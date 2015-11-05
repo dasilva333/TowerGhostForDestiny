@@ -1,3 +1,5 @@
+window.Hammer.Tap.prototype.defaults.threshold = 9;
+
 function Layout(layout) {
     var self = this;
 
@@ -364,6 +366,10 @@ var app = function() {
     this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
     this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
+    this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
+    this.ccWidth = ko.pureComputed(new tgd.StoreObj("ccWidth"));
+    this.vaultColumns = ko.pureComputed(new tgd.StoreObj("vaultColumns"));
+    this.vaultWidth = ko.pureComputed(new tgd.StoreObj("vaultWidth"));
     this.vaultPos = ko.pureComputed(new tgd.StoreObj("vaultPos"));
     this.xsColumn = ko.pureComputed(new tgd.StoreObj("xsColumn"));
     this.smColumn = ko.pureComputed(new tgd.StoreObj("smColumn"));
@@ -375,6 +381,7 @@ var app = function() {
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
@@ -423,7 +430,7 @@ var app = function() {
             return a.order() - b.order();
         });
     });
-    this.currentLocale = ko.pureComputed(function() {
+    this.currentLocale = ko.computed(function() {
         var locale = self.locale();
         if (self.appLocale() !== "") {
             locale = self.appLocale();
@@ -623,33 +630,47 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
+                if (self.advancedTooltips() == true && activeItem.weaponIndex > -1) {
+                    var magazineRow = stats.find(".stat-bar:last");
+                    var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key) {
+                        obj.name = _statDefs[key].statName;
+                        return obj;
+                    });
+                    var desireableStats = ["Aim assistance", "Equip Speed"];
+                    _.each(desireableStats, function(statName) {
+                        var statObj = _.findWhere(itemStats, {
+                            name: statName
+                        });
+                        var clonedRow = magazineRow.clone();
+                        clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                        magazineRow.before(clonedRow);
+                    });
+                }
             }
             if (activeItem.perks.length > 0) {
+                var activePerksTemplate = tgd.perksTemplate({
+                    perks: _.filter(activeItem.perks, function(perk) {
+                        return perk.active == true || (perk.active == false && self.advancedTooltips() == true);
+                    })
+                });
                 if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
                     // Weapon Perks (Pre-HoW) 
                     if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
-                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-talent").replaceWith(activePerksTemplate);
                     }
                     // Weapon Perks (Post-HoW)
                     else if ($content.find(".destt-talent").length === 0) {
-                        $content.find(".destt-stat").after(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
-                        $content.find(".destt-talent").replaceWith(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-talent").replaceWith(activePerksTemplate);
                     }
                     // this applies to ghost shells, maybe re rollable armor
                     else {
-                        $content.find(".destt-stat").after(tgd.perksTemplate({
-                            perks: activeItem.perks
-                        }));
+                        $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 }
             }
@@ -693,7 +714,7 @@ var app = function() {
     this.togglePadBucketHeight = function() {
         self.toggleBootstrapMenu();
         self.padBucketHeight(!self.padBucketHeight());
-        self.bucketSizeHandler();
+        self.redraw();
     };
     this.toggleDragAndDrop = function() {
         self.toggleBootstrapMenu();
@@ -714,6 +735,10 @@ var app = function() {
     this.toggleDestinyDbTooltips = function() {
         self.toggleBootstrapMenu();
         self.tooltipsEnabled(!self.tooltipsEnabled());
+    };
+    this.toggleAdvancedTooltips = function() {
+        self.toggleBootstrapMenu();
+        self.advancedTooltips(!self.advancedTooltips());
     };
     this.toggleShareView = function() {
         self.toggleBootstrapMenu();
@@ -761,6 +786,24 @@ var app = function() {
         self.toggleBootstrapMenu();
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
+    };
+    this.setVaultColumns = function(columns) {
+        return function() {
+            self.vaultColumns(columns);
+            self.redraw();
+        };
+    };
+    this.setVaultWidth = function(width) {
+        return function() {
+            self.vaultWidth(width);
+            self.redraw();
+        };
+    };
+    this.setCCWidth = function(model, evt) {
+        var width = $(evt.target).text();
+        width = (width == "Default") ? "" : width;
+        self.ccWidth(width);
+        self.redraw();
     };
     this.setSetFilter = function(collection) {
         return function() {
@@ -908,6 +951,11 @@ var app = function() {
         self.search();
     };
 
+    this.redraw = function() {
+        setTimeout(self.bucketSizeHandler, 1000);
+        setTimeout(self.quickIconHighlighter, 1000);
+    };
+
     var loadingData = false;
     this.search = function() {
         if (!("user" in self.activeUser())) {
@@ -940,8 +988,6 @@ var app = function() {
                     }
                     return 0;
                 });
-                setTimeout(self.bucketSizeHandler, 1000);
-                setTimeout(self.quickIconHighlighter, 1000);
                 loadingData = false;
                 self.loadingUser(false);
                 //console.timeEnd("avatars.forEach");
@@ -987,8 +1033,8 @@ var app = function() {
             total = avatars.length;
             _.map(avatars, function(avatar) {
                 var profile = new Profile(avatar);
-                self.addTierTypes(profile.items());
-                self.addWeaponTypes(profile.weapons());
+                profile.weapons.subscribe(self.addWeaponTypes);
+                profile.items.subscribe(self.addTierTypes);
                 done(profile);
             });
         });
@@ -1114,20 +1160,24 @@ var app = function() {
     };
 
     this.bucketSizeHandler = function() {
-        var buckets = $("div.profile .itemBucket:visible").css("height", "auto");
+        var buckets = $("div.profile .itemBucket:visible").css({
+            'height': 'auto',
+            'min-height': 'auto'
+        });
         if (self.padBucketHeight() === true) {
             var bucketSizes = {};
             var itemHeight = 0;
             var vaultPos = parseInt(self.vaultPos()) - 1;
             vaultPos = (vaultPos < 0) ? 0 : vaultPos;
+            var vaultColumns = tgd.bootstrapGridColumns / self.vaultColumns();
             buckets.each(function() {
                 var bucketType = this.className.split(" ")[2];
-                var isVault = this.className.indexOf("12") > -1;
-                var columnsPerBucket = isVault ? 4 : tgd.DestinyBucketColumns[bucketType];
+                var isVault = this.className.indexOf("Vault") > -1;
+                var columnsPerBucket = isVault ? vaultColumns : tgd.DestinyBucketColumns[bucketType];
                 var $visibleBucketItems = $(this).find(".bucket-item:visible");
                 var visibleBucketHeight = $visibleBucketItems.eq(0).height();
                 var bucketHeight = Math.ceil($visibleBucketItems.length / columnsPerBucket) * (visibleBucketHeight + 2);
-                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight)) {
+                if ((visibleBucketHeight) && (visibleBucketHeight > itemHeight) && !isVault) {
                     itemHeight = visibleBucketHeight;
                 }
                 if (!(bucketType in bucketSizes)) {
@@ -1136,6 +1186,7 @@ var app = function() {
                     bucketSizes[bucketType].push(bucketHeight);
                 }
             });
+            //console.log(bucketSizes);
             _.each(bucketSizes, function(sizes, type) {
                 //this is the max height all buckets will use
                 var maxHeight = _.max(sizes);
@@ -1143,22 +1194,29 @@ var app = function() {
                 var profileSizes = sizes.slice(0);
                 profileSizes.splice(vaultPos, 1);
                 var maxProfilesHeight = _.max(profileSizes);
-                var minNumRows = 1;
-                if (tgd.DestinyArmorPieces.indexOf(type) > -1 || tgd.DestinyWeaponPieces.indexOf(type) > -1) {
-                    minNumRows = 3;
-                } else if (type == "Materials") {
+                var minNumRows = 3;
+                if (type == "Bounties") {
                     minNumRows = 4;
+                } else if (tgd.DestinyFiveRowBuckets.indexOf(type) > -1) {
+                    minNumRows = 5;
                 }
                 maxProfilesHeight = Math.max(itemHeight * minNumRows, maxProfilesHeight);
                 var itemBuckets = buckets.filter("." + type);
+                /*if ( type == "Heavy") {
+                	console.log(type + " " + maxHeight);
+                	console.log(type + " " + maxProfilesHeight);
+                }*/
                 itemBuckets.css("min-height", maxHeight);
                 itemBuckets.find(".itemBucketBG").css("height", maxProfilesHeight);
+                //itemBuckets.find(".itemBucketBG").parent().parent().css("height", maxProfilesHeight);
             });
             // gets all the sub class areas and makes them the same heights. I'm terrible at JQuery/CSS/HTML stuff.
             var vaultSubClass = $('div.profile .title2:visible strong:contains("Vault Sub")').parent().parent().css("height", "auto");
             var notVaultSubClass = $('div.profile .title2:visible strong:contains("Sub")').not(':contains("Vault")').first().parent().parent().css("height", "auto");
             vaultSubClass.css("min-height", notVaultSubClass.height());
             vaultSubClass.css("visibility", "hidden");
+        } else {
+            buckets.find(".itemBucketBG").css("height", "auto");
         }
     };
 
@@ -1747,19 +1805,37 @@ var app = function() {
         });
     };
 
-    this.columnMode = ko.pureComputed(function() {
-        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + self.lgColumn();
-    });
+    this.columnMode = function(character) {
+        return ko.pureComputed(function() {
+            var totalCharacters = 3,
+                totalColumns = tgd.bootstrapGridColumns,
+                vaultColumns,
+                characterColumns;
+            if (self.layoutMode() == 'uneven') {
+                vaultColumns = self.vaultWidth();
+                characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
+            } else {
+                vaultColumns = self.lgColumn();
+                characterColumns = self.lgColumn();
+            }
+            if (character.id == "Vault") {
+                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+            } else {
+                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+            }
+        });
+    };
 
     this.setColumns = function(type, input) {
         return function() {
-            self[type + "Column"](12 / input.value);
+            self[type + "Column"](tgd.bootstrapGridColumns / input.value);
+            self.redraw();
         };
     };
 
     this.btnActive = function(type, input) {
         return ko.pureComputed(function() {
-            return ((12 / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
+            return ((tgd.bootstrapGridColumns / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
         });
     };
 
@@ -1891,6 +1967,12 @@ var app = function() {
 
     this.init = function() {
         $.idleTimer(1000 * 60 * 30);
+        if (self.lgColumn() == "3" || self.mdColumn() == "4") {
+            self.lgColumn(tgd.defaults.lgColumn);
+            self.mdColumn(tgd.defaults.mdColumn);
+            self.smColumn(tgd.defaults.smColumn);
+            self.xsColumn(tgd.defaults.xsColumn);
+        }
         $(document).on("idle.idleTimer", function(event, elem, obj) {
             clearInterval(self.refreshInterval);
         });
@@ -1920,6 +2002,7 @@ var app = function() {
         self.doRefresh.subscribe(self.refreshHandler);
         self.refreshSeconds.subscribe(self.refreshHandler);
         self.loadoutMode.subscribe(self.refreshHandler);
+        self.padBucketHeight.subscribe(self.redraw);
         self.refreshHandler();
         self.bungie_cookies = "";
         if (window.localStorage && window.localStorage.getItem) {
@@ -2015,15 +2098,18 @@ var app = function() {
         $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
-        self.activeView.subscribe(function() {
-            setTimeout(self.bucketSizeHandler, 500);
-        });
+        self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
+        $(document).on("click", "a[target='_system']", function() {
+            window.open(this.href, "_system");
+            return false;
+        });
         ko.applyBindings(self);
+		window.BOOSTRAP_OK = true;
     };
 };
 
