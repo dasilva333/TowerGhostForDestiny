@@ -1,4 +1,4 @@
-var bungie = (function(cookieString, complete) {
+tgd.bungie = (function(cookieString, complete) {
     var self = this;
 
     var _token,
