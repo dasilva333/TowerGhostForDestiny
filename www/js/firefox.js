@@ -52,7 +52,7 @@ window.addEventListener("xhr-request", function(event) {
 
 }, false);
 
-//TODO use this in app.bungie if I can't get the timing for loading stuff working properly
-//var event = document.createEvent('CustomEvent');
-//event.initCustomEvent("cs-ready", true, true, {});
-//document.documentElement.dispatchEvent(event);
+console.log("sending cs-ready");
+var event = document.createEvent('CustomEvent');
+event.initCustomEvent("cs-ready", true, true, {});
+document.documentElement.dispatchEvent(event);
