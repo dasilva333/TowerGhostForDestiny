@@ -45,7 +45,9 @@ module.exports = function(grunt) {
       generate: {
         options: {
           basePath: '../www/',
-          exclude: [],
+          exclude: [
+			"js/tgd/base.js"
+		  ],
           //load all found assets
           loadall: true,
           //manually add files to the manifest

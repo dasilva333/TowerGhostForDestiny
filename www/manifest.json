@@ -92,10 +92,6 @@
       "filename": "js/plugins/knockout-sortable.js",
       "version": "a793e2ce9cc772110b8ce20f2366deafd47281464dd5766de50f136275012478"
     },
-    "base.js": {
-      "filename": "js/tgd/base.js",
-      "version": "ae3323a099d20a59c853c17ccf1644305d9d7beb44bc1bf2bb747ed3637ae348"
-    },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
       "version": "c9b82440b8e33b914ce6753f6a845a67783458dcf0b917ee433b6f3baa7ec97a"
@@ -128,17 +124,13 @@
       "filename": "js/app/bungie.js",
       "version": "c971e2b72beaa5b548ea2afda5e9e57dd4cc0f5323a395ac4170a253e5132d52"
     },
-    "firefox-xhr.js": {
-      "filename": "js/app/firefox-xhr.js",
-      "version": "5e9d2ae9617504dff7e5b6b9e3f369ae1ad878123312dfc0e7eb645b2a3905ac"
-    },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
       "version": "786c5f66a04076a9a141c4986ba8a197102121e081381ed24f6c3f579c07622f"
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "7b227dadbbe0c3ae648997593c1317f68475312df24a26c04b6269db7a4dff3e"
+      "version": "47dac451ffcd0f466c4503931ae9dfddd7a2c7fb1bcb4003ac6c0e41a55b5a25"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -189,7 +181,6 @@
     "js/plugins/jquery.toaster.js",
     "js/plugins/jquery.touch.gestures.js",
     "js/plugins/knockout-sortable.js",
-    "js/tgd/base.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
     "js/tgd/utils.js",
@@ -198,7 +189,6 @@
     "js/app/Profile.js",
     "js/app/app.js",
     "js/app/bungie.js",
-    "js/app/firefox-xhr.js",
     "js/app/tooltips.min.js",
     "js/extras/autoupdate.js",
     "js/extras/buy.js",
