@@ -49,8 +49,9 @@
 
     // Couple events:
 
-    console.log("auto update 1");
+    console.log("skipping check");
     // 1. On launch
+	return;
     check();
 
     // 2. Cordova: On resume
