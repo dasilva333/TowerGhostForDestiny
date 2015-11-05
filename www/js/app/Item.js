@@ -819,7 +819,7 @@ Item.prototype = {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
-                        var adhoc = new Loadout();
+                        var adhoc = new tgd.Loadout();
                         if (self._id > 0) {
                             adhoc.addUniqueItem({
                                 id: self._id,
@@ -1049,7 +1049,7 @@ Item.prototype = {
                 }, 500);
             }
         } else {
-            var adhoc = new Loadout();
+            var adhoc = new tgd.Loadout();
             adhoc.addUniqueItem({
                 id: self._id,
                 bucketType: self.bucketType,

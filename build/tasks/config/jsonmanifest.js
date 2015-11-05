@@ -46,7 +46,8 @@ module.exports = function(grunt) {
         options: {
           basePath: '../www/',
           exclude: [
-			"js/tgd/base.js"
+			"js/tgd/base.js",
+			"js/libraries/secondary/cordova-app-loader-complete.js"
 		  ],
           //load all found assets
           loadall: true,

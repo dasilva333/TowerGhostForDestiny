@@ -1,4 +1,9 @@
 (function() {
+
+    console.log("skipping check");
+    // 1. On launch
+	return;
+	
     // Check for Cordova
     var isCordova = typeof cordova !== 'undefined',
         // CordovaPromiseFS
@@ -48,10 +53,6 @@
     }
 
     // Couple events:
-
-    console.log("skipping check");
-    // 1. On launch
-	return;
     check();
 
     // 2. Cordova: On resume

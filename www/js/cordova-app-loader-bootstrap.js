@@ -19,7 +19,7 @@ window.pegasus = function pegasus(a, xhr) {
   xhr.onreadystatechange = xhr.then = function(onSuccess, onError, cb) {
 
     // Test if onSuccess is a function or a load event
-    if (onSuccess.call) a = [onSuccess, onError];
+    if (onSuccess && onSuccess.call) a = [onSuccess, onError];
 
     // Test if request is complete
     if (xhr.readyState == 4) {
@@ -119,7 +119,7 @@ var manifest = JSON.parse(localStorage.getItem('manifest'));
 var s = document.querySelector('script[manifest]');
 // Not in localStorage? Fetch it!
 if(!manifest){
-  var url = (s? s.getAttribute('manifest'): null) || 'manifest.json';
+  var url = location.href.replace(location.href.split("/")[location.href.split("/").length-1],'') + ((s? s.getAttribute('manifest'): null) || 'manifest.json');
   // get manifest.json, then loadManifest.
   pegasus(url).then(loadManifest,function(xhr){
     console.error('Could not download '+url+': '+xhr.status);

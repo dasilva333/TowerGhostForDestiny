@@ -52,10 +52,6 @@
       "filename": "js/libraries/secondary/bootstrap.js",
       "version": "6447e59227786bcda7ad58ef045540cba328e5ec0e5ddbd88b4f57122feaf926"
     },
-    "cordova-app-loader-complete.js": {
-      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "55a282780480e759646d4af6259237b50a2b4e218f385201186fb8b8238e6581"
-    },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
       "version": "7426aa18391348e113d5246b483a45acac628bccac64167539cfd8d1e8f43163"
@@ -110,7 +106,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "9477b24e4636a634eb1a0a9108665f5bc993b9ae5314b7cf7cc0ca865bd57a08"
+      "version": "c2945a59fc6fd3f572bf535f663cab5fa2365d895525357a5aaf82f18b801943"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -118,11 +114,11 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "20e01d688d785eb20a056afaf68c31166166ca1c6e733a5243b6925cec5cd920"
+      "version": "79ae4938993eef2f7d6f474ad914229dc04a35c9f020c7e9423940dcd84cb989"
     },
     "bungie.js": {
       "filename": "js/app/bungie.js",
-      "version": "c971e2b72beaa5b548ea2afda5e9e57dd4cc0f5323a395ac4170a253e5132d52"
+      "version": "0000dd8c64d1992223227df006c96d1ebb8d4f8a50b18079578d073416846692"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -130,7 +126,7 @@
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "47dac451ffcd0f466c4503931ae9dfddd7a2c7fb1bcb4003ac6c0e41a55b5a25"
+      "version": "d937f79382b357b2447ebc9e2eaa16d7aa8a986c48da3228d8fc581eb45c2565"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -171,7 +167,6 @@
     "js/libraries/primary/underscore.js",
     "js/libraries/secondary/analytics.js",
     "js/libraries/secondary/bootstrap.js",
-    "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",

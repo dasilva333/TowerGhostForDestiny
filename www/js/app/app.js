@@ -2105,9 +2105,7 @@ var app = function() {
                 });
             });
         } else {
-            setTimeout(function() {
-                self.loadData();
-            }, isChrome || isMobile ? 1 : 5000);
+            self.loadData();
         }
         $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);

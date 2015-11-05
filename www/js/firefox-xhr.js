@@ -1,6 +1,12 @@
 if (!isNWJS && !isMobile && !isChrome) {
     tgd.ffRequestId = 0;
+	tgd.ffXHRisReady = false;
 
+	window.addEventListener("cs-ready", function(event) {
+		console.log("cs-ready!");
+		tgd.ffXHRisReady = true;
+	}, false);
+	
     var ffXHR = function() {
         console.log("creating new ff obj");
 
@@ -11,7 +17,8 @@ if (!isNWJS && !isMobile && !isChrome) {
         this.statusText = "";
         this.request = {};
         this.id = tgd.ffRequestId++;
-
+		this.withCredentials = true;
+		
         this.open = function(type, url, async, username, password) {
             console.log("opening a new request");
             self.request = {
@@ -37,12 +44,21 @@ if (!isNWJS && !isMobile && !isChrome) {
             return "";
         };
         this.send = function(payload) {
-            //console.log("send request to " + self.request.url);
-            if (payload)
-                self.request.payload = payload;
-            var event = document.createEvent('CustomEvent');
-            event.initCustomEvent("xhr-request", true, true, self.request);
-            document.documentElement.dispatchEvent(event);
+			//console.log("send request to " + self.request.url);
+			var send = function(){
+				if (payload)
+					self.request.payload = payload;
+				var event = document.createEvent('CustomEvent');
+				event.initCustomEvent("xhr-request", true, true, self.request);
+				document.documentElement.dispatchEvent(event);
+			}
+			var check = setInterval(function(){
+				//console.log("waiting xhr to be ready");
+				if ( tgd.ffXHRisReady == true ){
+					clearInterval(check);
+					send();
+				}
+			},1000);
         };
         this.onreadystatechange = function() {
             //console.log("state changed");
@@ -61,8 +77,8 @@ if (!isNWJS && !isMobile && !isChrome) {
         return self;
     };
 
-    var firefoxXHR = function() {
+	window.XMLHttpRequest = function() {
         return new ffXHR();
-    };
+    };;
     tgd.localLog("init firefox xhr");
 }
