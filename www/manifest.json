@@ -90,55 +90,55 @@
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "ae3323a099d20a59c853c17ccf1644305d9d7beb44bc1bf2bb747ed3637ae348"
+      "version": "0d97d7b1a19d446acfca0445bcf3e636bbf1e09852a0e7934b2fae6b2afadabe"
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "c9b82440b8e33b914ce6753f6a845a67783458dcf0b917ee433b6f3baa7ec97a"
+      "version": "b74dc8a60f224524f08b964595372a2a5ddfff611a813068c1cc7e0ac2712232"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
-      "version": "1e0640e609f2d67c1664e807e69bb167417979f860d2e388dac8b3b3fc0c7b7b"
+      "version": "9f469f0ee9d0933db69fec7bef67d19fc01215f1cd93a204b2ff87381e31d10b"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
-      "version": "5221370d75aa6415774ca9e2844a5a581597d59b26c2cf8a3f456c98bfcedfac"
+      "version": "0fa7715d33d10421a6c4390933f2d840903fea2787d0f878d5d2c408c1d4ba7e"
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "70164bfaa00bfc12f3a5fa288d7b242a53cf2fe4599f314d33cb973034e5a694"
+      "version": "0a990f3217182247786206b1a794a82bc823e7769f9227dcedc3729da3c31eb9"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "9477b24e4636a634eb1a0a9108665f5bc993b9ae5314b7cf7cc0ca865bd57a08"
+      "version": "13df3a4d02266c15c07e79fff68794a6da50d3b77b7639e554258cc0a687545f"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "9eaf4741abaac465560774b746e1053ad6733a7d9fa22a3543978959f7cdb60c"
+      "version": "29cef3a7d9b8d2ce725898b88bb4469d5e04f96f3b2a5cf51a09173a1a39c284"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "20e01d688d785eb20a056afaf68c31166166ca1c6e733a5243b6925cec5cd920"
+      "version": "82c17136999c5840ae9c6a306ce508312a90099e700e6f1cc8820fb502d247bd"
     },
     "bungie.js": {
       "filename": "js/app/bungie.js",
-      "version": "c971e2b72beaa5b548ea2afda5e9e57dd4cc0f5323a395ac4170a253e5132d52"
+      "version": "dc4524163040493d7fc5a17be063b1359e3b6f0210b9fa0e37fd2404437dbe37"
     },
     "firefox-xhr.js": {
       "filename": "js/app/firefox-xhr.js",
-      "version": "5e9d2ae9617504dff7e5b6b9e3f369ae1ad878123312dfc0e7eb645b2a3905ac"
+      "version": "54e6d6cd7328b58a8a6ace74d1eb47ff2a7086564179ce9a5f376853593a9cbc"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
-      "version": "786c5f66a04076a9a141c4986ba8a197102121e081381ed24f6c3f579c07622f"
+      "version": "bfc37a52616986dc7214e4d13f938ef79515adaf3946bd7be220e81194106b34"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
-      "version": "9f9f5078601c9fe55040c6c78790dd9164bf1e651e1347b021b600244cdeb39f"
+      "version": "9abccdcdeb240e880431d2c65b5343292182e4d449d828ce2c0fcd4b54422150"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",
-      "version": "9176463d8871cc494901f6d8899edc6d6294c781092d5432ad306bb62ecba86a"
+      "version": "56a23b896fca21fa4b3bf15672b39b4e69f49704bce02f0448973d02f37eb1bc"
     },
     "bootstrap.min.css": {
       "filename": "css/bootstrap.min.css",

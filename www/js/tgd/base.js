@@ -18,6 +18,7 @@ tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.activeElement = null;
 //Network Keys, Axiomatic Beads, House Banners, Silken Codex
+tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready"];
 tgd.DestinyGlimmerConsumables = [3632619276, 269776572, 2904517731, 1932910919];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
@@ -66,7 +67,7 @@ tgd.DestinyLayout = [
         view: 3,
         headerText: 'inventory_postmaster'
     }
-]
+];
 tgd.DestinyViews = {
     "0": "All",
     "1": "Weapons",
@@ -120,9 +121,8 @@ tgd.DestinyBucketTypes = {
     "434908299": "Artifact",
     "3054419239": "Emote",
     "1801258597": "Quests"
-}
+};
 tgd.DestinyBucketColumns = {
-    "Post Master": 4,
     "Chest": 3,
     "Boots": 3,
     "Ship": 3,
@@ -152,7 +152,7 @@ tgd.DestinyBucketColumns = {
     "Artifact": 3,
     "Quests": 4,
     "Emote": 3
-}
+};
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
     "Special": 13.04,
@@ -175,7 +175,6 @@ tgd.DestinyBucketWeights = [{
     "Ghost": 8,
     "Artifact": 8
 }];
-tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready"]
 tgd.languages = [
     {
         code: "en",

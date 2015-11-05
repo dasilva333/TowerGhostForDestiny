@@ -630,7 +630,7 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
-                if (self.advancedTooltips() == true && activeItem.weaponIndex > -1) {
+                if (self.advancedTooltips() === true && activeItem.weaponIndex > -1) {
                     var magazineRow = stats.find(".stat-bar:last");
                     var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key) {
                         obj.name = _statDefs[key].statName;
@@ -651,7 +651,7 @@ var app = function() {
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
-                        return perk.active == true || (perk.active == false && self.advancedTooltips() == true);
+                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true);
                     })
                 });
                 if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
