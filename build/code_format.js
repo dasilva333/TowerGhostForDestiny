@@ -61,8 +61,8 @@ function getOutputType(outfile) {
 
 function process_directory(directory) {
     var files = fs.readdirSync(directory).filter(function(value) {
-        return getOutputType(value) !== undefined
-    })
+        return getOutputType(value) !== undefined && exclude.indexOf(value) == -1
+    });
     var filepaths = files.map(function(value) {
         return path.join(directory, value)
     });
@@ -70,6 +70,10 @@ function process_directory(directory) {
         prettify(value)
     });
 };
+
+var exclude = [
+	'base.js'
+]
 
 var directories = [
     '../www',
