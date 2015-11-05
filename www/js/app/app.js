@@ -1044,7 +1044,7 @@ var app = function() {
         if (self.loadingUser() === false || self.hiddenWindowOpen() === true) {
             //window.t = (new Date());
             self.loadingUser(true);
-            self.bungie = new bungie(self.bungie_cookies, function() {
+            self.bungie = new tgd.bungie(self.bungie_cookies, function() {
                 self.characters.removeAll();
                 //console.time("self.bungie.user");
                 self.bungie.user(function(user) {
@@ -2098,7 +2098,7 @@ var app = function() {
         }
 
         if (isMobile && isEmptyCookie) {
-            self.bungie = new bungie('', function() {
+            self.bungie = new tgd.bungie('', function() {
                 self.activeUser({
                     "code": 99,
                     "error": "Please sign-in to continue."

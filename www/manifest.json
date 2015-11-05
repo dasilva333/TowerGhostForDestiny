@@ -88,6 +88,10 @@
       "filename": "js/plugins/knockout-sortable.js",
       "version": "a793e2ce9cc772110b8ce20f2366deafd47281464dd5766de50f136275012478"
     },
+    "bungie.js": {
+      "filename": "js/tgd/bungie.js",
+      "version": "4a8e84b7d5101db4b4b0895a44bc115dc811082b8193c0a8c8bb0836f204c1e7"
+    },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
       "version": "c9b82440b8e33b914ce6753f6a845a67783458dcf0b917ee433b6f3baa7ec97a"
@@ -114,11 +118,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "79ae4938993eef2f7d6f474ad914229dc04a35c9f020c7e9423940dcd84cb989"
-    },
-    "bungie.js": {
-      "filename": "js/app/bungie.js",
-      "version": "0000dd8c64d1992223227df006c96d1ebb8d4f8a50b18079578d073416846692"
+      "version": "e14675641111f09cad4dca25aa7cb0b308e38561b92ff11bc009d06453799f70"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -176,6 +176,7 @@
     "js/plugins/jquery.toaster.js",
     "js/plugins/jquery.touch.gestures.js",
     "js/plugins/knockout-sortable.js",
+    "js/tgd/bungie.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
     "js/tgd/utils.js",
@@ -183,7 +184,6 @@
     "js/app/Item.js",
     "js/app/Profile.js",
     "js/app/app.js",
-    "js/app/bungie.js",
     "js/app/tooltips.min.js",
     "js/extras/autoupdate.js",
     "js/extras/buy.js",
