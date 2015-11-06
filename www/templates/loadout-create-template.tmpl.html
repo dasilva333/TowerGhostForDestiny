@@ -1,0 +1,32 @@
+<div id="loadout-create" data-bind="visible: loadoutMode" style="display:none;">
+	<div class="content" data-bind="with: activeLoadout">
+		<div id="loadout-options">
+			<controls data-bind="visible: $parent.dynamicMode() == false">
+				<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
+				<span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
+				<span data-bind="fastclick: saveNew, text: $root.activeText().loadouts_save_new">Save as New</span>
+				<span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
+			</controls>
+			<span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
+			<!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
+			<div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, click: function(){ $parent.transfer(character.id) }, style: { backgroundImage: iconBG }">
+				<div class="lower-left" data-bind="text: classLetter"></div>
+			</div>
+			<!--/ko  -->
+			<p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">
+				<span data-bind="text: $root.activeText().loadouts_instructions">No items in loadout, click items to add, </span>
+				<span data-bind="text: isMobile ? $root.activeText().loadouts_mobile:$root.activeText().loadouts_desktop"></span>
+				<span data-bind="text: $root.activeText().loadouts_instructions_contd">to equip.</span>
+			</p>
+		</div>
+		<span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">			
+			<div class="item" data-bind="css: isMobile && item._id > 0 && item.doEquip() ? 'doEquip' : ''">
+				<input type="checkbox" value="true" data-bind="checked: item.doEquip, fastclick: markAsEquip, visible: !isMobile && item._id > 0" title="Enable to mark as the equip item">
+				<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
+					<img class="itemImage" src="about:blank" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+				</a>
+				<div class="attkIcon"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+			</div>
+		</span>
+	</div>
+</div>

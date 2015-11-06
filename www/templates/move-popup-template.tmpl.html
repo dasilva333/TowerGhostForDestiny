@@ -1,0 +1,46 @@
+	<nav data-bind="with: activeItem" id="move-popup" class="navbar navbar-default navbar-fixed-bottom" style="display:none;">
+        <div class="container-fluid">
+            <div class="move-popup row no-gutter">
+                <div class="item-name col-xs-24">
+                    <span data-bind="text: $root.activeText().movepopup_move"></span>: <span data-bind="text: description"></span>
+                    <!-- ko if: (bucketType == 'Consumables' && tgd.DestinyGlimmerConsumables.indexOf(id) > -1) -->
+                    <span data-bind="text: 'valued at: ' + (primaryStat() * 200) + 'G'"></span>
+                    <!-- /ko -->
+                    <!-- ko if: (bucketType !== 'Consumables' && bucketType !== 'Materials' && bucketType !== 'Messages' && bucketType !== 'Invisible' && bucketType !== 'Lost Items' && bucketType !== 'Bounties' && bucketType !== 'Mission') -->
+                    <img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, click: function(){ toggleLock() }" style="cursor:pointer;" />
+                    <!-- /ko -->
+                </div>
+                <div class="locations col-xs-24 col-md-20 col-md-offset-2 col-lg-28 col-lg-offset-4">
+                    <div class="locations" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
+                        <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
+                            <div class="attkIcon">
+                                <div class="icon-banner" data-bind="text: $root.activeText().movepopup_vault"></div>
+                                <img src="about:blank" data-bind="attr: { src : icon }">
+                                <div class="lower-left" data-bind="text: classLetter"></div>
+                            </div>
+                        </div>
+                        <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
+                            <div class="attkIcon">
+                                <div class="icon-banner" data-bind="text: $root.activeText().movepopup_store"></div>
+                                <img src="about:blank" data-bind="attr: { src : icon }">
+                                <div class="lower-left" data-bind="text: classLetter"></div>
+                            </div>
+                        </div>
+                        <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, click: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
+                            <div class="attkIcon">
+                                <div class="icon-banner" data-bind="text: $root.activeText().movepopup_equip"></div>
+                                <img src="about:blank" data-bind="attr: { src : icon }">
+                                <div class="lower-left" data-bind="text: classLetter"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="move-button col-xs-4" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (bucketType == 'Materials' || bucketType == 'Consumables')">
+                        <div class="attkIcon">
+                            <div class="icon-banner" data-bind="text: $root.activeText().movepopup_extras">extras</div>
+                            <img src="assets/icon128.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>

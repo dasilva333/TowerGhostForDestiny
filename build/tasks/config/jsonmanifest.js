@@ -67,6 +67,7 @@ module.exports = function(grunt) {
 			'js/libraries/primary/*.js',
 			'js/libraries/secondary/*.js',
 			'js/plugins/*.js',
+			'js/templates/*.js',
 			'js/tgd/*.js',
 			'js/app/*.js',
 			'js/extras/*.js'            

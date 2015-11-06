@@ -1,0 +1,119 @@
+<div class="container well bs-component" style="display:none;" id="viewOptions">
+	<div class="container-fluid">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="form-group">
+					<label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_container_width">Container Width</label>
+					<div class="col-xs-24 col-sm-18">
+						<div class="btn-group">
+							<a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '' ? 'btn-active': 'btn-default'" href="#">Default</a>
+							<a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '60%' ? 'btn-active': 'btn-default'" href="#">60%</a>
+							<a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '70%' ? 'btn-active': 'btn-default'" href="#">70%</a>
+							<a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '80%' ? 'btn-active': 'btn-default'" href="#">80%</a>
+							<a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '90%' ? 'btn-active': 'btn-default'" href="#">90%</a>
+							<a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '100%' ? 'btn-active': 'btn-default'" href="#">100%</a>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_layout_mode">Vault Mode</label>
+					<div class="col-xs-24 col-sm-18">
+						<div class="btn-group">
+							<div class="radio">
+								<label>
+									<input name="layoutMode" value="even" type="radio" data-bind="checked: layoutMode"> Default
+								</label>
+							</div>
+							<div class="radio">
+								<label>
+									<input name="layoutMode" value="uneven" type="radio" data-bind="checked: layoutMode"> Custom
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group" data-bind="visible: layoutMode() == 'even'">
+					<label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_number_of_columns"># of Columns</label>
+					<div class="col-xs-24 col-sm-18">
+						<div class="row">
+							<div class="col-xs-2">XS</div>
+							<div class="btn-group col-xs-22">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('xs', $element), css: btnActive('xs', $element)">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-2">SM</div>
+							<div class="btn-group col-xs-22">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('sm', $element), css: btnActive('sm', $element)">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-2">MD</div>
+							<div class="btn-group col-xs-22">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('md', $element), css: btnActive('md', $element)">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-2">LG</div>
+							<div class="btn-group col-xs-22">
+								<input type="Button" class="btn" value="1" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+								<input type="Button" class="btn" value="2" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+								<input type="Button" class="btn" value="3" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+								<input type="Button" class="btn" value="4" data-bind="click: setColumns('lg', $element), css: btnActive('lg', $element)">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group" data-bind="visible: layoutMode() == 'uneven'">
+					<label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_width">Vault Width</label>
+					<div class="col-xs-24 col-sm-18">
+						<div class="btn-group">
+							<a class="btn" data-bind="click: setVaultWidth(6), css: vaultWidth() == '6' ? 'btn-active': 'btn-default'" href="#">Default (25%)</a>
+							<a class="btn" data-bind="click: setVaultWidth(7), css: vaultWidth() == '7' ? 'btn-active': 'btn-default'" href="#">30%</a>
+							<a class="btn" data-bind="click: setVaultWidth(8), css: vaultWidth() == '8' ? 'btn-active': 'btn-default'" href="#">33%</a>
+							<a class="btn" data-bind="click: setVaultWidth(9), css: vaultWidth() == '9' ? 'btn-active': 'btn-default'" href="#">37%</a>
+							<a class="btn" data-bind="click: setVaultWidth(10), css: vaultWidth() == '10' ? 'btn-active': 'btn-default'" href="#">42%</a>
+							<a class="btn" data-bind="click: setVaultWidth(12), css: vaultWidth() == '12' ? 'btn-active': 'btn-default'" href="#">50%</a>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_columns">Vault Columns</label>
+					<div class="col-xs-24 col-sm-18">
+						<div class="btn-group">
+							<a class="btn" data-bind="click: setVaultColumns(2), css: vaultColumns() == '2' ? 'btn-active': 'btn-default'" href="#">12</a>
+							<a class="btn" data-bind="click: setVaultColumns(3), css: vaultColumns() == '3' ? 'btn-active': 'btn-default'" href="#">8</a>
+							<a class="btn" data-bind="click: setVaultColumns(4), css: vaultColumns() == '4' ? 'btn-active': 'btn-default'" href="#">6</a>
+							<a class="btn" data-bind="click: setVaultColumns(6), css: vaultColumns() == '6' ? 'btn-active': 'btn-default'" href="#">4</a>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_position">Vault Position</label>
+					<div class="col-xs-24 col-sm-18">
+						<label>
+							<input type="Checkbox" data-bind="checked: isVaultAt(0), click: setVaultTo(0)">
+							<span data-bind="text: $root.activeText().vo_vault_first">First/Left</span>
+						</label>
+						<label>
+							<input type="Checkbox" data-bind="checked: isVaultAt($root.characters().length), click: setVaultTo($root.characters().length)">
+							<span data-bind="text: $root.activeText().vo_vault_last">Last/Right</span>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="button" class="btn pull-right" value="x" data-bind="click: toggleViewOptions" style="position:relative;">
+				</div>
+			</fieldset>
+		</form>
+	</div>
+</div>

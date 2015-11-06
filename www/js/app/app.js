@@ -1968,6 +1968,9 @@ var app = function() {
     };
 
     this.init = function() {
+		_.each(ko.templates, function(content, name){
+			$("<script></script").attr("type","text/html").attr("id",name).html(content).appendTo("head");
+		});
         $.idleTimer(1000 * 60 * 30);
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
             self.lgColumn(tgd.defaults.lgColumn);

@@ -104,6 +104,10 @@
       "filename": "js/plugins/knockout-sortable.js",
       "version": "a793e2ce9cc772110b8ce20f2366deafd47281464dd5766de50f136275012478"
     },
+    "templates.js": {
+      "filename": "js/templates/templates.js",
+      "version": "bb40272ed8760f0bcf5bee63c701a3ab82c5299dbc05d9b240e1f6a0d97745c0"
+    },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
       "version": "4a8e84b7d5101db4b4b0895a44bc115dc811082b8193c0a8c8bb0836f204c1e7"
@@ -134,7 +138,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "e14675641111f09cad4dca25aa7cb0b308e38561b92ff11bc009d06453799f70"
+      "version": "4404a474e65001f1a03e5af124024caa1f68ad5ed36ec895f0ae8d5642ca0abd"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -142,7 +146,7 @@
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "b1d8de4ec0054eb6ece8dfb0632a966e2820437c2371c8c9b8a512d618852ed3"
+      "version": "d937f79382b357b2447ebc9e2eaa16d7aa8a986c48da3228d8fc581eb45c2565"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -180,6 +184,7 @@
     "js/plugins/jquery.toaster.js",
     "js/plugins/jquery.touch.gestures.js",
     "js/plugins/knockout-sortable.js",
+    "js/templates/templates.js",
     "js/tgd/bungie.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",

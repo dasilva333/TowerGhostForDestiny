@@ -1,0 +1,52 @@
+<div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', refreshableSection: true">
+	<span data-bind="text: $root.getBucketName(bucketType)"></span>
+	<!-- ko if: ( character.id !== 'Vault' ) -->
+	<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Quests' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
+	(<span data-bind="text: character.getVisible(bucketType).length + (character.itemEquippedVisible(bucketType) ? 1 : 0)"></span>/10)
+	<!--/ko  -->
+	<!-- ko if: (bucketType == 'Bounties') -->
+	(<span data-bind="text: character.get(bucketType).length"></span>/16)
+	<!--/ko  -->
+	<!-- ko if: (bucketType == 'Quests') -->
+	(<span data-bind="text: character.get(bucketType).length"></span>/32)
+	<!--/ko  -->
+	<!-- ko if: ( bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' ) -->
+	(<span data-bind="text: character.get(bucketType).length"></span>/20)
+	<!--/ko  -->
+	<!--/ko  -->
+	<div class="titleRefresh" data-bind="visible: isMobile">
+		<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables') -->
+		<i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
+		<!--/ko  -->
+		<!-- ko if: (bucketType == 'Materials' || bucketType == 'Consumables') -->
+		<img title="Click to normalize all consumables" src="assets/swap_16.png" data-bind="fastclick: function(){ $root.normalizeAll(bucketType); }, clickBubble: false" />
+		<!--/ko  -->
+		<i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+	</div>
+</div>
+<div class="row no-gutter" style="margin:auto;" data-bind="moveItem: true">
+	<div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-24' : 'col-xs-18') + ' ' + bucketType + ' ' + character.id">
+		<div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
+			<span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
+				<a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level() || character.id == 'Vault') ? 1 : 0.3 }">
+					<img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+				</a>
+				<div class="lockIcon" data-bind="if: item.locked()">
+					<img src="assets/lock.png" />
+				</div>
+				<div class="attkIcon" data-bind="visible: primaryStat() != ''">
+					<div data-bind="text: primaryStat, css: damageTypeName"></div>
+				</div>
+			</span>
+		</div>
+	</div>
+	<!-- ko with: character.itemEquipped(bucketType) -->
+	<div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
+		<span class="col-xs-24" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
+				<a class="itemLink" data-bind="attr:{href:href, instanceId:_id}"><img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }"></a>
+				<div class="lockIcon" data-bind="if: locked()"><img src="assets/lock.png" /></div>
+				<div class="attkIcon" data-bind="visible: primaryStat() != ''"><div data-bind="text: primaryStat, css: damageTypeName"></div></div>
+			</span>
+	</div>
+	<!--/ko  -->
+</div>
