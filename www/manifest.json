@@ -68,6 +68,10 @@
       "filename": "js/libraries/secondary/bootstrap.js",
       "version": "6447e59227786bcda7ad58ef045540cba328e5ec0e5ddbd88b4f57122feaf926"
     },
+    "cordova-app-loader-complete.js": {
+      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
+      "version": "55a282780480e759646d4af6259237b50a2b4e218f385201186fb8b8238e6581"
+    },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
       "version": "7426aa18391348e113d5246b483a45acac628bccac64167539cfd8d1e8f43163"
@@ -106,7 +110,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "bb40272ed8760f0bcf5bee63c701a3ab82c5299dbc05d9b240e1f6a0d97745c0"
+      "version": "c030e5337f45475ec1a43fbfba5469d3cbf35142155100e86b2e10e97441503a"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -138,7 +142,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "4404a474e65001f1a03e5af124024caa1f68ad5ed36ec895f0ae8d5642ca0abd"
+      "version": "1a98238bc48d08761c894ca3152360601f91a1dc500c62a9bdcd201b3c718c1f"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -146,7 +150,7 @@
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "d937f79382b357b2447ebc9e2eaa16d7aa8a986c48da3228d8fc581eb45c2565"
+      "version": "6b598813e8fc95690385113e47e04431800ed2e5b59bda353a64838ebc0eafc1"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -175,6 +179,7 @@
     "js/libraries/primary/underscore.js",
     "js/libraries/secondary/analytics.js",
     "js/libraries/secondary/bootstrap.js",
+    "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",

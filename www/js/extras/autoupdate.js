@@ -1,9 +1,10 @@
 (function() {
 
-    console.log("skipping check");
     // 1. On launch
-	return;
-	
+    if (!(isChrome || isIOS || isAndroid)) return;
+
+    tgd.localLog("checking for updates");
+
     // Check for Cordova
     var isCordova = typeof cordova !== 'undefined',
         // CordovaPromiseFS

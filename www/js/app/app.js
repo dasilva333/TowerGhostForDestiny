@@ -1122,24 +1122,24 @@ var app = function() {
     };
 
     this.refresh = function() {
-		if ( self.bungie.gamertag() ){
-			self.bungie.account(function(result) {
-				if (result && result.data && result.data.characters) {
-					var characters = result.data.characters;
-					_.each(self.characters(), function(character) {
-						if (character.id != "Vault") {
-							var result = _.filter(characters, function(avatar) {
-								return avatar.characterBase.characterId == character.id;
-							})[0];
-							character.updateCharacter(result);
-						}
-						character._reloadBucket(character);
-					});
-				} else {
-					tgd.localLog(result);
-				}
-			});
-		}
+        if (self.bungie.gamertag()) {
+            self.bungie.account(function(result) {
+                if (result && result.data && result.data.characters) {
+                    var characters = result.data.characters;
+                    _.each(self.characters(), function(character) {
+                        if (character.id != "Vault") {
+                            var result = _.filter(characters, function(avatar) {
+                                return avatar.characterBase.characterId == character.id;
+                            })[0];
+                            character.updateCharacter(result);
+                        }
+                        character._reloadBucket(character);
+                    });
+                } else {
+                    tgd.localLog(result);
+                }
+            });
+        }
     };
 
     this.refreshHandler = function() {
@@ -1968,9 +1968,9 @@ var app = function() {
     };
 
     this.init = function() {
-		_.each(ko.templates, function(content, name){
-			$("<script></script").attr("type","text/html").attr("id",name).html(content).appendTo("head");
-		});
+        _.each(ko.templates, function(content, name) {
+            $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
+        });
         $.idleTimer(1000 * 60 * 30);
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
             self.lgColumn(tgd.defaults.lgColumn);
@@ -2123,7 +2123,7 @@ var app = function() {
             return false;
         });
         ko.applyBindings(self);
-		self.whatsNew();
+        self.whatsNew();
         window.BOOTSTRAP_OK = true;
     };
 };
