@@ -1,77 +1,86 @@
-	<div class="container" id="charactersContainerParent" data-bind="style: { width: ccWidth }">
-        <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0">
-            <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
-                <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
-                    <div class="character">
-                        <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
-                            <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
-                            <div class="class" data-bind="text: classType"></div>
-                            <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false, visible: level() != ''">
-                                <div class="light" data-bind="text: level"></div>
-                                <div class="power" data-bind="text: character.powerLevel"></div>
-                            </div>
-                            <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
-                            <div class="row stats" data-bind="with: stats, visible: statsShowing">
-                                <div class="col-xs-10">
-                                    Armor <span data-bind="text: STAT_ARMOR.value"></span>
-                                </div>
-                                <div class="col-xs-14 text-right">
-                                    Intellect <span data-bind="text: character.equippedStats()['Intellect']"></span> <img src="assets/intellect.png">
-                                </div>
-                                <div class="col-xs-8">
-                                    Agility <span data-bind="text: STAT_AGILITY.value"></span>
-                                </div>
-                                <div class="col-xs-16 text-right">
-                                    Discipline <span data-bind="text: character.equippedStats()['Discipline']"></span> <img src="assets/discipline.png">
-                                </div>
-                                <div class="col-xs-10">
-                                    Recovery <span data-bind="text: STAT_RECOVERY.value"></span>
-                                </div>
-                                <div class="col-xs-14 text-right">
-                                    Strength <span data-bind="text: character.equippedStats()['Strength']"></span> <img src="assets/strength.png">
-                                </div>
-                                <div class="col-xs-24 text-center">
-                                    Equip Gear With Highest:
-                                    <br>
-                                    <a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a>
-                                    <a data-bind="click: character.equipHighest('Intellect')" class="btn btn-default">Int</a>
-                                    <a data-bind="click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a>
-                                    <a data-bind="click: character.equipHighest('Strength')" class="btn btn-default">Str</a>
-                                    <hr style="margin:3px; padding:6px;">
-                                    <a data-bind="click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a> |
-                                    <a data-bind="click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a>
-                                </div>
-                            </div>
+<div class="container" id="charactersContainerParent" data-bind="style: { width: ccWidth }">
+    <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0">
+        <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
+            <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
+                <div class="character">
+                    <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
+                        <div class="emblem" data-bind="style: { backgroundImage: iconBG }"></div>
+                        <div class="class" data-bind="text: classType"></div>
+                        <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false, visible: level() != ''">
+                            <div class="light" data-bind="text: level"></div>
+                            <div class="power" data-bind="text: character.powerLevel"></div>
                         </div>
-                    </div>
-                    <div class="inventory">
-                        <div class="items" data-type="item">
-                            <!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
-                            <!-- ko if: layout.isVisible(character)() -->
-                            <div>
-                                <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true">
-                                    <strong data-bind="text: (character.id == 'Vault' && layout.name == 'Sub Classes' ? 'Vault Sub Classes' : $root.activeText()[layout.headerText])"></strong>
-                                    <span data-bind="html: layout.countText(character)"></span>
-                                    <div class="titleRefresh" data-bind="visible: isMobile">
-                                        <!-- ko if: (layout.headerText == 'inventory_weapons' || layout.headerText == 'inventory_armor') -->
-                                        <i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
-                                        <!--/ko  -->
-                                        <i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
-                                    </div>
-                                </div>
-                                <div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
+                        <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
+                        <div class="row stats" data-bind="with: stats, visible: statsShowing">
+                            <div class="col-xs-10">
+                                Armor
+                                <span data-bind="text: STAT_ARMOR.value"></span>
                             </div>
-                            <!--/ko  -->
-                            <!--/ko  -->
+                            <div class="col-xs-14 text-right">
+                                Intellect
+                                <span data-bind="text: character.equippedStats()['Intellect']"></span>
+                                <img src="assets/intellect.png">
+                            </div>
+                            <div class="col-xs-8">
+                                Agility
+                                <span data-bind="text: STAT_AGILITY.value"></span>
+                            </div>
+                            <div class="col-xs-16 text-right">
+                                Discipline
+                                <span data-bind="text: character.equippedStats()['Discipline']"></span>
+                                <img src="assets/discipline.png">
+                            </div>
+                            <div class="col-xs-10">
+                                Recovery
+                                <span data-bind="text: STAT_RECOVERY.value"></span>
+                            </div>
+                            <div class="col-xs-14 text-right">
+                                Strength
+                                <span data-bind="text: character.equippedStats()['Strength']"></span>
+                                <img src="assets/strength.png">
+                            </div>
+                            <div class="col-xs-24 text-center">
+                                Equip Gear With Highest:
+                                <br>
+                                <a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a>
+                                <a data-bind="click: character.equipHighest('Intellect')" class="btn btn-default">Int</a>
+                                <a data-bind="click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a>
+                                <a data-bind="click: character.equipHighest('Strength')" class="btn btn-default">Str</a>
+                                <hr style="margin:3px; padding:6px;">
+                                <a data-bind="click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a> |
+                                <a data-bind="click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- ko if: $index() == 1 -->
-                <div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
-                <!--/ko  -->
-                <!-- ko if: $index() == 2 -->
-                <div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
-                <!--/ko  -->
+                <div class="inventory">
+                    <div class="items" data-type="item">
+                        <!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
+                        <!-- ko if: layout.isVisible(character)() -->
+                        <div>
+                            <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true">
+                                <strong data-bind="text: (character.id == 'Vault' && layout.name == 'Sub Classes' ? 'Vault Sub Classes' : $root.activeText()[layout.headerText])"></strong>
+                                <span data-bind="html: layout.countText(character)"></span>
+                                <div class="titleRefresh" data-bind="visible: isMobile">
+                                    <!-- ko if: (layout.headerText == 'inventory_weapons' || layout.headerText == 'inventory_armor') -->
+                                    <i title="Click to select multiple items to transfer in one go." class="fa fa-clone" data-bind="fastclick: $root.startMultiSelect, clickBubble: false"></i>
+                                    <!--/ko  -->
+                                    <i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
+                                </div>
+                            </div>
+                            <div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
+                        </div>
+                        <!--/ko  -->
+                        <!--/ko  -->
+                    </div>
+                </div>
             </div>
+            <!-- ko if: $index() == 1 -->
+            <div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
+            <!--/ko  -->
+            <!-- ko if: $index() == 2 -->
+            <div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
+            <!--/ko  -->
         </div>
     </div>
+</div>

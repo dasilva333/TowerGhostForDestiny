@@ -26,9 +26,14 @@ xmlConfig = xmlConfig.replace(/id=\"com.richardpinedo.towerghostfordestiny\" ver
 
 fs.writeFileSync(adobeBuildConfigFile, xmlConfig);
 
-var indexHomePage = "../www/index.html";
+var indexHomePage = "../www/templates/navbar-template.tmpl.html";
 var indexContent = fs.readFileSync(indexHomePage).toString("utf8");
 indexContent = indexContent.replace(/<span class=\"version\">(.*)<\/span>/g,'<span class=\"version\">' + versionInfo + '</span>');
+
+var aboutPage = "../www/templates/about-template.tmpl.html";
+var aboutContent = fs.readFileSync(aboutPage).toString("utf8");
+aboutContent = aboutContent.replace(/<span class=\"version\">(.*)<\/span>/g,'<span class=\"version\">' + versionInfo + '</span>');
+fs.writeFileSync(aboutPage, aboutContent);
 
 var versionScript = "../www/js/tgd/version.js";
 var versionContent = fs.readFileSync(versionScript).toString("utf8");
@@ -48,5 +53,3 @@ if ( process.argv[2] ){
 indexContent = indexContent.replace(/<div id=\"showwhatsnew\" style=\"display:none;\">(.*)<\/div>/g,'<div id=\"showwhatsnew\" style=\"display:none;\">' + whatsNew.doShow + '</div>');
 
 fs.writeFileSync(indexHomePage, indexContent);
-
-require("./code_format");

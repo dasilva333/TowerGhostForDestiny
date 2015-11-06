@@ -1,61 +1,67 @@
-    <div class="alert alert-info" data-bind="visible: shareView" style="display:none;">
-        <span data-bind="text: $root.activeText().text_shareurl"></span>: <a target="_system" data-bind="attr:{href: shareUrl}"><span data-bind="text: shareUrl"></span></a>
-    </div>
-    <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
-        <strong data-bind="text: $root.activeText().missing_items">Missing Items</strong>
-        <span data-bind="foreach: { data: missingSets }">			
-			<a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }">
-				<img src="about:blank" data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48">
-			</a>
-		</span>
-    </div>
-    <div data-bind="with: $root.activeUser()" style="">
-        <div data-bind="visible: typeof error !== 'undefined'" style="display:none;">
-            <div class="alert alert-danger" data-bind="visible: typeof code !== 'undefined' && code != 99">
-                <strong>Error:</strong> <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
-            </div>
-            <div data-bind="visible: typeof code !== 'undefined' && (code == 99) || (typeof error !== 'undefined' && (error == 'network error:502' || error == 'network error:503'))">
-                <div class="col-xs-24 col-sm-16 col-sm-offset-4 col-lg-8 col-lg-offset-8 text-center">
-                    <div class="panel panel-success" id="loginForm">
-                        <div class="panel-heading">
-                            <h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
-                        </div>
-                        <div class="panel-body">
-                            <p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
-                            <div class="btn-padding">
-                                <div class="form-group">
-                                    <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block"><img src="assets/xbox_live.png" /> Xbox Live</a>
-                                </div>
-                                <div class="form-group">
-                                    <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block"><img src="assets/playstation.png"> Playstation Network</a>
-                                </div>
+<div class="alert alert-info" data-bind="visible: shareView" style="display:none;">
+    <span data-bind="text: $root.activeText().text_shareurl"></span>:
+    <a target="_system" data-bind="attr:{href: shareUrl}">
+        <span data-bind="text: shareUrl"></span>
+    </a>
+</div>
+<div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
+    <strong data-bind="text: $root.activeText().missing_items">Missing Items</strong>
+    <span data-bind="foreach: { data: missingSets }">
+        <a data-bind="attr:{ href: 'https://destinydb.com/items/' + $data }, fastclick: function(){ return false }">
+            <img src="about:blank" data-bind="attr:{src: _itemDefs[ $data ] && ($root.bungie.getUrl() +_itemDefs[ $data ].icon), title: _itemDefs[ $data ] && _itemDefs[ $data ].name }" width="48">
+        </a>
+    </span>
+</div>
+<div data-bind="with: $root.activeUser()" style="">
+    <div data-bind="visible: typeof error !== 'undefined'" style="display:none;">
+        <div class="alert alert-danger" data-bind="visible: typeof code !== 'undefined' && code != 99">
+            <strong>Error:</strong>
+            <span data-bind="text: typeof error == 'undefined' ? '' : error"></span>
+        </div>
+        <div data-bind="visible: typeof code !== 'undefined' && (code == 99) || (typeof error !== 'undefined' && (error == 'network error:502' || error == 'network error:503'))">
+            <div class="col-xs-24 col-sm-16 col-sm-offset-4 col-lg-8 col-lg-offset-8 text-center">
+                <div class="panel panel-success" id="loginForm">
+                    <div class="panel-heading">
+                        <h2 class="panel-title" data-bind="text: $root.activeText().login_title">Welcome to Tower Ghost for Destiny!</h2>
+                    </div>
+                    <div class="panel-body">
+                        <p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
+                        <div class="btn-padding">
+                            <div class="form-group">
+                                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
+                                    <img src="assets/xbox_live.png" /> Xbox Live</a>
                             </div>
-                            <p data-bind="text: $root.activeText().login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
+                            <div class="form-group">
+                                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
+                                    <img src="assets/playstation.png"> Playstation Network</a>
+                            </div>
                         </div>
+                        <p data-bind="text: $root.activeText().login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div style="display:none;" data-bind="visible: loadingUser() == true && hiddenWindowOpen() == false">
-        <div class="col-xs-24">
-            <h4 data-bind="text: $root.activeText().login_loading_inventory">Please wait, loading arsenal from Bungie</h4>
-            <div class="progress progress-striped active">
-                <div class="progress-bar progress-bar-success" style="width: 100%"></div>
-            </div>
+</div>
+<div style="display:none;" data-bind="visible: loadingUser() == true && hiddenWindowOpen() == false">
+    <div class="col-xs-24">
+        <h4 data-bind="text: $root.activeText().login_loading_inventory">Please wait, loading arsenal from Bungie</h4>
+        <div class="progress progress-striped active">
+            <div class="progress-bar progress-bar-success" style="width: 100%"></div>
         </div>
     </div>
-    <div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
-        <div class="col-xs-24">
-            <h4 data-bind="text: $root.activeText().login_authenticating_pt1">Logging into Bungie... Please be patient.</h4>
-            <div class="progress progress-striped active">
-                <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
-            </div>
-            <div>
-                <span data-bind="text: $root.activeText().login_authenticating_pt2">If log in screen remains for 4+ minutes, use these links for</span>
-                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;">Xbox Live</a> or
-                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;">Playstation Network</a>
-                <span data-bind="text: $root.activeText().login_authenticating_pt3">to retry signing in. </span>
-            </div>
+</div>
+<div style="display:none;" data-bind="visible: hiddenWindowOpen() == true">
+    <div class="col-xs-24">
+        <h4 data-bind="text: $root.activeText().login_authenticating_pt1">Logging into Bungie... Please be patient.</h4>
+        <div class="progress progress-striped active">
+            <div class="progress-bar progress-bar-warning" style="width: 100%"></div>
+        </div>
+        <div>
+            <span data-bind="text: $root.activeText().login_authenticating_pt2">If log in screen remains for 4+ minutes, use these links for</span>
+            <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;">Xbox Live</a> or
+            <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;">Playstation Network</a>
+            <span data-bind="text: $root.activeText().login_authenticating_pt3">to retry signing in. </span>
         </div>
     </div>
+</div>
