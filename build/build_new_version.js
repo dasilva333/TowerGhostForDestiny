@@ -30,7 +30,7 @@ var indexHomePage = "../www/index.html";
 var indexContent = fs.readFileSync(indexHomePage).toString("utf8");
 indexContent = indexContent.replace(/<span class=\"version\">(.*)<\/span>/g,'<span class=\"version\">' + versionInfo + '</span>');
 
-var versionScript = "../www/js/version.js";
+var versionScript = "../www/js/tgd/version.js";
 var versionContent = fs.readFileSync(versionScript).toString("utf8");
 versionContent = versionContent.replace(/tgd.version = \"(.*)\";/g,'tgd.version = \"' + versionInfo + '\";');
 fs.writeFileSync(versionScript, versionContent);
@@ -38,13 +38,13 @@ fs.writeFileSync(versionScript, versionContent);
 
 //show the whatsnew in the next version number
 var whatsNew = {
-	doShow: "false",
-	content: fs.readFileSync("../www/whatsnew.html").toString("utf8")
+	doShow: "false"/*,
+	content: fs.readFileSync("../www/whatsnew.html").toString("utf8")*/
 }
 if ( process.argv[2] ){
 	whatsNew.doShow = "true";
 }
-indexContent = indexContent.replace(/<div id=\"whatsnew\" style=\"display:none;\">(.*)<\/div>/g,'<div id="whatsnew" style="display:none;">' + escape(JSON.stringify(whatsNew)) + '</div>');
+//indexContent = indexContent.replace(/<div id=\"whatsnew\" style=\"display:none;\">(.*)<\/div>/g,'<div id="whatsnew" style="display:none;">' + escape(JSON.stringify(whatsNew)) + '</div>');
 indexContent = indexContent.replace(/<div id=\"showwhatsnew\" style=\"display:none;\">(.*)<\/div>/g,'<div id=\"showwhatsnew\" style=\"display:none;\">' + whatsNew.doShow + '</div>');
 
 fs.writeFileSync(indexHomePage, indexContent);

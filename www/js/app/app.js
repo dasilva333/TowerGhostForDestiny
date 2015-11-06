@@ -1489,7 +1489,7 @@ var app = function() {
     this.showWhatsNew = function(callback) {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
-        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        container.html("Version: " + tgd.version + $("#whatsnew").html());
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
@@ -2117,13 +2117,13 @@ var app = function() {
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
         $(document).on("click", "a[target='_system']", function() {
             window.open(this.href, "_system");
             return false;
         });
         ko.applyBindings(self);
+		self.whatsNew();
         window.BOOTSTRAP_OK = true;
     };
 };
