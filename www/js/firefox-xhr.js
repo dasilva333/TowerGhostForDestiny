@@ -3,7 +3,6 @@ if (!isNWJS && !isMobile && !isChrome) {
 	tgd.ffXHRisReady = false;
 
 	window.addEventListener("cs-ready", function(event) {
-		console.log("cs-ready!");
 		tgd.ffXHRisReady = true;
 	}, false);
 	
@@ -52,13 +51,17 @@ if (!isNWJS && !isMobile && !isChrome) {
 				event.initCustomEvent("xhr-request", true, true, self.request);
 				document.documentElement.dispatchEvent(event);
 			}
-			var check = setInterval(function(){
-				//console.log("waiting xhr to be ready");
-				if ( tgd.ffXHRisReady == true ){
-					clearInterval(check);
-					send();
-				}
-			},1000);
+			if ( tgd.ffXHRisReady == true ){
+				send();
+			}
+			else {
+				var check = setInterval(function(){
+					if ( tgd.ffXHRisReady == true ){
+						clearInterval(check);
+						send();
+					}
+				},1000);			
+			}
         };
         this.onreadystatechange = function() {
             //console.log("state changed");

@@ -59,17 +59,17 @@ module.exports = function(grunt) {
           root: "./"
         },
         src: [
+			'css/bootstrap.min.css',
+			'css/style.css',
+			'css/tooltip.css',
+			'css/style_new.css',
 			'data/definitions/*.json',
 			'js/libraries/primary/*.js',
 			'js/libraries/secondary/*.js',
 			'js/plugins/*.js',
 			'js/tgd/*.js',
 			'js/app/*.js',
-			'js/extras/*.js',
-            'css/bootstrap.min.css',
-			'css/style.css',
-			'css/tooltip.css',
-			'css/style_new.css',
+			'js/extras/*.js'            
         ],
         dest: ['../www/manifest.json']
       }
