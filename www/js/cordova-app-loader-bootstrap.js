@@ -1,3 +1,4 @@
+(function(){
 // Retrieved and slightly modified from: https://github.com/typicode/pegasus
 // --------------------------------------------------------------------------
 //
@@ -86,13 +87,14 @@ function loadManifest(manifest,fromLocalStorage,timeout){
       if(src.substr(-5).indexOf(".js") > -1){
         el= document.createElement('script');
         el.type= 'text/javascript';
-        el.src= src + '?' + now;
+		//TODO: Investigate if cache busting is nessecary for some platforms, apparently it does not work in IEMobile 10
+        el.src= src;
         el.async = false;
       // Load CSS
       } else {
         el= document.createElement('link');
         el.rel = "stylesheet";
-        el.href = src + '?' + now;
+        el.href = src;
         el.type = "text/css";
       }
       head.appendChild(el);
@@ -136,3 +138,4 @@ if(!manifest){
 } else {
   loadManifest(manifest,true,s.getAttribute('timeout') || 10000);
 }
+})();
