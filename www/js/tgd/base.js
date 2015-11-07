@@ -258,7 +258,8 @@ tgd.defaults = {
     itemDefs: "",
     preferredSystem: "PSN",
     ccWidth: "",
-    layoutMode: "even"
+    layoutMode: "even",
+	autoUpdates: false
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +

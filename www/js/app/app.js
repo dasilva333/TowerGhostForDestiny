@@ -360,6 +360,7 @@ var app = function() {
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates"));
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
@@ -694,6 +695,14 @@ var app = function() {
         }
         callback($content.html());
     };
+
+    this.toggleAutoUpdates = function() {
+        self.toggleBootstrapMenu();
+        self.autoUpdates(!self.autoUpdates());
+        if (self.autoUpdates()) {
+            tgd.checkUpdates();
+        }
+    }
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
@@ -2127,6 +2136,9 @@ var app = function() {
 
         self.whatsNew();
         window.BOOTSTRAP_OK = true;
+        if (self.autoUpdates()) {
+            tgd.checkUpdates();
+        }
     };
 };
 
