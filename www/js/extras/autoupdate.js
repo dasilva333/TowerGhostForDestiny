@@ -1,7 +1,7 @@
 (function() {
 
     // 1. On launch
-    if (!(isChrome || isIOS || isAndroid)) return;
+    //if (!(isChrome || isIOS || isAndroid)) return;
 
     tgd.localLog("checking for updates");
 
