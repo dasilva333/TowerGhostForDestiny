@@ -6,7 +6,7 @@
     },
     "style.css": {
       "filename": "css/style.css",
-      "version": "b3b268b1b84876102b4132914ad2ab469236970c7a736c4d3cc3f6b836d9daef"
+      "version": "526b12ffeac01a9123d65b15c4af51294556e5a4ea5a4d0b28ca9cc647d0ad47"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
@@ -14,7 +14,7 @@
     },
     "style_new.css": {
       "filename": "css/style_new.css",
-      "version": "749d8f0b6b55a217971b431accf6fc69a28f291ced9b76df513f27f8a2b85795"
+      "version": "a649382ec38b96063c2b5b6b43960384cdaa1404cd6df1794219ecebd4842c39"
     },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "55a282780480e759646d4af6259237b50a2b4e218f385201186fb8b8238e6581"
+      "version": "d062cb9fa3fd5f617e8fbf0bb6647efd6d1bb7bd40a1f1e094e1433d39740622"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -110,7 +110,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "efe36a508b3e0ff5ab607e8cad3dce0f5b4969c8b577f9094b13828cb5c65693"
+      "version": "5cc61317611cd5d8902cbcd6531c5470454dd44c000a69138c985d0452e2f9db"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -130,7 +130,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "70164bfaa00bfc12f3a5fa288d7b242a53cf2fe4599f314d33cb973034e5a694"
+      "version": "fed189ee877355351d8ab796d20bb16a028f4bdf69ff053dc5e5044b27bc4981"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
@@ -150,7 +150,7 @@
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "6b598813e8fc95690385113e47e04431800ed2e5b59bda353a64838ebc0eafc1"
+      "version": "251ebdad9e826bb53ef45d8fef6a2a89ed5fff09292fde1bd135dba883baf4d0"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
