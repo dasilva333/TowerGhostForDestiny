@@ -76,13 +76,13 @@
       "filename": "js/libraries/secondary/fastclick.js",
       "version": "7426aa18391348e113d5246b483a45acac628bccac64167539cfd8d1e8f43163"
     },
+    "hammer.js": {
+      "filename": "js/libraries/secondary/hammer.js",
+      "version": "25a0fff3cf21bdbf4cfd988891bb6698045d3865fac4324607684bafda9b2748"
+    },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
       "version": "acdc47924955e3a3f1d50fcd6fbb4718fc1b98694a27159844b624a0ba1bed56"
-    },
-    "hammer.js": {
-      "filename": "js/plugins/hammer.js",
-      "version": "25a0fff3cf21bdbf4cfd988891bb6698045d3865fac4324607684bafda9b2748"
     },
     "jquery-idletimer.js": {
       "filename": "js/plugins/jquery-idletimer.js",
@@ -138,7 +138,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "89fcb7453eb5bab4a95bc31a0e6853d9bbbdbac4e4fb6e65fdd4c2df397848c9"
+      "version": "3da4664216f77e77c423465fa535e0465669d809e7146a8cf93094c412aace6e"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -177,8 +177,8 @@
     "js/libraries/secondary/bootstrap.js",
     "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
+    "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",
-    "js/plugins/hammer.js",
     "js/plugins/jquery-idletimer.js",
     "js/plugins/jquery-ui.js",
     "js/plugins/jquery-ui.touchpunch.js",
