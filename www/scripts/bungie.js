@@ -179,7 +179,7 @@ var bungie = (function(cookieString, complete) {
         return membershipId;
     }
     this.gamertag = function() {
-        return active.id;
+        return active ? active.id : null;
     }
     this.system = function() {
         return systemIds;
