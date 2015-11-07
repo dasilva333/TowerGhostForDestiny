@@ -100,10 +100,6 @@
       "filename": "js/plugins/jquery.toaster.js",
       "version": "04a53f3bd3121363a80340a7025e124c443dfbb1e0c638f79346376bea44462e"
     },
-    "jquery.touch.gestures.js": {
-      "filename": "js/plugins/jquery.touch.gestures.js",
-      "version": "c458c41146f98b1a565a426ebf65e856205aaf4bdc9d5094923a5114d536a358"
-    },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
       "version": "a793e2ce9cc772110b8ce20f2366deafd47281464dd5766de50f136275012478"
@@ -142,7 +138,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "89fcb7453eb5bab4a95bc31a0e6853d9bbbdbac4e4fb6e65fdd4c2df397848c9"
+      "version": "3da4664216f77e77c423465fa535e0465669d809e7146a8cf93094c412aace6e"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -187,7 +183,6 @@
     "js/plugins/jquery-ui.js",
     "js/plugins/jquery-ui.touchpunch.js",
     "js/plugins/jquery.toaster.js",
-    "js/plugins/jquery.touch.gestures.js",
     "js/plugins/knockout-sortable.js",
     "js/templates/templates.js",
     "js/tgd/bungie.js",

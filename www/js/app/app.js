@@ -2022,41 +2022,6 @@ var app = function() {
             document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
         }
 
-        if (isMobile) {
-            //This sets up swipe left/swipe right for mobile devices
-            //TODO: Add an option to disable this for users
-            Hammer(document.getElementById('charactersContainer'), {
-                    //Removing these values and allowing HammerJS to figure out the best value based on the device
-                    //drag_min_distance: 1,
-                    //swipe_velocity: 0.1,
-                    drag_horizontal: true,
-                    drag_vertical: false
-                }).on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight)
-                .on("tap", self.globalClickHandler);
-
-            //This ensures that the top status bar color matches the app
-            if (typeof StatusBar !== "undefined") {
-                StatusBar.styleBlackOpaque();
-                StatusBar.backgroundColorByHexString("#272B30");
-                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                    StatusBar.overlaysWebView(false);
-                }
-            }
-
-            //This sets up inAppBilling donations for iOS/Android
-            if (typeof inappbilling != "undefined") {
-                inappbilling.init(function() {}, function() {}, {
-                    showLog: false
-                }, ['small', 'medium', 'large']);
-            }
-
-            //Prevent the user from pressing the back button to reload the app
-            document.addEventListener("backbutton", function(e) {
-                e.preventDefault();
-            }, false);
-        }
-
         var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
         ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
         ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
@@ -2122,7 +2087,44 @@ var app = function() {
             window.open(this.href, "_system");
             return false;
         });
+
         ko.applyBindings(self);
+
+        if (isMobile) {
+            //This sets up swipe left/swipe right for mobile devices
+            //TODO: Add an option to disable this for users
+            Hammer(document.getElementById('charactersContainer'), {
+                    //Removing these values and allowing HammerJS to figure out the best value based on the device
+                    //drag_min_distance: 1,
+                    //swipe_velocity: 0.1,
+                    drag_horizontal: true,
+                    drag_vertical: false
+                }).on("swipeleft", self.shiftViewLeft)
+                .on("swiperight", self.shiftViewRight)
+                .on("tap", self.globalClickHandler);
+
+            //This ensures that the top status bar color matches the app
+            if (typeof StatusBar !== "undefined") {
+                StatusBar.styleBlackOpaque();
+                StatusBar.backgroundColorByHexString("#272B30");
+                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+                    StatusBar.overlaysWebView(false);
+                }
+            }
+
+            //This sets up inAppBilling donations for iOS/Android
+            if (typeof inappbilling != "undefined") {
+                inappbilling.init(function() {}, function() {}, {
+                    showLog: false
+                }, ['small', 'medium', 'large']);
+            }
+
+            //Prevent the user from pressing the back button to reload the app
+            document.addEventListener("backbutton", function(e) {
+                e.preventDefault();
+            }, false);
+        }
+
         self.whatsNew();
         window.BOOTSTRAP_OK = true;
     };
