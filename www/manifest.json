@@ -1,5 +1,21 @@
 {
   "files": {
+    "bootstrap.min.css": {
+      "filename": "css/bootstrap.min.css",
+      "version": "66487d550a92eb21855aec3826b5ea45447744dbd521b973d87fbff13ea5fc5d"
+    },
+    "style.css": {
+      "filename": "css/style.css",
+      "version": "526b12ffeac01a9123d65b15c4af51294556e5a4ea5a4d0b28ca9cc647d0ad47"
+    },
+    "tooltip.css": {
+      "filename": "css/tooltip.css",
+      "version": "74efeefc7bd6641f2c1ec87c1401fecc4f2448a93213814f8df08d5d50abfceb"
+    },
+    "style_new.css": {
+      "filename": "css/style_new.css",
+      "version": "a649382ec38b96063c2b5b6b43960384cdaa1404cd6df1794219ecebd4842c39"
+    },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
       "version": "6b530e3cc819603ca56ecfda35038b9ab158b0611718382fbb8c4494b1a496f0"
@@ -52,6 +68,10 @@
       "filename": "js/libraries/secondary/bootstrap.js",
       "version": "6447e59227786bcda7ad58ef045540cba328e5ec0e5ddbd88b4f57122feaf926"
     },
+    "cordova-app-loader-complete.js": {
+      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
+      "version": "d062cb9fa3fd5f617e8fbf0bb6647efd6d1bb7bd40a1f1e094e1433d39740622"
+    },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
       "version": "7426aa18391348e113d5246b483a45acac628bccac64167539cfd8d1e8f43163"
@@ -88,9 +108,13 @@
       "filename": "js/plugins/knockout-sortable.js",
       "version": "a793e2ce9cc772110b8ce20f2366deafd47281464dd5766de50f136275012478"
     },
+    "templates.js": {
+      "filename": "js/templates/templates.js",
+      "version": "5cc61317611cd5d8902cbcd6531c5470454dd44c000a69138c985d0452e2f9db"
+    },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
-      "version": "4a8e84b7d5101db4b4b0895a44bc115dc811082b8193c0a8c8bb0836f204c1e7"
+      "version": "6c5f0a27c2bc87c59d6b6afc5b645c6f862e3f4ae68bfabab91b952770274103"
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
@@ -106,11 +130,11 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "70164bfaa00bfc12f3a5fa288d7b242a53cf2fe4599f314d33cb973034e5a694"
+      "version": "fed189ee877355351d8ab796d20bb16a028f4bdf69ff053dc5e5044b27bc4981"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "c2945a59fc6fd3f572bf535f663cab5fa2365d895525357a5aaf82f18b801943"
+      "version": "78a403f10c6a7674f9c46a6f6e2de08f02ff081337e29eeb17043251705921e3"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -118,7 +142,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "e14675641111f09cad4dca25aa7cb0b308e38561b92ff11bc009d06453799f70"
+      "version": "89fcb7453eb5bab4a95bc31a0e6853d9bbbdbac4e4fb6e65fdd4c2df397848c9"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -126,7 +150,7 @@
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "d937f79382b357b2447ebc9e2eaa16d7aa8a986c48da3228d8fc581eb45c2565"
+      "version": "251ebdad9e826bb53ef45d8fef6a2a89ed5fff09292fde1bd135dba883baf4d0"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -135,25 +159,13 @@
     "ga.js": {
       "filename": "js/extras/ga.js",
       "version": "9176463d8871cc494901f6d8899edc6d6294c781092d5432ad306bb62ecba86a"
-    },
-    "bootstrap.min.css": {
-      "filename": "css/bootstrap.min.css",
-      "version": "66487d550a92eb21855aec3826b5ea45447744dbd521b973d87fbff13ea5fc5d"
-    },
-    "style.css": {
-      "filename": "css/style.css",
-      "version": "b3b268b1b84876102b4132914ad2ab469236970c7a736c4d3cc3f6b836d9daef"
-    },
-    "tooltip.css": {
-      "filename": "css/tooltip.css",
-      "version": "74efeefc7bd6641f2c1ec87c1401fecc4f2448a93213814f8df08d5d50abfceb"
-    },
-    "style_new.css": {
-      "filename": "css/style_new.css",
-      "version": "749d8f0b6b55a217971b431accf6fc69a28f291ced9b76df513f27f8a2b85795"
     }
   },
   "load": [
+    "css/bootstrap.min.css",
+    "css/style.css",
+    "css/tooltip.css",
+    "css/style_new.css",
     "data/definitions/itemDefs.json",
     "data/definitions/objectiveDefs.json",
     "data/definitions/perkDefs.json",
@@ -167,6 +179,7 @@
     "js/libraries/primary/underscore.js",
     "js/libraries/secondary/analytics.js",
     "js/libraries/secondary/bootstrap.js",
+    "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",
@@ -176,6 +189,7 @@
     "js/plugins/jquery.toaster.js",
     "js/plugins/jquery.touch.gestures.js",
     "js/plugins/knockout-sortable.js",
+    "js/templates/templates.js",
     "js/tgd/bungie.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
@@ -187,11 +201,7 @@
     "js/app/tooltips.min.js",
     "js/extras/autoupdate.js",
     "js/extras/buy.js",
-    "js/extras/ga.js",
-    "css/bootstrap.min.css",
-    "css/style.css",
-    "css/tooltip.css",
-    "css/style_new.css"
+    "js/extras/ga.js"
   ],
   "root": "./"
 }

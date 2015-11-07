@@ -1,9 +1,10 @@
 (function() {
 
-    console.log("skipping check");
     // 1. On launch
-	return;
-	
+    if (!(isChrome || isIOS || isAndroid)) return;
+
+    tgd.localLog("checking for updates");
+
     // Check for Cordova
     var isCordova = typeof cordova !== 'undefined',
         // CordovaPromiseFS
@@ -28,7 +29,7 @@
         Promise: Promise
     });
 
-    loader = new CordovaAppLoader({
+    tgd.loader = new CordovaAppLoader({
         fs: fs,
         localRoot: 'app',
         serverRoot: serverRoot,
@@ -37,23 +38,23 @@
     });
 
     // Check > Download > Update
-    function check() {
+    tgd.check = function() {
         console.log("RUNNING CHECK");
-        loader.check()
+        tgd.loader.check()
             .then(function() {
                 console.log("RUNNING DOWNLOAD");
-                return loader.download();
+                return tgd.loader.download();
             })
             .then(function() {
                 console.log("RUNNING UPDATE");
-                return loader.update();
+                return tgd.loader.update();
             }, function(err) {
                 console.error('Auto-update error:', err);
             });
     }
 
     // Couple events:
-    check();
+    tgd.check();
 
     // 2. Cordova: On resume
     fs.deviceready.then(function() {
@@ -63,7 +64,7 @@
     // 3. Chrome: On page becomes visible again
     function handleVisibilityChange() {
         if (!document.webkitHidden) {
-            check();
+            tgd.check();
         }
     }
     document.addEventListener("webkitvisibilitychange", handleVisibilityChange, false);

@@ -81,7 +81,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         if (existingItem)
             app.activeLoadout().ids.remove(existingItem);
         else {
-            if (item.transferStatus >= 2) {
+            if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
@@ -113,7 +113,7 @@ tgd.moveItemPositionHandler = function(element, item) {
         tgd.localLog("else");
         app.activeItem(item);
         var $movePopup = $("#move-popup");
-        if (item.transferStatus == 2 || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+        if ((item.transferStatus >= 2 && item.bucketType != "Subclasses") || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
@@ -259,7 +259,7 @@ ko.bindingHandlers.moveItem = {
                     var context = ko.contextFor(target);
                     if (context && "$data" in context) {
                         var item = context.$data;
-                        if (item.transferStatus < 2) {
+                        if (item.transferStatus < 2 || item.bucketType == "Subclasses") {
                             if (app.dynamicMode() === false) {
                                 app.dynamicMode(true);
                                 app.createLoadout();
@@ -630,7 +630,7 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
-                if (self.advancedTooltips() == true && activeItem.weaponIndex > -1) {
+                if (self.advancedTooltips() === true && activeItem.weaponIndex > -1) {
                     var magazineRow = stats.find(".stat-bar:last");
                     var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key) {
                         obj.name = _statDefs[key].statName;
@@ -651,7 +651,7 @@ var app = function() {
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
-                        return perk.active == true || (perk.active == false && self.advancedTooltips() == true);
+                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true);
                     })
                 });
                 if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
@@ -1122,24 +1122,24 @@ var app = function() {
     };
 
     this.refresh = function() {
-		if ( self.bungie.gamertag() ){
-			self.bungie.account(function(result) {
-				if (result && result.data && result.data.characters) {
-					var characters = result.data.characters;
-					_.each(self.characters(), function(character) {
-						if (character.id != "Vault") {
-							var result = _.filter(characters, function(avatar) {
-								return avatar.characterBase.characterId == character.id;
-							})[0];
-							character.updateCharacter(result);
-						}
-						character._reloadBucket(character);
-					});
-				} else {
-					tgd.localLog(result);
-				}
-			});
-		}
+        if (self.bungie.gamertag()) {
+            self.bungie.account(function(result) {
+                if (result && result.data && result.data.characters) {
+                    var characters = result.data.characters;
+                    _.each(self.characters(), function(character) {
+                        if (character.id != "Vault") {
+                            var result = _.filter(characters, function(avatar) {
+                                return avatar.characterBase.characterId == character.id;
+                            })[0];
+                            character.updateCharacter(result);
+                        }
+                        character._reloadBucket(character);
+                    });
+                } else {
+                    tgd.localLog(result);
+                }
+            });
+        }
     };
 
     this.refreshHandler = function() {
@@ -1489,7 +1489,7 @@ var app = function() {
     this.showWhatsNew = function(callback) {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
-        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        container.html("Version: " + tgd.version + $("#whatsnew").html());
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
@@ -1968,6 +1968,9 @@ var app = function() {
     };
 
     this.init = function() {
+        _.each(ko.templates, function(content, name) {
+            $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
+        });
         $.idleTimer(1000 * 60 * 30);
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
             self.lgColumn(tgd.defaults.lgColumn);
@@ -2114,13 +2117,13 @@ var app = function() {
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
         $(document).on("click", "a[target='_system']", function() {
             window.open(this.href, "_system");
             return false;
         });
         ko.applyBindings(self);
+        self.whatsNew();
         window.BOOTSTRAP_OK = true;
     };
 };

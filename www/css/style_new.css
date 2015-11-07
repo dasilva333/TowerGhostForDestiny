@@ -49,29 +49,6 @@
 {
 	position: fixed;
 }
-@-ms-viewport
-{
-	width: device-width;
-}
-html:not(.touch) body
-{
-	overflow-y: scroll;
-}
-body
-{
-	background: -o-radial-gradient(transparent, 70%, #000) fixed,#697d7b;
-	background: -o-radial-gradient(transparent, 70%, #000) fixed,url("../assets/gradient_green.jpg") fixed;
-	background: radial-gradient(transparent, 70%, #000) fixed,#697d7b;
-	background: radial-gradient(transparent, 70%, #000) fixed,url("../assets/gradient_green.jpg") fixed;
-	background: -webkit-radial-gradient(transparent, 70%, #000) fixed,#697d7b;
-	background: -webkit-radial-gradient(transparent, 70%, #000) fixed,url("../assets/gradient_green.jpg") fixed;
-	background-size: cover;
-	color: #fff;
-	font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 1em;
-	margin: 0 auto;
-	padding-top: 55px;
-}
 h1,h2,h3,h4,h5,h6
 {
 	text-shadow: none;
