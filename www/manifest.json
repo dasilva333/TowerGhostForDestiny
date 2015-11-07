@@ -76,13 +76,13 @@
       "filename": "js/libraries/secondary/fastclick.js",
       "version": "7426aa18391348e113d5246b483a45acac628bccac64167539cfd8d1e8f43163"
     },
-    "hammer.js": {
-      "filename": "js/libraries/secondary/hammer.js",
-      "version": "25a0fff3cf21bdbf4cfd988891bb6698045d3865fac4324607684bafda9b2748"
-    },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
       "version": "acdc47924955e3a3f1d50fcd6fbb4718fc1b98694a27159844b624a0ba1bed56"
+    },
+    "hammer.js": {
+      "filename": "js/plugins/hammer.js",
+      "version": "25a0fff3cf21bdbf4cfd988891bb6698045d3865fac4324607684bafda9b2748"
     },
     "jquery-idletimer.js": {
       "filename": "js/plugins/jquery-idletimer.js",
@@ -99,10 +99,6 @@
     "jquery.toaster.js": {
       "filename": "js/plugins/jquery.toaster.js",
       "version": "04a53f3bd3121363a80340a7025e124c443dfbb1e0c638f79346376bea44462e"
-    },
-    "jquery.touch.gestures.js": {
-      "filename": "js/plugins/jquery.touch.gestures.js",
-      "version": "c458c41146f98b1a565a426ebf65e856205aaf4bdc9d5094923a5114d536a358"
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
@@ -181,13 +177,12 @@
     "js/libraries/secondary/bootstrap.js",
     "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
-    "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",
+    "js/plugins/hammer.js",
     "js/plugins/jquery-idletimer.js",
     "js/plugins/jquery-ui.js",
     "js/plugins/jquery-ui.touchpunch.js",
     "js/plugins/jquery.toaster.js",
-    "js/plugins/jquery.touch.gestures.js",
     "js/plugins/knockout-sortable.js",
     "js/templates/templates.js",
     "js/tgd/bungie.js",
