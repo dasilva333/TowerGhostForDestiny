@@ -1,8 +1,5 @@
 (function() {
 
-    // 1. On launch
-    if (!(isChrome || isIOS || isAndroid)) return;
-
     tgd.localLog("checking for updates");
 
     // Check for Cordova
@@ -38,21 +35,37 @@
     });
 
     // Check > Download > Update
-    tgd.check = function() {
-        console.log("RUNNING CHECK");
-        tgd.loader.check()
-            .then(function() {
-                console.log("RUNNING DOWNLOAD");
-                return tgd.loader.download();
-            })
-            .then(function() {
-                console.log("RUNNING UPDATE");
-                return tgd.loader.update();
-            }, function(err) {
-                console.error('Auto-update error:', err);
+    tgd.checkUpdates = function() {
+            $.toaster({
+                priority: 'info',
+                title: 'Info',
+                message: "Checking for updates"
             });
-    }
-
+            tgd.loader.check()
+                .then(function() {
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Info',
+                        message: "Downloading updates"
+                    });
+                    return tgd.loader.download();
+                })
+                .then(function() {
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Info',
+                        message: "Installing updates"
+                    });
+                    return tgd.loader.update();
+                }, function(err) {
+                    $.toaster({
+                        priority: 'danger',
+                        title: 'Error',
+                        message: 'Auto-update error:' + err
+                    });
+                });
+        }
+        /*
     // Couple events:
     tgd.check();
 
@@ -68,4 +81,5 @@
         }
     }
     document.addEventListener("webkitvisibilitychange", handleVisibilityChange, false);
+	*/
 })();

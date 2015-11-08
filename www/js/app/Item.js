@@ -164,8 +164,8 @@ Item.prototype = {
             }
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
-                    return perk.active === true || (perk.active === false && perk.isExclusive === -1);
-                }).length > 0;
+                    return perk.active === false && perk.isExclusive === -1;
+                }).length == 0;
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
