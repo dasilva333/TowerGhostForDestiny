@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 			'js/app/*.js',
 			'js/extras/*.js'            
         ],
-        dest: ['../www/manifest.json']
+        dest: ['../www/bootstrap.json']
       }
     });
 
