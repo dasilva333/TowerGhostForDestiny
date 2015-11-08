@@ -7,8 +7,8 @@ cp js temp\www -R
 cp data temp\www -R
 cp scripts temp\www -R
 cp lib temp -R
-cp *.html temp\www
-cp manifest.json temp\www
+cp index.html temp\www
+cp bootstrap.json temp\www
 copy icon.png temp
 copy ..\package_nw.json temp\package.json
 cd ..\build\nwjs
