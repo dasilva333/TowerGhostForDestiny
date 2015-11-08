@@ -136,7 +136,10 @@
 	        app.activeLoadout(_.clone(this));
 	    },
 	    remove: function() {
-	        app.loadouts.remove(this);
+	        var ref = _.findWhere(app.loadouts(), {
+	            loadoutId: this.loadoutId
+	        });
+	        app.loadouts.remove(ref);
 	        app.createLoadout();
 	        app.saveLoadouts();
 	    },
