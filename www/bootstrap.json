@@ -46,19 +46,19 @@
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
-      "version": "a271a3f9e3cae897ced669d6652699e947928ef095e56384c4f9dd04bbb942ec"
+      "version": "2ecd295d295bec062cedebe177e54b9d6b19fc0a841dc5c178c654c9ccff09c0"
     },
     "knockout.js": {
       "filename": "js/libraries/primary/knockout.js",
-      "version": "18547751c3c89c0c44a7970e8afe6905d86f82ffc95722e86008970ae81acce4"
+      "version": "43e21ee81d80adccf54b5d576da2ae4cacb595282014cf89b0f154f4c3b7aa95"
     },
     "modernizr.js": {
       "filename": "js/libraries/primary/modernizr.js",
-      "version": "01a5fb2664e0e15591ff8b425b0dd4623cc592bfaec230385b1601a0134b748b"
+      "version": "d2b82e612d2a812e8be2a57300dab8923c4f2edbe7a799e7da70791b595646fe"
     },
     "underscore.js": {
       "filename": "js/libraries/primary/underscore.js",
-      "version": "edcfd7dceda1409bd09945eda3a34e8faa4a94568d141ff4208de4c4be4f8d45"
+      "version": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9"
     },
     "analytics.js": {
       "filename": "js/libraries/secondary/analytics.js",
@@ -66,19 +66,19 @@
     },
     "bootstrap.js": {
       "filename": "js/libraries/secondary/bootstrap.js",
-      "version": "6447e59227786bcda7ad58ef045540cba328e5ec0e5ddbd88b4f57122feaf926"
+      "version": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8"
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "d062cb9fa3fd5f617e8fbf0bb6647efd6d1bb7bd40a1f1e094e1433d39740622"
+      "version": "55a282780480e759646d4af6259237b50a2b4e218f385201186fb8b8238e6581"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
-      "version": "7426aa18391348e113d5246b483a45acac628bccac64167539cfd8d1e8f43163"
+      "version": "1aa08cb3c7aa70d268d24d59c374c14af7bd08e0af8c85f8e4f60a2651f4bab5"
     },
     "hammer.js": {
       "filename": "js/libraries/secondary/hammer.js",
-      "version": "25a0fff3cf21bdbf4cfd988891bb6698045d3865fac4324607684bafda9b2748"
+      "version": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e"
     },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
@@ -90,7 +90,7 @@
     },
     "jquery-ui.js": {
       "filename": "js/plugins/jquery-ui.js",
-      "version": "9109efd790dc097361f9e99ed57f5538ba36e12f14c0f9501a07c6bff347f10d"
+      "version": "c48feaca5f6fa70585397cfbfb1ffd5a41b98ff4959d2c36d6f8b2f1f5b06de1"
     },
     "jquery-ui.touchpunch.js": {
       "filename": "js/plugins/jquery-ui.touchpunch.js",
@@ -102,7 +102,7 @@
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "a793e2ce9cc772110b8ce20f2366deafd47281464dd5766de50f136275012478"
+      "version": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -138,7 +138,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "5f542db9cfc3170f3def0c908398c9531b3329213539c95b9124144f75979add"
+      "version": "b56dd8edabc30769237775fdd7a1405b2c7c000d1612316b85e8253fe4ea88a9"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",

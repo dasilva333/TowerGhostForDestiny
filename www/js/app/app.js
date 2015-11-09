@@ -642,10 +642,12 @@ var app = function() {
                         var statObj = _.findWhere(itemStats, {
                             name: statName
                         });
-                        var clonedRow = magazineRow.clone();
-                        clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                        magazineRow.before(clonedRow);
+                        if (statObj) {
+                            var clonedRow = magazineRow.clone();
+                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                            clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                            magazineRow.before(clonedRow);
+                        }
                     });
                 }
             }
