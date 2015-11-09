@@ -106,7 +106,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "be354d471d17941630b6341966429ba8471b7524f353b8ead349d84661802829"
+      "version": "97cd0362519abaf48b83cf03d9c1860fda3ab16ffb34f22983f2e4306d832269"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -126,7 +126,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "b2a2d2230c3df56c18efafd69c2fea4d72e7318cb48562d644f605ab513121fa"
+      "version": "560156ccda5fa6cc6735a4017d18eeade5f492346b3eff75179ec672ed4b4395"
     },
     "Item.js": {
       "filename": "js/app/Item.js",

@@ -1,4 +1,5 @@
 var builderInfo = require("./package.json"),
+	_ = require("lodash"),
 	fs = require("fs");
 
 var versionInfo = builderInfo.version;
@@ -18,13 +19,16 @@ var nwConfig = require(nwConfigFile);
 nwConfig.version = versionInfo;
 fs.writeFileSync(nwConfigFile, JSON.stringify(nwConfig, null, 2));
 
-var adobeBuildConfigFile = "../www/config.xml";
-var xmlConfig = fs.readFileSync(adobeBuildConfigFile).toString("utf8");
-//avoid having to load xml libraries to update it
-xmlConfig = xmlConfig.replace(/version="(.*)" xmlns=\"http:\/\/www.w3.org\/ns\/widgets\"/,'version="' + versionInfo + '" xmlns="http://www.w3.org/ns/widgets"');
-xmlConfig = xmlConfig.replace(/id=\"com.richardpinedo.towerghostfordestiny\" versionCode="(.*)" version/,'id=\"com.richardpinedo.towerghostfordestiny\" versionCode="' + versionInfo.replace(/\./g,'') + '" version');
+var platforms = [ "ios", "android", "windows-phone" ];
+_.each(platforms, function(platform){
+	var adobeBuildConfigFile = "../www/config_" + platform + ".xml";
+	var xmlConfig = fs.readFileSync(adobeBuildConfigFile).toString("utf8");
+	//avoid having to load xml libraries to update it
+	xmlConfig = xmlConfig.replace(/version="(.*)" xmlns=\"http:\/\/www.w3.org\/ns\/widgets\"/,'version="' + versionInfo + '" xmlns="http://www.w3.org/ns/widgets"');
+	xmlConfig = xmlConfig.replace(/id=\"com.richardpinedo.towerghostfordestiny\" versionCode="(.*)" version/,'id=\"com.richardpinedo.towerghostfordestiny\" versionCode="' + versionInfo.replace(/\./g,'') + '" version');
+	fs.writeFileSync(adobeBuildConfigFile, xmlConfig);
+});
 
-fs.writeFileSync(adobeBuildConfigFile, xmlConfig);
 
 var indexHomePage = "../www/templates/navbar-template.tmpl.html";
 var indexContent = fs.readFileSync(indexHomePage).toString("utf8");
