@@ -354,6 +354,8 @@
 	                if (typeof item == "undefined") {
 	                    console.log(ref);
 	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
+	                } else if (ref.bucketType == "Subclasses") {
+	                    return fnHasFreeSpace();
 	                }
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"
