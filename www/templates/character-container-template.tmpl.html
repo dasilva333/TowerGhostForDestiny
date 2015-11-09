@@ -76,10 +76,10 @@
                 </div>
             </div>
             <!-- ko if: $index() == 1 -->
-            <div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg"></div>
+            <div class="clearfix hidden-xs visibile-sm-block hidden-md hidden-lg" data-bind="visible: tgd.defaults.smColumn == $root.smColumn()"></div>
             <!--/ko  -->
             <!-- ko if: $index() == 2 -->
-            <div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg"></div>
+            <div class="clearfix hidden-xs hidden-sm visibile-md-block hidden-lg" data-bind="visible: tgd.defaults.mdColumn == $root.mdColumn()"></div>
             <!--/ko  -->
         </div>
     </div>

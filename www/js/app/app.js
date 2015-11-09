@@ -703,6 +703,9 @@ var app = function() {
         self.autoUpdates(!self.autoUpdates());
         if (self.autoUpdates()) {
             tgd.checkUpdates();
+        } else {
+            localStorage.setItem("manifest", null);
+            location.reload();
         }
     }
 
