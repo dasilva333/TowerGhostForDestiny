@@ -3,7 +3,7 @@ mkdir branch
 cd ..\www
 copy index.html ..\build\branch\
 copy bootstrap.json ..\build\branch\
-copy config_%1.xml ..\build\branch\%1\config.xml
+copy config_%1.xml ..\build\branch\config.xml
 mkdir ..\build\branch\scripts\
 copy scripts\ ..\build\branch\scripts\
 mkdir ..\build\branch\assets\
