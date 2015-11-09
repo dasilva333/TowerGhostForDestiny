@@ -10,6 +10,7 @@
     "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-sass": "~0.7.3",
     "grunt-contrib-watch": "~0.6.1",
+    "grunt-ftp-deploy": "^0.1.10",
     "grunt-jsbeautifier": "^0.2.10",
     "grunt-script-link-tags": "^1.0.2",
     "include-all": "^0.1.6",
