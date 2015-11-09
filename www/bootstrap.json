@@ -106,7 +106,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "7ef97b95cdef82275175fe7c033054ce481039f11159168bff5050add5b42c94"
+      "version": "151305ebdc0e6b7d7d4dd8ac16155a6a19553a5973f251daa92a40578e77e5a6"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -126,11 +126,11 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "4ecbbbe705a444040f93b22601bb23e122ece8c0e8a8ca34935c786fe437db32"
+      "version": "b8c835aa8f50d5b01e6b7d17280f118dc79414a8157af4f394163fad455ab125"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "ee63b4e45316cee1bae445e624a01471388513089e341236f77b6cfc7fdbbb75"
+      "version": "7bb64a0569beff55ead02dd4226c1564b2d34382d635f67ed7f26ca8822069cc"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -138,7 +138,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "871a29992852bf070dbb6a1eeedec6cf3ec66089b577f16fa2fd480c9ebb2b41"
+      "version": "e4f9863e7b8b12e2e0afa6c5787a28835578e22f84eeb65c18d2aa63e9386410"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",

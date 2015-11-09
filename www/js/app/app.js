@@ -705,9 +705,10 @@ var app = function() {
             tgd.checkUpdates();
         } else {
             localStorage.setItem("manifest", null);
+            localStorage.setItem("last_update_files", null);
             location.reload();
         }
-    }
+    };
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
