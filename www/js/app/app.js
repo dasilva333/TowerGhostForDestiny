@@ -360,6 +360,7 @@ var app = function() {
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates"));
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
@@ -641,10 +642,12 @@ var app = function() {
                         var statObj = _.findWhere(itemStats, {
                             name: statName
                         });
-                        var clonedRow = magazineRow.clone();
-                        clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                        magazineRow.before(clonedRow);
+                        if (statObj) {
+                            var clonedRow = magazineRow.clone();
+                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                            clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                            magazineRow.before(clonedRow);
+                        }
                     });
                 }
             }
@@ -693,6 +696,18 @@ var app = function() {
             $content.find(".stat-bar-empty").css("width", "125px");
         }
         callback($content.html());
+    };
+
+    this.toggleAutoUpdates = function() {
+        self.toggleBootstrapMenu();
+        self.autoUpdates(!self.autoUpdates());
+        if (self.autoUpdates()) {
+            tgd.checkUpdates();
+        } else {
+            localStorage.setItem("manifest", null);
+            localStorage.setItem("last_update_files", null);
+            location.reload();
+        }
     };
 
     this.toggleViewOptions = function() {
@@ -2127,6 +2142,9 @@ var app = function() {
 
         self.whatsNew();
         window.BOOTSTRAP_OK = true;
+        if (self.autoUpdates()) {
+            tgd.checkUpdates();
+        }
     };
 };
 
