@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-	grunt.config.set('ftp-deploy', {
+	grunt.config.set('ftpush', {
 	  js: {
 		auth: {
 		  host: 'towerghostfordestiny.com',
@@ -20,14 +20,14 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/www/css',
 		exclusions: []
 	  },
-	  data: {
+	  definitions: {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
 		  authKey: 'key1'
 		},
-		src: '../www/data/',
-		dest: '/myredditall/towerghostfordestiny.com/www/www/data',
+		src: '../www/data/definitions/',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/data/definitions',
 		exclusions: []
 	  },
 	  manifest: {
@@ -36,11 +36,13 @@ module.exports = function(grunt) {
 		  port: 21,
 		  authKey: 'key1'
 		},
-		src: '../www/bootstrap.json',
-		dest: '/myredditall/towerghostfordestiny.com/www/www/bootstrap.json',
-		exclusions: []
+		src: '../www/',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/',
+		simple: true,
+		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
+		exclusions: [ 'assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
 	  }
 	});
 
-	grunt.loadNpmTasks('grunt-ftp-deploy');
+	grunt.loadNpmTasks('grunt-ftpush');
 };

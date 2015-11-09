@@ -1,5 +1,8 @@
 module.exports = function (grunt) {
 	grunt.registerTask('deploy', [
-        'ftp-deploy'
+        'ftpush'
+	]);
+	grunt.registerTask('deployjs', [
+        'ftpush:js', 'ftpush:manifest'
 	]);
 };
