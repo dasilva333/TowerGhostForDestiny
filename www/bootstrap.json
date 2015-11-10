@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "86e32fd1ad3c4bd5d3e3481ced068d8bdfd4080570be3ae2d67ff515b48ca112"
+      "version": "5160600e177f018d1945e56edc670ed86d40fcf059089e2e271e77f99fa70e69"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -154,7 +154,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "f7cabfb4c86bfe78e766a9db28fbed2be7b57dfc781dacf99c660ff9a211a41d"
+      "version": "acefeb61b985115a5a61145df79dea30727f70a7b10fdff3a683dff1bb2148fe"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",

@@ -360,7 +360,7 @@ var app = function() {
         } else {
             localStorage.setItem("manifest", null);
             localStorage.setItem("last_update_files", null);
-            location.reload();
+            tgd.loader.reset();
         }
     };
 

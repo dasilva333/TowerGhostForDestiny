@@ -95,7 +95,7 @@
 	  options.serverRoot = options.serverRoot || '';
 	  if(!!options.serverRoot && options.serverRoot[options.serverRoot.length-1] !== '/') options.serverRoot += '/';
 	  this.newManifestUrl = options.manifestUrl || options.serverRoot + (options.manifest || 'bootstrap.json');
-	  this.newManifestUrl = this.newManifestUrl + '?now=' + (new Date()).getTime();
+	  this.newManifestUrl = this.newManifestUrl + '?now=' + (Math.random() * 10000000000).toFixed(0);
 	  
 	  // initialize a file cache
 	  if(options.mode) options.mode = 'mirror';
@@ -129,7 +129,7 @@
 	  var self = this;
 	  var bootstrapScript = document.querySelector('script[manifest]');
 	  var bundledManifestUrl = (bootstrapScript? bootstrapScript.getAttribute('manifest'): null) || 'bootstrap.json';
-	  bundledManifestUrl = bundledManifestUrl + '?now=' + (new Date()).getTime();
+	  bundledManifestUrl = bundledManifestUrl + '?now=' + (Math.random() * 10000000000).toFixed(0);
 	  
 	  return new Promise(function(resolve,reject){
 	    if(self.bundledManifest) {
