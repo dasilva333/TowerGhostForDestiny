@@ -1,0 +1,311 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.5.3.3</span></strong></a>
+            <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
+                <div class="mobile-characters">
+                    <img class="mobile-characters-image" data-bind="attr: {src : icon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">
+                </div>
+            </div>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text" data-bind="text: $root.activeText().menu_refresh">Refresh</span></a>
+                </li>
+                <li class="dropdown">
+                    <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text" data-bind="text: $root.activeText().menu_settings">Settings</span> <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+
+                        <li><a href="#" data-bind="fastclick: logout">Logout</a></li>
+                        <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'PSN')"><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
+                        <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'XBL')"><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
+                        <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
+                        <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i><span data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a></li>
+                        <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: $root.activeText().menu_about">About</span></a></li>
+                        <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
+                        <li><a href="#" data-bind="fastclick: showDonate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
+                        <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
+                        <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
+                        <li class="divider"></li>
+                        <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autorefresh">Auto Refresh</span></a>
+                        </li>
+                        <li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: tooltipsEnabled() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_destinydbtooltips">DestinyDB Tooltips</span></a>
+                        </li>
+                        <li data-bind="fastclick: toggleAdvancedTooltips, css: advancedTooltips() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: advancedTooltips() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_advancedtooltips">Advanced Tooltips</span></a>
+                        </li>
+                        <li data-bind="fastclick: toggleDestinyDbMode, css: destinyDbMode() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: destinyDbMode() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_destinydbmode">DestinyDB Mode</span></a>
+                        </li>
+                        <li data-bind="fastclick: toggleTransferStacks, css: autoXferStacks() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: autoXferStacks() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autotransfer">Auto Transfer Stacks</span></a>
+                        </li>
+                        <li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
+                        </li>
+                        <li data-bind="fastclick: toggleDragAndDrop, css: dragAndDrop() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: dragAndDrop() == true ? 'fa-check-square' : 'fa-square'"></i><span>Drag and Drop</span></a>
+                        </li>
+                        <li data-bind="visible: (isChrome || isIOS || isAndroid), fastclick: toggleAutoUpdates, css: autoUpdates() == true ? 'active' : ''">
+                            <a href="#"><i class="fa" data-bind="css: autoUpdates() == true ? 'fa-check-square' : 'fa-square'"></i><span>Auto Updates</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input class="form-control" placeholder="Search" size="9" type="text" data-bind="value: searchKeyword">
+            </form>
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_loadouts">Loadouts</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <!-- ko foreach: { data: sortedLoadouts, as: 'loadout' } -->
+                        <li data-bind="fastclick: setActive">
+                            <a data-bind="text: loadout.name" href="#"></a>
+                        </li>
+                        <!--/ko  -->
+                        <li class="divider"></li>
+                        <li data-bind="fastclick: createLoadout"><a href="#"><i class="fa fa-plus"></i>								<span data-bind="text: $root.activeText().menu_loadouts_create">Create</span>							</a></li>
+                        <li data-bind="fastclick: cancelLoadout"><a href="#"><i class="fa fa-times"></i>								<span data-bind="text: $root.activeText().cancel">Cancel</span>							</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_view">View</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="fastclick: setView" value="0">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeView() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_all">All</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setView" value="1">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeView() == 1 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_view_weapons">Weapons</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setView" value="2">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeView() == 2 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_view_armor">Armor</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setView" value="3">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeView() == 3 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_view_general">General</span>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <strong style="padding-left: 10px;">Sort By</strong>
+                        </li>
+                        <li data-bind="fastclick: setSort" value="0">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeSort() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Tier, Type</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setSort" value="1">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeSort() == 1 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Type</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setSort" value="2">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeSort() == 2 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Light Level</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setSort" value="3">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeSort() == 3 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Damage Type</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setSort" value="4">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeSort() == 4 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Name</span>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="#" data-bind="fastclick: toggleViewOptions, text: $root.activeText().menu_view_options">View Options</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_set">Set</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: setFilter().length == 0 ? 'active' : '', fastclick: setSetFilter('All')">
+                            <a href="#"><i class="fa" data-bind="css: setFilter().length == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                        </li>
+                        <!-- ko foreach: { data: collectionSets, as: 'collection' } -->
+                        <li data-bind="css: $root.setFilter() == _collections[collection] ? 'active' : '', fastclick: $root.setSetFilter(collection)">
+                            <a href="#">
+                                <i class="fa" data-bind="css: $root.setFilter() == _collections[collection] ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: collection"></span>
+                            </a>
+                        </li>
+                        <!--/ko  -->
+                        <li class="divider"></li>
+                        <li data-bind="css: showMissing() ? 'active' : '', fastclick: toggleShowMissing">
+                            <a href="#"><i class="fa" data-bind="css: showMissing() ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_set_showmissing">Show Missing Items</span>								</a>
+                        </li>
+                        <li data-bind="css: showDuplicate() ? 'active' : '', fastclick: toggleDuplicates">
+                            <a href="#"><i class="fa" data-bind="css: showDuplicate() ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_set_showduplicates">Show Duplicate Items</span>								</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_tier">Tier</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: function(){ $root.setTierFilter({ tier: 0 }) }" value="0">
+                            <a href="#"><i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                        </li>
+                        <!-- ko foreach: { data: tierTypes, as: 'tierType' } -->
+                        <li data-bind="css: $parent.tierFilter() == tierType.tier ? 'active' : '', fastclick: $parent.setTierFilter, value: tierType.tier" value="0">
+                            <a href="#"><i class="fa" data-bind="css: $parent.tierFilter() == tierType.tier ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tierType.name"></span></a>
+                        </li>
+                        <!--/ko  -->
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_progress">Progress</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="0">
+                            <a href="#"><i class="fa" data-bind="css: progressFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                        </li>
+                        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="1">
+                            <a href="#"><i class="fa" data-bind="css: progressFilter() == 1 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_progress_1">Missing XP</span>								</a>
+                        </li>
+                        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="2">
+                            <a href="#"><i class="fa" data-bind="css: progressFilter() == 2 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_progress_2">Full XP</span>								</a>
+                        </li>
+                        <li data-bind="css: progressFilter() == $($element).attr('value') ? 'active' : '', fastclick: setProgressFilter" value="3">
+                            <a href="#"><i class="fa" data-bind="css: progressFilter() == 3 ? 'fa-check-square' : 'fa-square'"></i>									
+								<span data-bind="text: $root.activeText().menu_progress_3">Maxed</span>								</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="html: $root.activeText().menu_damage">Damage</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Kinetic">
+                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Kinetic') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/kinetic.png" class="icon">Kinetic (None)</a>
+                        </li>
+                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Solar">
+                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Solar') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/solar.png" class="icon">Solar</a>
+                        </li>
+                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Arc">
+                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Arc') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/arc.png" class="icon">Arc</a>
+                        </li>
+                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Void">
+                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Void') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/void.png" class="icon">Void</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown" data-bind="visible: (activeView() == 0 || activeView() == 1)">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_view_weapons">Weapons</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: weaponFilter() == $($element).attr('value') ? 'active' : '', fastclick: setWeaponFilter({ name: 0 })">
+                            <a href="#">
+                                <i class="fa" data-bind="css: weaponFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_all">All</span>
+                            </a>
+                        </li>
+                        <!-- ko foreach: { data: weaponTypes, as: 'weaponType' } -->
+                        <li data-bind="css: $parent.weaponFilter() == weaponType.name ? 'active' : '', fastclick: $parent.setWeaponFilter(weaponType)">
+                            <a href="#"><i class="fa" data-bind="css: $parent.weaponFilter() == weaponType.name ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: weaponType.name">All</span>
+								</a>
+                        </li>
+                        <!--/ko  -->
+                    </ul>
+                </li>
+                <li class="dropdown" data-bind="visible: (activeView() == 0 || activeView() == 2)">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_view_armor">Armor</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: armorFilter() == $($element).attr('value') ? 'active' : '', fastclick: setArmorFilter(0)">
+                            <a href="#">
+                                <i class="fa" data-bind="css: armorFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_all">All</span>
+                            </a>
+                        </li>
+                        <!-- ko foreach: { data: tgd.DestinyArmorPieces, as: 'armorType' } -->
+                        <li data-bind="css: $parent.armorFilter() == armorType ? 'active' : '', fastclick: $parent.setArmorFilter(armorType)">
+                            <a href="#"><i class="fa" data-bind="css: $parent.armorFilter() == armorType ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: armorType"></span>
+								</a>
+                        </li>
+                        <!--/ko  -->
+                    </ul>
+                </li>
+                <li class="dropdown" data-bind="visible: (activeView() == 0 || activeView() == 3)">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <span data-bind="text: $root.activeText().menu_view_general">General</span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li data-bind="css: generalFilter() == $($element).attr('value') ? 'active' : '', fastclick: setGeneralFilter(0)">
+                            <a href="#">
+                                <i class="fa" data-bind="css: generalFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_all">All</span>
+                            </a>
+                        </li>
+                        <!-- ko foreach: { data: tgd.DestinyGeneralSearches, as: 'searchType' } -->
+                        <li data-bind="css: $parent.generalFilter() == searchType ? 'active' : '', fastclick: $parent.setGeneralFilter(searchType)">
+                            <a href="#"><i class="fa" data-bind="css: $parent.generalFilter() == searchType ? 'fa-check-square' : 'fa-square'"></i>
+									<span data-bind="text: searchType"></span>
+								</a>
+                        </li>
+                        <!--/ko  -->
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
