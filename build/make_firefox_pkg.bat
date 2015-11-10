@@ -7,7 +7,6 @@ cp assets temp\data -R
 cp css temp\data -R
 cp js temp\data -R
 cp data temp\data -R
-cp scripts temp\data -R
 cp lib temp -R
 cp index.html temp\data
 cp bootstrap.json temp\data
