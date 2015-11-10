@@ -657,7 +657,9 @@ var app = function() {
                         return perk.active === true || (perk.active === false && self.advancedTooltips() === true);
                     })
                 });
-                if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
+                //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
+                var weaponTypes = _.pluck(app.weaponTypes(), 'name');
+                if (weaponTypes.indexOf(activeItem.typeName) > -1) {
                     // Weapon Perks (Pre-HoW) 
                     if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                         $content.find(".destt-talent").replaceWith(activePerksTemplate);
@@ -666,7 +668,7 @@ var app = function() {
                     else if ($content.find(".destt-talent").length === 0) {
                         $content.find(".destt-stat").after(activePerksTemplate);
                     }
-                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
+                } else if (activeItem.armorIndex > -1) {
                     // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(activePerksTemplate);
