@@ -94,8 +94,9 @@
 	  // normalize serverRoot and set remote manifest url
 	  options.serverRoot = options.serverRoot || '';
 	  if(!!options.serverRoot && options.serverRoot[options.serverRoot.length-1] !== '/') options.serverRoot += '/';
-	  this.newManifestUrl = options.manifestUrl || options.serverRoot + (options.manifest || 'manifest.json');
-
+	  this.newManifestUrl = options.manifestUrl || options.serverRoot + (options.manifest || 'bootstrap.json');
+	  this.newManifestUrl = this.newManifestUrl + '?now=' + (new Date()).getTime();
+	  
 	  // initialize a file cache
 	  if(options.mode) options.mode = 'mirror';
 	  this.cache = new CordovaFileCache(options);
@@ -127,8 +128,9 @@
 	AppLoader.prototype.getBundledManifest = function(){
 	  var self = this;
 	  var bootstrapScript = document.querySelector('script[manifest]');
-	  var bundledManifestUrl = (bootstrapScript? bootstrapScript.getAttribute('manifest'): null) || 'manifest.json';
-
+	  var bundledManifestUrl = (bootstrapScript? bootstrapScript.getAttribute('manifest'): null) || 'bootstrap.json';
+	  bundledManifestUrl = bundledManifestUrl + '?now=' + (new Date()).getTime();
+	  
 	  return new Promise(function(resolve,reject){
 	    if(self.bundledManifest) {
 	      resolve(self.bundledManifest);

@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "55a282780480e759646d4af6259237b50a2b4e218f385201186fb8b8238e6581"
+      "version": "86e32fd1ad3c4bd5d3e3481ced068d8bdfd4080570be3ae2d67ff515b48ca112"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -106,7 +106,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "97cd0362519abaf48b83cf03d9c1860fda3ab16ffb34f22983f2e4306d832269"
+      "version": "d498428bb01675890e8ae914885853603053c760e1a2ea7319a1a48e4e2e3e48"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -126,7 +126,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "560156ccda5fa6cc6735a4017d18eeade5f492346b3eff75179ec672ed4b4395"
+      "version": "e598383df1de6a4268ed016d43faaf5b0e502a11578b86fb55b595c192a12336"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
