@@ -110,7 +110,7 @@
     },
     "Layout.js": {
       "filename": "js/tgd/Layout.js",
-      "version": "9c02f211e945f121d228a9855a6285c0c657f058ccfe968a06f5607f4dfaed91"
+      "version": "c133cd1efdd534236d281f16f1ebefe16101595cd33ed066073e0db9310922f2"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -146,7 +146,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "72d41398a0f642ee2740ef0075e7c33645beb90278951a2f68a5a2d6f484fdac"
+      "version": "52c529373d5c762e211d5d7645b75b350906d6dd681a4f0f88e9aab9a6c171b5"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -162,7 +162,7 @@
     },
     "autoupdate.js": {
       "filename": "js/extras/autoupdate.js",
-      "version": "9263ddecfa670bc051f39b0494d2789eee199c8b429f182ad7e6834b78663e49"
+      "version": "9efc4f1523e91ab128ff1174aa6f6de9383b6b9a89343a5303767ee75642f212"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

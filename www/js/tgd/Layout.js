@@ -26,4 +26,4 @@ tgd.Layout = function(layout) {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
     };
-}
+};

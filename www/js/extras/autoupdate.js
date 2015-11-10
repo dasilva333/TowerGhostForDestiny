@@ -36,50 +36,33 @@
 
     // Check > Download > Update
     tgd.checkUpdates = function() {
-            $.toaster({
-                priority: 'info',
-                title: 'Info',
-                message: "Checking for updates"
-            });
-            tgd.loader.check()
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Downloading updates"
-                    });
-                    return tgd.loader.download();
-                })
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Installing updates"
-                    });
-                    return tgd.loader.update();
-                }, function(err) {
-                    $.toaster({
-                        priority: 'danger',
-                        title: 'Error',
-                        message: 'Auto-update error:' + err
-                    });
+        $.toaster({
+            priority: 'info',
+            title: 'Info',
+            message: "Checking for updates"
+        });
+        tgd.loader.check()
+            .then(function() {
+                $.toaster({
+                    priority: 'info',
+                    title: 'Info',
+                    message: "Downloading updates"
                 });
-        }
-        /*
-    // Couple events:
-    tgd.check();
-
-    // 2. Cordova: On resume
-    fs.deviceready.then(function() {
-        document.addEventListener('resume', check);
-    });
-
-    // 3. Chrome: On page becomes visible again
-    function handleVisibilityChange() {
-        if (!document.webkitHidden) {
-            tgd.check();
-        }
-    }
-    document.addEventListener("webkitvisibilitychange", handleVisibilityChange, false);
-	*/
+                return tgd.loader.download();
+            })
+            .then(function() {
+                $.toaster({
+                    priority: 'info',
+                    title: 'Info',
+                    message: "Installing updates"
+                });
+                return tgd.loader.update();
+            }, function(err) {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Error',
+                    message: 'Auto-update error:' + err
+                });
+            });
+    };
 })();

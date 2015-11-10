@@ -5,7 +5,7 @@ window.ko.bindingHandlers.itemImageHandler = {
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + viewModel.icon;
             }
-        }
+        };
     }
 };
 
