@@ -1,3 +1,104 @@
+window.ko.bindingHandlers.itemImageHandler = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        element.onerror = function() {
+            var source = element.src;
+            if (source.indexOf(tgd.remoteImagePath) == -1) {
+                element.src = tgd.remoteImagePath + viewModel.icon;
+            }
+        };
+    }
+};
+
+tgd.moveItemPositionHandler = function(element, item) {
+    tgd.localLog("moveItemPositionHandler");
+    if (app.destinyDbMode() === true) {
+        tgd.localLog("destinyDbMode");
+        window.open(item.href, "_system");
+        return false;
+    } else if (app.loadoutMode() === true) {
+        tgd.localLog("loadoutMode");
+        var existingItem = _.findWhere(app.activeLoadout().ids(), {
+            id: item._id
+        });
+        if (existingItem)
+            app.activeLoadout().ids.remove(existingItem);
+        else {
+            if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning',
+                    message: app.activeText().unable_create_loadout_for_type
+                });
+            } else if (item._id === "0") {
+                app.activeLoadout().addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    primaryStat: item.primaryStat()
+                });
+            } else if (_.where(app.activeLoadout().items(), {
+                    bucketType: item.bucketType
+                }).length < 10) {
+                app.activeLoadout().addUniqueItem({
+                    id: item._id,
+                    bucketType: item.bucketType,
+                    doEquip: false
+                });
+            } else {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Error',
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                });
+            }
+        }
+    } else {
+        tgd.localLog("else");
+        app.activeItem(item);
+        var $movePopup = $("#move-popup");
+        if ((item.transferStatus >= 2 && item.bucketType != "Subclasses") || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+            $.toaster({
+                priority: 'danger',
+                title: 'Error',
+                message: app.activeText().unable_to_move_bucketitems
+            });
+            return;
+        }
+        if (element == tgd.activeElement) {
+            $movePopup.hide();
+            tgd.activeElement = null;
+            tgd.localLog("hide");
+        } else {
+            tgd.localLog("show");
+            tgd.activeElement = element;
+            $ZamTooltips.hide();
+            if (window.isMobile) {
+                $("body").css("padding-bottom", $movePopup.height() + "px");
+                /* bringing back the delay it's sitll a problem in issue #128 */
+                setTimeout(function() {
+                    $movePopup.show().addClass("mobile");
+                }, 50);
+            } else {
+                tgd.localLog("display");
+                $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
+                    my: "left bottom",
+                    at: "left top",
+                    collision: "none",
+                    of: element,
+                    using: function(pos, ui) {
+                        var obj = $(this),
+                            box = $(ui.element.element).find(".move-popup").width();
+                        obj.removeAttr('style');
+                        if (box + pos.left > $(window).width()) {
+                            pos.left = pos.left - box;
+                        }
+                        obj.css(pos).width(box);
+                    }
+                });
+            }
+        }
+    }
+};
+
 var Item = function(model, profile) {
     var self = this;
 

@@ -13,6 +13,8 @@ tgd.localLog = function(msg) {
         console.log(msg);
     }
 };
+//TODO find all the remote http variables and have them use a single variable
+tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
