@@ -13,3 +13,4 @@ node_modules
 *.map
 *.db
 /build/npm-debug.log
+/build/.ftppass
