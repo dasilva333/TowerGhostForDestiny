@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
-		  authKey: 'key1'
+		  authKey: 'mraKey'
 		},
 		src: '../www/js/',
 		dest: '/myredditall/towerghostfordestiny.com/www/www/js',
@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
-		  authKey: 'key1'
+		  authKey: 'mraKey'
 		},
 		src: '../www/css/',
 		dest: '/myredditall/towerghostfordestiny.com/www/www/css',
@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
-		  authKey: 'key1'
+		  authKey: 'mraKey'
 		},
 		src: '../www/data/definitions/',
 		dest: '/myredditall/towerghostfordestiny.com/www/www/data/definitions',
@@ -34,7 +34,7 @@ module.exports = function(grunt) {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
-		  authKey: 'key1'
+		  authKey: 'mraKey'
 		},
 		src: '../www/',
 		dest: '/myredditall/towerghostfordestiny.com/www/www/',
