@@ -2,19 +2,16 @@ rmdir branch
 mkdir branch
 cd ..\www
 copy index.html ..\build\branch\
-copy manifest.json ..\build\branch\
-copy config.xml ..\build\branch\
+copy bootstrap.json ..\build\branch\
+copy config_%1.xml ..\build\branch\config.xml
 mkdir ..\build\branch\scripts\
 copy scripts\ ..\build\branch\scripts\
 mkdir ..\build\branch\assets\
 copy assets\ ..\build\branch\assets\
 mkdir ..\build\branch\js\
-mkdir ..\build\branch\js\dependencies
-copy js\ ..\build\branch\js\
-copy js\dependencies ..\build\branch\js\dependencies
+xcopy js\* ..\build\branch\js\ /E /Y
 mkdir ..\build\branch\data\
-copy data\*.js ..\build\branch\data\
-copy data\*.json ..\build\branch\data\
+xcopy data\* ..\build\branch\data\ /E /Y
 mkdir ..\build\branch\css\
 copy css\ ..\build\branch\css\
 mkdir ..\build\branch\res\icon\%1

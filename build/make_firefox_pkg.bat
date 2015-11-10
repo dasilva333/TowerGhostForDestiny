@@ -9,7 +9,8 @@ cp js temp\data -R
 cp data temp\data -R
 cp scripts temp\data -R
 cp lib temp -R
-cp *.html temp\data
+cp index.html temp\data
+cp bootstrap.json temp\data
 copy icon.png temp
 copy ..\package_firefox.json temp\package.json
 cd ..\build

@@ -136,7 +136,10 @@
 	        app.activeLoadout(_.clone(this));
 	    },
 	    remove: function() {
-	        app.loadouts.remove(this);
+	        var ref = _.findWhere(app.loadouts(), {
+	            loadoutId: this.loadoutId
+	        });
+	        app.loadouts.remove(ref);
 	        app.createLoadout();
 	        app.saveLoadouts();
 	    },
@@ -351,6 +354,8 @@
 	                if (typeof item == "undefined") {
 	                    console.log(ref);
 	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
+	                } else if (ref.bucketType == "Subclasses") {
+	                    return fnHasFreeSpace();
 	                }
 	                var vault = _.findWhere(app.characters(), {
 	                    id: "Vault"
@@ -776,12 +781,12 @@
 	                            dialog.close();
 	                        });
 	                    }
-                 }, {
+	                }, {
 	                    label: app.activeText().cancel,
 	                    action: function(dialog) {
 	                        dialog.close();
 	                    }
-                 }]
+	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
 	        }
 	    }

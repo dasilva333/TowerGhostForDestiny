@@ -360,6 +360,7 @@ var app = function() {
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
+    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates"));
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
@@ -641,10 +642,12 @@ var app = function() {
                         var statObj = _.findWhere(itemStats, {
                             name: statName
                         });
-                        var clonedRow = magazineRow.clone();
-                        clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                        magazineRow.before(clonedRow);
+                        if (statObj) {
+                            var clonedRow = magazineRow.clone();
+                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                            clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                            magazineRow.before(clonedRow);
+                        }
                     });
                 }
             }
@@ -693,6 +696,18 @@ var app = function() {
             $content.find(".stat-bar-empty").css("width", "125px");
         }
         callback($content.html());
+    };
+
+    this.toggleAutoUpdates = function() {
+        self.toggleBootstrapMenu();
+        self.autoUpdates(!self.autoUpdates());
+        if (self.autoUpdates()) {
+            tgd.checkUpdates();
+        } else {
+            localStorage.setItem("manifest", null);
+            localStorage.setItem("last_update_files", null);
+            location.reload();
+        }
     };
 
     this.toggleViewOptions = function() {
@@ -1044,7 +1059,7 @@ var app = function() {
         if (self.loadingUser() === false || self.hiddenWindowOpen() === true) {
             //window.t = (new Date());
             self.loadingUser(true);
-            self.bungie = new bungie(self.bungie_cookies, function() {
+            self.bungie = new tgd.bungie(self.bungie_cookies, function() {
                 self.characters.removeAll();
                 //console.time("self.bungie.user");
                 self.bungie.user(function(user) {
@@ -1489,7 +1504,7 @@ var app = function() {
     this.showWhatsNew = function(callback) {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
-        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
+        container.html("Version: " + tgd.version + $("#whatsnew").html());
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
@@ -1968,6 +1983,9 @@ var app = function() {
     };
 
     this.init = function() {
+        _.each(ko.templates, function(content, name) {
+            $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
+        });
         $.idleTimer(1000 * 60 * 30);
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
             self.lgColumn(tgd.defaults.lgColumn);
@@ -2019,41 +2037,6 @@ var app = function() {
             document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
         }
 
-        if (isMobile) {
-            //This sets up swipe left/swipe right for mobile devices
-            //TODO: Add an option to disable this for users
-            Hammer(document.getElementById('charactersContainer'), {
-                    //Removing these values and allowing HammerJS to figure out the best value based on the device
-                    //drag_min_distance: 1,
-                    //swipe_velocity: 0.1,
-                    drag_horizontal: true,
-                    drag_vertical: false
-                }).on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight)
-                .on("tap", self.globalClickHandler);
-
-            //This ensures that the top status bar color matches the app
-            if (typeof StatusBar !== "undefined") {
-                StatusBar.styleBlackOpaque();
-                StatusBar.backgroundColorByHexString("#272B30");
-                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                    StatusBar.overlaysWebView(false);
-                }
-            }
-
-            //This sets up inAppBilling donations for iOS/Android
-            if (typeof inappbilling != "undefined") {
-                inappbilling.init(function() {}, function() {}, {
-                    showLog: false
-                }, ['small', 'medium', 'large']);
-            }
-
-            //Prevent the user from pressing the back button to reload the app
-            document.addEventListener("backbutton", function(e) {
-                e.preventDefault();
-            }, false);
-        }
-
         var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
         ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
         ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
@@ -2098,16 +2081,14 @@ var app = function() {
         }
 
         if (isMobile && isEmptyCookie) {
-            self.bungie = new bungie('', function() {
+            self.bungie = new tgd.bungie('', function() {
                 self.activeUser({
                     "code": 99,
                     "error": "Please sign-in to continue."
                 });
             });
         } else {
-            setTimeout(function() {
-                self.loadData();
-            }, isChrome || isMobile ? 1 : 5000);
+            self.loadData();
         }
         $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
@@ -2116,14 +2097,54 @@ var app = function() {
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
-        self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
         $(document).on("click", "a[target='_system']", function() {
             window.open(this.href, "_system");
             return false;
         });
+
         ko.applyBindings(self);
+
+        if (isMobile) {
+            //This sets up swipe left/swipe right for mobile devices
+            //TODO: Add an option to disable this for users
+            Hammer(document.getElementById('charactersContainer'), {
+                    //Removing these values and allowing HammerJS to figure out the best value based on the device
+                    //drag_min_distance: 1,
+                    //swipe_velocity: 0.1,
+                    drag_horizontal: true,
+                    drag_vertical: false
+                }).on("swipeleft", self.shiftViewLeft)
+                .on("swiperight", self.shiftViewRight)
+                .on("tap", self.globalClickHandler);
+
+            //This ensures that the top status bar color matches the app
+            if (typeof StatusBar !== "undefined") {
+                StatusBar.styleBlackOpaque();
+                StatusBar.backgroundColorByHexString("#272B30");
+                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+                    StatusBar.overlaysWebView(false);
+                }
+            }
+
+            //This sets up inAppBilling donations for iOS/Android
+            if (typeof inappbilling != "undefined") {
+                inappbilling.init(function() {}, function() {}, {
+                    showLog: false
+                }, ['small', 'medium', 'large']);
+            }
+
+            //Prevent the user from pressing the back button to reload the app
+            document.addEventListener("backbutton", function(e) {
+                e.preventDefault();
+            }, false);
+        }
+
+        self.whatsNew();
         window.BOOTSTRAP_OK = true;
+        if (self.autoUpdates()) {
+            tgd.checkUpdates();
+        }
     };
 };
 

@@ -1,4 +1,4 @@
-var bungie = (function(cookieString, complete) {
+tgd.bungie = (function(cookieString, complete) {
     var self = this;
 
     var _token,
@@ -382,11 +382,6 @@ var bungie = (function(cookieString, complete) {
 
     this.init = function() {
         if (!isChrome && !isMobile) {
-            $.ajaxSetup({
-                xhr: function() {
-                    return firefoxXHR();
-                },
-            });
             window.addEventListener("response-cookie-from-cs", function(event) {
                 tgd.localLog("response-cookie-from-cs: " + event.detail);
                 self.requestCookieCB(event.detail);

@@ -4,11 +4,11 @@
  */
 module.exports = function(grunt) {
 	grunt.config.set('watch', {
-		sass: {
-			files: '../www/scss/{,*/}*.{scss,sass}',
-			tasks: ['sass:dev', 'autoprefixer:dev']
+		build: {
+			files: '../www/js/**',
+			tasks: ['codeformat','combineKOTemplates','jsonmanifest']
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-contrib-sass');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 };
