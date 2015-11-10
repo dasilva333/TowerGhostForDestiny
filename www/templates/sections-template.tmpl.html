@@ -33,7 +33,7 @@
         <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
             <span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
                 <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level() || character.id == 'Vault') ? 1 : 0.3 }">
-                    <img class="itemImage" data-bind="attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+                    <img class="itemImage" data-bind="itemImageHandler: true, attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
                 </a>
                 <div class="lockIcon" data-bind="if: item.locked()">
                     <img src="assets/lock.png" />
@@ -48,7 +48,7 @@
     <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="visible: (character.id != 'Vault' && bucketType !== 'Consumables' && bucketType !== 'Materials'), sortable: [$data]">
         <span class="col-xs-24" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible">
             <a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
-                <img class="itemImage" data-bind="attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">
+                <img class="itemImage" data-bind="itemImageHandler: true, attr: { src: icon, instanceId:_id }, fastclick: function(){ return false }">
             </a>
             <div class="lockIcon" data-bind="if: locked()">
                 <img src="assets/lock.png" />

@@ -30,6 +30,17 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/www/data/definitions',
 		exclusions: []
 	  },
+	  images: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../www/data/common/',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/data/common',
+		simple: true,
+		exclusions: []
+	  },
 	  manifest: {
 		auth: {
 		  host: 'towerghostfordestiny.com',

@@ -106,11 +106,23 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "ad00765791f1bb47b7083165a96dffa2a2c550c5a0393a08da02d26be0660569"
+      "version": "4829fda2d0554a85524506beef0a0e4b61b13d3a5aae3fd84f617e16db6abe3d"
+    },
+    "Layout.js": {
+      "filename": "js/tgd/Layout.js",
+      "version": "9c02f211e945f121d228a9855a6285c0c657f058ccfe968a06f5607f4dfaed91"
+    },
+    "bindingHandlers.js": {
+      "filename": "js/tgd/bindingHandlers.js",
+      "version": "ad3ce5c4954834eddc854e49622fac182c5626c38a38057a878350c584361b9f"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
       "version": "6c5f0a27c2bc87c59d6b6afc5b645c6f862e3f4ae68bfabab91b952770274103"
+    },
+    "dialog.js": {
+      "filename": "js/tgd/dialog.js",
+      "version": "564cc2b1af37210651ca1d477267e7aeea61edcf993695c9a707ef1a1d4cd310"
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
@@ -120,25 +132,29 @@
       "filename": "js/tgd/locale.js",
       "version": "1e0640e609f2d67c1664e807e69bb167417979f860d2e388dac8b3b3fc0c7b7b"
     },
+    "storage.js": {
+      "filename": "js/tgd/storage.js",
+      "version": "a4ca93c52b485ff87d2a243f54361121b11e7642d72d1d2aa210d3ee1073fa76"
+    },
     "utils.js": {
       "filename": "js/tgd/utils.js",
       "version": "5221370d75aa6415774ca9e2844a5a581597d59b26c2cf8a3f456c98bfcedfac"
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "c0c477771b467eee9ee3260e8833f30e0f1c0791ecebf8dfd27ef43d251731a9"
+      "version": "856d80df9f45757af7fb0e62c96db4cecf6fea504ccda23b840f1829d54e5a0a"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "7bb64a0569beff55ead02dd4226c1564b2d34382d635f67ed7f26ca8822069cc"
+      "version": "72d41398a0f642ee2740ef0075e7c33645beb90278951a2f68a5a2d6f484fdac"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "80c8a24429a9e28e061d50e8e5271ab6ae2ca3ab0d4781ac86e29f09ebd1677f"
+      "version": "610c813b907989c0268e1fb3ea5f9777ab09daf7a8bbede66710764155caac03"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "3ffe06ee34f9760d70ed737cf37c773916308289078850ee677aaec4a821bf5f"
+      "version": "f7cabfb4c86bfe78e766a9db28fbed2be7b57dfc781dacf99c660ff9a211a41d"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -185,9 +201,13 @@
     "js/plugins/jquery.toaster.js",
     "js/plugins/knockout-sortable.js",
     "js/templates/templates.js",
+    "js/tgd/Layout.js",
+    "js/tgd/bindingHandlers.js",
     "js/tgd/bungie.js",
+    "js/tgd/dialog.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
+    "js/tgd/storage.js",
     "js/tgd/utils.js",
     "js/tgd/version.js",
     "js/app/Item.js",
