@@ -108,9 +108,9 @@
       "filename": "js/templates/templates.js",
       "version": "518c5c7ae90009c457d29658c0d219a2cc1022ab731451524db3e1e4da77c8a6"
     },
-    "Layout.js": {
-      "filename": "js/tgd/Layout.js",
-      "version": "c133cd1efdd534236d281f16f1ebefe16101595cd33ed066073e0db9310922f2"
+    "base.js": {
+      "filename": "js/tgd/base.js",
+      "version": "6644e7dfa248dae2bcb1c79d95354fd93ab00e8d2540484478dcb820b4243410"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -123,6 +123,10 @@
     "dialog.js": {
       "filename": "js/tgd/dialog.js",
       "version": "564cc2b1af37210651ca1d477267e7aeea61edcf993695c9a707ef1a1d4cd310"
+    },
+    "layout.js": {
+      "filename": "js/tgd/layout.js",
+      "version": "c133cd1efdd534236d281f16f1ebefe16101595cd33ed066073e0db9310922f2"
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
@@ -205,10 +209,11 @@
     "js/plugins/jquery.toaster.js",
     "js/plugins/knockout-sortable.js",
     "js/templates/templates.js",
-    "js/tgd/Layout.js",
+    "js/tgd/base.js",
     "js/tgd/bindingHandlers.js",
     "js/tgd/bungie.js",
     "js/tgd/dialog.js",
+    "js/tgd/layout.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
     "js/tgd/storage.js",
