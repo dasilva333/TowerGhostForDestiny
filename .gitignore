@@ -14,3 +14,4 @@ node_modules
 *.db
 /build/npm-debug.log
 /build/.ftppass
+/build/nwjs/download/nwjs-v0.12.1-win-x64

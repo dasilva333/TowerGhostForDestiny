@@ -695,9 +695,9 @@
                         xhr.open('GET', url);
                         xhr.responseType = "blob";
                         xhr.onreadystatechange = function(onSuccess, onError, cb) {
-                            console.log(xhr.readyState);
                             if (xhr.readyState == 4) {
                                 if (xhr.status === 200) {
+                                    console.log("writing file to " + file);
                                     write(file, xhr.response).then(win, fail);
                                 } else {
                                     fail(xhr.status);

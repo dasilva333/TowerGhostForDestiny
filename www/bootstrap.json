@@ -58,7 +58,7 @@
     },
     "underscore.js": {
       "filename": "js/libraries/primary/underscore.js",
-      "version": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9"
+      "version": "da11fb5776007cd13c6645d76616bd4504b1f66c8a00d4323e8931072326eb92"
     },
     "analytics.js": {
       "filename": "js/libraries/secondary/analytics.js",
@@ -74,7 +74,7 @@
     },
     "hammer.js": {
       "filename": "js/libraries/secondary/hammer.js",
-      "version": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e"
+      "version": "c026391282ae250b5b0205f7b0ce5a84b3b79abe0af40a312fc99e0ab1bab9b2"
     },
     "idb.filesystem.js": {
       "filename": "js/libraries/secondary/idb.filesystem.js",
@@ -166,7 +166,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/extras/cordova-app-loader-complete.js",
-      "version": "0728348bbbcfd3ef9be8af5ca977d155b0d2c0bbdc93ede482d6be59fcdb545b"
+      "version": "098ed332d9803558a9786be546c47a27b39b948369e5e6997da8bd5f6d4115c9"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",
