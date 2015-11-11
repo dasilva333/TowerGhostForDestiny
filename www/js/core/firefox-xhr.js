@@ -1,9 +1,9 @@
-if (!isNWJS && !isMobile && !isChrome) {
-    tgd.ffRequestId = 0;
-    tgd.ffXHRisReady = false;
+if (isFirefox) {
+    window.ffRequestId = 0;
+    window.ffXHRisReady = false;
 
     window.addEventListener("cs-ready", function(event) {
-        tgd.ffXHRisReady = true;
+        window.ffXHRisReady = true;
     }, false);
 
     var ffXHR = function() {
@@ -15,7 +15,7 @@ if (!isNWJS && !isMobile && !isChrome) {
         this.status = 500;
         this.statusText = "";
         this.request = {};
-        this.id = tgd.ffRequestId++;
+        this.id = window.ffRequestId++;
         this.withCredentials = true;
 
         this.open = function(type, url, async, username, password) {
@@ -51,11 +51,11 @@ if (!isNWJS && !isMobile && !isChrome) {
                 event.initCustomEvent("xhr-request", true, true, self.request);
                 document.documentElement.dispatchEvent(event);
             }
-            if (tgd.ffXHRisReady == true) {
+            if (window.ffXHRisReady == true) {
                 send();
             } else {
                 var check = setInterval(function() {
-                    if (tgd.ffXHRisReady == true) {
+                    if (window.ffXHRisReady == true) {
                         clearInterval(check);
                         send();
                     }
