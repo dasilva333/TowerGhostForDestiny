@@ -76,6 +76,10 @@
       "filename": "js/libraries/secondary/hammer.js",
       "version": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e"
     },
+    "idb.filesystem.js": {
+      "filename": "js/libraries/secondary/idb.filesystem.js",
+      "version": "ec907a984f47a7b5ad915e4fd2bd03d9dc32493615295306721b3366499fd7a7"
+    },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
       "version": "acdc47924955e3a3f1d50fcd6fbb4718fc1b98694a27159844b624a0ba1bed56"
@@ -102,7 +106,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "f776b1469bc5a9272e33f4e640792fd955df858607ac2693b164767895aa8b7b"
+      "version": "518c5c7ae90009c457d29658c0d219a2cc1022ab731451524db3e1e4da77c8a6"
     },
     "Layout.js": {
       "filename": "js/tgd/Layout.js",
@@ -162,7 +166,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/extras/cordova-app-loader-complete.js",
-      "version": "670511e68d8ca41868e0d687cb94c3bc92f85054d49f654ab79ff91b885b6bc8"
+      "version": "0728348bbbcfd3ef9be8af5ca977d155b0d2c0bbdc93ede482d6be59fcdb545b"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",
@@ -193,6 +197,7 @@
     "js/libraries/secondary/bootstrap.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
+    "js/libraries/secondary/idb.filesystem.js",
     "js/plugins/bootstrap-dialog.js",
     "js/plugins/jquery-idletimer.js",
     "js/plugins/jquery-ui.js",

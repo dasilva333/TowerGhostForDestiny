@@ -152,7 +152,7 @@
             var self = this;
             var bootstrapScript = document.querySelector('script[manifest]');
             var bundledManifestUrl = (bootstrapScript ? bootstrapScript.getAttribute('manifest') : null) || 'bootstrap.json';
-            bundledManifestUrl = bundledManifestUrl + '?now=' + (Math.random() * 10000000000).toFixed(0);
+            bundledManifestUrl = location.href.replace(location.href.split("/")[location.href.split("/").length - 1], '') + bundledManifestUrl;
 
             return new Promise(function(resolve, reject) {
                 if (self.bundledManifest) {
@@ -687,27 +687,15 @@
             options.storageSize = options.storageSize || 20 * 1024 * 1024;
             options.concurrency = options.concurrency || 3;
             options.retry = options.retry || [];
-
-            /* Cordova deviceready promise */
-            var deviceready, isCordova = typeof cordova !== 'undefined';
-            if (isCordova) {
-                deviceready = new Promise(function(resolve, reject) {
-                    document.addEventListener("deviceready", resolve, false);
-                    setTimeout(function() {
-                        reject(new Error('deviceready has not fired after 5 seconds.'));
-                    }, 5100);
-                });
-            } else {
-                /* FileTransfer implementation for Chrome */
-                deviceready = ResolvedPromise(true);
-                if (typeof webkitRequestFileSystem !== 'undefined') {
-                    window.requestFileSystem = webkitRequestFileSystem;
+            var setupShims = function() {
                     window.FileTransfer = function FileTransfer() {};
                     FileTransfer.prototype.download = function download(url, file, win, fail) {
+                        console.log("FileTransfer.prototype.download: " + url);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
                         xhr.responseType = "blob";
                         xhr.onreadystatechange = function(onSuccess, onError, cb) {
+                            console.log(xhr.readyState);
                             if (xhr.readyState == 4) {
                                 if (xhr.status === 200) {
                                     write(file, xhr.response).then(win, fail);
@@ -721,7 +709,25 @@
                     };
                     window.ProgressEvent = function ProgressEvent() {};
                     window.FileEntry = function FileEntry() {};
-                } else {
+                }
+                /* Cordova deviceready promise */
+            var deviceready, isCordova = typeof cordova !== 'undefined';
+            if (isCordova) {
+                deviceready = new Promise(function(resolve, reject) {
+                    document.addEventListener("deviceready", resolve, false);
+                    setTimeout(function() {
+                        reject(new Error('deviceready has not fired after 5 seconds.'));
+                    }, 5100);
+                });
+            } else {
+                /* FileTransfer implementation for Chrome */
+                deviceready = ResolvedPromise(true);
+                if (typeof webkitRequestFileSystem !== 'undefined') {
+                    window.requestFileSystem = webkitRequestFileSystem;
+                    setupShims();
+                } else if (isFirefox) {
+                    setupShims();
+                } else if (typeof window.requestFileSystem == "undefined") {
                     window.requestFileSystem = function(x, y, z, fail) {
                         fail(new Error('requestFileSystem not supported!'));
                     };
