@@ -102,7 +102,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "4829fda2d0554a85524506beef0a0e4b61b13d3a5aae3fd84f617e16db6abe3d"
+      "version": "f776b1469bc5a9272e33f4e640792fd955df858607ac2693b164767895aa8b7b"
     },
     "Layout.js": {
       "filename": "js/tgd/Layout.js",
@@ -138,7 +138,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "856d80df9f45757af7fb0e62c96db4cecf6fea504ccda23b840f1829d54e5a0a"
+      "version": "ef83cb27cbcb23b8efde0c0c239ccfcaca2acf52fe49bb7f9877fdb7d087c834"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
