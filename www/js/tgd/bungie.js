@@ -63,7 +63,7 @@ tgd.bungie = (function(cookieString, complete) {
                 }
                 callback(c ? c.value : null);
             });
-        } else if (!isChrome && !isMobile) {
+        } else if (isFirefox) {
             self.requestCookie(callback);
         } else {
             callback(readCookie('bungled'));
@@ -381,7 +381,7 @@ tgd.bungie = (function(cookieString, complete) {
     };
 
     this.init = function() {
-        if (!isChrome && !isMobile) {
+        if (isFirefox) {
             window.addEventListener("response-cookie-from-cs", function(event) {
                 tgd.localLog("response-cookie-from-cs: " + event.detail);
                 self.requestCookieCB(event.detail);

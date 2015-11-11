@@ -68,10 +68,6 @@
       "filename": "js/libraries/secondary/bootstrap.js",
       "version": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8"
     },
-    "cordova-app-loader-complete.js": {
-      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "5160600e177f018d1945e56edc670ed86d40fcf059089e2e271e77f99fa70e69"
-    },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
       "version": "1aa08cb3c7aa70d268d24d59c374c14af7bd08e0af8c85f8e4f60a2651f4bab5"
@@ -118,7 +114,7 @@
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
-      "version": "6c5f0a27c2bc87c59d6b6afc5b645c6f862e3f4ae68bfabab91b952770274103"
+      "version": "117e1e8e43cc7d180176e9eb68a711c4904923ec314752614034692f54cb126d"
     },
     "dialog.js": {
       "filename": "js/tgd/dialog.js",
@@ -160,17 +156,21 @@
       "filename": "js/app/tooltips.min.js",
       "version": "786c5f66a04076a9a141c4986ba8a197102121e081381ed24f6c3f579c07622f"
     },
-    "autoupdate.js": {
-      "filename": "js/extras/autoupdate.js",
-      "version": "9efc4f1523e91ab128ff1174aa6f6de9383b6b9a89343a5303767ee75642f212"
-    },
     "buy.js": {
       "filename": "js/extras/buy.js",
       "version": "9f9f5078601c9fe55040c6c78790dd9164bf1e651e1347b021b600244cdeb39f"
     },
+    "cordova-app-loader-complete.js": {
+      "filename": "js/extras/cordova-app-loader-complete.js",
+      "version": "670511e68d8ca41868e0d687cb94c3bc92f85054d49f654ab79ff91b885b6bc8"
+    },
     "ga.js": {
       "filename": "js/extras/ga.js",
       "version": "9176463d8871cc494901f6d8899edc6d6294c781092d5432ad306bb62ecba86a"
+    },
+    "updater.js": {
+      "filename": "js/extras/updater.js",
+      "version": "9efc4f1523e91ab128ff1174aa6f6de9383b6b9a89343a5303767ee75642f212"
     }
   },
   "load": [
@@ -191,7 +191,6 @@
     "js/libraries/primary/underscore.js",
     "js/libraries/secondary/analytics.js",
     "js/libraries/secondary/bootstrap.js",
-    "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",
@@ -214,9 +213,10 @@
     "js/app/Profile.js",
     "js/app/app.js",
     "js/app/tooltips.min.js",
-    "js/extras/autoupdate.js",
     "js/extras/buy.js",
-    "js/extras/ga.js"
+    "js/extras/cordova-app-loader-complete.js",
+    "js/extras/ga.js",
+    "js/extras/updater.js"
   ],
   "root": "./"
 }
