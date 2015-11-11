@@ -13,12 +13,14 @@ tgd.localLog = function(msg) {
         console.log(msg);
     }
 };
+//TODO find all the remote http variables and have them use a single variable
+tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.activeElement = null;
 //Network Keys, Axiomatic Beads, House Banners, Silken Codex
-tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready"];
+tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready","Twist Fate","Scabbard"];
 tgd.DestinyGlimmerConsumables = [3632619276, 269776572, 2904517731, 1932910919];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
@@ -258,7 +260,8 @@ tgd.defaults = {
     itemDefs: "",
     preferredSystem: "PSN",
     ccWidth: "",
-    layoutMode: "even"
+    layoutMode: "even",
+	autoUpdates: false
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
