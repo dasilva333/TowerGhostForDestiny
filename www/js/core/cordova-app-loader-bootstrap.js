@@ -59,8 +59,8 @@
             setTimeout(function() {
                 if (!window.BOOTSTRAP_OK) {
                     console.warn('BOOTSTRAP_OK !== true; Resetting to original manifest.json...');
-                    localStorage.removeItem('manifest');
-                    location.reload();
+                    //localStorage.removeItem('manifest');
+                    //location.reload();
                 }
             }, timeout);
         }
@@ -71,33 +71,80 @@
         }
 
         var el,
+			loadAsScript = (isFirefox == true && !fromLocalStorage || !isFirefox),
             head = document.getElementsByTagName('head')[0],
             scripts = manifest.load.concat(),
-            now = Date.now();
-
+            now = Date.now(),
+			loading = [],
+			count = 0;
+		
+		function loadNextFromFS(index){
+			if ((loading.length - 1) >= index){
+				var element = loading[index][0];
+				var source = loading[index][1];
+				window.__fs.root.getFile(source,{},
+					function(fileEntry){ //onSuccess
+						fileEntry.file(function(file){ 
+							var reader = new FileReader(); 
+							reader.onloadend = function(){ 
+								setTimeout(function(){
+									index++;
+									loadNextFromFS(index);
+								},250);
+								element.innerHTML = this.result;
+								head.appendChild(element);
+							} 
+							reader.readAsText(file);
+						});
+					},
+					function(){} //onError
+				)
+			}
+		}
+		
         // Load Scripts
         function loadScripts() {
             scripts.forEach(function(src) {
                 if (!src) return;
                 // Ensure the 'src' has no '/' (it's in the root already)
                 if (src[0] === '/') src = src.substr(1);
-                src = manifest.root + src;
-                // Load javascript
-                if (src.substr(-5).indexOf(".js") > -1) {
-                    el = document.createElement('script');
-                    el.type = 'text/javascript';
-                    //TODO: Investigate if cache busting is nessecary for some platforms, apparently it does not work in IEMobile 10
-                    el.src = src;
-                    el.async = false;
-                    // Load CSS
-                } else {
-                    el = document.createElement('link');
-                    el.rel = "stylesheet";
-                    el.href = src;
-                    el.type = "text/css";
-                }
+				//Don't use the root manifest when loading from local storage for Firefox
+				if (loadAsScript){
+					src = manifest.root + src;
+				}
+				else {
+					src = "app/" + src;
+				}
+				// Load javascript
+				if (src.substr(-5).indexOf(".js") > -1) {
+					el = document.createElement('script');
+					el.type = 'text/javascript';
+					el.async = false;
+					//TODO: Investigate if cache busting is nessecary for some platforms, apparently it does not work in IEMobile 10
+					if (loadAsScript){
+						el.src = src;
+					}
+					else {
+						loading.push([el,src]);
+					}
+					
+				// Load CSS
+				} else {
+					el = document.createElement(loadAsScript ? 'link' : 'style');
+					el.rel = "stylesheet";
+					if (loadAsScript){
+						el.href = src;
+					}
+					else {
+						loading.push([el,src]);
+					}
+					el.type = "text/css";
+				}
                 head.appendChild(el);
             });
+			if (!loadAsScript){
+				loadNextFromFS(count);
+			}
         }
 
         //---------------------------------------------------
@@ -115,7 +162,13 @@
         if (typeof window.cordova !== 'undefined') {
             document.addEventListener("deviceready", loadScripts, false);
         } else {
-            loadScripts();
+			if (loadAsScript){ loadScripts(); }
+			else {
+				window.requestFileSystem(0, 20 * 1024 * 1024, function(fs){
+					window.__fs = fs;
+					loadScripts();
+				}, function(){});
+			}	
         }
         // Save to global scope
         window.Manifest = manifest;
