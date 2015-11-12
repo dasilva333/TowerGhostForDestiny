@@ -7,7 +7,7 @@ if (isFirefox) {
     }, false);
 
     var ffXHR = function() {
-        console.log("creating new ff obj");
+        //console.log("creating new ff obj");
 
         var self = this;
 
@@ -19,7 +19,7 @@ if (isFirefox) {
         this.withCredentials = true;
 
         this.open = function(type, url, async, username, password) {
-            console.log("opening a new request");
+            //console.log("opening a new request");
             self.request = {
                 id: self.id,
                 type: type,

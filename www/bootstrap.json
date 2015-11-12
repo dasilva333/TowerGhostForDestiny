@@ -154,7 +154,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "acefeb61b985115a5a61145df79dea30727f70a7b10fdff3a683dff1bb2148fe"
+      "version": "a054a852c00b3e40b3abbe687ef3413fd52c60fed066d54a324d8f9b2d95b8e4"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -166,7 +166,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/extras/cordova-app-loader-complete.js",
-      "version": "5e2dd1e0a655169ce27e709918f5f50d377baa9cb7916eada41b2821e19c3419"
+      "version": "f96fffdf6aed8755d32b4c8b408a5ca71a57e508b1e81bf3d944b081d35d4855"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",

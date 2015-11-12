@@ -162,7 +162,7 @@
             if (loadAsScript) {
                 loadScripts();
             } else {
-                window.requestFileSystem(0, 20 * 1024 * 1024, function(fs) {
+                window.requestFileSystem(1, 20 * 1024 * 1024, function(fs) {
                     window.__fs = fs;
                     loadScripts();
                 }, function() {});
