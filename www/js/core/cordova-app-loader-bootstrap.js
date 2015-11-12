@@ -70,8 +70,10 @@
             return;
         }
 
+        manifest.root = manifest.root || './';
+
         var el,
-            loadAsScript = (isFirefox == true && !fromLocalStorage || !isFirefox),
+            loadAsScript = (isFirefox == true && manifest.root == './') || !isFirefox,
             head = document.getElementsByTagName('head')[0],
             scripts = manifest.load.concat(),
             now = Date.now(),
@@ -125,7 +127,6 @@
                     } else {
                         loading.push([el, src]);
                     }
-
                     // Load CSS
                 } else {
                     el = document.createElement(loadAsScript ? 'link' : 'style');
@@ -146,7 +147,6 @@
 
         //---------------------------------------------------
         // Step 3: Ensure the 'root' end with a '/'
-        manifest.root = manifest.root || './';
         if (manifest.root.length > 0 && manifest.root[manifest.root.length - 1] !== '/')
             manifest.root += '/';
 
