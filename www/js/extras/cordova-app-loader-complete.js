@@ -301,36 +301,36 @@
                     resolve(null);
                 });
             }
-            console.log("downloading new app");
+            //console.log("downloading new app");
             // we will delete files, which will invalidate the current manifest...
             localStorage.removeItem('manifest');
-            console.log("removing manifest");
+            //console.log("removing manifest");
             // only attempt this once - set 'last_update_files'
             localStorage.setItem('last_update_files', hash(this.newManifest.files));
             this.manifest.files = Manifest.files = {};
             return self.cache.remove(self._toBeDeleted, true)
                 .then(function() {
-                    console.log("cache cleared");
+                    //console.log("cache cleared");
                     return Promise.all(self._toBeCopied.map(function(file) {
                         return self.cache._fs.download(BUNDLE_ROOT + file, self.cache.localRoot + file);
                     }));
                 })
                 .then(function() {
-                    console.log("files downloading");
+                    //console.log("files downloading");
                     if (self.allowServerRootFromManifest && self.newManifest.serverRoot) {
                         self.cache.serverRoot = self.newManifest.serverRoot;
                     }
                     self.cache.add(self._toBeDownloaded);
                     return self.cache.download(onprogress);
                 }).then(function() {
-                    console.log("files downloaded");
+                    //console.log("files downloaded");
                     self._toBeDeleted = [];
                     self._toBeDownloaded = [];
                     self._updateReady = true;
                     return self.newManifest;
                 }, function(files) {
-                    console.log("download error");
-                    console.log(files);
+                    //console.log("download error");
+                    //console.log(files);
                     // on download error, remove files...
                     if (!!files && files.length) {
                         self.cache.remove(files);
@@ -697,14 +697,14 @@
             var setupShims = function() {
                     window.FileTransfer = function FileTransfer() {};
                     FileTransfer.prototype.download = function download(url, file, win, fail) {
-                        console.log("FileTransfer.prototype.download: " + url);
+                        //console.log("FileTransfer.prototype.download: " + url);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
                         //xhr.responseType = "blob";
                         xhr.onreadystatechange = function(onSuccess, onError, cb) {
                             if (xhr.readyState == 4) {
                                 if (xhr.status === 200) {
-                                    console.log("writing file to " + file);
+                                    //console.log("writing file to " + file);
                                     write(file, xhr.responseText).then(win, fail);
                                 } else {
                                     fail(xhr.status);
@@ -929,20 +929,20 @@
             function read(path, method) {
                 method = method || 'readAsText';
                 return file(path).then(function(fileEntry) {
-                    console.log("reading " + path);
-                    console.log(fileEntry);
+                    //console.log("reading " + path);
+                    //console.log(fileEntry);
                     return new Promise(function(resolve, reject) {
                         fileEntry.file(function(file) {
-                            console.log("fileEntry " + file);
+                            /*console.log("fileEntry " + file);
                             console.log(file);
-                            window.f = file;
+                            window.f = file;*/
 
                             var reader = new FileReader();
                             reader.onloadend = function() {
-                                console.log("file read " + this.result);
+                                //console.log("file read " + this.result);
                                 resolve(this.result);
                             };
-                            console.log(reader[method].toString());
+                            //console.log(reader[method].toString());
                             reader[method](file);
                         }, reject);
                     });
