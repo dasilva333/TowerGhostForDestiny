@@ -22,7 +22,7 @@
 
     // Initialize filesystem and loader
     fs = new CordovaPromiseFS({
-        persistent: isCordova, // Chrome should use temporary storage.
+        persistent: isCordova || isFirefox, // Chrome should use temporary storage.
         Promise: Promise
     });
 

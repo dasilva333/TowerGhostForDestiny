@@ -76,10 +76,6 @@
       "filename": "js/libraries/secondary/hammer.js",
       "version": "c026391282ae250b5b0205f7b0ce5a84b3b79abe0af40a312fc99e0ab1bab9b2"
     },
-    "idb.filesystem.js": {
-      "filename": "js/libraries/secondary/idb.filesystem.js",
-      "version": "ec907a984f47a7b5ad915e4fd2bd03d9dc32493615295306721b3366499fd7a7"
-    },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
       "version": "acdc47924955e3a3f1d50fcd6fbb4718fc1b98694a27159844b624a0ba1bed56"
@@ -106,7 +102,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "518c5c7ae90009c457d29658c0d219a2cc1022ab731451524db3e1e4da77c8a6"
+      "version": "4c6adf2518d6d2466826d099a51b620e0a2b54ca3c6dd6eef2c031e8938eef95"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
@@ -146,7 +142,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "ef83cb27cbcb23b8efde0c0c239ccfcaca2acf52fe49bb7f9877fdb7d087c834"
+      "version": "18de143a14c4eb4caeffe3b30235708d05d98e7883026081f74d4852f2e15ce1"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
@@ -170,7 +166,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/extras/cordova-app-loader-complete.js",
-      "version": "098ed332d9803558a9786be546c47a27b39b948369e5e6997da8bd5f6d4115c9"
+      "version": "5e2dd1e0a655169ce27e709918f5f50d377baa9cb7916eada41b2821e19c3419"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",
@@ -178,7 +174,7 @@
     },
     "updater.js": {
       "filename": "js/extras/updater.js",
-      "version": "9efc4f1523e91ab128ff1174aa6f6de9383b6b9a89343a5303767ee75642f212"
+      "version": "e11d0897eaeadefed74ffb265f7b1f89b4c2d6ff43e683702a85cb626ff5de51"
     }
   },
   "load": [
@@ -201,7 +197,6 @@
     "js/libraries/secondary/bootstrap.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
-    "js/libraries/secondary/idb.filesystem.js",
     "js/plugins/bootstrap-dialog.js",
     "js/plugins/jquery-idletimer.js",
     "js/plugins/jquery-ui.js",

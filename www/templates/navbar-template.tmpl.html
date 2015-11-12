@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.5.3.6</span></strong></a>
+            <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.5.4</span></strong></a>
             <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                 <div class="mobile-characters">
                     <img class="mobile-characters-image" data-bind="attr: {src : icon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">
@@ -62,7 +62,7 @@
                         <li data-bind="fastclick: toggleDragAndDrop, css: dragAndDrop() == true ? 'active' : ''">
                             <a href="#"><i class="fa" data-bind="css: dragAndDrop() == true ? 'fa-check-square' : 'fa-square'"></i><span>Drag and Drop</span></a>
                         </li>
-                        <li data-bind="visible: (isChrome || isIOS || isAndroid), fastclick: toggleAutoUpdates, css: autoUpdates() == true ? 'active' : ''">
+                        <li data-bind="visible: (isChrome || isIOS || isAndroid || isFirefox), fastclick: toggleAutoUpdates, css: autoUpdates() == true ? 'active' : ''">
                             <a href="#"><i class="fa" data-bind="css: autoUpdates() == true ? 'fa-check-square' : 'fa-square'"></i><span>Auto Updates</span></a>
                         </li>
                     </ul>
