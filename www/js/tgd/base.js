@@ -8,6 +8,9 @@ window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
 window.tgd = {};
+if ( isWindowsPhone ){
+	window.requestFileSystem = function(){}
+}
 tgd.localLogging = false;
 tgd.localLog = function(msg) {
     if (tgd.localLogging) {
