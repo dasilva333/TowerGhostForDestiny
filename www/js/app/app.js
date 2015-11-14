@@ -1744,7 +1744,6 @@ var app = function() {
         } else {
             self.loadData();
         }
-        $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);
@@ -1758,6 +1757,8 @@ var app = function() {
         });
 
         ko.applyBindings(self);
+
+        $("form").bind("submit", false);
 
         if (isMobile) {
             //This sets up swipe left/swipe right for mobile devices
