@@ -12,7 +12,6 @@ var app = function() {
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates"));
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
@@ -30,6 +29,7 @@ var app = function() {
     this.lgColumn = ko.pureComputed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.pureComputed(new tgd.StoreObj("activeView"));
     this.activeSort = ko.pureComputed(new tgd.StoreObj("activeSort"));
+    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates", "true"));
     this.doRefresh = ko.pureComputed(new tgd.StoreObj("doRefresh", "true"));
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
@@ -1744,7 +1744,6 @@ var app = function() {
         } else {
             self.loadData();
         }
-        $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);
@@ -1758,6 +1757,8 @@ var app = function() {
         });
 
         ko.applyBindings(self);
+
+        $("form").bind("submit", false);
 
         if (isMobile) {
             //This sets up swipe left/swipe right for mobile devices
@@ -1796,7 +1797,7 @@ var app = function() {
 
         self.whatsNew();
         window.BOOTSTRAP_OK = true;
-        if (self.autoUpdates()) {
+        if (self.autoUpdates() == true) {
             tgd.checkUpdates();
         }
     };
