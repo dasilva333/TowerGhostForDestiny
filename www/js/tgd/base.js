@@ -277,7 +277,7 @@ tgd.perksTemplate = '<div class="destt-talent">' +
 	'<% perks.forEach(function(perk){ %>' +
 		'<div class="destt-talent-wrapper">' +
 			'<div class="destt-talent-icon">' +
-				'<img src="<%= perk.iconPath %>" width="36">' +
+				'<img src="<%= perk.iconPath %>" data-name="<%= perk.name %>" width="36">' +
 			'</div>' +
 			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
 				'<%= perk.description %>' +

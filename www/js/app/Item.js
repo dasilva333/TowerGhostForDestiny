@@ -1,11 +1,15 @@
+tgd.imageErrorHandler = function(src, element) {
+	return function(){
+		var source = element.src;
+		if (source.indexOf(tgd.remoteImagePath) == -1) {
+			element.src = tgd.remoteImagePath + src;
+		}
+	}
+}
+
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        element.onerror = function() {
-            var source = element.src;
-            if (source.indexOf(tgd.remoteImagePath) == -1) {
-                element.src = tgd.remoteImagePath + viewModel.icon;
-            }
-        };
+        element.onerror = tgd.imageErrorHandler(viewModel.icon, element);
     }
 };
 
