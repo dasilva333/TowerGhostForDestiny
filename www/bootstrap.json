@@ -18,7 +18,7 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
-      "version": "6b530e3cc819603ca56ecfda35038b9ab158b0611718382fbb8c4494b1a496f0"
+      "version": "8d8300397a35a3a98092830392010b686d1802cb539dfe7f706c4aeff1f18148"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/objectiveDefs.json",
@@ -26,7 +26,7 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/perkDefs.json",
-      "version": "e84fec5da86e8743bdee30b7f95c739fc9ff530d33919d491bbc23b00b49f56b"
+      "version": "9ff53d27f7588da616486bf7bea95bad3bd2e2e4dc5c2acd662a6dcc57069a8f"
     },
     "raceDefs.json": {
       "filename": "data/definitions/raceDefs.json",
@@ -42,7 +42,7 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/talentGridDefs.json",
-      "version": "55cf493f61bd2de1bf9cfc5f005747db7fa2d5a82d02c3e4460d5c1609961c21"
+      "version": "08ad11d77daefadefb9e0060f08563ebb349460b30766796351560a97ae41813"
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
@@ -106,7 +106,7 @@
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "168946597d649db27b34e9107f8d9d04dc9228fe70ba0cad28552df036e1ce4c"
+      "version": "5a8d8b2ba1a2d25de9c249cfda27bb7100e2707472a0e7e8058a380eaf09ebf8"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -146,7 +146,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "52c529373d5c762e211d5d7645b75b350906d6dd681a4f0f88e9aab9a6c171b5"
+      "version": "fb15ea1d245d94f9e7fe9e1ecc9e81eeb7bfbaca79157536e8d1f8cbdd97170b"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -154,7 +154,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "f65f62efe1b1116362e036360c66ad027fa46442a28ce84d954c11536ee6834d"
+      "version": "8237f35525f825de03967b2353d58684e6c81e962fe5d82176dcee049a9a1aae"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",

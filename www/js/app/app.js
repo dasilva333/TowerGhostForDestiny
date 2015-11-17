@@ -330,12 +330,14 @@ var app = function() {
                         $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 }
-				$content.find("img").bind("error", function(){
-					var perkName = $(this).attr("data-name");
-					var src = _.findWhere(activeItem.perks,{ name: perkName }).iconPath;
-					var element = $('img[data-name="' + perkName + '"]')[0];
-					tgd.imageErrorHandler(src, element)();
-				});
+                $content.find("img").bind("error", function() {
+                    var perkName = $(this).attr("data-name");
+                    var src = _.findWhere(activeItem.perks, {
+                        name: perkName
+                    }).iconPath;
+                    var element = $('img[data-name="' + perkName + '"]')[0];
+                    tgd.imageErrorHandler(src, element)();
+                });
             }
             if (activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
