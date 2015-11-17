@@ -228,7 +228,7 @@ var app = function() {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Sub title for materials and consumables */
-            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
+            if (tgd.DestinyGeneralItems["GlimmerConsumables"].indexOf(activeItem.id) > -1) {
                 $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
             }
             /* Add Required Level if provided */
@@ -330,6 +330,14 @@ var app = function() {
                         $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 }
+                $content.find("img").bind("error", function() {
+                    var perkName = $(this).attr("data-name");
+                    var src = _.findWhere(activeItem.perks, {
+                        name: perkName
+                    }).iconPath;
+                    var element = $('img[data-name="' + perkName + '"]')[0];
+                    tgd.imageErrorHandler(src, element)();
+                });
             }
             if (activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
