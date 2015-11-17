@@ -351,29 +351,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Synths" && [211861343, 928169143, 2180254632].indexOf(this.id) > -1) {
-            return true;
-        } else if (type == "Parts" && this.id == 1898539128) {
-            return true;
-        } else if (type == "Motes" && this.id == 937555249) {
-            return true;
-        }
-        //Passage Coins, Strange Coins, 3 of Coins
-        else if (type == "Coins" && [417308266, 1738186005, 605475555].indexOf(this.id) > -1) {
-            return true;
-        }
-        //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
-        else if (type == "Runes" && [1565194903, 2620224196, 1556533319, 1314217221, 2906158273].indexOf(this.id) > -1) {
-            return true;
-        }
-        //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
-        else if (type == "Planetary Resources" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
-            return true;
-        }
-        //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
-        else if (type == "Glimmer Consumables" && [3446457162, 1043138475, 1772853454, 3783295803].indexOf(this.id) > -1) {
-            return true;
-        } else if (type == "Telemetries" && [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091].indexOf(this.id) > -1) {
+        if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
         } else {
             return false;

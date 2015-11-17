@@ -228,7 +228,7 @@ var app = function() {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Sub title for materials and consumables */
-            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
+            if (tgd.DestinyGeneralItems["GlimmerConsumables"].indexOf(activeItem.id) > -1) {
                 $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
             }
             /* Add Required Level if provided */
