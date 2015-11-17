@@ -70,10 +70,39 @@
             return;
         }
 
+        manifest.root = manifest.root || './';
+
         var el,
+            loadAsScript = (isFirefox == true && manifest.root == './') || !isFirefox,
             head = document.getElementsByTagName('head')[0],
             scripts = manifest.load.concat(),
-            now = Date.now();
+            now = Date.now(),
+            loading = [],
+            count = 0;
+
+        function loadNextFromFS(index) {
+            if ((loading.length - 1) >= index) {
+                var element = loading[index][0];
+                var source = loading[index][1];
+                window.__fs.root.getFile(source, {},
+                    function(fileEntry) { //onSuccess
+                        fileEntry.file(function(file) {
+                            var reader = new FileReader();
+                            reader.onloadend = function() {
+                                setTimeout(function() {
+                                    index++;
+                                    loadNextFromFS(index);
+                                }, 250);
+                                element.innerHTML = this.result;
+                                head.appendChild(element);
+                            }
+                            reader.readAsText(file);
+                        });
+                    },
+                    function() {} //onError
+                )
+            }
+        }
 
         // Load Scripts
         function loadScripts() {
@@ -81,28 +110,43 @@
                 if (!src) return;
                 // Ensure the 'src' has no '/' (it's in the root already)
                 if (src[0] === '/') src = src.substr(1);
-                src = manifest.root + src;
+                //Don't use the root manifest when loading from local storage for Firefox
+                if (loadAsScript) {
+                    src = manifest.root + src;
+                } else {
+                    src = "app/" + src;
+                }
                 // Load javascript
                 if (src.substr(-5).indexOf(".js") > -1) {
                     el = document.createElement('script');
                     el.type = 'text/javascript';
-                    //TODO: Investigate if cache busting is nessecary for some platforms, apparently it does not work in IEMobile 10
-                    el.src = src;
                     el.async = false;
+                    //TODO: Investigate if cache busting is nessecary for some platforms, apparently it does not work in IEMobile 10
+                    if (loadAsScript) {
+                        el.src = src;
+                    } else {
+                        loading.push([el, src]);
+                    }
                     // Load CSS
                 } else {
-                    el = document.createElement('link');
+                    el = document.createElement(loadAsScript ? 'link' : 'style');
                     el.rel = "stylesheet";
-                    el.href = src;
+                    if (loadAsScript) {
+                        el.href = src;
+                    } else {
+                        loading.push([el, src]);
+                    }
                     el.type = "text/css";
                 }
                 head.appendChild(el);
             });
+            if (!loadAsScript) {
+                loadNextFromFS(count);
+            }
         }
 
         //---------------------------------------------------
         // Step 3: Ensure the 'root' end with a '/'
-        manifest.root = manifest.root || './';
         if (manifest.root.length > 0 && manifest.root[manifest.root.length - 1] !== '/')
             manifest.root += '/';
 
@@ -115,7 +159,14 @@
         if (typeof window.cordova !== 'undefined') {
             document.addEventListener("deviceready", loadScripts, false);
         } else {
-            loadScripts();
+            if (loadAsScript) {
+                loadScripts();
+            } else {
+                window.requestFileSystem(1, 20 * 1024 * 1024, function(fs) {
+                    window.__fs = fs;
+                    loadScripts();
+                }, function() {});
+            }
         }
         // Save to global scope
         window.Manifest = manifest;
@@ -128,7 +179,7 @@
     var s = document.querySelector('script[manifest]');
     // Not in localStorage? Fetch it!
     if (!manifest) {
-        var url = location.href.replace(location.href.split("/")[location.href.split("/").length - 1], '') + ((s ? s.getAttribute('manifest') : null) || 'manifest.json');
+        var url = location.href.replace(location.href.split("/")[location.href.split("/").length - 1], '') + ((s ? s.getAttribute('manifest') : null) || 'bootstrap.json') + '?now=' + (new Date()).getTime();
         // get manifest.json, then loadManifest.
         pegasus(url).then(loadManifest, function(xhr) {
             console.error('Could not download ' + url + ': ' + xhr.status);

@@ -1,3 +1,108 @@
+tgd.imageErrorHandler = function(src, element) {
+    return function() {
+        var source = element.src;
+        if (source.indexOf(tgd.remoteImagePath) == -1) {
+            element.src = tgd.remoteImagePath + src;
+        }
+    }
+}
+
+window.ko.bindingHandlers.itemImageHandler = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        element.onerror = tgd.imageErrorHandler(viewModel.icon, element);
+    }
+};
+
+tgd.moveItemPositionHandler = function(element, item) {
+    tgd.localLog("moveItemPositionHandler");
+    if (app.destinyDbMode() === true) {
+        tgd.localLog("destinyDbMode");
+        window.open(item.href, "_system");
+        return false;
+    } else if (app.loadoutMode() === true) {
+        tgd.localLog("loadoutMode");
+        var existingItem = _.findWhere(app.activeLoadout().ids(), {
+            id: item._id
+        });
+        if (existingItem)
+            app.activeLoadout().ids.remove(existingItem);
+        else {
+            if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning',
+                    message: app.activeText().unable_create_loadout_for_type
+                });
+            } else if (item._id === "0") {
+                app.activeLoadout().addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    primaryStat: item.primaryStat()
+                });
+            } else if (_.where(app.activeLoadout().items(), {
+                    bucketType: item.bucketType
+                }).length < 10) {
+                app.activeLoadout().addUniqueItem({
+                    id: item._id,
+                    bucketType: item.bucketType,
+                    doEquip: false
+                });
+            } else {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Error',
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                });
+            }
+        }
+    } else {
+        tgd.localLog("else");
+        app.activeItem(item);
+        var $movePopup = $("#move-popup");
+        if ((item.transferStatus >= 2 && item.bucketType != "Subclasses") || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+            $.toaster({
+                priority: 'danger',
+                title: 'Error',
+                message: app.activeText().unable_to_move_bucketitems
+            });
+            return;
+        }
+        if (element == tgd.activeElement) {
+            $movePopup.hide();
+            tgd.activeElement = null;
+            tgd.localLog("hide");
+        } else {
+            tgd.localLog("show");
+            tgd.activeElement = element;
+            $ZamTooltips.hide();
+            if (window.isMobile) {
+                $("body").css("padding-bottom", $movePopup.height() + "px");
+                /* bringing back the delay it's sitll a problem in issue #128 */
+                setTimeout(function() {
+                    $movePopup.show().addClass("mobile");
+                }, 50);
+            } else {
+                tgd.localLog("display");
+                $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
+                    my: "left bottom",
+                    at: "left top",
+                    collision: "none",
+                    of: element,
+                    using: function(pos, ui) {
+                        var obj = $(this),
+                            box = $(ui.element.element).find(".move-popup").width();
+                        obj.removeAttr('style');
+                        if (box + pos.left > $(window).width()) {
+                            pos.left = pos.left - box;
+                        }
+                        obj.css(pos).width(box);
+                    }
+                });
+            }
+        }
+    }
+};
+
 var Item = function(model, profile) {
     var self = this;
 
@@ -116,56 +221,58 @@ Item.prototype = {
             if (item.perks.length > 0) {
                 var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
-                _.each(item.perks, function(perk) {
-                    if (perk.perkHash in window._perkDefs) {
-                        var p = window._perkDefs[perk.perkHash];
-                        var nodeIndex = talentGrid.nodes.indexOf(
-                            _.filter(talentGrid.nodes, function(o) {
-                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
-                            })[0]
-                        );
-                        itemObject.perks.push({
-                            iconPath: tgd.dataDir + p.displayIcon,
-                            name: p.displayName,
-                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-                            active: perk.isActive,
-                            isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
-                        });
-                    }
-                });
-                var perkHashes = _.pluck(item.perks, 'perkHash'),
-                    perkNames = _.pluck(itemObject.perks, 'name'),
-                    talentPerks = {};
-                var talentGridNodes = talentGrid.nodes;
-                _.each(item.nodes, function(node) {
-                    if (node.isActivated && node.hidden === false) {
-                        var nodes = _.findWhere(talentGridNodes, {
-                            nodeHash: node.nodeHash
-                        });
-                        if (nodes && nodes.steps) {
-                            var perk = nodes.steps[node.stepIndex];
-                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
-                                talentPerks[perk.nodeStepName] = {
-                                    active: true,
-                                    name: perk.nodeStepName,
-                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: tgd.dataDir + perk.icon,
-                                    isExclusive: -1
-                                };
+                if (talentGrid && talentGrid.nodes) {
+                    _.each(item.perks, function(perk) {
+                        if (perk.perkHash in window._perkDefs) {
+                            var p = window._perkDefs[perk.perkHash];
+                            var nodeIndex = talentGrid.nodes.indexOf(
+                                _.filter(talentGrid.nodes, function(o) {
+                                    return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+                                })[0]
+                            );
+                            itemObject.perks.push({
+                                iconPath: tgd.dataDir + p.displayIcon,
+                                name: p.displayName,
+                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                                active: perk.isActive,
+                                isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
+                            });
+                        }
+                    });
+                    var perkHashes = _.pluck(item.perks, 'perkHash'),
+                        perkNames = _.pluck(itemObject.perks, 'name'),
+                        talentPerks = {};
+                    var talentGridNodes = talentGrid.nodes;
+                    _.each(item.nodes, function(node) {
+                        if (node.isActivated && node.hidden === false) {
+                            var nodes = _.findWhere(talentGridNodes, {
+                                nodeHash: node.nodeHash
+                            });
+                            if (nodes && nodes.steps) {
+                                var perk = nodes.steps[node.stepIndex];
+                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                    (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
+                                    talentPerks[perk.nodeStepName] = {
+                                        active: true,
+                                        name: perk.nodeStepName,
+                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                        iconPath: tgd.dataDir + perk.icon,
+                                        isExclusive: -1
+                                    };
+                                }
                             }
                         }
-                    }
-                });
-                _.each(talentPerks, function(perk) {
-                    itemObject.perks.push(perk);
-                });
+                    });
+                    _.each(talentPerks, function(perk) {
+                        itemObject.perks.push(perk);
+                    });
+                }
             }
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
-                }).length == 0;
+                }).length === 0;
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
@@ -246,29 +353,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Synths" && [211861343, 928169143, 2180254632].indexOf(this.id) > -1) {
-            return true;
-        } else if (type == "Parts" && this.id == 1898539128) {
-            return true;
-        } else if (type == "Motes" && this.id == 937555249) {
-            return true;
-        }
-        //Passage Coins, Strange Coins, 3 of Coins
-        else if (type == "Coins" && [417308266, 1738186005, 605475555].indexOf(this.id) > -1) {
-            return true;
-        }
-        //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
-        else if (type == "Runes" && [1565194903, 2620224196, 1556533319, 1314217221, 2906158273].indexOf(this.id) > -1) {
-            return true;
-        }
-        //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
-        else if (type == "Planetary Resources" && [2254123540, 2882093969, 3164836592, 3242866270, 1797491610].indexOf(this.id) > -1) {
-            return true;
-        }
-        //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
-        else if (type == "Glimmer Consumables" && [3446457162, 1043138475, 1772853454, 3783295803].indexOf(this.id) > -1) {
-            return true;
-        } else if (type == "Telemetries" && [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091].indexOf(this.id) > -1) {
+        if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
         } else {
             return false;
