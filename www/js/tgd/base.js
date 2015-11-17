@@ -38,6 +38,7 @@ tgd.DestinyLayout = [
         array: 'weapons',
         counts: [72, 30],
         bucketTypes: tgd.DestinyWeaponPieces,
+		extras: [],
         view: 1,
         headerText: 'inventory_weapons'
     },
@@ -46,6 +47,7 @@ tgd.DestinyLayout = [
         array: 'armor',
         counts: [72, 50],
         bucketTypes: tgd.DestinyArmorPieces,
+		extras: tgd.DestinyGeneralExceptions,
         view: 2,
         headerText: 'inventory_armor'
     },
@@ -54,6 +56,7 @@ tgd.DestinyLayout = [
         array: '',
         counts: [0, 0],
         bucketTypes: ['Subclasses'],
+		extras: [],
         view: 3,
         headerText: 'inventory_subclasses'
     },
@@ -62,6 +65,7 @@ tgd.DestinyLayout = [
         array: 'general',
         counts: [36, 80],
         bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Emote'],
+		extras: tgd.DestinyGeneralExceptions,
         view: 3,
         headerText: 'inventory_general'
     },
@@ -70,6 +74,7 @@ tgd.DestinyLayout = [
         array: 'postmaster',
         counts: [60, 60],
         bucketTypes: ['Messages', 'Invisible', 'Lost Items', 'Bounties', 'Quests', 'Mission'],
+		extras: [],
         view: 3,
         headerText: 'inventory_postmaster'
     }
