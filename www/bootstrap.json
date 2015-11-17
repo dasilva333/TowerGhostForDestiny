@@ -18,15 +18,15 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
-      "version": "8d8300397a35a3a98092830392010b686d1802cb539dfe7f706c4aeff1f18148"
+      "version": "72517ae4302f38898634a0a16bf132e19c8ed5b68cd636ec2aefba272b0001e1"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/objectiveDefs.json",
-      "version": "4b4a3dd1ef91d54255c89517e1efc7c16ccc8db841836b7dfe125927ffb2bd35"
+      "version": "8d15f20b3a789af4f797e24d13ce289d8f878499f9ff1d46fd51fcb677131953"
     },
     "perkDefs.json": {
       "filename": "data/definitions/perkDefs.json",
-      "version": "9ff53d27f7588da616486bf7bea95bad3bd2e2e4dc5c2acd662a6dcc57069a8f"
+      "version": "794868e43f9799d7e3115ddde7097ce8c6f6cc77603c5447f450220644c31d63"
     },
     "raceDefs.json": {
       "filename": "data/definitions/raceDefs.json",
@@ -42,7 +42,7 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/talentGridDefs.json",
-      "version": "08ad11d77daefadefb9e0060f08563ebb349460b30766796351560a97ae41813"
+      "version": "85bd87ec767b44c6d19116f7931fb554eaa2c14d68d90b15f57b9f9d7fb329a1"
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
@@ -102,11 +102,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "db00db103c62f82a82e3c588ce4f8a697774ce5224104f10772e7508a13ca541"
+      "version": "6cea0b2369f5a1c81c919a03aee9eb1065dc436655a3d6349ec0f638fa09790c"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "5a8d8b2ba1a2d25de9c249cfda27bb7100e2707472a0e7e8058a380eaf09ebf8"
+      "version": "eee40fbc798c49e185f7cee8ffcc78c7b939ee398dbe6fed3227fbbc9c0297bf"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -142,11 +142,11 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "6ce463f1aaf8db551cbf9337dd8d2eb0bc134573ae0d05be4fd14d2f0a70d1c4"
+      "version": "abd4e417531a9a7aa82d350adc17297823664ababbe56a235200dc5cd44ae2da"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "fb15ea1d245d94f9e7fe9e1ecc9e81eeb7bfbaca79157536e8d1f8cbdd97170b"
+      "version": "54e1794caf655d146c733063e82dac86ac826ac0b0afdd491f37ebfdd4c270c7"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -154,7 +154,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "8237f35525f825de03967b2353d58684e6c81e962fe5d82176dcee049a9a1aae"
+      "version": "d5a935c4a24b0a7cb182750a1203186c7b2be6343286a6e0b9d0f7de9154469a"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",

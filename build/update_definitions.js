@@ -2,6 +2,7 @@ var purgeCache = (process.argv.length == 3 && process.argv[2] == "true")
 
 var jag = require("jag"),
 	http = require("http"),
+	https = require("https"),
 	sqlite3 = require('sqlite3').verbose(),
 	fs = require("fs"),
 	zip = require('node-zip'),
@@ -10,7 +11,9 @@ var jag = require("jag"),
 var jsonPath = "../www/data/";
 var definitionPath = jsonPath + "definitions/";
 var imgPath = "/common/destiny_content/icons/";
-var bungieURL = "http://www.bungie.net";
+var remoteBungieURL = "www.bungie.net";
+var secureBungieURL = "https://" + remoteBungieURL;
+var publicBungieURL = "http://" + remoteBungieURL;
 var manifestURL = "/Platform/Destiny/Manifest/";
 var apikey = '5cae9cdee67a42848025223b4e61f929';
 var neededFiles = [
@@ -105,7 +108,7 @@ var downloadDatabase = function(callback){
 			var payload = JSON.parse(Buffer.concat(data));
 			var languages = payload.Response.mobileWorldContentPaths;
 			_.each(languages, function(link, locale){
-				var mobileWorldContentPath = bungieURL + payload.Response.mobileWorldContentPaths[locale];
+				var mobileWorldContentPath = publicBungieURL + payload.Response.mobileWorldContentPaths[locale];
 				count++;
 				console.log("downloading mwcp in " + locale);
 				http.get(mobileWorldContentPath, function(res) {
@@ -239,9 +242,9 @@ var cacheIcons = function(){
 	var iconPath = (icon.indexOf("/") > -1 ? icon : (imgPath + icon));
 	var physicalPath = jsonPath + iconPath;
 	if ( !fs.existsSync(physicalPath) ){
-		var dlPath = bungieURL + iconPath;
+		var dlPath = secureBungieURL + iconPath;
 		console.log("downloading icon " + dlPath);
-		http.get(dlPath, function(res) {
+		https.get(dlPath, function(res) {
 			if (res.statusCode != 200){
 				console.log(res.statusCode + " status code for icon " + icon);
 				if (queue.length > 0)
