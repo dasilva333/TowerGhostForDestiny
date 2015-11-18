@@ -10,17 +10,6 @@ module.exports = function(grunt) {
 			nwConfigFile: "package_nw.json",
 			versionScript: "../www/js/tgd/version.js"
         }
-      },
-	  hide: {
-        options: {
-			cwd: "./",
-			showWhatsNew: true,
-			versionFile: "version.txt",
-			chromeConfigFile: "../manifest.json",
-			firefoxConfigFile: "package_firefox.json",
-			nwConfigFile: "package_nw.json",
-			versionScript: "../www/js/tgd/version.js"
-        }
       }
     });
 

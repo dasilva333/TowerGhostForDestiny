@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 	grunt.registerMultiTask('generate-version', 'Generate updated files with the new version number', function () {
 		
 		var _ = require("lodash");
-		var options = this.options({ platforms: [ "ios", "android", "windows-phone" ], showWhatsNew: "false" });
+		var options = this.options({ platforms: [ "ios", "android", "windows-phone" ] });
 		var done = this.async();
 		
 		grunt.file.setBase(options.cwd);
@@ -27,7 +27,7 @@ module.exports = function (grunt) {
 		_.each(options.platforms, function(platform){
 			var adobeBuildConfigFile = "config_" + platform + ".xml";
 			var xmlConfig = grunt.file.read(adobeBuildConfigFile).toString("utf8");
-			var versionCode = versionInfo.replace(/\./g,'');
+			var versionCode = threeDigitVersion.replace(/\./g,'') + '0';
 			//avoid having to load xml libraries to update it
 			xmlConfig = xmlConfig.replace(/version="(.*)" xmlns=\"http:\/\/www.w3.org\/ns\/widgets\"/,'version="' + versionInfo + '" xmlns="http://www.w3.org/ns/widgets"');
 			xmlConfig = xmlConfig.replace(/id=\"com.richardpinedo.towerghostfordestiny\" versionCode="(.*)" version/,'id=\"com.richardpinedo.towerghostfordestiny\" versionCode="' + versionCode + '" version');
