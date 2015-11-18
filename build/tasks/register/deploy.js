@@ -8,4 +8,7 @@ module.exports = function (grunt) {
 	grunt.registerTask('deployimages', [
         'ftpush:images'
 	]);
+	grunt.registerTask('deploylocale', [
+        'ftpush:locale'
+	]);
 };
