@@ -3,8 +3,9 @@ mkdir branch
 cd ..\www
 copy index.html ..\build\branch\
 copy bootstrap.json ..\build\branch\
-node applyCurrentVersion.js ..\build\config_%1.xml
-copy ..\build\config_%1.xml ..\build\branch\config.xml
+node ..\build\applyCurrentVersion.js %1
+copy ..\build\config_%1_versioned.xml ..\build\branch\config.xml
+del ..\build\config_%1_versioned.xml
 mkdir ..\build\branch\assets\
 copy assets\ ..\build\branch\assets\
 mkdir ..\build\branch\js\
