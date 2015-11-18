@@ -1,7 +1,7 @@
 {
   "name": "tower-ghost-builder",
-  "version": "3.5.9",
-  "description": "",
+  "version": "12.0.0",
+  "description": "This is the file for building, compiling, maintaining and updating Tower Ghost and all it's components",
   "main": "update_definitions.js",
   "dependencies": {
     "cordova-app-loader": "^0.17.0",

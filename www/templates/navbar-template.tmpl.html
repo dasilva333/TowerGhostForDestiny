@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version">3.5.9</span></strong></a>
+            <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile"><span class="version" data-bind="text: tgd.version"></span></strong></a>
             <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
                 <div class="mobile-characters">
                     <img class="mobile-characters-image" data-bind="attr: {src : icon, title: uniqueName}, css: id, scrollToView: false" src="about:blank">

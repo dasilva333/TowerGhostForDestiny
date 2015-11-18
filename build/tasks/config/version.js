@@ -4,12 +4,10 @@ module.exports = function(grunt) {
         options: {
 			cwd: "./",
 			showWhatsNew: true,
-			versionFile: "package.json",
+			versionFile: "version.txt",
 			chromeConfigFile: "../manifest.json",
-			firefoxConfigFile: "../package_firefox.json",
-			nwConfigFile: "../package_nw.json",
-			indexHomePage: "../www/templates/navbar-template.tmpl.html",
-			aboutPage: "../www/templates/about-template.tmpl.html",
+			firefoxConfigFile: "package_firefox.json",
+			nwConfigFile: "package_nw.json",
 			versionScript: "../www/js/tgd/version.js"
         }
       },
@@ -17,12 +15,10 @@ module.exports = function(grunt) {
         options: {
 			cwd: "./",
 			showWhatsNew: true,
-			versionFile: "package.json",
+			versionFile: "version.txt",
 			chromeConfigFile: "../manifest.json",
-			firefoxConfigFile: "../package_firefox.json",
-			nwConfigFile: "../package_nw.json",
-			indexHomePage: "../www/templates/navbar-template.tmpl.html",
-			aboutPage: "../www/templates/about-template.tmpl.html",
+			firefoxConfigFile: "package_firefox.json",
+			nwConfigFile: "package_nw.json",
 			versionScript: "../www/js/tgd/version.js"
         }
       }
