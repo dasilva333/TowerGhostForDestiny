@@ -106,6 +106,12 @@ tgd.moveItemPositionHandler = function(element, item) {
 var Item = function(model, profile) {
     var self = this;
 
+	if ( model && model.id ){
+		model.itemHash = model.id;
+		model.itemInstanceId = model._id;
+		model.equipRequiredLevel = 0;
+	}
+		
     _.each(model, function(value, key) {
         self[key] = value;
     });
@@ -201,7 +207,7 @@ Item.prototype = {
                 description: description,
                 itemDescription: itemDescription,
                 classType: info.classType,
-                bucketType: self.character.getBucketTypeHelper(item, info),
+                bucketType: item.bucketType || self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
                 tierType: info.tierType,
@@ -283,7 +289,7 @@ Item.prototype = {
                     }
                 });
             }
-            if (item.objectives.length > 0) {
+            if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
                     return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
                 })) * 100).toFixed(0) + "%";

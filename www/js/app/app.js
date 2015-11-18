@@ -285,22 +285,25 @@ var app = function() {
                 );
                 if (self.advancedTooltips() === true && activeItem.weaponIndex > -1) {
                     var magazineRow = stats.find(".stat-bar:last");
-                    var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key) {
-                        obj.name = _statDefs[key].statName;
-                        return obj;
-                    });
-                    var desireableStats = ["Aim assistance", "Equip Speed"];
-                    _.each(desireableStats, function(statName) {
-                        var statObj = _.findWhere(itemStats, {
-                            name: statName
-                        });
-                        if (statObj) {
-                            var clonedRow = magazineRow.clone();
-                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                            clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                            magazineRow.before(clonedRow);
-                        }
-                    });
+					var itemDef = _itemDefs[activeItem.itemHash];
+					if (itemDef && itemDef.stats ){
+						var itemStats = _.map(itemDef.stats, function(obj, key) {
+							obj.name = _statDefs[key].statName;
+							return obj;
+						});
+						var desireableStats = ["Aim assistance", "Equip Speed"];
+						_.each(desireableStats, function(statName) {
+							var statObj = _.findWhere(itemStats, {
+								name: statName
+							});
+							if (statObj) {
+								var clonedRow = magazineRow.clone();
+								clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+								clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+								magazineRow.before(clonedRow);
+							}
+						});
+					}
                 }
             }
             if (activeItem.perks.length > 0) {
@@ -1736,12 +1739,23 @@ var app = function() {
 					});
 				} 
 				_.each(staticProfiles, function(data, index){
-					var profile = new Profile(data.id == "Vault" ? "Vault" : data, data.items, index);
-					self.addTierTypes(profile.items());
-                    self.addWeaponTypes(profile.weapons());
+					var avatar = {
+						processed: true,
+						characterBase: {
+							characterId: data.id,
+							stats: data.stats,
+							level: data.level,
+							race: data.race,
+							gender: data.gender,
+							classType: data.classType,
+							background: data.background,
+							icon: data.icon
+						},
+						items: data.items,
+						index: data.order
+					};
+					var profile = new Profile(avatar);
 					self.characters.push(profile);
-					setTimeout(self.bucketSizeHandler, 1000);
-					setTimeout(self.quickIconHighlighter, 1000);
 				});
 			}
 		)
@@ -1753,7 +1767,9 @@ var app = function() {
         });
 		
 		if ( window.isStaticBrowser ){
-			self.loadStatic(unescape(location.search.replace('?','')));
+			self.bungie = new tgd.bungie('', function(){
+				self.loadStatic(unescape(location.search.replace('?','')));
+			});
 		}
 		else {
 			$.idleTimer(1000 * 60 * 30);
