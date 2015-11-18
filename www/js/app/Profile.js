@@ -57,7 +57,7 @@ Profile.prototype = {
             var processedItem = new Item(item, self);
             if ("id" in processedItem) processedItems.push(processedItem);
         });
-		
+
         self.items(processedItems);
         if (self.id != "Vault" && typeof profile.processed == "undefined") {
             self._reloadBucket(self);
@@ -65,28 +65,27 @@ Profile.prototype = {
     },
     updateCharacter: function(profile) {
         var self = this;
-		if ( profile && profile.processed ){
-			self.background(profile.characterBase.background);
-			self.icon(profile.characterBase.icon);
-			self.gender(profile.characterBase.gender);
-			self.classType(profile.characterBase.classType);
-			self.level(profile.characterBase.level);
-			self.stats(profile.characterBase.stats);
-			self.race(profile.characterBase.race);
-			self.percentToNextLevel(0);
-		}
-		else {
-			self.background(app.makeBackgroundUrl(tgd.dataDir + profile.backgroundPath, true));
-			self.icon(tgd.dataDir + profile.emblemPath);
-			self.gender(tgd.DestinyGender[profile.characterBase.genderType]);
-			self.classType(tgd.DestinyClass[profile.characterBase.classType]);
-			self.level(profile.characterLevel);
-			self.stats(profile.characterBase.stats);
-			if (!("STAT_LIGHT" in self.stats()))
-				self.stats()['STAT_LIGHT'] = 0;
-			self.percentToNextLevel(profile.percentToNextLevel);
-			self.race(_raceDefs[profile.characterBase.raceHash].raceName);
-		}
+        if (profile && profile.processed) {
+            self.background(profile.characterBase.background);
+            self.icon(profile.characterBase.icon);
+            self.gender(profile.characterBase.gender);
+            self.classType(profile.characterBase.classType);
+            self.level(profile.characterBase.level);
+            self.stats(profile.characterBase.stats);
+            self.race(profile.characterBase.race);
+            self.percentToNextLevel(0);
+        } else {
+            self.background(app.makeBackgroundUrl(tgd.dataDir + profile.backgroundPath, true));
+            self.icon(tgd.dataDir + profile.emblemPath);
+            self.gender(tgd.DestinyGender[profile.characterBase.genderType]);
+            self.classType(tgd.DestinyClass[profile.characterBase.classType]);
+            self.level(profile.characterLevel);
+            self.stats(profile.characterBase.stats);
+            if (!("STAT_LIGHT" in self.stats()))
+                self.stats()['STAT_LIGHT'] = 0;
+            self.percentToNextLevel(profile.percentToNextLevel);
+            self.race(_raceDefs[profile.characterBase.raceHash].raceName);
+        }
     },
     refresh: function(profile, event) {
         var self = this;

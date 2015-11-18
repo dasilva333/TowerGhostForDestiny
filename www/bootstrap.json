@@ -102,11 +102,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "2aec1e3bb459b51592a4353c8fbb07d47a72137d16a6036206320f7503464513"
+      "version": "2a7540fae92a4dc9e2aac57a12cb7688149dcfb21477c3c0079d7f2a2d1376ef"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "eee40fbc798c49e185f7cee8ffcc78c7b939ee398dbe6fed3227fbbc9c0297bf"
+      "version": "04869183997bc3c365b94282c2e8ea286bf7b8fa3ad43c0367553f734f87a06c"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -146,15 +146,15 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "54e1794caf655d146c733063e82dac86ac826ac0b0afdd491f37ebfdd4c270c7"
+      "version": "cf653ab05cbb2444654d46a331bc2984fe78a1ffb75e4de975da71ae1b364f29"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "610c813b907989c0268e1fb3ea5f9777ab09daf7a8bbede66710764155caac03"
+      "version": "82f33dc830472cc2747343ecc488d7f78bb9c821dc4d33f6ab5d49882608c2ff"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "d5a935c4a24b0a7cb182750a1203186c7b2be6343286a6e0b9d0f7de9154469a"
+      "version": "e0838926bee0a1306c5daddbf082fd7c4451af17ae791c1314b02257f84aaae2"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",

@@ -106,12 +106,12 @@ tgd.moveItemPositionHandler = function(element, item) {
 var Item = function(model, profile) {
     var self = this;
 
-	if ( model && model.id ){
-		model.itemHash = model.id;
-		model.itemInstanceId = model._id;
-		model.equipRequiredLevel = 0;
-	}
-		
+    if (model && model.id) {
+        model.itemHash = model.id;
+        model.itemInstanceId = model._id;
+        model.equipRequiredLevel = 0;
+    }
+
     _.each(model, function(value, key) {
         self[key] = value;
     });
