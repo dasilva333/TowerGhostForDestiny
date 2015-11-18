@@ -11,7 +11,7 @@
   "short_name": "TGD",
   "background": {
     "scripts": [
-      "www/js/chrome.js"
+      "www/js/core/chrome.js"
     ]
   },
   "permissions": [
