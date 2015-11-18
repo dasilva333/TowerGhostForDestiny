@@ -13,11 +13,11 @@ module.exports = function (grunt) {
 		console.log("Applying 4 digit version: " + versionInfo + ", 3 digit version: " + threeDigitVersion);
 		
 		var chromeConfig = JSON.parse(grunt.file.read(options.chromeConfigFile));
-		chromeConfig.version = versionInfo;
+		chromeConfig.version = threeDigitVersion;
 		grunt.file.write(options.chromeConfigFile, JSON.stringify(chromeConfig, null, 2));
 		
 		var firefoxConfig = JSON.parse(grunt.file.read(options.firefoxConfigFile));
-		firefoxConfig.version = versionInfo;
+		firefoxConfig.version = threeDigitVersion;
 		grunt.file.write(options.firefoxConfigFile, JSON.stringify(firefoxConfig, null, 2));
 
 		var nwConfig = JSON.parse(grunt.file.read(options.nwConfigFile));
