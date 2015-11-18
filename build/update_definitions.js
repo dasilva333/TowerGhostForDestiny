@@ -278,12 +278,9 @@ downloadDatabase(function(){
 			removeOrphans(function(){
 				console.log("caching icons");
 				cacheIcons();
+				require("./make_setDefs.js");
 			});
 		});
 	});
 });
-
-
-
-
 

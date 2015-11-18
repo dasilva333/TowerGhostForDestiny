@@ -27,7 +27,7 @@ function extractRewardSources(callback){
 }
 
 tgd = {};
-tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact" ];
+tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost" ];
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyBucketTypes = {
 	"1498876634": "Primary",
@@ -186,6 +186,7 @@ extractItems(function(_itemDefs){
 		}), 'itemHash');		
 		
 		
-		fs.writeFileSync("../www/data/setDefs.json", "_collections="+JSON.stringify(setDefs, null, 4));
+		fs.writeFileSync("../www/data/definitions/setDefs.json", "_collections="+JSON.stringify(setDefs, null, 4));
+		console.log("new setDefs file written");
 	});
 });
