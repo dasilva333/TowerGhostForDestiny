@@ -348,7 +348,18 @@
 	                    });
 	                });
 	            };
-	            /* this assumes there is a swap item and a target item*/
+	            /* this function is meant to normalize the difference between having ghost/artifacts in armor and it existing under general */
+	            var normalize = function(bucketTypes, extras) {
+	                    var arrUnion = _.difference(extras, bucketTypes),
+	                        arr = [];
+	                    if (arrUnion.length == extras.length) {
+	                        arr = _.union(bucketTypes, extras);
+	                    } else {
+	                        arr = _.difference(bucketTypes, extras);
+	                    }
+	                    return arr;
+	                }
+	                /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
 	                if (typeof item == "undefined") {
@@ -365,10 +376,11 @@
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                    return layout.bucketTypes.indexOf(bucketType) > -1;
 	                })[0];
+	                var actualBucketTypes = normalize(layout.bucketTypes, layout.extras);
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
 	                //TODO: TypeError: undefined is not an object (evaluating 'vault.items')
 	                var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
-	                    return layout.bucketTypes.indexOf(otherItem.bucketType) > -1;
+	                    return actualBucketTypes.indexOf(otherItem.bucketType) > -1;
 	                }).length;
 
 	                tgd.localLog(bucketType + " spaceNeededInVault: " + spaceNeededInVault);
@@ -385,7 +397,7 @@
 	                        tmpIds = [];
 	                    var freeSpaceNeeded = spaceUsedInVault - spaceNeededInVault;
 	                    tgd.localLog("Vault does not have enough free space, need to temp move something from here to free up x slots: " + freeSpaceNeeded);
-	                    otherBucketTypes = [].concat(layout.bucketTypes);
+	                    otherBucketTypes = [].concat(actualBucketTypes);
 	                    otherBucketTypes.splice(otherBucketTypes.indexOf(bucketType), 1);
 	                    tgd.localLog("other bucket types: " + otherBucketTypes);
 	                    tgd.localLog(otherBucketTypes + " being checked in other characters");

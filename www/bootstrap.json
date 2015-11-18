@@ -18,15 +18,15 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
-      "version": "6b530e3cc819603ca56ecfda35038b9ab158b0611718382fbb8c4494b1a496f0"
+      "version": "72517ae4302f38898634a0a16bf132e19c8ed5b68cd636ec2aefba272b0001e1"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/objectiveDefs.json",
-      "version": "4b4a3dd1ef91d54255c89517e1efc7c16ccc8db841836b7dfe125927ffb2bd35"
+      "version": "8d15f20b3a789af4f797e24d13ce289d8f878499f9ff1d46fd51fcb677131953"
     },
     "perkDefs.json": {
       "filename": "data/definitions/perkDefs.json",
-      "version": "e84fec5da86e8743bdee30b7f95c739fc9ff530d33919d491bbc23b00b49f56b"
+      "version": "794868e43f9799d7e3115ddde7097ce8c6f6cc77603c5447f450220644c31d63"
     },
     "raceDefs.json": {
       "filename": "data/definitions/raceDefs.json",
@@ -42,7 +42,7 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/talentGridDefs.json",
-      "version": "55cf493f61bd2de1bf9cfc5f005747db7fa2d5a82d02c3e4460d5c1609961c21"
+      "version": "85bd87ec767b44c6d19116f7931fb554eaa2c14d68d90b15f57b9f9d7fb329a1"
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
@@ -102,11 +102,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "47f952f42bf4febf5a4c6cf64003d568dec2647a1b75a47e925ab2ea0ac821c5"
+      "version": "6cea0b2369f5a1c81c919a03aee9eb1065dc436655a3d6349ec0f638fa09790c"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "6644e7dfa248dae2bcb1c79d95354fd93ab00e8d2540484478dcb820b4243410"
+      "version": "eee40fbc798c49e185f7cee8ffcc78c7b939ee398dbe6fed3227fbbc9c0297bf"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -126,7 +126,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "4d958595a9d1393c459ed9a2903816f53e63473c47637b01c89f2d5b9c735486"
+      "version": "ea08768fe0082a27fde98be0630cb66cbb40030b72a47af4fec57f3ae2540bb9"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
@@ -142,11 +142,11 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "ed7d71d7bfe44f823c374406a270e2ffa3b06651d92c2699be9504716ca12df3"
+      "version": "abd4e417531a9a7aa82d350adc17297823664ababbe56a235200dc5cd44ae2da"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "52c529373d5c762e211d5d7645b75b350906d6dd681a4f0f88e9aab9a6c171b5"
+      "version": "54e1794caf655d146c733063e82dac86ac826ac0b0afdd491f37ebfdd4c270c7"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -154,7 +154,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "a054a852c00b3e40b3abbe687ef3413fd52c60fed066d54a324d8f9b2d95b8e4"
+      "version": "d5a935c4a24b0a7cb182750a1203186c7b2be6343286a6e0b9d0f7de9154469a"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
