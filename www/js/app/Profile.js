@@ -38,6 +38,9 @@ function Profile(character) {
     this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(character);
+
+    this.weapons.subscribe(app.addWeaponTypes);
+    this.items.subscribe(app.addTierTypes);
 }
 
 Profile.prototype = {

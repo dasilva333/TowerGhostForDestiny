@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
 	grunt.config.set('ftpush', {
-	  share: {
+	  shareAssets: {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
@@ -8,8 +8,19 @@ module.exports = function(grunt) {
 		},
 		src: '../../branches/static-share/www/',
 		dest: '/myredditall/towerghostfordestiny.com/www/share',
+		simple: true,
+		exclusions: [ 'data' ]
+	  },
+	  shareData: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../../branches/static-share/www/data',
+		dest: '/myredditall/towerghostfordestiny.com/www/share/data',
 		exclusions: []
-	  }, 	
+	  },	  
 	  js: {
 		auth: {
 		  host: 'towerghostfordestiny.com',

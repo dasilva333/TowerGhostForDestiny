@@ -110,6 +110,7 @@ var Item = function(model, profile) {
         model.itemHash = model.id;
         model.itemInstanceId = model._id;
         model.equipRequiredLevel = 0;
+        model.isEquipment = true;
     }
 
     _.each(model, function(value, key) {
@@ -224,7 +225,9 @@ Item.prototype = {
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-            if (item.perks.length > 0) {
+            if (item.id) {
+                itemObject.perks = item.perks;
+            } else if (item.perks.length > 0) {
                 var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
                 if (talentGrid && talentGrid.nodes) {
