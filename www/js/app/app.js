@@ -342,7 +342,7 @@ var app = function() {
                     tgd.imageErrorHandler(src, element)();
                 });
             }
-            if (activeItem.objectives.length > 0) {
+            if (activeItem.objectives && activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
                     var label = "";
