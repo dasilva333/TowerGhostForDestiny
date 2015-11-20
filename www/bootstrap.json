@@ -102,11 +102,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "2a7540fae92a4dc9e2aac57a12cb7688149dcfb21477c3c0079d7f2a2d1376ef"
+      "version": "5c9691ec7eab78baf30c857bb0b7526048f56c808f62986268015052d53d7cfa"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "394aaef9cd194807e035d78ad23c0491820ed12bb5d4195aa961da9e76a489e9"
+      "version": "3fee3a6e06f37265f5e8dcc4bae329ed71a114717c809be9c7f4aba3c0c41c84"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
