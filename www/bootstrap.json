@@ -106,7 +106,7 @@
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "3fee3a6e06f37265f5e8dcc4bae329ed71a114717c809be9c7f4aba3c0c41c84"
+      "version": "a65994310b3161b12c7c19256679eb26f00e551eb58aa6c6b965195cef3b7c4a"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -126,7 +126,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "ea08768fe0082a27fde98be0630cb66cbb40030b72a47af4fec57f3ae2540bb9"
+      "version": "781666b83a77dc836a7e7c8d1bfdecced7e40e41236dcb09fd29b4eb40b3832b"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
@@ -142,11 +142,11 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "f090a1def00391408a532d5258be5e9e95ee869dfcb81c5db87eb52cda23ab05"
+      "version": "b571bdf51ccbaf7450580a5454b899c91f23c217be8e5454bb9dc40f5abc631e"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "65e4f1006d908b647f59cec7f6bc141c3988ac68c9676b4ce477f51f94d2c721"
+      "version": "4cd4179028aed1c37ab5385a3ab882de8930c821d5addf1772c0424a4f092cd8"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -154,7 +154,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "7b64792ce8d64cc366fcb5c84de8fc77f89d4a7731685a116461f2ff97eb2b77"
+      "version": "f7c83dff4d9724476de33b5dce1027cf25bc26047d75a4043ea5b9de879d55c7"
     },
     "tooltips.min.js": {
       "filename": "js/app/tooltips.min.js",
@@ -166,11 +166,11 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/extras/cordova-app-loader-complete.js",
-      "version": "f96fffdf6aed8755d32b4c8b408a5ca71a57e508b1e81bf3d944b081d35d4855"
+      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
     },
     "ga.js": {
       "filename": "js/extras/ga.js",
-      "version": "9176463d8871cc494901f6d8899edc6d6294c781092d5432ad306bb62ecba86a"
+      "version": "dace7fb5eff251ab4289d01db4c19c1e209907643a1348fc7ea514e0afbe46f8"
     },
     "updater.js": {
       "filename": "js/extras/updater.js",

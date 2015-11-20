@@ -4,8 +4,8 @@ tgd.imageErrorHandler = function(src, element) {
         if (source.indexOf(tgd.remoteImagePath) == -1) {
             element.src = tgd.remoteImagePath + src;
         }
-    }
-}
+    };
+};
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
