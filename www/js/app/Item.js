@@ -385,12 +385,9 @@ Item.prototype = {
         var $parent = app,
             self = this;
 
-        //console.time("isVisible");
         if (typeof self.id == "undefined") {
             return false;
         }
-        var searchFilter = $parent.searchKeyword() === '' || ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
-        var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
         var dmgFilter = true;
         var progressFilter = true;
@@ -398,6 +395,23 @@ Item.prototype = {
         var armorFilter = true;
         var showDuplicate = true;
         var setFilter = true;
+        var searchFilter = ($parent.searchKeyword() === '' || $parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
+        var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
+
+        var itemStatValue = this.primaryStatValue().toString();
+        var operator = $parent.searchKeyword().substring(0, 1);
+        if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
+            var operand = "=",
+                searchValue = $parent.searchKeyword();
+            if (operator == ">" || operator == "<") {
+                operand = operator + operand;
+                searchValue = searchValue.replace(operator, '');
+            } else {
+                operand = "=" + operand;
+            }
+            searchFilter = new Function('return ' + itemStatValue + operand + searchValue.toString())();
+        }
+
         if (self.armorIndex > -1 || self.weaponIndex > -1) {
             setFilter = $parent.setFilter().length === 0 || $parent.setFilter().indexOf(self.id) > -1;
             searchFilter = searchFilter || self.hasPerkSearch($parent.searchKeyword());
