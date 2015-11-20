@@ -39,7 +39,7 @@ tgd.DestinyGeneralItems = {
 	"Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803],  //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
 	"Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
-tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries"];
+tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries" ,"Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];

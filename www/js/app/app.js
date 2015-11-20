@@ -548,7 +548,7 @@ var app = function() {
     this.setGeneralFilter = function(searchType) {
         return function() {
             self.toggleBootstrapMenu();
-            self.activeView(3);
+            if (searchType != "Engram") self.activeView(3);
             self.generalFilter(searchType);
         };
     };

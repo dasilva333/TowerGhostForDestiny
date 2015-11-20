@@ -1,12 +1,12 @@
 tgd.imageErrorHandler = function(src, element) {
-	if ( element && element.src ){
-		return function() {
-			var source = element.src;
-			if (source.indexOf(tgd.remoteImagePath) == -1) {
-				element.src = tgd.remoteImagePath + src;
-			}
-		};	
-	}
+    if (element && element.src) {
+        return function() {
+            var source = element.src;
+            if (source.indexOf(tgd.remoteImagePath) == -1) {
+                element.src = tgd.remoteImagePath + src;
+            }
+        };
+    }
 };
 
 window.ko.bindingHandlers.itemImageHandler = {
@@ -364,7 +364,9 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
+        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment == false) {
+            return true;
+        } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
         } else {
             return false;
@@ -394,7 +396,6 @@ Item.prototype = {
         var progressFilter = true;
         var weaponFilter = true;
         var armorFilter = true;
-        var generalFilter = true;
         var showDuplicate = true;
         var setFilter = true;
         if (self.armorIndex > -1 || self.weaponIndex > -1) {
@@ -411,9 +412,8 @@ Item.prototype = {
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
             }
             progressFilter = $parent.progressFilter() == "0" || self.hashProgress($parent.progressFilter());
-        } else {
-            generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
         }
+        generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
         showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
 
         var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
