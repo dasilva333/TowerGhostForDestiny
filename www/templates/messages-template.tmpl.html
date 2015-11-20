@@ -1,9 +1,15 @@
+<div class="alert alert-dismissible alert-info" data-bind="visible: isStaticBrowser" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <strong>Create your own share URL!</strong> <a href="/index.php/downloads/" target="_blank">Install the app</a> for Chrome, Firefox, iOS, Android or Windows-Phone.
+</div>
+
 <div class="alert alert-info" data-bind="visible: shareView" style="display:none;">
     <span data-bind="text: $root.activeText().text_shareurl"></span>:
     <a target="_system" data-bind="attr:{href: shareUrl}">
         <span data-bind="text: shareUrl"></span>
     </a>
 </div>
+
 <div class="alert alert-success" data-bind="visible: showMissing" style="display:none;">
     <strong data-bind="text: $root.activeText().missing_items">Missing Items</strong>
     <span data-bind="foreach: { data: missingSets }">
