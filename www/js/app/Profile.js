@@ -552,7 +552,7 @@ Profile.prototype = {
             //console.log(candidates);
             _.each(candidates, function(candidate) {
                 if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                    (candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+                    (candidate.tierType == 6 && candidate.hasLifeExotic == false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
                 }
             });
         });

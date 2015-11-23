@@ -548,7 +548,7 @@ var app = function() {
     this.setGeneralFilter = function(searchType) {
         return function() {
             self.toggleBootstrapMenu();
-            self.activeView(3);
+            if (searchType != "Engram") self.activeView(3);
             self.generalFilter(searchType);
         };
     };
@@ -1104,7 +1104,7 @@ var app = function() {
                 callback(response);
             }
         });
-    }
+    };
 
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
@@ -1663,7 +1663,7 @@ var app = function() {
                 username: username
             },
             function(staticProfiles) {
-                if (staticProfiles.length == 0) {
+                if (staticProfiles.length === 0) {
                     return BootstrapDialog.alert("There is no shared data to view for this profile");
                 }
                 if (staticProfiles && staticProfiles.Response) {
@@ -1719,13 +1719,13 @@ var app = function() {
                                         stats: [],
                                         isUnique: false,
                                         href: "https://destinydb.com/items/" + item.itemHash
-                                    }
+                                    };
                                 }
                             });
 
                         return {
                             items: _.filter(items, function(item) {
-                                return typeof item !== "undefined"
+                                return typeof item !== "undefined";
                             }),
                             id: character.characterBase.characterId,
                             race: _raceDefs[character.characterBase.raceHash].raceName,
@@ -1736,7 +1736,7 @@ var app = function() {
                             imgIcon: self.bungie.getUrl() + character.emblemPath,
                             icon: self.makeBackgroundUrl(character.emblemPath),
                             background: self.makeBackgroundUrl(character.backgroundPath)
-                        }
+                        };
                     });
                 }
                 _.each(staticProfiles, function(data, index) {
@@ -1759,8 +1759,8 @@ var app = function() {
                     self.characters.push(profile);
                 });
             }
-        )
-    }
+        );
+    };
 
     this.init = function() {
         _.each(ko.templates, function(content, name) {
