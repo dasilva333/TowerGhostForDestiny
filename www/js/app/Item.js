@@ -280,6 +280,9 @@ Item.prototype = {
                     });
                 }
             }
+            itemObject.hasLifeExotic = _.where(itemObject.perks, {
+                name: "The Life Exotic"
+            }).length > 0
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -596,9 +599,7 @@ Item.prototype = {
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
-            if (self.tierType == 6 && _.where(self.perks, {
-                    name: "The Life Exotic"
-                }).length === 0) {
+            if (self.tierType == 6 && self.hasLifeExotic == false) {
                 //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
