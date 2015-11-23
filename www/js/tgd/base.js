@@ -7,9 +7,13 @@ window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
+window.isStaticBrowser = location.protocol.indexOf("http") > -1;
+if ( window.isStaticBrowser ){
+	window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
+}
 window.tgd = {};
 if ( isWindowsPhone ){
-	window.requestFileSystem = function(){}
+	window.requestFileSystem = function(){};
 }
 tgd.localLogging = false;
 tgd.localLog = function(msg) {
@@ -34,8 +38,8 @@ tgd.DestinyGeneralItems = {
 	"Planetary Resources": [2254123540, 2882093969, 3164836592, 3242866270, 1797491610], //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
 	"Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803],  //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
 	"Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
-}
-tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries"];
+};
+tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries" ,"Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
@@ -279,7 +283,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-	autoUpdates: false
+	autoUpdates: isFirefox || isIOS
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +

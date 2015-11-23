@@ -225,7 +225,7 @@
                         // We're good to go check! Get all the files we need
                         var cachedFiles = values[2]; // files in cache
                         var oldFiles = self._createFilemap(manifest.files); // files in current manifest
-                        var newFiles = self._createFilemap(newManifest.files); // files in new manifest
+                        newFiles = self._createFilemap(newManifest.files); // files in new manifest
                         var bundledFiles = self._createFilemap(bundledManifest.files); // files in app bundle
 
                         // Create COPY and DOWNLOAD lists

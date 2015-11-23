@@ -1,11 +1,13 @@
 tgd.imageErrorHandler = function(src, element) {
-    return function() {
-        var source = element.src;
-        if (source.indexOf(tgd.remoteImagePath) == -1) {
-            element.src = tgd.remoteImagePath + src;
-        }
+    if (element && element.src) {
+        return function() {
+            var source = element.src;
+            if (source.indexOf(tgd.remoteImagePath) == -1) {
+                element.src = tgd.remoteImagePath + src;
+            }
+        };
     }
-}
+};
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
@@ -106,6 +108,13 @@ tgd.moveItemPositionHandler = function(element, item) {
 var Item = function(model, profile) {
     var self = this;
 
+    if (model && model.id) {
+        model.itemHash = model.id;
+        model.itemInstanceId = model._id;
+        model.equipRequiredLevel = 0;
+        model.isEquipment = true;
+    }
+
     _.each(model, function(value, key) {
         self[key] = value;
     });
@@ -201,7 +210,7 @@ Item.prototype = {
                 description: description,
                 itemDescription: itemDescription,
                 classType: info.classType,
-                bucketType: self.character.getBucketTypeHelper(item, info),
+                bucketType: item.bucketType || self.character.getBucketTypeHelper(item, info),
                 type: info.itemSubType,
                 typeName: itemTypeName,
                 tierType: info.tierType,
@@ -218,7 +227,9 @@ Item.prototype = {
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-            if (item.perks.length > 0) {
+            if (item.id) {
+                itemObject.perks = item.perks;
+            } else if (item.perks.length > 0) {
                 var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
                 if (talentGrid && talentGrid.nodes) {
@@ -269,6 +280,9 @@ Item.prototype = {
                     });
                 }
             }
+            itemObject.hasLifeExotic = _.where(itemObject.perks, {
+                name: "The Life Exotic"
+            }).length > 0
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -283,7 +297,7 @@ Item.prototype = {
                     }
                 });
             }
-            if (item.objectives.length > 0) {
+            if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
                     return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
                 })) * 100).toFixed(0) + "%";
@@ -353,7 +367,9 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
+        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment == false) {
+            return true;
+        } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
         } else {
             return false;
@@ -372,20 +388,33 @@ Item.prototype = {
         var $parent = app,
             self = this;
 
-        //console.time("isVisible");
         if (typeof self.id == "undefined") {
             return false;
         }
-        var searchFilter = $parent.searchKeyword() === '' || ($parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
-        var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
         var dmgFilter = true;
         var progressFilter = true;
         var weaponFilter = true;
         var armorFilter = true;
-        var generalFilter = true;
         var showDuplicate = true;
         var setFilter = true;
+        var searchFilter = ($parent.searchKeyword() === '' || $parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
+        var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
+
+        var itemStatValue = this.primaryStatValue().toString();
+        var operator = $parent.searchKeyword().substring(0, 1);
+        if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
+            var operand = "=",
+                searchValue = $parent.searchKeyword();
+            if (operator == ">" || operator == "<") {
+                operand = operator + operand;
+                searchValue = searchValue.replace(operator, '');
+            } else {
+                operand = "=" + operand;
+            }
+            searchFilter = new Function('return ' + itemStatValue + operand + searchValue.toString())();
+        }
+
         if (self.armorIndex > -1 || self.weaponIndex > -1) {
             setFilter = $parent.setFilter().length === 0 || $parent.setFilter().indexOf(self.id) > -1;
             searchFilter = searchFilter || self.hasPerkSearch($parent.searchKeyword());
@@ -400,9 +429,8 @@ Item.prototype = {
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
             }
             progressFilter = $parent.progressFilter() == "0" || self.hashProgress($parent.progressFilter());
-        } else {
-            generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
         }
+        generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
         showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
 
         var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
@@ -571,9 +599,7 @@ Item.prototype = {
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
-            if (self.tierType == 6 && _.where(self.perks, {
-                    name: "The Life Exotic"
-                }).length === 0) {
+            if (self.tierType == 6 && self.hasLifeExotic == false) {
                 //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);

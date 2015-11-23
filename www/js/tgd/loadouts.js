@@ -350,16 +350,16 @@
 	            };
 	            /* this function is meant to normalize the difference between having ghost/artifacts in armor and it existing under general */
 	            var normalize = function(bucketTypes, extras) {
-	                    var arrUnion = _.difference(extras, bucketTypes),
-	                        arr = [];
-	                    if (arrUnion.length == extras.length) {
-	                        arr = _.union(bucketTypes, extras);
-	                    } else {
-	                        arr = _.difference(bucketTypes, extras);
-	                    }
-	                    return arr;
+	                var arrUnion = _.difference(extras, bucketTypes),
+	                    arr = [];
+	                if (arrUnion.length == extras.length) {
+	                    arr = _.union(bucketTypes, extras);
+	                } else {
+	                    arr = _.difference(bucketTypes, extras);
 	                }
-	                /* this assumes there is a swap item and a target item*/
+	                return arr;
+	            };
+	            /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
 	                if (typeof item == "undefined") {
