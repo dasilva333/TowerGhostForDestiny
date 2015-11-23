@@ -18,7 +18,7 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
-      "version": "72517ae4302f38898634a0a16bf132e19c8ed5b68cd636ec2aefba272b0001e1"
+      "version": "3858c8567081972c7176bcd74423fe544f217abdecf1356f13e54fb56d349b2a"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/objectiveDefs.json",
@@ -26,11 +26,11 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/perkDefs.json",
-      "version": "794868e43f9799d7e3115ddde7097ce8c6f6cc77603c5447f450220644c31d63"
+      "version": "59552cd1a36a669ad5131e1dc0ad6e771d060d7be7a8ba13a5cfcca666791ea5"
     },
     "raceDefs.json": {
       "filename": "data/definitions/raceDefs.json",
-      "version": "ce7c22bb7081b1406d7858fdc39c13317d02a415e22add9730b2a7ccccdbdef8"
+      "version": "8d305a7e4b87c9c66f29431adc8cd507e1706a1e013ee49a41242c763015918c"
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
@@ -38,11 +38,11 @@
     },
     "statDefs.json": {
       "filename": "data/definitions/statDefs.json",
-      "version": "50a891f54d98053eea077b1aa5d63da3af102c33c0c2f7794c6b731c05edf559"
+      "version": "91d0a92e1b33799c20f620cf8c79893b716dd5155ed29fe3d485bd25a452b09e"
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/talentGridDefs.json",
-      "version": "85bd87ec767b44c6d19116f7931fb554eaa2c14d68d90b15f57b9f9d7fb329a1"
+      "version": "67a1d97d259f6b3370f5169e378e93fe155dc87eaed00484f138547326b94eac"
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
@@ -102,7 +102,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "3fca16a3353223a78de44aadc830cfb0f047e1f6c991ddda4e26029c65fec071"
+      "version": "2bd1c779c83fcd037e74e8153831c1efead2c2922f2046b5976a8dece073bcfe"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
@@ -142,7 +142,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "7818e85aa72de990c150cb1c621acdaaa16496618e0726ae67920f024aaad5e0"
+      "version": "dfc14f79b02793dfcedfef90a8836f05f5417b7f98eebe6496bee68e42d3de5f"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
@@ -150,7 +150,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "1c071fe4bfdbb1582b55570873d3c5f537e556260a9164228f3abbf8ae47ee4b"
+      "version": "0abf7bff31d00c24deb766a79c9453c9d48be41c1c3c3d1cfd61acb5574b9468"
     },
     "app.js": {
       "filename": "js/app/app.js",
