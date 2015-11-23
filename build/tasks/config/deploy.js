@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 		  authKey: 'mraKey'
 		},
 		src: '../../branches/static-share/www/data',
+		simple: true,
 		dest: '/myredditall/towerghostfordestiny.com/www/share/data',
 		exclusions: []
 	  },	  
