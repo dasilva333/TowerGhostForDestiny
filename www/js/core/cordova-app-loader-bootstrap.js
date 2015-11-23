@@ -179,7 +179,8 @@
     var s = document.querySelector('script[manifest]');
     // Not in localStorage? Fetch it!
     if (!manifest) {
-        var url = location.href.replace(location.href.split("/")[location.href.split("/").length - 1], '') + ((s ? s.getAttribute('manifest') : null) || 'bootstrap.json') + '?now=' + (new Date()).getTime();
+        var noQueryString = location.href.indexOf("?") > -1 ? location.href.split("?")[0] : location.href;
+        var url = noQueryString.replace(noQueryString.split("/")[noQueryString.split("/").length - 1], '') + ((s ? s.getAttribute('manifest') : null) || 'bootstrap.json') + '?now=' + (new Date()).getTime();
         // get manifest.json, then loadManifest.
         pegasus(url).then(loadManifest, function(xhr) {
             console.error('Could not download ' + url + ': ' + xhr.status);
