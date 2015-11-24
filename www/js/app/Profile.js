@@ -208,6 +208,12 @@ Profile.prototype = {
             return;
         }
 
+        $.toaster({
+            priority: 'info',
+            title: 'Success',
+            message: 'Refreshing ' + self.uniqueName()
+        });
+
         var buckets = [];
         if (typeof model === 'string' || model instanceof String) {
             buckets.push(model);
@@ -239,12 +245,12 @@ Profile.prototype = {
                 self.reloadingBucket = false;
                 if (element) {
                     element.removeClass("fa-spin");
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Success',
-                        message: 'Refresh completed'
-                    });
                 }
+                $.toaster({
+                    priority: 'info',
+                    title: 'Success',
+                    message: 'Refresh completed for ' + self.uniqueName()
+				});
             }
 
             if (needsInvisibleRefresh) {
