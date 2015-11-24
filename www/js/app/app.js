@@ -1942,6 +1942,8 @@ var app = function() {
             }
 
             self.whatsNew();
+
+            $ZamTooltips.init();
         }
 
         window.BOOTSTRAP_OK = true;
