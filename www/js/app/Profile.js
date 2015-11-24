@@ -250,7 +250,7 @@ Profile.prototype = {
                     priority: 'info',
                     title: 'Success',
                     message: 'Refresh completed for ' + self.uniqueName()
-				});
+                });
             }
 
             if (needsInvisibleRefresh) {
