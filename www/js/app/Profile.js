@@ -63,7 +63,7 @@ Profile.prototype = {
 
         self.items(processedItems);
         if (self.id != "Vault" && typeof profile.processed == "undefined") {
-            self._reloadBucket(self);
+            self._reloadBucket(self, undefined, function() {}, true);
         }
     },
     updateCharacter: function(profile) {
@@ -201,18 +201,19 @@ Profile.prototype = {
         if (this.id == "Vault") return "";
         return this.calculatePowerLevelWithItems(this.equippedGear());
     },
-    _reloadBucket: function(model, event, callback) {
+    _reloadBucket: function(model, event, callback, excludeMessage) {
         var self = this,
             element;
         if (self.reloadingBucket) {
             return;
         }
 
-        $.toaster({
-            priority: 'info',
-            title: 'Success',
-            message: 'Refreshing ' + self.uniqueName()
-        });
+        if (!excludeMessage)
+            $.toaster({
+                priority: 'info',
+                title: 'Success',
+                message: 'Refreshing ' + self.uniqueName()
+            });
 
         var buckets = [];
         if (typeof model === 'string' || model instanceof String) {
@@ -246,11 +247,12 @@ Profile.prototype = {
                 if (element) {
                     element.removeClass("fa-spin");
                 }
-                $.toaster({
-                    priority: 'info',
-                    title: 'Success',
-                    message: 'Refresh completed for ' + self.uniqueName()
-                });
+                if (!excludeMessage)
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Success',
+                        message: 'Refresh completed for ' + self.uniqueName()
+                    });
             }
 
             if (needsInvisibleRefresh) {
