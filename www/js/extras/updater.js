@@ -48,7 +48,13 @@
                     title: 'Info',
                     message: "Downloading updates"
                 });
-                return tgd.loader.download();
+                return tgd.loader.download(_.throttle(function(progress) {
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Info',
+                        message: "Downloading file, completed " + (progress.percentage * 100).toFixed(0) + "%"
+                    });
+                }, 1000));
             })
             .then(function() {
                 $.toaster({

@@ -670,6 +670,7 @@ var app = function() {
                 });
                 loadingData = false;
                 self.loadingUser(false);
+                $ZamTooltips.init();
                 //console.timeEnd("new profile");
             }
         }
@@ -1769,6 +1770,7 @@ var app = function() {
         });
 
         if (window.isStaticBrowser) {
+            $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {
                 self.loadStatic(unescape(location.search.replace('?', '')));
             });
@@ -1942,8 +1944,6 @@ var app = function() {
             }
 
             self.whatsNew();
-
-            $ZamTooltips.init();
         }
 
         window.BOOTSTRAP_OK = true;
