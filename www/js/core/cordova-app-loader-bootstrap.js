@@ -89,10 +89,10 @@
                         fileEntry.file(function(file) {
                             var reader = new FileReader();
                             reader.onloadend = function() {
-                                setTimeout(function() {
-                                    index++;
-                                    loadNextFromFS(index);
-                                }, 250);
+                                //setTimeout(function() {
+                                index++;
+                                loadNextFromFS(index);
+                                //}, 250);
                                 element.innerHTML = this.result;
                                 head.appendChild(element);
                             }
@@ -121,6 +121,7 @@
                     el = document.createElement('script');
                     el.type = 'text/javascript';
                     el.async = false;
+                    el.defer = true;
                     //TODO: Investigate if cache busting is nessecary for some platforms, apparently it does not work in IEMobile 10
                     if (loadAsScript) {
                         el.src = src;

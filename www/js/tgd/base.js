@@ -285,7 +285,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-	autoUpdates: isFirefox || isIOS
+	autoUpdates: (isFirefox || isIOS) ? "true" : false
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
