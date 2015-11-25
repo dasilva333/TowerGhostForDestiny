@@ -1948,13 +1948,21 @@ var app = function() {
 
         window.BOOTSTRAP_OK = true;
 
-		$.get("js/tgd/version.js", function(response){ 
-		
-			var originalInstalledVersion = response.match(/\"(\d.+)\"/)[1].replace(/\./g,'');
-	        if (self.autoUpdates() == true) {
-	            tgd.checkUpdates();
-	        }			
-		});
+        $.get("js/tgd/version.js", function(response) {
+            var originalInstalledVersion = response.match(/\"(\d.+)\"/)[1].replace(/\./g, '');
+            if (originalInstalledVersion.length == 3) originalInstalledVersion += "0";
+            var currentlyLoadedVersion = tgd.version.replace(/\./g, '');
+            if (currentlyLoadedVersion.length == 3) currentlyLoadedVersion += "0";
+            tgd.localLog("originalInstalledVersion: " + originalInstalledVersion + " currentlyLoadedVersion: " + currentlyLoadedVersion);
+            if (originalInstalledVersion > currentlyLoadedVersion) {
+                tgd.localLog("upgrade detected, resetting");
+                localStorage.setItem("manifest", null);
+                localStorage.setItem("last_update_files", null);
+                tgd.loader.reset();
+            } else if (self.autoUpdates() == true) {
+                tgd.checkUpdates();
+            }
+        });
 
     };
 };
