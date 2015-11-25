@@ -83,8 +83,9 @@
                 });
         };
 
-        if (localStorage.autoUpdates == "true")
+        if (localStorage.autoUpdates == "true" || tgd.defaults.autoUpdates == "true") {
             tgd.checkUpdates();
+        }
     } catch (e) {
         tgd.localLog("update crash" + e);
     }
