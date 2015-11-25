@@ -2,7 +2,7 @@
   "files": {
     "bootstrap.min.css": {
       "filename": "css/bootstrap.min.css",
-      "version": "66487d550a92eb21855aec3826b5ea45447744dbd521b973d87fbff13ea5fc5d"
+      "version": "2b884b4ea59543160b9c3279456e87c56931b9d647dfef903e3b096a88694e94"
     },
     "style.css": {
       "filename": "css/style.css",
@@ -106,7 +106,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "f4cce74b56ff114be16b48a070a4766b8b2695db576b94ba10a0c95f51dac391"
+      "version": "f9e48317861aff19592c741a3fd3f2a3527cb949ffa370fe4df98e7318c2553e"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
@@ -150,7 +150,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "dbf4551b6c1ad70b7a5eeb0de7ab423f59565e9be76f6c206abd92fe5e948793"
+      "version": "a076fba0da99780f3510c319ddc43d75eac7744a882ed72ff4744f5ad77a7013"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
