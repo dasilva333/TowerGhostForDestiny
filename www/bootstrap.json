@@ -142,7 +142,7 @@
     },
     "updater.js": {
       "filename": "js/tgd/updater.js",
-      "version": "c886a6f41a1c29ee1014273360ed93a51b07dbcc71e248a0ac1ddc478a5c7cc8"
+      "version": "f06f67d5efcc88b2f27d1a11f9621cb12804cb0e58189911134f17c40b9050e2"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
@@ -150,7 +150,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "fc73d4e5b6d1ab7348376fb14108c65cc6bbb20c9e4c3dc7f729267472725512"
+      "version": "58bf2cced7441d1d57463d0c4d091e45615c91a21cb929ac038ed8f5e505792e"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
