@@ -2,7 +2,7 @@
   "files": {
     "bootstrap.min.css": {
       "filename": "css/bootstrap.min.css",
-      "version": "66487d550a92eb21855aec3826b5ea45447744dbd521b973d87fbff13ea5fc5d"
+      "version": "2b884b4ea59543160b9c3279456e87c56931b9d647dfef903e3b096a88694e94"
     },
     "style.css": {
       "filename": "css/style.css",
@@ -106,11 +106,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "01ad3a9bf5a7805597eb7ef1e11df9c4c6cd59a8f48ba603bb25d47be802a827"
+      "version": "f9e48317861aff19592c741a3fd3f2a3527cb949ffa370fe4df98e7318c2553e"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "a015e29be5d5e734b452652fdb8d77ca1339ffbc25d96a2aa71378f0a54e6c48"
+      "version": "430ffb3690954c7a00ff0e95f0ca340416ec3c923e010e9b8257c8971fc69d5c"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -142,7 +142,7 @@
     },
     "updater.js": {
       "filename": "js/tgd/updater.js",
-      "version": "d5f61c70b6542498e93f1340321e5a52ea73493e0f8eec032fb055ee79a2a4a6"
+      "version": "c10c9bda1a1058ce1b5bbdd1dd7b584e4bed79523b61bbca542e0bd3b3f47345"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
@@ -150,7 +150,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "00c548af0647262e1da49a3ca26044d40e93e3f10b52e329f05b01481373c986"
+      "version": "a076fba0da99780f3510c319ddc43d75eac7744a882ed72ff4744f5ad77a7013"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
@@ -162,7 +162,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "3e1ace6c6fb0b21495dbf5f2736320a14ab2d9db35ad0c94a2470aadbd7c3d14"
+      "version": "79f8b33fefb73882124e444620cd60a7cb62760a96d46a76eba564cb1c8620d9"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

@@ -1948,9 +1948,6 @@ var app = function() {
 
         window.BOOTSTRAP_OK = true;
 
-        if (self.autoUpdates() == true) {
-            tgd.checkUpdates();
-        }
     };
 };
 

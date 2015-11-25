@@ -1,5 +1,3 @@
-window.BOOTSTRAP_OK = true;
-
 window.ua = navigator.userAgent;
 window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
@@ -17,7 +15,7 @@ window.tgd = {};
 if ( isWindowsPhone ){
 	window.requestFileSystem = function(){};
 }
-tgd.localLogging = false;
+tgd.localLogging = location.href.indexOf("debug") > -1;
 tgd.localLog = function(msg) {
     if (tgd.localLogging) {
         console.log(msg);
