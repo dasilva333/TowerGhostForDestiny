@@ -1,3 +1,5 @@
+window.BOOTSTRAP_OK = true;
+
 window.ua = navigator.userAgent;
 window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
@@ -283,7 +285,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-	autoUpdates: isFirefox || isIOS
+	autoUpdates: (isFirefox || isIOS) ? "true" : false
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +

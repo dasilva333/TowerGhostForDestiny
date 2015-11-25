@@ -670,7 +670,8 @@ var app = function() {
                 });
                 loadingData = false;
                 self.loadingUser(false);
-                //console.timeEnd("avatars.forEach");
+                $ZamTooltips.init();
+                //console.timeEnd("new profile");
             }
         }
         self.bungie.search(self.preferredSystem(), function(e) {
@@ -712,6 +713,7 @@ var app = function() {
             });
             total = avatars.length;
             _.map(avatars, function(avatar) {
+                //console.time("new profile");
                 var profile = new Profile(avatar);
                 done(profile);
             });
@@ -1768,6 +1770,7 @@ var app = function() {
         });
 
         if (window.isStaticBrowser) {
+            $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {
                 self.loadStatic(unescape(location.search.replace('?', '')));
             });
