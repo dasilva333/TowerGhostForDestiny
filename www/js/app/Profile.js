@@ -38,6 +38,9 @@ function Profile(character) {
     this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(character);
+
+    this.weapons.subscribe(app.addWeaponTypes);
+    this.items.subscribe(app.addTierTypes);
 }
 
 Profile.prototype = {
@@ -57,23 +60,35 @@ Profile.prototype = {
             var processedItem = new Item(item, self);
             if ("id" in processedItem) processedItems.push(processedItem);
         });
+
         self.items(processedItems);
-        if (self.id != "Vault") {
-            self._reloadBucket(self);
+        if (self.id != "Vault" && typeof profile.processed == "undefined") {
+            self._reloadBucket(self, undefined, function() {}, true);
         }
     },
     updateCharacter: function(profile) {
         var self = this;
-        self.background(app.makeBackgroundUrl(tgd.dataDir + profile.backgroundPath, true));
-        self.icon(tgd.dataDir + profile.emblemPath);
-        self.gender(tgd.DestinyGender[profile.characterBase.genderType]);
-        self.classType(tgd.DestinyClass[profile.characterBase.classType]);
-        self.level(profile.characterLevel);
-        self.stats(profile.characterBase.stats);
-        if (!("STAT_LIGHT" in self.stats()))
-            self.stats()['STAT_LIGHT'] = 0;
-        self.percentToNextLevel(profile.percentToNextLevel);
-        self.race(_raceDefs[profile.characterBase.raceHash].raceName);
+        if (profile && profile.processed) {
+            self.background(profile.characterBase.background);
+            self.icon(profile.characterBase.icon);
+            self.gender(profile.characterBase.gender);
+            self.classType(profile.characterBase.classType);
+            self.level(profile.characterBase.level);
+            self.stats(profile.characterBase.stats);
+            self.race(profile.characterBase.race);
+            self.percentToNextLevel(0);
+        } else {
+            self.background(app.makeBackgroundUrl(tgd.dataDir + profile.backgroundPath, true));
+            self.icon(tgd.dataDir + profile.emblemPath);
+            self.gender(tgd.DestinyGender[profile.characterBase.genderType]);
+            self.classType(tgd.DestinyClass[profile.characterBase.classType]);
+            self.level(profile.characterLevel);
+            self.stats(profile.characterBase.stats);
+            if (!("STAT_LIGHT" in self.stats()))
+                self.stats()['STAT_LIGHT'] = 0;
+            self.percentToNextLevel(profile.percentToNextLevel);
+            self.race(_raceDefs[profile.characterBase.raceHash].raceName);
+        }
     },
     refresh: function(profile, event) {
         var self = this;
@@ -186,12 +201,19 @@ Profile.prototype = {
         if (this.id == "Vault") return "";
         return this.calculatePowerLevelWithItems(this.equippedGear());
     },
-    _reloadBucket: function(model, event, callback) {
+    _reloadBucket: function(model, event, callback, excludeMessage) {
         var self = this,
             element;
         if (self.reloadingBucket) {
             return;
         }
+
+        if (!excludeMessage)
+            $.toaster({
+                priority: 'info',
+                title: 'Success',
+                message: 'Refreshing ' + self.uniqueName()
+            });
 
         var buckets = [];
         if (typeof model === 'string' || model instanceof String) {
@@ -224,12 +246,13 @@ Profile.prototype = {
                 self.reloadingBucket = false;
                 if (element) {
                     element.removeClass("fa-spin");
+                }
+                if (!excludeMessage)
                     $.toaster({
                         priority: 'info',
                         title: 'Success',
-                        message: 'Refresh completed'
+                        message: 'Refresh completed for ' + self.uniqueName()
                     });
-                }
             }
 
             if (needsInvisibleRefresh) {
@@ -537,7 +560,7 @@ Profile.prototype = {
             //console.log(candidates);
             _.each(candidates, function(candidate) {
                 if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                    (candidate.tierType == 6 ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+                    (candidate.tierType == 6 && candidate.hasLifeExotic == false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
                 }
             });
         });
