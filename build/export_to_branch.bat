@@ -20,5 +20,6 @@ mkdir ..\build\branch\res\screen\%1
 copy res\screen\%1\ ..\build\branch\res\screen\%1
 cd ..\build
 rd /s /q ..\..\branches\%1\www\data\common\
+rd /s /q ..\..\branches\%1\www\js\
 xcopy branch ..\..\branches\%1\www\ /E /Y
 rd /s /q branch

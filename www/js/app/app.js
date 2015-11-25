@@ -1948,9 +1948,14 @@ var app = function() {
 
         window.BOOTSTRAP_OK = true;
 
-        if (self.autoUpdates() == true) {
-            tgd.checkUpdates();
-        }
+		$.get("js/tgd/version.js", function(response){ 
+		
+			var originalInstalledVersion = response.match(/\"(\d.+)\"/)[1].replace(/\./g,'');
+	        if (self.autoUpdates() == true) {
+	            tgd.checkUpdates();
+	        }			
+		});
+
     };
 };
 
