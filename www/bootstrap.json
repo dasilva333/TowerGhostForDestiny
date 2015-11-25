@@ -106,11 +106,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "01ad3a9bf5a7805597eb7ef1e11df9c4c6cd59a8f48ba603bb25d47be802a827"
+      "version": "f4cce74b56ff114be16b48a070a4766b8b2695db576b94ba10a0c95f51dac391"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "1ed25d254eece6483b93d2ee34218ca40701a7a558bde6fc670691e6dc44ddca"
+      "version": "430ffb3690954c7a00ff0e95f0ca340416ec3c923e010e9b8257c8971fc69d5c"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -142,7 +142,7 @@
     },
     "updater.js": {
       "filename": "js/tgd/updater.js",
-      "version": "d5f61c70b6542498e93f1340321e5a52ea73493e0f8eec032fb055ee79a2a4a6"
+      "version": "c886a6f41a1c29ee1014273360ed93a51b07dbcc71e248a0ac1ddc478a5c7cc8"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
@@ -150,7 +150,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "b39f3a7069dd891b9e622164fb3e1bd9abd250487a795e5b76ca0a1e8e8deaba"
+      "version": "fc73d4e5b6d1ab7348376fb14108c65cc6bbb20c9e4c3dc7f729267472725512"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
@@ -162,7 +162,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "29ed9cec2b37d07c00755c7be7e80b843fb0d1c980666fe6184599095dd0b11c"
+      "version": "79f8b33fefb73882124e444620cd60a7cb62760a96d46a76eba564cb1c8620d9"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

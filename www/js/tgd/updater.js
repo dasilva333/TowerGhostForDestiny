@@ -71,4 +71,7 @@
                 });
             });
     };
+
+    if (localStorage.autoUpdates == "true")
+        tgd.checkUpdates();
 })();
