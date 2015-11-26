@@ -12,9 +12,6 @@ if ( window.isStaticBrowser ){
 	window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
 }
 window.tgd = {};
-if ( isWindowsPhone ){
-	window.requestFileSystem = function(){};
-}
 tgd.localLogging = location.href.indexOf("debug") > -1;
 tgd.localLog = function(msg) {
     if (tgd.localLogging) {
@@ -283,7 +280,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-	autoUpdates: (isFirefox || isIOS) ? "true" : false
+	autoUpdates: (isFirefox || isIOS || isWindowsPhone) ? "true" : false
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
