@@ -701,9 +701,9 @@ Profile.prototype = {
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
                         var key, description = "",
-                            stats = Profile.prototype.joinStats(combo.set);
+                            stats = character.joinStats(combo.set);
                         _.each(stats, function(stat, key) {
-                            description = description + " " + key.substring(0, 3) + " T" + Math.floor(stat / 60);
+                            description = description + " <strong>" + key.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
                         });
                         key = $.trim(description);
                         if (key in armorBuilds && combo.score > armorBuilds[key].score || !(key in armorBuilds)) {
@@ -711,7 +711,7 @@ Profile.prototype = {
                         }
                     }
                 });
-                if (Object.keys(armorBuilds).length == 1) {
+                if (Object.keys(armorBuilds).length === 1) {
                     highestSet = bestSets[bestSets.length - 1].set;
                     highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
                     character.equipAction(type, highestSetValue, highestSet);
@@ -723,14 +723,14 @@ Profile.prototype = {
                         buttons: [{
                             label: app.activeText().movepopup_equip,
                             action: function(dialog) {
-                                if ($("input.armorBuild:checked").length > 0) {
+                                if ($("input.armorBuild:checked").length === 0) {
+                                    BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                                } else {
                                     var selectedBuild = $("input.armorBuild:checked").val();
                                     highestSet = armorBuilds[selectedBuild].set;
                                     highestSetValue = armorBuilds[selectedBuild].score;
                                     character.equipAction(type, highestSetValue, highestSet);
-									dialog.close();
-                                } else {
-                                    BootstrapDialog.alert("Error: Please select one armor build to use to equip");
+                                    dialog.close();
                                 }
                             }
                         }, {
@@ -739,7 +739,7 @@ Profile.prototype = {
                                 dialog.close();
                             }
                         }]
-                    })).title("Multiple Armor Builds Found").content($template).show(true);
+                    })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true);
                     return;
                 }
             } else if (type == "Light") {

@@ -40,14 +40,14 @@
             <h3>Web Options</h3>
         </li>
         <li>
-            <strong>Share URL with friends</strong> Provides a custom link with your username to be able to share your inventory with friends online.</li>
+            <strong>Share URL with friends</strong> Provides a custom link with your gamer tag to be able to share your inventory with friends online.</li>
         <li>
             <strong>DestinyStatus Report</strong> Opens a new page that allows you to see the current progress of all your characters.</li>
         <li>
             <h3>UI Options</h3>
         </li>
         <li>
-            <strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds set by default to 300 (5 minutes).</li>
+            <strong>Auto Refresh</strong> Allows option for enable/disable and a refresh interval in seconds set by default to 5 minutes.</li>
         <li>
             <strong>DestinyDB Tooltips</strong> Allows for taps or hovers to enable the tooltip, if disabled double tap or double click enables the tooltip.</li>
         <li>
@@ -57,7 +57,11 @@
         <li>
             <strong>Auto Pad Height</strong> When enabled the sections will automatically adjust height to align with each other.</li>
         <li>
-            <strong>Drag and Drop</strong> When enabled you may drag and drop an item from one section to another, compatible with mobile and desktop..</li>
+            <strong>Drag and Drop</strong> When enabled you may drag and drop an item from one section to another, compatible with mobile and desktop.</li>
+        <li>
+            <strong>Auto Updates</strong> This option will ensure you always have the latest version of Tower Ghost, enable it to allow Tower Ghost to update itself when a new version is available.
+            <em>Note: If you are having problems with Auto Updates please try to disable and enable it again to clear the cache. thank you.</em>
+        </li>
         <li>
             <h3>Menu Options</h3>
         </li>
@@ -83,7 +87,30 @@
         <li>
             <strong>Weapon</strong> Filter by type of weapon, this list will only show types you have in your inventory.</li>
         <li>
-            <strong>Name or Perk</strong> Filter by the name of the item, or the name of the perk, or the description in the perk.</li>
+            <strong>Search Box</strong> Filter by the name of the item, or the name of the perk, or the description in the perk, even if the perk is not active. Also allows you to filter by light level, you may type 280 to find items only at light level 280, you may also use &gt;280 to find anything higher or &lt;280 for items below 280.</li>
+        <li>
+            <h3>View Options</h3>
+        </li>
+        <li>
+            <strong>Container Width</strong>
+            This option allows you to control how wide you would like the overall container to be, the default option ensures proper padding on both sides for large displays, this option will not affect the layout for most mobile displays but will work for most tablet displays.</li>
+        <li>
+            <strong>Vault Mode</strong>
+            The default option ensures that the Vault column is always as wide as all the other columns, setting it to Custom allows you to make the Vault column wider, do note that this option will not affect mobile displays only tablets and desktops.</li>
+        <li>
+            <strong>Vault Width</strong>
+            This option is only available under "Custom" Vault Mode, setting this option will make the Vault column wider than the default 25%.</li>
+        <li>
+            <strong>Number of Columns</strong>
+            This option is only available under "Default" Vault Mode, this option works as a matrix of column modes depending on your display.
+            <br> Each row has a designated tag (xs,sm,md,lg) they are ordered from smallest display to largest so mobile displays use xs portrait and sm landscape. Desktop displays most likely use md or lg tag, each tag is dependent upon your resolution so 1 or 2 out of the 4 rows only apply to your device. Example: You have a mobile display that currently shows 1 column portrait (xs) and 2 columns landscape (sm) and you'd like to change it to 1/3, what you do is set the second row (sm) to 3 so it'll display 1 | 3 | 3 | 4 instead of 1 | 2 | 3 | 4 buttons selected.
+        </li>
+        <li>
+            <strong>Vault Columns</strong>
+            This option allows you to choose how many columns of items you want to see for the Vault profile, the default is 4 with the option of fitting more icons per row as the number goes up.</li>
+        <li>
+            <strong>Vault Position</strong>
+            First/Left - The vault is displayed first on mobile, on the left side for wide displays. Last/Right - The vault is ordered last or on the right side for wide displays.</li>
         <li>
             <h3>Materials and Consumable Options</h3>
         </li>
@@ -98,10 +125,10 @@
         <li>
             <strong>Light</strong> Equip the armor and weapons with the most Light points from any character or vault.</li>
         <li>
-            <strong>Skill (Int/Disc/Str)</strong> Optimize armor for Tier 5 for that skill, ensure skill doesn't go too much over 300 points.</li>
+            <strong>Skill (Int/Disc/Str)</strong> Optimize armor for Tier 5 for that skill, ensure skill doesn't go too much over 300 points, if so it will automatically reduce the skill to arond 300 and buff the other stats.</li>
         <li>
-            <strong>Most Points</strong> Optimize armor for the set that contains the most combined points.</li>
+            <strong>Most Points</strong> Optimize armor for the set that contains the most combined stat points.</li>
         <li>
-            <strong>Best Combo</strong> Optimize armor for the set that has the most combined tiers available.</li>
+            <strong>Best Combo</strong> Optimize armor for the set that has the most combined tiers available, if multiple tiers available a prompt will ask you which armor build you'd like to use.</li>
     </ul>
 </div>
