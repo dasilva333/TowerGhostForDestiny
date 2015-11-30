@@ -1801,6 +1801,7 @@ var app = function() {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
         self.initItemDefs();
+        tgd.armorTemplates = _.template(tgd.armorTemplates);
         tgd.perksTemplate = _.template(tgd.perksTemplate);
         tgd.statsTemplate = _.template(tgd.statsTemplate);
         tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);

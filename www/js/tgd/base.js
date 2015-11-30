@@ -428,3 +428,18 @@ tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through altern
 		'</li>' +
 	'<% }) %>' +
 '</ul>';
+	
+tgd.armorTemplates = '<ul class="list-group">' +
+	'<% _.each(builds, function(build, key){ %>' +
+		'<li class="list-group-item">' +
+			'<div class="row">' +
+				'<div class="text-left col-lg-3">' +
+					'<input type="radio" class="armorBuild form-control" value="<%= key %>" name="armorBuild">' +
+				'</div>' +
+				'<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12">' +
+					'<%= key %>' +
+				'</div>' +
+			'</div>' +
+		'</li>' +
+	'<% }) %>' +
+'</ul>';
