@@ -623,6 +623,61 @@ Profile.prototype = {
         });
         return [highestSetValue, highestSet];
     },
+    equipAction: function(type, highestSetValue, highestSet) {
+        var character = this;
+
+        $.toaster({
+            settings: {
+                timeout: 10 * 1000
+            }
+        });
+
+        $.toaster({
+            priority: 'success',
+            title: 'Result',
+            message: " The highest set available for " + type + "  is  " + highestSetValue
+        });
+
+        var count = 0;
+        var done = function() {
+            count++;
+            if (count == highestSet.length) {
+                var msa = adhoc.transfer(character.id, true);
+                tgd.localLog(msa);
+                adhoc.swapItems(msa, character.id, function() {
+                    $.toaster({
+                        priority: 'success',
+                        title: 'Result',
+                        message: " Completed equipping the highest " + type + " set at " + highestSetValue
+                    });
+                    $.toaster.reset();
+                });
+            }
+        };
+        //console.log(highestSet); abort;
+
+        var adhoc = new tgd.Loadout();
+        _.each(highestSet, function(candidate) {
+            var itemEquipped = character.itemEquipped(candidate.bucketType);
+            if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
+                adhoc.addUniqueItem({
+                    id: candidate._id,
+                    bucketType: candidate.bucketType,
+                    doEquip: true
+                });
+                var message = candidate.bucketType + " can have a better item with " + candidate.description;
+                tgd.localLog(message);
+                $.toaster({
+                    priority: 'info',
+                    title: 'Equip',
+                    message: message
+                });
+                done();
+            } else {
+                done();
+            }
+        });
+    },
     equipHighest: function(type) {
         var character = this;
         return function() {
@@ -641,8 +696,52 @@ Profile.prototype = {
 
             if (type == "Best") {
                 var bestSets = character.findBestArmorSet(items);
-                highestSet = bestSets[bestSets.length - 1].set;
-                highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
+                var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
+                    armorBuilds = {};
+                _.each(bestSets, function(combo) {
+                    if (combo.score >= highestTier) {
+                        var key, description = "",
+                            stats = character.joinStats(combo.set);
+                        _.each(stats, function(stat, key) {
+                            description = description + " <strong>" + key.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                        });
+                        key = $.trim(description);
+                        if (key in armorBuilds && combo.score > armorBuilds[key].score || !(key in armorBuilds)) {
+                            armorBuilds[key] = combo;
+                        }
+                    }
+                });
+                if (Object.keys(armorBuilds).length === 1) {
+                    highestSet = bestSets[bestSets.length - 1].set;
+                    highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
+                    character.equipAction(type, highestSetValue, highestSet);
+                } else {
+                    var $template = tgd.armorTemplates({
+                        builds: armorBuilds
+                    });
+                    (new tgd.dialog({
+                        buttons: [{
+                            label: app.activeText().movepopup_equip,
+                            action: function(dialog) {
+                                if ($("input.armorBuild:checked").length === 0) {
+                                    BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                                } else {
+                                    var selectedBuild = $("input.armorBuild:checked").val();
+                                    highestSet = armorBuilds[selectedBuild].set;
+                                    highestSetValue = armorBuilds[selectedBuild].score;
+                                    character.equipAction(type, highestSetValue, highestSet);
+                                    dialog.close();
+                                }
+                            }
+                        }, {
+                            label: app.activeText().cancel,
+                            action: function(dialog) {
+                                dialog.close();
+                            }
+                        }]
+                    })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true);
+                    return;
+                }
             } else if (type == "Light") {
                 bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];
                 tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
@@ -651,11 +750,13 @@ Profile.prototype = {
                 highestSet = bestArmorSets.concat(bestWeaponSets);
                 tgd.localLog("highestSet: " + _.pluck(highestSet, 'description'));
                 highestSetValue = character.calculatePowerLevelWithItems(highestSet);
+                character.equipAction(type, highestSetValue, highestSet);
             } else if (type == "All") {
                 bestArmorSets = character.findHighestItemBy("All", armor, items);
                 tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
                 highestSet = bestArmorSets[1];
                 highestSetValue = bestArmorSets[0];
+                character.equipAction(type, highestSetValue, highestSet);
             } else {
                 bestArmorSets = character.findHighestItemBy(type, armor, items);
                 if (bestArmorSets[0] < tgd.DestinySkillCap) {
@@ -666,59 +767,8 @@ Profile.prototype = {
                     highestSetValue = bestArmorSets[0];
                     highestSet = bestArmorSets[1];
                 }
+                character.equipAction(type, highestSetValue, highestSet);
             }
-
-            $.toaster({
-                settings: {
-                    timeout: 10 * 1000
-                }
-            });
-
-            $.toaster({
-                priority: 'success',
-                title: 'Result',
-                message: " The highest set available for " + type + "  is  " + highestSetValue
-            });
-
-            var count = 0;
-            var done = function() {
-                count++;
-                if (count == highestSet.length) {
-                    var msa = adhoc.transfer(character.id, true);
-                    tgd.localLog(msa);
-                    adhoc.swapItems(msa, character.id, function() {
-                        $.toaster({
-                            priority: 'success',
-                            title: 'Result',
-                            message: " Completed equipping the highest " + type + " set at " + highestSetValue
-                        });
-                        $.toaster.reset();
-                    });
-                }
-            };
-            //console.log(highestSet); abort;
-
-            var adhoc = new tgd.Loadout();
-            _.each(highestSet, function(candidate) {
-                var itemEquipped = character.itemEquipped(candidate.bucketType);
-                if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
-                    adhoc.addUniqueItem({
-                        id: candidate._id,
-                        bucketType: candidate.bucketType,
-                        doEquip: true
-                    });
-                    var message = candidate.bucketType + " can have a better item with " + candidate.description;
-                    tgd.localLog(message);
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Equip',
-                        message: message
-                    });
-                    done();
-                } else {
-                    done();
-                }
-            });
         };
     }
 };
