@@ -996,9 +996,9 @@ var app = function() {
             } else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
-                window.ref = window.open('about:blank');
-                window.ref.opener = null;
-                window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
+                //window.ref = window.open('about:blank');
+                //window.ref.opener = null;
+                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
             }
             if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
