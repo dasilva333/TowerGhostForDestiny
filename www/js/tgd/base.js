@@ -15,7 +15,7 @@ window.tgd = {};
 if ( isWindowsPhone ){
 	window.requestFileSystem = function(){};
 }
-tgd.localLogging = false;
+tgd.localLogging = location.href.indexOf("debug") > -1;
 tgd.localLog = function(msg) {
     if (tgd.localLogging) {
         console.log(msg);
@@ -283,7 +283,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-	autoUpdates: isFirefox || isIOS
+	autoUpdates: (isFirefox || isIOS) ? "true" : false
 };
 
 tgd.perksTemplate = '<div class="destt-talent">' +
@@ -423,6 +423,21 @@ tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through altern
 					'<a class="swapItem item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
 						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
 					'</a>' +
+				'</div>' +
+			'</div>' +
+		'</li>' +
+	'<% }) %>' +
+'</ul>';
+	
+tgd.armorTemplates = '<ul class="list-group">' +
+	'<% _.each(builds, function(build, key){ %>' +
+		'<li class="list-group-item">' +
+			'<div class="row">' +
+				'<div class="text-left col-lg-3">' +
+					'<input type="radio" class="armorBuild form-control" value="<%= key %>" name="armorBuild">' +
+				'</div>' +
+				'<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12">' +
+					'<%= key %>' +
 				'</div>' +
 			'</div>' +
 		'</li>' +
