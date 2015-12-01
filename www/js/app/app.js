@@ -1814,8 +1814,8 @@ var app = function() {
         }
         self.initItemDefs();
 
-        _.each(_.templates, function(content, filename) {
-            var templateName = filename.replace(".html", "");
+        /* These templates are loaded after the locale for the language template, they are used dynamically for pop ups and other content */
+        _.each(_.templates, function(content, templateName) {
             if (templateName == "languagesTemplate") {
                 content = self.activeText().language_text + content;
             }
