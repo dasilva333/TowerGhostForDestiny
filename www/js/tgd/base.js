@@ -437,7 +437,7 @@ tgd.armorTemplates = '<ul class="list-group">' +
 				'<div class="text-left col-lg-3">' +
 					'<input type="radio" class="armorBuild form-control" value="<%= key %>" name="armorBuild">' +
 				'</div>' +
-				'<div class="text-center col-lg-21">' +
+				'<div class="text-left col-lg-21">' +
 					'<%= key %> - <%= _.pluck(_.sortBy(build.set,\'bucketType\'),\'description\') %>' +
 				'</div>' +
 			'</div>' +
