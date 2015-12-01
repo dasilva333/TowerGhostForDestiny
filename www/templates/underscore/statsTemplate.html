@@ -1,0 +1,18 @@
+<div class="destt-stat">
+    <% Object.keys(stats).forEach(function(key){ %>
+        <div class="stat-bar">
+            <div class="stat-bar-label">
+                <%= key %>
+            </div>
+            <div class="stat-bar-static-value">
+                <%= stats[key] %>
+            </div>
+            <div class="stat-bar-empty">
+                <div style="width:<%= stats[key] %>%" class="stat-bar-fill"></div>
+            </div>
+            <div class="stat-bar-value">
+                <%= stats[key] %>
+            </div>
+        </div>
+        <% }) %>
+</div>

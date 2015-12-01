@@ -1,0 +1,15 @@
+<ul class="list-group">
+    <%_.each(builds, function(build, key){ %>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="text-left col-lg-3">
+                    <input class="armorBuild form-control" name="armorBuild" type="radio" value="<%= key %>">
+                </div>
+                <div class="text-left col-lg-21">
+                    <%= key %>-
+                        <%= _.pluck(_.sortBy(build.set,'bucketType'),'description').reverse() %>
+                </div>
+            </div>
+        </li>
+        <%}) %>
+</ul>

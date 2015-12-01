@@ -1813,10 +1813,15 @@ var app = function() {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
         self.initItemDefs();
-        tgd.armorTemplates = _.template(tgd.armorTemplates);
-        tgd.perksTemplate = _.template(tgd.perksTemplate);
-        tgd.statsTemplate = _.template(tgd.statsTemplate);
-        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+
+        _.each(_.templates, function(content, filename) {
+            var templateName = filename.replace(".html", "");
+            if (templateName == "languagesTemplate") {
+                content = self.activeText().language_text + content;
+            }
+            tgd[templateName] = _.template(content);
+        });
+
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
@@ -1824,9 +1829,6 @@ var app = function() {
             }
         });
         if (!window.isStaticBrowser) {
-            tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
-            tgd.swapTemplate = _.template(tgd.swapTemplate);
-            tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
             self.doRefresh.subscribe(self.refreshHandler);
             self.refreshSeconds.subscribe(self.refreshHandler);
             self.loadoutMode.subscribe(self.refreshHandler);

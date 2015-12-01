@@ -2,7 +2,7 @@ module.exports = function(grunt) {
 	grunt.config.set("jsbeautifier", {
 		files: [
 			'../www/index.html',
-			'../www/templates/*.html',
+			'../www/templates/**/*.html',
 			'../www/js*.js',
 			'../www/js/app/*.js',
 			'../www/js/core/*.js',

@@ -1,0 +1,9 @@
+<div class="row button-group">
+    <% languages.forEach(function(language){ %>
+        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-6 text-center">
+            <button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? 'btn-primary' : '' %>" value="<%= language.code %>">
+                <%= language.description %>
+            </button>
+        </div>
+        <% }) %>
+</div>
