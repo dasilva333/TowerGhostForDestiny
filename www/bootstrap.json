@@ -34,7 +34,7 @@
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
-      "version": "b00d9d54b3d714412d8161ff46c29ec4f14621108598a5de3fbcf50b2210d88f"
+      "version": "e7cf987f1f3935909eafe46159005eaceed80678fe0da21cf2ec6822e3e63d4f"
     },
     "statDefs.json": {
       "filename": "data/definitions/statDefs.json",
@@ -106,11 +106,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "7f0863449a6a24c7e82cda6e122cebb4231b625fe72a8cd3de912e85bab5e481"
+      "version": "678534bfc7e947d4d4e0d5489f89c4987c55e7638784415f9764c6bce2223b38"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "33cb39b97f9c653acef27f93438b8755ebb966df29c53bd224203ed5954814b4"
+      "version": "a8e647c721070a15e559e9357dc54cee9b24bd91a3efbd26696698c9646251e1"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -130,7 +130,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "c806198fa9986ecdf944afed318c0f5318430bf07df1ab0458f7c189905db7af"
+      "version": "1498310774ec1d8a3392db1a54851103d674b5b052c119fd0e94bab0cf71d8b5"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
@@ -150,7 +150,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "739e1f31e244158bfed4ed62cd22db5f440be611184af067350227cbda76b026"
+      "version": "c4bef14184be35ae8f91b170eaac4ce368e2cd2b3fdccc722c8142584d535f69"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
@@ -162,7 +162,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "2fbdafa6cdbcac10e69541490c7293228d7fe472effc0f44067ed045fce4554d"
+      "version": "1f25e0078dd3e5d6017b4984865c87499ed068a0e33335ea73abd4370512b741"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

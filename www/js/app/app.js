@@ -489,6 +489,18 @@ var app = function() {
         return function() {
             self.toggleBootstrapMenu();
             if (collection in _collections || collection == "All") {
+                if (collection == "Year 2 Items" || collection == "Year 1 Items") {
+                    _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
+                        return character.items();
+                    })), function(item) {
+                        if (collection == "Year 2 Items") {
+                            return item.primaryStatValue() > tgd.DestinyY1Cap || item.id in _collections[collection];
+                        } else {
+                            return item.primaryStatValue() <= tgd.DestinyY1Cap;
+                        }
+
+                    }), 'id');
+                }
                 self.setFilter(collection == "All" ? [] : _collections[collection]);
                 if (collection == "All") {
                     self.showMissing(false);

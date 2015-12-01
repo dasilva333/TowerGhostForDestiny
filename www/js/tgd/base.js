@@ -26,6 +26,7 @@ tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready","Twist Fate","Scabbard"];
 tgd.DestinyGeneralItems = {
