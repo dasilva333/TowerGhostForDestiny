@@ -534,12 +534,13 @@
 	                        var maxBucketSize = 10;
 	                        var targetBucketSize = targetBucket.length;
 	                        if (targetCharacter.id == "Vault") {
-	                            targetBucketSize = _.where(targetCharacter.items(), {
-	                                bucketType: key
-	                            }).length;
-	                            maxBucketSize = _.filter(tgd.DestinyLayout, function(layout) {
+	                            var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return layout.bucketTypes.indexOf(key) > -1;
-	                            })[0].counts[0];
+	                            })[0];
+	                            targetBucketSize = _.filter(targetCharacter.items(), function(item) {
+	                                return layout.bucketTypes.indexOf(item.bucketType) > -1;
+	                            }).length;
+	                            maxBucketSize = layout.counts[0];
 	                        }
 	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                        var targetMaxed = (targetBucketSize == maxBucketSize);
