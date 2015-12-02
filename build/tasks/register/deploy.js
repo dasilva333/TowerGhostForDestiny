@@ -6,15 +6,15 @@ module.exports = function (grunt) {
         'ftpush:js', 'ftpush:css', 'ftpush:manifest'
 	]);
 	grunt.registerTask('deploydef', [
-        'ftpush:definitions'
+        'ftpush:definitions', 'ftpush:shareData'
 	]);
 	grunt.registerTask('deployimages', [
-        'ftpush:images', 'ftpush:shareData'
+        'ftpush:images', 'ftpush:shareImages'
 	]);
 	grunt.registerTask('deploylocale', [
         'ftpush:locale'
 	]);
 	grunt.registerTask('deployshare', [
-        'ftpush:shareAssets'
+        'ftpush:shareAssets', 'ftpush:shareData', 'ftpush:shareImages'
 	]);
 };
