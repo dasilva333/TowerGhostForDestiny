@@ -186,7 +186,7 @@ extractItems(function(_itemDefs){
 		}), 'itemHash');		
 		
 		/* Year 1 is anything at or below 170, Year 2 is anything above 170 or sourced from SOURCE_TTK */
-		setDefs['Year 1 Items'] = [];
+		setDefs['Year 1 Items'] = [''];
 		setDefs['Year 2 Items'] = _.pluck(_.filter(_itemDefs, function(item) {
 			return (item.sourceHashes.indexOf(rewardSources.SOURCE_TTK.sourceHash) > -1);
 		}),'itemHash');

@@ -420,7 +420,9 @@ _collections={
         3919765140,
         3919765141
     ],
-    "Year 1 Items": [],
+    "Year 1 Items": [
+        ""
+    ],
     "Year 2 Items": [
         19464,
         19465,

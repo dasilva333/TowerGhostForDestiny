@@ -34,7 +34,7 @@
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
-      "version": "e7cf987f1f3935909eafe46159005eaceed80678fe0da21cf2ec6822e3e63d4f"
+      "version": "26a29e7c18bd3470489c3d73e9aef683ea0161e2a62bb7e34872bb10ec906d33"
     },
     "statDefs.json": {
       "filename": "data/definitions/statDefs.json",
@@ -154,7 +154,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "8156c6ca0ec810821e151664926e7e5f454aae6b4182f7c83a09463c4b671a95"
+      "version": "22aada795ca9af4b97255901336ba8721a2c74e06f2bb0978357df3f01eb7eda"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
