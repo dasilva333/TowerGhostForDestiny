@@ -17,9 +17,20 @@ module.exports = function(grunt) {
 		  port: 21,
 		  authKey: 'mraKey'
 		},
-		src: '../../branches/static-share/www/data',
+		src: '../../branches/static-share/www/data/definitions',
 		simple: true,
-		dest: '/myredditall/towerghostfordestiny.com/www/share/data',
+		dest: '/myredditall/towerghostfordestiny.com/www/share/data/definitions',
+		exclusions: []
+	  },
+	  shareImages: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../../branches/static-share/www/data/common',
+		simple: true,
+		dest: '/myredditall/towerghostfordestiny.com/www/share/data/common',
 		exclusions: []
 	  },	  
 	  js: {
