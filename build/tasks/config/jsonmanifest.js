@@ -42,7 +42,7 @@
 
 module.exports = function(grunt) {
 	grunt.config.set('jsonmanifest',{
-      generate: {
+      dev: {
         options: {
           basePath: '../www/',
           exclude: [],
@@ -68,6 +68,26 @@ module.exports = function(grunt) {
 			'js/tgd/*.js',
 			'js/app/*.js',
 			'js/extras/*.js'            
+        ],
+        dest: ['../www/bootstrap.json']
+      },
+	  prod: {
+        options: {
+          basePath: '../www/',
+          exclude: [],
+          //load all found assets
+          loadall: true,
+          //manually add files to the manifest
+          files: {},
+          //manually define the files that should be injected into the page
+          load: [],
+          // root location of files to be loaded in the load array.
+          root: "./"
+        },
+        src: [
+			'compiled/*.css',
+			'compiled/*.json',
+			'compiled/*.js'
         ],
         dest: ['../www/bootstrap.json']
       }
