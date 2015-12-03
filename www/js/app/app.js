@@ -489,6 +489,18 @@ var app = function() {
         return function() {
             self.toggleBootstrapMenu();
             if (collection in _collections || collection == "All") {
+                if (collection == "Year 2 Items" || collection == "Year 1 Items") {
+                    _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
+                        return character.items();
+                    })), function(item) {
+                        if (collection == "Year 2 Items") {
+                            return item.primaryStatValue() > tgd.DestinyY1Cap || item.id in _collections[collection];
+                        } else {
+                            return item.primaryStatValue() <= tgd.DestinyY1Cap;
+                        }
+
+                    }), 'id');
+                }
                 self.setFilter(collection == "All" ? [] : _collections[collection]);
                 if (collection == "All") {
                     self.showMissing(false);
@@ -670,7 +682,8 @@ var app = function() {
                 });
                 loadingData = false;
                 self.loadingUser(false);
-                //console.timeEnd("avatars.forEach");
+                $ZamTooltips.init();
+                //console.timeEnd("new profile");
             }
         }
         self.bungie.search(self.preferredSystem(), function(e) {
@@ -712,6 +725,7 @@ var app = function() {
             });
             total = avatars.length;
             _.map(avatars, function(avatar) {
+                //console.time("new profile");
                 var profile = new Profile(avatar);
                 done(profile);
             });
@@ -994,9 +1008,9 @@ var app = function() {
             } else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
-                window.ref = window.open('about:blank');
-                window.ref.opener = null;
-                window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
+                //window.ref = window.open('about:blank');
+                //window.ref.opener = null;
+                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
             }
             if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
@@ -1666,79 +1680,6 @@ var app = function() {
                 if (staticProfiles.length === 0) {
                     return BootstrapDialog.alert("There is no shared data to view for this profile");
                 }
-                if (staticProfiles && staticProfiles.Response) {
-                    var data = staticProfiles.Response.data;
-                    //console.log("we got someone who hasnt used the app");
-                    //window.d = data;
-                    staticProfiles = _.map(data.characters, function(character, index) {
-                        var items = _.map(
-                            _.filter(data.items, function(item) {
-                                return item.characterIndex == index;
-                            }),
-                            function(item) {
-                                var info = _itemDefs[item.itemHash];
-                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var description, tierTypeName, itemDescription, itemTypeName;
-                                    try {
-                                        description = decodeURIComponent(info.itemName);
-                                        tierTypeName = decodeURIComponent(info.tierTypeName);
-                                        itemDescription = decodeURIComponent(info.itemDescription);
-                                        itemTypeName = decodeURIComponent(info.itemTypeName);
-                                    } catch (e) {
-                                        description = info.itemName;
-                                        tierTypeName = info.tierTypeName;
-                                        itemDescription = info.itemDescription;
-                                        itemTypeName = info.itemTypeName;
-                                    }
-                                    var primaryStat = item.quantity;
-                                    if (item && item.primaryStat && item.primaryStat.value) {
-                                        primaryStat = item.primaryStat.value;
-                                    }
-                                    return {
-                                        id: item.itemHash,
-                                        _id: item.itemId,
-                                        characterId: data.characters[item.characterIndex].characterBase.characterId,
-                                        damageType: item.damageType,
-                                        damageTypeName: tgd.DestinyDamageTypes[item.damageType],
-                                        isEquipped: item.transferStatus == 1,
-                                        isGridComplete: item.isGridComplete,
-                                        locked: item.locked,
-                                        description: description,
-                                        itemDescription: itemDescription,
-                                        bucketType: getBucketTypeHelper(item, info),
-                                        type: info.itemSubType,
-                                        typeName: itemTypeName,
-                                        tierType: info.tierType,
-                                        tierTypeName: tierTypeName,
-                                        icon: "data" + info.icon,
-                                        primaryStat: primaryStat,
-                                        progression: false,
-                                        weaponIndex: tgd.DestinyWeaponPieces.indexOf(getBucketTypeHelper(item, info)),
-                                        armorIndex: tgd.DestinyArmorPieces.indexOf(getBucketTypeHelper(item, info)),
-                                        perks: [],
-                                        stats: [],
-                                        isUnique: false,
-                                        href: "https://destinydb.com/items/" + item.itemHash
-                                    };
-                                }
-                            });
-
-                        return {
-                            items: _.filter(items, function(item) {
-                                return typeof item !== "undefined";
-                            }),
-                            id: character.characterBase.characterId,
-                            race: _raceDefs[character.characterBase.raceHash].raceName,
-                            order: index,
-                            gender: tgd.DestinyGender[character.characterBase.genderType],
-                            classType: tgd.DestinyClass[character.characterBase.classType],
-                            level: character.characterLevel,
-                            imgIcon: self.bungie.getUrl() + character.emblemPath,
-                            icon: self.makeBackgroundUrl(character.emblemPath),
-                            background: self.makeBackgroundUrl(character.backgroundPath)
-                        };
-                    });
-                }
                 _.each(staticProfiles, function(data, index) {
                     var avatar = {
                         processed: true,
@@ -1768,6 +1709,7 @@ var app = function() {
         });
 
         if (window.isStaticBrowser) {
+            $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {
                 self.loadStatic(unescape(location.search.replace('?', '')));
             });
@@ -1798,9 +1740,15 @@ var app = function() {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
         self.initItemDefs();
-        tgd.perksTemplate = _.template(tgd.perksTemplate);
-        tgd.statsTemplate = _.template(tgd.statsTemplate);
-        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
+
+        /* These templates are loaded after the locale for the language template, they are used dynamically for pop ups and other content */
+        _.each(_.templates, function(content, templateName) {
+            if (templateName == "languagesTemplate") {
+                content = self.activeText().language_text + content;
+            }
+            tgd[templateName] = _.template(content);
+        });
+
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
@@ -1808,9 +1756,6 @@ var app = function() {
             }
         });
         if (!window.isStaticBrowser) {
-            tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
-            tgd.swapTemplate = _.template(tgd.swapTemplate);
-            tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
             self.doRefresh.subscribe(self.refreshHandler);
             self.refreshSeconds.subscribe(self.refreshHandler);
             self.loadoutMode.subscribe(self.refreshHandler);
@@ -1945,9 +1890,6 @@ var app = function() {
 
         window.BOOTSTRAP_OK = true;
 
-        if (self.autoUpdates() == true) {
-            tgd.checkUpdates();
-        }
     };
 };
 
