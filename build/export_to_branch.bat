@@ -15,7 +15,7 @@ xcopy data\* ..\build\branch\data\ /E /Y
 rmdir ..\build\branch\data\definitions /S /Q
 mkdir ..\build\branch\compiled\
 copy compiled\ ..\build\branch\compiled\
-del ..\build\branch\compiled\*.gz
+if "%1" NEQ "static-share" del ..\build\branch\compiled\*.gz
 del ..\build\branch\compiled\*.map
 mkdir ..\build\branch\res\icon\%1
 copy res\icon\%1\ ..\build\branch\res\icon\%1
