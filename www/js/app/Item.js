@@ -384,7 +384,10 @@ Item.prototype = {
         var searchFilter = ($parent.searchKeyword() === '' || $parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
 
-        var itemStatValue = this.primaryStatValue().toString();
+        var itemStatValue = "";
+        if (this.primaryStatValue && this.primaryStatValue()) {
+            itemStatValue = this.primaryStatValue().toString();
+        }
         var operator = $parent.searchKeyword().substring(0, 1);
         if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
             var operand = "=",
