@@ -33,34 +33,14 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/share/data/common',
 		exclusions: []
 	  },	  
-	  js: {
+	  compiled: {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
 		  authKey: 'mraKey'
 		},
-		src: '../www/js/',
-		dest: '/myredditall/towerghostfordestiny.com/www/www/js',
-		exclusions: []
-	  },
-	  css: {
-		auth: {
-		  host: 'towerghostfordestiny.com',
-		  port: 21,
-		  authKey: 'mraKey'
-		},
-		src: '../www/css/',
-		dest: '/myredditall/towerghostfordestiny.com/www/www/css',
-		exclusions: []
-	  },
-	  definitions: {
-		auth: {
-		  host: 'towerghostfordestiny.com',
-		  port: 21,
-		  authKey: 'mraKey'
-		},
-		src: '../www/data/definitions/',
-		dest: '/myredditall/towerghostfordestiny.com/www/www/data/definitions',
+		src: '../www/compiled/',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/compiled',
 		exclusions: []
 	  },
 	  locale: {
@@ -94,7 +74,7 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/www/',
 		simple: true,
 		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
-		exclusions: [ 'assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
+		exclusions: [ 'compiled','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
 	  }
 	});
 

@@ -179,7 +179,8 @@
     // grab manifest.json location from <script manifest="..."></script>
     var s = document.querySelector('script[manifest]');
     // Not in localStorage? Fetch it!
-    if (!manifest) {
+    // Modified the code to always fetch the manifest if loaded locally, this allows auto updates to remain off and still be able to use the new manifests
+    if (!manifest || manifest && manifest.root && manifest.root == "./") {
         var noQueryString = location.href.indexOf("?") > -1 ? location.href.split("?")[0] : location.href;
         var url = noQueryString.replace(noQueryString.split("/")[noQueryString.split("/").length - 1], '') + ((s ? s.getAttribute('manifest') : null) || 'bootstrap.json') + '?now=' + (new Date()).getTime();
         // get manifest.json, then loadManifest.
