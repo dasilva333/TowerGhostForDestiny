@@ -12,8 +12,11 @@ mkdir ..\build\branch\js\
 xcopy js\* ..\build\branch\js\ /E /Y
 mkdir ..\build\branch\data\
 xcopy data\* ..\build\branch\data\ /E /Y
-mkdir ..\build\branch\css\
-copy css\ ..\build\branch\css\
+rmdir ..\build\branch\data\definitions /S /Q
+mkdir ..\build\branch\compiled\
+copy compiled\ ..\build\branch\compiled\
+del ..\build\branch\compiled\*.gz
+del ..\build\branch\compiled\*.map
 mkdir ..\build\branch\res\icon\%1
 copy res\icon\%1\ ..\build\branch\res\icon\%1
 mkdir ..\build\branch\res\screen\%1
