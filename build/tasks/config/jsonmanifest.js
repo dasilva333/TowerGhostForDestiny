@@ -90,7 +90,31 @@ module.exports = function(grunt) {
 			'compiled/*.js'
         ],
         dest: ['../www/bootstrap.json']
-      }
+      },
+	  share: {
+        options: {
+          basePath: '../www/',
+          exclude: [],
+          //load all found assets
+          loadall: false,
+          //manually add files to the manifest
+          files: {},
+          //manually define the files that should be injected into the page
+          load: [
+			"/auto_updates.cfm?compiled/tower_ghost.css",
+			"/auto_updates.cfm?compiled/definitions.json", 
+			"/auto_updates.cfm?compiled/tower_ghost.js"
+		  ],
+          // root location of files to be loaded in the load array.
+          root: "./"
+        },
+        src: [
+			'compiled/*.css',
+			'compiled/*.json',
+			'compiled/*.js'
+        ],
+        dest: ['../www/bootstrap.json']
+      },
     });
 
 };
