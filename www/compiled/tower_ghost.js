@@ -7457,7 +7457,11 @@ Item.prototype = {
                 isUnique: false
             };
             if (item.primaryStat) {
-                itemObject.primaryStat(item.primaryStat.value);
+                if (item.primaryStat && item.primaryStat.value) {
+                    itemObject.primaryStat(item.primaryStat.value);
+                } else {
+                    itemObject.primaryStat(item.primaryStat);
+                }
             }
             //hack for issue #442
             if (itemObject.bucketType == "Artifact") {
@@ -11032,79 +11036,6 @@ var app = function() {
             function(staticProfiles) {
                 if (staticProfiles.length === 0) {
                     return BootstrapDialog.alert("There is no shared data to view for this profile");
-                }
-                if (staticProfiles && staticProfiles.Response) {
-                    var data = staticProfiles.Response.data;
-                    //console.log("we got someone who hasnt used the app");
-                    //window.d = data;
-                    staticProfiles = _.map(data.characters, function(character, index) {
-                        var items = _.map(
-                            _.filter(data.items, function(item) {
-                                return item.characterIndex == index;
-                            }),
-                            function(item) {
-                                var info = _itemDefs[item.itemHash];
-                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-                                    var description, tierTypeName, itemDescription, itemTypeName;
-                                    try {
-                                        description = decodeURIComponent(info.itemName);
-                                        tierTypeName = decodeURIComponent(info.tierTypeName);
-                                        itemDescription = decodeURIComponent(info.itemDescription);
-                                        itemTypeName = decodeURIComponent(info.itemTypeName);
-                                    } catch (e) {
-                                        description = info.itemName;
-                                        tierTypeName = info.tierTypeName;
-                                        itemDescription = info.itemDescription;
-                                        itemTypeName = info.itemTypeName;
-                                    }
-                                    var primaryStat = item.quantity;
-                                    if (item && item.primaryStat && item.primaryStat.value) {
-                                        primaryStat = item.primaryStat.value;
-                                    }
-                                    return {
-                                        id: item.itemHash,
-                                        _id: item.itemId,
-                                        characterId: data.characters[item.characterIndex].characterBase.characterId,
-                                        damageType: item.damageType,
-                                        damageTypeName: tgd.DestinyDamageTypes[item.damageType],
-                                        isEquipped: item.transferStatus == 1,
-                                        isGridComplete: item.isGridComplete,
-                                        locked: item.locked,
-                                        description: description,
-                                        itemDescription: itemDescription,
-                                        bucketType: getBucketTypeHelper(item, info),
-                                        type: info.itemSubType,
-                                        typeName: itemTypeName,
-                                        tierType: info.tierType,
-                                        tierTypeName: tierTypeName,
-                                        icon: "data" + info.icon,
-                                        primaryStat: primaryStat,
-                                        progression: false,
-                                        weaponIndex: tgd.DestinyWeaponPieces.indexOf(getBucketTypeHelper(item, info)),
-                                        armorIndex: tgd.DestinyArmorPieces.indexOf(getBucketTypeHelper(item, info)),
-                                        perks: [],
-                                        stats: [],
-                                        isUnique: false,
-                                        href: "https://destinydb.com/items/" + item.itemHash
-                                    };
-                                }
-                            });
-
-                        return {
-                            items: _.filter(items, function(item) {
-                                return typeof item !== "undefined";
-                            }),
-                            id: character.characterBase.characterId,
-                            race: _raceDefs[character.characterBase.raceHash].raceName,
-                            order: index,
-                            gender: tgd.DestinyGender[character.characterBase.genderType],
-                            classType: tgd.DestinyClass[character.characterBase.classType],
-                            level: character.characterLevel,
-                            imgIcon: self.bungie.getUrl() + character.emblemPath,
-                            icon: self.makeBackgroundUrl(character.emblemPath),
-                            background: self.makeBackgroundUrl(character.backgroundPath)
-                        };
-                    });
                 }
                 _.each(staticProfiles, function(data, index) {
                     var avatar = {

@@ -12,6 +12,6 @@ module.exports = function (grunt) {
         'ftpush:locale'
 	]);
 	grunt.registerTask('deployshare', [
-        'ftpush:shareAssets', 'ftpush:shareData', 'ftpush:shareImages'
+        'ftpush:shareAssets'
 	]);
 };

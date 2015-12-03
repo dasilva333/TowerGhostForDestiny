@@ -202,7 +202,11 @@ Item.prototype = {
                 isUnique: false
             };
             if (item.primaryStat) {
-                itemObject.primaryStat(item.primaryStat.value);
+                if (item.primaryStat && item.primaryStat.value) {
+                    itemObject.primaryStat(item.primaryStat.value);
+                } else {
+                    itemObject.primaryStat(item.primaryStat);
+                }
             }
             //hack for issue #442
             if (itemObject.bucketType == "Artifact") {
