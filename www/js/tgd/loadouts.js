@@ -124,6 +124,17 @@
 	};
 
 	tgd.Loadout.prototype = {
+	    /* this function is meant to normalize the difference between having ghost/artifacts in armor and it existing under general */
+	    normalize: function(bucketTypes, extras) {
+	        var arrUnion = _.difference(extras, bucketTypes),
+	            arr = [];
+	        if (arrUnion.length == extras.length) {
+	            arr = _.union(bucketTypes, extras);
+	        } else {
+	            arr = _.difference(bucketTypes, extras);
+	        }
+	        return arr;
+	    },
 	    toJSON: function() {
 	        var copy = ko.toJS(this); //easy way to get a clean copy
 	        //copy.items = _.pluck(copy.items, '_id'); //strip out items metadata
@@ -348,17 +359,6 @@
 	                    });
 	                });
 	            };
-	            /* this function is meant to normalize the difference between having ghost/artifacts in armor and it existing under general */
-	            var normalize = function(bucketTypes, extras) {
-	                var arrUnion = _.difference(extras, bucketTypes),
-	                    arr = [];
-	                if (arrUnion.length == extras.length) {
-	                    arr = _.union(bucketTypes, extras);
-	                } else {
-	                    arr = _.difference(bucketTypes, extras);
-	                }
-	                return arr;
-	            };
 	            /* this assumes there is a swap item and a target item*/
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
@@ -376,7 +376,7 @@
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                    return layout.bucketTypes.indexOf(bucketType) > -1;
 	                })[0];
-	                var actualBucketTypes = normalize(layout.bucketTypes, layout.extras);
+	                var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
 	                //TODO: TypeError: undefined is not an object (evaluating 'vault.items')
 	                var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
@@ -534,12 +534,14 @@
 	                        var maxBucketSize = 10;
 	                        var targetBucketSize = targetBucket.length;
 	                        if (targetCharacter.id == "Vault") {
-	                            targetBucketSize = _.where(targetCharacter.items(), {
-	                                bucketType: key
-	                            }).length;
-	                            maxBucketSize = _.filter(tgd.DestinyLayout, function(layout) {
+	                            var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return layout.bucketTypes.indexOf(key) > -1;
-	                            })[0].counts[0];
+	                            })[0];
+	                            var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
+	                            targetBucketSize = _.filter(targetCharacter.items(), function(item) {
+	                                return actualBucketTypes.indexOf(item.bucketType) > -1;
+	                            }).length;
+	                            maxBucketSize = layout.counts[0];
 	                        }
 	                        //tgd.localLog("the current bucket size is " + targetBucketSize);
 	                        var targetMaxed = (targetBucketSize == maxBucketSize);
