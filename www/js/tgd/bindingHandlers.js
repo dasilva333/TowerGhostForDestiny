@@ -1,3 +1,20 @@
+tgd.imageErrorHandler = function(src, element) {
+    if (element && element.src) {
+        return function() {
+            var source = element.src;
+            if (source.indexOf(tgd.remoteImagePath) == -1) {
+                element.src = tgd.remoteImagePath + src;
+            }
+        };
+    }
+};
+
+window.ko.bindingHandlers.itemImageHandler = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        element.onerror = tgd.imageErrorHandler(viewModel.icon, element);
+    }
+};
+
 window.ko.bindingHandlers.refreshableSection = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         //tgd.localLog(element);

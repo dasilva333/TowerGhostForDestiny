@@ -7,11 +7,15 @@ window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
-window.tgd = {};
-if ( isWindowsPhone || isFirefox ){
-	window.requestFileSystem = function(){}
+window.isStaticBrowser = location.protocol.indexOf("http") > -1;
+if ( window.isStaticBrowser ){
+	window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
 }
-tgd.localLogging = false;
+window.tgd = {};
+if ( isWindowsPhone ){
+	window.requestFileSystem = function(){};
+}
+tgd.localLogging = location.href.indexOf("debug") > -1;
 tgd.localLog = function(msg) {
     if (tgd.localLogging) {
         console.log(msg);
@@ -22,11 +26,21 @@ tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
 tgd.dataDir = "data";
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
-//Network Keys, Axiomatic Beads, House Banners, Silken Codex
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready","Twist Fate","Scabbard"];
-tgd.DestinyGlimmerConsumables = [3632619276, 269776572, 2904517731, 1932910919];
-tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries"];
+tgd.DestinyGeneralItems = {
+	"GlimmerConsumables": [3632619276, 269776572, 2904517731, 1932910919], //Network Keys, Axiomatic Beads, House Banners, Silken Codex
+	"Synths": [211861343, 928169143, 2180254632],
+	"Parts": [1898539128],
+	"Motes": [937555249],
+	"Coins": [417308266, 1738186005, 605475555],  //Passage Coins, Strange Coins, 3 of Coins
+	"Runes": [1565194903, 2620224196, 1556533319, 1314217221, 2906158273], //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
+	"Planetary Resources": [2254123540, 2882093969, 3164836592, 3242866270, 1797491610], //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
+	"Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803],  //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
+	"Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
+};
+tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries" ,"Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
@@ -38,6 +52,7 @@ tgd.DestinyLayout = [
         array: 'weapons',
         counts: [72, 30],
         bucketTypes: tgd.DestinyWeaponPieces,
+		extras: [],
         view: 1,
         headerText: 'inventory_weapons'
     },
@@ -46,6 +61,7 @@ tgd.DestinyLayout = [
         array: 'armor',
         counts: [72, 50],
         bucketTypes: tgd.DestinyArmorPieces,
+		extras: tgd.DestinyGeneralExceptions,
         view: 2,
         headerText: 'inventory_armor'
     },
@@ -54,6 +70,7 @@ tgd.DestinyLayout = [
         array: '',
         counts: [0, 0],
         bucketTypes: ['Subclasses'],
+		extras: [],
         view: 3,
         headerText: 'inventory_subclasses'
     },
@@ -62,6 +79,7 @@ tgd.DestinyLayout = [
         array: 'general',
         counts: [36, 80],
         bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Emote'],
+		extras: tgd.DestinyGeneralExceptions,
         view: 3,
         headerText: 'inventory_general'
     },
@@ -70,6 +88,7 @@ tgd.DestinyLayout = [
         array: 'postmaster',
         counts: [60, 60],
         bucketTypes: ['Messages', 'Invisible', 'Lost Items', 'Bounties', 'Quests', 'Mission'],
+		extras: [],
         view: 3,
         headerText: 'inventory_postmaster'
     }
@@ -265,148 +284,5 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-	autoUpdates: false
+	autoUpdates: (isFirefox || isIOS) ? "true" : false
 };
-
-tgd.perksTemplate = '<div class="destt-talent">' +
-	'<% perks.forEach(function(perk){ %>' +
-		'<div class="destt-talent-wrapper">' +
-			'<div class="destt-talent-icon">' +
-				'<img src="<%= perk.iconPath %>" width="36">' +
-			'</div>' +
-			'<div class="destt-talent-description" style="color: <%= perk.active == true ? \'white\' : \'gray\' %>">' +
-				'<%= perk.description %>' +
-			'</div>' +
-		'</div>' +
-	'<% }) %>' +
-'</div>';
-
-tgd.statsTemplate = '<div class="destt-stat">' +
-	'<% Object.keys(stats).forEach(function(key){ %>' +
-		'<div class="stat-bar">' +
-			'<div class="stat-bar-label">' +
-				'<%= key %>' +
-			'</div>' +
-			'<div class="stat-bar-static-value">' +
-				'<%= stats[key] %>' +
-			'</div>' +
-			'<div class="stat-bar-empty"><div style="width:<%= stats[key] %>%" class="stat-bar-fill"></div></div>'+
-			'<div class="stat-bar-value">' +
-				'<%= stats[key] %>' +
-			'</div>' +
-		'</div>' +
-	'<% }) %>' +
-'</div>';
-
-tgd.languagesTemplate = '<div class="row button-group">' +
-	'<% languages.forEach(function(language){ %>' +
-		'<div class="col-xs-12 col-sm-8 col-md-8 col-lg-6 text-center">' +
-			'<button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? \'btn-primary\' : \'\' %>" value="<%= language.code %>"><%= language.description %></button>' +
-		'</div>' +
-	'<% }) %>' +
-'</div>';
-
-tgd.normalizeTemplate = '<div id="menu">' +
-	'<div class="panel list-group">' +
-		'<div class="list-group-item row">' +
-			'<div class="item-name col-xs-24 col-sm-24 col-md-24 col-lg-24">' + 
-				'<!-- reenable this button if/when more options are added ' +
-				'<p class="alignright"><button class="btn btn-default" data-toggle="collapse" data-target="#opt1" data-parent="#menu">...</button></p>' +
-				'-->' +
-				'<p>Normalize: equally distribute <%= item.description %> across the selected characters</p>' +
-			'</div>' +
-		'</div>' +
-		'<div id="opt1" class="collapse in">' +
-			'<div class="list-group-item row">' +
-				'<div class="locations col-xs-24 col-sm-24 col-md-24 col-lg-24">' +
-					'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">' +
-						'<div class="attkIcon">' +
-							'<!-- <div class="icon-banner"><%= item.description %></div> -->' +
-							'<img src="<%= item.icon %>">' +
-							'<div class="lower-left" id="total"><%= total %></div>' +
-						'</div>' +
-					'</div>' +
-					'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4"><!-- padding --></div>' +
-					'<% for (i = 0; i < characters.length; i++){ %>' +
-						'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4" id="char<%= i %>">' +
-							'<div class="attkIcon">' +
-								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
-								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
-								'<% } else { %>' +
-									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
-								'<% } %>' +
-								'<div class="lower-left"><%= characters[i].classLetter() %></div>' +
-							'</div>' +
-						'</div>' +
-					'<% } %>' +
-				'</div>' +
-			'</div>' +
-		'</div>' +		
-		'<!-- example for adding more entries ' +
-		'<div class="list-group-item row">' + 
-			'<p class="alignright"><button class="btn btn-default" data-toggle="collapse" data-target="#opt2" data-parent="#menu">...</button></p>' +
-			'<p>Other thing: blah blah <%= item.description %> blah blah</p>' +
-		'</div>' +		
-		'<div id="opt2" class="collapse">' +
-			'<a class="list-group-item row">sub-item 1</a>' +
-			'<a class="list-group-item row">sub-item 2</a>' +
-		'</div>' +
-		'-->' +
-	'</div>' +
-'</div>';
-
-tgd.selectMultiCharactersTemplate = '<div id="menu">' +
-	'<div class="panel list-group">' +
-		'<div class="list-group-item row">' +
-			'<div class="item-name col-xs-24 col-sm-24 col-md-24 col-lg-24">' + 				
-				'<p><%= description %></p>' +
-			'</div>' +
-		'</div>' +
-		'<div id="opt1" class="collapse in">' +
-			'<div class="list-group-item row">' +
-				'<div class="locations col-xs-24 col-sm-24 col-md-24 col-lg-24">' +					
-					'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4"><!-- padding --></div>' +
-					'<% for (i = 0; i < characters.length; i++){ %>' +
-						'<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4" id="char<%= i %>">' +
-							'<div class="attkIcon">' +
-								'<div class="icon-banner"><%= characters[i].classType() %></div>' +								
-								'<% if (selected[characters[i].id] == true){ %>' +
-									'<img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">' +
-								'<% } else { %>' +
-									'<img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">' +
-								'<% } %>' +
-								'<div class="lower-left"><%= characters[i].classLetter() %></div>' +
-							'</div>' +
-						'</div>' +
-					'<% } %>' +
-				'</div>' +
-			'</div>' +
-		'</div>' +
-	'</div>' +
-'</div>';
-	
-tgd.swapTemplate = '<p>Tip: You may click on a swap item to cycle through alternative replacements. </p><ul class="list-group">' +
-	'<% swapArray.forEach(function(pair){ %>' +
-		'<li class="list-group-item">' +
-			'<div class="row">' +
-				'<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12">' +
-					'<%= pair.description %>' +
-				'</div>' +
-				'<div class="text-right col-xs-10 col-sm-10 col-md-10 col-lg-4">' +
-					'<a class="item" href="<%= pair.targetItem && pair.targetItem.href %>">' +
-						'<img class="itemImage" src="<%= (pair.targetItem && pair.targetItem.icon) || pair.targetIcon %>">' +
-					'</a>' +
-				'</div>' +
-				'<div class="text-center col-xs-4 col-sm-4 col-md-4 col-lg-4">' +
-					'<img src="<%= pair.actionIcon %>">' +
-				'</div>' +
-				'<div class="text-left col-xs-10 col-sm-10 col-md-10 col-lg-4">' +
-					'<a class="swapItem item" href="<%= pair.swapItem && pair.swapItem.href %>" instanceid="<%= pair.swapItem && pair.swapItem._id %>">' +
-						'<img class="itemImage" src="<%= (pair.swapItem && pair.swapItem.icon) || pair.swapIcon %>">' +
-					'</a>' +
-				'</div>' +
-			'</div>' +
-		'</li>' +
-	'<% }) %>' +
-'</ul>';

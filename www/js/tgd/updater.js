@@ -1,0 +1,92 @@
+(function() {
+
+    tgd.localLog("init auto updates");
+    try {
+
+        // Check for Cordova
+        var isCordova = typeof cordova !== 'undefined',
+            // CordovaPromiseFS
+            fs,
+            // CordovaFileLoader
+            loader,
+            // script-tag...
+            script,
+            // ...that contains the serverRoot
+            serverRoot;
+
+        // Get serverRoot from script tag.
+        script = document.querySelector('script[server]');
+        if (script) serverRoot = script.getAttribute('server');
+        if (!serverRoot) {
+            throw new Error('Add a "server" attribute to the bootstrap.js script!');
+        }
+
+        // Initialize filesystem and loader
+        fs = new CordovaPromiseFS({
+            persistent: isCordova || isFirefox, // Chrome should use temporary storage.
+            Promise: Promise
+        });
+
+        tgd.loader = new CordovaAppLoader({
+            fs: fs,
+            localRoot: 'app',
+            serverRoot: serverRoot,
+            mode: 'mirror',
+            cacheBuster: true
+        });
+
+        // Check > Download > Update
+        tgd.checkUpdates = function() {
+            $.toaster({
+                priority: 'info',
+                title: 'Info',
+                message: "Checking for updates"
+            });
+            tgd.localLog("Checking for auto updates");
+            tgd.loader.check()
+                .then(function() {
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Info',
+                        message: "Downloading updates"
+                    });
+                    tgd.localLog("Downloading auto updates");
+                    return tgd.loader.download(_.throttle(function(progress) {
+                        tgd.localLog("Downloaded " + progress);
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Info',
+                            message: "Downloading file, completed " + (progress.percentage * 100).toFixed(0) + "%"
+                        });
+                    }, 1000));
+                })
+                .catch(function(e) {
+                    $.toaster({
+                        priority: 'danger',
+                        title: 'Error',
+                        message: "Problem checking for updates: " + e.message
+                    });
+                })
+                .then(function() {
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Info',
+                        message: "Installing updates"
+                    });
+                    return tgd.loader.update();
+                }, function(err) {
+                    $.toaster({
+                        priority: 'danger',
+                        title: 'Error',
+                        message: 'Auto-update error:' + err
+                    });
+                });
+        };
+
+        if (localStorage.autoUpdates == "true" || tgd.defaults.autoUpdates == "true") {
+            tgd.checkUpdates();
+        }
+    } catch (e) {
+        tgd.localLog("update crash" + e);
+    }
+})();

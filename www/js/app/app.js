@@ -12,7 +12,6 @@ var app = function() {
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
-    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates"));
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
@@ -30,6 +29,7 @@ var app = function() {
     this.lgColumn = ko.pureComputed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.pureComputed(new tgd.StoreObj("activeView"));
     this.activeSort = ko.pureComputed(new tgd.StoreObj("activeSort"));
+    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates", "true"));
     this.doRefresh = ko.pureComputed(new tgd.StoreObj("doRefresh", "true"));
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
@@ -228,7 +228,7 @@ var app = function() {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Sub title for materials and consumables */
-            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
+            if (tgd.DestinyGeneralItems["GlimmerConsumables"].indexOf(activeItem.id) > -1) {
                 $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
             }
             /* Add Required Level if provided */
@@ -285,22 +285,25 @@ var app = function() {
                 );
                 if (self.advancedTooltips() === true && activeItem.weaponIndex > -1) {
                     var magazineRow = stats.find(".stat-bar:last");
-                    var itemStats = _.map(_itemDefs[activeItem.itemHash].stats, function(obj, key) {
-                        obj.name = _statDefs[key].statName;
-                        return obj;
-                    });
-                    var desireableStats = ["Aim assistance", "Equip Speed"];
-                    _.each(desireableStats, function(statName) {
-                        var statObj = _.findWhere(itemStats, {
-                            name: statName
+                    var itemDef = _itemDefs[activeItem.itemHash];
+                    if (itemDef && itemDef.stats) {
+                        var itemStats = _.map(itemDef.stats, function(obj, key) {
+                            obj.name = _statDefs[key].statName;
+                            return obj;
                         });
-                        if (statObj) {
-                            var clonedRow = magazineRow.clone();
-                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                            clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                            magazineRow.before(clonedRow);
-                        }
-                    });
+                        var desireableStats = ["Aim assistance", "Equip Speed"];
+                        _.each(desireableStats, function(statName) {
+                            var statObj = _.findWhere(itemStats, {
+                                name: statName
+                            });
+                            if (statObj) {
+                                var clonedRow = magazineRow.clone();
+                                clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                                clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                                magazineRow.before(clonedRow);
+                            }
+                        });
+                    }
                 }
             }
             if (activeItem.perks.length > 0) {
@@ -330,8 +333,16 @@ var app = function() {
                         $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 }
+                $content.find("img").bind("error", function() {
+                    var perkName = $(this).attr("data-name");
+                    var src = _.findWhere(activeItem.perks, {
+                        name: perkName
+                    }).iconPath;
+                    var element = $('img[data-name="' + perkName + '"]')[0];
+                    tgd.imageErrorHandler(src, element)();
+                });
             }
-            if (activeItem.objectives.length > 0) {
+            if (activeItem.objectives && activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
                     var label = "";
@@ -478,6 +489,18 @@ var app = function() {
         return function() {
             self.toggleBootstrapMenu();
             if (collection in _collections || collection == "All") {
+                if (collection == "Year 2 Items" || collection == "Year 1 Items") {
+                    _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
+                        return character.items();
+                    })), function(item) {
+                        if (collection == "Year 2 Items") {
+                            return item.primaryStatValue() > tgd.DestinyY1Cap || item.id in _collections[collection];
+                        } else {
+                            return item.primaryStatValue() <= tgd.DestinyY1Cap;
+                        }
+
+                    }), 'id');
+                }
                 self.setFilter(collection == "All" ? [] : _collections[collection]);
                 if (collection == "All") {
                     self.showMissing(false);
@@ -537,7 +560,7 @@ var app = function() {
     this.setGeneralFilter = function(searchType) {
         return function() {
             self.toggleBootstrapMenu();
-            self.activeView(3);
+            if (searchType != "Engram") self.activeView(3);
             self.generalFilter(searchType);
         };
     };
@@ -659,7 +682,8 @@ var app = function() {
                 });
                 loadingData = false;
                 self.loadingUser(false);
-                //console.timeEnd("avatars.forEach");
+                $ZamTooltips.init();
+                //console.timeEnd("new profile");
             }
         }
         self.bungie.search(self.preferredSystem(), function(e) {
@@ -701,9 +725,8 @@ var app = function() {
             });
             total = avatars.length;
             _.map(avatars, function(avatar) {
+                //console.time("new profile");
                 var profile = new Profile(avatar);
-                profile.weapons.subscribe(self.addWeaponTypes);
-                profile.items.subscribe(self.addTierTypes);
                 done(profile);
             });
         });
@@ -985,9 +1008,9 @@ var app = function() {
             } else if (isChrome || isMobile) {
                 window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
             } else {
-                window.ref = window.open('about:blank');
-                window.ref.opener = null;
-                window.ref.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
+                //window.ref = window.open('about:blank');
+                //window.ref.opener = null;
+                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
             }
             if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
@@ -1073,6 +1096,19 @@ var app = function() {
     var id = -1;
     this.apiRequest = function(params, callback) {
         var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
+        $.ajax({
+            url: apiURL,
+            data: params,
+            type: "POST",
+            success: function(data) {
+                var response = (typeof data == "string") ? JSON.parse(data) : data;
+                callback(response);
+            }
+        });
+    };
+
+    this.staticApiRequest = function(params, callback) {
+        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -1636,115 +1672,239 @@ var app = function() {
         }
     };
 
+    this.loadStatic = function(username) {
+        self.staticApiRequest({
+                username: username
+            },
+            function(staticProfiles) {
+                if (staticProfiles.length === 0) {
+                    return BootstrapDialog.alert("There is no shared data to view for this profile");
+                }
+                if (staticProfiles && staticProfiles.Response) {
+                    var data = staticProfiles.Response.data;
+                    //console.log("we got someone who hasnt used the app");
+                    //window.d = data;
+                    staticProfiles = _.map(data.characters, function(character, index) {
+                        var items = _.map(
+                            _.filter(data.items, function(item) {
+                                return item.characterIndex == index;
+                            }),
+                            function(item) {
+                                var info = _itemDefs[item.itemHash];
+                                if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
+                                    var description, tierTypeName, itemDescription, itemTypeName;
+                                    try {
+                                        description = decodeURIComponent(info.itemName);
+                                        tierTypeName = decodeURIComponent(info.tierTypeName);
+                                        itemDescription = decodeURIComponent(info.itemDescription);
+                                        itemTypeName = decodeURIComponent(info.itemTypeName);
+                                    } catch (e) {
+                                        description = info.itemName;
+                                        tierTypeName = info.tierTypeName;
+                                        itemDescription = info.itemDescription;
+                                        itemTypeName = info.itemTypeName;
+                                    }
+                                    var primaryStat = item.quantity;
+                                    if (item && item.primaryStat && item.primaryStat.value) {
+                                        primaryStat = item.primaryStat.value;
+                                    }
+                                    return {
+                                        id: item.itemHash,
+                                        _id: item.itemId,
+                                        characterId: data.characters[item.characterIndex].characterBase.characterId,
+                                        damageType: item.damageType,
+                                        damageTypeName: tgd.DestinyDamageTypes[item.damageType],
+                                        isEquipped: item.transferStatus == 1,
+                                        isGridComplete: item.isGridComplete,
+                                        locked: item.locked,
+                                        description: description,
+                                        itemDescription: itemDescription,
+                                        bucketType: getBucketTypeHelper(item, info),
+                                        type: info.itemSubType,
+                                        typeName: itemTypeName,
+                                        tierType: info.tierType,
+                                        tierTypeName: tierTypeName,
+                                        icon: "data" + info.icon,
+                                        primaryStat: primaryStat,
+                                        progression: false,
+                                        weaponIndex: tgd.DestinyWeaponPieces.indexOf(getBucketTypeHelper(item, info)),
+                                        armorIndex: tgd.DestinyArmorPieces.indexOf(getBucketTypeHelper(item, info)),
+                                        perks: [],
+                                        stats: [],
+                                        isUnique: false,
+                                        href: "https://destinydb.com/items/" + item.itemHash
+                                    };
+                                }
+                            });
+
+                        return {
+                            items: _.filter(items, function(item) {
+                                return typeof item !== "undefined";
+                            }),
+                            id: character.characterBase.characterId,
+                            race: _raceDefs[character.characterBase.raceHash].raceName,
+                            order: index,
+                            gender: tgd.DestinyGender[character.characterBase.genderType],
+                            classType: tgd.DestinyClass[character.characterBase.classType],
+                            level: character.characterLevel,
+                            imgIcon: self.bungie.getUrl() + character.emblemPath,
+                            icon: self.makeBackgroundUrl(character.emblemPath),
+                            background: self.makeBackgroundUrl(character.backgroundPath)
+                        };
+                    });
+                }
+                _.each(staticProfiles, function(data, index) {
+                    var avatar = {
+                        processed: true,
+                        characterBase: {
+                            characterId: data.id,
+                            stats: data.stats,
+                            level: data.level,
+                            race: data.race,
+                            gender: data.gender,
+                            classType: data.classType,
+                            background: data.background,
+                            icon: data.icon
+                        },
+                        items: data.items,
+                        index: data.order
+                    };
+                    var profile = new Profile(avatar);
+                    self.characters.push(profile);
+                });
+            }
+        );
+    };
+
     this.init = function() {
         _.each(ko.templates, function(content, name) {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
         });
-        $.idleTimer(1000 * 60 * 30);
+
+        if (window.isStaticBrowser) {
+            $ZamTooltips.init();
+            self.bungie = new tgd.bungie('', function() {
+                self.loadStatic(unescape(location.search.replace('?', '')));
+            });
+        } else {
+            $.idleTimer(1000 * 60 * 30);
+            $(document).on("idle.idleTimer", function(event, elem, obj) {
+                clearInterval(self.refreshInterval);
+            });
+            $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
+                self.refreshHandler();
+            });
+        }
+
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
             self.lgColumn(tgd.defaults.lgColumn);
             self.mdColumn(tgd.defaults.mdColumn);
             self.smColumn(tgd.defaults.smColumn);
             self.xsColumn(tgd.defaults.xsColumn);
         }
-        $(document).on("idle.idleTimer", function(event, elem, obj) {
-            clearInterval(self.refreshInterval);
-        });
-        $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
-            self.refreshHandler();
-        });
+
         _.each(tgd.DestinyLayout, function(layout) {
             self.allLayouts.push(new tgd.Layout(layout));
         });
+
         self.initLocale();
+
         if (_.isUndefined(window._itemDefs) || _.isUndefined(window._perkDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
         self.initItemDefs();
-        tgd.perksTemplate = _.template(tgd.perksTemplate);
-        tgd.statsTemplate = _.template(tgd.statsTemplate);
-        tgd.normalizeTemplate = _.template(tgd.normalizeTemplate);
-        tgd.selectMultiCharactersTemplate = _.template(tgd.selectMultiCharactersTemplate);
-        tgd.swapTemplate = _.template(tgd.swapTemplate);
-        tgd.languagesTemplate = _.template(app.activeText().language_text + tgd.languagesTemplate);
+
+        /* These templates are loaded after the locale for the language template, they are used dynamically for pop ups and other content */
+        _.each(_.templates, function(content, templateName) {
+            if (templateName == "languagesTemplate") {
+                content = self.activeText().language_text + content;
+            }
+            tgd[templateName] = _.template(content);
+        });
+
         tgd.duplicates = ko.observableArray().extend({
             rateLimit: {
                 timeout: 5000,
                 method: "notifyWhenChangesStop"
             }
         });
-        self.doRefresh.subscribe(self.refreshHandler);
-        self.refreshSeconds.subscribe(self.refreshHandler);
-        self.loadoutMode.subscribe(self.refreshHandler);
+        if (!window.isStaticBrowser) {
+            self.doRefresh.subscribe(self.refreshHandler);
+            self.refreshSeconds.subscribe(self.refreshHandler);
+            self.loadoutMode.subscribe(self.refreshHandler);
+        }
+
         self.padBucketHeight.subscribe(self.redraw);
         self.refreshHandler();
-        self.bungie_cookies = "";
-        if (window.localStorage && window.localStorage.getItem) {
-            self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-        }
-        var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
 
-        //This makes it so that the viewport width behaves like android/ios browsers
-        if (isWindowsPhone) {
-            var msViewportStyle = document.createElement("style");
-            msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
-            document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
-        }
+        if (!window.isStaticBrowser) {
+            self.bungie_cookies = "";
+            if (window.localStorage && window.localStorage.getItem) {
+                self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
+            }
+            var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
 
-        var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
-        ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
-        ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
-        if (dragAndDropEnabled) {
-            ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
-            ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
-            ko.bindingHandlers.sortable.options = {
-                start: function() {
-                    $ZamTooltips.isEnabled = false;
-                    $ZamTooltips.hide();
-                },
-                stop: function() {
-                    if (self.tooltipsEnabled() === true)
-                        $ZamTooltips.isEnabled = true;
-                },
-                over: function() {
-                    $(this).addClass("active");
-                },
-                out: function() {
-                    $(this).removeClass("active");
-                },
-                sort: function(event, ui) {
-                    var $target = $(event.target);
-                    if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
-                        var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
-                        ui.helper.css({
-                            'top': top + 'px'
-                        });
-                    }
-                },
-                scroll: false,
-                revert: false,
-                placeholder: "item-placeholder",
-                cursorAt: {
-                    cursor: "move",
-                    top: 27,
-                    left: 27
-                },
-                cursor: "pointer",
-                appendTo: "body"
-            };
-        }
+            //This makes it so that the viewport width behaves like android/ios browsers
+            if (isWindowsPhone) {
+                var msViewportStyle = document.createElement("style");
+                msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
+                document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+            }
 
-        if (isMobile && isEmptyCookie) {
-            self.bungie = new tgd.bungie('', function() {
-                self.activeUser({
-                    "code": 99,
-                    "error": "Please sign-in to continue."
+            var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
+            ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
+            ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
+            if (dragAndDropEnabled) {
+                ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
+                ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
+                ko.bindingHandlers.sortable.options = {
+                    start: function() {
+                        $ZamTooltips.isEnabled = false;
+                        $ZamTooltips.hide();
+                    },
+                    stop: function() {
+                        if (self.tooltipsEnabled() === true)
+                            $ZamTooltips.isEnabled = true;
+                    },
+                    over: function() {
+                        $(this).addClass("active");
+                    },
+                    out: function() {
+                        $(this).removeClass("active");
+                    },
+                    sort: function(event, ui) {
+                        var $target = $(event.target);
+                        if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+                            var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+                            ui.helper.css({
+                                'top': top + 'px'
+                            });
+                        }
+                    },
+                    scroll: false,
+                    revert: false,
+                    placeholder: "item-placeholder",
+                    cursorAt: {
+                        cursor: "move",
+                        top: 27,
+                        left: 27
+                    },
+                    cursor: "pointer",
+                    appendTo: "body"
+                };
+            }
+
+            if (isMobile && isEmptyCookie) {
+                self.bungie = new tgd.bungie('', function() {
+                    self.activeUser({
+                        "code": 99,
+                        "error": "Please sign-in to continue."
+                    });
                 });
-            });
-        } else {
-            self.loadData();
+            } else {
+                self.loadData();
+            }
         }
-        $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);
@@ -1752,53 +1912,57 @@ var app = function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.collectionSets = _.sortBy(Object.keys(_collections));
-        $(document).on("click", "a[target='_system']", function() {
-            window.open(this.href, "_system");
-            return false;
-        });
-
+        if (!window.isStaticBrowser) {
+            $(document).on("click", "a[target='_system']", function() {
+                window.open(this.href, "_system");
+                return false;
+            });
+        }
         ko.applyBindings(self);
 
-        if (isMobile) {
-            //This sets up swipe left/swipe right for mobile devices
-            //TODO: Add an option to disable this for users
-            Hammer(document.getElementById('charactersContainer'), {
-                    //Removing these values and allowing HammerJS to figure out the best value based on the device
-                    //drag_min_distance: 1,
-                    //swipe_velocity: 0.1,
-                    drag_horizontal: true,
-                    drag_vertical: false
-                }).on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight)
-                .on("tap", self.globalClickHandler);
+        $("form").bind("submit", false);
 
-            //This ensures that the top status bar color matches the app
-            if (typeof StatusBar !== "undefined") {
-                StatusBar.styleBlackOpaque();
-                StatusBar.backgroundColorByHexString("#272B30");
-                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                    StatusBar.overlaysWebView(false);
+        if (!window.isStaticBrowser) {
+            if (isMobile) {
+                //This sets up swipe left/swipe right for mobile devices
+                //TODO: Add an option to disable this for users
+                Hammer(document.getElementById('charactersContainer'), {
+                        //Removing these values and allowing HammerJS to figure out the best value based on the device
+                        //drag_min_distance: 1,
+                        //swipe_velocity: 0.1,
+                        drag_horizontal: true,
+                        drag_vertical: false
+                    }).on("swipeleft", self.shiftViewLeft)
+                    .on("swiperight", self.shiftViewRight)
+                    .on("tap", self.globalClickHandler);
+
+                //This ensures that the top status bar color matches the app
+                if (typeof StatusBar !== "undefined") {
+                    StatusBar.styleBlackOpaque();
+                    StatusBar.backgroundColorByHexString("#272B30");
+                    if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+                        StatusBar.overlaysWebView(false);
+                    }
                 }
+
+                //This sets up inAppBilling donations for iOS/Android
+                if (typeof inappbilling != "undefined") {
+                    inappbilling.init(function() {}, function() {}, {
+                        showLog: false
+                    }, ['small', 'medium', 'large']);
+                }
+
+                //Prevent the user from pressing the back button to reload the app
+                document.addEventListener("backbutton", function(e) {
+                    e.preventDefault();
+                }, false);
             }
 
-            //This sets up inAppBilling donations for iOS/Android
-            if (typeof inappbilling != "undefined") {
-                inappbilling.init(function() {}, function() {}, {
-                    showLog: false
-                }, ['small', 'medium', 'large']);
-            }
-
-            //Prevent the user from pressing the back button to reload the app
-            document.addEventListener("backbutton", function(e) {
-                e.preventDefault();
-            }, false);
+            self.whatsNew();
         }
 
-        self.whatsNew();
         window.BOOTSTRAP_OK = true;
-        if (self.autoUpdates()) {
-            tgd.checkUpdates();
-        }
+
     };
 };
 

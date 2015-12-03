@@ -1,13 +1,13 @@
-if (!isNWJS && !isMobile && !isChrome) {
-    tgd.ffRequestId = 0;
-    tgd.ffXHRisReady = false;
+if (isFirefox) {
+    window.ffRequestId = 0;
+    window.ffXHRisReady = false;
 
     window.addEventListener("cs-ready", function(event) {
-        tgd.ffXHRisReady = true;
+        window.ffXHRisReady = true;
     }, false);
 
     var ffXHR = function() {
-        console.log("creating new ff obj");
+        tgd.localLog("creating new ff obj");
 
         var self = this;
 
@@ -15,11 +15,11 @@ if (!isNWJS && !isMobile && !isChrome) {
         this.status = 500;
         this.statusText = "";
         this.request = {};
-        this.id = tgd.ffRequestId++;
+        this.id = window.ffRequestId++;
         this.withCredentials = true;
 
         this.open = function(type, url, async, username, password) {
-            console.log("opening a new request");
+            tgd.localLog("opening a new request");
             self.request = {
                 id: self.id,
                 type: type,
@@ -43,19 +43,19 @@ if (!isNWJS && !isMobile && !isChrome) {
             return "";
         };
         this.send = function(payload) {
-            //console.log("send request to " + self.request.url);
             var send = function() {
                 if (payload)
                     self.request.payload = payload;
                 var event = document.createEvent('CustomEvent');
                 event.initCustomEvent("xhr-request", true, true, self.request);
                 document.documentElement.dispatchEvent(event);
+                tgd.localLog("send request to " + self.request.url);
             }
-            if (tgd.ffXHRisReady == true) {
+            if (window.ffXHRisReady == true) {
                 send();
             } else {
                 var check = setInterval(function() {
-                    if (tgd.ffXHRisReady == true) {
+                    if (window.ffXHRisReady == true) {
                         clearInterval(check);
                         send();
                     }
@@ -66,7 +66,7 @@ if (!isNWJS && !isMobile && !isChrome) {
             //console.log("state changed");
         };
         window.addEventListener("xhr-reply", function(event) {
-            //console.log("xhr-reply! " + self.request.url);
+            tgd.localLog("xhr-reply! " + self.request.url);
             var xhr = event.detail;
             if (xhr.id == self.id) {
                 self.readyState = xhr.readyState;
