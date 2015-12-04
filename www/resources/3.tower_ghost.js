@@ -250,7 +250,7 @@ tgd.defaults = {
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
-        if (element.src && element.src != "") {
+        if (element && element.src && element.src != "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
@@ -261,7 +261,8 @@ tgd.imageErrorHandler = function(src, element) {
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        element.onerror = tgd.imageErrorHandler(viewModel.icon, element);
+        var icon = ko.unwrap(viewModel.icon);
+        element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
 
@@ -2733,7 +2734,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.6.4";
+tgd.version = "3.6.6.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

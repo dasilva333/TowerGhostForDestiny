@@ -1,6 +1,6 @@
 tgd.imageErrorHandler = function(src, element) {
     return function() {
-        if (element.src && element.src != "") {
+        if (element && element.src && element.src != "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
@@ -11,7 +11,8 @@ tgd.imageErrorHandler = function(src, element) {
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        element.onerror = tgd.imageErrorHandler(viewModel.icon, element);
+        var icon = ko.unwrap(viewModel.icon);
+        element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
 
