@@ -496,7 +496,7 @@ var app = function() {
                         if (collection == "Year 2 Items") {
                             return item.primaryStatValue() > tgd.DestinyY1Cap || _collections[collection].indexOf(item.id) > -1;
                         } else {
-                            return item.primaryStatValue() <= tgd.DestinyY1Cap;
+                            return item.primaryStatValue() <= tgd.DestinyY1Cap && _collections["Year 2 Items"].indexOf(item.id) == -1;
                         }
 
                     }), 'id');

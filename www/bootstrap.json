@@ -10,13 +10,13 @@
     },
     "tower_ghost.js": {
       "filename": "compiled/tower_ghost.js",
-      "version": "e6adec6329226f8ad909faf56c70e5389ad27582f7c1a4d62385c16b8f4c8ef7"
+      "version": "5963d93f8e342c8d646fd256bd052c47660755c0c22776a0370b61465607f996"
     }
   },
   "load": [
-    "compiled/tower_ghost.css",
-    "compiled/definitions.json",
-    "compiled/tower_ghost.js"
+    "/auto_updates.cfm?compiled/tower_ghost.css",
+    "/auto_updates.cfm?compiled/definitions.json",
+    "/auto_updates.cfm?compiled/tower_ghost.js"
   ],
   "root": "./"
 }

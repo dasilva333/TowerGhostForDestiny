@@ -8979,7 +8979,7 @@ Profile.prototype = {
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
                 return _.isObject(item.stats) && item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1)
+                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType === 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
                 );
             });
             tgd.localLog("candidates considering " + candidates.length);
@@ -9856,7 +9856,7 @@ var app = function() {
                         if (collection == "Year 2 Items") {
                             return item.primaryStatValue() > tgd.DestinyY1Cap || _collections[collection].indexOf(item.id) > -1;
                         } else {
-                            return item.primaryStatValue() <= tgd.DestinyY1Cap;
+                            return item.primaryStatValue() <= tgd.DestinyY1Cap && _collections["Year 2 Items"].indexOf(item.id) == -1;
                         }
 
                     }), 'id');
