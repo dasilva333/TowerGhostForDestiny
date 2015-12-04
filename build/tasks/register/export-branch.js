@@ -14,10 +14,9 @@ module.exports = function (grunt) {
 		}, function done(error, result, code) {
 		  if ( result ) {
 			grunt.log.ok(result);
-			done();
 		  }	
 		});
 		
-
+		done();
 	});
 }

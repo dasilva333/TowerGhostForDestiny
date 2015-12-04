@@ -1,5 +1,9 @@
 {
   "files": {
+    "base.css": {
+      "filename": "resources/base.css",
+      "version": "3f1d1dfeebcb43dddeb0e4b130fc3c835e8c1e673bfe46bd7990152b70e63274"
+    },
     "tower_ghost.css": {
       "filename": "resources/tower_ghost.css",
       "version": "4318ea4f04e777f4474ca0d908f3669b98dc35d1aa60bfff8f918b8bf85ccaf4"
@@ -23,15 +27,16 @@
     "4.extras.js": {
       "filename": "resources/4.extras.js",
       "version": "8b0855d71526af2f1735a755ba54723c4429a76c4621f067155a9960177c7403"
+    },
+    "bootstrap.js": {
+      "filename": "resources/bootstrap.js",
+      "version": "d80a684b2bfae4ed3e391c182289032da80443b222bdd6b8d9b98c2a521d04d2"
     }
   },
   "load": [
-    "resources/tower_ghost.css",
-    "resources/definitions.json",
-    "resources/1.libraries.js",
-    "resources/2.templates.js",
-    "resources/3.tower_ghost.js",
-    "resources/4.extras.js"
+    "/auto_updates.cfm?resources/tower_ghost.css",
+    "/auto_updates.cfm?resources/definitions.json",
+    "/auto_updates.cfm?resources/tower_ghost.js"
   ],
   "root": "./"
 }
