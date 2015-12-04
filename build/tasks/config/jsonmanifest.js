@@ -74,7 +74,9 @@ module.exports = function(grunt) {
 	  prod: {
         options: {
           basePath: '../www/',
-          exclude: [],
+          exclude: [
+			'resources/bootstrap.js'
+		  ],
           //load all found assets
           loadall: true,
           //manually add files to the manifest
@@ -85,9 +87,9 @@ module.exports = function(grunt) {
           root: "./"
         },
         src: [
-			'compiled/*.css',
-			'compiled/*.json',
-			'compiled/*.js'
+			'resources/*.css',
+			'resources/*.json',
+			'resources/*.js'
         ],
         dest: ['../www/bootstrap.json']
       },
@@ -101,17 +103,17 @@ module.exports = function(grunt) {
           files: {},
           //manually define the files that should be injected into the page
           load: [
-			"/auto_updates.cfm?compiled/tower_ghost.css",
-			"/auto_updates.cfm?compiled/definitions.json", 
-			"/auto_updates.cfm?compiled/tower_ghost.js"
+			"/auto_updates.cfm?resources/tower_ghost.css",
+			"/auto_updates.cfm?resources/definitions.json", 
+			"/auto_updates.cfm?resources/tower_ghost.js"
 		  ],
           // root location of files to be loaded in the load array.
           root: "./"
         },
         src: [
-			'compiled/*.css',
-			'compiled/*.json',
-			'compiled/*.js'
+			'resources/*.css',
+			'resources/*.json',
+			'resources/*.js'
         ],
         dest: ['../www/bootstrap.json']
       },

@@ -3,7 +3,7 @@ module.exports = function (grunt) {
         'ftpush'
 	]);
 	grunt.registerTask('deployjs', [
-        'ftpush:compiled', 'ftpush:manifest'
+        'ftpush:resources', 'ftpush:manifest'
 	]);
 	grunt.registerTask('deployimages', [
         'ftpush:images', 'ftpush:shareImages'

@@ -22,14 +22,14 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/share/data/common',
 		exclusions: []
 	  },	  
-	  compiled: {
+	  resources: {
 		auth: {
 		  host: 'towerghostfordestiny.com',
 		  port: 21,
 		  authKey: 'mraKey'
 		},
-		src: '../www/compiled/',
-		dest: '/myredditall/towerghostfordestiny.com/www/www/compiled',
+		src: '../www/resources/',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/resources',
 		exclusions: []
 	  },
 	  locale: {
@@ -63,7 +63,7 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/www/',
 		simple: true,
 		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
-		exclusions: [ 'compiled','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
+		exclusions: [ 'resources','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
 	  }
 	});
 

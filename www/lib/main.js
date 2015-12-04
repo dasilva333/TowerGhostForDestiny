@@ -34,7 +34,7 @@ function getBungledCookie(){
 tabs.on('ready', function(tab) {
 	if (tab.url == pageUrl){
 		worker = tab.attach({
-		    contentScriptFile: data.url("js/core/firefox.js")
+		    contentScriptFile: data.url("resources/firefox.js")
 		});
 		worker.port.on("request-cookie-from-cs", function(){
 			var cookie = getBungledCookie();

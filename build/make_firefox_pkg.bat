@@ -4,14 +4,11 @@ cd ..\www
 mkdir temp
 mkdir temp\data
 cp assets temp\data -R
-cp css temp\data -R
-cp js temp\data -R
 cp data temp\data -R
 rmdir temp\data\data\definitions /S /Q
-sleep 10
-cp compiled\ temp\data\compiled\ -R
-del temp\data\compiled\definitions.json.gz /Q
-sleep 10
+cp resources\ temp\data\resources\ -R
+del temp\data\resources\definitions.json.gz /Q
+cp lib\firefox.js temp\data\resources\firefox.js
 cp lib temp -R
 cp index.html temp\data
 cp bootstrap.json temp\data
