@@ -1,12 +1,12 @@
 tgd.imageErrorHandler = function(src, element) {
-    if (element && element.src) {
-        return function() {
+    return function() {
+        if (element.src && element.src != "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
             }
-        };
-    }
+        }
+    };
 };
 
 window.ko.bindingHandlers.itemImageHandler = {

@@ -249,14 +249,14 @@ tgd.defaults = {
     autoUpdates: (isFirefox || isIOS) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
-    if (element && element.src) {
-        return function() {
+    return function() {
+        if (element.src && element.src != "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
             }
-        };
-    }
+        }
+    };
 };
 
 window.ko.bindingHandlers.itemImageHandler = {
@@ -2733,7 +2733,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.6.3";
+tgd.version = "3.6.6.4";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
