@@ -2,15 +2,15 @@
   "files": {
     "tower_ghost.css": {
       "filename": "compiled/tower_ghost.css",
-      "version": "4318ea4f04e777f4474ca0d908f3669b98dc35d1aa60bfff8f918b8bf85ccaf4"
+      "version": "aa7aa97fe31692e56fd69196aa360f0d5267465939d627082f6cd64c86389962"
     },
     "definitions.json": {
       "filename": "compiled/definitions.json",
-      "version": "a9b1e2d366acbd645e75cef0d79aaf6a860c5c7785bb6dbee54ed9ba88672163"
+      "version": "d473c7876471f1e805522ff95ec3b69d4df4e2ddd6bdac4649e06fabe6a85844"
     },
     "tower_ghost.js": {
       "filename": "compiled/tower_ghost.js",
-      "version": "4f9c38056f3643f24be213d0f5d51bf4da0921b63fd44f29382591229ccf7964"
+      "version": "e6adec6329226f8ad909faf56c70e5389ad27582f7c1a4d62385c16b8f4c8ef7"
     }
   },
   "load": [

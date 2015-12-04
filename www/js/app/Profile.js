@@ -504,14 +504,16 @@ Profile.prototype = {
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1)
+                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
                 );
             });
+            tgd.localLog(bucket + " total candidates " + candidates.length);
             _.each(candidates, function(candidate) {
                 sets.push([candidate]);
             });
         });
 
+        tgd.localLog("total sets " + sets.length);
         backups = _.flatten(sets);
 
         _.each(sets, function(set) {
