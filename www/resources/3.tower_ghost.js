@@ -2734,7 +2734,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.6.5";
+tgd.version = "3.6.6.6";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4727,13 +4727,17 @@ Profile.prototype = {
         _.each(highestSet, function(candidate) {
             var itemEquipped = character.itemEquipped(candidate.bucketType);
             if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
-                adhoc.addUniqueItem({
-                    id: candidate._id,
-                    bucketType: candidate.bucketType,
-                    doEquip: true
-                });
-                var message = candidate.bucketType + " can have a better item with " + candidate.description;
-                tgd.localLog(message);
+                if ((type == "Light" && candidate.primaryStatValue() > itemEquipped.primaryStatValue()) || type != "Light") {
+                    adhoc.addUniqueItem({
+                        id: candidate._id,
+                        bucketType: candidate.bucketType,
+                        doEquip: true
+                    });
+                    var message = candidate.bucketType + " can have a better item with " + candidate.description;
+                    tgd.localLog(message);
+                } else {
+                    var message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
+                }
                 $.toaster({
                     priority: 'info',
                     title: 'Equip',
