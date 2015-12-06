@@ -1,19 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3500" version="3.5.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3670" version="3.6.7.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
-		Formerly known as DIV. This app allows you to transfer items between profiles, with various filters.
+		This app allows you to transfer items between profiles, with various filters.
     </description>
     <author email="dasilva333@github.com" href="https://github.com/dasilva333/TowerGhostForDestiny/">
         Richard Pinedo
     </author>
 
     <content src="index.html" />
-	<preference name="phonegap-version" value="3.7.0" /> 
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
-    <preference name="webviewbounce" value="true" />
+    <preference name="webviewbounce" value="false" />
     <preference name="prerendered-icon" value="true" />
     <preference name="stay-in-webview" value="false" />
     <preference name="StatusBarStyle" value="lightcontent" />
@@ -22,9 +21,6 @@
     <preference name="show-splash-screen-spinner" value="true" />
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
-    <preference name="android-minSdkVersion" value="7" />
-	<preference name="android-targetSdkVersion" value="19" />
-    <preference name="android-installLocation" value="auto" />
     <gap:plugin name="org.apache.cordova.globalization" />
 	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
@@ -33,15 +29,8 @@
 	<gap:plugin name="org.apache.cordova.file-transfer" version="0.4.6" />
 	<gap:plugin name="org.apache.cordova.file" version="1.3.1" />
 	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
-    <preference name="android-iabplugin-license-key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6kyZb15cxcGhaUVThjCY+c/rGCpKXW2Ek0v/dFOlx6MTAyTA9lUe3dMijtW1RjrTzqsZ+QgcCLRAGiAzL1+tgnalZJFeAIbbWA9DXjFrkw7hMqlrAeRLWWpLXCE96lqspvrxvtcnFb2doZTmuJmH68Y7MtItM7Gdg5K2G/bDACkWcA4qD2lNTkcWG/qTvUeOM0amV+2ENdJO0uQrneva/qM7BgIRqBQqTfiFL+xMAOwDRZBHdY35e+FMWgirIrKxA0XymIRbQVyHnTIFkQOMJBZ9dUaEn0LwRgBJjblYH7puwrYSUDshMXefcQDDfb9wfisDQD90iwbgy5SzDxmwwIDAQAB" />
 
     <icon src="icon.png" />
-    <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
-    <icon gap:platform="android" gap:qualifier="mdpi" src="res/icon/android/icon-48-mdpi.png" />
-    <icon gap:platform="android" gap:qualifier="hdpi" src="res/icon/android/icon-72-hdpi.png" />
-    <icon gap:platform="android" gap:qualifier="xhdpi" src="res/icon/android/icon-96-xhdpi.png" />
-    <icon gap:platform="blackberry" src="res/icon/blackberry/icon-80.png" />
-    <icon gap:platform="blackberry" gap:state="hover" src="res/icon/blackberry/icon-80.png" />
     
 	<!-- iPhone 6 / 6+ -->
 	<icon src="res/icon/ios/icon-60@3x.png" gap:platform="ios" width="180" height="180" />
@@ -78,19 +67,11 @@
 	<icon src="res/icon/ios/icon-50.png" gap:platform="ios" width="50" height="50" />
 	<icon src="res/icon/ios/icon-50@2x.png" gap:platform="ios" width="100" height="100" />
 
-    <icon gap:platform="webos" src="res/icon/webos/icon-64.png" />
-    <icon gap:platform="winphone" src="res/icon/windows-phone/icon-48.png" />
-    <icon gap:platform="winphone" gap:role="background" src="res/icon/windows-phone/icon-173-tile.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-ldpi" src="res/screen/android/screen-ldpi-portrait.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-mdpi" src="res/screen/android/screen-mdpi-portrait.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-hdpi" src="res/screen/android/screen-hdpi-portrait.png" />
-    <gap:splash gap:platform="android" gap:qualifier="port-xhdpi" src="res/screen/android/screen-xhdpi-portrait.png" />
-    <gap:splash gap:platform="blackberry" src="res/screen/blackberry/screen-225.png" />
     <gap:splash gap:platform="ios" height="480" src="res/screen/ios/screen-iphone-portrait.png" width="320" />
     <gap:splash gap:platform="ios" height="960" src="res/screen/ios/screen-iphone-portrait-2x.png" width="640" />
     <gap:splash gap:platform="ios" height="1136" src="res/screen/ios/screen-iphone-portrait-568h-2x.png" width="640" />
     <gap:splash gap:platform="ios" height="1024" src="res/screen/ios/screen-ipad-portrait.png" width="768" />
     <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
-    <gap:splash gap:platform="winphone" src="res/screen/windows-phone/screen-portrait.jpg" />
+	
     <access origin="*" />
 </widget>
