@@ -2734,7 +2734,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.7.0";
+tgd.version = "3.6.7.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4565,7 +4565,7 @@ Profile.prototype = {
             candidates;
         var character = this;
 
-        console.time("finding candidates");
+        //console.time("finding candidates");
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (

@@ -500,7 +500,7 @@ Profile.prototype = {
             candidates;
         var character = this;
 
-        console.time("finding candidates");
+        //console.time("finding candidates");
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (

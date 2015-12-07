@@ -53,7 +53,7 @@ _ga = new(function() {
                 });
             }*/
             /* don't log known issue with InAppBrowser using 0.6.0 supposedly fixed since 0.5.4*/
-            if (e.filename.toLowerCase().indexOf("inappbrowser") == -1 && e.filename.toLowerCase().indexOf("cordova") == -1) {
+            if (e.filename.toLowerCase().indexOf("inappbrowser") == -1 && e.filename.toLowerCase().indexOf("cordova") == -1 && e.filename.toLowerCase().indexOf("libraries") == -1) {
                 ga('send', 'exception', {
                     'exDescription': e.message,
                     'exFatal': true,
@@ -66,7 +66,7 @@ _ga = new(function() {
                 });
             }
         });
-        var unwantedCodes = [0, 503, 504, 522, 524];
+        var unwantedCodes = [0, 503, 504, 522, 524, 502, 400, 500];
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
             if (unwantedCodes.indexOf(request.status) == -1) {
