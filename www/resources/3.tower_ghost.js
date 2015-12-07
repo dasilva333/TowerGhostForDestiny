@@ -1652,28 +1652,31 @@ tgd.Layout = function(layout) {
 	            var self = this;
 	            self.indexes = {};
 	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
+	            var transfer = function(dialog) {
+	                self.swapItems(masterSwapArray, targetCharacterId, function() {
+	                    $.toaster({
+	                        settings: {
+	                            timeout: 15 * 1000
+	                        }
+	                    });
+	                    $.toaster({
+	                        priority: 'success',
+	                        title: 'Success',
+	                        message: app.activeText().loadouts_transferred
+	                    });
+	                    $.toaster.reset();
+	                    setTimeout(function() {
+	                        $(".donateLink").click(app.showDonate);
+	                    }, 1000);
+	                    app.dynamicMode(false);
+	                    dialog.close();
+	                });
+	            };
 	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
-	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            $.toaster({
-	                                settings: {
-	                                    timeout: 15 * 1000
-	                                }
-	                            });
-	                            $.toaster({
-	                                priority: 'success',
-	                                title: 'Success',
-	                                message: app.activeText().loadouts_transferred
-	                            });
-	                            $.toaster.reset();
-	                            setTimeout(function() {
-	                                $(".donateLink").click(app.showDonate);
-	                            }, 1000);
-	                            app.dynamicMode(false);
-	                            dialog.close();
-	                        });
+	                        transfer(dialog);
 	                    }
 	                }, {
 	                    label: app.activeText().cancel,
@@ -1681,7 +1684,20 @@ tgd.Layout = function(layout) {
 	                        dialog.close();
 	                    }
 	                }]
-	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
+	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
+	                function() { //onHide
+	                    $(document).unbind("keyup.dialog")
+	                },
+	                function() { //onShown
+	                    //to prevent multiple binding
+	                    $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
+	                        var code = e.which;
+	                        if (code == 13) {
+	                            transfer(self.loadoutsDialog.modal);
+	                            $(document).unbind("keyup.dialog");
+	                        }
+	                    });
+	                });
 	        }
 	    }
 	};
@@ -2734,7 +2750,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.7.2";
+tgd.version = "3.6.7.3";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

@@ -773,28 +773,31 @@
 	            var self = this;
 	            self.indexes = {};
 	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
+	            var transfer = function(dialog) {
+	                self.swapItems(masterSwapArray, targetCharacterId, function() {
+	                    $.toaster({
+	                        settings: {
+	                            timeout: 15 * 1000
+	                        }
+	                    });
+	                    $.toaster({
+	                        priority: 'success',
+	                        title: 'Success',
+	                        message: app.activeText().loadouts_transferred
+	                    });
+	                    $.toaster.reset();
+	                    setTimeout(function() {
+	                        $(".donateLink").click(app.showDonate);
+	                    }, 1000);
+	                    app.dynamicMode(false);
+	                    dialog.close();
+	                });
+	            };
 	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
-	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            $.toaster({
-	                                settings: {
-	                                    timeout: 15 * 1000
-	                                }
-	                            });
-	                            $.toaster({
-	                                priority: 'success',
-	                                title: 'Success',
-	                                message: app.activeText().loadouts_transferred
-	                            });
-	                            $.toaster.reset();
-	                            setTimeout(function() {
-	                                $(".donateLink").click(app.showDonate);
-	                            }, 1000);
-	                            app.dynamicMode(false);
-	                            dialog.close();
-	                        });
+	                        transfer(dialog);
 	                    }
 	                }, {
 	                    label: app.activeText().cancel,
@@ -802,7 +805,20 @@
 	                        dialog.close();
 	                    }
 	                }]
-	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
+	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
+	                function() { //onHide
+	                    $(document).unbind("keyup.dialog")
+	                },
+	                function() { //onShown
+	                    //to prevent multiple binding
+	                    $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
+	                        var code = e.which;
+	                        if (code == 13) {
+	                            transfer(self.loadoutsDialog.modal);
+	                            $(document).unbind("keyup.dialog");
+	                        }
+	                    });
+	                });
 	        }
 	    }
 	};
