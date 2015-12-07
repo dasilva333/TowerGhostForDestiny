@@ -26,9 +26,12 @@ _.each(arrDebug, function(record){
 			
 		if ( !(version in stDebug2) )
 			stDebug2[version] = {}
-		if ( !(error in stDebug2[version]) )
+		if ( !(error in stDebug2[version]) && value.indexOf("libraries") == -1 )
 			stDebug2[version][error] = value;
-			
+		
+		if ( error.indexOf("isStaticBrowser") > -1 ){
+			console.log(record);
+		}
 		stDebug[key]++;
 	}
 });
