@@ -1,6 +1,8 @@
 //TODO find all the remote http variables and have them use a single variable
-tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
+tgd.remoteServer = "https://towerghostfordestiny.com";
+tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.dataDir = "data";
+tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.DestinyY1Cap = 170;
@@ -204,7 +206,6 @@ tgd.languages = [{
     description: "Turkish",
     bungie_code: "en"
 }];
-tgd.bootstrapGridColumns = 24;
 tgd.defaults = {
     searchKeyword: "",
     doRefresh: isMobile ? false : "true",
@@ -257,6 +258,18 @@ tgd.imageErrorHandler = function(src, element) {
             }
         }
     };
+};
+
+tgd.getEventDelegate = function(target, selector) {
+    var delegate;
+    while (target && target != this.el) {
+        delegate = $(target).filter(selector)[0];
+        if (delegate) {
+            return delegate;
+        }
+        target = target.parentNode;
+    }
+    return undefined;
 };
 
 window.ko.bindingHandlers.itemImageHandler = {
@@ -2601,18 +2614,6 @@ tgd.locale = {
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     }
 };
-tgd.getEventDelegate = function(target, selector) {
-    var delegate;
-    while (target && target != this.el) {
-        delegate = $(target).filter(selector)[0];
-        if (delegate) {
-            return delegate;
-        }
-        target = target.parentNode;
-    }
-    return undefined;
-};
-
 tgd.getStoredValue = function(key) {
     var saved = "";
     if (window.localStorage && window.localStorage.getItem)
@@ -2750,7 +2751,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.7.3";
+tgd.version = "3.6.8.0";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5285,7 +5286,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         if (!self.shareView()) {
             var username = self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag();
-            self.shareUrl("https://towerghostfordestiny.com/share/?" + username);
+            self.shareUrl(tgd.remoteServer + "/share/?" + username);
             self.apiRequest({
                 action: "save_inventory",
                 username: username,
@@ -5956,7 +5957,7 @@ var app = function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
+        var apiURL = tgd.remoteServer + "/api3.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -5969,7 +5970,7 @@ var app = function() {
     };
 
     this.staticApiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
+        var apiURL = tgd.remoteServer + "/static_api.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -6447,7 +6448,7 @@ var app = function() {
             code: locale
         }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
+            url: tgd.remoteServer + "/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {

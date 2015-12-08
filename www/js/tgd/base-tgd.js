@@ -1,6 +1,8 @@
 //TODO find all the remote http variables and have them use a single variable
-tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
+tgd.remoteServer = "https://towerghostfordestiny.com";
+tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.dataDir = "data";
+tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.DestinyY1Cap = 170;
@@ -204,7 +206,6 @@ tgd.languages = [{
     description: "Turkish",
     bungie_code: "en"
 }];
-tgd.bootstrapGridColumns = 24;
 tgd.defaults = {
     searchKeyword: "",
     doRefresh: isMobile ? false : "true",

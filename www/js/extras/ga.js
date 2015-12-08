@@ -29,7 +29,7 @@ _ga = new(function() {
             tracker.set('sendHitTask', function(model) {
                 originalSendHitTask(model);
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'https://www.towerghostfordestiny.com/ga.cfm', true);
+                xhr.open('POST', tgd.remoteServer + '/ga.cfm', true);
                 xhr.send(model.get('hitPayload'));
             });
         });

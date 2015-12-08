@@ -9,6 +9,18 @@ tgd.imageErrorHandler = function(src, element) {
     };
 };
 
+tgd.getEventDelegate = function(target, selector) {
+    var delegate;
+    while (target && target != this.el) {
+        delegate = $(target).filter(selector)[0];
+        if (delegate) {
+            return delegate;
+        }
+        target = target.parentNode;
+    }
+    return undefined;
+};
+
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var icon = ko.unwrap(viewModel.icon);

@@ -424,7 +424,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         if (!self.shareView()) {
             var username = self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag();
-            self.shareUrl("https://towerghostfordestiny.com/share/?" + username);
+            self.shareUrl(tgd.remoteServer + "/share/?" + username);
             self.apiRequest({
                 action: "save_inventory",
                 username: username,
@@ -1095,7 +1095,7 @@ var app = function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
+        var apiURL = tgd.remoteServer + "/api3.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -1108,7 +1108,7 @@ var app = function() {
     };
 
     this.staticApiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
+        var apiURL = tgd.remoteServer + "/static_api.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -1586,7 +1586,7 @@ var app = function() {
             code: locale
         }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
+            url: tgd.remoteServer + "/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {

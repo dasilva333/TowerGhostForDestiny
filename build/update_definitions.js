@@ -108,24 +108,29 @@ var downloadDatabase = function(callback){
 			var payload = JSON.parse(Buffer.concat(data));
 			var languages = payload.Response.mobileWorldContentPaths;
 			_.each(languages, function(link, locale){
-				var mobileWorldContentPath = publicBungieURL + payload.Response.mobileWorldContentPaths[locale];
+				var mobileWorldContentPath = secureBungieURL + payload.Response.mobileWorldContentPaths[locale];
 				count++;
 				console.log("downloading mwcp in " + locale);
-				http.get(mobileWorldContentPath, function(res) {
+				https.get(mobileWorldContentPath, function(res) {
 					var data = []; // List of Buffer objects
 					res.on("data", function(chunk) {
 						data.push(chunk); // Append Buffer object
 					});
 					res.on("end", function() {
-						console.log("going to unzip file");
-						var payload = Buffer.concat(data);
-						var unzipped = new zip(payload, {base64: false, compression:'DEFLATE', checkCRC32: true});
-						var fileName = Object.keys(unzipped.files)[0];
-						console.log("unzipping " + fileName);
-						fs.writeFileSync("mobileWorldContent_" +  locale + ".db", unzipped.files[fileName]._data, 'binary');
 						count--;
-						if (count == 0){
-							callback();
+						if ( res.statusCode == 200 ){
+							console.log("going to unzip file");
+							var payload = Buffer.concat(data);
+							var unzipped = new zip(payload, {base64: false, compression:'DEFLATE', checkCRC32: true});
+							var fileName = Object.keys(unzipped.files)[0];
+							console.log("unzipping " + fileName);
+							fs.writeFileSync("mobileWorldContent_" +  locale + ".db", unzipped.files[fileName]._data, 'binary');
+							if (count == 0){
+								callback();
+							}						
+						}
+						else {
+							console.log(res.statusCode + ":" + res.statusMessage + " ERROR for " + locale);
 						}
 					});
 				})
@@ -242,9 +247,9 @@ var cacheIcons = function(){
 	var iconPath = (icon.indexOf("/") > -1 ? icon : (imgPath + icon));
 	var physicalPath = jsonPath + iconPath;
 	if ( !fs.existsSync(physicalPath) ){
-		var dlPath = secureBungieURL + iconPath;
+		var dlPath = publicBungieURL + iconPath;
 		console.log("downloading icon " + dlPath);
-		https.get(dlPath, function(res) {
+		http.get(dlPath, function(res) {
 			if (res.statusCode != 200){
 				console.log(res.statusCode + " status code for icon " + icon);
 				if (queue.length > 0)

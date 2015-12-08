@@ -1,15 +1,3 @@
-tgd.getEventDelegate = function(target, selector) {
-    var delegate;
-    while (target && target != this.el) {
-        delegate = $(target).filter(selector)[0];
-        if (delegate) {
-            return delegate;
-        }
-        target = target.parentNode;
-    }
-    return undefined;
-};
-
 tgd.getStoredValue = function(key) {
     var saved = "";
     if (window.localStorage && window.localStorage.getItem)
