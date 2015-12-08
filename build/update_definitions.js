@@ -247,9 +247,9 @@ var cacheIcons = function(){
 	var iconPath = (icon.indexOf("/") > -1 ? icon : (imgPath + icon));
 	var physicalPath = jsonPath + iconPath;
 	if ( !fs.existsSync(physicalPath) ){
-		var dlPath = publicBungieURL + iconPath;
+		var dlPath = secureBungieURL + iconPath;
 		console.log("downloading icon " + dlPath);
-		http.get(dlPath, function(res) {
+		https.get(dlPath, function(res) {
 			if (res.statusCode != 200){
 				console.log(res.statusCode + " status code for icon " + icon);
 				if (queue.length > 0)
