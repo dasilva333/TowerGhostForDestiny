@@ -53,7 +53,7 @@ tgd.DestinyLayout = [{
     name: "General",
     array: 'general',
     counts: [36, 80],
-    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Emote'],
+    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
     extras: tgd.DestinyGeneralExceptions,
     view: 3,
     headerText: 'inventory_general'
@@ -118,7 +118,8 @@ tgd.DestinyBucketTypes = {
     "4023194814": "Ghost",
     "434908299": "Artifact",
     "3054419239": "Emote",
-    "1801258597": "Quests"
+    "1801258597": "Quests",
+    "3796357825": "Horn"
 };
 tgd.DestinyBucketColumns = {
     "Chest": 3,
@@ -149,7 +150,8 @@ tgd.DestinyBucketColumns = {
     "Ghost": 3,
     "Artifact": 3,
     "Quests": 4,
-    "Emote": 3
+    "Emote": 3,
+    "Horn": 3
 };
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,

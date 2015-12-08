@@ -97,7 +97,10 @@ module.exports = function(grunt) {
 	  share: {
         options: {
           basePath: '../www/',
-          exclude: [],
+          exclude: [
+			'resources/bootstrap.js',
+			'resources/base.css'
+		  ],
           //load all found assets
           loadall: false,
           //manually add files to the manifest
@@ -106,7 +109,10 @@ module.exports = function(grunt) {
           load: [
 			"/auto_updates.cfm?resources/tower_ghost.css",
 			"/auto_updates.cfm?resources/definitions.json", 
-			"/auto_updates.cfm?resources/tower_ghost.js"
+			"/auto_updates.cfm?resources/1.libraries.js",
+			"/auto_updates.cfm?resources/2.templates.js",
+			"/auto_updates.cfm?resources/3.tower_ghost.js",
+			"/auto_updates.cfm?resources/4.extras.js"
 		  ],
           // root location of files to be loaded in the load array.
           root: "./"
