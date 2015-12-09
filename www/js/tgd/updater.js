@@ -44,37 +44,40 @@
             });
             tgd.localLog("Checking for auto updates");
             tgd.loader.check()
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Downloading updates"
-                    });
-                    tgd.localLog("Downloading auto updates");
-                    return tgd.loader.download(_.throttle(function(progress) {
-                        tgd.localLog("Downloaded " + progress);
+                .then(function(updateAvailable) {
+                    if (updateAvailable) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Downloading file, completed " + (progress.percentage * 100).toFixed(0) + "%"
+                            message: "Downloading updates"
                         });
-                    }, 1000));
+                        tgd.localLog("Downloading auto updates");
+                        $("#tgdLoader").show();
+                    }
+                    return tgd.loader.download(function(progress) {
+                        $("#tgdLoaderProgress").width((progress.percentage * 100).toFixed(0) + "%");
+                    });
                 })
                 .catch(function(e) {
+                    $("#tgdLoader").hide();
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
                         message: "Problem checking for updates: " + e.message
                     });
                 })
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Installing updates"
-                    });
+                .then(function(manifest) {
+                    $("#tgdLoader").hide();
+                    if (manifest) {
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Info',
+                            message: "Installing updates"
+                        });
+                    }
                     return tgd.loader.update();
                 }, function(err) {
+                    $("#tgdLoader").hide();
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
