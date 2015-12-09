@@ -1,6 +1,8 @@
 //TODO find all the remote http variables and have them use a single variable
-tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
+tgd.remoteServer = "https://towerghostfordestiny.com";
+tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.dataDir = "data";
+tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.DestinyY1Cap = 170;
@@ -51,7 +53,7 @@ tgd.DestinyLayout = [{
     name: "General",
     array: 'general',
     counts: [36, 80],
-    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Emote'],
+    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
     extras: tgd.DestinyGeneralExceptions,
     view: 3,
     headerText: 'inventory_general'
@@ -116,7 +118,8 @@ tgd.DestinyBucketTypes = {
     "4023194814": "Ghost",
     "434908299": "Artifact",
     "3054419239": "Emote",
-    "1801258597": "Quests"
+    "1801258597": "Quests",
+    "3796357825": "Horn"
 };
 tgd.DestinyBucketColumns = {
     "Chest": 3,
@@ -147,7 +150,8 @@ tgd.DestinyBucketColumns = {
     "Ghost": 3,
     "Artifact": 3,
     "Quests": 4,
-    "Emote": 3
+    "Emote": 3,
+    "Horn": 3
 };
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
@@ -204,7 +208,6 @@ tgd.languages = [{
     description: "Turkish",
     bungie_code: "en"
 }];
-tgd.bootstrapGridColumns = 24;
 tgd.defaults = {
     searchKeyword: "",
     doRefresh: isMobile ? false : "true",
@@ -257,6 +260,18 @@ tgd.imageErrorHandler = function(src, element) {
             }
         }
     };
+};
+
+tgd.getEventDelegate = function(target, selector) {
+    var delegate;
+    while (target && target != this.el) {
+        delegate = $(target).filter(selector)[0];
+        if (delegate) {
+            return delegate;
+        }
+        target = target.parentNode;
+    }
+    return undefined;
 };
 
 window.ko.bindingHandlers.itemImageHandler = {
@@ -1652,28 +1667,31 @@ tgd.Layout = function(layout) {
 	            var self = this;
 	            self.indexes = {};
 	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
+	            var transfer = function(dialog) {
+	                self.swapItems(masterSwapArray, targetCharacterId, function() {
+	                    $.toaster({
+	                        settings: {
+	                            timeout: 15 * 1000
+	                        }
+	                    });
+	                    $.toaster({
+	                        priority: 'success',
+	                        title: 'Success',
+	                        message: app.activeText().loadouts_transferred
+	                    });
+	                    $.toaster.reset();
+	                    setTimeout(function() {
+	                        $(".donateLink").click(app.showDonate);
+	                    }, 1000);
+	                    app.dynamicMode(false);
+	                    dialog.close();
+	                });
+	            };
 	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
-	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            $.toaster({
-	                                settings: {
-	                                    timeout: 15 * 1000
-	                                }
-	                            });
-	                            $.toaster({
-	                                priority: 'success',
-	                                title: 'Success',
-	                                message: app.activeText().loadouts_transferred
-	                            });
-	                            $.toaster.reset();
-	                            setTimeout(function() {
-	                                $(".donateLink").click(app.showDonate);
-	                            }, 1000);
-	                            app.dynamicMode(false);
-	                            dialog.close();
-	                        });
+	                        transfer(dialog);
 	                    }
 	                }, {
 	                    label: app.activeText().cancel,
@@ -1681,7 +1699,20 @@ tgd.Layout = function(layout) {
 	                        dialog.close();
 	                    }
 	                }]
-	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
+	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
+	                function() { //onHide
+	                    $(document).unbind("keyup.dialog")
+	                },
+	                function() { //onShown
+	                    //to prevent multiple binding
+	                    $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
+	                        var code = e.which;
+	                        if (code == 13) {
+	                            transfer(self.loadoutsDialog.modal);
+	                            $(document).unbind("keyup.dialog");
+	                        }
+	                    });
+	                });
 	        }
 	    }
 	};
@@ -2585,18 +2616,6 @@ tgd.locale = {
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     }
 };
-tgd.getEventDelegate = function(target, selector) {
-    var delegate;
-    while (target && target != this.el) {
-        delegate = $(target).filter(selector)[0];
-        if (delegate) {
-            return delegate;
-        }
-        target = target.parentNode;
-    }
-    return undefined;
-};
-
 tgd.getStoredValue = function(key) {
     var saved = "";
     if (window.localStorage && window.localStorage.getItem)
@@ -2734,7 +2753,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.7.0";
+tgd.version = "3.6.8.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4565,7 +4584,7 @@ Profile.prototype = {
             candidates;
         var character = this;
 
-        console.time("finding candidates");
+        //console.time("finding candidates");
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
@@ -5269,7 +5288,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         if (!self.shareView()) {
             var username = self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag();
-            self.shareUrl("https://towerghostfordestiny.com/share/?" + username);
+            self.shareUrl(tgd.remoteServer + "/share/?" + username);
             self.apiRequest({
                 action: "save_inventory",
                 username: username,
@@ -5940,7 +5959,7 @@ var app = function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
+        var apiURL = tgd.remoteServer + "/api3.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -5953,7 +5972,7 @@ var app = function() {
     };
 
     this.staticApiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
+        var apiURL = tgd.remoteServer + "/static_api.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -6431,7 +6450,7 @@ var app = function() {
             code: locale
         }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
+            url: tgd.remoteServer + "/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {
