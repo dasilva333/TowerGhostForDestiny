@@ -2682,7 +2682,6 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 title: 'Info',
                 message: "Checking for updates"
             });
-            tgd.localLog("Checking for auto updates");
             tgd.loader.check()
                 .then(function(updateAvailable) {
                     if (updateAvailable) {
@@ -2726,7 +2725,8 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 });
         };
 
-        if (localStorage.autoUpdates == "true" || tgd.defaults.autoUpdates == "true") {
+        if (localStorage.autoUpdates == "true" || (tgd.defaults.autoUpdates == "true" && _.isEmpty(localStorage.autoUpdates))) {
+            tgd.localLog("Checking for auto updates");
             tgd.checkUpdates();
         }
     } catch (e) {
@@ -2756,7 +2756,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.8.4";
+tgd.version = "3.6.8.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4793,18 +4793,23 @@ Profile.prototype = {
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var key, description = "",
+                        var title, description = "",
                             stats = character.joinStats(combo.set);
-                        _.each(stats, function(stat, key) {
-                            description = description + " <strong>" + key.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                        combo.stats = [];
+                        _.each(stats, function(stat, name) {
+                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            combo.stats.push(stat);
                         });
-                        key = $.trim(description);
-                        if (key in armorBuilds && combo.score > armorBuilds[key].score || !(key in armorBuilds)) {
-                            armorBuilds[key] = combo;
+                        combo.title = $.trim(description);
+                        if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
+                            armorBuilds[combo.title] = combo;
                         }
                     }
                 });
-                if (Object.keys(armorBuilds).length === 1) {
+                armorBuilds = _.sortBy(armorBuilds, function(combo) {
+                    return _.max(combo.stats) * -1;
+                });
+                if (armorBuilds.length === 1) {
                     highestSet = bestSets[bestSets.length - 1].set;
                     highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
                     character.equipAction(type, highestSetValue, highestSet);
@@ -4820,9 +4825,10 @@ Profile.prototype = {
                                     BootstrapDialog.alert("Error: Please select one armor build to equip.");
                                 } else {
                                     var selectedBuild = $("input.armorBuild:checked").val();
-                                    highestSet = armorBuilds[selectedBuild].set;
-                                    highestSetValue = armorBuilds[selectedBuild].score;
-                                    character.equipAction(type, highestSetValue, highestSet);
+                                    highestCombo = _.findWhere(armorBuilds, {
+                                        title: selectedBuild
+                                    });
+                                    character.equipAction(type, highestCombo.score, highestCombo.set);
                                     dialog.close();
                                 }
                             }

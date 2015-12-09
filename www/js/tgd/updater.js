@@ -42,7 +42,6 @@
                 title: 'Info',
                 message: "Checking for updates"
             });
-            tgd.localLog("Checking for auto updates");
             tgd.loader.check()
                 .then(function(updateAvailable) {
                     if (updateAvailable) {
@@ -86,7 +85,8 @@
                 });
         };
 
-        if (localStorage.autoUpdates == "true" || tgd.defaults.autoUpdates == "true") {
+        if (localStorage.autoUpdates == "true" || (tgd.defaults.autoUpdates == "true" && _.isEmpty(localStorage.autoUpdates))) {
+            tgd.localLog("Checking for auto updates");
             tgd.checkUpdates();
         }
     } catch (e) {
