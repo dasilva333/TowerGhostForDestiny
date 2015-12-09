@@ -1,6 +1,8 @@
 //TODO find all the remote http variables and have them use a single variable
-tgd.remoteImagePath = "https://towerghostfordestiny.com/www/";
+tgd.remoteServer = "https://towerghostfordestiny.com";
+tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.dataDir = "data";
+tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.DestinyY1Cap = 170;
@@ -51,7 +53,7 @@ tgd.DestinyLayout = [{
     name: "General",
     array: 'general',
     counts: [36, 80],
-    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Emote'],
+    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
     extras: tgd.DestinyGeneralExceptions,
     view: 3,
     headerText: 'inventory_general'
@@ -116,7 +118,8 @@ tgd.DestinyBucketTypes = {
     "4023194814": "Ghost",
     "434908299": "Artifact",
     "3054419239": "Emote",
-    "1801258597": "Quests"
+    "1801258597": "Quests",
+    "3796357825": "Horn"
 };
 tgd.DestinyBucketColumns = {
     "Chest": 3,
@@ -147,7 +150,8 @@ tgd.DestinyBucketColumns = {
     "Ghost": 3,
     "Artifact": 3,
     "Quests": 4,
-    "Emote": 3
+    "Emote": 3,
+    "Horn": 3
 };
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
@@ -204,7 +208,6 @@ tgd.languages = [{
     description: "Turkish",
     bungie_code: "en"
 }];
-tgd.bootstrapGridColumns = 24;
 tgd.defaults = {
     searchKeyword: "",
     doRefresh: isMobile ? false : "true",
@@ -246,7 +249,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isFirefox || isIOS) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -257,6 +260,18 @@ tgd.imageErrorHandler = function(src, element) {
             }
         }
     };
+};
+
+tgd.getEventDelegate = function(target, selector) {
+    var delegate;
+    while (target && target != this.el) {
+        delegate = $(target).filter(selector)[0];
+        if (delegate) {
+            return delegate;
+        }
+        target = target.parentNode;
+    }
+    return undefined;
 };
 
 window.ko.bindingHandlers.itemImageHandler = {
@@ -1652,28 +1667,31 @@ tgd.Layout = function(layout) {
 	            var self = this;
 	            self.indexes = {};
 	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
+	            var transfer = function(dialog) {
+	                self.swapItems(masterSwapArray, targetCharacterId, function() {
+	                    $.toaster({
+	                        settings: {
+	                            timeout: 15 * 1000
+	                        }
+	                    });
+	                    $.toaster({
+	                        priority: 'success',
+	                        title: 'Success',
+	                        message: app.activeText().loadouts_transferred
+	                    });
+	                    $.toaster.reset();
+	                    setTimeout(function() {
+	                        $(".donateLink").click(app.showDonate);
+	                    }, 1000);
+	                    app.dynamicMode(false);
+	                    dialog.close();
+	                });
+	            };
 	            self.loadoutsDialog = (new tgd.dialog({
 	                buttons: [{
 	                    label: app.activeText().loadouts_transfer,
 	                    action: function(dialog) {
-	                        self.swapItems(masterSwapArray, targetCharacterId, function() {
-	                            $.toaster({
-	                                settings: {
-	                                    timeout: 15 * 1000
-	                                }
-	                            });
-	                            $.toaster({
-	                                priority: 'success',
-	                                title: 'Success',
-	                                message: app.activeText().loadouts_transferred
-	                            });
-	                            $.toaster.reset();
-	                            setTimeout(function() {
-	                                $(".donateLink").click(app.showDonate);
-	                            }, 1000);
-	                            app.dynamicMode(false);
-	                            dialog.close();
-	                        });
+	                        transfer(dialog);
 	                    }
 	                }, {
 	                    label: app.activeText().cancel,
@@ -1681,7 +1699,20 @@ tgd.Layout = function(layout) {
 	                        dialog.close();
 	                    }
 	                }]
-	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true);
+	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
+	                function() { //onHide
+	                    $(document).unbind("keyup.dialog")
+	                },
+	                function() { //onShown
+	                    //to prevent multiple binding
+	                    $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
+	                        var code = e.which;
+	                        if (code == 13) {
+	                            transfer(self.loadoutsDialog.modal);
+	                            $(document).unbind("keyup.dialog");
+	                        }
+	                    });
+	                });
 	        }
 	    }
 	};
@@ -2585,18 +2616,6 @@ tgd.locale = {
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
     }
 };
-tgd.getEventDelegate = function(target, selector) {
-    var delegate;
-    while (target && target != this.el) {
-        delegate = $(target).filter(selector)[0];
-        if (delegate) {
-            return delegate;
-        }
-        target = target.parentNode;
-    }
-    return undefined;
-};
-
 tgd.getStoredValue = function(key) {
     var saved = "";
     if (window.localStorage && window.localStorage.getItem)
@@ -2663,39 +2682,41 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 title: 'Info',
                 message: "Checking for updates"
             });
-            tgd.localLog("Checking for auto updates");
             tgd.loader.check()
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Downloading updates"
-                    });
-                    tgd.localLog("Downloading auto updates");
-                    return tgd.loader.download(_.throttle(function(progress) {
-                        tgd.localLog("Downloaded " + progress);
+                .then(function(updateAvailable) {
+                    if (updateAvailable) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Downloading file, completed " + (progress.percentage * 100).toFixed(0) + "%"
+                            message: "Downloading updates"
                         });
-                    }, 1000));
+                        tgd.localLog("Downloading auto updates");
+                        $("#tgdLoader").show();
+                    }
+                    return tgd.loader.download(function(progress) {
+                        $("#tgdLoaderProgress").width((progress.percentage * 100).toFixed(0) + "%");
+                    });
                 })
                 .catch(function(e) {
+                    $("#tgdLoader").hide();
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
                         message: "Problem checking for updates: " + e.message
                     });
                 })
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Installing updates"
-                    });
+                .then(function(manifest) {
+                    $("#tgdLoader").hide();
+                    if (manifest) {
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Info',
+                            message: "Installing updates"
+                        });
+                    }
                     return tgd.loader.update();
                 }, function(err) {
+                    $("#tgdLoader").hide();
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
@@ -2704,7 +2725,8 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 });
         };
 
-        if (localStorage.autoUpdates == "true" || tgd.defaults.autoUpdates == "true") {
+        if (localStorage.autoUpdates == "true" || (tgd.defaults.autoUpdates == "true" && _.isEmpty(localStorage.autoUpdates))) {
+            tgd.localLog("Checking for auto updates");
             tgd.checkUpdates();
         }
     } catch (e) {
@@ -2734,7 +2756,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.7.0";
+tgd.version = "3.6.8.6";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4565,7 +4587,7 @@ Profile.prototype = {
             candidates;
         var character = this;
 
-        console.time("finding candidates");
+        //console.time("finding candidates");
         _.each(buckets, function(bucket) {
             candidates = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
@@ -4771,18 +4793,23 @@ Profile.prototype = {
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var key, description = "",
+                        var title, description = "",
                             stats = character.joinStats(combo.set);
-                        _.each(stats, function(stat, key) {
-                            description = description + " <strong>" + key.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                        combo.stats = [];
+                        _.each(stats, function(stat, name) {
+                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            combo.stats.push(stat);
                         });
-                        key = $.trim(description);
-                        if (key in armorBuilds && combo.score > armorBuilds[key].score || !(key in armorBuilds)) {
-                            armorBuilds[key] = combo;
+                        combo.title = $.trim(description);
+                        if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
+                            armorBuilds[combo.title] = combo;
                         }
                     }
                 });
-                if (Object.keys(armorBuilds).length === 1) {
+                armorBuilds = _.sortBy(armorBuilds, function(combo) {
+                    return _.max(combo.stats) * -1;
+                });
+                if (armorBuilds.length === 1) {
                     highestSet = bestSets[bestSets.length - 1].set;
                     highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
                     character.equipAction(type, highestSetValue, highestSet);
@@ -4798,9 +4825,10 @@ Profile.prototype = {
                                     BootstrapDialog.alert("Error: Please select one armor build to equip.");
                                 } else {
                                     var selectedBuild = $("input.armorBuild:checked").val();
-                                    highestSet = armorBuilds[selectedBuild].set;
-                                    highestSetValue = armorBuilds[selectedBuild].score;
-                                    character.equipAction(type, highestSetValue, highestSet);
+                                    highestCombo = _.findWhere(armorBuilds, {
+                                        title: selectedBuild
+                                    });
+                                    character.equipAction(type, highestCombo.score, highestCombo.set);
                                     dialog.close();
                                 }
                             }
@@ -5269,7 +5297,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         if (!self.shareView()) {
             var username = self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag();
-            self.shareUrl("https://towerghostfordestiny.com/share/?" + username);
+            self.shareUrl(tgd.remoteServer + "/share/?" + username);
             self.apiRequest({
                 action: "save_inventory",
                 username: username,
@@ -5940,7 +5968,7 @@ var app = function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/api3.cfm";
+        var apiURL = tgd.remoteServer + "/api3.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -5953,7 +5981,7 @@ var app = function() {
     };
 
     this.staticApiRequest = function(params, callback) {
-        var apiURL = "https://www.towerghostfordestiny.com/static_api.cfm";
+        var apiURL = tgd.remoteServer + "/static_api.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -6431,7 +6459,7 @@ var app = function() {
             code: locale
         }).bungie_code;
         $.ajax({
-            url: "https://www.towerghostfordestiny.com/locale.cfm?locale=" + bungie_code,
+            url: tgd.remoteServer + "/locale.cfm?locale=" + bungie_code,
             success: function(data) {
                 BootstrapDialog.alert(self.activeText().language_pack_downloaded);
                 try {
