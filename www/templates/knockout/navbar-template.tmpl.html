@@ -15,14 +15,14 @@
             </div>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right" data-bind="visible: !isStaticBrowser">
+            <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a data-bind="fastclick: refreshButton" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-refresh text-success"></i> <span class="refresh-text" data-bind="text: $root.activeText().menu_refresh">Refresh</span></a>
                 </li>
                 <li class="dropdown">
                     <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a>
                 </li>
-                <li class="dropdown">
+                <li class="dropdown" data-bind="visible: !isStaticBrowser">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text" data-bind="text: $root.activeText().menu_settings">Settings</span> <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
 
