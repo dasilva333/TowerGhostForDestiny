@@ -2758,7 +2758,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.9.0";
+tgd.version = "3.6.9.1";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3047,7 +3047,11 @@ Item.prototype = {
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    var result = 0;
+                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
+                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    }
+                    return result;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
@@ -5220,11 +5224,14 @@ var app = function() {
             if (activeItem.objectives && activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
-                    var label = "";
+                    var label = "",
+                        value = 0;
                     if (info.displayDescription) {
                         label = "<strong>" + info.displayDescription + "</strong>:";
                     }
-                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    if (info && info.completionValue) {
+                        value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    }
                     $content.find(".destt-desc").after(label + value + "<br>");
                 });
             }

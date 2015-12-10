@@ -344,11 +344,14 @@ var app = function() {
             if (activeItem.objectives && activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
-                    var label = "";
+                    var label = "",
+                        value = 0;
                     if (info.displayDescription) {
                         label = "<strong>" + info.displayDescription + "</strong>:";
                     }
-                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    if (info && info.completionValue) {
+                        value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    }
                     $content.find(".destt-desc").after(label + value + "<br>");
                 });
             }

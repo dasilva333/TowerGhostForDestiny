@@ -286,7 +286,11 @@ Item.prototype = {
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    var result = 0;
+                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
+                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    }
+                    return result;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
