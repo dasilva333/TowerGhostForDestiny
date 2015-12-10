@@ -1,0 +1,40 @@
+<div id="donate">
+    <div class="panel panel-success">
+        <div class="panel-body">
+            <p data-bind="text: $root.activeText().donation_instructions">
+                This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs. Thank you.
+            </p>
+            <div class="btn-padding">
+                <div class="form-group">
+                    <a class="donatePaypal btn btn-secondary btn-block">
+                        <img src="assets/paypal.png">
+                    </a>
+                </div>
+                <div class="supportsIAB" style="display:none;">
+                    <div class="chromeWallet form-group text-center" style="display:none;">
+                        Donate now with Google Wallet
+                        <img src="assets/wallet.png" style="width:50%">
+                    </div>
+                    <div class="googlePlay form-group text-center" style="display:none;">
+                        Donate now with Google Play
+                        <img src="assets/google_play.png" style="width:50%">
+                    </div>
+                    <div class="appleIAP form-group text-center" style="display:none;">
+                        Donate now with Apple's In-App Purchase
+                        <img src="assets/in-app-purchase.png" width="80">
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <a sku="small" class="donate btn btn-secondary btn-block">Small Donation</a>
+                    </div>
+                    <div class="form-group">
+                        <a sku="medium" class="donate btn btn-secondary btn-block">Medium Donation</a>
+                    </div>
+                    <div class="form-group">
+                        <a sku="large" class="donate btn btn-secondary btn-block">Large Donation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

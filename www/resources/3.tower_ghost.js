@@ -2758,7 +2758,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.9.1";
+tgd.version = "3.6.9.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4990,7 +4990,7 @@ var app = function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
+        (new tgd.dialog()).title("Help").content(tgd.helpTemplate()).show();
     };
 
     this.showLanguageSettings = function() {
@@ -5026,7 +5026,7 @@ var app = function() {
 
     this.showDonate = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+        (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, function() {}, function() {
             $("a.donatePaypal").click(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
@@ -5060,7 +5060,7 @@ var app = function() {
 
     this.showAbout = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("About").content($("#about").html()).show();
+        (new tgd.dialog()).title("About").content(tgd.aboutTemplate()).show();
     };
 
     this.clearFilters = function(model, element) {
@@ -6076,7 +6076,7 @@ var app = function() {
     this.showWhatsNew = function(callback) {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
-        container.html("Version: " + tgd.version + $("#whatsnew").html());
+        container.html(tgd.whatsNewTemplate());
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
