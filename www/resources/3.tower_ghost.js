@@ -7,7 +7,7 @@ tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
-tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard"];
+tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];
 tgd.DestinyGeneralItems = {
     "GlimmerConsumables": [3632619276, 269776572, 2904517731, 1932910919], //Network Keys, Axiomatic Beads, House Banners, Silken Codex
     "Synths": [211861343, 928169143, 2180254632],
@@ -19,6 +19,8 @@ tgd.DestinyGeneralItems = {
     "Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
     "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
+//This is a list of items not indexed by DestinyDB
+tgd.itemsNotIndexed = [4097026463, 4158489060];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
@@ -253,7 +255,7 @@ tgd.defaults = {
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
-        if (element && element.src && element.src != "") {
+        if (element && element.src && element.src !== "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
@@ -1268,7 +1270,7 @@ tgd.Layout = function(layout) {
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
-	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);;
+	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);
 	                })[0];
 	                var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
@@ -1430,7 +1432,7 @@ tgd.Layout = function(layout) {
 	                        if (targetCharacter.id == "Vault") {
 	                            var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return (layout.bucketTypes.indexOf(key) > -1 && layout.extras.indexOf(key) == -1) ||
-	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);;
+	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);
 	                            })[0];
 	                            var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                            targetBucketSize = _.filter(targetCharacter.items(), function(item) {
@@ -1701,7 +1703,7 @@ tgd.Layout = function(layout) {
 	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
 	                function() { //onHide
-	                    $(document).unbind("keyup.dialog")
+	                    $(document).unbind("keyup.dialog");
 	                },
 	                function() { //onShown
 	                    //to prevent multiple binding
@@ -2756,7 +2758,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.8.6";
+tgd.version = "3.6.9.1";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3028,7 +3030,7 @@ Item.prototype = {
             }
             itemObject.hasLifeExotic = _.where(itemObject.perks, {
                 name: "The Life Exotic"
-            }).length > 0
+            }).length > 0;
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -3045,7 +3047,11 @@ Item.prototype = {
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    var result = 0;
+                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
+                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    }
+                    return result;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
@@ -3113,7 +3119,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment == false) {
+        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
             return true;
         } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
@@ -3152,10 +3158,10 @@ Item.prototype = {
             itemStatValue = this.primaryStatValue().toString();
         }
         var operator = $parent.searchKeyword().substring(0, 1);
-        if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
+        if (itemStatValue !== "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
             var operand = "=",
                 searchValue = $parent.searchKeyword();
-            if (operator == ">" || operator == "<") {
+            if (operator === ">" || operator === "<") {
                 operand = operator + operand;
                 searchValue = searchValue.replace(operator, '');
             } else {
@@ -3348,7 +3354,7 @@ Item.prototype = {
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
-            if (self.tierType == 6 && self.hasLifeExotic == false) {
+            if (self.tierType == 6 && self.hasLifeExotic === false) {
                 //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
@@ -4649,7 +4655,7 @@ Profile.prototype = {
             //console.log(candidates);
             _.each(candidates, function(candidate) {
                 if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                    (candidate.tierType == 6 && candidate.hasLifeExotic == false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+                    (candidate.tierType == 6 && candidate.hasLifeExotic === false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
                 }
             });
         });
@@ -4749,16 +4755,17 @@ Profile.prototype = {
         _.each(highestSet, function(candidate) {
             var itemEquipped = character.itemEquipped(candidate.bucketType);
             if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
+                var message;
                 if ((type == "Light" && candidate.primaryStatValue() > itemEquipped.primaryStatValue()) || type != "Light") {
                     adhoc.addUniqueItem({
                         id: candidate._id,
                         bucketType: candidate.bucketType,
                         doEquip: true
                     });
-                    var message = candidate.bucketType + " can have a better item with " + candidate.description;
+                    message = candidate.bucketType + " can have a better item with " + candidate.description;
                     tgd.localLog(message);
                 } else {
-                    var message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
+                    message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
                 }
                 $.toaster({
                     priority: 'info',
@@ -5061,7 +5068,6 @@ var app = function() {
         self.activeView(tgd.defaults.activeView);
         self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
-        self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
         self.tierFilter(tgd.defaults.tierFilter);
         self.weaponFilter(tgd.defaults.weaponFilter);
@@ -5218,11 +5224,14 @@ var app = function() {
             if (activeItem.objectives && activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
-                    var label = "";
+                    var label = "",
+                        value = 0;
                     if (info.displayDescription) {
                         label = "<strong>" + info.displayDescription + "</strong>:";
                     }
-                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    if (info && info.completionValue) {
+                        value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    }
                     $content.find(".destt-desc").after(label + value + "<br>");
                 });
             }
@@ -5717,7 +5726,7 @@ var app = function() {
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        if (self.doRefresh() == 1 && self.loadoutMode() === false) {
+        if (self.doRefresh() === true && self.loadoutMode() === false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");

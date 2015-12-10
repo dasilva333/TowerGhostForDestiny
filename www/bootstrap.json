@@ -6,7 +6,7 @@
     },
     "definitions.json": {
       "filename": "resources/definitions.json",
-      "version": "a3ac8a1a43d5078fb7529e6da1df44d18626e5895fc230a40c69b915c786d69f"
+      "version": "ce1cb6cddcbf5946efec60d5bbb22fa32fe2b8f4669aa54f90ba581586c25c85"
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
@@ -14,15 +14,15 @@
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "ff218db8607368784f4397a54e782e0c63921b9dbea95b54aec0feacce40cd62"
+      "version": "d1ffa9999fcad61757f7481a78e13854701e88b95106a73db62da114856a9341"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "88e849afada2c464d4b44fbf5caba66f9bfa7a14e197954c317be4aa3b5c0389"
+      "version": "dd04818a27ff8b4e36ba29ae12fcf46bce878deb02387528d7ed7297daff4bf5"
     },
     "4.extras.js": {
       "filename": "resources/4.extras.js",
-      "version": "7d49e59977d9fd426022a7bd5499c746e4709835a179197361156253551ef149"
+      "version": "71059267b4a817dacd05ac6aa2b125b8ecad0eecc9896e5e8a964044a208c9be"
     }
   },
   "load": [
