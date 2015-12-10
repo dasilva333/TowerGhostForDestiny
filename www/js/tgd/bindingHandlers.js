@@ -1,6 +1,6 @@
 tgd.imageErrorHandler = function(src, element) {
     return function() {
-        if (element && element.src && element.src != "") {
+        if (element && element.src && element.src !== "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;

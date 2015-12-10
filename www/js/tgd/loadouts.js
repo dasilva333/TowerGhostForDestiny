@@ -374,7 +374,7 @@
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
-	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);;
+	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);
 	                })[0];
 	                var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
@@ -536,7 +536,7 @@
 	                        if (targetCharacter.id == "Vault") {
 	                            var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return (layout.bucketTypes.indexOf(key) > -1 && layout.extras.indexOf(key) == -1) ||
-	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);;
+	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);
 	                            })[0];
 	                            var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                            targetBucketSize = _.filter(targetCharacter.items(), function(item) {
@@ -807,7 +807,7 @@
 	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
 	                function() { //onHide
-	                    $(document).unbind("keyup.dialog")
+	                    $(document).unbind("keyup.dialog");
 	                },
 	                function() { //onShown
 	                    //to prevent multiple binding

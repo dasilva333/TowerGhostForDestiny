@@ -18,11 +18,11 @@
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "6fc8cf35077860086ecd431280ea005682759894ca49524d836c087bd5e8e9df"
+      "version": "3582012c6c23ed08593c3d7cfb8f22c5a7601c58edea68b60634010aae32951e"
     },
     "4.extras.js": {
       "filename": "resources/4.extras.js",
-      "version": "ee97018a08a86170e03b6731c7a1932a316841c0a2904f625eb463e67bafaaef"
+      "version": "71059267b4a817dacd05ac6aa2b125b8ecad0eecc9896e5e8a964044a208c9be"
     }
   },
   "load": [

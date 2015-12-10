@@ -269,7 +269,7 @@ Item.prototype = {
             }
             itemObject.hasLifeExotic = _.where(itemObject.perks, {
                 name: "The Life Exotic"
-            }).length > 0
+            }).length > 0;
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -354,7 +354,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment == false) {
+        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
             return true;
         } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
@@ -393,10 +393,10 @@ Item.prototype = {
             itemStatValue = this.primaryStatValue().toString();
         }
         var operator = $parent.searchKeyword().substring(0, 1);
-        if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
+        if (itemStatValue !== "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
             var operand = "=",
                 searchValue = $parent.searchKeyword();
-            if (operator == ">" || operator == "<") {
+            if (operator === ">" || operator === "<") {
                 operand = operator + operand;
                 searchValue = searchValue.replace(operator, '');
             } else {
@@ -589,7 +589,7 @@ Item.prototype = {
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
-            if (self.tierType == 6 && self.hasLifeExotic == false) {
+            if (self.tierType == 6 && self.hasLifeExotic === false) {
                 //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);

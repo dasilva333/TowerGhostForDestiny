@@ -255,7 +255,7 @@ tgd.defaults = {
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
-        if (element && element.src && element.src != "") {
+        if (element && element.src && element.src !== "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
@@ -1270,7 +1270,7 @@ tgd.Layout = function(layout) {
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
-	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);;
+	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);
 	                })[0];
 	                var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
@@ -1432,7 +1432,7 @@ tgd.Layout = function(layout) {
 	                        if (targetCharacter.id == "Vault") {
 	                            var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return (layout.bucketTypes.indexOf(key) > -1 && layout.extras.indexOf(key) == -1) ||
-	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);;
+	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);
 	                            })[0];
 	                            var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                            targetBucketSize = _.filter(targetCharacter.items(), function(item) {
@@ -1703,7 +1703,7 @@ tgd.Layout = function(layout) {
 	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
 	                function() { //onHide
-	                    $(document).unbind("keyup.dialog")
+	                    $(document).unbind("keyup.dialog");
 	                },
 	                function() { //onShown
 	                    //to prevent multiple binding
@@ -2758,7 +2758,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.8.9";
+tgd.version = "3.6.8.10";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3030,7 +3030,7 @@ Item.prototype = {
             }
             itemObject.hasLifeExotic = _.where(itemObject.perks, {
                 name: "The Life Exotic"
-            }).length > 0
+            }).length > 0;
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -3115,7 +3115,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment == false) {
+        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
             return true;
         } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
@@ -3154,10 +3154,10 @@ Item.prototype = {
             itemStatValue = this.primaryStatValue().toString();
         }
         var operator = $parent.searchKeyword().substring(0, 1);
-        if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
+        if (itemStatValue !== "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
             var operand = "=",
                 searchValue = $parent.searchKeyword();
-            if (operator == ">" || operator == "<") {
+            if (operator === ">" || operator === "<") {
                 operand = operator + operand;
                 searchValue = searchValue.replace(operator, '');
             } else {
@@ -3350,7 +3350,7 @@ Item.prototype = {
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
-            if (self.tierType == 6 && self.hasLifeExotic == false) {
+            if (self.tierType == 6 && self.hasLifeExotic === false) {
                 //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
@@ -4651,7 +4651,7 @@ Profile.prototype = {
             //console.log(candidates);
             _.each(candidates, function(candidate) {
                 if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                    (candidate.tierType == 6 && candidate.hasLifeExotic == false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+                    (candidate.tierType == 6 && candidate.hasLifeExotic === false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
                 }
             });
         });
@@ -4751,16 +4751,17 @@ Profile.prototype = {
         _.each(highestSet, function(candidate) {
             var itemEquipped = character.itemEquipped(candidate.bucketType);
             if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
+                var message;
                 if ((type == "Light" && candidate.primaryStatValue() > itemEquipped.primaryStatValue()) || type != "Light") {
                     adhoc.addUniqueItem({
                         id: candidate._id,
                         bucketType: candidate.bucketType,
                         doEquip: true
                     });
-                    var message = candidate.bucketType + " can have a better item with " + candidate.description;
+                    message = candidate.bucketType + " can have a better item with " + candidate.description;
                     tgd.localLog(message);
                 } else {
-                    var message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
+                    message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
                 }
                 $.toaster({
                     priority: 'info',

@@ -147,7 +147,7 @@ tgd.Tooltip = function(id) {
         item: info
     });
     this.type = "items";
-}
+};
 
 var $ZamTooltips = function() {
     this.addIcons = false;
@@ -618,7 +618,7 @@ var $ZamTooltips = function() {
     var fetchLocal = function(id) {
         var tooltips = [new tgd.Tooltip(id)];
         $ZamTooltips.onTooltip(tooltips);
-    }
+    };
     var fetch = function(site, type, id) {
         // loadCss(site);
         var canonical = getCanonicalName(site, type, id);
@@ -648,7 +648,7 @@ var $ZamTooltips = function() {
                 if (!isLoaded || !_.isObject(cache[canonical])) {
                     fetchLocal(id);
                 }
-            }
+            };
             addResource(script);
             setTimeout(function() {
                 if (!_.isObject(cache[canonical])) {
