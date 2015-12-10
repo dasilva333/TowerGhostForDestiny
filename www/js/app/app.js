@@ -188,7 +188,6 @@ var app = function() {
         self.activeView(tgd.defaults.activeView);
         self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
-        self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
         self.tierFilter(tgd.defaults.tierFilter);
         self.weaponFilter(tgd.defaults.weaponFilter);
@@ -844,7 +843,7 @@ var app = function() {
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        if (self.doRefresh() == 1 && self.loadoutMode() === false) {
+        if (self.doRefresh() === true && self.loadoutMode() === false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
