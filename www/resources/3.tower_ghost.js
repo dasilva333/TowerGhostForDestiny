@@ -7,7 +7,7 @@ tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
-tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard"];
+tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];
 tgd.DestinyGeneralItems = {
     "GlimmerConsumables": [3632619276, 269776572, 2904517731, 1932910919], //Network Keys, Axiomatic Beads, House Banners, Silken Codex
     "Synths": [211861343, 928169143, 2180254632],
@@ -19,6 +19,8 @@ tgd.DestinyGeneralItems = {
     "Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
     "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
+//This is a list of items not indexed by DestinyDB
+tgd.itemsNotIndexed = [4097026463, 4158489060];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
@@ -53,7 +55,7 @@ tgd.DestinyLayout = [{
     name: "General",
     array: 'general',
     counts: [36, 80],
-    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Emote'],
+    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
     extras: tgd.DestinyGeneralExceptions,
     view: 3,
     headerText: 'inventory_general'
@@ -118,7 +120,8 @@ tgd.DestinyBucketTypes = {
     "4023194814": "Ghost",
     "434908299": "Artifact",
     "3054419239": "Emote",
-    "1801258597": "Quests"
+    "1801258597": "Quests",
+    "3796357825": "Horn"
 };
 tgd.DestinyBucketColumns = {
     "Chest": 3,
@@ -149,7 +152,8 @@ tgd.DestinyBucketColumns = {
     "Ghost": 3,
     "Artifact": 3,
     "Quests": 4,
-    "Emote": 3
+    "Emote": 3,
+    "Horn": 3
 };
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
@@ -238,20 +242,16 @@ tgd.defaults = {
     locale: "en",
     //user interface set locale
     appLocale: "",
-    //internally cached version of the itemDefs
-    defsLocale: "en",
-    //as of 2.7.0 I added versioning to itemDefs so the default would be this for everyone
-    defLocaleVersion: "2.7.0",
     vaultPos: 0,
     itemDefs: "",
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isFirefox || isIOS) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
-        if (element && element.src && element.src != "") {
+        if (element && element.src && element.src !== "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src;
@@ -1266,7 +1266,7 @@ tgd.Layout = function(layout) {
 	                var bucketType = item.bucketType,
 	                    otherBucketTypes;
 	                var layout = _.filter(tgd.DestinyLayout, function(layout) {
-	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);;
+	                    return (layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1);
 	                })[0];
 	                var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                var spaceNeededInVault = layout.counts[0] - spaceNeeded;
@@ -1428,7 +1428,7 @@ tgd.Layout = function(layout) {
 	                        if (targetCharacter.id == "Vault") {
 	                            var layout = _.filter(tgd.DestinyLayout, function(layout) {
 	                                return (layout.bucketTypes.indexOf(key) > -1 && layout.extras.indexOf(key) == -1) ||
-	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);;
+	                                    (layout.bucketTypes.indexOf(key) == -1 && layout.extras.indexOf(key) > -1);
 	                            })[0];
 	                            var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
 	                            targetBucketSize = _.filter(targetCharacter.items(), function(item) {
@@ -1699,7 +1699,7 @@ tgd.Layout = function(layout) {
 	                }]
 	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
 	                function() { //onHide
-	                    $(document).unbind("keyup.dialog")
+	                    $(document).unbind("keyup.dialog");
 	                },
 	                function() { //onShown
 	                    //to prevent multiple binding
@@ -2680,39 +2680,41 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 title: 'Info',
                 message: "Checking for updates"
             });
-            tgd.localLog("Checking for auto updates");
-            tgd.loader.check()
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Downloading updates"
-                    });
-                    tgd.localLog("Downloading auto updates");
-                    return tgd.loader.download(_.throttle(function(progress) {
-                        tgd.localLog("Downloaded " + progress);
+            tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.appLocale || localStorage.locale || "en"))
+                .then(function(updateAvailable) {
+                    if (updateAvailable) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Downloading file, completed " + (progress.percentage * 100).toFixed(0) + "%"
+                            message: "Downloading updates"
                         });
-                    }, 1000));
+                        tgd.localLog("Downloading auto updates");
+                        $("#tgdLoader").show();
+                    }
+                    return tgd.loader.download(function(progress) {
+                        $("#tgdLoaderProgress").width((progress.percentage * 100).toFixed(0) + "%");
+                    });
                 })
                 .catch(function(e) {
+                    $("#tgdLoader").hide();
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
                         message: "Problem checking for updates: " + e.message
                     });
                 })
-                .then(function() {
-                    $.toaster({
-                        priority: 'info',
-                        title: 'Info',
-                        message: "Installing updates"
-                    });
+                .then(function(manifest) {
+                    $("#tgdLoader").hide();
+                    if (manifest) {
+                        $.toaster({
+                            priority: 'info',
+                            title: 'Info',
+                            message: "Installing updates"
+                        });
+                    }
                     return tgd.loader.update();
                 }, function(err) {
+                    $("#tgdLoader").hide();
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
@@ -2721,7 +2723,8 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 });
         };
 
-        if (localStorage.autoUpdates == "true" || tgd.defaults.autoUpdates == "true") {
+        if (localStorage.autoUpdates == "true" || (tgd.defaults.autoUpdates == "true" && _.isEmpty(localStorage.autoUpdates))) {
+            tgd.localLog("Checking for auto updates");
             tgd.checkUpdates();
         }
     } catch (e) {
@@ -2751,7 +2754,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.8.0";
+tgd.version = "3.6.9.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3023,7 +3026,7 @@ Item.prototype = {
             }
             itemObject.hasLifeExotic = _.where(itemObject.perks, {
                 name: "The Life Exotic"
-            }).length > 0
+            }).length > 0;
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -3040,7 +3043,11 @@ Item.prototype = {
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    var result = 0;
+                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
+                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    }
+                    return result;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
@@ -3108,7 +3115,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment == false) {
+        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
             return true;
         } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
@@ -3147,10 +3154,10 @@ Item.prototype = {
             itemStatValue = this.primaryStatValue().toString();
         }
         var operator = $parent.searchKeyword().substring(0, 1);
-        if (itemStatValue != "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
+        if (itemStatValue !== "" && itemStatValue.indexOf("%") == -1 && (operator == ">" || operator == "<" || $.isNumeric($parent.searchKeyword()))) {
             var operand = "=",
                 searchValue = $parent.searchKeyword();
-            if (operator == ">" || operator == "<") {
+            if (operator === ">" || operator === "<") {
                 operand = operator + operand;
                 searchValue = searchValue.replace(operator, '');
             } else {
@@ -3343,7 +3350,7 @@ Item.prototype = {
         if (targetCharacterId == sourceCharacterId) {
             tgd.localLog("item is already in the character");
             /* if item is exotic */
-            if (self.tierType == 6 && self.hasLifeExotic == false) {
+            if (self.tierType == 6 && self.hasLifeExotic === false) {
                 //tgd.localLog("item is exotic");
                 var otherExoticFound = false,
                     otherBucketTypes = self.weaponIndex > -1 ? _.clone(tgd.DestinyWeaponPieces) : _.clone(tgd.DestinyArmorPieces);
@@ -4644,7 +4651,7 @@ Profile.prototype = {
             //console.log(candidates);
             _.each(candidates, function(candidate) {
                 if (type == "Light" || type == "All" || (type != "Light" && candidate.stats[type] > 0)) {
-                    (candidate.tierType == 6 && candidate.hasLifeExotic == false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
+                    (candidate.tierType == 6 && candidate.hasLifeExotic === false ? sets : backups)[candidate.isEquipped() ? "unshift" : "push"]([candidate]);
                 }
             });
         });
@@ -4744,16 +4751,17 @@ Profile.prototype = {
         _.each(highestSet, function(candidate) {
             var itemEquipped = character.itemEquipped(candidate.bucketType);
             if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
+                var message;
                 if ((type == "Light" && candidate.primaryStatValue() > itemEquipped.primaryStatValue()) || type != "Light") {
                     adhoc.addUniqueItem({
                         id: candidate._id,
                         bucketType: candidate.bucketType,
                         doEquip: true
                     });
-                    var message = candidate.bucketType + " can have a better item with " + candidate.description;
+                    message = candidate.bucketType + " can have a better item with " + candidate.description;
                     tgd.localLog(message);
                 } else {
-                    var message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
+                    message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
                 }
                 $.toaster({
                     priority: 'info',
@@ -4788,18 +4796,23 @@ Profile.prototype = {
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var key, description = "",
+                        var title, description = "",
                             stats = character.joinStats(combo.set);
-                        _.each(stats, function(stat, key) {
-                            description = description + " <strong>" + key.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                        combo.stats = [];
+                        _.each(stats, function(stat, name) {
+                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            combo.stats.push(stat);
                         });
-                        key = $.trim(description);
-                        if (key in armorBuilds && combo.score > armorBuilds[key].score || !(key in armorBuilds)) {
-                            armorBuilds[key] = combo;
+                        combo.title = $.trim(description);
+                        if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
+                            armorBuilds[combo.title] = combo;
                         }
                     }
                 });
-                if (Object.keys(armorBuilds).length === 1) {
+                armorBuilds = _.sortBy(armorBuilds, function(combo) {
+                    return _.max(combo.stats) * -1;
+                });
+                if (armorBuilds.length === 1) {
                     highestSet = bestSets[bestSets.length - 1].set;
                     highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
                     character.equipAction(type, highestSetValue, highestSet);
@@ -4815,9 +4828,10 @@ Profile.prototype = {
                                     BootstrapDialog.alert("Error: Please select one armor build to equip.");
                                 } else {
                                     var selectedBuild = $("input.armorBuild:checked").val();
-                                    highestSet = armorBuilds[selectedBuild].set;
-                                    highestSetValue = armorBuilds[selectedBuild].score;
-                                    character.equipAction(type, highestSetValue, highestSet);
+                                    highestCombo = _.findWhere(armorBuilds, {
+                                        title: selectedBuild
+                                    });
+                                    character.equipAction(type, highestCombo.score, highestCombo.set);
                                     dialog.close();
                                 }
                             }
@@ -4876,9 +4890,7 @@ var app = function() {
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
-    this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
-    this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
-    this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.appLocale = ko.pureComputed(new tgd.StoreObj("appLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
     this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
     this.ccWidth = ko.pureComputed(new tgd.StoreObj("ccWidth"));
@@ -4972,7 +4984,7 @@ var app = function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("Help").content('<div class="help">' + $("#help").html() + '</div>').show();
+        (new tgd.dialog()).title("Help").content(tgd.helpTemplate()).show();
     };
 
     this.showLanguageSettings = function() {
@@ -4985,7 +4997,11 @@ var app = function() {
         })).title("Set Language").show(true, function() {}, function() {
             tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
+                console.log("changing locale to " + this.value);
                 self.appLocale(this.value);
+                self.autoUpdates(true);
+                tgd.checkUpdates();
+                BootstrapDialog.alert("Downloading updated language files");
                 $(".btn-setLanguage").removeClass("btn-primary");
                 $(this).addClass("btn-primary");
             });
@@ -5008,7 +5024,7 @@ var app = function() {
 
     this.showDonate = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title(self.activeText().donation_title).content($("#donate").html()).show(true, function() {}, function() {
+        (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, function() {}, function() {
             $("a.donatePaypal").click(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
                 return false;
@@ -5042,7 +5058,7 @@ var app = function() {
 
     this.showAbout = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("About").content($("#about").html()).show();
+        (new tgd.dialog()).title("About").content(tgd.aboutTemplate()).show();
     };
 
     this.clearFilters = function(model, element) {
@@ -5050,7 +5066,6 @@ var app = function() {
         self.activeView(tgd.defaults.activeView);
         self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
-        self.doRefresh(tgd.defaults.doRefresh);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
         self.tierFilter(tgd.defaults.tierFilter);
         self.weaponFilter(tgd.defaults.weaponFilter);
@@ -5207,11 +5222,14 @@ var app = function() {
             if (activeItem.objectives && activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
                     var info = _objectiveDefs[objective.objectiveHash];
-                    var label = "";
+                    var label = "",
+                        value = 0;
                     if (info.displayDescription) {
                         label = "<strong>" + info.displayDescription + "</strong>:";
                     }
-                    var value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    if (info && info.completionValue) {
+                        value = Math.floor((objective.progress / info.completionValue) * 100) + "% (" + objective.progress + '/' + info.completionValue + ')';
+                    }
                     $content.find(".destt-desc").after(label + value + "<br>");
                 });
             }
@@ -5706,7 +5724,7 @@ var app = function() {
         } else {
             $("body").css("padding-bottom", "80px");
         }
-        if (self.doRefresh() == 1 && self.loadoutMode() === false) {
+        if (self.doRefresh() === true && self.loadoutMode() === false) {
             tgd.localLog("refresh handler enabled");
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
@@ -6019,10 +6037,8 @@ var app = function() {
             self.apiRequest({
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),
-                locale: self.currentLocale(),
-                version: self.defLocaleVersion(),
-                /*this one applies only to your current profile
+                membershipId: parseFloat(self.activeUser().user.membershipId)
+                    /*this one applies only to your current profile
 				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
@@ -6056,7 +6072,7 @@ var app = function() {
     this.showWhatsNew = function(callback) {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
-        container.html("Version: " + tgd.version + $("#whatsnew").html());
+        container.html(tgd.whatsNewTemplate());
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
@@ -6408,18 +6424,6 @@ var app = function() {
         });
     };
 
-    this.initItemDefs = function() {
-        var itemDefs = self.itemDefs();
-        if (self.currentLocale() != "en" && !_.isEmpty(itemDefs) && self.currentLocale() == self.defsLocale()) {
-            try {
-                window._itemDefs = JSON.parse(itemDefs);
-            } catch (e) {
-                tgd.localLog("invalid itemDefs");
-                self.itemDefs("");
-            }
-        }
-    };
-
     this.generateStatic = function() {
         var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background", "stats"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
@@ -6443,43 +6447,7 @@ var app = function() {
         return JSON.stringify(profiles);
     };
 
-    this.downloadLocale = function(locale, version) {
-        var bungie_code = _.findWhere(tgd.languages, {
-            code: locale
-        }).bungie_code;
-        $.ajax({
-            url: tgd.remoteServer + "/locale.cfm?locale=" + bungie_code,
-            success: function(data) {
-                BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-                try {
-                    self.itemDefs(JSON.stringify(data));
-                } catch (e) {
-                    localStorage.clear();
-                    localStorage.setItem("quota_error", "1");
-                    tgd.localLog("quota error");
-                }
-                self.defsLocale(locale);
-                self.defLocaleVersion(version);
-                window._itemDefs = data;
-            }
-        });
-    };
-
-    this.onLocaleChange = function() {
-        var locale = self.currentLocale();
-        tgd.localLog("locale changed to " + locale);
-        if (locale == "en") {
-            self.defsLocale(locale);
-        }
-        if (locale != "en" && locale != "tr" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
-            tgd.localLog("downloading language pack");
-            self.downloadLocale(locale, tgd.version);
-        }
-    };
-
     this.initLocale = function(callback) {
-        self.locale.subscribe(self.onLocaleChange);
-        self.appLocale.subscribe(self.onLocaleChange);
         if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
             tgd.localLog("getting device locale internally");
             navigator.globalization.getPreferredLanguage(function(a) {
@@ -6601,7 +6569,6 @@ var app = function() {
         if (_.isUndefined(window._itemDefs) || _.isUndefined(window._perkDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
-        self.initItemDefs();
 
         /* These templates are loaded after the locale for the language template, they are used dynamically for pop ups and other content */
         _.each(_.templates, function(content, templateName) {
