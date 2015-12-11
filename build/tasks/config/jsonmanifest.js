@@ -60,6 +60,7 @@ module.exports = function(grunt) {
 			'css/style.css',
 			'css/tooltip.css',
 			'css/style_new.css',
+			'data/definitions/en/*.json',
 			'data/definitions/*.json',
 			'js/libraries/primary/*.js',
 			'js/libraries/secondary/*.js',
@@ -108,7 +109,7 @@ module.exports = function(grunt) {
           //manually define the files that should be injected into the page
           load: [
 			"/auto_updates.cfm?resources/tower_ghost.css",
-			"/auto_updates.cfm?resources/definitions.json", 
+			"/auto_updates.cfm?resources/en/definitions.json", 
 			"/auto_updates.cfm?resources/1.libraries.js",
 			"/auto_updates.cfm?resources/2.templates.js",
 			"/auto_updates.cfm?resources/3.tower_ghost.js",
@@ -119,7 +120,7 @@ module.exports = function(grunt) {
         },
         src: [
 			'resources/*.css',
-			'resources/*.json',
+			'resources/en/*.json',
 			'resources/*.js'
         ],
         dest: ['../www/bootstrap.json']

@@ -42,7 +42,7 @@
                 title: 'Info',
                 message: "Checking for updates"
             });
-            tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.defsLocale || "en"))
+            tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.appLocale || localStorage.locale || "en"))
                 .then(function(updateAvailable) {
                     if (updateAvailable) {
                         $.toaster({

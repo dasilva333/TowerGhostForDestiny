@@ -14,9 +14,7 @@ var app = function() {
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
     this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
-    this.defsLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
-    this.defLocaleVersion = ko.pureComputed(new tgd.StoreObj("defLocaleVersion"));
-    this.appLocale = ko.pureComputed(new tgd.StoreObj("defsLocale"));
+    this.appLocale = ko.pureComputed(new tgd.StoreObj("appLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
     this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
     this.ccWidth = ko.pureComputed(new tgd.StoreObj("ccWidth"));
@@ -123,7 +121,11 @@ var app = function() {
         })).title("Set Language").show(true, function() {}, function() {
             tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
+                console.log("changing locale to " + this.value);
                 self.appLocale(this.value);
+                self.autoUpdates(true);
+                tgd.checkUpdates();
+                BootstrapDialog.alert("Downloading updated language files");
                 $(".btn-setLanguage").removeClass("btn-primary");
                 $(this).addClass("btn-primary");
             });
@@ -1159,10 +1161,8 @@ var app = function() {
             self.apiRequest({
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),
-                locale: self.currentLocale(),
-                version: self.defLocaleVersion(),
-                /*this one applies only to your current profile
+                membershipId: parseFloat(self.activeUser().user.membershipId)
+                    /*this one applies only to your current profile
 				accountId: self.bungie.getMemberId()*/
             }, function(results) {
                 var _results = [];
@@ -1548,18 +1548,6 @@ var app = function() {
         });
     };
 
-    this.initItemDefs = function() {
-        var itemDefs = self.itemDefs();
-        if (self.currentLocale() != "en" && !_.isEmpty(itemDefs) && self.currentLocale() == self.defsLocale()) {
-            try {
-                window._itemDefs = JSON.parse(itemDefs);
-            } catch (e) {
-                tgd.localLog("invalid itemDefs");
-                self.itemDefs("");
-            }
-        }
-    };
-
     this.generateStatic = function() {
         var profileKeys = ["race", "order", "gender", "classType", "id", "level", "imgIcon", "icon", "background", "stats"];
         var itemKeys = ["id", "_id", "characterId", "damageType", "damageTypeName", "isEquipped", "isGridComplete", "locked",
@@ -1583,43 +1571,7 @@ var app = function() {
         return JSON.stringify(profiles);
     };
 
-    this.downloadLocale = function(locale, version) {
-        var bungie_code = _.findWhere(tgd.languages, {
-            code: locale
-        }).bungie_code;
-        $.ajax({
-            url: tgd.remoteServer + "/locale.cfm?locale=" + bungie_code,
-            success: function(data) {
-                BootstrapDialog.alert(self.activeText().language_pack_downloaded);
-                try {
-                    self.itemDefs(JSON.stringify(data));
-                } catch (e) {
-                    localStorage.clear();
-                    localStorage.setItem("quota_error", "1");
-                    tgd.localLog("quota error");
-                }
-                self.defsLocale(locale);
-                self.defLocaleVersion(version);
-                window._itemDefs = data;
-            }
-        });
-    };
-
-    this.onLocaleChange = function() {
-        var locale = self.currentLocale();
-        tgd.localLog("locale changed to " + locale);
-        if (locale == "en") {
-            self.defsLocale(locale);
-        }
-        if (locale != "en" && locale != "tr" && self.defsLocale() != locale && !localStorage.getItem("quota_error")) {
-            tgd.localLog("downloading language pack");
-            self.downloadLocale(locale, tgd.version);
-        }
-    };
-
     this.initLocale = function(callback) {
-        self.locale.subscribe(self.onLocaleChange);
-        self.appLocale.subscribe(self.onLocaleChange);
         if (navigator && navigator.globalization && navigator.globalization.getPreferredLanguage) {
             tgd.localLog("getting device locale internally");
             navigator.globalization.getPreferredLanguage(function(a) {
@@ -1741,7 +1693,6 @@ var app = function() {
         if (_.isUndefined(window._itemDefs) || _.isUndefined(window._perkDefs)) {
             return BootstrapDialog.alert(self.activeText().itemDefs_undefined);
         }
-        self.initItemDefs();
 
         /* These templates are loaded after the locale for the language template, they are used dynamically for pop ups and other content */
         _.each(_.templates, function(content, templateName) {
