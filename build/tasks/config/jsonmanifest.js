@@ -89,7 +89,7 @@ module.exports = function(grunt) {
         },
         src: [
 			'resources/*.css',
-			'resources/*.json',
+			'resources/en/*.json',
 			'resources/*.js'
         ],
         dest: ['../www/bootstrap.json']

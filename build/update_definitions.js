@@ -1,7 +1,6 @@
 var purgeCache = (process.argv.length == 3 && process.argv[2] == "true")
 
-var jag = require("jag"),
-	http = require("http"),
+var http = require("http"),
 	https = require("https"),
 	sqlite3 = require('sqlite3').verbose(),
 	fs = require("fs"),
@@ -170,21 +169,12 @@ var extractData = function(callback){
 					var patchData = JSON.parse(fs.readFileSync(patchFile));
 					_.extend(obj, patchData);
 				}
-				if (locale == "en"){
-					console.log(locale +' writing file: ' + filename);
-					fs.writeFileSync(definitionPath + filename, "_" + set.name + "="+JSON.stringify(obj));
+				var dataPath = definitionPath + locale + '/';
+				if (!fs.existsSync(dataPath)){
+					console.log(fs.existsSync(dataPath) + " creating new path: " + dataPath);
+					fs.mkdirSync(dataPath);
 				}
-				else if (set.name == "itemDefs") {
-					var dataPath = "./locale/" + locale + "/";
-					console.log(locale + ' saving file: ' + filename);
-					if (!fs.existsSync(dataPath)){
-						console.log(fs.existsSync(dataPath) + " creating new path: " + dataPath);
-						fs.mkdirSync(dataPath);
-					}					
-					fs.writeFileSync(dataPath + filename, JSON.stringify(obj));				
-					console.log(fs.existsSync(dataPath + filename) + " creating gz for " + locale);
-					jag.pack(dataPath + filename,dataPath + filename+".gz", function(){ console.log("compressed " + locale); });
-				}
+				fs.writeFileSync(dataPath + filename, "_" + set.name + "="+JSON.stringify(obj));
 				//console.log("2.count " + count);
 				if (count == 0){
 					callback();
@@ -212,7 +202,7 @@ var removeOrphans = function(callback){
 
 var queueImages = function(callback){
 	console.log("first queue");
-	var contents = JSON.parse(fs.readFileSync(definitionPath + "itemDefs.json").toString("utf8").replace("_itemDefs=",""));
+	var contents = JSON.parse(fs.readFileSync(definitionPath + "en/itemDefs.json").toString("utf8").replace("_itemDefs=",""));
 	_.each(contents, function(item){
 		var icon = item.icon.replace(imgPath,'');
 		if (icon != "") queue.push(icon);
@@ -221,12 +211,12 @@ var queueImages = function(callback){
 		}
 	});
 	console.log("2nd queue");
-	contents = JSON.parse(fs.readFileSync(definitionPath + "perkDefs.json").toString("utf8").replace("_perkDefs=",""));
+	contents = JSON.parse(fs.readFileSync(definitionPath + "en/perkDefs.json").toString("utf8").replace("_perkDefs=",""));
 	_.each(contents, function(item){
 		queue.push(item.displayIcon.replace(imgPath,''));
 	});
 	console.log("3rd queue");
-	contents = JSON.parse(fs.readFileSync(definitionPath + "talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
+	contents = JSON.parse(fs.readFileSync(definitionPath + "en/talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
 	_.each(contents , function(tg){
 		_.each(tg.nodes, function(node){
 			_.each( node.steps, function(step){

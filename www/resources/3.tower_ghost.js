@@ -2684,7 +2684,7 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                 title: 'Info',
                 message: "Checking for updates"
             });
-            tgd.loader.check()
+            tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.defsLocale || "en"))
                 .then(function(updateAvailable) {
                     if (updateAvailable) {
                         $.toaster({
