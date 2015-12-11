@@ -26,7 +26,8 @@ var neededFiles = [
 		obj.itemDescription = encodeURIComponent(obj.itemDescription);
 		obj.itemTypeName = encodeURIComponent(obj.itemTypeName);
 		//TODO use the information in obj.stats to supplement missing data in DestinyDB tooltips for min/max
-		delete obj.stats;
+		//STATS is currently being used to provide AA/Equip Speed stats with advanced tooltips enabled
+		//delete obj.stats;
 		delete obj.hasAction;
 		delete obj.instanced;
 		delete obj.setItemHashes;

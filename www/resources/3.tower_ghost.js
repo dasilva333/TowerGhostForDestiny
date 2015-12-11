@@ -2754,7 +2754,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.6.9.5";
+tgd.version = "3.6.9.6";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5148,6 +5148,13 @@ var app = function() {
                     }));
                     stats = $content.find(".destt-stat");
                 }
+                var itemStats, itemDef = _itemDefs[activeItem.itemHash];
+                if (itemDef && itemDef.stats) {
+                    itemStats = _.map(itemDef.stats, function(obj, key) {
+                        obj.name = _statDefs[key].statName;
+                        return obj;
+                    });
+                }
                 stats.html(
                     stats.find(".stat-bar").map(function(index, stat) {
                         var $stat = $("<div>" + stat.outerHTML + "</div>"),
@@ -5155,32 +5162,37 @@ var app = function() {
                             labelText = $.trim(label.text());
                         if (labelText in activeItem.stats) {
                             label.text(labelText + ": " + activeItem.stats[labelText]);
-                            $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+                            if ($stat.find(".stat-bar-static-value").length > 0) {
+                                $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+                            } else {
+                                var statObj = _.findWhere(itemStats, {
+                                    name: labelText
+                                });
+                                if (statObj.minimum > 0 && statObj.maximum > 0) {
+                                    $stat.find(".stat-bar-empty").text(" Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                                }
+                            }
+
                         }
                         return $stat.html();
                     }).get().join("")
                 );
-                if (self.advancedTooltips() === true && activeItem.weaponIndex > -1) {
+                if (self.advancedTooltips() === true && activeItem.weaponIndex > -1 && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last");
-                    var itemDef = _itemDefs[activeItem.itemHash];
-                    if (itemDef && itemDef.stats) {
-                        var itemStats = _.map(itemDef.stats, function(obj, key) {
-                            obj.name = _statDefs[key].statName;
-                            return obj;
+                    var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction"];
+                    _.each(desireableStats, function(statName) {
+                        var statObj = _.findWhere(itemStats, {
+                            name: statName
                         });
-                        var desireableStats = ["Aim assistance", "Equip Speed"];
-                        _.each(desireableStats, function(statName) {
-                            var statObj = _.findWhere(itemStats, {
-                                name: statName
-                            });
-                            if (statObj) {
-                                var clonedRow = magazineRow.clone();
-                                clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                        if (statObj) {
+                            var clonedRow = magazineRow.clone();
+                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                            if (statObj.minimum > 0 && statObj.maximum > 0) {
                                 clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                                magazineRow.before(clonedRow);
                             }
-                        });
-                    }
+                            magazineRow.before(clonedRow);
+                        }
+                    });
                 }
             }
             if (activeItem.perks.length > 0) {

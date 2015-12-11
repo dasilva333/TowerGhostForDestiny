@@ -6,7 +6,7 @@
     },
     "definitions.json": {
       "filename": "resources/en/definitions.json",
-      "version": "4b8a8586114967b49f2e663ae2cf6c4562efea7271391c17122597fc1cc9489c"
+      "version": "fa49cebb45a7f67340fda25827c2c03c05b9420e516c7bf992ed440b2a041576"
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
@@ -14,11 +14,11 @@
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "c806fdc9e3cdeb57f242b29aa646ff395e4ca110b15786a572aa68ec0423e6ef"
+      "version": "654e9a4132cdabfe31fd72ec5ccb16d07914c2db81558a7fa3dc9f6901a8aa69"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "c27f0b4d3be7c2a15eee5e0b3eaf87413d599fb7a3b9b9b524a5032409da1d35"
+      "version": "761650f48403c1345036c0884154875b7800ca3dfe27fec38e53db9a8539c522"
     },
     "4.extras.js": {
       "filename": "resources/4.extras.js",
@@ -26,12 +26,12 @@
     }
   },
   "load": [
-    "/auto_updates.cfm?resources/tower_ghost.css",
-    "/auto_updates.cfm?resources/en/definitions.json",
-    "/auto_updates.cfm?resources/1.libraries.js",
-    "/auto_updates.cfm?resources/2.templates.js",
-    "/auto_updates.cfm?resources/3.tower_ghost.js",
-    "/auto_updates.cfm?resources/4.extras.js"
+    "resources/tower_ghost.css",
+    "resources/en/definitions.json",
+    "resources/1.libraries.js",
+    "resources/2.templates.js",
+    "resources/3.tower_ghost.js",
+    "resources/4.extras.js"
   ],
   "root": "./"
 }
