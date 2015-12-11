@@ -12,9 +12,17 @@ module.exports = function (grunt) {
 
 		var files = this.data.files;
 		
-		Object.keys(files).forEach(function(src){
+		var keys = Object.keys(files), count = 0;
+		
+		var finish = function(){
+			count++;
+			if (count == keys.length){
+				done();
+			}
+		}
+		keys.forEach(function(src){
 			var dst = files[src];
-			jag.pack(src, dst, done);
+			jag.pack(src, dst, finish);
 		});
 		
 
