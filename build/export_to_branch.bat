@@ -12,8 +12,10 @@ mkdir ..\build\branch\data\
 xcopy data\* ..\build\branch\data\ /E /Y
 rmdir ..\build\branch\data\definitions /S /Q
 mkdir ..\build\branch\resources\
+mkdir ..\build\branch\resources\en\
 copy resources\ ..\build\branch\resources\
-if "%1" NEQ "static-share" del ..\build\branch\resources\*.gz
+copy resources\en\ ..\build\branch\resources\en\
+if "%1" NEQ "static-share" del ..\build\branch\resources\en\*.gz
 del ..\build\branch\resources\*.map
 mkdir ..\build\branch\res\icon\%1
 copy res\icon\%1\ ..\build\branch\res\icon\%1
