@@ -15,3 +15,4 @@ node_modules
 /build/npm-debug.log
 /build/.ftppass
 /build/nwjs/download/nwjs-v0.12.1-win-x64
+/www/data/definitions

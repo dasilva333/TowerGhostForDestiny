@@ -108,7 +108,7 @@ _ga = new(function() {
                 });
             }
         });
-        var unwantedCodes = [0, 503, 504, 522, 524, 502, 400, 500];
+        var unwantedCodes = [0, 503, 504, 522, 524, 526, 502, 400, 500];
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
             if (unwantedCodes.indexOf(request.status) == -1) {
