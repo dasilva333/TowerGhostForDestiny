@@ -10,7 +10,7 @@
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
-      "version": "3fa5957b0352f18796b82577843457033eb584e70df8a73d772c26ae172f209b"
+      "version": "d96249d5a6a5b3c04f642cd2d268e9bca4a3e99d7425c5f7c3ee5cd6d1ec5641"
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
@@ -18,11 +18,11 @@
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "6d09ce06312d1e240122c9e1f51a8922416ef1c2c23e273f59f7dbc2226807a3"
+      "version": "ed98915d0fb19c160c971a98827fe70c6cb8b0e4c0ac459ce5ef37dc2c699ea4"
     },
     "4.extras.js": {
       "filename": "resources/4.extras.js",
-      "version": "402b86e6d40f7ddaf8a27500d978fcdc6f2041df35a3c2d46120a07870bce067"
+      "version": "0a70328e4116cc6dd7904c126e9d2fa022b8e652668a02b6e848dcf5eb6acfda"
     }
   },
   "load": [
