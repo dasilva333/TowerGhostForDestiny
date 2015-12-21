@@ -71,7 +71,7 @@ _ga = new(function() {
             tracker.set('sendHitTask', function(model) {
                 originalSendHitTask(model);
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', 'https://www.towerghostfordestiny.com/ga.cfm', true);
+                xhr.open('POST', tgd.remoteServer + '/ga.cfm', true);
                 xhr.send(model.get('hitPayload'));
             });
         });
@@ -108,7 +108,7 @@ _ga = new(function() {
                 });
             }
         });
-        var unwantedCodes = [0, 503, 504, 522, 524, 502, 400, 500];
+        var unwantedCodes = [0, 503, 504, 522, 524, 525, 526, 502, 400, 409, 500];
         // Track AJAX errors (jQuery API)
         $(document).ajaxError(function(evt, request, settings, err) {
             if (unwantedCodes.indexOf(request.status) == -1) {
@@ -132,6 +132,23 @@ if (isMobile) {
 } else {
     $(document).ready(_ga.init);
 }
+tgd.Tooltip = function(id) {
+    var self = this;
+
+    var info = _itemDefs[id];
+    this.class = "destt-q" + info.tierType;
+    this.icon = tgd.tooltipsIconTemplate({
+        item: info
+    });
+    this.id = id;
+    this.name = unescape(info.itemName);
+    this.site = "destinydb";
+    this.tooltip = tgd.tooltipsTemplate({
+        item: info
+    });
+    this.type = "items";
+};
+
 var $ZamTooltips = function() {
     this.addIcons = false;
     this.renameLinks = false;
@@ -598,23 +615,48 @@ var $ZamTooltips = function() {
             top: top
         };
     };
+    var fetchLocal = function(id) {
+        var tooltips = [new tgd.Tooltip(id)];
+        $ZamTooltips.onTooltip(tooltips);
+    };
     var fetch = function(site, type, id) {
         // loadCss(site);
         var canonical = getCanonicalName(site, type, id);
-        var url = '/' + type + '/tooltip/' + id;
-        if (!remote && FH.DOMAIN == site) {
-            url = getServerUrl() + url;
-        } else {
-            if (!sites[site]) {
-                return false;
-            }
-            url = 'https://' + sites[site].url + url;
-        }
         cache[canonical] = true;
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-        addResource(script);
+        if (tgd.itemsNotIndexed.indexOf(parseFloat(id)) > -1) {
+            fetchLocal(id);
+        } else {
+            var url = '/' + type + '/tooltip/' + id;
+            if (!remote && FH.DOMAIN == site) {
+                url = getServerUrl() + url;
+            } else {
+                if (!sites[site]) {
+                    return false;
+                }
+                url = 'https://' + sites[site].url + url;
+            }
+
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = url;
+            var isLoaded = false;
+            script.onload = script.onreadystatechange = function() {
+                if (!this.readyState || this.readyState == "loaded" || this.readyState == "complete") {
+                    // script successfully loaded
+                    isLoaded = true;
+                }
+                if (!isLoaded || !_.isObject(cache[canonical])) {
+                    fetchLocal(id);
+                }
+            };
+            addResource(script);
+            setTimeout(function() {
+                if (!_.isObject(cache[canonical])) {
+                    fetchLocal(id);
+                }
+            }, 3 * 1000);
+        }
+
         return true;
     };
     // var loadCss = function(site) {
