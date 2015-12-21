@@ -1674,3 +1674,13 @@
 .fh-icon.des-icon.no-border span.effect {
     background: none !important
 }
+
+@media (max-width: 719px), (max-height: 680px) {
+ .fhtt {
+    -webkit-transform: scale(0.8);
+    -moz-transform: scale(0.8);
+    -ms-transform: scale(0.8);
+    -o-transform: scale(0.8);
+    transform: scale(0.8);
+ }
+}
