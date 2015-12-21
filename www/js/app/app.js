@@ -292,7 +292,7 @@ var app = function() {
                                 var statObj = _.findWhere(itemStats, {
                                     name: labelText
                                 });
-                                if (statObj.minimum > 0 && statObj.maximum > 0) {
+                                if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
                                     $stat.find(".stat-bar-empty").text(" Min/Max : " + statObj.minimum + "/" + statObj.maximum);
                                 }
                             }
