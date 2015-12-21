@@ -6768,6 +6768,7 @@ if (isMobile) {
         });
     });
     document.addEventListener('deviceready', app.init, false);
+    $(document).ready(app.init);
 } else {
     $(document).ready(app.init);
 }
