@@ -6610,13 +6610,13 @@ var app = function() {
                     .on("tap", self.globalClickHandler);
 
                 //This ensures that the top status bar color matches the app
-                if (typeof StatusBar !== "undefined") {
+                /*if (typeof StatusBar !== "undefined") {
                     StatusBar.styleBlackOpaque();
                     StatusBar.backgroundColorByHexString("#272B30");
                     if (window.device && device.platform === "iOS" && device.version >= 7.0) {
                         StatusBar.overlaysWebView(false);
                     }
-                }
+                }*/
 
                 //This sets up inAppBilling donations for iOS/Android
                 if (typeof inappbilling != "undefined") {
