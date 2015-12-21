@@ -3,6 +3,7 @@ window.isNWJS = (typeof require != "undefined");
 window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
 window.isFirefox = (/firefox/i.test(ua));
 window.isIOS = (/ios|iphone|ipod|ipad/i.test(ua));
+window.isiPad = (/ipad/i.test(ua));
 window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
