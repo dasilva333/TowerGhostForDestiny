@@ -2754,7 +2754,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.0.2";
+tgd.version = "3.7.0.3";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -6705,7 +6705,7 @@ var app = function() {
                     .on("tap", self.globalClickHandler);
 
                 //This ensures that the top status bar color matches the app
-                if (typeof StatusBar !== "undefined" && !window.isiPad) {
+                if (typeof StatusBar !== "undefined" && !(window.isiPad || (/ipad/i.test(ua)))) {
                     StatusBar.styleBlackOpaque();
                     StatusBar.backgroundColorByHexString("#272B30");
                     if (window.device && device.platform === "iOS" && device.version >= 7.0) {

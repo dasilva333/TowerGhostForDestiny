@@ -1829,7 +1829,7 @@ var app = function() {
                     .on("tap", self.globalClickHandler);
 
                 //This ensures that the top status bar color matches the app
-                if (typeof StatusBar !== "undefined" && !window.isiPad) {
+                if (typeof StatusBar !== "undefined" && !(window.isiPad || (/ipad/i.test(ua)))) {
                     StatusBar.styleBlackOpaque();
                     StatusBar.backgroundColorByHexString("#272B30");
                     if (window.device && device.platform === "iOS" && device.version >= 7.0) {
