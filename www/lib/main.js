@@ -31,16 +31,14 @@ function getBungledCookie(){
 	return cookieValue;
 }
 
-tabs.on('ready', function(tab) {
-	if (tab.url == pageUrl){
-		worker = tab.attach({
-		    contentScriptFile: data.url("resources/firefox.js")
-		});
-		worker.port.on("request-cookie-from-cs", function(){
-			var cookie = getBungledCookie();
-			//console.log("received request-cookie-from-cs: " + cookie);
-			worker.port.emit("response-cookie-from-as", cookie);
-		});
-	}
+pageMod.PageMod({
+  include: [ pageUrl + '*' ],
+  contentScriptFile: data.url("resources/firefox.js"),
+  contentScriptWhen: "end",
+  onAttach: function(worker) {
+	worker.port.on("request-cookie-from-cs", function(){
+		var cookie = getBungledCookie();
+		worker.port.emit("response-cookie-from-as", cookie);
+	});
+  }
 });
-
