@@ -76,12 +76,6 @@
 					});
 				}, timeout);
 			}
-			
-			$toast.click(function(){
-				settings.toast.remove($toast, function(){
-					$toast.remove();
-				});
-			});
 		}
 	};
 
@@ -96,7 +90,7 @@
 			'css'       :
 			{
 				'position' : 'fixed',
-				'top'      : '45px',
+				'top'      : '10px',
 				'right'    : '10px',
 				'width'    : '300px',
 				'zIndex'   : 50000
@@ -106,13 +100,19 @@
 		'toast'       :
 		{
 			'template' :
-			'<div class="alert alert-%priority% alert-dismissible text-center" role="alert">' +
+			'<div class="alert alert-%priority% alert-dismissible" role="alert">' +
 				'<button type="button" class="close" data-dismiss="alert">' +
 					'<span aria-hidden="true">&times;</span>' +
 					'<span class="sr-only">Close</span>' +
 				'</button>' +
 				'<span class="title"></span>: <span class="message"></span>' +
 			'</div>',
+
+			'defaults' :
+			{
+				'title'    : 'Notice',
+				'priority' : 'success'
+			},
 
 			'css'      : {},
 			'cssm'     : {},
@@ -157,17 +157,28 @@
 		{
 			if ('settings' in options)
 			{
-				settings = $.extend(settings, options.settings);
+				settings = $.extend(true, settings, options.settings);
 			}
+		}
+		else
+		{
+			var values = Array.prototype.slice.call(arguments, 0);
+			var labels = ['message', 'title', 'priority'];
+			options = {};
 
-			var title    = ('title' in options) ? options.title : 'Notice';
-			var message  = ('message' in options) ? options.message : null;
-			var priority = ('priority' in options) ? options.priority : 'success';
-
-			if (message !== null)
+			for (var i = 0, l = values.length; i < l; i += 1)
 			{
-				toasting.notify(title, message, priority);
+				options[labels[i]] = values[i];
 			}
+		}
+
+		var title    = (('title' in options) && (typeof options.title === 'string')) ? options.title : settings.toast.defaults.title;
+		var message  = ('message' in options) ? options.message : null;
+		var priority = (('priority' in options) && (typeof options.priority === 'string')) ? options.priority : settings.toast.defaults.priority;
+
+		if (message !== null)
+		{
+			toasting.notify(title, message, priority);
 		}
 	};
 
