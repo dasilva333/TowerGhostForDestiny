@@ -77,7 +77,8 @@ module.exports = function(grunt) {
           basePath: '../www/',
           exclude: [
 			'resources/bootstrap.js',
-			'resources/base.css'
+			'resources/base.css',
+			'js/extras/buy.js'
 		  ],
           //load all found assets
           loadall: true,
