@@ -1,0 +1,100 @@
+{
+    "analytics.js": {
+        "currentFile": "../www/js//libraries/secondary/analytics.js",
+        "fileName": "analytics.js",
+        "link": "http://www.google-analytics.com/analytics.js",
+        "localHash": "895e138272db26a84037277a64a76032bdf23eddfe375583fe3756bc19d1c31b",
+        "remoteHash": "895e138272db26a84037277a64a76032bdf23eddfe375583fe3756bc19d1c31b"
+    },
+    "hammer.js": {
+        "currentFile": "../www/js//libraries/secondary/hammer.js",
+        "fileName": "hammer.js",
+        "link": "http://hammerjs.github.io/dist/hammer.min.js",
+        "localHash": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e",
+        "remoteHash": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e"
+    },
+    "bootstrap.js": {
+        "currentFile": "../www/js//libraries/secondary/bootstrap.js",
+        "fileName": "bootstrap.js",
+        "link": "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js",
+        "localHash": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8",
+        "remoteHash": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8"
+    },
+    "jquery-idletimer.js": {
+        "currentFile": "../www/js//plugins/jquery-idletimer.js",
+        "fileName": "jquery-idletimer.js",
+        "link": "https://raw.githubusercontent.com/thorst/jquery-idletimer/master/dist/idle-timer.min.js",
+        "localHash": "92c35f839d90ea55730d05ce3ea859cb598cd85eb20be3ed55621bb8baa3aa36",
+        "remoteHash": "92c35f839d90ea55730d05ce3ea859cb598cd85eb20be3ed55621bb8baa3aa36"
+    },
+    "jquery.toaster.js": {
+        "currentFile": "../www/js//plugins/jquery.toaster.js",
+        "fileName": "jquery.toaster.js",
+        "link": "https://raw.githubusercontent.com/scottoffen/jquery.toaster/master/jquery.toaster.js",
+        "localHash": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf",
+        "remoteHash": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf"
+    },
+    "fastclick.js": {
+        "currentFile": "../www/js//libraries/secondary/fastclick.js",
+        "fileName": "fastclick.js",
+        "link": "https://raw.githubusercontent.com/ftlabs/fastclick/master/lib/fastclick.js",
+        "localHash": "1aa08cb3c7aa70d268d24d59c374c14af7bd08e0af8c85f8e4f60a2651f4bab5",
+        "remoteHash": "1aa08cb3c7aa70d268d24d59c374c14af7bd08e0af8c85f8e4f60a2651f4bab5"
+    },
+    "knockout-sortable.js": {
+        "currentFile": "../www/js//plugins/knockout-sortable.js",
+        "fileName": "knockout-sortable.js",
+        "link": "https://raw.githubusercontent.com/rniemeyer/knockout-sortable/master/src/knockout-sortable.js",
+        "localHash": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4",
+        "remoteHash": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
+    },
+    "jquery-ui.js": {
+        "currentFile": "../www/js//plugins/jquery-ui.js",
+        "fileName": "jquery-ui.js",
+        "link": "https://code.jquery.com/ui/1.11.3/jquery-ui.min.js",
+        "localHash": "c48feaca5f6fa70585397cfbfb1ffd5a41b98ff4959d2c36d6f8b2f1f5b06de1",
+        "remoteHash": "c48feaca5f6fa70585397cfbfb1ffd5a41b98ff4959d2c36d6f8b2f1f5b06de1"
+    },
+    "bootstrap-dialog.js": {
+        "currentFile": "../www/js//plugins/bootstrap-dialog.js",
+        "fileName": "bootstrap-dialog.js",
+        "link": "https://raw.githubusercontent.com/nakupanda/bootstrap3-dialog/master/dist/js/bootstrap-dialog.js",
+        "localHash": "822c465080c509499dfd057125a064facdf139574e61c3b1270a169a8d30d0f1",
+        "remoteHash": "822c465080c509499dfd057125a064facdf139574e61c3b1270a169a8d30d0f1"
+    },
+    "jquery-ui.touchpunch.js": {
+        "currentFile": "../www/js//plugins/jquery-ui.touchpunch.js",
+        "fileName": "jquery-ui.touchpunch.js",
+        "link": "https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js",
+        "localHash": "000854d782781aff1b16ea5451c1da3d07efadd35ab911ccb7e4b851571a25bd",
+        "remoteHash": "000854d782781aff1b16ea5451c1da3d07efadd35ab911ccb7e4b851571a25bd"
+    },
+    "modernizr.js": {
+        "currentFile": "../www/js//libraries/primary/modernizr.js",
+        "fileName": "modernizr.js",
+        "link": "https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js",
+        "localHash": "d2b82e612d2a812e8be2a57300dab8923c4f2edbe7a799e7da70791b595646fe",
+        "remoteHash": "d2b82e612d2a812e8be2a57300dab8923c4f2edbe7a799e7da70791b595646fe"
+    },
+    "knockout.js": {
+        "currentFile": "../www/js//libraries/primary/knockout.js",
+        "fileName": "knockout.js",
+        "link": "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js",
+        "localHash": "43e21ee81d80adccf54b5d576da2ae4cacb595282014cf89b0f154f4c3b7aa95",
+        "remoteHash": "43e21ee81d80adccf54b5d576da2ae4cacb595282014cf89b0f154f4c3b7aa95"
+    },
+    "jquery.js": {
+        "currentFile": "../www/js//libraries/primary/jquery.js",
+        "fileName": "jquery.js",
+        "link": "https://code.jquery.com/jquery-1.11.2.min.js",
+        "localHash": "2ecd295d295bec062cedebe177e54b9d6b19fc0a841dc5c178c654c9ccff09c0",
+        "remoteHash": "2ecd295d295bec062cedebe177e54b9d6b19fc0a841dc5c178c654c9ccff09c0"
+    },
+    "underscore.js": {
+        "currentFile": "../www/js//libraries/primary/underscore.js",
+        "fileName": "underscore.js",
+        "link": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js",
+        "localHash": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9",
+        "remoteHash": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9"
+    }
+}

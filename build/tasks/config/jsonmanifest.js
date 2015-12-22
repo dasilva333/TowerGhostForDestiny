@@ -72,6 +72,35 @@ module.exports = function(grunt) {
         ],
         dest: ['../www/bootstrap.json']
       },
+	  firefox: {
+        options: {
+          basePath: '../www/',
+          exclude: [
+			'resources/bootstrap.js',
+			'resources/base.css'
+		  ],
+          //load all found assets
+          loadall: true,
+          //manually add files to the manifest
+          files: {},
+          //manually define the files that should be injected into the page
+          load: [],
+          // root location of files to be loaded in the load array.
+          root: "./"
+        },
+        src: [
+			'resources/*.css',
+			'resources/en/*.json',
+			'js/libraries/primary/*.js',
+			'js/libraries/secondary/*.js',
+			'js/plugins/*.js',
+			'js/templates/*.js',
+			'js/tgd/*.js',
+			'js/app/*.js',
+			'js/extras/*.js'            
+        ],
+        dest: ['../www/bootstrap.json']
+      },
 	  prod: {
         options: {
           basePath: '../www/',
