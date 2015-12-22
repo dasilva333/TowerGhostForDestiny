@@ -31,13 +31,13 @@ module.exports = function(grunt) {
 		  options: {
 		  },
 		  files: {
-			'../www/resources/en/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/en/*.json'],
-			'../www/resources/de/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/de/*.json'],
-			'../www/resources/es/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/es/*.json'],
-			'../www/resources/fr/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/fr/*.json'],
-			'../www/resources/it/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/it/*.json'],
-			'../www/resources/ja/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/ja/*.json'],
-			'../www/resources/pt-br/definitions.json': ['../www/data/definitions/*.json','../www/data/definitions/pt-br/*.json']
+			'../www/resources/en/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/en/*.json'],
+			'../www/resources/de/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/de/*.json'],
+			'../www/resources/es/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/es/*.json'],
+			'../www/resources/fr/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/fr/*.json'],
+			'../www/resources/it/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/it/*.json'],
+			'../www/resources/ja/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/ja/*.json'],
+			'../www/resources/pt-br/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/pt-br/*.json']
 		  }
 		},
 		css: {
