@@ -12,5 +12,6 @@ module.exports = [
   { "knockout-sortable.js": "https://raw.githubusercontent.com/rniemeyer/knockout-sortable/master/src/knockout-sortable.js" },
   { "knockout.js": "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js" },
   { "modernizr.js": "https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" },
-  { "underscore.js": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" }
+  { "underscore.js": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" },
+  { "knockout-lazyload.js": "https://raw.githubusercontent.com/seantimm/Knockout.LazyLoad/master/ko.lazyload.js" }
 ]
