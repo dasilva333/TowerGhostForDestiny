@@ -1860,13 +1860,6 @@ var app = function() {
 
 window.app = new app();
 
-window.zam_tooltips = {
-    addIcons: false,
-    colorLinks: false,
-    renameLinks: false,
-    renderCallback: app.renderCallback,
-    isEnabled: app.tooltipsEnabled()
-};
 BootstrapDialog.defaultOptions.nl2br = false;
 
 if (isMobile) {

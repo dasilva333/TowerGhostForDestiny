@@ -17,8 +17,6 @@ module.exports = function(grunt) {
 				'../www/js/tgd/*.js',
 				'!../www/js/tgd/base-definitions.js',
 				'../www/js/app/*.js',
-			],
-			'../www/resources/4.extras.js': [
 				'../www/js/extras/*.js'
 			],
 			'../www/resources/bootstrap.js': [

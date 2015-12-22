@@ -112,8 +112,7 @@ module.exports = function(grunt) {
 			"/auto_updates.cfm?resources/en/definitions.json", 
 			"/auto_updates.cfm?resources/1.libraries.js",
 			"/auto_updates.cfm?resources/2.templates.js",
-			"/auto_updates.cfm?resources/3.tower_ghost.js",
-			"/auto_updates.cfm?resources/4.extras.js"
+			"/auto_updates.cfm?resources/3.tower_ghost.js"
 		  ],
           // root location of files to be loaded in the load array.
           root: "./"
