@@ -4173,7 +4173,7 @@ return e.ui.ddmanager&&(e.ui.ddmanager.current=this),e.ui.ddmanager&&!o.dropBeha
   function KoLazyLoad() {
     var self = this;
     
-    var updatebit = ko.observable(true).extend({ throttle: 50 });
+    var updatebit = ko.observable(true).extend({ throttle: 10 });
 
     var handlers = {
       img: updateImage

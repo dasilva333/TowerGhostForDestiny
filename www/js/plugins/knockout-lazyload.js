@@ -4,7 +4,7 @@
   function KoLazyLoad() {
     var self = this;
     
-    var updatebit = ko.observable(true).extend({ throttle: 50 });
+    var updatebit = ko.observable(true).extend({ throttle: 10 });
 
     var handlers = {
       img: updateImage
