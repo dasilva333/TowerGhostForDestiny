@@ -6,6 +6,7 @@ module.exports = function(grunt) {
 			'../www/js*.js',
 			'../www/js/app/*.js',
 			'../www/js/core/*.js',
+			'!../www/js/core/idb.filesystem.js',
 			'../www/js/tgd/*.js',
 			'!../www/js/tgd/base.js',
 			'../www/js/extras/*.js'

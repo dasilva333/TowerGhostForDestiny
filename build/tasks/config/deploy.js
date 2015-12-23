@@ -21,6 +21,28 @@ module.exports = function(grunt) {
 		simple: true,
 		dest: '/myredditall/towerghostfordestiny.com/www/share/data/common',
 		exclusions: []
+	  },
+	  firefoxAssets: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../../branches/firefox/www/',
+		dest: '/myredditall/towerghostfordestiny.com/www/firefox',
+		simple: true,
+		exclusions: [ 'data' ]
+	  },
+	  firefoxImages: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../../branches/firefox/www/data/common',
+		simple: true,
+		dest: '/myredditall/towerghostfordestiny.com/www/firefox/data/common',
+		exclusions: []
 	  },	  
 	  resources: {
 		auth: {

@@ -32,7 +32,7 @@ var count = 0;
 var finish = function(){
 	count++;
 	if (count == sources.length){
-		fs.writeFileSync(jsDir +  "sources.txt", JSON.stringify(verification,null,4));
+		fs.writeFileSync(jsDir +  "sources.txt", JSON.stringify(_.sortBy(verification,'fileName'),null,4));
 	}
 }
 var StringDecoder = require('string_decoder').StringDecoder;

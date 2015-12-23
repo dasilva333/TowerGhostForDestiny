@@ -4,7 +4,7 @@
             <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                 <div class="character">
                     <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
-                        <img class="emblem" data-bind="itemImageHandler: true, attr: { src: icon }">
+                        <img class="emblem" data-bind="itemImageHandler: icon">
                         <div class="class" data-bind="text: classType"></div>
                         <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false, visible: level() != ''">
                             <div class="light" data-bind="text: level"></div>

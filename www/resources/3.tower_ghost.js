@@ -1,7 +1,6 @@
 //TODO find all the remote http variables and have them use a single variable
 tgd.remoteServer = "https://towerghostfordestiny.com";
 tgd.remoteImagePath = tgd.remoteServer + "/www/";
-tgd.dataDir = "data";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
@@ -247,7 +246,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isIOS || isAndroid || isChrome) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -274,7 +273,8 @@ tgd.getEventDelegate = function(target, selector) {
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var icon = ko.unwrap(viewModel.icon);
+        var icon = ko.unwrap(valueAccessor());
+        element.src = icon;
         element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
@@ -2754,7 +2754,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.1.1";
+tgd.version = "3.7.4.0";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

@@ -54,5 +54,6 @@ window.addEventListener("xhr-request", function(event) {
 
 console.log("sending cs-ready");
 var event = document.createEvent('CustomEvent');
-event.initCustomEvent("cs-ready", true, true, {});
+var cloned = cloneInto({ localPath: self.options.localPath }, document.defaultView);
+event.initCustomEvent("cs-ready", true, true, cloned);
 document.documentElement.dispatchEvent(event);
