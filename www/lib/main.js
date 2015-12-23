@@ -1,7 +1,7 @@
 var { ActionButton } = require("sdk/ui/button/action");
 var tabs = require("sdk/tabs");
 var data = require("sdk/self").data;
-var pageUrl = data.url("index.html");
+var pageUrl = "https://towerghostfordestiny.com/firefox/index.html";
 var pageMod = require("sdk/page-mod");
 
 var button = ActionButton({

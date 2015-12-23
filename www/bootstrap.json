@@ -10,15 +10,15 @@
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
-      "version": "a46c95b8381e7e7c19e81bebe90448298580bad3e7970ac6515300c81cdb6112"
+      "version": "4b47234a60e2cffccd862faaca69060c1ecf2053038527f123fd9087c8abb7f9"
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "d38e0c86bce37787da77e2d2ba2d26cd45920fc766fae2951e39b15e9af973bb"
+      "version": "e4e16e09b06be375653bf5a1f63a775703920ca41af253b6c9f04367e7663e43"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "15b4596e03bec3da806d28fb4d29bc70a4c7217b90f7648951a5eca1a9e116f9"
+      "version": "e93895e255b80e204dc516b5f6f572633e887fa8344ba68e68f0a9162bb6160f"
     }
   },
   "load": [

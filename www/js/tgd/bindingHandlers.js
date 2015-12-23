@@ -23,7 +23,8 @@ tgd.getEventDelegate = function(target, selector) {
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var icon = ko.unwrap(viewModel.icon);
+        var icon = ko.unwrap(valueAccessor());
+        element.src = icon;
         element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };

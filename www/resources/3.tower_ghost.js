@@ -274,7 +274,8 @@ tgd.getEventDelegate = function(target, selector) {
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var icon = ko.unwrap(viewModel.icon);
+        var icon = ko.unwrap(valueAccessor());
+        element.src = icon;
         element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
@@ -2754,7 +2755,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.1.1";
+tgd.version = "3.7.1.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
