@@ -8,11 +8,12 @@ window.isAndroid = (/android/i.test(ua));
 window.isWindowsPhone = (/iemobile/i.test(ua));
 window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
 window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
-window.isStaticBrowser = location.protocol.indexOf("http") > -1;
+window.isStaticBrowser = location.protocol.indexOf("http") > -1 && location.href.indexOf("towerghostfordestiny.com/firefox") == -1;
 if (window.isStaticBrowser) {
     window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
 }
 window.tgd = {};
+tgd.dataDir = "data";
 if (isWindowsPhone) {
     window.requestFileSystem = function() {};
 }
@@ -28,6 +29,7 @@ if (isFirefox) {
 
     window.addEventListener("cs-ready", function(event) {
         window.ffXHRisReady = true;
+        tgd.dataDir = event.detail.localPath + 'data';
     }, false);
 
     var ffXHR = function() {
