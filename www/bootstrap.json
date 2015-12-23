@@ -18,15 +18,15 @@
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "e93895e255b80e204dc516b5f6f572633e887fa8344ba68e68f0a9162bb6160f"
+      "version": "8fe067fa26e2ba141c18fb867af6506ab87120fb0df241c8b11ee0340e2940b6"
     }
   },
   "load": [
-    "resources/tower_ghost.css",
-    "resources/en/definitions.json",
-    "resources/1.libraries.js",
-    "resources/2.templates.js",
-    "resources/3.tower_ghost.js"
+    "/auto_updates.cfm?resources/tower_ghost.css",
+    "/auto_updates.cfm?resources/en/definitions.json",
+    "/auto_updates.cfm?resources/1.libraries.js",
+    "/auto_updates.cfm?resources/2.templates.js",
+    "/auto_updates.cfm?resources/3.tower_ghost.js"
   ],
   "root": "./"
 }

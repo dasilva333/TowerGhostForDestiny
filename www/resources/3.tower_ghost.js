@@ -247,7 +247,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isIOS || isAndroid || isChrome) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
