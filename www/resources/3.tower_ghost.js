@@ -1,7 +1,6 @@
 //TODO find all the remote http variables and have them use a single variable
 tgd.remoteServer = "https://towerghostfordestiny.com";
 tgd.remoteImagePath = tgd.remoteServer + "/www/";
-tgd.dataDir = "data";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
@@ -2755,7 +2754,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.2.0";
+tgd.version = "3.7.3.0";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

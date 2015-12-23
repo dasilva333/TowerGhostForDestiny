@@ -13,6 +13,7 @@ if (window.isStaticBrowser) {
     window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
 }
 window.tgd = {};
+tgd.dataDir = "data";
 if (isWindowsPhone) {
     window.requestFileSystem = function() {};
 }
@@ -28,6 +29,7 @@ if (isFirefox) {
 
     window.addEventListener("cs-ready", function(event) {
         window.ffXHRisReady = true;
+        tgd.dataDir = event.data.localPath + 'data';
     }, false);
 
     var ffXHR = function() {
