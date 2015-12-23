@@ -1108,10 +1108,7 @@ if (isFirefox) {
     // Clean up.
     // TODO: decide if this is the best place for this. 
     exports.addEventListener('beforeunload', function(e) {
-        //"Uncaught TypeError: Cannot read property 'close' of null"
-        if (idb_ && idb_.db && idb_.db.close) {
-            idb_.db.close();
-        }
+        idb_.db && idb_.db.close();
     }, false);
 
     //exports.idb = idb_;
