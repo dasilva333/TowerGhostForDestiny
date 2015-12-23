@@ -29,7 +29,7 @@ if (isFirefox) {
 
     window.addEventListener("cs-ready", function(event) {
         window.ffXHRisReady = true;
-        tgd.dataDir = event.data.localPath + 'data';
+        tgd.dataDir = event.detail.localPath + 'data';
     }, false);
 
     var ffXHR = function() {
