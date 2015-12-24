@@ -2,7 +2,7 @@ var { ActionButton } = require("sdk/ui/button/action");
 var tabs = require("sdk/tabs");
 var data = require("sdk/self").data;
 var localPath = data.url("");
-var pageUrl = "https://towerghostfordestiny.com/firefox/index.html";
+var pageUrl = "https://towerghostfordestiny.com/firefox/";
 var pageMod = require("sdk/page-mod");
 var button = ActionButton({
   id: "tgd-link",

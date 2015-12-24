@@ -271,7 +271,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -2779,7 +2779,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.4.2";
+tgd.version = "3.7.5.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

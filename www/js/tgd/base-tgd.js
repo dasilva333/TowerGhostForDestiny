@@ -246,5 +246,5 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
 };
