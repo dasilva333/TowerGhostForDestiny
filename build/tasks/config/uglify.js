@@ -7,6 +7,7 @@ module.exports = function(grunt) {
 		  files: {
 			'../www/resources/1.libraries.js': [
 				'../www/js/libraries/primary/*.js',
+				'!../www/js/libraries/secondary/cordova-app-loader-complete.js',
 				'../www/js/libraries/secondary/*.js',
 				'../www/js/plugins/*.js'
 			],
@@ -16,13 +17,15 @@ module.exports = function(grunt) {
 			'../www/resources/3.tower_ghost.js': [
 				'../www/js/tgd/*.js',
 				'!../www/js/tgd/base-definitions.js',
+				'!../www/js/tgd/updater.js',
 				'../www/js/app/*.js',
-				'../www/js/extras/*.js'
+				'../www/js/extras/*.js',
+				'!../www/js/extras/buy.js'
 			],
 			'../www/resources/bootstrap.js': [
 				'../www/js/tgd/base-definitions.js',
-				'../www/js/core/firefox-xhr.js',
-				'../www/js/core/idb.filesystem.js',
+				//'../www/js/core/firefox-xhr.js',
+				//'../www/js/core/idb.filesystem.js',
 				'../www/js/core/cordova-app-loader-bootstrap.js'
 			]
 		  }
