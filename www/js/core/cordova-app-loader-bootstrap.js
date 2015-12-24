@@ -78,7 +78,26 @@
             scripts = manifest.load.concat(),
             now = Date.now(),
             loading = [],
-            count = 0;
+            count = 0,
+            index = 0,
+            scriptsContent = "",
+            cssContent = "";
+
+        function finishLoadingFromFS() {
+            index++;
+            if (index == loading.length) {
+                var el = document.createElement('style');
+                el.type = 'text/css';
+                el.innerHTML = cssContent;
+                head.appendChild(el);
+
+                var el = document.createElement('script');
+                el.type = 'text/javascript';
+                console.log("appending script")
+                el.innerHTML = scriptsContent;
+                head.appendChild(el);
+            }
+        }
 
         function loadNextFromFS(index) {
             if ((loading.length - 1) >= index) {
@@ -89,12 +108,14 @@
                         fileEntry.file(function(file) {
                             var reader = new FileReader();
                             reader.onloadend = function() {
-                                //setTimeout(function() {
                                 index++;
                                 loadNextFromFS(index);
-                                //}, 250);
-                                element.innerHTML = this.result;
-                                head.appendChild(element);
+                                if (element.type == "text/javascript") {
+                                    scriptsContent = scriptsContent + "\n" + this.result.toString();
+                                } else {
+                                    cssContent = cssContent + "\n" + this.result.toString();
+                                }
+                                finishLoadingFromFS();
                             }
                             reader.readAsText(file);
                         });
