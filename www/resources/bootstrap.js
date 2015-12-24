@@ -13,7 +13,7 @@ if (window.isStaticBrowser) {
     window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
 }
 if (typeof window.tgd == "undefined") window.tgd = {};
-tgd.dataDir = "data";
+if (typeof tgd.dataDir == "undefined") tgd.dataDir = "data";
 if (isWindowsPhone) {
     window.requestFileSystem = function() {};
 }
