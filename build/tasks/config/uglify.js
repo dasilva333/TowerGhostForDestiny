@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 			],
 			'../www/resources/3.tower_ghost.js': [
 				'../www/js/tgd/*.js',
-				'!../www/js/tgd/base-definitions.js',
+				//'!../www/js/tgd/base-definitions.js',
 				'../www/js/app/*.js',
 				'../www/js/extras/*.js'
 			],
