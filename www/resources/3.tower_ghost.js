@@ -493,9 +493,8 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.requestCookie = function(callback) {
         tgd.localLog("sending request-cookie-from-ps");
-        var event = document.createEvent('CustomEvent');
-        event.initCustomEvent("request-cookie-from-ps", true, true, {});
-        document.documentElement.dispatchEvent(event);
+        var event = new CustomEvent("request-cookie-from-ps", {});
+        window.dispatchEvent(event);
         self.requestCookieCB = callback;
     };
 
@@ -2782,7 +2781,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.5";
+tgd.version = "3.7.5.6";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

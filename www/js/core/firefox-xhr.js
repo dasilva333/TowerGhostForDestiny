@@ -47,9 +47,10 @@ if (isFirefox) {
             var send = function() {
                 if (payload)
                     self.request.payload = payload;
-                var event = document.createEvent('CustomEvent');
-                event.initCustomEvent("xhr-request", true, true, self.request);
-                document.documentElement.dispatchEvent(event);
+                var event = new CustomEvent("xhr-request", {
+                    detail: self.request
+                });
+                window.dispatchEvent(event);
                 tgd.localLog("send request to " + self.request.url);
             }
             if (window.ffXHRisReady == true) {

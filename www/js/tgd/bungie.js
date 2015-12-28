@@ -45,9 +45,8 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.requestCookie = function(callback) {
         tgd.localLog("sending request-cookie-from-ps");
-        var event = document.createEvent('CustomEvent');
-        event.initCustomEvent("request-cookie-from-ps", true, true, {});
-        document.documentElement.dispatchEvent(event);
+        var event = new CustomEvent("request-cookie-from-ps", {});
+        window.dispatchEvent(event);
         self.requestCookieCB = callback;
     };
 

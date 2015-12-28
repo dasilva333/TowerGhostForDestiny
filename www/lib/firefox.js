@@ -2,9 +2,8 @@ window.addEventListener("request-cookie-from-ps", function(event) {
     //console.log("received request-cookie-from-ps");
     self.port.on("response-cookie-from-as", function(newValue) {
         var cloned = cloneInto(newValue, document.defaultView);
-        var event = document.createEvent('CustomEvent');
-        event.initCustomEvent("response-cookie-from-cs", true, true, cloned);
-        document.documentElement.dispatchEvent(event);
+		var event = new CustomEvent("response-cookie-from-cs", { detail: cloned });
+		window.dispatchEvent(event);
         //console.log("sending out response-cookie-from-cs, got response-cookie-from-as: " + cloned);
     });
     //console.log("sending request-cookie-from-cs");
@@ -26,9 +25,8 @@ window.addEventListener("xhr-request", function(event) {
             };
             //console.log("onload fired " + request.url);
             var cloned = cloneInto(fXHR, document.defaultView);
-            var event = document.createEvent('CustomEvent');
-            event.initCustomEvent("xhr-reply", true, true, cloned);
-            document.documentElement.dispatchEvent(event);
+			var event = new CustomEvent("xhr-reply", { detail: cloned });
+			window.dispatchEvent(event);
         }
     };
     //console.log("firefox.js received xhr-request " + request.url);
@@ -53,7 +51,6 @@ window.addEventListener("xhr-request", function(event) {
 }, false);
 
 console.log("sending cs-ready");
-var event = document.createEvent('CustomEvent');
 var cloned = cloneInto({ localPath: self.options.localPath }, document.defaultView);
-event.initCustomEvent("cs-ready", true, true, cloned);
-document.documentElement.dispatchEvent(event);
+var event = new CustomEvent("cs-ready", { detail: cloned });
+window.dispatchEvent(event);
