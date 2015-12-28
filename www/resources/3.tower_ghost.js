@@ -105,8 +105,7 @@ tgd.DestinyGender = {
 tgd.DestinyClass = {
     "0": "Titan",
     "1": "Hunter",
-    "2": "Warlock",
-    "3": "Unknown"
+    "2": "Warlock"
 };
 tgd.DestinyClassNames = {};
 Object.keys(tgd.DestinyClass).forEach(function(key, index) {
@@ -248,9 +247,13 @@ tgd.defaults = {
     progressFilter: 0,
     showDuplicate: false,
     setFilter: [],
+    activeClasses: [],
     shareView: false,
     shareUrl: "",
     showMissing: false,
+    showArmorPerks: false,
+    showArmorSC: false,
+    customFilter: false,
     tooltipsEnabled: isMobile ? false : "true",
     advancedTooltips: isMobile ? false : "true",
     autoXferStacks: false,
@@ -2779,7 +2782,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.3";
+tgd.version = "3.7.5.4";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -2889,7 +2892,7 @@ var Item = function(model, profile) {
     this.init(model);
 
     this.characterId = ko.observable(self.character.id);
-    this.isDuplicate = ko.observable(false);
+    this.isFiltered = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.columnMode = ko.computed(function() {
@@ -3207,7 +3210,7 @@ Item.prototype = {
             progressFilter = $parent.progressFilter() == "0" || self.hashProgress($parent.progressFilter());
         }
         generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
-        showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
+        showDuplicate = $parent.customFilter() === false || ($parent.customFilter() === true && self.isFiltered() === true);
 
         var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
         //console.timeEnd("isVisible");
@@ -4945,10 +4948,14 @@ var app = function() {
     this.dmgFilter = ko.observableArray(tgd.defaults.dmgFilter);
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
+    this.activeClasses = ko.observableArray(tgd.defaults.activeClasses);
     this.shareView = ko.observable(tgd.defaults.shareView);
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
+    this.customFilter = ko.observable(tgd.defaults.customFilter);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
+    this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
+    this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
 
     this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
@@ -5103,6 +5110,8 @@ var app = function() {
         self.shareUrl(tgd.defaults.shareUrl);
         self.showMissing(tgd.defaults.showMissing);
         self.showDuplicate(tgd.defaults.showDuplicate);
+        self.customFilter(tgd.defaults.customFilter);
+        self.showArmorPerks(tgd.defaults.showArmorPerks);
         $(element.target).removeClass("active");
         return false;
     };
@@ -5354,6 +5363,7 @@ var app = function() {
     this.toggleDuplicates = function(model, event) {
         self.toggleBootstrapMenu();
         self.showDuplicate(!self.showDuplicate());
+        self.customFilter(self.showDuplicate());
         if (self.showDuplicate()) {
             var items = _.flatten(_.map(app.characters(), function(avatar) {
                 return avatar.items();
@@ -5363,10 +5373,77 @@ var app = function() {
                 var itemCount = _.filter(ids, function(id) {
                     return id == item.id;
                 }).length;
-                item.isDuplicate(itemCount > 1);
+                item.isFiltered(itemCount > 1);
             });
         }
     };
+    this.toggleArmorPerks = function() {
+        self.toggleBootstrapMenu();
+        self.showArmorPerks(!self.showArmorPerks());
+        self.customFilter(self.showArmorPerks());
+        if (self.showArmorPerks()) {
+            _.each(app.characters(), function(character) {
+                var weaponsEquipped = _.filter(character.weapons(), function(item) {
+                    return item.isEquipped();
+                });
+                var weaponTypes = _.map(weaponsEquipped, function(item) {
+                    return item.typeName.split(" ")[0];
+                })
+                _.each(character.armor(), function(item) {
+                    var itemPerks = _.pluck(item.perks, 'name');
+                    var matches = _.filter(itemPerks, function(perk) {
+                        return _.filter(perk.split(" "), function(name) {
+                            return weaponTypes.indexOf(name) > -1;
+                        }).length > 0;
+                    });
+                    item.isFiltered(matches.length > 0);
+                });
+            });
+        }
+    };
+    this.toggleArmorSC = function() {
+        self.toggleBootstrapMenu();
+        self.showArmorSC(!self.showArmorSC());
+        self.customFilter(self.showArmorSC());
+        if (self.showArmorSC()) {
+            _.each(app.characters(), function(character) {
+                var damagedBasedSubclass = _.filter(character.items(), function(item) {
+                    return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
+                })
+                if (damagedBasedSubclass.length > 0) {
+                    damagedBasedSubclass = damagedBasedSubclass[0].damageTypeName;
+                    _.each(character.armor(), function(item) {
+                        var itemPerks = _.pluck(item.perks, 'name');
+                        var matches = _.filter(itemPerks, function(perk) {
+                            return _.filter(perk.split(" "), function(name) {
+                                return damagedBasedSubclass.indexOf(name) > -1;
+                            }).length > 0;
+                        });
+                        item.isFiltered(matches.length > 0);
+                    });
+                }
+            });
+        }
+    };
+    this.toggleArmorClass = function(classType) {
+        return function() {
+            self.toggleBootstrapMenu();
+            self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
+            self.customFilter(self.activeClasses().length > 0);
+            if (self.customFilter()) {
+                var classTypeNum = _.values(tgd.DestinyClass).indexOf(classType);
+                _.each(app.characters(), function(character) {
+                    _.each(character.armor(), function(item) {
+                        item.isFiltered(item.classType == classTypeNum);
+                    });
+                });
+            }
+
+        }
+    }
+    this.showArmorClass = function(classType) {
+        return self.activeClasses().indexOf(classType) > -1;
+    }
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length === 0) {

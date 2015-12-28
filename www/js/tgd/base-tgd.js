@@ -80,8 +80,7 @@ tgd.DestinyGender = {
 tgd.DestinyClass = {
     "0": "Titan",
     "1": "Hunter",
-    "2": "Warlock",
-    "3": "Unknown"
+    "2": "Warlock"
 };
 tgd.DestinyClassNames = {};
 Object.keys(tgd.DestinyClass).forEach(function(key, index) {
@@ -223,9 +222,13 @@ tgd.defaults = {
     progressFilter: 0,
     showDuplicate: false,
     setFilter: [],
+    activeClasses: [],
     shareView: false,
     shareUrl: "",
     showMissing: false,
+    showArmorPerks: false,
+    showArmorSC: false,
+    customFilter: false,
     tooltipsEnabled: isMobile ? false : "true",
     advancedTooltips: isMobile ? false : "true",
     autoXferStacks: false,

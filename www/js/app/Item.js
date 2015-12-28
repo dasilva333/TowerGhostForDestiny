@@ -107,7 +107,7 @@ var Item = function(model, profile) {
     this.init(model);
 
     this.characterId = ko.observable(self.character.id);
-    this.isDuplicate = ko.observable(false);
+    this.isFiltered = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.columnMode = ko.computed(function() {
@@ -425,7 +425,7 @@ Item.prototype = {
             progressFilter = $parent.progressFilter() == "0" || self.hashProgress($parent.progressFilter());
         }
         generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
-        showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
+        showDuplicate = $parent.customFilter() === false || ($parent.customFilter() === true && self.isFiltered() === true);
 
         var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
         //console.timeEnd("isVisible");
