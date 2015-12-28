@@ -2781,7 +2781,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.7";
+tgd.version = "3.7.5.8";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3007,9 +3007,13 @@ Item.prototype = {
                     _.each(item.perks, function(perk) {
                         if (perk.perkHash in window._perkDefs) {
                             var p = window._perkDefs[perk.perkHash];
+                            //There is an inconsistency between perkNames in Destiny for example:
+                            /* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
+                               This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
+                            */
                             var nodeIndex = talentGrid.nodes.indexOf(
                                 _.filter(talentGrid.nodes, function(o) {
-                                    return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+                                    return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
                                 })[0]
                             );
                             itemObject.perks.push({
@@ -5248,7 +5252,7 @@ var app = function() {
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
-                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true);
+                        return perk.active === true || (perk.active === false && perk.isExclusive == -1 && self.advancedTooltips() === true);
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
