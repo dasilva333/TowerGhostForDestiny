@@ -246,7 +246,7 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -1803,7 +1803,7 @@ tgd.locale = {
         loadouts_instructions_contd: "to equip.",
         loadouts_mobile: "hold",
         loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
         loadouts_to_transfer: " will be moved",
         loadouts_no_transfer: " will not be moved",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
@@ -1915,7 +1915,7 @@ tgd.locale = {
         loadouts_instructions_contd: "para equipar.",
         loadouts_mobile: "sostener",
         loadouts_desktop: "cheque",
-        loadouts_transferred: "<strong>Articulo(s) transferido con exito</strong><br> Si te gusta esta aplicacion, puedes <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">comprarme una cerveza.</a>",
+        loadouts_transferred: "<strong>Articulo(s) transferido con exito</strong><br> Si te gusta esta aplicacion, puedes <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">comprarme un ponchecrema.</a>",
         loadouts_to_transfer: " sera trasladado",
         loadouts_no_transfer: " no sera trasladado",
         loadouts_no_replacement: " no sera trasladado. No hay otro para reemplazarlo.",
@@ -2139,7 +2139,7 @@ tgd.locale = {
         loadouts_instructions_contd: "to equip.",
         loadouts_mobile: "hold",
         loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
         loadouts_to_transfer: " will be moved",
         loadouts_no_transfer: " will not be moved",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
@@ -2475,7 +2475,7 @@ tgd.locale = {
         loadouts_instructions_contd: "to equip.",
         loadouts_mobile: "hold",
         loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
         loadouts_to_transfer: " will be moved",
         loadouts_no_transfer: " will not be moved",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
@@ -2588,7 +2588,7 @@ tgd.locale = {
         loadouts_instructions_contd: "to equip.",
         loadouts_mobile: "hold",
         loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
         loadouts_to_transfer: " will be moved",
         loadouts_no_transfer: " will not be moved",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
@@ -2659,7 +2659,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.4.1";
+tgd.version = "3.7.5.3";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
