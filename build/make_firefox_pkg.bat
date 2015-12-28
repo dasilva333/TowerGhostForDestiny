@@ -12,4 +12,4 @@ cp lib/firefox.js temp/data/resources/firefox.js
 cp icon.png temp
 cp ../build/package_firefox.json temp/package.json
 cd ..\build
-cfx xpi --pkgdir=..\www\temp
+cfx xpi --pkgdir=..\www\temp  --update-link https://example.com/addon/latest --update-url https://example.com/addon/update_rdf

@@ -2782,7 +2782,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.4";
+tgd.version = "3.7.5.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3958,14 +3958,14 @@ Item.prototype = {
     normalize: function(characters) {
         app.normalizeSingle(this.description, characters, false, undefined);
     },
-    consolidate: function(targetCharacterId, description) {
+    consolidate: function(targetCharacterId, description, selectedCharacters) {
         //tgd.localLog(targetCharacterId);
         //tgd.localLog(description);
-
+        var activeCharacters = (typeof selectedCharacters == "undefined") ? [] : selectedCharacters;
         var getNextStack = (function() {
             var i = 0;
             var chars = _.filter(app.orderedCharacters(), function(c) {
-                return c.id !== targetCharacterId;
+                return (c.id !== targetCharacterId && activeCharacters.length == 0) || (activeCharacters.indexOf(c.id) > -1);
             });
             var stacks = _.flatten(_.map(chars, function(c) {
                 return _.filter(c.items(), {
@@ -3979,6 +3979,7 @@ Item.prototype = {
 
         var nextTransfer = function(callback) {
             var theStack = getNextStack();
+
             if (typeof theStack == "undefined") {
                 //tgd.localLog("all items consolidated");
                 if (callback !== undefined) {
@@ -3987,19 +3988,24 @@ Item.prototype = {
                 return;
             }
 
-            //tgd.localLog("xfer " + theStack.primaryStat() + " from: " + theStack.character.id + ", to: " + targetCharacterId);
+            //transferAmount needs to be defined once and reused bc querying the primaryStat value mid-xfers results in merging qty amounts with existing stacks.
+            var transferAmount = theStack.primaryStat();
+
+            //tgd.localLog("xfer " + transferAmount + " from: " + theStack.character.id + ", to: " + targetCharacterId);
 
             if (targetCharacterId == "Vault") {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
+                theStack.transfer(theStack.character.id, "Vault", transferAmount, function() {
                     nextTransfer(callback);
                 });
             } else if (theStack.character.id == "Vault") {
-                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
+                theStack.transfer("Vault", targetCharacterId, transferAmount, function() {
                     nextTransfer(callback);
                 });
+            } else if (theStack.character.id == targetCharacterId) {
+                nextTransfer(callback);
             } else {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
-                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
+                theStack.transfer(theStack.character.id, "Vault", transferAmount, function() {
+                    theStack.transfer("Vault", targetCharacterId, transferAmount, function() {
                         nextTransfer(callback);
                     });
                 });
@@ -4073,6 +4079,16 @@ Item.prototype = {
                         return;
                     }
                     self.normalize(characters);
+                    dialogItself.close();
+                }
+            }, {
+                label: 'Consolidate',
+                cssClass: 'btn-primary',
+                action: function(dialogItself) {
+                    var characters = _.pluck(_.filter(app.orderedCharacters(), function(c) {
+                        return selectedStatus[c.id] === true;
+                    }), 'id');
+                    self.consolidate(self.character.id, self.description, characters);
                     dialogItself.close();
                 }
             }, {
