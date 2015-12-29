@@ -2800,7 +2800,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.9";
+tgd.version = "3.7.5.10";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5309,7 +5309,7 @@ var app = function() {
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
-                        return perk.active === true || (perk.active === false && perk.isExclusive == -1 && self.advancedTooltips() === true);
+                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true); //&& perk.isExclusive == -1
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
