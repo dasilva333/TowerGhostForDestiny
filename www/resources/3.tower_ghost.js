@@ -274,7 +274,8 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
+    toastTimeout: 2600
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -360,7 +361,10 @@ window.ko.bindingHandlers.scrollToView = {
                 $.toaster({
                     priority: 'info',
                     title: 'Info',
-                    message: app.activeText().this_icon + viewModel.uniqueName()
+                    message: app.activeText().this_icon + viewModel.uniqueName(),
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             });
     }
@@ -416,7 +420,10 @@ window.ko.bindingHandlers.moveItem = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Warning',
-                                message: app.activeText().unable_create_loadout_for_type
+                                message: app.activeText().unable_create_loadout_for_type,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -1697,14 +1704,11 @@ tgd.Layout = function(layout) {
 	                    $.toaster({
 	                        settings: {
 	                            timeout: 15 * 1000
-	                        }
-	                    });
-	                    $.toaster({
+	                        },
 	                        priority: 'success',
 	                        title: 'Success',
 	                        message: app.activeText().loadouts_transferred
 	                    });
-	                    $.toaster.reset();
 	                    setTimeout(function() {
 	                        $(".donateLink").click(app.showDonate);
 	                    }, 1000);
@@ -2705,7 +2709,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
             $.toaster({
                 priority: 'info',
                 title: 'Info',
-                message: "Checking for updates"
+                message: "Checking for updates",
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
             tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.appLocale || localStorage.locale || "en"))
                 .then(function(updateAvailable) {
@@ -2713,7 +2720,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Downloading updates"
+                            message: "Downloading updates",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                         tgd.localLog("Downloading auto updates");
                         $("#tgdLoader").show();
@@ -2727,7 +2737,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
-                        message: "Problem checking for updates: " + e.message
+                        message: "Problem checking for updates: " + e.message,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 })
                 .then(function(manifest) {
@@ -2736,7 +2749,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Installing updates"
+                            message: "Installing updates",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     }
                     return tgd.loader.update();
@@ -2745,7 +2761,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
-                        message: 'Auto-update error:' + err
+                        message: 'Auto-update error:' + err,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 });
         };
@@ -2781,7 +2800,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.8";
+tgd.version = "3.7.5.9";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -2800,7 +2819,10 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
-                    message: app.activeText().unable_create_loadout_for_type
+                    message: app.activeText().unable_create_loadout_for_type,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             } else if (item._id === "0") {
                 app.activeLoadout().addGenericItem({
@@ -2820,7 +2842,10 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Error',
-                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         }
@@ -2832,7 +2857,10 @@ tgd.moveItemPositionHandler = function(element, item) {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
-                message: app.activeText().unable_to_move_bucketitems
+                message: app.activeText().unable_to_move_bucketitems,
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
             return;
         }
@@ -3254,7 +3282,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: app.activeText().cannot_unequip + self.description
+                                message: app.activeText().cannot_unequip + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                         return;
@@ -3303,7 +3334,10 @@ Item.prototype = {
                                     $.toaster({
                                         priority: 'danger',
                                         title: 'Error',
-                                        message: app.activeText().unable_unequip + itemEquipped.description
+                                        message: app.activeText().unable_unequip + itemEquipped.description,
+                                        settings: {
+                                            timeout: tgd.defaults.toastTimeout
+                                        }
                                     });
                                     callback(false);
                                 }
@@ -3366,7 +3400,10 @@ Item.prototype = {
                         $.toaster({
                             priority: 'info',
                             title: 'Error',
-                            message: result.Message
+                            message: result.Message,
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     }
                     //TODO perhaps log this condition and determine the cause
@@ -3651,7 +3688,10 @@ Item.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Error',
-                    message: result.Message
+                    message: result.Message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         });
@@ -3755,7 +3795,10 @@ Item.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Error',
-                    message: result.Message
+                    message: result.Message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         };
@@ -3781,7 +3824,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: "Unable to unequip " + self.description
+                                message: "Unable to unequip " + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -3814,7 +3860,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: "Unable to unequip " + self.description
+                                message: "Unable to unequip " + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -4348,7 +4397,10 @@ Profile.prototype = {
             $.toaster({
                 priority: 'info',
                 title: 'Success',
-                message: 'Refreshing ' + self.uniqueName()
+                message: 'Refreshing ' + self.uniqueName(),
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
 
         var buckets = [];
@@ -4387,7 +4439,10 @@ Profile.prototype = {
                     $.toaster({
                         priority: 'info',
                         title: 'Success',
-                        message: 'Refresh completed for ' + self.uniqueName()
+                        message: 'Refresh completed for ' + self.uniqueName(),
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
             }
 
@@ -4765,15 +4820,12 @@ Profile.prototype = {
         var character = this;
 
         $.toaster({
-            settings: {
-                timeout: 10 * 1000
-            }
-        });
-
-        $.toaster({
             priority: 'success',
             title: 'Result',
-            message: " The highest set available for " + type + "  is  " + highestSetValue
+            message: " The highest set available for " + type + "  is  " + highestSetValue,
+            settings: {
+                timeout: 7 * 1000
+            }
         });
 
         var count = 0;
@@ -4784,11 +4836,13 @@ Profile.prototype = {
                 tgd.localLog(msa);
                 adhoc.swapItems(msa, character.id, function() {
                     $.toaster({
+                        settings: {
+                            timeout: 7 * 1000
+                        },
                         priority: 'success',
                         title: 'Result',
                         message: " Completed equipping the highest " + type + " set at " + highestSetValue
                     });
-                    $.toaster.reset();
                 });
             }
         };
@@ -4813,7 +4867,10 @@ Profile.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Equip',
-                    message: message
+                    message: message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
                 done();
             } else {
@@ -5473,7 +5530,10 @@ var app = function() {
             $.toaster({
                 priority: 'danger',
                 title: 'Warning',
-                message: self.activeText().pick_a_set
+                message: self.activeText().pick_a_set,
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
         } else {
             self.showMissing(!self.showMissing());
@@ -5674,7 +5734,6 @@ var app = function() {
             return;
         }
         loadingData = true;
-        tgd.duplicates.removeAll();
         var total = 0,
             count = 0,
             profiles = [];
@@ -5787,9 +5846,7 @@ var app = function() {
                         $.toaster({
                             settings: {
                                 timeout: 10 * 1000
-                            }
-                        });
-                        $.toaster({
+                            },
                             priority: 'info',
                             title: 'Info',
                             message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
@@ -5801,7 +5858,6 @@ var app = function() {
                                 self.useXboxAccount();
                             }
                         });
-                        $.toaster.reset();
                     }
                     self.locale(self.activeUser().user.locale);
                     self.loadingUser(false);
@@ -5832,6 +5888,20 @@ var app = function() {
 
     this.refresh = function() {
         if (self.bungie.gamertag()) {
+            var count = 0,
+                finish = function() {
+                    count++;
+                    if (count == self.characters().length) {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Success',
+                            message: "All the inventory has been updated.",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
+                        });
+                    }
+                }
             self.bungie.account(function(result) {
                 if (result && result.data && result.data.characters) {
                     var characters = result.data.characters;
@@ -5842,7 +5912,7 @@ var app = function() {
                             })[0];
                             character.updateCharacter(result);
                         }
-                        character._reloadBucket(character);
+                        character._reloadBucket(character, undefined, finish, true);
                     });
                 } else {
                     tgd.localLog(result);
@@ -6051,7 +6121,10 @@ var app = function() {
                             $.toaster({
                                 priority: 'success',
                                 title: 'Loading',
-                                message: "Please wait while Firefox acquires your arsenal"
+                                message: "Please wait while Firefox acquires your arsenal",
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                             var event = document.createEvent('CustomEvent');
                             event.initCustomEvent("request-cookie", true, true, {});
@@ -6090,7 +6163,10 @@ var app = function() {
             $.toaster({
                 priority: 'info',
                 title: 'View',
-                message: tgd.DestinyViews[newIndex]
+                message: tgd.DestinyViews[newIndex],
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
         });
     };
@@ -6151,7 +6227,10 @@ var app = function() {
                         $.toaster({
                             priority: 'success',
                             title: 'Saved',
-                            message: "Loadouts saved to the cloud"
+                            message: "Loadouts saved to the cloud",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     } else BootstrapDialog.alert("Error has occurred saving loadouts");
                 }
@@ -6254,7 +6333,10 @@ var app = function() {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
-                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
+                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.",
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
             if (callback !== undefined) {
@@ -6295,7 +6377,10 @@ var app = function() {
                 $.toaster({
                     priority: 'success',
                     title: 'Result',
-                    message: description + " already normalized as best as possible."
+                    message: description + " already normalized as best as possible.",
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
             if (typeof callback !== "undefined") {
@@ -6325,7 +6410,10 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
-                        message: "All items normalized as best as possible"
+                        message: "All items normalized as best as possible",
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 }
                 if (callback !== undefined) {
@@ -6430,7 +6518,10 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
-                        message: "All items normalized as best as possible"
+                        message: "All items normalized as best as possible",
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                     return;
                 }
@@ -6632,7 +6723,10 @@ var app = function() {
                 $.toaster({
                     priority: 'info',
                     title: 'Transfer',
-                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName()
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName(),
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
                 arg.item[action](destination.character.id);
             }
@@ -6675,6 +6769,17 @@ var app = function() {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
         });
 
+        $.toaster({
+            settings: {
+                toaster: {
+                    css: {
+                        top: "45px"
+                    }
+                },
+                timeout: tgd.defaults.toastTimeout
+            }
+        });
+
         if (window.isStaticBrowser) {
             $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {
@@ -6713,13 +6818,6 @@ var app = function() {
                 content = self.activeText().language_text + content;
             }
             tgd[templateName] = _.template(content);
-        });
-
-        tgd.duplicates = ko.observableArray().extend({
-            rateLimit: {
-                timeout: 5000,
-                method: "notifyWhenChangesStop"
-            }
         });
         if (!window.isStaticBrowser) {
             self.doRefresh.subscribe(self.refreshHandler);

@@ -16,7 +16,10 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
-                    message: app.activeText().unable_create_loadout_for_type
+                    message: app.activeText().unable_create_loadout_for_type,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             } else if (item._id === "0") {
                 app.activeLoadout().addGenericItem({
@@ -36,7 +39,10 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Error',
-                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         }
@@ -48,7 +54,10 @@ tgd.moveItemPositionHandler = function(element, item) {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
-                message: app.activeText().unable_to_move_bucketitems
+                message: app.activeText().unable_to_move_bucketitems,
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
             return;
         }
@@ -470,7 +479,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: app.activeText().cannot_unequip + self.description
+                                message: app.activeText().cannot_unequip + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                         return;
@@ -519,7 +531,10 @@ Item.prototype = {
                                     $.toaster({
                                         priority: 'danger',
                                         title: 'Error',
-                                        message: app.activeText().unable_unequip + itemEquipped.description
+                                        message: app.activeText().unable_unequip + itemEquipped.description,
+                                        settings: {
+                                            timeout: tgd.defaults.toastTimeout
+                                        }
                                     });
                                     callback(false);
                                 }
@@ -582,7 +597,10 @@ Item.prototype = {
                         $.toaster({
                             priority: 'info',
                             title: 'Error',
-                            message: result.Message
+                            message: result.Message,
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     }
                     //TODO perhaps log this condition and determine the cause
@@ -867,7 +885,10 @@ Item.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Error',
-                    message: result.Message
+                    message: result.Message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         });
@@ -971,7 +992,10 @@ Item.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Error',
-                    message: result.Message
+                    message: result.Message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         };
@@ -997,7 +1021,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: "Unable to unequip " + self.description
+                                message: "Unable to unequip " + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -1030,7 +1057,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: "Unable to unequip " + self.description
+                                message: "Unable to unequip " + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }

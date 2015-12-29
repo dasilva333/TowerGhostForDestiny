@@ -40,7 +40,10 @@
             $.toaster({
                 priority: 'info',
                 title: 'Info',
-                message: "Checking for updates"
+                message: "Checking for updates",
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
             tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.appLocale || localStorage.locale || "en"))
                 .then(function(updateAvailable) {
@@ -48,7 +51,10 @@
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Downloading updates"
+                            message: "Downloading updates",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                         tgd.localLog("Downloading auto updates");
                         $("#tgdLoader").show();
@@ -62,7 +68,10 @@
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
-                        message: "Problem checking for updates: " + e.message
+                        message: "Problem checking for updates: " + e.message,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 })
                 .then(function(manifest) {
@@ -71,7 +80,10 @@
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Installing updates"
+                            message: "Installing updates",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     }
                     return tgd.loader.update();
@@ -80,7 +92,10 @@
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
-                        message: 'Auto-update error:' + err
+                        message: 'Auto-update error:' + err,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 });
         };

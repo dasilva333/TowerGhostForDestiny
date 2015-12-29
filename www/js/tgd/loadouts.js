@@ -778,14 +778,11 @@
 	                    $.toaster({
 	                        settings: {
 	                            timeout: 15 * 1000
-	                        }
-	                    });
-	                    $.toaster({
+	                        },
 	                        priority: 'success',
 	                        title: 'Success',
 	                        message: app.activeText().loadouts_transferred
 	                    });
-	                    $.toaster.reset();
 	                    setTimeout(function() {
 	                        $(".donateLink").click(app.showDonate);
 	                    }, 1000);

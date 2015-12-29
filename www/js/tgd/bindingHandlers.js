@@ -82,7 +82,10 @@ window.ko.bindingHandlers.scrollToView = {
                 $.toaster({
                     priority: 'info',
                     title: 'Info',
-                    message: app.activeText().this_icon + viewModel.uniqueName()
+                    message: app.activeText().this_icon + viewModel.uniqueName(),
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             });
     }
@@ -138,7 +141,10 @@ window.ko.bindingHandlers.moveItem = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Warning',
-                                message: app.activeText().unable_create_loadout_for_type
+                                message: app.activeText().unable_create_loadout_for_type,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }

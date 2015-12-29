@@ -550,7 +550,10 @@ var app = function() {
             $.toaster({
                 priority: 'danger',
                 title: 'Warning',
-                message: self.activeText().pick_a_set
+                message: self.activeText().pick_a_set,
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
         } else {
             self.showMissing(!self.showMissing());
@@ -751,7 +754,6 @@ var app = function() {
             return;
         }
         loadingData = true;
-        tgd.duplicates.removeAll();
         var total = 0,
             count = 0,
             profiles = [];
@@ -864,9 +866,7 @@ var app = function() {
                         $.toaster({
                             settings: {
                                 timeout: 10 * 1000
-                            }
-                        });
-                        $.toaster({
+                            },
                             priority: 'info',
                             title: 'Info',
                             message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
@@ -878,7 +878,6 @@ var app = function() {
                                 self.useXboxAccount();
                             }
                         });
-                        $.toaster.reset();
                     }
                     self.locale(self.activeUser().user.locale);
                     self.loadingUser(false);
@@ -909,6 +908,20 @@ var app = function() {
 
     this.refresh = function() {
         if (self.bungie.gamertag()) {
+            var count = 0,
+                finish = function() {
+                    count++;
+                    if (count == self.characters().length) {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Success',
+                            message: "All the inventory has been updated.",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
+                        });
+                    }
+                }
             self.bungie.account(function(result) {
                 if (result && result.data && result.data.characters) {
                     var characters = result.data.characters;
@@ -919,7 +932,7 @@ var app = function() {
                             })[0];
                             character.updateCharacter(result);
                         }
-                        character._reloadBucket(character);
+                        character._reloadBucket(character, undefined, finish, true);
                     });
                 } else {
                     tgd.localLog(result);
@@ -1128,7 +1141,10 @@ var app = function() {
                             $.toaster({
                                 priority: 'success',
                                 title: 'Loading',
-                                message: "Please wait while Firefox acquires your arsenal"
+                                message: "Please wait while Firefox acquires your arsenal",
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                             var event = document.createEvent('CustomEvent');
                             event.initCustomEvent("request-cookie", true, true, {});
@@ -1167,7 +1183,10 @@ var app = function() {
             $.toaster({
                 priority: 'info',
                 title: 'View',
-                message: tgd.DestinyViews[newIndex]
+                message: tgd.DestinyViews[newIndex],
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
         });
     };
@@ -1228,7 +1247,10 @@ var app = function() {
                         $.toaster({
                             priority: 'success',
                             title: 'Saved',
-                            message: "Loadouts saved to the cloud"
+                            message: "Loadouts saved to the cloud",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     } else BootstrapDialog.alert("Error has occurred saving loadouts");
                 }
@@ -1331,7 +1353,10 @@ var app = function() {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
-                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
+                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.",
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
             if (callback !== undefined) {
@@ -1372,7 +1397,10 @@ var app = function() {
                 $.toaster({
                     priority: 'success',
                     title: 'Result',
-                    message: description + " already normalized as best as possible."
+                    message: description + " already normalized as best as possible.",
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
             if (typeof callback !== "undefined") {
@@ -1402,7 +1430,10 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
-                        message: "All items normalized as best as possible"
+                        message: "All items normalized as best as possible",
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 }
                 if (callback !== undefined) {
@@ -1507,7 +1538,10 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
-                        message: "All items normalized as best as possible"
+                        message: "All items normalized as best as possible",
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                     return;
                 }
@@ -1709,7 +1743,10 @@ var app = function() {
                 $.toaster({
                     priority: 'info',
                     title: 'Transfer',
-                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName()
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName(),
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
                 arg.item[action](destination.character.id);
             }
@@ -1752,6 +1789,17 @@ var app = function() {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
         });
 
+        $.toaster({
+            settings: {
+                toaster: {
+                    css: {
+                        top: "45px"
+                    }
+                },
+                timeout: tgd.defaults.toastTimeout
+            }
+        });
+
         if (window.isStaticBrowser) {
             $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {
@@ -1790,13 +1838,6 @@ var app = function() {
                 content = self.activeText().language_text + content;
             }
             tgd[templateName] = _.template(content);
-        });
-
-        tgd.duplicates = ko.observableArray().extend({
-            rateLimit: {
-                timeout: 5000,
-                method: "notifyWhenChangesStop"
-            }
         });
         if (!window.isStaticBrowser) {
             self.doRefresh.subscribe(self.refreshHandler);

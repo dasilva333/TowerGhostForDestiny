@@ -212,7 +212,10 @@ Profile.prototype = {
             $.toaster({
                 priority: 'info',
                 title: 'Success',
-                message: 'Refreshing ' + self.uniqueName()
+                message: 'Refreshing ' + self.uniqueName(),
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
 
         var buckets = [];
@@ -251,7 +254,10 @@ Profile.prototype = {
                     $.toaster({
                         priority: 'info',
                         title: 'Success',
-                        message: 'Refresh completed for ' + self.uniqueName()
+                        message: 'Refresh completed for ' + self.uniqueName(),
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
             }
 
@@ -629,15 +635,12 @@ Profile.prototype = {
         var character = this;
 
         $.toaster({
-            settings: {
-                timeout: 10 * 1000
-            }
-        });
-
-        $.toaster({
             priority: 'success',
             title: 'Result',
-            message: " The highest set available for " + type + "  is  " + highestSetValue
+            message: " The highest set available for " + type + "  is  " + highestSetValue,
+            settings: {
+                timeout: 7 * 1000
+            }
         });
 
         var count = 0;
@@ -648,11 +651,13 @@ Profile.prototype = {
                 tgd.localLog(msa);
                 adhoc.swapItems(msa, character.id, function() {
                     $.toaster({
+                        settings: {
+                            timeout: 7 * 1000
+                        },
                         priority: 'success',
                         title: 'Result',
                         message: " Completed equipping the highest " + type + " set at " + highestSetValue
                     });
-                    $.toaster.reset();
                 });
             }
         };
@@ -677,7 +682,10 @@ Profile.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Equip',
-                    message: message
+                    message: message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
                 done();
             } else {
