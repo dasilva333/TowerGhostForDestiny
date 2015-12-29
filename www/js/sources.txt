@@ -77,13 +77,6 @@
         "remoteHash": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf"
     },
     {
-        "currentFile": "../www/js//plugins/knockout-lazyload.js",
-        "fileName": "knockout-lazyload.js",
-        "link": "https://raw.githubusercontent.com/seantimm/Knockout.LazyLoad/master/ko.lazyload.js",
-        "localHash": "f5eecbf06351d6a152c3c7890eabc806326f3554317a27a5c011553e2f3e9747",
-        "remoteHash": "f5eecbf06351d6a152c3c7890eabc806326f3554317a27a5c011553e2f3e9747"
-    },
-    {
         "currentFile": "../www/js//plugins/knockout-sortable.js",
         "fileName": "knockout-sortable.js",
         "link": "https://raw.githubusercontent.com/rniemeyer/knockout-sortable/master/src/knockout-sortable.js",
