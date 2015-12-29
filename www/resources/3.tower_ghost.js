@@ -277,6 +277,25 @@ tgd.defaults = {
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
     toastTimeout: 2600
 };
+tgd.armorTemplateDescriptionBuilder = function(item) {
+    var description = item.description;
+
+    //Build the stats as (DIS:46, INT: 47)
+    var stats = _.compact(
+        _.map(item.stats, function(stat, type) {
+            return stat > 0 ? type.substring(0, 3).toUpperCase() + ":" + stat : "";
+        })
+    ).join(", ");
+
+    //Add the stats to the description
+    description = description + " <em>(" + stats + ")</em>"
+
+    //Make bold the exotics
+    description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
+
+    return description;
+}
+
 tgd.imageErrorHandler = function(src, element) {
     return function() {
         if (element && element.src && element.src !== "") {
@@ -2800,7 +2819,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.10";
+tgd.version = "3.7.5.11";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {

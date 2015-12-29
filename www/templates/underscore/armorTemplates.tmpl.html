@@ -7,7 +7,7 @@
                 </div>
                 <div class="text-left col-lg-21">
                     <%= build.title %>-
-                        <%= _.pluck(_.sortBy(build.set,'bucketType'),'description').reverse() %>
+                        <%= _.map(_.sortBy(build.set,'bucketType'),tgd.armorTemplateDescriptionBuilder).reverse()	%>
                 </div>
             </div>
         </li>
