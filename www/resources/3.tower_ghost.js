@@ -5402,6 +5402,7 @@ var app = function() {
         self.showArmorPerks(!self.showArmorPerks());
         self.customFilter(self.showArmorPerks());
         if (self.showArmorPerks()) {
+            self.activeView(2);
             _.each(app.characters(), function(character) {
                 var weaponsEquipped = _.filter(character.weapons(), function(item) {
                     return item.isEquipped();
@@ -5426,6 +5427,7 @@ var app = function() {
         self.showArmorSC(!self.showArmorSC());
         self.customFilter(self.showArmorSC());
         if (self.showArmorSC()) {
+            self.activeView(2);
             _.each(app.characters(), function(character) {
                 var damagedBasedSubclass = _.filter(character.items(), function(item) {
                     return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
@@ -5451,6 +5453,7 @@ var app = function() {
             self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
             self.customFilter(self.activeClasses().length > 0);
             if (self.customFilter()) {
+                self.activeView(2);
                 var classTypeNum = _.values(tgd.DestinyClass).indexOf(classType);
                 _.each(app.characters(), function(character) {
                     _.each(character.armor(), function(item) {
