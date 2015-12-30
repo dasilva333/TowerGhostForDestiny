@@ -275,7 +275,8 @@ tgd.defaults = {
     ccWidth: "",
     layoutMode: "even",
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
-    toastTimeout: 2600
+    toastTimeout: 2600,
+    armorViewBy: "Light"
 };
 tgd.armorTemplateDescriptionBuilder = function(item) {
     var description = item.description;
@@ -2819,7 +2820,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.5.11";
+tgd.version = "3.7.5.12";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3030,21 +3031,20 @@ Item.prototype = {
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
                 icon: tgd.dataDir + info.icon,
-                isUnique: false
+                isUnique: false,
+                primaryValues: {}
             };
-            if (item.primaryStat) {
-                if (item.primaryStat && item.primaryStat.value) {
-                    itemObject.primaryStat(item.primaryStat.value);
-                } else {
-                    itemObject.primaryStat(item.primaryStat);
-                }
-            }
             //hack for issue #442
             if (itemObject.bucketType == "Artifact") {
                 itemObject.classType = tgd.DestinyClassNames[itemObject.typeName.split(" ")[0]];
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
+            if (itemObject.armorIndex > -1) {
+                app.armorViewBy.subscribe(function(type) {
+                    self.primaryStat(self.primaryValues[type == "Light" ? "Default" : "Stats"]);
+                });
+            }
             if (item.id) {
                 itemObject.perks = item.perks;
             } else if (item.perks.length > 0) {
@@ -3110,6 +3110,13 @@ Item.prototype = {
                     return perk.active === false && perk.isExclusive === -1;
                 }).length === 0;
             }
+            if (item.primaryStat) {
+                if (item.primaryStat && item.primaryStat.value) {
+                    itemObject.primaryStat(item.primaryStat.value);
+                } else {
+                    itemObject.primaryStat(item.primaryStat);
+                }
+            }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
                 _.each(item.stats, function(stat) {
@@ -3118,6 +3125,7 @@ Item.prototype = {
                         itemObject.stats[p.statName] = stat.value;
                     }
                 });
+                itemObject.primaryValues['Stats'] = tgd.sum(_.values(itemObject.stats));
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
@@ -3140,6 +3148,7 @@ Item.prototype = {
             } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
+            itemObject.primaryValues['Default'] = itemObject.primaryStat();
             $.extend(self, itemObject);
         }
     },
@@ -5051,6 +5060,7 @@ var app = function() {
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
     this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
     this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
+    this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
 
     this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
@@ -5563,6 +5573,11 @@ var app = function() {
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     };
+    this.setArmorView = function(type) {
+        return function() {
+            self.armorViewBy(type);
+        }
+    }
     this.setVaultColumns = function(columns) {
         return function() {
             self.vaultColumns(columns);

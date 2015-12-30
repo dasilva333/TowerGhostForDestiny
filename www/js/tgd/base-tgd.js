@@ -250,5 +250,6 @@ tgd.defaults = {
     ccWidth: "",
     layoutMode: "even",
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
-    toastTimeout: 2600
+    toastTimeout: 2600,
+    armorViewBy: "Light"
 };

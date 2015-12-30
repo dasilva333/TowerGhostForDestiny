@@ -52,6 +52,7 @@ var app = function() {
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
     this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
     this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
+    this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
 
     this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
@@ -564,6 +565,11 @@ var app = function() {
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     };
+    this.setArmorView = function(type) {
+        return function() {
+            self.armorViewBy(type);
+        }
+    }
     this.setVaultColumns = function(columns) {
         return function() {
             self.vaultColumns(columns);

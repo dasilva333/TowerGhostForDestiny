@@ -208,21 +208,20 @@ Item.prototype = {
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
                 icon: tgd.dataDir + info.icon,
-                isUnique: false
+                isUnique: false,
+                primaryValues: {}
             };
-            if (item.primaryStat) {
-                if (item.primaryStat && item.primaryStat.value) {
-                    itemObject.primaryStat(item.primaryStat.value);
-                } else {
-                    itemObject.primaryStat(item.primaryStat);
-                }
-            }
             //hack for issue #442
             if (itemObject.bucketType == "Artifact") {
                 itemObject.classType = tgd.DestinyClassNames[itemObject.typeName.split(" ")[0]];
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
+            if (itemObject.armorIndex > -1) {
+                app.armorViewBy.subscribe(function(type) {
+                    self.primaryStat(self.primaryValues[type == "Light" ? "Default" : "Stats"]);
+                });
+            }
             if (item.id) {
                 itemObject.perks = item.perks;
             } else if (item.perks.length > 0) {
@@ -288,6 +287,13 @@ Item.prototype = {
                     return perk.active === false && perk.isExclusive === -1;
                 }).length === 0;
             }
+            if (item.primaryStat) {
+                if (item.primaryStat && item.primaryStat.value) {
+                    itemObject.primaryStat(item.primaryStat.value);
+                } else {
+                    itemObject.primaryStat(item.primaryStat);
+                }
+            }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
                 _.each(item.stats, function(stat) {
@@ -296,6 +302,7 @@ Item.prototype = {
                         itemObject.stats[p.statName] = stat.value;
                     }
                 });
+                itemObject.primaryValues['Stats'] = tgd.sum(_.values(itemObject.stats));
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
@@ -318,6 +325,7 @@ Item.prototype = {
             } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
+            itemObject.primaryValues['Default'] = itemObject.primaryStat();
             $.extend(self, itemObject);
         }
     },

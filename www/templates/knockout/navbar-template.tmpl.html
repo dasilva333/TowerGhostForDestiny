@@ -283,28 +283,49 @@
                         </li>
                         <!--/ko  -->
                         <li class="divider"></li>
+                        <li>
+                            <strong style="padding-left: 10px;">Filter By</strong>
+                        </li>
                         <li data-bind="css: showArmorPerks() ? 'active' : '', fastclick: toggleArmorPerks">
                             <a href="#">
                                 <i class="fa" data-bind="css: showArmorPerks() ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>By Weapons Equipped</span>
+                                <span>Weapons Equipped</span>
                             </a>
                         </li>
                         <li data-bind="css: showArmorSC() ? 'active' : '', fastclick: toggleArmorSC">
                             <a href="#">
                                 <i class="fa" data-bind="css: showArmorSC() ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>By Subclass Equipped</span>
+                                <span>Subclass Equipped</span>
                             </a>
                         </li>
                         <li class="divider"></li>
+                        <li>
+                            <strong style="padding-left: 10px;">Filter for Class</strong>
+                        </li>
                         <!-- ko foreach: { data: _.values(tgd.DestinyClass), as: 'classType' } -->
                         <li data-bind="css: $parent.showArmorClass(classType) ? 'active' : '', fastclick: $parent.toggleArmorClass(classType)">
                             <a href="#">
                                 <i class="fa" data-bind="css: $parent.showArmorClass(classType) ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>For
-                                    <span data-bind="text: classType"></span> Class</span>
+                                <span data-bind="text: classType"></span>
                             </a>
                         </li>
                         <!--/ko  -->
+                        <li class="divider"></li>
+                        <li>
+                            <strong style="padding-left: 10px;">View By</strong>
+                        </li>
+                        <li data-bind="css: armorViewBy() == 'Light' ? 'active' : '', fastclick: setArmorView('Light')">
+                            <a href="#">
+                                <i class="fa" data-bind="css: armorViewBy() == 'Light' ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Light Level</span>
+                            </a>
+                        </li>
+                        <li data-bind="css: armorViewBy() == 'All' ? 'active' : '', fastclick: setArmorView('All')">
+                            <a href="#">
+                                <i class="fa" data-bind="css: armorViewBy() == 'All' ? 'fa-check-square' : 'fa-square'"></i>
+                                <span>Combined Stat Points</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="dropdown" data-bind="visible: (activeView() == 0 || activeView() == 3)">
