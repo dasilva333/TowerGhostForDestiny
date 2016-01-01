@@ -120,7 +120,9 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <span data-bind="text: $root.activeText().menu_sortby"><strong style="padding-left: 10px;">Sort By</strong></span>
+                            <span data-bind="text: $root.activeText().menu_sortby">
+                                <strong style="padding-left: 10px;">Sort By</strong>
+                            </span>
                         </li>
                         <li data-bind="fastclick: setSort" value="0">
                             <a href="#">
@@ -284,7 +286,9 @@
                         <!--/ko  -->
                         <li class="divider"></li>
                         <li>
-                            <span data-bind="text: $root.activeText().menu_filter_by"><strong style="padding-left: 10px;">Filter By</strong></span>
+                            <span data-bind="text: $root.activeText().menu_filter_by">
+                                <strong style="padding-left: 10px;">Filter By</strong>
+                            </span>
                         </li>
                         <li data-bind="css: showArmorPerks() ? 'active' : '', fastclick: toggleArmorPerks">
                             <a href="#">
@@ -300,7 +304,9 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <span data-bind="text: $root.activeText().menu_filter_for_class"><strong style="padding-left: 10px;">Filter for Class</strong></span>
+                            <span data-bind="text: $root.activeText().menu_filter_for_class">
+                                <strong style="padding-left: 10px;">Filter for Class</strong>
+                            </span>
                         </li>
                         <!-- ko foreach: { data: _.values(tgd.DestinyClass), as: 'classType' } -->
                         <li data-bind="css: $parent.showArmorClass(classType) ? 'active' : '', fastclick: $parent.toggleArmorClass(classType)">
@@ -312,7 +318,9 @@
                         <!--/ko  -->
                         <li class="divider"></li>
                         <li>
-                            <span data-bind="text: $root.activeText().menu_view_by"><strong style="padding-left: 10px;">View By</strong></span>
+                            <span data-bind="text: $root.activeText().menu_view_by">
+                                <strong style="padding-left: 10px;">View By</strong>
+                            </span>
                         </li>
                         <li data-bind="css: armorViewBy() == 'Light' ? 'active' : '', fastclick: setArmorView('Light')">
                             <a href="#">
