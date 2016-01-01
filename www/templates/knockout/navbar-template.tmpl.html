@@ -120,36 +120,36 @@
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <strong style="padding-left: 10px;">Sort By</strong>
+                            <span data-bind="text: $root.activeText().menu_sortby"><strong style="padding-left: 10px;">Sort By</strong></span>
                         </li>
                         <li data-bind="fastclick: setSort" value="0">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 0 ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Tier, Type</span>
+                                <span data-bind="text: $root.activeText().menu_sortby_tier_type">Tier, Type</span>
                             </a>
                         </li>
                         <li data-bind="fastclick: setSort" value="1">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 1 ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Type</span>
+                                <span data-bind="text: $root.activeText().menu_sortby_type">Type</span>
                             </a>
                         </li>
                         <li data-bind="fastclick: setSort" value="2">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 2 ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Light Level</span>
+                                <span data-bind="text: $root.activeText().menu_sortby_lightlvl">Light Level</span>
                             </a>
                         </li>
                         <li data-bind="fastclick: setSort" value="3">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 3 ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Damage Type</span>
+                                <span data-bind="text: $root.activeText().menu_sortby_damage">Damage Type</span>
                             </a>
                         </li>
                         <li data-bind="fastclick: setSort" value="4">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 4 ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Name</span>
+                                <span data-bind="text: $root.activeText().menu_sortby_name">Name</span>
                             </a>
                         </li>
                         <li class="divider"></li>
@@ -284,23 +284,23 @@
                         <!--/ko  -->
                         <li class="divider"></li>
                         <li>
-                            <strong style="padding-left: 10px;">Filter By</strong>
+                            <span data-bind="text: $root.activeText().menu_filter_by"><strong style="padding-left: 10px;">Filter By</strong></span>
                         </li>
                         <li data-bind="css: showArmorPerks() ? 'active' : '', fastclick: toggleArmorPerks">
                             <a href="#">
                                 <i class="fa" data-bind="css: showArmorPerks() ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Weapons Equipped</span>
+                                <span data-bind="text: $root.activeText().menu_filter_by_weapon_eq">Weapons Equipped</span>
                             </a>
                         </li>
                         <li data-bind="css: showArmorSC() ? 'active' : '', fastclick: toggleArmorSC">
                             <a href="#">
                                 <i class="fa" data-bind="css: showArmorSC() ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Subclass Equipped</span>
+                                <span data-bind="text: $root.activeText().menu_filter_by_subclass_eq">Subclass Equipped</span>
                             </a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <strong style="padding-left: 10px;">Filter for Class</strong>
+                            <span data-bind="text: $root.activeText().menu_filter_for_class"><strong style="padding-left: 10px;">Filter for Class</strong></span>
                         </li>
                         <!-- ko foreach: { data: _.values(tgd.DestinyClass), as: 'classType' } -->
                         <li data-bind="css: $parent.showArmorClass(classType) ? 'active' : '', fastclick: $parent.toggleArmorClass(classType)">
@@ -312,18 +312,18 @@
                         <!--/ko  -->
                         <li class="divider"></li>
                         <li>
-                            <strong style="padding-left: 10px;">View By</strong>
+                            <span data-bind="text: $root.activeText().menu_view_by"><strong style="padding-left: 10px;">View By</strong></span>
                         </li>
                         <li data-bind="css: armorViewBy() == 'Light' ? 'active' : '', fastclick: setArmorView('Light')">
                             <a href="#">
                                 <i class="fa" data-bind="css: armorViewBy() == 'Light' ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Light Level</span>
+                                <span data-bind="text: $root.activeText().menu_view_by_lightlvl">Light Level</span>
                             </a>
                         </li>
                         <li data-bind="css: armorViewBy() == 'All' ? 'active' : '', fastclick: setArmorView('All')">
                             <a href="#">
                                 <i class="fa" data-bind="css: armorViewBy() == 'All' ? 'fa-check-square' : 'fa-square'"></i>
-                                <span>Combined Stat Points</span>
+                                <span data-bind="text: $root.activeText().menu_view_by_stat_points">Combined Stat Points</span>
                             </a>
                         </li>
                     </ul>
