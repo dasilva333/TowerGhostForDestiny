@@ -13,42 +13,42 @@
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
                             <div class="col-xs-10">
-                                Armor
+                                <span data-bind="text: $root.activeText().armor">Armor</span>
                                 <span data-bind="text: STAT_ARMOR.value"></span>
                             </div>
                             <div class="col-xs-14 text-right">
-                                Intellect
+                                <span data-bind="text: $root.activeText().intellect">Intellect</span>
                                 <span data-bind="text: character.equippedStats()['Intellect']"></span>
                                 <img src="assets/intellect.png">
                             </div>
                             <div class="col-xs-8">
-                                Agility
+                                <span data-bind="text: $root.activeText().agility">Agility</span>
                                 <span data-bind="text: STAT_AGILITY.value"></span>
                             </div>
                             <div class="col-xs-16 text-right">
-                                Discipline
+                                <span data-bind="text: $root.activeText().discipline">Discipline</span>
                                 <span data-bind="text: character.equippedStats()['Discipline']"></span>
                                 <img src="assets/discipline.png">
                             </div>
                             <div class="col-xs-10">
-                                Recovery
+                                <span data-bind="text: $root.activeText().recovery">Recovery</span>
                                 <span data-bind="text: STAT_RECOVERY.value"></span>
                             </div>
                             <div class="col-xs-14 text-right">
-                                Strength
+                                <span data-bind="text: $root.activeText().strength">Strength</span>
                                 <span data-bind="text: character.equippedStats()['Strength']"></span>
                                 <img src="assets/strength.png">
                             </div>
                             <div class="col-xs-24 text-center">
-                                Equip Gear With Highest:
+                                <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
                                 <br>
-                                <a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a>
-                                <a data-bind="click: character.equipHighest('Intellect')" class="btn btn-default">Int</a>
-                                <a data-bind="click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a>
-                                <a data-bind="click: character.equipHighest('Strength')" class="btn btn-default">Str</a>
+                                <span data-bind="text: $root.activeText().light"><a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a></span>
+                                <span data-bind="text: $root.activeText().inte"><a data-bind="click: character.equipHighest('Intellect')" class="btn btn-default">Int</a></span>
+                                <span data-bind="text: $root.activeText().disc"><a data-bind="click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a></span>
+                                <span data-bind="text: $root.activeText().str"><a data-bind="click: character.equipHighest('Strength')" class="btn btn-default">Str</a></span>
                                 <hr style="margin:3px; padding:6px;">
-                                <a data-bind="click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a> |
-                                <a data-bind="click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a>
+                                <span data-bind="text: $root.activeText().most_points"><a data-bind="click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a></span>|
+                                <span data-bind="text: $root.activeText().best_combo"><a data-bind="click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a></span>
                             </div>
                         </div>
                     </div>

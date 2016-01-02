@@ -21,12 +21,14 @@
                         <div class="btn-group">
                             <div class="radio">
                                 <label>
-                                    <input name="layoutMode" value="even" type="radio" data-bind="checked: layoutMode"> Default
+                                    <input name="layoutMode" value="even" type="radio" data-bind="checked: layoutMode">
+									<span data-bind="text: $root.activeText().vo_layout_mode_def"> Default</span>
                                 </label>
                             </div>
                             <div class="radio">
                                 <label>
-                                    <input name="layoutMode" value="uneven" type="radio" data-bind="checked: layoutMode"> Custom
+                                    <input name="layoutMode" value="uneven" type="radio" data-bind="checked: layoutMode">
+									<span data-bind="text: $root.activeText().vo_layout_mode_cust"> Custom</span>
                                 </label>
                             </div>
                         </div>
