@@ -51,7 +51,7 @@
 </div>
 <div style="display:none;" id="tgdLoader">
     <div class="col-xs-24">
-        <h4>Please wait, downloading auto updates</h4>
+        <h4 data-bind="text: $root.activeText().login_loading_updates">Please wait, downloading auto updates</h4>
         <div class="progress progress-striped active">
             <div class="progress-bar progress-bar-success" id="tgdLoaderProgress" style="width: 100%"></div>
         </div>
