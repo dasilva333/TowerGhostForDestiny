@@ -12,8 +12,8 @@ window.isStaticBrowser = location.protocol.indexOf("http") > -1 && location.href
 if (window.isStaticBrowser) {
     window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
 }
-window.tgd = {};
-tgd.dataDir = "data";
+if (typeof window.tgd == "undefined") window.tgd = {};
+if (typeof tgd.dataDir == "undefined") tgd.dataDir = "data";
 if (isWindowsPhone) {
     window.requestFileSystem = function() {};
 }
@@ -72,9 +72,10 @@ if (isFirefox) {
             var send = function() {
                 if (payload)
                     self.request.payload = payload;
-                var event = document.createEvent('CustomEvent');
-                event.initCustomEvent("xhr-request", true, true, self.request);
-                document.documentElement.dispatchEvent(event);
+                var event = new CustomEvent("xhr-request", {
+                    detail: self.request
+                });
+                window.dispatchEvent(event);
                 tgd.localLog("send request to " + self.request.url);
             }
             if (window.ffXHRisReady == true) {
