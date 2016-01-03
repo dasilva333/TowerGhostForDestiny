@@ -1114,8 +1114,8 @@ Item.prototype = {
                                 '</div>' +
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
-                                '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
-                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
+                                '<label><input type="checkbox" id="consolidate" /> ' + app.activeText().transfer_con + ' (' + itemTotal + '))</label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> ' + app.activeText().transfer_ask + '</label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
