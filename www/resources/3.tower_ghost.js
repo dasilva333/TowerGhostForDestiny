@@ -3342,6 +3342,9 @@ Item.prototype = {
                     itemObject.primaryStat(item.primaryStat.value);
                 } else {
                     itemObject.primaryStat(item.primaryStat);
+                    if (_.isObject(item.stats)) {
+                        itemObject.primaryValues['Stats'] = tgd.sum(_.values(item.stats));
+                    }
                 }
             }
             if (item.stats.length > 0) {
