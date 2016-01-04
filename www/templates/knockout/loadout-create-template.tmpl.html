@@ -13,11 +13,7 @@
                 <div class="lower-left" data-bind="text: classLetter"></div>
             </div>
             <!--/ko  -->
-            <p id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0">
-                <span data-bind="text: $root.activeText().loadouts_instructions">No items in loadout, click items to add, </span>
-                <span data-bind="text: isMobile ? $root.activeText().loadouts_mobile:$root.activeText().loadouts_desktop"></span>
-                <span data-bind="text: $root.activeText().loadouts_instructions_contd">to equip.</span>
-            </p>
+            <div id="loadout-error" class="label label-danger" data-bind="visible: items().length == 0, text: $root.activeText().loadouts_instructions + (isMobile ? $root.activeText().loadouts_mobile:$root.activeText().loadouts_desktop) + $root.activeText().loadouts_instructions_contd"></div>
         </div>
         <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
             <div class="item" data-bind="css: isMobile && item._id > 0 && item.doEquip() ? 'doEquip' : ''">
