@@ -42,13 +42,13 @@
                             <div class="col-xs-24 text-center">
                                 <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
                                 <br>
-                                <span data-bind="text: $root.activeText().light"><a data-bind="click: character.equipHighest('Light')" class="btn btn-default">Light</a></span>
-                                <span data-bind="text: $root.activeText().inte"><a data-bind="click: character.equipHighest('Intellect')" class="btn btn-default">Int</a></span>
-                                <span data-bind="text: $root.activeText().disc"><a data-bind="click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a></span>
-                                <span data-bind="text: $root.activeText().str"><a data-bind="click: character.equipHighest('Strength')" class="btn btn-default">Str</a></span>
+                                <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light')" class="btn btn-default">Light</a>
+                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect')" class="btn btn-default">Int</a>
+                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a>
+                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength')" class="btn btn-default">Str</a>
                                 <hr style="margin:3px; padding:6px;">
-                                <span data-bind="text: $root.activeText().most_points"><a data-bind="click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a></span>|
-                                <span data-bind="text: $root.activeText().best_combo"><a data-bind="click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a></span>
+                                <a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a> |
+                                <a data-bind="text: $root.activeText().best_combo, click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a>
                             </div>
                         </div>
                     </div>
