@@ -2,27 +2,23 @@
   "files": {
     "tower_ghost.css": {
       "filename": "resources/tower_ghost.css",
-      "version": "1ffc392ff87802c2cdd6800ca4723da969a4d5db64283146ab49107ad54b9343"
+      "version": "8e53b9b7be68e260a7a4d5f1b7c039d799b9b7b7bbee5b467f86424f9f8b1995"
     },
     "definitions.json": {
       "filename": "resources/en/definitions.json",
-      "version": "4b8a8586114967b49f2e663ae2cf6c4562efea7271391c17122597fc1cc9489c"
+      "version": "c5dde9dd65ae3bf66d8231d71c371da9dc2ffcff6ca155b92947c4938e6d5221"
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
-      "version": "77331cc5dccaae3d966abde278ac3cc6ad106673752425e18505033db89248de"
+      "version": "4b47234a60e2cffccd862faaca69060c1ecf2053038527f123fd9087c8abb7f9"
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "c806fdc9e3cdeb57f242b29aa646ff395e4ca110b15786a572aa68ec0423e6ef"
+      "version": "1f1239e5847e9dfdde6e505ab6606ab95f9b15628f705883a65a8a43dabb1489"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "c27f0b4d3be7c2a15eee5e0b3eaf87413d599fb7a3b9b9b524a5032409da1d35"
-    },
-    "4.extras.js": {
-      "filename": "resources/4.extras.js",
-      "version": "71059267b4a817dacd05ac6aa2b125b8ecad0eecc9896e5e8a964044a208c9be"
+      "version": "2c833b30e4a295dc1a88efadd401f2dc1250de9d72beb6feb8d522240688c7fe"
     }
   },
   "load": [
@@ -30,8 +26,7 @@
     "/auto_updates.cfm?resources/en/definitions.json",
     "/auto_updates.cfm?resources/1.libraries.js",
     "/auto_updates.cfm?resources/2.templates.js",
-    "/auto_updates.cfm?resources/3.tower_ghost.js",
-    "/auto_updates.cfm?resources/4.extras.js"
+    "/auto_updates.cfm?resources/3.tower_ghost.js"
   ],
   "root": "./"
 }
