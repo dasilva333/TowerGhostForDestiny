@@ -135,7 +135,7 @@ input
 #loadout-options span,
 #loadout-contents span {
     display: inline-block;
-    width: 65px;
+    width: 60px;
     border-radius: 3px;
     background-color: #5b6e6c;
     cursor: pointer;
