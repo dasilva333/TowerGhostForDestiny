@@ -1473,7 +1473,7 @@ tgd.Layout = function(layout) {
 	            var targetGroups = _.groupBy(targetList, 'bucketType');
 	            masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key) {
 	                var sourceBucket = sourceGroups[key];
-	                var targetBucket = targetGroups[key];
+	                var targetBucket = targetGroups[key] || [];
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
 	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
@@ -1658,6 +1658,8 @@ tgd.Layout = function(layout) {
 	                }
 	                return swapArray;
 	            }));
+	        } else {
+	            BootstrapDialog.alert("No source items available to transfer");
 	        }
 	        if (callback) {
 	            if (_.isFunction(callback)) callback(masterSwapArray);
