@@ -4,6 +4,7 @@ tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinySkillTier = 60;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];

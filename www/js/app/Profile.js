@@ -487,7 +487,7 @@ Profile.prototype = {
         });
         var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
             var score = tgd.sum(_.map(combo.sumSet, function(value, key) {
-                var result = Math.floor(value / 60);
+                var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
             }));
             combo.sum = tgd.sum(_.values(combo.sumSet));
@@ -498,28 +498,58 @@ Profile.prototype = {
         var highestSetObj = sumSetValues[sumSetValues.length - 1];
         return [highestSetObj.sum, highestSetObj.set];
     },
-    findBestArmorSet: function(items) {
-        var buckets = [].concat(tgd.DestinyArmorPieces);
-        var sets = [],
+    findBestArmorSetV2: function(items) {
+        var buckets = [].concat(tgd.DestinyArmorPieces),
+            sets = [],
             bestSets = [],
             backups = [],
-            candidates;
-        var character = this;
+            groups = {},
+            candidates,
+            statGroups = {},
+            highestArmorTier = 0,
+            highestArmorValue = 0,
+            highestTierValue = 0,
+            character = this;
 
-        //console.time("finding candidates");
+
         _.each(buckets, function(bucket) {
-            candidates = _.filter(items, function(item) {
+            groups[bucket] = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
                     (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
                 );
             });
-            tgd.localLog(bucket + " total candidates " + candidates.length);
+            var csps = _.map(groups[bucket], function(item) {
+                return item.getValue("All");
+            });
+            statGroups[bucket] = {
+                max: _.max(csps),
+                min: _.min(csps)
+            };
+        });
+
+        highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
+            return stat.max;
+        }));
+        //console.log("highestArmorValue:"+highestArmorValue);
+
+        highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
+        //console.log("highestArmorTier :"+highestArmorTier );
+
+        highestTierValue = highestArmorTier * tgd.DestinySkillTier;
+        //console.log("highestTierValue :"+highestTierValue );
+
+        _.each(groups, function(items, bucketType) {
+            var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
+            //console.log(bucketType+":"+minCSP +",before:" + items.length);
+            candidates = _.filter(items, function(item) {
+                return item.getValue("All") >= minCSP;
+            });
+            //console.log("after:" + candidates.length);
             _.each(candidates, function(candidate) {
                 sets.push([candidate]);
             });
         });
 
-        tgd.localLog("total sets " + sets.length);
         backups = _.flatten(sets);
 
         _.each(sets, function(set) {
@@ -537,7 +567,7 @@ Profile.prototype = {
             var sums = _.map(combos, function(combo) {
                 var tmp = character.joinStats(combo);
                 var score = tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / 60);
+                    var result = Math.floor(value / tgd.DestinySkillTier);
                     return result > 5 ? 5 : result;
                 }));
                 var subScore = (tgd.sum(_.values(tmp)) / 1000);
@@ -710,16 +740,16 @@ Profile.prototype = {
             var bestWeaponSets;
 
             if (type == "Best") {
-                var bestSets = character.findBestArmorSet(items);
+                var bestSets = character.findBestArmorSetV2(items);
                 var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title, description = "",
+                        var title, description = "(" + combo.score + ")",
                             stats = character.joinStats(combo.set);
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
-                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
                         combo.title = $.trim(description);
