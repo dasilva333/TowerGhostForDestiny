@@ -14,19 +14,19 @@
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "7106c90675d88cd6fc9628a0e48fbda90358d584e9911b07df182b2f7e0f027e"
+      "version": "01fdeeb177149a3796f5f7265925793f61242c70368872935ea5c1cf7808ee9e"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "907951b72f7c5a1c260a345cf545ac0881967626bef6604d3bdd53e2fde7f4f2"
+      "version": "256ccaaf850e320a28fd885d9de5005a30d2636999104d9faeb8e87b5d75b7ec"
     }
   },
   "load": [
-    "resources/tower_ghost.css",
-    "resources/en/definitions.json",
-    "resources/1.libraries.js",
-    "resources/2.templates.js",
-    "resources/3.tower_ghost.js"
+    "/auto_updates.cfm?resources/tower_ghost.css",
+    "/auto_updates.cfm?resources/en/definitions.json",
+    "/auto_updates.cfm?resources/1.libraries.js",
+    "/auto_updates.cfm?resources/2.templates.js",
+    "/auto_updates.cfm?resources/3.tower_ghost.js"
   ],
   "root": "./"
 }

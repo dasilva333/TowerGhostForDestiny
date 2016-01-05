@@ -5,8 +5,11 @@ module.exports = function (grunt) {
 	grunt.registerTask('deployjs', [
         'ftpush:resources', 'ftpush:manifest'
 	]);
+	grunt.registerTask('deployfirefox', [
+        'ftpush:firefoxAssets'
+	]);
 	grunt.registerTask('deployimages', [
-        'ftpush:images', 'ftpush:shareImages'
+        'ftpush:images', 'ftpush:shareImages', 'ftpush:firefoxImages'
 	]);
 	grunt.registerTask('deploylocale', [
         'ftpush:locale'

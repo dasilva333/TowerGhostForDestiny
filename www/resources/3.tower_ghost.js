@@ -3061,7 +3061,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.5";
+tgd.version = "3.7.6.6";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -6404,9 +6404,8 @@ var app = function() {
                                     timeout: tgd.defaults.toastTimeout
                                 }
                             });
-                            var event = document.createEvent('CustomEvent');
-                            event.initCustomEvent("request-cookie", true, true, {});
-                            document.documentElement.dispatchEvent(event);
+                            var event = new CustomEvent("request-cookie-from-ps", {});
+                            window.dispatchEvent(event);
                             setTimeout(function() {
                                 tgd.localLog("loadData");
                                 self.loadData();

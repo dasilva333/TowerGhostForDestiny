@@ -1152,9 +1152,8 @@ var app = function() {
                                     timeout: tgd.defaults.toastTimeout
                                 }
                             });
-                            var event = document.createEvent('CustomEvent');
-                            event.initCustomEvent("request-cookie", true, true, {});
-                            document.documentElement.dispatchEvent(event);
+                            var event = new CustomEvent("request-cookie-from-ps", {});
+                            window.dispatchEvent(event);
                             setTimeout(function() {
                                 tgd.localLog("loadData");
                                 self.loadData();
