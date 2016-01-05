@@ -5203,7 +5203,7 @@ Profile.prototype = {
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title, description = "(" + combo.score + ")",
+                        var title, description = "(" + combo.score.toFixed(3) + ")",
                             stats = character.joinStats(combo.set);
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
