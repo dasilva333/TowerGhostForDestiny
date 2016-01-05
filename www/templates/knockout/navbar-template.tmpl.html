@@ -32,14 +32,14 @@
                         <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount, text: $root.activeText().menu_usexbox">Use Xbox Account</a></li>
                         <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount, text: $root.activeText().menu_useps">Use Playstation Account</a></li>
                         <li class="divider"></li>
-                        <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i><span data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a></li>
-                        <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: $root.activeText().menu_about">About</span></a></li>
-                        <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
-                        <li><a href="#" data-bind="fastclick: showDonate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
-                        <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
+                        <li><a href="#" data-bind="fastclick: clearFilters, text: $root.activeText().menu_clear"><i class="fa fa-filter"></i>Clear Filters</a></li>
+                        <li><a href="#" data-bind="fastclick: showAbout, text: $root.activeText().menu_about"><i class="fa fa-info"></i>About</a></li>
+                        <li><a href="#" data-bind="fastclick: showHelp, text: $root.activeText().menu_help"><i class="fa fa-question"></i>Help</a></li>
+                        <li><a href="#" data-bind="fastclick: showDonate, text: $root.activeText().menu_donate"><i class="fa fa-credit-card"></i>Donate</a></li>
+                        <li><a href="#" data-bind="fastclick: showLanguageSettings, text: $root.activeText().menu_language"><i class="fa fa-language"></i>Language</a></li>
                         <li class="divider"></li>
-                        <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
-                        <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
+                        <li><a href="#" data-bind="fastclick: openStatusReport, text: $root.activeText().menu_destinystatus"><i class="fa fa-external-link"></i>DestinyStatus Report</a></li>
+                        <li><a href="#" data-bind="fastclick: toggleShareView, text: $root.activeText().menu_shareurl"><i class="fa fa-share-alt"></i>Share URL with friends</a></li>
                         <li class="divider"></li>
                         <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
                             <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autorefresh">Auto Refresh</span></a>
@@ -84,8 +84,16 @@
                         </li>
                         <!--/ko  -->
                         <li class="divider"></li>
-                        <li data-bind="fastclick: createLoadout"><a href="#"><i class="fa fa-plus"></i>								<span data-bind="text: $root.activeText().menu_loadouts_create">Create</span>							</a></li>
-                        <li data-bind="fastclick: cancelLoadout"><a href="#"><i class="fa fa-times"></i>								<span data-bind="text: $root.activeText().cancel">Cancel</span>							</a></li>
+                        <li data-bind="fastclick: createLoadout">
+							<a href="#"><i class="fa fa-plus"></i>
+							<span data-bind="text: $root.activeText().menu_loadouts_create">Create</span>
+							</a>
+						</li>
+                        <li data-bind="fastclick: cancelLoadout">
+							<a href="#"><i class="fa fa-times"></i>
+							<span data-bind="text: $root.activeText().cancel">Cancel</span>
+							</a>
+						</li>
                     </ul>
                 </li>
                 <li class="dropdown">
