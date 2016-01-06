@@ -29,6 +29,7 @@ tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinySkillTier = 60;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];
@@ -324,7 +325,7 @@ window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var icon = ko.unwrap(valueAccessor());
         element.src = icon;
-        element.onerror = tgd.imageErrorHandler(icon, element);
+        //element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
 
@@ -1473,7 +1474,7 @@ tgd.Layout = function(layout) {
 	            var targetGroups = _.groupBy(targetList, 'bucketType');
 	            masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key) {
 	                var sourceBucket = sourceGroups[key];
-	                var targetBucket = targetGroups[key];
+	                var targetBucket = targetGroups[key] || [];
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
 	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
@@ -1658,6 +1659,8 @@ tgd.Layout = function(layout) {
 	                }
 	                return swapArray;
 	            }));
+	        } else {
+	            BootstrapDialog.alert("No source items available to transfer");
 	        }
 	        if (callback) {
 	            if (_.isFunction(callback)) callback(masterSwapArray);
@@ -1798,15 +1801,15 @@ tgd.locale = {
         loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
         loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
         loadouts_mobile: "hold",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
         loadouts_no_transfer: " will not be moved",
         loadouts_outofspace: " will not be moved, there is no space in ",
         loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
+        loadouts_save_new: "Save As",
         loadouts_swap: " will be swapped with ",
         loadouts_to_equip: " will be equipped.",
         loadouts_to_moveequip: " will be moved and equipped.",
@@ -1941,14 +1944,15 @@ tgd.locale = {
         loadouts_close: "Schließen",
         loadouts_delete: "Löschen",
         loadouts_desktop: "prüfen",
-        loadouts_instructions: "Keine Gegenstände in der Ausrüstung, klicke Gegenstände um sie hinzuzufügen,",
-        loadouts_instructions_contd: "zum Ausrüsten.",
+        loadouts_instructions: "Keine Gegenstände in der Ausrüstung, klicke Gegenstände um sie hinzuzufügen, ",
+        loadouts_instructions_contd: " zum Ausrüsten.",
         loadouts_invalidbucket: " wird nicht verschoben. Wegen diesem Bucket: ",
         loadouts_mobile: "halten",
         loadouts_no_replacement: " wird nicht verschoben. Es gibt keinen Gegenstand als Ersatz.",
         loadouts_no_transfer: " wird nicht verschoben",
         loadouts_outofspace: " wird nicht verschoben, es ist kein Platz in ",
         loadouts_save: "Speichern",
+        loadouts_save_new: "Speichern As",
         loadouts_swap: " wird ausgetauscht mit ",
         loadouts_to_equip: " wird ausgerüstet.",
         loadouts_to_moveequip: " wird verschoben und ausgerüstet.",
@@ -2082,14 +2086,15 @@ tgd.locale = {
         loadouts_close: "Cerrar",
         loadouts_delete: "Borrar",
         loadouts_desktop: "cheque",
-        loadouts_instructions: "No hay articulos en loadout, haga clic en los articulos a anadir,",
-        loadouts_instructions_contd: "para equipar.",
+        loadouts_instructions: "No hay articulos en loadout, haga clic en los articulos a anadir, ",
+        loadouts_instructions_contd: " para equipar.",
         loadouts_invalidbucket: " no sera trasladado, Debido a este cubo: ",
         loadouts_mobile: "sostener",
         loadouts_no_replacement: " no sera trasladado. No hay otro para reemplazarlo.",
         loadouts_no_transfer: " no sera trasladado",
         loadouts_outofspace: " no sera trasladado, no hay espacio en ",
         loadouts_save: "Guardar",
+        loadouts_save_new: "Guardar Como",
         loadouts_swap: " sera intercambiado con ",
         loadouts_to_equip: " sera equipado.",
         loadouts_to_moveequip: " sera trasladado y equipado.",
@@ -2223,14 +2228,15 @@ tgd.locale = {
         loadouts_close: "Fermer",
         loadouts_delete: "Rayer",
         loadouts_desktop: "check",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
         loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
         loadouts_mobile: "hold",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
         loadouts_no_transfer: " will not be moved",
         loadouts_outofspace: " will not be moved, there is no space in ",
         loadouts_save: "Sauver",
+        loadouts_save_new: "Sauver As",
         loadouts_swap: " will be swapped with ",
         loadouts_to_equip: " will be equipped.",
         loadouts_to_moveequip: " will be moved and equipped.",
@@ -2247,6 +2253,10 @@ tgd.locale = {
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Bienvenue à Tower Ghost for Destiny!",
         menu_about: "Propos",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
         menu_all: "Tout",
         menu_autorefresh: "Auto Actualiser (5 min)",
         menu_autotransfer: "Auto transfert s'entasser",
@@ -2360,15 +2370,15 @@ tgd.locale = {
         loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
         loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
         loadouts_mobile: "hold",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
         loadouts_no_transfer: " will not be moved",
         loadouts_outofspace: " will not be moved, there is no space in ",
         loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
+        loadouts_save_new: "Save As",
         loadouts_swap: " will be swapped with ",
         loadouts_to_equip: " will be equipped.",
         loadouts_to_moveequip: " will be moved and equipped.",
@@ -2425,6 +2435,9 @@ tgd.locale = {
         menu_useps: "Use Playstation Account",
         menu_view: "View",
         menu_view_armor: "Armor",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
         menu_view_general: "General",
         menu_view_options: "View Options",
         menu_view_weapons: "Weapons",
@@ -2499,15 +2512,15 @@ tgd.locale = {
         loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
         loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
         loadouts_mobile: "hold",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
         loadouts_no_transfer: " will not be moved",
         loadouts_outofspace: " will not be moved, there is no space in ",
         loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
+        loadouts_save_new: "Save As",
         loadouts_swap: " will be swapped with ",
         loadouts_to_equip: " will be equipped.",
         loadouts_to_moveequip: " will be moved and equipped.",
@@ -2641,15 +2654,15 @@ tgd.locale = {
         loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
         loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
         loadouts_mobile: "hold",
         loadouts_no_replacement: " will not be moved. There is no item to replace it.",
         loadouts_no_transfer: " will not be moved",
         loadouts_outofspace: " will not be moved, there is no space in ",
         loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
+        loadouts_save_new: "Save As",
         loadouts_swap: " will be swapped with ",
         loadouts_to_equip: " will be equipped.",
         loadouts_to_moveequip: " will be moved and equipped.",
@@ -2783,14 +2796,15 @@ tgd.locale = {
         loadouts_close: "Kapat",
         loadouts_delete: "Sil",
         loadouts_desktop: "kontrol",
-        loadouts_instructions: "Teçhizatında donanmak için öğe yok.Donanmak için tıkla,",
-        loadouts_instructions_contd: "ekle.",
+        loadouts_instructions: "Teçhizatında donanmak için öğe yok.Donanmak için tıkla, ",
+        loadouts_instructions_contd: " ekle.",
         loadouts_invalidbucket: " aktarılmayacak. Çünkü seçtiğin bu öğeler yüzünden: ",
         loadouts_mobile: "tut",
         loadouts_no_replacement: " aktarılmayacak. Bu öğenin yerine koyabileceğimiz başka bir öğe yok.",
         loadouts_no_transfer: " aktarılmayacak",
         loadouts_outofspace: " aktarılmayacak, çünkü yandaki yerde yeterli alanın yok ",
         loadouts_save: "Kaydet",
+        loadouts_save_new: "Kaydet As",
         loadouts_swap: " ile takas yapılacak ",
         loadouts_to_equip: " donanılacak.",
         loadouts_to_moveequip: " aktarılacak ve donanılacak.",
@@ -2807,6 +2821,7 @@ tgd.locale = {
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Tower Ghost for Destiny ye Hoşgeldiniz!",
         menu_about: "Hakkında",
+        menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "Hepsi",
         menu_autorefresh: "Otomatik yenileme (5 mins)",
         menu_autotransfer: "Otomatik Transfer",
@@ -3047,7 +3062,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.0";
+tgd.version = "3.7.6.7";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3342,6 +3357,9 @@ Item.prototype = {
                     itemObject.primaryStat(item.primaryStat.value);
                 } else {
                     itemObject.primaryStat(item.primaryStat);
+                    if (_.isObject(item.stats)) {
+                        itemObject.primaryValues['Stats'] = tgd.sum(_.values(item.stats));
+                    }
                 }
             }
             if (item.stats.length > 0) {
@@ -4927,7 +4945,7 @@ Profile.prototype = {
         });
         var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
             var score = tgd.sum(_.map(combo.sumSet, function(value, key) {
-                var result = Math.floor(value / 60);
+                var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
             }));
             combo.sum = tgd.sum(_.values(combo.sumSet));
@@ -4938,28 +4956,58 @@ Profile.prototype = {
         var highestSetObj = sumSetValues[sumSetValues.length - 1];
         return [highestSetObj.sum, highestSetObj.set];
     },
-    findBestArmorSet: function(items) {
-        var buckets = [].concat(tgd.DestinyArmorPieces);
-        var sets = [],
+    findBestArmorSetV2: function(items) {
+        var buckets = [].concat(tgd.DestinyArmorPieces),
+            sets = [],
             bestSets = [],
             backups = [],
-            candidates;
-        var character = this;
+            groups = {},
+            candidates,
+            statGroups = {},
+            highestArmorTier = 0,
+            highestArmorValue = 0,
+            highestTierValue = 0,
+            character = this;
 
-        //console.time("finding candidates");
+
         _.each(buckets, function(bucket) {
-            candidates = _.filter(items, function(item) {
+            groups[bucket] = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
                     (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
                 );
             });
-            tgd.localLog(bucket + " total candidates " + candidates.length);
+            var csps = _.map(groups[bucket], function(item) {
+                return item.getValue("All");
+            });
+            statGroups[bucket] = {
+                max: _.max(csps),
+                min: _.min(csps)
+            };
+        });
+
+        highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
+            return stat.max;
+        }));
+        //console.log("highestArmorValue:"+highestArmorValue);
+
+        highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
+        //console.log("highestArmorTier :"+highestArmorTier );
+
+        highestTierValue = highestArmorTier * tgd.DestinySkillTier;
+        //console.log("highestTierValue :"+highestTierValue );
+
+        _.each(groups, function(items, bucketType) {
+            var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
+            //console.log(bucketType+":"+minCSP +",before:" + items.length);
+            candidates = _.filter(items, function(item) {
+                return item.getValue("All") >= minCSP;
+            });
+            //console.log("after:" + candidates.length);
             _.each(candidates, function(candidate) {
                 sets.push([candidate]);
             });
         });
 
-        tgd.localLog("total sets " + sets.length);
         backups = _.flatten(sets);
 
         _.each(sets, function(set) {
@@ -4977,7 +5025,7 @@ Profile.prototype = {
             var sums = _.map(combos, function(combo) {
                 var tmp = character.joinStats(combo);
                 var score = tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / 60);
+                    var result = Math.floor(value / tgd.DestinySkillTier);
                     return result > 5 ? 5 : result;
                 }));
                 var subScore = (tgd.sum(_.values(tmp)) / 1000);
@@ -5150,16 +5198,16 @@ Profile.prototype = {
             var bestWeaponSets;
 
             if (type == "Best") {
-                var bestSets = character.findBestArmorSet(items);
+                var bestSets = character.findBestArmorSetV2(items);
                 var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title, description = "",
+                        var title, description = "(" + combo.score.toFixed(3) + ")",
                             stats = character.joinStats(combo.set);
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
-                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
                         combo.title = $.trim(description);
@@ -6003,7 +6051,7 @@ var app = function() {
             profiles.push(profile);
             count++;
             if (count == total) {
-                self.characters(profiles);
+                //self.characters(profiles);
                 self.loadLoadouts();
                 self.tierTypes.sort(function(a, b) {
                     return a.tier - b.tier;
@@ -6064,7 +6112,8 @@ var app = function() {
             _.map(avatars, function(avatar) {
                 //console.time("new profile");
                 var profile = new Profile(avatar);
-                done(profile);
+                self.characters.push(profile);
+                done();
             });
         });
     };
@@ -6387,9 +6436,8 @@ var app = function() {
                                     timeout: tgd.defaults.toastTimeout
                                 }
                             });
-                            var event = document.createEvent('CustomEvent');
-                            event.initCustomEvent("request-cookie", true, true, {});
-                            document.documentElement.dispatchEvent(event);
+                            var event = new CustomEvent("request-cookie-from-ps", {});
+                            window.dispatchEvent(event);
                             setTimeout(function() {
                                 tgd.localLog("loadData");
                                 self.loadData();
@@ -7103,7 +7151,7 @@ var app = function() {
                 document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
             }
 
-            var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
+            /*var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
             ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
             ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
             if (dragAndDropEnabled) {
@@ -7145,7 +7193,7 @@ var app = function() {
                     appendTo: "body"
                 };
             }
-
+			*/
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({
