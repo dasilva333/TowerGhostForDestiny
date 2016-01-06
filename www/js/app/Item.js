@@ -1117,8 +1117,8 @@ Item.prototype = {
                                 '</div>' +
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
-                                '<label><input type="checkbox" id="consolidate" /> ' + app.activeText().transfer_consolidate + ' (' + itemTotal + '))</label>' +
-                                '<br><label><input type="checkbox" id="neverAsk" /> ' + app.activeText().transfer_ask + ' </label>' +
+                                '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -1166,18 +1166,18 @@ Item.prototype = {
                             return $content;
                         },
                         buttons: [{
-                            label: app.activeText().transfer,
+                            label: 'Transfer',
                             cssClass: 'btn-primary',
                             action: function() {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: app.activeText().close,
+                            label: 'Close',
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
                         }]
-                    })).title(app.activeText().transfer + " " + self.description).show(true),
+                    })).title("Transfer " + self.description).show(true),
                     finishTransfer = function(consolidate) {
                         if (consolidate) {
                             self.consolidate(targetCharacterId, self.description);

@@ -10,7 +10,7 @@
                     <span data-bind="fastclick: saveNew, text: $root.activeText().loadouts_save_new" style="white-space:nowrap;">Save As</span>
                     <span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
                 </controls>
-                <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().close_msg">Close</span>
+                <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().loadouts_close">Close</span>
             </div>
             <div class="col-xs-24">
                 <!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
