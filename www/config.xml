@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3470" version="3.4.7" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3767" version="3.7.6.7" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
-		Formerly known as DIV. This app allows you to transfer items between profiles, with various filters.
+		This app allows you to transfer items between profiles, with various filters.
     </description>
     <author email="dasilva333@github.com" href="https://github.com/dasilva333/TowerGhostForDestiny/">
         Richard Pinedo
@@ -13,7 +13,7 @@
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
-    <preference name="webviewbounce" value="true" />
+    <preference name="webviewbounce" value="false" />
     <preference name="prerendered-icon" value="true" />
     <preference name="stay-in-webview" value="false" />
     <preference name="StatusBarStyle" value="lightcontent" />
@@ -26,11 +26,11 @@
 	<preference name="android-targetSdkVersion" value="19" />
     <preference name="android-installLocation" value="auto" />
     <gap:plugin name="org.apache.cordova.globalization" />
-    <gap:plugin name="org.apache.cordova.inappbrowser" source="plugins.cordova.io" version="0.6.0" />
+	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
-	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
-	
+	<gap:plugin name="org.apache.cordova.file-transfer" version="0.4.6" />
+	<gap:plugin name="org.apache.cordova.file" version="1.3.1" />
 	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
     <preference name="android-iabplugin-license-key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6kyZb15cxcGhaUVThjCY+c/rGCpKXW2Ek0v/dFOlx6MTAyTA9lUe3dMijtW1RjrTzqsZ+QgcCLRAGiAzL1+tgnalZJFeAIbbWA9DXjFrkw7hMqlrAeRLWWpLXCE96lqspvrxvtcnFb2doZTmuJmH68Y7MtItM7Gdg5K2G/bDACkWcA4qD2lNTkcWG/qTvUeOM0amV+2ENdJO0uQrneva/qM7BgIRqBQqTfiFL+xMAOwDRZBHdY35e+FMWgirIrKxA0XymIRbQVyHnTIFkQOMJBZ9dUaEn0LwRgBJjblYH7puwrYSUDshMXefcQDDfb9wfisDQD90iwbgy5SzDxmwwIDAQAB" />
 
@@ -39,57 +39,11 @@
     <icon gap:platform="android" gap:qualifier="mdpi" src="res/icon/android/icon-48-mdpi.png" />
     <icon gap:platform="android" gap:qualifier="hdpi" src="res/icon/android/icon-72-hdpi.png" />
     <icon gap:platform="android" gap:qualifier="xhdpi" src="res/icon/android/icon-96-xhdpi.png" />
-    <icon gap:platform="blackberry" src="res/icon/blackberry/icon-80.png" />
-    <icon gap:platform="blackberry" gap:state="hover" src="res/icon/blackberry/icon-80.png" />
     
-	<!-- iPhone 6 / 6+ -->
-	<icon src="res/icon/ios/icon-60@3x.png" gap:platform="ios" width="180" height="180" />
-
-	<!-- iPhone / iPod Touch  -->
-	<icon src="res/icon/ios/icon-60.png" gap:platform="ios" width="60" height="60" />
-	<icon src="res/icon/ios/icon-60@2x.png" gap:platform="ios" width="120" height="120" />
-
-	<!-- iPad -->
-	<icon src="res/icon/ios/icon-76.png" gap:platform="ios" width="76" height="76" />
-	<icon src="res/icon/ios/icon-76@2x.png" gap:platform="ios" width="152" height="152" />
-
-	<!-- Settings Icon -->
-	<icon src="res/icon/ios/icon-small.png" gap:platform="ios" width="29" height="29" />
-	<icon src="res/icon/ios/icon-small@2x.png" gap:platform="ios" width="58" height="58" />
-
-	<!-- Spotlight Icon -->
-	<icon src="res/icon/ios/icon-40.png" gap:platform="ios" width="40" height="40" />
-	<icon src="res/icon/ios/icon-40@2x.png" gap:platform="ios" width="80" height="80" />
-
-	<!-- iPhone / iPod Touch -->
-	<icon src="res/icon/ios/icon.png" gap:platform="ios" width="57" height="57" />
-	<icon src="res/icon/ios/icon@2x.png" gap:platform="ios" width="114" height="114" />
-
-	<!-- iPad -->
-	<icon src="res/icon/ios/icon-72.png" gap:platform="ios" width="72" height="72" />
-	<icon src="res/icon/ios/icon-72@2x.png" gap:platform="ios" width="144" height="144" />
-
-	<!-- iPhone Spotlight and Settings Icon -->
-	<icon src="res/icon/ios/icon-small.png" gap:platform="ios" width="29" height="29" />
-	<icon src="res/icon/ios/icon-small@2x.png" gap:platform="ios" width="58" height="58" />
-
-	<!-- iPad Spotlight and Settings Icon -->
-	<icon src="res/icon/ios/icon-50.png" gap:platform="ios" width="50" height="50" />
-	<icon src="res/icon/ios/icon-50@2x.png" gap:platform="ios" width="100" height="100" />
-
-    <icon gap:platform="webos" src="res/icon/webos/icon-64.png" />
-    <icon gap:platform="winphone" src="res/icon/windows-phone/icon-48.png" />
-    <icon gap:platform="winphone" gap:role="background" src="res/icon/windows-phone/icon-173-tile.png" />
     <gap:splash gap:platform="android" gap:qualifier="port-ldpi" src="res/screen/android/screen-ldpi-portrait.png" />
     <gap:splash gap:platform="android" gap:qualifier="port-mdpi" src="res/screen/android/screen-mdpi-portrait.png" />
     <gap:splash gap:platform="android" gap:qualifier="port-hdpi" src="res/screen/android/screen-hdpi-portrait.png" />
     <gap:splash gap:platform="android" gap:qualifier="port-xhdpi" src="res/screen/android/screen-xhdpi-portrait.png" />
-    <gap:splash gap:platform="blackberry" src="res/screen/blackberry/screen-225.png" />
-    <gap:splash gap:platform="ios" height="480" src="res/screen/ios/screen-iphone-portrait.png" width="320" />
-    <gap:splash gap:platform="ios" height="960" src="res/screen/ios/screen-iphone-portrait-2x.png" width="640" />
-    <gap:splash gap:platform="ios" height="1136" src="res/screen/ios/screen-iphone-portrait-568h-2x.png" width="640" />
-    <gap:splash gap:platform="ios" height="1024" src="res/screen/ios/screen-ipad-portrait.png" width="768" />
-    <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
-    <gap:splash gap:platform="winphone" src="res/screen/windows-phone/screen-portrait.jpg" />
+	
     <access origin="*" />
 </widget>
