@@ -122,20 +122,22 @@ Item.prototype = {
                 _.each(item.perks, function(perk) {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
-                        var nodeIndex = talentGrid.nodes.indexOf(
-                            _.filter(talentGrid.nodes, function(o) {
-                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
-                            })[0]
-                        );
-                        var isExclusive = talentGrid.exclusiveSets.indexOf(nodeIndex) > -1;
-                        if (isExclusive && perk.isActive || !isExclusive) {
-                            itemObject.perks.push({
-                                iconPath: tgd.dataDir + p.displayIcon,
-                                name: p.displayName,
-                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-                                active: perk.isActive
-                            });
-                        }
+						if (talentGrid && talentGrid.nodes){
+							var nodeIndex = talentGrid.nodes.indexOf(
+	                            _.filter(talentGrid.nodes, function(o) {
+	                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+	                            })[0]
+	                        );
+	                        var isExclusive = talentGrid.exclusiveSets.indexOf(nodeIndex) > -1;
+	                        if (isExclusive && perk.isActive || !isExclusive) {
+	                            itemObject.perks.push({
+	                                iconPath: tgd.dataDir + p.displayIcon,
+	                                name: p.displayName,
+	                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+	                                active: perk.isActive
+	                            });
+	                        }
+						}                        
                     }
                 });
                 var perkHashes = _.pluck(item.perks, 'perkHash'),
