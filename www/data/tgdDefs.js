@@ -24,6 +24,7 @@ tgd.DestinyArmorPieces = [ "Helmet", "Gauntlet", "Chest", "Boots", "Class Items"
 tgd.DestinyWeaponPieces = [ "Primary","Special","Heavy" ];
 tgd.DestinyGeneralExceptions = ["Ghost","Artifact"];
 tgd.DestinyNonUniqueBuckets = ["Consumables","Materials"];
+tgd.DestinyFiveRowBuckets = ["Materials","Consumables","Invisible","Messages","Lost"];
 tgd.DestinyLayout = [
   { name: "Weapons", array: 'weapons', counts: [72,30], bucketTypes: tgd.DestinyWeaponPieces, view: 1, headerText: 'inventory_weapons' },
   { name: "Armor", array: 'armor', counts: [72,50], bucketTypes: tgd.DestinyArmorPieces, view: 2, headerText: 'inventory_armor' },
@@ -167,6 +168,7 @@ tgd.defaults = {
 	shareUrl: "",
 	showMissing: false,
 	tooltipsEnabled: isMobile ? false : "true",
+	advancedTooltips: isMobile ? false : "true",
 	autoXferStacks: false,
 	padBucketHeight: isMobile ? false : "true",
 	dragAndDrop: false,

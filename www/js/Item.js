@@ -46,11 +46,6 @@ var Item = function(model, profile) {
 Item.prototype = {
     init: function(item) {
         var self = this;
-        if (!(item.itemHash in _itemDefs)) {
-            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
-            tgd.localLog(item.itemHash);
-            return;
-        }
         var info = {};
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
@@ -63,6 +58,8 @@ Item.prototype = {
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Classified"
             };
+            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
+            tgd.localLog(item.itemHash);
         }
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             var description, tierTypeName, itemDescription, itemTypeName;
@@ -122,22 +119,18 @@ Item.prototype = {
                 _.each(item.perks, function(perk) {
                     if (perk.perkHash in window._perkDefs) {
                         var p = window._perkDefs[perk.perkHash];
-						if (talentGrid && talentGrid.nodes){
-							var nodeIndex = talentGrid.nodes.indexOf(
-	                            _.filter(talentGrid.nodes, function(o) {
-	                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
-	                            })[0]
-	                        );
-	                        var isExclusive = talentGrid.exclusiveSets.indexOf(nodeIndex) > -1;
-	                        if (isExclusive && perk.isActive || !isExclusive) {
-	                            itemObject.perks.push({
-	                                iconPath: tgd.dataDir + p.displayIcon,
-	                                name: p.displayName,
-	                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-	                                active: perk.isActive
-	                            });
-	                        }
-						}                        
+                        var nodeIndex = talentGrid.nodes.indexOf(
+                            _.filter(talentGrid.nodes, function(o) {
+                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+                            })[0]
+                        );
+                        itemObject.perks.push({
+                            iconPath: tgd.dataDir + p.displayIcon,
+                            name: p.displayName,
+                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                            active: perk.isActive,
+                            isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
+                        });
                     }
                 });
                 var perkHashes = _.pluck(item.perks, 'perkHash'),
@@ -158,7 +151,8 @@ Item.prototype = {
                                     active: true,
                                     name: perk.nodeStepName,
                                     description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: tgd.dataDir + perk.icon
+                                    iconPath: tgd.dataDir + perk.icon,
+                                    isExclusive: -1
                                 };
                             }
                         }
@@ -169,7 +163,9 @@ Item.prototype = {
                 });
             }
             if (item.progression) {
-                itemObject.progression = _.pluck(itemObject.perks, 'active').indexOf(false) == -1;
+                itemObject.progression = _.filter(itemObject.perks, function(perk) {
+                    return perk.active == true || (perk.active == false && perk.isExclusive == -1)
+                }).length > 0;
             }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
