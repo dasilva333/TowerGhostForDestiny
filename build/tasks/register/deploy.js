@@ -5,6 +5,9 @@ module.exports = function (grunt) {
 	grunt.registerTask('deployjs', [
         'ftpush:resources', 'ftpush:manifest'
 	]);
+	grunt.registerTask('deploydev', [
+        'ftpush:devResources', 'ftpush:devManifest'
+	]);
 	grunt.registerTask('deployfirefox', [
         'ftpush:firefoxAssets'
 	]);

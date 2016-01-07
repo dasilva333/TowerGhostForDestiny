@@ -54,6 +54,16 @@ module.exports = function(grunt) {
 		dest: '/myredditall/towerghostfordestiny.com/www/www/resources',
 		exclusions: []
 	  },
+	  devResources: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../www/resources/',
+		dest: '/myredditall/towerghostfordestiny.com/www/dev/resources',
+		exclusions: []
+	  },
 	  images: {
 		auth: {
 		  host: 'towerghostfordestiny.com',
@@ -73,6 +83,18 @@ module.exports = function(grunt) {
 		},
 		src: '../www/',
 		dest: '/myredditall/towerghostfordestiny.com/www/www/',
+		simple: true,
+		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
+		exclusions: [ 'resources','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
+	  },
+	  devManifest: {
+		auth: {
+		  host: 'towerghostfordestiny.com',
+		  port: 21,
+		  authKey: 'mraKey'
+		},
+		src: '../www/',
+		dest: '/myredditall/towerghostfordestiny.com/www/dev/',
 		simple: true,
 		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
 		exclusions: [ 'resources','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
