@@ -294,7 +294,7 @@ tgd.bungie = (function(cookieString, complete) {
             route: '/Destiny/' + active.type +
                 '/Account/' + active.membership +
                 '/Character/' + characterId +
-                '/Inventory/' + instanceId,
+                '/Inventory/' + instanceId + '/',
             method: 'GET',
             complete: callback
         });
@@ -315,7 +315,7 @@ tgd.bungie = (function(cookieString, complete) {
         self.request({
             route: '/Destiny/' + active.type +
                 '/Account/' + active.membership +
-                '/Character/' + characterId,
+                '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
         });
