@@ -9,6 +9,7 @@ var app = function() {
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
+    this.viewOptionsEnabled = ko.observable(false);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -401,9 +402,8 @@ var app = function() {
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
-        $("#viewOptions").toggle();
-        var isVisible = $("#viewOptions").is(":visible");
-        if (isVisible) {
+        self.viewOptionsEnabled(!self.viewOptionsEnabled());
+        if (self.viewOptionsEnabled()) {
             $(".character").css("margin", 'auto');
             $(".character-box").css("position", 'relative');
         } else {

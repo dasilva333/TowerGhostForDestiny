@@ -1776,6 +1776,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -1798,7 +1799,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -1893,8 +1893,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -1913,20 +1916,21 @@ tgd.locale = {
         whats_new_title: "Tower Ghost for Destiny Updates"
     },
     de: {
-        agility: "Agilität",
-        armor: "Rüstung",
+        agility: "Agil",
+        armor: "Rstg",
         best_combo: "Beste Komb.",
         cancel: "Abbrechen",
         cannot_equip: "Unbekannter Fehler beim Ausrüsten von ",
         cannot_unequip: "Keine Gegenstände mehr zum Ablegen von ",
+        close_msg: "Schließen",
         disc: "Dis",
-        discipline: "Disziplin",
+        discipline: "Dis",
         donation_instructions: "Dies ist ein nicht-kommerzielles Projekt, das Destiny gewidmet ist. Wenn dir diese App gefällt, denke doch über eine Spende nach um das Projekt am Leben zu halten.",
         donation_title: "Spenden an Tower Ghost für Destiny!",
         error_loading_inventory: "Fehler beim Laden des Inventars ",
         gear_with_highest: "Ausrüstung mit höchstem:",
         inte: "Int",
-        intellect: "Intellekt",
+        intellect: "Int",
         invalid_transfer_amount: "Ungültige Menge eingegeben: ",
         inventory_armor: "Rüstung",
         inventory_general: "Allgemein",
@@ -1941,7 +1945,6 @@ tgd.locale = {
         light: "Licht",
         loadouts_alreadythere_pt1: " ist bereits im ",
         loadouts_alreadythere_pt2: "'s Bucket von ",
-        loadouts_close: "Schließen",
         loadouts_delete: "Löschen",
         loadouts_desktop: "prüfen",
         loadouts_instructions: "Keine Gegenstände in der Ausrüstung, klicke Gegenstände um sie hinzuzufügen, ",
@@ -1952,7 +1955,7 @@ tgd.locale = {
         loadouts_no_transfer: " wird nicht verschoben",
         loadouts_outofspace: " wird nicht verschoben, es ist kein Platz in ",
         loadouts_save: "Speichern",
-        loadouts_save_new: "Speichern As",
+        loadouts_save_new: "Speichern Als",
         loadouts_swap: " wird ausgetauscht mit ",
         loadouts_to_equip: " wird ausgerüstet.",
         loadouts_to_moveequip: " wird verschoben und ausgerüstet.",
@@ -2011,7 +2014,7 @@ tgd.locale = {
         menu_view_armor: "Rüstung",
         menu_view_by: "Anzeigen nach",
         menu_view_by_lightlvl: "Licht Level",
-        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_by_stat_points: "Komb Stat Pkte",
         menu_view_general: "Allgemein",
         menu_view_options: "Optionen Anzeigen",
         menu_view_weapons: "Waffen",
@@ -2025,9 +2028,9 @@ tgd.locale = {
         normalize_title: "Normalisieren - Gegenstände gleichmäßig über deine Charaktere verteilen",
         paypal_code: "DE",
         pick_a_set: "Bitte wähle ein Set bevor du diese Option auswählst",
-        recovery: "Erholung",
+        recovery: "Erhlg",
         str: "Stä",
-        strength: "Stärke",
+        strength: "Stä",
         text_shareurl: "Dein Inventar wird aktualisiert, indem du erneut auf URL teilen im Menü klickst.",
         this_icon: "Das Icon ist",
         tier_common: "Gewöhnlich",
@@ -2035,8 +2038,11 @@ tgd.locale = {
         tier_legendary: "Legendär",
         tier_rare: "Selten",
         tier_uncommon: "Ungewöhnlich",
+        transfer: "Übertrage",
         transfer_all: "Alle",
         transfer_amount: "Menge Übertragen",
+        transfer_ask: "Nicht erneut fragen",
+        transfer_consolidate: "Zusammenlegen (von allen Charakteren",
         transfer_one: "Eins",
         unable_create_loadout_for_type: "Es ist aktuell nicht möglich Ausrüstungen mit diesem Gegenstand zu erstellen.",
         unable_to_create_loadout_for_bucket: "Du kannst keine Ausrüstung mit mehr als 10 Gegenständen in diesem Platz erstellen: ",
@@ -2061,6 +2067,7 @@ tgd.locale = {
         cancel: "Cancelar",
         cannot_equip: "Error desconocido tratando de equipar ",
         cannot_unequip: "No mas elementos para tratar de unequip la ",
+        close_msg: "Cerrar",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Este es un projecto non-commercial dedicado para Destiny. Si usted disfurat esta aplicacion proveve una donacion para supportar los gastos.",
@@ -2083,7 +2090,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " ya esta en el ",
         loadouts_alreadythere_pt2: "'s cubo de ",
-        loadouts_close: "Cerrar",
         loadouts_delete: "Borrar",
         loadouts_desktop: "cheque",
         loadouts_instructions: "No hay articulos en loadout, haga clic en los articulos a anadir, ",
@@ -2177,8 +2183,11 @@ tgd.locale = {
         tier_legendary: "Legendario",
         tier_rare: "Raro",
         tier_uncommon: "Poco com\xFAn",
+        transfer: "Transfer",
         transfer_all: "Todos",
         transfer_amount: "Transferencia monto",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "Uno",
         unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
         unable_to_create_loadout_for_bucket: "No se puede crear un loadout con mas de 10 articulos en esta ranura: ",
@@ -2203,6 +2212,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Erreur inconnue essayant d'quiper ",
         cannot_unequip: "Peu plus d'lments pour tenter de dsquiper le ",
+        close_msg: "Fermer",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Ceci est un projet non commercial dédié au Destiny. Si vous aimez ce soft fournir un don de garder ce projet en vie et soutenir les coûts de maintenance.",
@@ -2225,7 +2235,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Fermer",
         loadouts_delete: "Rayer",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2319,8 +2328,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
+        transfer: "Transfer",
         transfer_all: "Tous",
         transfer_amount: "Transferencia monto",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "Un",
         unable_create_loadout_for_type: "Actuellement incapable de crer loadouts avec ce type d'article",
         unable_to_create_loadout_for_bucket: "Vous ne pouvez pas crer un loadout avec plus de 10 articles dans cette fente: ",
@@ -2345,6 +2357,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -2367,7 +2380,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2461,8 +2473,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -2487,6 +2502,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -2509,7 +2525,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2603,8 +2618,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -2629,6 +2647,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -2651,7 +2670,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2745,8 +2763,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -2771,6 +2792,7 @@ tgd.locale = {
         cancel: "Vazgeç",
         cannot_equip: "Öğeyi donanırken hata oluştu ",
         cannot_unequip: "Üzerinizdekini bırakmak için öğe yok ",
+        close_msg: "Kapat",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Bu program tamamen ücretsiz ve Destiny ye bağışlanmış bir programdır.Herhangi bir ücret talep etmemektedir yani kelepirdir. Programımızı geliştirmek ve daha iyi bir deneyim sağlamamızı istiyorsanız,lütfen bağışlarınızı ve desteğinizi esirgemeyiniz.Teşekkürler.",
@@ -2793,7 +2815,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: "zaten bunun içerisinde ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Kapat",
         loadouts_delete: "Sil",
         loadouts_desktop: "kontrol",
         loadouts_instructions: "Teçhizatında donanmak için öğe yok.Donanmak için tıkla, ",
@@ -2887,8 +2908,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Nadir",
+        transfer: "Transfer",
         transfer_all: "Hepsi",
         transfer_amount: "Aktarılacak Miktar",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "Bir Adet",
         unable_create_loadout_for_type: "Bu öğe tipi ile teçhizat oluşturmak mümkün değil.",
         unable_to_create_loadout_for_bucket: "Bu slot içerisinde 10'dan fazla öğe ile teçhizat oluşturamazsın: ",
@@ -3062,7 +3086,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.7";
+tgd.version = "3.7.6.9";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4182,8 +4206,8 @@ Item.prototype = {
                                 '</div>' +
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
-                                '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
-                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
+                                '<label><input type="checkbox" id="consolidate" /> ' + app.activeText().transfer_consolidate + ' (' + itemTotal + '))</label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> ' + app.activeText().transfer_ask + ' </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -4231,18 +4255,18 @@ Item.prototype = {
                             return $content;
                         },
                         buttons: [{
-                            label: 'Transfer',
+                            label: app.activeText().transfer,
                             cssClass: 'btn-primary',
                             action: function() {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: 'Close',
+                            label: app.activeText().close,
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
                         }]
-                    })).title("Transfer " + self.description).show(true),
+                    })).title(app.activeText().transfer + " " + self.description).show(true),
                     finishTransfer = function(consolidate) {
                         if (consolidate) {
                             self.consolidate(targetCharacterId, self.description);
@@ -5292,6 +5316,7 @@ var app = function() {
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
+    this.viewOptionsEnabled = ko.observable(false);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -5684,9 +5709,8 @@ var app = function() {
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
-        $("#viewOptions").toggle();
-        var isVisible = $("#viewOptions").is(":visible");
-        if (isVisible) {
+        self.viewOptionsEnabled(!self.viewOptionsEnabled());
+        if (self.viewOptionsEnabled()) {
             $(".character").css("margin", 'auto');
             $(".character-box").css("position", 'relative');
         } else {

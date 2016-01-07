@@ -70,9 +70,10 @@ input
     z-index: 1004;
     top: -75px;
     width: 380px;
-    height: 75px;
+    height: 77px;
     background-color: rgba(21, 13, 13, 1);
     cursor: default;
+	overflow: hidden;
 }
 
 .move-popup .item-name {
@@ -486,12 +487,8 @@ li a {
 .lockIcon {
     position: absolute;
     left: 3px;
-    top: 1px;	
-}
-
-.lockIcon img {
-    position: relative;
-    opacity: 0.5;
+    top: 5px;
+	opacity: 0.5;
 }
 
 .quickScrollView {
