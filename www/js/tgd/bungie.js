@@ -388,18 +388,14 @@ tgd.bungie = (function(cookieString, complete) {
             });
         }
         tgd.localLog("bungie.init");
-        if (isStaticBrowser) {
-            complete("");
-        } else {
-            self.login(function() {
-                tgd.localLog("bungie.login.complete, now getCookie");
-                self.getCookie('bungled', function(token) {
-                    tgd.localLog("bungied started with token " + token);
-                    self.bungled = token;
-                    complete(token);
-                });
+        self.login(function() {
+            tgd.localLog("bungie.login.complete, now getCookie");
+            self.getCookie('bungled', function(token) {
+                tgd.localLog("bungied started with token " + token);
+                self.bungled = token;
+                complete(token);
             });
-        }
+        });
     };
 
 

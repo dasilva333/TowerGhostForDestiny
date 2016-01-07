@@ -2,7 +2,7 @@
     trace: true
 };*/
 
-_ga = new(function() {
+_ga = (function() {
     var self = this;
 
     this.init = function() {

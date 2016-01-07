@@ -18,7 +18,7 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/itemDefs.json",
-      "version": "3858c8567081972c7176bcd74423fe544f217abdecf1356f13e54fb56d349b2a"
+      "version": "72517ae4302f38898634a0a16bf132e19c8ed5b68cd636ec2aefba272b0001e1"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/objectiveDefs.json",
@@ -26,23 +26,23 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/perkDefs.json",
-      "version": "59552cd1a36a669ad5131e1dc0ad6e771d060d7be7a8ba13a5cfcca666791ea5"
+      "version": "794868e43f9799d7e3115ddde7097ce8c6f6cc77603c5447f450220644c31d63"
     },
     "raceDefs.json": {
       "filename": "data/definitions/raceDefs.json",
-      "version": "8d305a7e4b87c9c66f29431adc8cd507e1706a1e013ee49a41242c763015918c"
+      "version": "ce7c22bb7081b1406d7858fdc39c13317d02a415e22add9730b2a7ccccdbdef8"
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
-      "version": "b9c6d179c0710d567d4cc5cd1d50947f96d0f1e238eda7c2a034277f7892f810"
+      "version": "ef1a88c9decc8f79678167f215953b557da459203dbe3d0b58968e51a57097d3"
     },
     "statDefs.json": {
       "filename": "data/definitions/statDefs.json",
-      "version": "91d0a92e1b33799c20f620cf8c79893b716dd5155ed29fe3d485bd25a452b09e"
+      "version": "50a891f54d98053eea077b1aa5d63da3af102c33c0c2f7794c6b731c05edf559"
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/talentGridDefs.json",
-      "version": "67a1d97d259f6b3370f5169e378e93fe155dc87eaed00484f138547326b94eac"
+      "version": "85bd87ec767b44c6d19116f7931fb554eaa2c14d68d90b15f57b9f9d7fb329a1"
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
@@ -67,10 +67,6 @@
     "bootstrap.js": {
       "filename": "js/libraries/secondary/bootstrap.js",
       "version": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8"
-    },
-    "cordova-app-loader-complete.js": {
-      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -106,11 +102,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "01ad3a9bf5a7805597eb7ef1e11df9c4c6cd59a8f48ba603bb25d47be802a827"
+      "version": "6cea0b2369f5a1c81c919a03aee9eb1065dc436655a3d6349ec0f638fa09790c"
     },
     "base.js": {
       "filename": "js/tgd/base.js",
-      "version": "1ed25d254eece6483b93d2ee34218ca40701a7a558bde6fc670691e6dc44ddca"
+      "version": "eee40fbc798c49e185f7cee8ffcc78c7b939ee398dbe6fed3227fbbc9c0297bf"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -118,7 +114,7 @@
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
-      "version": "1349fab1784eeb0eddecc29c48cee42786a9348616232c813324837a01566157"
+      "version": "117e1e8e43cc7d180176e9eb68a711c4904923ec314752614034692f54cb126d"
     },
     "dialog.js": {
       "filename": "js/tgd/dialog.js",
@@ -130,7 +126,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "781666b83a77dc836a7e7c8d1bfdecced7e40e41236dcb09fd29b4eb40b3832b"
+      "version": "ea08768fe0082a27fde98be0630cb66cbb40030b72a47af4fec57f3ae2540bb9"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
@@ -140,41 +136,45 @@
       "filename": "js/tgd/storage.js",
       "version": "a4ca93c52b485ff87d2a243f54361121b11e7642d72d1d2aa210d3ee1073fa76"
     },
-    "updater.js": {
-      "filename": "js/tgd/updater.js",
-      "version": "d5f61c70b6542498e93f1340321e5a52ea73493e0f8eec032fb055ee79a2a4a6"
-    },
     "utils.js": {
       "filename": "js/tgd/utils.js",
       "version": "5221370d75aa6415774ca9e2844a5a581597d59b26c2cf8a3f456c98bfcedfac"
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "b39f3a7069dd891b9e622164fb3e1bd9abd250487a795e5b76ca0a1e8e8deaba"
+      "version": "abd4e417531a9a7aa82d350adc17297823664ababbe56a235200dc5cd44ae2da"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "b506e55030c757b3911ae706821a2865d5dc1244f6ecb2ea47967dbfc9e756f8"
+      "version": "54e1794caf655d146c733063e82dac86ac826ac0b0afdd491f37ebfdd4c270c7"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "00bce3b114fe97c2b2fe34a8fd5e0b181a2aa6be8ccced4d3ec48e170410390e"
+      "version": "610c813b907989c0268e1fb3ea5f9777ab09daf7a8bbede66710764155caac03"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "29ed9cec2b37d07c00755c7be7e80b843fb0d1c980666fe6184599095dd0b11c"
+      "version": "d5a935c4a24b0a7cb182750a1203186c7b2be6343286a6e0b9d0f7de9154469a"
+    },
+    "tooltips.min.js": {
+      "filename": "js/app/tooltips.min.js",
+      "version": "786c5f66a04076a9a141c4986ba8a197102121e081381ed24f6c3f579c07622f"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
       "version": "9f9f5078601c9fe55040c6c78790dd9164bf1e651e1347b021b600244cdeb39f"
     },
+    "cordova-app-loader-complete.js": {
+      "filename": "js/extras/cordova-app-loader-complete.js",
+      "version": "f96fffdf6aed8755d32b4c8b408a5ca71a57e508b1e81bf3d944b081d35d4855"
+    },
     "ga.js": {
       "filename": "js/extras/ga.js",
-      "version": "dace7fb5eff251ab4289d01db4c19c1e209907643a1348fc7ea514e0afbe46f8"
+      "version": "9176463d8871cc494901f6d8899edc6d6294c781092d5432ad306bb62ecba86a"
     },
-    "tooltips.min.js": {
-      "filename": "js/extras/tooltips.min.js",
-      "version": "3862f6369c0c835f8bc9067f472c420d940f49d289c597f23e427eb72ecdaad6"
+    "updater.js": {
+      "filename": "js/extras/updater.js",
+      "version": "e11d0897eaeadefed74ffb265f7b1f89b4c2d6ff43e683702a85cb626ff5de51"
     }
   },
   "load": [
@@ -195,7 +195,6 @@
     "js/libraries/primary/underscore.js",
     "js/libraries/secondary/analytics.js",
     "js/libraries/secondary/bootstrap.js",
-    "js/libraries/secondary/cordova-app-loader-complete.js",
     "js/libraries/secondary/fastclick.js",
     "js/libraries/secondary/hammer.js",
     "js/plugins/bootstrap-dialog.js",
@@ -213,15 +212,16 @@
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
     "js/tgd/storage.js",
-    "js/tgd/updater.js",
     "js/tgd/utils.js",
     "js/tgd/version.js",
     "js/app/Item.js",
     "js/app/Profile.js",
     "js/app/app.js",
+    "js/app/tooltips.min.js",
     "js/extras/buy.js",
+    "js/extras/cordova-app-loader-complete.js",
     "js/extras/ga.js",
-    "js/extras/tooltips.min.js"
+    "js/extras/updater.js"
   ],
   "root": "./"
 }
