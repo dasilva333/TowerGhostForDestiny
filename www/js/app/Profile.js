@@ -87,6 +87,7 @@ Profile.prototype = {
         }
     },
     refresh: function(profile, event) {
+        tgd.localLog("refresh event called");
         var self = this;
         if (self.id == "Vault") {
             self._reloadBucket(self, event);

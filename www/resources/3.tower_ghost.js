@@ -3099,7 +3099,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.9";
+tgd.version = "3.7.6.10";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4590,6 +4590,7 @@ Profile.prototype = {
         }
     },
     refresh: function(profile, event) {
+        tgd.localLog("refresh event called");
         var self = this;
         if (self.id == "Vault") {
             self._reloadBucket(self, event);
