@@ -3,7 +3,7 @@
     <!-- ko if: ( character.id !== 'Vault' ) -->
     <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Quests' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
     (
-    <span data-bind="text: character.getVisible(bucketType).length + (character.itemEquippedVisible(bucketType) ? 1 : 0)"></span>/10)
+    <span data-bind="text: character.get(bucketType).length + (character.itemEquipped(bucketType) ? 1 : 0)"></span>/10)
     <!--/ko  -->
     <!-- ko if: (bucketType == 'Bounties') -->
     (

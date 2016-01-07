@@ -7215,8 +7215,9 @@ var app = function() {
                     cursor: "pointer",
                     appendTo: "body"
                 };
+            } else {
+                ko.bindingHandlers.sortable = ko.bindingHandlers.foreach;
             }
-
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({
