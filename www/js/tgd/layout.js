@@ -7,7 +7,11 @@ tgd.Layout = function(layout) {
     self.headerText = layout.headerText;
     self.array = layout.array;
     self.counts = layout.counts;
-    self.countText = function(character) {
+};
+
+tgd.Layout.prototype = {
+    countText: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             var text = "";
             if (self.array !== "" && character.id == 'Vault') {
@@ -20,10 +24,17 @@ tgd.Layout = function(layout) {
             }
             return text;
         });
-    };
-    self.isVisible = function(character) {
+    },
+    titleText: function(character) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText])
+        });
+    },
+    isVisible: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
-    };
-};
+    }
+}

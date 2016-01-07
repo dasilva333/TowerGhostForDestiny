@@ -32,7 +32,7 @@
     <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-24' : 'col-xs-18') + ' ' + bucketType + ' ' + character.id">
         <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
             <span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
-                <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: (item.equipRequiredLevel <= character.level() || character.id == 'Vault') ? 1 : 0.3 }">
+                <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: item.opacity }">
                     <img class="itemImage" data-bind="itemImageHandler: item.icon, attr: { instanceId:item._id }, fastclick: function(){ return false }">
                 </a>
                 <img src="assets/lock.png" class="lockIcon" data-bind="visible: item.locked" />

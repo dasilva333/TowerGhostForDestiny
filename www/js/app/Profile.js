@@ -30,12 +30,8 @@ function Profile(character) {
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
-    this.iconBG = ko.pureComputed(function() {
-        return app.makeBackgroundUrl(self.icon(), true);
-    });
+    this.iconBG = ko.pureComputed(this._iconBG, this);
     this.container = ko.observable();
-    this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
-    this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(character);
 
@@ -109,9 +105,9 @@ Profile.prototype = {
             return "";
         } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
-        } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        } else if (item.isEquipment || tgd.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
-        } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        } else if (tgd.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";
@@ -196,6 +192,9 @@ Profile.prototype = {
     },
     _uniqueName: function() {
         return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
+    },
+    _iconBG: function() {
+        return app.makeBackgroundUrl(this.icon(), true);
     },
     _powerLevel: function() {
         if (this.id == "Vault") return "";

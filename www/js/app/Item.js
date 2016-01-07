@@ -118,35 +118,9 @@ var Item = function(model, profile) {
     this.characterId = ko.observable(self.character.id);
     this.isFiltered = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
+    this.columnMode = ko.computed(this._columnMode, this);
+    this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-    this.columnMode = ko.computed(function() {
-        var className = "";
-        if (self.characterId() == 'Vault') {
-            className = 'col-xs-' + app.vaultColumns();
-        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
-        } else {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
-        }
-        if (self.isGridComplete) {
-            className += ' complete';
-        }
-        return className;
-    });
-    this.isEquippable = function(avatarId) {
-        return ko.pureComputed(function() {
-            //rules for how subclasses can be equipped
-            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
-            //if it's in this character and it's equippable
-            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
-        });
-    };
-    this.isStoreable = function(avatarId) {
-        return ko.pureComputed(function() {
-            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
-                (self.isEquipped() && self.character.id == avatarId);
-        });
-    };
 };
 
 Item.prototype = {
@@ -331,6 +305,40 @@ Item.prototype = {
             itemObject.primaryValues['Default'] = itemObject.primaryStat();
             $.extend(self, itemObject);
         }
+    },
+    _opacity: function() {
+        return (this.equipRequiredLevel <= this.character.level() || this.character.id == 'Vault') ? 1 : 0.3;
+    },
+    _columnMode: function() {
+        var self = this;
+        var className = "";
+        if (self.characterId() == 'Vault') {
+            className = 'col-xs-' + app.vaultColumns();
+        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
+        } else {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
+        }
+        if (self.isGridComplete) {
+            className += ' complete';
+        }
+        return className;
+    },
+    isEquippable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            //rules for how subclasses can be equipped
+            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
+            //if it's in this character and it's equippable
+            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+        });
+    },
+    isStoreable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
+                (self.isEquipped() && self.character.id == avatarId);
+        });
     },
     clone: function() {
         var self = this;

@@ -44,6 +44,8 @@ tgd.DestinyGeneralItems = {
     "Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
     "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
+tgd.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
+tgd.invisibleItemsHelper = [2910404660, 2537120989];
 //This is a list of items not indexed by DestinyDB
 tgd.itemsNotIndexed = [];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
@@ -925,7 +927,11 @@ tgd.Layout = function(layout) {
     self.headerText = layout.headerText;
     self.array = layout.array;
     self.counts = layout.counts;
-    self.countText = function(character) {
+};
+
+tgd.Layout.prototype = {
+    countText: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             var text = "";
             if (self.array !== "" && character.id == 'Vault') {
@@ -938,13 +944,20 @@ tgd.Layout = function(layout) {
             }
             return text;
         });
-    };
-    self.isVisible = function(character) {
+    },
+    titleText: function(character) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText])
+        });
+    },
+    isVisible: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
-    };
-};
+    }
+}
 	tgd.loadoutId = 0;
 
 	tgd.LoadoutItem = function(model) {
@@ -3207,35 +3220,9 @@ var Item = function(model, profile) {
     this.characterId = ko.observable(self.character.id);
     this.isFiltered = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
+    this.columnMode = ko.computed(this._columnMode, this);
+    this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-    this.columnMode = ko.computed(function() {
-        var className = "";
-        if (self.characterId() == 'Vault') {
-            className = 'col-xs-' + app.vaultColumns();
-        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
-        } else {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
-        }
-        if (self.isGridComplete) {
-            className += ' complete';
-        }
-        return className;
-    });
-    this.isEquippable = function(avatarId) {
-        return ko.pureComputed(function() {
-            //rules for how subclasses can be equipped
-            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
-            //if it's in this character and it's equippable
-            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
-        });
-    };
-    this.isStoreable = function(avatarId) {
-        return ko.pureComputed(function() {
-            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
-                (self.isEquipped() && self.character.id == avatarId);
-        });
-    };
 };
 
 Item.prototype = {
@@ -3420,6 +3407,40 @@ Item.prototype = {
             itemObject.primaryValues['Default'] = itemObject.primaryStat();
             $.extend(self, itemObject);
         }
+    },
+    _opacity: function() {
+        return (this.equipRequiredLevel <= this.character.level() || this.character.id == 'Vault') ? 1 : 0.3;
+    },
+    _columnMode: function() {
+        var self = this;
+        var className = "";
+        if (self.characterId() == 'Vault') {
+            className = 'col-xs-' + app.vaultColumns();
+        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
+        } else {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
+        }
+        if (self.isGridComplete) {
+            className += ' complete';
+        }
+        return className;
+    },
+    isEquippable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            //rules for how subclasses can be equipped
+            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
+            //if it's in this character and it's equippable
+            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+        });
+    },
+    isStoreable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
+                (self.isEquipped() && self.character.id == avatarId);
+        });
     },
     clone: function() {
         var self = this;
@@ -4512,12 +4533,8 @@ function Profile(character) {
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
-    this.iconBG = ko.pureComputed(function() {
-        return app.makeBackgroundUrl(self.icon(), true);
-    });
+    this.iconBG = ko.pureComputed(this._iconBG, this);
     this.container = ko.observable();
-    this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
-    this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(character);
 
@@ -4591,9 +4608,9 @@ Profile.prototype = {
             return "";
         } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
-        } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        } else if (item.isEquipment || tgd.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
-        } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        } else if (tgd.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";
@@ -4678,6 +4695,9 @@ Profile.prototype = {
     },
     _uniqueName: function() {
         return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
+    },
+    _iconBG: function() {
+        return app.makeBackgroundUrl(this.icon(), true);
     },
     _powerLevel: function() {
         if (this.id == "Vault") return "";

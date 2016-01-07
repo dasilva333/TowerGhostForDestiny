@@ -59,7 +59,7 @@
                         <!-- ko if: layout.isVisible(character)() -->
                         <div>
                             <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true">
-                                <strong data-bind="text: (character.id == 'Vault' && layout.name == 'Sub Classes' ? 'Vault Sub Classes' : $root.activeText()[layout.headerText])"></strong>
+                                <strong data-bind="text: layout.titleText(character)"></strong>
                                 <span data-bind="html: layout.countText(character)"></span>
                                 <div class="titleRefresh" data-bind="visible: isMobile">
                                     <!-- ko if: (layout.headerText == 'inventory_weapons' || layout.headerText == 'inventory_armor') -->
