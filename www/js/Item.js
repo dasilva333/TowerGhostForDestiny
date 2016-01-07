@@ -113,55 +113,61 @@ Item.prototype = {
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-            if (item.perks.length > 0) {
-                var talentGrid = _talentGridDefs[item.talentGridHash];
+			var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
-                _.each(item.perks, function(perk) {
-                    if (perk.perkHash in window._perkDefs) {
-                        var p = window._perkDefs[perk.perkHash];
-                        var nodeIndex = talentGrid.nodes.indexOf(
-                            _.filter(talentGrid.nodes, function(o) {
-                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
-                            })[0]
-                        );
-                        itemObject.perks.push({
-                            iconPath: tgd.dataDir + p.displayIcon,
-                            name: p.displayName,
-                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-                            active: perk.isActive,
-                            isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
-                        });
-                    }
-                });
-                var perkHashes = _.pluck(item.perks, 'perkHash'),
-                    perkNames = _.pluck(itemObject.perks, 'name'),
-                    talentPerks = {};
-                var talentGridNodes = talentGrid.nodes;
-                _.each(item.nodes, function(node) {
-                    if (node.isActivated && node.hidden === false) {
-                        var nodes = _.findWhere(talentGridNodes, {
-                            nodeHash: node.nodeHash
-                        });
-                        if (nodes && nodes.steps) {
-                            var perk = nodes.steps[node.stepIndex];
-                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
-                                talentPerks[perk.nodeStepName] = {
-                                    active: true,
-                                    name: perk.nodeStepName,
-                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                    iconPath: tgd.dataDir + perk.icon,
-                                    isExclusive: -1
-                                };
+                if (talentGrid && talentGrid.nodes) {
+                    _.each(item.perks, function(perk) {
+                        if (perk.perkHash in window._perkDefs) {
+                            var p = window._perkDefs[perk.perkHash];
+                            //There is an inconsistency between perkNames in Destiny for example:
+                            /* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
+                               This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
+                            */
+                            var nodeIndex = talentGrid.nodes.indexOf(
+                                _.filter(talentGrid.nodes, function(o) {
+                                    return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
+                                })[0]
+                            );
+                            itemObject.perks.push({
+                                iconPath: tgd.dataDir + p.displayIcon,
+                                name: p.displayName,
+                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                                active: perk.isActive,
+                                isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
+                            });
+                        }
+                    });
+                    var perkHashes = _.pluck(item.perks, 'perkHash'),
+                        perkNames = _.pluck(itemObject.perks, 'name'),
+                        talentPerks = {};
+                    var talentGridNodes = talentGrid.nodes;
+                    _.each(item.nodes, function(node) {
+                        if (node.isActivated && node.hidden === false) {
+                            var nodes = _.findWhere(talentGridNodes, {
+                                nodeHash: node.nodeHash
+                            });
+                            if (nodes && nodes.steps) {
+                                var perk = nodes.steps[node.stepIndex];
+                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                    (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
+                                    talentPerks[perk.nodeStepName] = {
+                                        active: true,
+                                        name: perk.nodeStepName,
+                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                        iconPath: tgd.dataDir + perk.icon,
+                                        isExclusive: -1
+                                    };
+                                }
                             }
                         }
-                    }
-                });
-                _.each(talentPerks, function(perk) {
-                    itemObject.perks.push(perk);
-                });
-            }
+                    });
+                    _.each(talentPerks, function(perk) {
+                        itemObject.perks.push(perk);
+                    });
+		             
+		   	}
+
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
                     return perk.active == true || (perk.active == false && perk.isExclusive == -1)
@@ -176,9 +182,13 @@ Item.prototype = {
                     }
                 });
             }
-            if (item.objectives.length > 0) {
+			if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    var result = 0;
+                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
+                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+                    }
+                    return result;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
