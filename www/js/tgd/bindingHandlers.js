@@ -9,13 +9,13 @@ tgd.armorTemplateDescriptionBuilder = function(item) {
     ).join(", ");
 
     //Add the stats to the description
-    description = description + " <em>(" + stats + ")</em>"
+    description = description + " <em>(" + stats + ")</em>";
 
     //Make bold the exotics
     description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
 
     return description;
-}
+};
 
 tgd.imageErrorHandler = function(src, element) {
     return function() {

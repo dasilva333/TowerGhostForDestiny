@@ -115,7 +115,6 @@ tgd.locale = {
         strength: "Strength",
         recovery: "Recovery",
         str: "Str",
-        strength: "Strength",
         text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
         this_icon: "This icon is ",
         tier_common: "Common",

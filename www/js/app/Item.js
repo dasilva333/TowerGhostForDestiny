@@ -449,7 +449,7 @@ Item.prototype = {
                 weaponFilter = $parent.weaponFilter() == "0" || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
-                    return name.split(" ")[0];
+                    return name && name.split(" ")[0];
                 });
                 dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
@@ -1233,7 +1233,7 @@ Item.prototype = {
         var getNextStack = (function() {
             var i = 0;
             var chars = _.filter(app.orderedCharacters(), function(c) {
-                return (c.id !== targetCharacterId && activeCharacters.length == 0) || (activeCharacters.indexOf(c.id) > -1);
+                return (c.id !== targetCharacterId && activeCharacters.length === 0) || (activeCharacters.indexOf(c.id) > -1);
             });
             var stacks = _.flatten(_.map(chars, function(c) {
                 return _.filter(c.items(), {

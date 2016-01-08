@@ -250,7 +250,7 @@ var app = function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Primary Stat and Stat Type */
             var primaryStatMin = $content.find(".destt-primary-min");
-            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() != "") {
+            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() !== "") {
                 var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
                 var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
                 $content.find(".destt-desc").before(statBlock);
@@ -486,8 +486,8 @@ var app = function() {
                     return item.isEquipped();
                 });
                 var weaponTypes = _.map(weaponsEquipped, function(item) {
-                    return item.typeName.split(" ")[0];
-                })
+                    return item && item.typeName && item.typeName.split(" ")[0];
+                });
                 _.each(character.armor(), function(item) {
                     var itemPerks = _.pluck(item.perks, 'name');
                     var matches = _.filter(itemPerks, function(perk) {
@@ -509,7 +509,7 @@ var app = function() {
             _.each(app.characters(), function(character) {
                 var damagedBasedSubclass = _.filter(character.items(), function(item) {
                     return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
-                })
+                });
                 if (damagedBasedSubclass.length > 0) {
                     damagedBasedSubclass = damagedBasedSubclass[0].damageTypeName;
                     _.each(character.armor(), function(item) {
@@ -539,12 +539,11 @@ var app = function() {
                     });
                 });
             }
-
-        }
-    }
+        };
+    };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
-    }
+    };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length === 0) {
@@ -568,8 +567,8 @@ var app = function() {
     this.setArmorView = function(type) {
         return function() {
             self.armorViewBy(type);
-        }
-    }
+        };
+    };
     this.setVaultColumns = function(columns) {
         return function() {
             self.vaultColumns(columns);
@@ -927,7 +926,7 @@ var app = function() {
                             }
                         });
                     }
-                }
+                };
             self.bungie.account(function(result) {
                 if (result && result.data && result.data.characters) {
                     var characters = result.data.characters;

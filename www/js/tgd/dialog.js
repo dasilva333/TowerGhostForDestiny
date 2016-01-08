@@ -24,7 +24,7 @@ tgd.dialog.prototype = {
     },
 
     show: function(excludeClick, onHide, onShown) {
-		var self = this;
+        var self = this;
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -36,4 +36,4 @@ tgd.dialog.prototype = {
         mdl.on("shown.bs.modal", onShown);
         return self;
     }
-}
+};

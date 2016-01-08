@@ -292,13 +292,13 @@ tgd.armorTemplateDescriptionBuilder = function(item) {
     ).join(", ");
 
     //Add the stats to the description
-    description = description + " <em>(" + stats + ")</em>"
+    description = description + " <em>(" + stats + ")</em>";
 
     //Make bold the exotics
     description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
 
     return description;
-}
+};
 
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -885,25 +885,30 @@ tgd.bungie = (function(cookieString, complete) {
 tgd.dialog = (function(options) {
     var self = this;
 
-    this.modal = null;
+    this.modal = new BootstrapDialog(options);
+    this.options = options;
 
-    this.title = function(title) {
-        self.modal = new BootstrapDialog(options);
-        self.modal.setTitle(title);
-        return self;
-    };
+    return self;
+});
 
-    this.content = function(content) {
-        self.modal.setMessage(content);
-        return self;
-    };
+tgd.dialog.prototype = {
+    title: function(title) {
+        this.modal.setTitle(title);
+        return this;
+    },
 
-    this.buttons = function(buttons) {
-        self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
-        return self;
-    };
+    content: function(content) {
+        this.modal.setMessage(content);
+        return this;
+    },
 
-    this.show = function(excludeClick, onHide, onShown) {
+    buttons: function(buttons) {
+        this.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
+        return this;
+    },
+
+    show: function(excludeClick, onHide, onShown) {
+        var self = this;
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -914,10 +919,8 @@ tgd.dialog = (function(options) {
         mdl.on("hide.bs.modal", onHide);
         mdl.on("shown.bs.modal", onShown);
         return self;
-    };
-
-    return self.modal;
-});
+    }
+};
 tgd.Layout = function(layout) {
     var self = this;
 
@@ -948,7 +951,7 @@ tgd.Layout.prototype = {
     titleText: function(character) {
         var self = this;
         return ko.pureComputed(function() {
-            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText])
+            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText]);
         });
     },
     isVisible: function(character) {
@@ -957,7 +960,7 @@ tgd.Layout.prototype = {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
     }
-}
+};
 	tgd.loadoutId = 0;
 
 	tgd.LoadoutItem = function(model) {
@@ -1029,10 +1032,10 @@ tgd.Layout.prototype = {
 	            return item.doEquip() === true && item._id != loadoutItem.id;
 	        });
 	        /* if the item being equipped is an exotic then the other exotics become unequipped */
-	        if (item.tierType == 6 && item.hasLifeExotic == false && item.doEquip()) {
+	        if (item.tierType == 6 && item.hasLifeExotic === false && item.doEquip()) {
 	            _.each(self.ids(), function(equip) {
 	                var itemFound = self.findItemById(equip.id);
-	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && itemFound.hasLifeExotic == false && equip.doEquip() && equip.id != item._id && (
+	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && itemFound.hasLifeExotic === false && equip.doEquip() && equip.id != item._id && (
 	                        (item.weaponIndex > -1 && itemFound.weaponIndex > -1) || (item.armorIndex > -1 && itemFound.armorIndex > -1)
 	                    )) {
 	                    existingItems.push(equip);
@@ -1898,7 +1901,6 @@ tgd.locale = {
         strength: "Strength",
         recovery: "Recovery",
         str: "Str",
-        strength: "Strength",
         text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
         this_icon: "This icon is ",
         tier_common: "Common",
@@ -3551,7 +3553,7 @@ Item.prototype = {
                 weaponFilter = $parent.weaponFilter() == "0" || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
-                    return name.split(" ")[0];
+                    return name && name.split(" ")[0];
                 });
                 dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
@@ -4335,7 +4337,7 @@ Item.prototype = {
         var getNextStack = (function() {
             var i = 0;
             var chars = _.filter(app.orderedCharacters(), function(c) {
-                return (c.id !== targetCharacterId && activeCharacters.length == 0) || (activeCharacters.indexOf(c.id) > -1);
+                return (c.id !== targetCharacterId && activeCharacters.length === 0) || (activeCharacters.indexOf(c.id) > -1);
             });
             var stacks = _.flatten(_.map(chars, function(c) {
                 return _.filter(c.items(), {
@@ -5578,7 +5580,7 @@ var app = function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Primary Stat and Stat Type */
             var primaryStatMin = $content.find(".destt-primary-min");
-            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() != "") {
+            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() !== "") {
                 var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
                 var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
                 $content.find(".destt-desc").before(statBlock);
@@ -5814,8 +5816,8 @@ var app = function() {
                     return item.isEquipped();
                 });
                 var weaponTypes = _.map(weaponsEquipped, function(item) {
-                    return item.typeName.split(" ")[0];
-                })
+                    return item && item.typeName && item.typeName.split(" ")[0];
+                });
                 _.each(character.armor(), function(item) {
                     var itemPerks = _.pluck(item.perks, 'name');
                     var matches = _.filter(itemPerks, function(perk) {
@@ -5837,7 +5839,7 @@ var app = function() {
             _.each(app.characters(), function(character) {
                 var damagedBasedSubclass = _.filter(character.items(), function(item) {
                     return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
-                })
+                });
                 if (damagedBasedSubclass.length > 0) {
                     damagedBasedSubclass = damagedBasedSubclass[0].damageTypeName;
                     _.each(character.armor(), function(item) {
@@ -5867,12 +5869,11 @@ var app = function() {
                     });
                 });
             }
-
-        }
-    }
+        };
+    };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
-    }
+    };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length === 0) {
@@ -5896,8 +5897,8 @@ var app = function() {
     this.setArmorView = function(type) {
         return function() {
             self.armorViewBy(type);
-        }
-    }
+        };
+    };
     this.setVaultColumns = function(columns) {
         return function() {
             self.vaultColumns(columns);
@@ -6255,7 +6256,7 @@ var app = function() {
                             }
                         });
                     }
-                }
+                };
             self.bungie.account(function(result) {
                 if (result && result.data && result.data.characters) {
                     var characters = result.data.characters;
