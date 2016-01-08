@@ -1,5 +1,353 @@
 window.Hammer.Tap.prototype.defaults.threshold = 9;
 
+function Layout(layout) {
+    var self = this;
+
+    self.name = layout.name;
+    self.id = layout.view;
+    self.bucketTypes = layout.bucketTypes;
+    self.headerText = layout.headerText;
+    self.array = layout.array;
+    self.counts = layout.counts;
+    self.countText = function(character) {
+        return ko.pureComputed(function() {
+            var text = "";
+            if (self.array !== "" && character.id == 'Vault') {
+                var currentAmount = character[self.array]().length;
+                var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
+                text = "(" + currentAmount + "/" + totalAmount + ")";
+                if (currentAmount == totalAmount) {
+                    text = "<label class='label label-danger'>" + text + "</label>";
+                }
+            }
+            return text;
+        });
+    };
+    self.isVisible = function(character) {
+        return ko.pureComputed(function() {
+            return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
+        });
+    };
+}
+
+tgd.dialog = (function(options) {
+    var self = this;
+
+    this.modal = null;
+
+    this.title = function(title) {
+        self.modal = new BootstrapDialog(options);
+        self.modal.setTitle(title);
+        return self;
+    };
+
+    this.content = function(content) {
+        self.modal.setMessage(content);
+        return self;
+    };
+
+    this.buttons = function(buttons) {
+        self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
+        return self;
+    };
+
+    this.show = function(excludeClick, onHide, onShown) {
+        self.modal.open();
+        var mdl = self.modal.getModal();
+        if (!excludeClick) {
+            mdl.bind("click", function() {
+                self.modal.close();
+            });
+        }
+        mdl.on("hide.bs.modal", onHide);
+        mdl.on("shown.bs.modal", onShown);
+        return self;
+    };
+
+    return self.modal;
+});
+
+tgd.moveItemPositionHandler = function(element, item) {
+    tgd.localLog("moveItemPositionHandler");
+    if (app.destinyDbMode() === true) {
+        tgd.localLog("destinyDbMode");
+        window.open(item.href, "_system");
+        return false;
+    } else if (app.loadoutMode() === true) {
+        tgd.localLog("loadoutMode");
+        var existingItem = _.findWhere(app.activeLoadout().ids(), {
+            id: item._id
+        });
+        if (existingItem)
+            app.activeLoadout().ids.remove(existingItem);
+        else {
+            if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning',
+                    message: app.activeText().unable_create_loadout_for_type
+                });
+            } else if (item._id === "0") {
+                app.activeLoadout().addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    primaryStat: item.primaryStat()
+                });
+            } else if (_.where(app.activeLoadout().items(), {
+                    bucketType: item.bucketType
+                }).length < 10) {
+                app.activeLoadout().addUniqueItem({
+                    id: item._id,
+                    bucketType: item.bucketType,
+                    doEquip: false
+                });
+            } else {
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Error',
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                });
+            }
+        }
+    } else {
+        tgd.localLog("else");
+        app.activeItem(item);
+        var $movePopup = $("#move-popup");
+        if ((item.transferStatus >= 2 && item.bucketType != "Subclasses") || item.bucketType == "Post Master" || item.bucketType == "Messages" || item.bucketType == "Invisible" || item.bucketType == "Lost Items" || item.bucketType == "Bounties" || item.bucketType == "Mission" || item.typeName == "Armsday Order") {
+            $.toaster({
+                priority: 'danger',
+                title: 'Error',
+                message: app.activeText().unable_to_move_bucketitems
+            });
+            return;
+        }
+        if (element == tgd.activeElement) {
+            $movePopup.hide();
+            tgd.activeElement = null;
+            tgd.localLog("hide");
+        } else {
+            tgd.localLog("show");
+            tgd.activeElement = element;
+            $ZamTooltips.hide();
+            if (window.isMobile) {
+                $("body").css("padding-bottom", $movePopup.height() + "px");
+                /* bringing back the delay it's sitll a problem in issue #128 */
+                setTimeout(function() {
+                    $movePopup.show().addClass("mobile");
+                }, 50);
+            } else {
+                tgd.localLog("display");
+                $movePopup.removeClass("navbar navbar-default navbar-fixed-bottom").addClass("desktop").show().position({
+                    my: "left bottom",
+                    at: "left top",
+                    collision: "none",
+                    of: element,
+                    using: function(pos, ui) {
+                        var obj = $(this),
+                            box = $(ui.element.element).find(".move-popup").width();
+                        obj.removeAttr('style');
+                        if (box + pos.left > $(window).width()) {
+                            pos.left = pos.left - box;
+                        }
+                        obj.css(pos).width(box);
+                    }
+                });
+            }
+        }
+    }
+};
+
+window.ko.bindingHandlers.refreshableSection = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        //tgd.localLog(element);
+        //event: { mouseenter: $root.toggleSectionRefresh, mouseleave: $root.toggleSectionRefresh }, css: { titleHover: $root.showSectionRefresh }
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("titleHover");
+                $(this).find(".titleRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("titleHover");
+                $(this).find(".titleRefresh").hide();
+            });
+    }
+};
+
+window.ko.bindingHandlers.refreshableEmblem = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        if (isMobile) {
+            return;
+        }
+        $(element)
+            .bind("mouseenter", function() {
+                $(this).addClass("emblemHover");
+                //$(this).find(".emblemRefresh").show();
+            })
+            .bind("mouseleave", function() {
+                $(this).removeClass("emblemHover");
+                //$(this).find(".emblemRefresh").hide();
+            });
+    }
+};
+
+/*
+window.ko.bindingHandlers.logger = {
+    update: function(element, valueAccessor, allBindings) {
+        //store a counter with this element
+        var count = ko.utils.domData.get(element, "_ko_logger") || 0,
+            data = ko.toJS(valueAccessor() || allBindings());
+
+        ko.utils.domData.set(element, "_ko_logger", ++count);
+
+        if (window.console && tgd.localLog) {
+            tgd.localLog(count, element, data);
+        }
+    }
+};
+*/
+
+window.ko.bindingHandlers.scrollToView = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        Hammer(element, {
+                time: 2000
+            })
+            .on("tap", function() {
+                var index = $(element).index('.mobile-characters-image'),
+                    distance = $(".profile:eq(" + index + ")");
+                if (distance.length > 0) {
+                    distance = distance.position().top - 50;
+                    app.scrollTo(distance);
+                }
+            })
+            .on("press", function() {
+                $.toaster({
+                    priority: 'info',
+                    title: 'Info',
+                    message: app.activeText().this_icon + viewModel.uniqueName()
+                });
+            });
+    }
+};
+
+window.ko.bindingHandlers.fastclick = {
+    init: function(element, valueAccessor) {
+        FastClick.attach(element);
+        return ko.bindingHandlers.click.init.apply(this, arguments);
+    }
+};
+
+ko.bindingHandlers.moveItem = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        Hammer(element, {
+                time: 2000
+            })
+            .on("tap", function(ev) {
+                tgd.localLog("item.tap");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var item = ko.contextFor(target).$data;
+                    tgd.moveItemPositionHandler(target, item);
+                }
+            })
+            .on("doubletap", function(ev) {
+                tgd.localLog("item.doubletap");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item.transferStatus < 2 || item.bucketType == "Subclasses") {
+                            if (app.dynamicMode() === false) {
+                                app.dynamicMode(true);
+                                app.createLoadout();
+                            }
+                            tgd.localLog("double tap");
+                            if (item._id > 0) {
+                                app.activeLoadout().addUniqueItem({
+                                    id: item._id,
+                                    bucketType: item.bucketType,
+                                    doEquip: false
+                                });
+                            } else {
+                                app.activeLoadout().addGenericItem({
+                                    hash: item.id,
+                                    bucketType: item.bucketType,
+                                    primaryStat: item.primaryStat()
+                                });
+                            }
+                        } else {
+                            $.toaster({
+                                priority: 'danger',
+                                title: 'Warning',
+                                message: app.activeText().unable_create_loadout_for_type
+                            });
+                        }
+                    }
+                }
+            })
+            // press is actually hold 
+            .on("press", function(ev) {
+                tgd.localLog("item.press");
+                var target = tgd.getEventDelegate(ev.target, ".itemLink");
+                if (target) {
+                    var context = ko.contextFor(target);
+                    if (context && "$data" in context) {
+                        var item = context.$data;
+                        if (item && item.doEquip && app.loadoutMode() === true) {
+                            item.doEquip(!item.doEquip());
+                            item.markAsEquip(item, {
+                                target: target
+                            });
+                        } else if (!isMobile) {
+                            tgd.moveItemPositionHandler(target, item);
+                        } else {
+                            $ZamTooltips.lastElement = target;
+                            $ZamTooltips.show("destinydb", "items", item.id, target);
+                        }
+                    }
+                }
+            });
+    }
+};
+
+tgd.getEventDelegate = function(target, selector) {
+    var delegate;
+    while (target && target != this.el) {
+        delegate = $(target).filter(selector)[0];
+        if (delegate) {
+            return delegate;
+        }
+        target = target.parentNode;
+    }
+    return undefined;
+};
+
+tgd.getStoredValue = function(key) {
+    var saved = "";
+    if (window.localStorage && window.localStorage.getItem)
+        saved = window.localStorage.getItem(key);
+    if (_.isEmpty(saved)) {
+        return tgd.defaults[key];
+    } else {
+        return saved;
+    }
+};
+
+tgd.StoreObj = function(key, compare, writeCallback) {
+    var value = ko.observable(compare ? tgd.getStoredValue(key) == compare : tgd.getStoredValue(key));
+    this.read = function() {
+        return value();
+    };
+    this.write = function(newValue) {
+        window.localStorage.setItem(key, newValue);
+        value(newValue);
+        if (writeCallback) writeCallback(newValue);
+    };
+};
+
 var app = function() {
     var self = this;
 
@@ -29,7 +377,6 @@ var app = function() {
     this.lgColumn = ko.pureComputed(new tgd.StoreObj("lgColumn"));
     this.activeView = ko.pureComputed(new tgd.StoreObj("activeView"));
     this.activeSort = ko.pureComputed(new tgd.StoreObj("activeSort"));
-    this.autoUpdates = ko.pureComputed(new tgd.StoreObj("autoUpdates", "true"));
     this.doRefresh = ko.pureComputed(new tgd.StoreObj("doRefresh", "true"));
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
@@ -228,7 +575,7 @@ var app = function() {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Sub title for materials and consumables */
-            if (tgd.DestinyGeneralItems["GlimmerConsumables"].indexOf(activeItem.id) > -1) {
+            if (tgd.DestinyGlimmerConsumables.indexOf(activeItem.id) > -1) {
                 $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
             }
             /* Add Required Level if provided */
@@ -294,12 +641,10 @@ var app = function() {
                         var statObj = _.findWhere(itemStats, {
                             name: statName
                         });
-                        if (statObj) {
-                            var clonedRow = magazineRow.clone();
-                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                            clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                            magazineRow.before(clonedRow);
-                        }
+                        var clonedRow = magazineRow.clone();
+                        clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                        magazineRow.before(clonedRow);
                     });
                 }
             }
@@ -309,9 +654,7 @@ var app = function() {
                         return perk.active === true || (perk.active === false && self.advancedTooltips() === true);
                     })
                 });
-                //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
-                var weaponTypes = _.pluck(app.weaponTypes(), 'name');
-                if (weaponTypes.indexOf(activeItem.typeName) > -1) {
+                if (tgd.DestinyWeaponPieces.indexOf(activeItem.bucketType) > -1) {
                     // Weapon Perks (Pre-HoW) 
                     if ($content.find(".destt-talent").length == 1 && $content.find(".destt-talent-description").text().indexOf("Year 1")) {
                         $content.find(".destt-talent").replaceWith(activePerksTemplate);
@@ -320,7 +663,7 @@ var app = function() {
                     else if ($content.find(".destt-talent").length === 0) {
                         $content.find(".destt-stat").after(activePerksTemplate);
                     }
-                } else if (activeItem.armorIndex > -1) {
+                } else if (tgd.DestinyArmorPieces.indexOf(activeItem.bucketType) > -1) {
                     // Armor Perks: this only applies to armor with existing perks
                     if ($content.find(".destt-talent").length > 0) {
                         $content.find(".destt-talent").replaceWith(activePerksTemplate);
@@ -330,14 +673,6 @@ var app = function() {
                         $content.find(".destt-stat").after(activePerksTemplate);
                     }
                 }
-                $content.find("img").bind("error", function() {
-                    var perkName = $(this).attr("data-name");
-                    var src = _.findWhere(activeItem.perks, {
-                        name: perkName
-                    }).iconPath;
-                    var element = $('img[data-name="' + perkName + '"]')[0];
-                    tgd.imageErrorHandler(src, element)();
-                });
             }
             if (activeItem.objectives.length > 0) {
                 _.each(activeItem.objectives, function(objective) {
@@ -358,18 +693,6 @@ var app = function() {
             $content.find(".stat-bar-empty").css("width", "125px");
         }
         callback($content.html());
-    };
-
-    this.toggleAutoUpdates = function() {
-        self.toggleBootstrapMenu();
-        self.autoUpdates(!self.autoUpdates());
-        if (self.autoUpdates()) {
-            tgd.checkUpdates();
-        } else {
-            localStorage.setItem("manifest", null);
-            localStorage.setItem("last_update_files", null);
-            tgd.loader.reset();
-        }
     };
 
     this.toggleViewOptions = function() {
@@ -721,7 +1044,7 @@ var app = function() {
         if (self.loadingUser() === false || self.hiddenWindowOpen() === true) {
             //window.t = (new Date());
             self.loadingUser(true);
-            self.bungie = new tgd.bungie(self.bungie_cookies, function() {
+            self.bungie = new bungie(self.bungie_cookies, function() {
                 self.characters.removeAll();
                 //console.time("self.bungie.user");
                 self.bungie.user(function(user) {
@@ -1166,7 +1489,7 @@ var app = function() {
     this.showWhatsNew = function(callback) {
         var container = $("<div></div>");
         container.attr("style", "overflow-y: scroll; height: 480px");
-        container.html("Version: " + tgd.version + $("#whatsnew").html());
+        container.html("Version: " + tgd.version + JSON.parse(unescape($("#whatsnew").html())).content);
         (new tgd.dialog()).title(self.activeText().whats_new_title).content(container).show(false, function() {
             if (_.isFunction(callback)) callback();
         });
@@ -1645,9 +1968,6 @@ var app = function() {
     };
 
     this.init = function() {
-        _.each(ko.templates, function(content, name) {
-            $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
-        });
         $.idleTimer(1000 * 60 * 30);
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
             self.lgColumn(tgd.defaults.lgColumn);
@@ -1662,7 +1982,7 @@ var app = function() {
             self.refreshHandler();
         });
         _.each(tgd.DestinyLayout, function(layout) {
-            self.allLayouts.push(new tgd.Layout(layout));
+            self.allLayouts.push(new Layout(layout));
         });
         self.initLocale();
         if (_.isUndefined(window._itemDefs) || _.isUndefined(window._perkDefs)) {
@@ -1697,6 +2017,41 @@ var app = function() {
             var msViewportStyle = document.createElement("style");
             msViewportStyle.appendChild(document.createTextNode("@-ms-viewport{width:auto!important}"));
             document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
+        }
+
+        if (isMobile) {
+            //This sets up swipe left/swipe right for mobile devices
+            //TODO: Add an option to disable this for users
+            Hammer(document.getElementById('charactersContainer'), {
+                    //Removing these values and allowing HammerJS to figure out the best value based on the device
+                    //drag_min_distance: 1,
+                    //swipe_velocity: 0.1,
+                    drag_horizontal: true,
+                    drag_vertical: false
+                }).on("swipeleft", self.shiftViewLeft)
+                .on("swiperight", self.shiftViewRight)
+                .on("tap", self.globalClickHandler);
+
+            //This ensures that the top status bar color matches the app
+            if (typeof StatusBar !== "undefined") {
+                StatusBar.styleBlackOpaque();
+                StatusBar.backgroundColorByHexString("#272B30");
+                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
+                    StatusBar.overlaysWebView(false);
+                }
+            }
+
+            //This sets up inAppBilling donations for iOS/Android
+            if (typeof inappbilling != "undefined") {
+                inappbilling.init(function() {}, function() {}, {
+                    showLog: false
+                }, ['small', 'medium', 'large']);
+            }
+
+            //Prevent the user from pressing the back button to reload the app
+            document.addEventListener("backbutton", function(e) {
+                e.preventDefault();
+            }, false);
         }
 
         var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
@@ -1743,71 +2098,32 @@ var app = function() {
         }
 
         if (isMobile && isEmptyCookie) {
-            self.bungie = new tgd.bungie('', function() {
+            self.bungie = new bungie('', function() {
                 self.activeUser({
                     "code": 99,
                     "error": "Please sign-in to continue."
                 });
             });
         } else {
-            self.loadData();
+            setTimeout(function() {
+                self.loadData();
+            }, isChrome || isMobile ? 1 : 5000);
         }
+        $("form").bind("submit", false);
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
+        self.whatsNew();
         self.collectionSets = _.sortBy(Object.keys(_collections));
         $(document).on("click", "a[target='_system']", function() {
             window.open(this.href, "_system");
             return false;
         });
-
         ko.applyBindings(self);
-
-        $("form").bind("submit", false);
-
-        if (isMobile) {
-            //This sets up swipe left/swipe right for mobile devices
-            //TODO: Add an option to disable this for users
-            Hammer(document.getElementById('charactersContainer'), {
-                    //Removing these values and allowing HammerJS to figure out the best value based on the device
-                    //drag_min_distance: 1,
-                    //swipe_velocity: 0.1,
-                    drag_horizontal: true,
-                    drag_vertical: false
-                }).on("swipeleft", self.shiftViewLeft)
-                .on("swiperight", self.shiftViewRight)
-                .on("tap", self.globalClickHandler);
-
-            //This ensures that the top status bar color matches the app
-            if (typeof StatusBar !== "undefined") {
-                StatusBar.styleBlackOpaque();
-                StatusBar.backgroundColorByHexString("#272B30");
-                if (window.device && device.platform === "iOS" && device.version >= 7.0) {
-                    StatusBar.overlaysWebView(false);
-                }
-            }
-
-            //This sets up inAppBilling donations for iOS/Android
-            if (typeof inappbilling != "undefined") {
-                inappbilling.init(function() {}, function() {}, {
-                    showLog: false
-                }, ['small', 'medium', 'large']);
-            }
-
-            //Prevent the user from pressing the back button to reload the app
-            document.addEventListener("backbutton", function(e) {
-                e.preventDefault();
-            }, false);
-        }
-
-        self.whatsNew();
         window.BOOTSTRAP_OK = true;
-        if (self.autoUpdates() == true) {
-            tgd.checkUpdates();
-        }
     };
 };
 

@@ -196,7 +196,7 @@ Profile.prototype = {
         var buckets = [];
         if (typeof model === 'string' || model instanceof String) {
             buckets.push(model);
-        } else if (model instanceof tgd.Layout) {
+        } else if (model instanceof Layout) {
             buckets.push.apply(buckets, model.bucketTypes);
         } else if (model instanceof Profile) {
             _.each(tgd.DestinyLayout, function(layout) {
