@@ -1,3 +1,7 @@
+html, body { font-size: 14px }
+@-ms-viewport {
+    width: device-width;
+}
 .item-placeholder {
     box-shadow:0 0 2px #000;
 	width: 54px;
@@ -5,6 +9,19 @@
 	margin: 2px;
 	border: 1px solid white;
 	display: inline-block;
+}
+body {
+    font-size: 1em;
+    margin: 0 auto;
+    padding-top: 55px;
+    background: radial-gradient(transparent, 70%, #000) fixed, rgb(105, 125, 123);
+    background: radial-gradient(transparent, 70%, #000) fixed, url('../assets/gradient_green.jpg') fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #fff;
+    font-family: HelveticaNeue-Light, 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .loadout-button {
