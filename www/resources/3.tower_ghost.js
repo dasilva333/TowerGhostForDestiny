@@ -3099,7 +3099,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.13";
+tgd.version = "3.7.6.14";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -7855,8 +7855,9 @@ window.$ZamTooltips = function() {
             $ZamTooltips.hide();
         };
         var win = getWindowInfo();
-        var w = container.offsetWidth,
-            h = container.offsetHeight;
+        var tempcontainer = container.getBoundingClientRect();
+        var w = tempcontainer.width,
+            h = tempcontainer.height;
         var pos;
         if (attachedTo) {
             var dim = getElementDimensions(attachedTo);
@@ -7957,7 +7958,7 @@ window.$ZamTooltips = function() {
             }
         }
         if (dim.y + h + padding.y > win.bottom && top < win.top) {
-            top = win.bottom - h - padding.y;
+            top = win.top - padding.y;
         } else if (top < win.top) {
             top = dim.y + dim.h + padding.y;
         }

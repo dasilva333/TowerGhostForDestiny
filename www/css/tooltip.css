@@ -1674,13 +1674,22 @@
 .fh-icon.des-icon.no-border span.effect {
     background: none !important
 }
-
-@media (max-width: 719px), (max-height: 680px) {
+@media (max-width: 420px), (max-height: 480px) {
  .fhtt {
-    -webkit-transform: scale(0.8);
-    -moz-transform: scale(0.8);
-    -ms-transform: scale(0.8);
-    -o-transform: scale(0.8);
-    transform: scale(0.8);
+    -webkit-transform: scale(0.6);
+    -moz-transform: scale(0.6);
+    -ms-transform: scale(0.6);
+    -o-transform: scale(0.6);
+    transform: scale(0.6);
+ }
+}
+
+@media (max-width: 719px), (max-height: 890px) {
+ .fhtt {
+    -webkit-transform: scale(0.75);
+    -moz-transform: scale(0.75);
+    -ms-transform: scale(0.75);
+    -o-transform: scale(0.75);
+    transform: scale(0.75);
  }
 }
