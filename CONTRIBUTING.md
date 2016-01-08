@@ -38,12 +38,9 @@ Tower Ghost users an auto update manifest system that allows it to be updated au
 4. make sure you have NodeJS and NPM installed
 5. run the command: *npm install*
 6. after that is finished you may run one of the two commands:
-
-7a. If you are making changes to the definitions files you need to run: *grunt prod*
-
-7b. If you are making changes to templates/js/css you need to simply run: *grunt*
-
-8. After the grunt task has finished executing you may return to your browser (app) Chrome and refresh the page to see your changes on the page.
+7. If you are making changes to the definitions files you need to run: *grunt prod*
+8. If you are making changes to templates/js/css you need to simply run: *grunt*
+9. After the grunt task has finished executing you may return to your browser (app) Chrome and refresh the page to see your changes on the page.
 
 Note: Please do not submit pull requests to changes in the *resources/* folder, running this grunt task will modify and alter those files however make sure to revert those changes and only commit the changes made to the js, css, or templates folder.
 
