@@ -328,6 +328,11 @@ window.ko.bindingHandlers.itemImageHandler = {
         var icon = ko.unwrap(valueAccessor());
         element.src = icon;
         element.onerror = tgd.imageErrorHandler(icon, element);
+    },
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var icon = ko.unwrap(valueAccessor());
+        element.src = icon;
+        element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
 
