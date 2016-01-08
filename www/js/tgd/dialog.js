@@ -1,25 +1,30 @@
 tgd.dialog = (function(options) {
     var self = this;
 
-    this.modal = null;
+    this.modal = new BootstrapDialog(options);
+    this.options = options;
 
-    this.title = function(title) {
-        self.modal = new BootstrapDialog(options);
-        self.modal.setTitle(title);
-        return self;
-    };
+    return self;
+});
 
-    this.content = function(content) {
-        self.modal.setMessage(content);
-        return self;
-    };
+tgd.dialog.prototype = {
+    title: function(title) {
+        this.modal.setTitle(title);
+        return this;
+    },
 
-    this.buttons = function(buttons) {
-        self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
-        return self;
-    };
+    content: function(content) {
+        this.modal.setMessage(content);
+        return this;
+    },
 
-    this.show = function(excludeClick, onHide, onShown) {
+    buttons: function(buttons) {
+        this.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
+        return this;
+    },
+
+    show: function(excludeClick, onHide, onShown) {
+		var self = this;
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -30,7 +35,5 @@ tgd.dialog = (function(options) {
         mdl.on("hide.bs.modal", onHide);
         mdl.on("shown.bs.modal", onShown);
         return self;
-    };
-
-    return self.modal;
-});
+    }
+}

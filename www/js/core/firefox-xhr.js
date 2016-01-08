@@ -22,22 +22,22 @@ if (isFirefox) {
         this.processReply = function(event) {
             var xhr = event.detail;
             if (xhr.id == self.id) {
-				tgd.localLog("xhr-reply! " + self.request.url);
+                tgd.localLog("xhr-reply! " + self.request.url);
                 self.readyState = xhr.readyState;
                 self.status = xhr.status;
                 self.statusText = xhr.statusText;
                 self.responseText = xhr.responseText;
                 self.onreadystatechange();
-				window.removeEventListener("xhr-reply", self.processReply);
+                window.removeEventListener("xhr-reply", self.processReply);
             }
         }
-		
+
         window.addEventListener("xhr-reply", self.processReply, false);
         return self;
     };
-	
-	ffXHR.prototype = {
-		open: function(type, url, async, username, password) {
+
+    ffXHR.prototype = {
+        open: function(type, url, async, username, password) {
             tgd.localLog("opening a new request");
             this.request = {
                 id: this.id,
@@ -62,7 +62,7 @@ if (isFirefox) {
             return "";
         },
         send: function(payload) {
-			var self = this;
+            var self = this;
             var send = function() {
                 if (payload)
                     self.request.payload = payload;
@@ -85,8 +85,8 @@ if (isFirefox) {
         },
         onreadystatechange: function() {
             //console.log("state changed");
-        }	
-	}
+        }
+    }
 
     window.XMLHttpRequest = function() {
         return new ffXHR();
