@@ -525,21 +525,22 @@ var app = function() {
             });
         }
     };
-    this.toggleArmorClass = function(classType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
-            self.customFilter(self.activeClasses().length > 0);
-            if (self.customFilter()) {
-                self.activeView(2);
-                var classTypeNum = _.values(tgd.DestinyClass).indexOf(classType);
-                _.each(app.characters(), function(character) {
-                    _.each(character.armor(), function(item) {
-                        item.isFiltered(item.classType == classTypeNum);
-                    });
+    this._toggleArmorClass = function(classType) {
+        self.toggleBootstrapMenu();
+        self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
+        self.customFilter(self.activeClasses().length > 0);
+        if (self.customFilter()) {
+            self.activeView(2);
+            var classTypeNum = _.values(tgd.DestinyClass).indexOf(classType);
+            _.each(app.characters(), function(character) {
+                _.each(character.armor(), function(item) {
+                    item.isFiltered(item.classType == classTypeNum);
                 });
-            }
-        };
+            });
+        }
+    };
+    this.toggleArmorClass = function(classType) {
+        return this._toggleArmorClass;
     };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
@@ -564,22 +565,25 @@ var app = function() {
         window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
         return false;
     };
+    this._setArmorView = function(type) {
+        self.armorViewBy(type);
+    };
     this.setArmorView = function(type) {
-        return function() {
-            self.armorViewBy(type);
-        };
+        return this._setArmorView;
+    };
+    this._setVaultColumns = function(columns) {
+        self.vaultColumns(columns);
+        self.redraw();
     };
     this.setVaultColumns = function(columns) {
-        return function() {
-            self.vaultColumns(columns);
-            self.redraw();
-        };
+        return this._setVaultColumns;
+    };
+    this._setVaultWidth = function(width) {
+        self.vaultWidth(width);
+        self.redraw();
     };
     this.setVaultWidth = function(width) {
-        return function() {
-            self.vaultWidth(width);
-            self.redraw();
-        };
+        return this._setVaultWidth;
     };
     this.setCCWidth = function(model, evt) {
         var width = $(evt.target).text();
@@ -587,39 +591,40 @@ var app = function() {
         self.ccWidth(width);
         self.redraw();
     };
-    this.setSetFilter = function(collection) {
-        return function() {
-            self.toggleBootstrapMenu();
-            if (collection in _collections || collection == "All") {
-                if (collection == "Year 2 Items" || collection == "Year 1 Items") {
-                    _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
-                        return character.items();
-                    })), function(item) {
-                        if (collection == "Year 2 Items") {
-                            return item.primaryStatValue() > tgd.DestinyY1Cap || _collections[collection].indexOf(item.id) > -1;
-                        } else {
-                            return item.primaryStatValue() <= tgd.DestinyY1Cap && _collections["Year 2 Items"].indexOf(item.id) == -1;
-                        }
+    this._setSetFilter = function(collection) {
+        self.toggleBootstrapMenu();
+        if (collection in _collections || collection == "All") {
+            if (collection == "Year 2 Items" || collection == "Year 1 Items") {
+                _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
+                    return character.items();
+                })), function(item) {
+                    if (collection == "Year 2 Items") {
+                        return item.primaryStatValue() > tgd.DestinyY1Cap || _collections[collection].indexOf(item.id) > -1;
+                    } else {
+                        return item.primaryStatValue() <= tgd.DestinyY1Cap && _collections["Year 2 Items"].indexOf(item.id) == -1;
+                    }
 
-                    }), 'id');
-                }
-                self.setFilter(collection == "All" ? [] : _collections[collection]);
-                if (collection == "All") {
-                    self.showMissing(false);
-                } else if (collection.indexOf("Weapons") > -1) {
-                    self.activeView(1);
-                    self.armorFilter(0);
-                    self.generalFilter(0);
-                } else if (collection.indexOf("Armor") > -1) {
-                    self.activeView(2);
-                    self.weaponFilter(0);
-                    self.generalFilter(0);
-                }
-            } else {
-                self.setFilter([]);
-                self.showMissing(false);
+                }), 'id');
             }
-        };
+            self.setFilter(collection == "All" ? [] : _collections[collection]);
+            if (collection == "All") {
+                self.showMissing(false);
+            } else if (collection.indexOf("Weapons") > -1) {
+                self.activeView(1);
+                self.armorFilter(0);
+                self.generalFilter(0);
+            } else if (collection.indexOf("Armor") > -1) {
+                self.activeView(2);
+                self.weaponFilter(0);
+                self.generalFilter(0);
+            }
+        } else {
+            self.setFilter([]);
+            self.showMissing(false);
+        }
+    }
+    this.setSetFilter = function(collection) {
+        return this._setSetFilter;
     };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
@@ -642,29 +647,32 @@ var app = function() {
         self.toggleBootstrapMenu();
         self.tierFilter(model.tier);
     };
-    this.setWeaponFilter = function(weaponType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            self.activeView(1);
-            var type = weaponType.name;
-            tgd.localLog("weapon type: " + type);
-            self.weaponFilter(type);
-        };
+    this._setWeaponFilter = function(weaponType) {
+        self.toggleBootstrapMenu();
+        self.activeView(1);
+        var type = weaponType.name;
+        tgd.localLog("weapon type: " + type);
+        self.weaponFilter(type);
     };
+    this.setWeaponFilter = function(weaponType) {
+        return this._setWeaponFilter;
+    };
+    this._setArmorFilter = function(armorType) {
+        self.toggleBootstrapMenu();
+        self.activeView(2);
+        tgd.localLog("armor type: " + armorType);
+        self.armorFilter(armorType);
+    }
     this.setArmorFilter = function(armorType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            self.activeView(2);
-            tgd.localLog("armor type: " + armorType);
-            self.armorFilter(armorType);
-        };
+        return this._setArmorFilter;
     };
     this.setGeneralFilter = function(searchType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            if (searchType != "Engram") self.activeView(3);
-            self.generalFilter(searchType);
-        };
+        self.toggleBootstrapMenu();
+        if (searchType != "Engram") self.activeView(3);
+        self.generalFilter(searchType);
+    }
+    this.setGeneralFilter = function(searchType) {
+        return this._setGeneralFilter;
     };
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -1110,60 +1118,62 @@ var app = function() {
         } catch (e) {}
     };
 
-    this.openBungieWindow = function(type) {
-        return function() {
-            var loop;
-            if (isNWJS) {
-                var gui = require('nw.gui');
-                var mainwin = gui.Window.get();
-                window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
-            } else if (isChrome || isMobile) {
-                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
-            } else {
-                //window.ref = window.open('about:blank');
-                //window.ref.opener = null;
-                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
-            }
-            if (isMobile) {
-                ref.addEventListener('loadstop', function(event) {
+    this._openBungieWindow = function(type) {
+        var loop;
+        if (isNWJS) {
+            var gui = require('nw.gui');
+            var mainwin = gui.Window.get();
+            window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
+        } else if (isChrome || isMobile) {
+            window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+        } else {
+            //window.ref = window.open('about:blank');
+            //window.ref.opener = null;
+            window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
+        }
+        if (isMobile) {
+            ref.addEventListener('loadstop', function(event) {
+                self.readBungieCookie(ref, loop);
+            });
+            ref.addEventListener('exit', function() {
+                if (_.isEmpty(self.bungie_cookies)) {
                     self.readBungieCookie(ref, loop);
-                });
-                ref.addEventListener('exit', function() {
-                    if (_.isEmpty(self.bungie_cookies)) {
-                        self.readBungieCookie(ref, loop);
-                    }
-                });
-            } else if (isNWJS) {
-                window.ref.on('loaded', function() {
-                    location.reload();
-                });
-            } else {
-                clearInterval(loop);
-                loop = setInterval(function() {
-                    if (window.ref.closed) {
-                        clearInterval(loop);
-                        if (!isMobile && !isChrome) {
-                            $.toaster({
-                                priority: 'success',
-                                title: 'Loading',
-                                message: "Please wait while Firefox acquires your arsenal",
-                                settings: {
-                                    timeout: tgd.defaults.toastTimeout
-                                }
-                            });
-                            var event = new CustomEvent("request-cookie-from-ps", {});
-                            window.dispatchEvent(event);
-                            setTimeout(function() {
-                                tgd.localLog("loadData");
-                                self.loadData();
-                            }, 5000);
-                        } else {
+                }
+            });
+        } else if (isNWJS) {
+            window.ref.on('loaded', function() {
+                location.reload();
+            });
+        } else {
+            clearInterval(loop);
+            loop = setInterval(function() {
+                if (window.ref.closed) {
+                    clearInterval(loop);
+                    if (!isMobile && !isChrome) {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Loading',
+                            message: "Please wait while Firefox acquires your arsenal",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
+                        });
+                        var event = new CustomEvent("request-cookie-from-ps", {});
+                        window.dispatchEvent(event);
+                        setTimeout(function() {
+                            tgd.localLog("loadData");
                             self.loadData();
-                        }
+                        }, 5000);
+                    } else {
+                        self.loadData();
                     }
-                }, 100);
-            }
-        };
+                }
+            }, 100);
+        }
+    };
+
+    this.openBungieWindow = function(type) {
+        return this._openBungieWindow;
     };
 
     this.scrollTo = function(distance, callback) {
@@ -1609,18 +1619,20 @@ var app = function() {
         })).title(title).show(true);
     };
 
+    this._setVaultTo = function(pos) {
+        var vault = _.findWhere(self.characters(), {
+            id: "Vault"
+        });
+        if (vault) {
+            self.vaultPos(pos);
+            vault.order(pos);
+        } else {
+            return false;
+        }
+    }
+
     this.setVaultTo = function(pos) {
-        return function() {
-            var vault = _.findWhere(self.characters(), {
-                id: "Vault"
-            });
-            if (vault) {
-                self.vaultPos(pos);
-                vault.order(pos);
-            } else {
-                return false;
-            }
-        };
+        return this._setVaultTo;
     };
 
     this.isVaultAt = function(pos) {
@@ -1642,38 +1654,46 @@ var app = function() {
         });
     };
 
+    this._columnMode = function() {
+        var character = this;
+        var totalCharacters = 3,
+            totalColumns = tgd.bootstrapGridColumns,
+            vaultColumns,
+            characterColumns;
+        if (self.layoutMode() == 'uneven') {
+            vaultColumns = self.vaultWidth();
+            characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
+        } else {
+            vaultColumns = self.lgColumn();
+            characterColumns = self.lgColumn();
+        }
+        if (character.id == "Vault") {
+            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+        } else {
+            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+        }
+    }
+
     this.columnMode = function(character) {
-        return ko.pureComputed(function() {
-            var totalCharacters = 3,
-                totalColumns = tgd.bootstrapGridColumns,
-                vaultColumns,
-                characterColumns;
-            if (self.layoutMode() == 'uneven') {
-                vaultColumns = self.vaultWidth();
-                characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
-            } else {
-                vaultColumns = self.lgColumn();
-                characterColumns = self.lgColumn();
-            }
-            if (character.id == "Vault") {
-                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
-            } else {
-                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
-            }
-        });
+        return ko.pureComputed(self._columnMode, character);
+    };
+
+    this._setColumns = function(type, input) {
+        self[type + "Column"](tgd.bootstrapGridColumns / input.value);
+        self.redraw();
     };
 
     this.setColumns = function(type, input) {
-        return function() {
-            self[type + "Column"](tgd.bootstrapGridColumns / input.value);
-            self.redraw();
-        };
+        return this._setColumns;
     };
 
+    this._btnActive = function() {
+        var input = this;
+        return ((tgd.bootstrapGridColumns / input.value) == self[input.kind + "Column"]()) ? "btn-primary" : "";
+    }
     this.btnActive = function(type, input) {
-        return ko.pureComputed(function() {
-            return ((tgd.bootstrapGridColumns / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
-        });
+        input.kind = type;
+        return ko.pureComputed(self._btnActive, input);
     };
 
     this.generateStatic = function() {
@@ -1814,9 +1834,7 @@ var app = function() {
             $(document).on("idle.idleTimer", function(event, elem, obj) {
                 clearInterval(self.refreshInterval);
             });
-            $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
-                self.refreshHandler();
-            });
+            $(document).on("active.idleTimer", self.refreshHandler);
         }
 
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
