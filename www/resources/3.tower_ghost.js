@@ -29,6 +29,7 @@ tgd.remoteImagePath = tgd.remoteServer + "/www/";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinySkillTier = 60;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];
@@ -43,6 +44,8 @@ tgd.DestinyGeneralItems = {
     "Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
     "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
+tgd.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
+tgd.invisibleItemsHelper = [2910404660, 2537120989];
 //This is a list of items not indexed by DestinyDB
 tgd.itemsNotIndexed = [];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
@@ -289,13 +292,13 @@ tgd.armorTemplateDescriptionBuilder = function(item) {
     ).join(", ");
 
     //Add the stats to the description
-    description = description + " <em>(" + stats + ")</em>"
+    description = description + " <em>(" + stats + ")</em>";
 
     //Make bold the exotics
     description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
 
     return description;
-}
+};
 
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -769,7 +772,7 @@ tgd.bungie = (function(cookieString, complete) {
             route: '/Destiny/' + active.type +
                 '/Account/' + active.membership +
                 '/Character/' + characterId +
-                '/Inventory/' + instanceId,
+                '/Inventory/' + instanceId + '/',
             method: 'GET',
             complete: callback
         });
@@ -790,7 +793,7 @@ tgd.bungie = (function(cookieString, complete) {
         self.request({
             route: '/Destiny/' + active.type +
                 '/Account/' + active.membership +
-                '/Character/' + characterId,
+                '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
         });
@@ -882,25 +885,30 @@ tgd.bungie = (function(cookieString, complete) {
 tgd.dialog = (function(options) {
     var self = this;
 
-    this.modal = null;
+    this.modal = new BootstrapDialog(options);
+    this.options = options;
 
-    this.title = function(title) {
-        self.modal = new BootstrapDialog(options);
-        self.modal.setTitle(title);
-        return self;
-    };
+    return self;
+});
 
-    this.content = function(content) {
-        self.modal.setMessage(content);
-        return self;
-    };
+tgd.dialog.prototype = {
+    title: function(title) {
+        this.modal.setTitle(title);
+        return this;
+    },
 
-    this.buttons = function(buttons) {
-        self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
-        return self;
-    };
+    content: function(content) {
+        this.modal.setMessage(content);
+        return this;
+    },
 
-    this.show = function(excludeClick, onHide, onShown) {
+    buttons: function(buttons) {
+        this.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
+        return this;
+    },
+
+    show: function(excludeClick, onHide, onShown) {
+        var self = this;
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -911,10 +919,8 @@ tgd.dialog = (function(options) {
         mdl.on("hide.bs.modal", onHide);
         mdl.on("shown.bs.modal", onShown);
         return self;
-    };
-
-    return self.modal;
-});
+    }
+};
 tgd.Layout = function(layout) {
     var self = this;
 
@@ -924,7 +930,11 @@ tgd.Layout = function(layout) {
     self.headerText = layout.headerText;
     self.array = layout.array;
     self.counts = layout.counts;
-    self.countText = function(character) {
+};
+
+tgd.Layout.prototype = {
+    countText: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             var text = "";
             if (self.array !== "" && character.id == 'Vault') {
@@ -937,12 +947,19 @@ tgd.Layout = function(layout) {
             }
             return text;
         });
-    };
-    self.isVisible = function(character) {
+    },
+    titleText: function(character) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText]);
+        });
+    },
+    isVisible: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
-    };
+    }
 };
 	tgd.loadoutId = 0;
 
@@ -1015,10 +1032,10 @@ tgd.Layout = function(layout) {
 	            return item.doEquip() === true && item._id != loadoutItem.id;
 	        });
 	        /* if the item being equipped is an exotic then the other exotics become unequipped */
-	        if (item.tierType == 6 && item.doEquip()) {
+	        if (item.tierType == 6 && item.hasLifeExotic === false && item.doEquip()) {
 	            _.each(self.ids(), function(equip) {
 	                var itemFound = self.findItemById(equip.id);
-	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && equip.doEquip() && equip.id != item._id && (
+	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && itemFound.hasLifeExotic === false && equip.doEquip() && equip.id != item._id && (
 	                        (item.weaponIndex > -1 && itemFound.weaponIndex > -1) || (item.armorIndex > -1 && itemFound.armorIndex > -1)
 	                    )) {
 	                    existingItems.push(equip);
@@ -1775,6 +1792,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -1797,7 +1815,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -1884,7 +1901,6 @@ tgd.locale = {
         strength: "Strength",
         recovery: "Recovery",
         str: "Str",
-        strength: "Strength",
         text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
         this_icon: "This icon is ",
         tier_common: "Common",
@@ -1892,8 +1908,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -1912,20 +1931,21 @@ tgd.locale = {
         whats_new_title: "Tower Ghost for Destiny Updates"
     },
     de: {
-        agility: "Agilität",
-        armor: "Rüstung",
+        agility: "Agil",
+        armor: "Rstg",
         best_combo: "Beste Komb.",
         cancel: "Abbrechen",
         cannot_equip: "Unbekannter Fehler beim Ausrüsten von ",
         cannot_unequip: "Keine Gegenstände mehr zum Ablegen von ",
+        close_msg: "Schließen",
         disc: "Dis",
-        discipline: "Disziplin",
+        discipline: "Dis",
         donation_instructions: "Dies ist ein nicht-kommerzielles Projekt, das Destiny gewidmet ist. Wenn dir diese App gefällt, denke doch über eine Spende nach um das Projekt am Leben zu halten.",
         donation_title: "Spenden an Tower Ghost für Destiny!",
         error_loading_inventory: "Fehler beim Laden des Inventars ",
         gear_with_highest: "Ausrüstung mit höchstem:",
         inte: "Int",
-        intellect: "Intellekt",
+        intellect: "Int",
         invalid_transfer_amount: "Ungültige Menge eingegeben: ",
         inventory_armor: "Rüstung",
         inventory_general: "Allgemein",
@@ -1940,7 +1960,6 @@ tgd.locale = {
         light: "Licht",
         loadouts_alreadythere_pt1: " ist bereits im ",
         loadouts_alreadythere_pt2: "'s Bucket von ",
-        loadouts_close: "Schließen",
         loadouts_delete: "Löschen",
         loadouts_desktop: "prüfen",
         loadouts_instructions: "Keine Gegenstände in der Ausrüstung, klicke Gegenstände um sie hinzuzufügen, ",
@@ -1951,7 +1970,7 @@ tgd.locale = {
         loadouts_no_transfer: " wird nicht verschoben",
         loadouts_outofspace: " wird nicht verschoben, es ist kein Platz in ",
         loadouts_save: "Speichern",
-        loadouts_save_new: "Speichern As",
+        loadouts_save_new: "Speichern Als",
         loadouts_swap: " wird ausgetauscht mit ",
         loadouts_to_equip: " wird ausgerüstet.",
         loadouts_to_moveequip: " wird verschoben und ausgerüstet.",
@@ -2010,7 +2029,7 @@ tgd.locale = {
         menu_view_armor: "Rüstung",
         menu_view_by: "Anzeigen nach",
         menu_view_by_lightlvl: "Licht Level",
-        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_by_stat_points: "Komb Stat Pkte",
         menu_view_general: "Allgemein",
         menu_view_options: "Optionen Anzeigen",
         menu_view_weapons: "Waffen",
@@ -2024,9 +2043,9 @@ tgd.locale = {
         normalize_title: "Normalisieren - Gegenstände gleichmäßig über deine Charaktere verteilen",
         paypal_code: "DE",
         pick_a_set: "Bitte wähle ein Set bevor du diese Option auswählst",
-        recovery: "Erholung",
+        recovery: "Erhlg",
         str: "Stä",
-        strength: "Stärke",
+        strength: "Stä",
         text_shareurl: "Dein Inventar wird aktualisiert, indem du erneut auf URL teilen im Menü klickst.",
         this_icon: "Das Icon ist",
         tier_common: "Gewöhnlich",
@@ -2034,8 +2053,11 @@ tgd.locale = {
         tier_legendary: "Legendär",
         tier_rare: "Selten",
         tier_uncommon: "Ungewöhnlich",
+        transfer: "Übertrage",
         transfer_all: "Alle",
         transfer_amount: "Menge Übertragen",
+        transfer_ask: "Nicht erneut fragen",
+        transfer_consolidate: "Zusammenlegen (von allen Charakteren",
         transfer_one: "Eins",
         unable_create_loadout_for_type: "Es ist aktuell nicht möglich Ausrüstungen mit diesem Gegenstand zu erstellen.",
         unable_to_create_loadout_for_bucket: "Du kannst keine Ausrüstung mit mehr als 10 Gegenständen in diesem Platz erstellen: ",
@@ -2060,6 +2082,7 @@ tgd.locale = {
         cancel: "Cancelar",
         cannot_equip: "Error desconocido tratando de equipar ",
         cannot_unequip: "No mas elementos para tratar de unequip la ",
+        close_msg: "Cerrar",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Este es un projecto non-commercial dedicado para Destiny. Si usted disfurat esta aplicacion proveve una donacion para supportar los gastos.",
@@ -2082,7 +2105,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " ya esta en el ",
         loadouts_alreadythere_pt2: "'s cubo de ",
-        loadouts_close: "Cerrar",
         loadouts_delete: "Borrar",
         loadouts_desktop: "cheque",
         loadouts_instructions: "No hay articulos en loadout, haga clic en los articulos a anadir, ",
@@ -2176,8 +2198,11 @@ tgd.locale = {
         tier_legendary: "Legendario",
         tier_rare: "Raro",
         tier_uncommon: "Poco com\xFAn",
+        transfer: "Transfer",
         transfer_all: "Todos",
         transfer_amount: "Transferencia monto",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "Uno",
         unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
         unable_to_create_loadout_for_bucket: "No se puede crear un loadout con mas de 10 articulos en esta ranura: ",
@@ -2202,6 +2227,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Erreur inconnue essayant d'quiper ",
         cannot_unequip: "Peu plus d'lments pour tenter de dsquiper le ",
+        close_msg: "Fermer",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Ceci est un projet non commercial dédié au Destiny. Si vous aimez ce soft fournir un don de garder ce projet en vie et soutenir les coûts de maintenance.",
@@ -2224,7 +2250,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Fermer",
         loadouts_delete: "Rayer",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2318,8 +2343,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
+        transfer: "Transfer",
         transfer_all: "Tous",
         transfer_amount: "Transferencia monto",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "Un",
         unable_create_loadout_for_type: "Actuellement incapable de crer loadouts avec ce type d'article",
         unable_to_create_loadout_for_bucket: "Vous ne pouvez pas crer un loadout avec plus de 10 articles dans cette fente: ",
@@ -2344,6 +2372,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -2366,7 +2395,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2460,8 +2488,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -2486,6 +2517,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -2508,7 +2540,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2602,8 +2633,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -2628,6 +2662,7 @@ tgd.locale = {
         cancel: "Cancel",
         cannot_equip: "Unknown error trying to equip ",
         cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
@@ -2650,7 +2685,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: " is already in the ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Close",
         loadouts_delete: "Delete",
         loadouts_desktop: "check",
         loadouts_instructions: "No items in loadout, click items to add, ",
@@ -2744,8 +2778,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Uncommon",
-        transfer_amount: "Transfer Amount",
+        transfer: "Transfer",
         transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
         unable_unequip: "Unable to unequip ",
@@ -2770,6 +2807,7 @@ tgd.locale = {
         cancel: "Vazgeç",
         cannot_equip: "Öğeyi donanırken hata oluştu ",
         cannot_unequip: "Üzerinizdekini bırakmak için öğe yok ",
+        close_msg: "Kapat",
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Bu program tamamen ücretsiz ve Destiny ye bağışlanmış bir programdır.Herhangi bir ücret talep etmemektedir yani kelepirdir. Programımızı geliştirmek ve daha iyi bir deneyim sağlamamızı istiyorsanız,lütfen bağışlarınızı ve desteğinizi esirgemeyiniz.Teşekkürler.",
@@ -2792,7 +2830,6 @@ tgd.locale = {
         light: "Light",
         loadouts_alreadythere_pt1: "zaten bunun içerisinde ",
         loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_close: "Kapat",
         loadouts_delete: "Sil",
         loadouts_desktop: "kontrol",
         loadouts_instructions: "Teçhizatında donanmak için öğe yok.Donanmak için tıkla, ",
@@ -2886,8 +2923,11 @@ tgd.locale = {
         tier_legendary: "Legendary",
         tier_rare: "Rare",
         tier_uncommon: "Nadir",
+        transfer: "Transfer",
         transfer_all: "Hepsi",
         transfer_amount: "Aktarılacak Miktar",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
         transfer_one: "Bir Adet",
         unable_create_loadout_for_type: "Bu öğe tipi ile teçhizat oluşturmak mümkün değil.",
         unable_to_create_loadout_for_bucket: "Bu slot içerisinde 10'dan fazla öğe ile teçhizat oluşturamazsın: ",
@@ -3061,7 +3101,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.6";
+tgd.version = "3.7.6.14";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3182,35 +3222,9 @@ var Item = function(model, profile) {
     this.characterId = ko.observable(self.character.id);
     this.isFiltered = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
+    this.columnMode = ko.computed(this._columnMode, this);
+    this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-    this.columnMode = ko.computed(function() {
-        var className = "";
-        if (self.characterId() == 'Vault') {
-            className = 'col-xs-' + app.vaultColumns();
-        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
-        } else {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
-        }
-        if (self.isGridComplete) {
-            className += ' complete';
-        }
-        return className;
-    });
-    this.isEquippable = function(avatarId) {
-        return ko.pureComputed(function() {
-            //rules for how subclasses can be equipped
-            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
-            //if it's in this character and it's equippable
-            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
-        });
-    };
-    this.isStoreable = function(avatarId) {
-        return ko.pureComputed(function() {
-            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
-                (self.isEquipped() && self.character.id == avatarId);
-        });
-    };
 };
 
 Item.prototype = {
@@ -3396,6 +3410,40 @@ Item.prototype = {
             $.extend(self, itemObject);
         }
     },
+    _opacity: function() {
+        return (this.equipRequiredLevel <= this.character.level() || this.character.id == 'Vault') ? 1 : 0.3;
+    },
+    _columnMode: function() {
+        var self = this;
+        var className = "";
+        if (self.characterId() == 'Vault') {
+            className = 'col-xs-' + app.vaultColumns();
+        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
+        } else {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
+        }
+        if (self.isGridComplete) {
+            className += ' complete';
+        }
+        return className;
+    },
+    isEquippable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            //rules for how subclasses can be equipped
+            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
+            //if it's in this character and it's equippable
+            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+        });
+    },
+    isStoreable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
+                (self.isEquipped() && self.character.id == avatarId);
+        });
+    },
     clone: function() {
         var self = this;
         var model = {};
@@ -3505,7 +3553,7 @@ Item.prototype = {
                 weaponFilter = $parent.weaponFilter() == "0" || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
-                    return name.split(" ")[0];
+                    return name && name.split(" ")[0];
                 });
                 dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
@@ -4181,8 +4229,8 @@ Item.prototype = {
                                 '</div>' +
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
-                                '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
-                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
+                                '<label><input type="checkbox" id="consolidate" /> ' + app.activeText().transfer_consolidate + ' (' + itemTotal + '))</label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> ' + app.activeText().transfer_ask + ' </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -4230,18 +4278,18 @@ Item.prototype = {
                             return $content;
                         },
                         buttons: [{
-                            label: 'Transfer',
+                            label: app.activeText().transfer,
                             cssClass: 'btn-primary',
                             action: function() {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: 'Close',
+                            label: app.activeText().close,
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
                         }]
-                    })).title("Transfer " + self.description).show(true),
+                    })).title(app.activeText().transfer + " " + self.description).show(true),
                     finishTransfer = function(consolidate) {
                         if (consolidate) {
                             self.consolidate(targetCharacterId, self.description);
@@ -4289,7 +4337,7 @@ Item.prototype = {
         var getNextStack = (function() {
             var i = 0;
             var chars = _.filter(app.orderedCharacters(), function(c) {
-                return (c.id !== targetCharacterId && activeCharacters.length == 0) || (activeCharacters.indexOf(c.id) > -1);
+                return (c.id !== targetCharacterId && activeCharacters.length === 0) || (activeCharacters.indexOf(c.id) > -1);
             });
             var stacks = _.flatten(_.map(chars, function(c) {
                 return _.filter(c.items(), {
@@ -4487,12 +4535,8 @@ function Profile(character) {
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
-    this.iconBG = ko.pureComputed(function() {
-        return app.makeBackgroundUrl(self.icon(), true);
-    });
+    this.iconBG = ko.pureComputed(this._iconBG, this);
     this.container = ko.observable();
-    this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
-    this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(character);
 
@@ -4548,6 +4592,7 @@ Profile.prototype = {
         }
     },
     refresh: function(profile, event) {
+        tgd.localLog("refresh event called");
         var self = this;
         if (self.id == "Vault") {
             self._reloadBucket(self, event);
@@ -4566,9 +4611,9 @@ Profile.prototype = {
             return "";
         } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
-        } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        } else if (item.isEquipment || tgd.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
-        } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        } else if (tgd.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";
@@ -4653,6 +4698,9 @@ Profile.prototype = {
     },
     _uniqueName: function() {
         return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
+    },
+    _iconBG: function() {
+        return app.makeBackgroundUrl(this.icon(), true);
     },
     _powerLevel: function() {
         if (this.id == "Vault") return "";
@@ -4944,7 +4992,7 @@ Profile.prototype = {
         });
         var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
             var score = tgd.sum(_.map(combo.sumSet, function(value, key) {
-                var result = Math.floor(value / 60);
+                var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
             }));
             combo.sum = tgd.sum(_.values(combo.sumSet));
@@ -4955,28 +5003,58 @@ Profile.prototype = {
         var highestSetObj = sumSetValues[sumSetValues.length - 1];
         return [highestSetObj.sum, highestSetObj.set];
     },
-    findBestArmorSet: function(items) {
-        var buckets = [].concat(tgd.DestinyArmorPieces);
-        var sets = [],
+    findBestArmorSetV2: function(items) {
+        var buckets = [].concat(tgd.DestinyArmorPieces),
+            sets = [],
             bestSets = [],
             backups = [],
-            candidates;
-        var character = this;
+            groups = {},
+            candidates,
+            statGroups = {},
+            highestArmorTier = 0,
+            highestArmorValue = 0,
+            highestTierValue = 0,
+            character = this;
 
-        //console.time("finding candidates");
+
         _.each(buckets, function(bucket) {
-            candidates = _.filter(items, function(item) {
+            groups[bucket] = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
                     (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
                 );
             });
-            tgd.localLog(bucket + " total candidates " + candidates.length);
+            var csps = _.map(groups[bucket], function(item) {
+                return item.getValue("All");
+            });
+            statGroups[bucket] = {
+                max: _.max(csps),
+                min: _.min(csps)
+            };
+        });
+
+        highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
+            return stat.max;
+        }));
+        //console.log("highestArmorValue:"+highestArmorValue);
+
+        highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
+        //console.log("highestArmorTier :"+highestArmorTier );
+
+        highestTierValue = highestArmorTier * tgd.DestinySkillTier;
+        //console.log("highestTierValue :"+highestTierValue );
+
+        _.each(groups, function(items, bucketType) {
+            var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
+            //console.log(bucketType+":"+minCSP +",before:" + items.length);
+            candidates = _.filter(items, function(item) {
+                return item.getValue("All") >= minCSP;
+            });
+            //console.log("after:" + candidates.length);
             _.each(candidates, function(candidate) {
                 sets.push([candidate]);
             });
         });
 
-        tgd.localLog("total sets " + sets.length);
         backups = _.flatten(sets);
 
         _.each(sets, function(set) {
@@ -4994,7 +5072,7 @@ Profile.prototype = {
             var sums = _.map(combos, function(combo) {
                 var tmp = character.joinStats(combo);
                 var score = tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / 60);
+                    var result = Math.floor(value / tgd.DestinySkillTier);
                     return result > 5 ? 5 : result;
                 }));
                 var subScore = (tgd.sum(_.values(tmp)) / 1000);
@@ -5167,16 +5245,16 @@ Profile.prototype = {
             var bestWeaponSets;
 
             if (type == "Best") {
-                var bestSets = character.findBestArmorSet(items);
+                var bestSets = character.findBestArmorSetV2(items);
                 var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title, description = "",
+                        var title, description = "(" + combo.score.toFixed(3) + ")",
                             stats = character.joinStats(combo.set);
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
-                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
                         combo.title = $.trim(description);
@@ -5261,6 +5339,7 @@ var app = function() {
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
+    this.viewOptionsEnabled = ko.observable(false);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -5501,7 +5580,7 @@ var app = function() {
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Primary Stat and Stat Type */
             var primaryStatMin = $content.find(".destt-primary-min");
-            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() != "") {
+            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() !== "") {
                 var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
                 var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
                 $content.find(".destt-desc").before(statBlock);
@@ -5653,9 +5732,8 @@ var app = function() {
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
-        $("#viewOptions").toggle();
-        var isVisible = $("#viewOptions").is(":visible");
-        if (isVisible) {
+        self.viewOptionsEnabled(!self.viewOptionsEnabled());
+        if (self.viewOptionsEnabled()) {
             $(".character").css("margin", 'auto');
             $(".character-box").css("position", 'relative');
         } else {
@@ -5738,8 +5816,8 @@ var app = function() {
                     return item.isEquipped();
                 });
                 var weaponTypes = _.map(weaponsEquipped, function(item) {
-                    return item.typeName.split(" ")[0];
-                })
+                    return item && item.typeName && item.typeName.split(" ")[0];
+                });
                 _.each(character.armor(), function(item) {
                     var itemPerks = _.pluck(item.perks, 'name');
                     var matches = _.filter(itemPerks, function(perk) {
@@ -5761,7 +5839,7 @@ var app = function() {
             _.each(app.characters(), function(character) {
                 var damagedBasedSubclass = _.filter(character.items(), function(item) {
                     return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
-                })
+                });
                 if (damagedBasedSubclass.length > 0) {
                     damagedBasedSubclass = damagedBasedSubclass[0].damageTypeName;
                     _.each(character.armor(), function(item) {
@@ -5791,12 +5869,11 @@ var app = function() {
                     });
                 });
             }
-
-        }
-    }
+        };
+    };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
-    }
+    };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
         if (self.setFilter().length === 0) {
@@ -5820,8 +5897,8 @@ var app = function() {
     this.setArmorView = function(type) {
         return function() {
             self.armorViewBy(type);
-        }
-    }
+        };
+    };
     this.setVaultColumns = function(columns) {
         return function() {
             self.vaultColumns(columns);
@@ -6179,7 +6256,7 @@ var app = function() {
                             }
                         });
                     }
-                }
+                };
             self.bungie.account(function(result) {
                 if (result && result.data && result.data.characters) {
                     var characters = result.data.characters;
@@ -7160,8 +7237,9 @@ var app = function() {
                     cursor: "pointer",
                     appendTo: "body"
                 };
+            } else {
+                ko.bindingHandlers.sortable = ko.bindingHandlers.foreach;
             }
-
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({
@@ -7778,8 +7856,9 @@ window.$ZamTooltips = function() {
             $ZamTooltips.hide();
         };
         var win = getWindowInfo();
-        var w = container.offsetWidth,
-            h = container.offsetHeight;
+        var tempcontainer = container.getBoundingClientRect();
+        var w = tempcontainer.width,
+            h = tempcontainer.height;
         var pos;
         if (attachedTo) {
             var dim = getElementDimensions(attachedTo);
@@ -7880,7 +7959,7 @@ window.$ZamTooltips = function() {
             }
         }
         if (dim.y + h + padding.y > win.bottom && top < win.top) {
-            top = win.bottom - h - padding.y;
+            top = win.top - padding.y;
         } else if (top < win.top) {
             top = dim.y + dim.h + padding.y;
         }
