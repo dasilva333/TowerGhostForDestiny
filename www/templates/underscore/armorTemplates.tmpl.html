@@ -6,8 +6,9 @@
                     <input class="armorBuild form-control" name="armorBuild" type="radio" value="<%= build.title %>">
                 </div>
                 <div class="text-left col-lg-21">
-                    <%= build.title %>-
-                        <%= _.map(_.sortBy(build.set,'bucketType'),tgd.armorTemplateDescriptionBuilder).reverse()	%>
+                    <%= build.description %>
+                        <%= build.title %>-
+                            <%= _.map(_.sortBy(build.set,'bucketType'),tgd.armorTemplateDescriptionBuilder).reverse()	%>
                 </div>
             </div>
         </li>

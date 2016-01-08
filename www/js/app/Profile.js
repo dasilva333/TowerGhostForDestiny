@@ -745,14 +745,16 @@ Profile.prototype = {
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title, description = "(" + combo.score.toFixed(3) + ")",
-                            stats = character.joinStats(combo.set);
+                        var title = "",
+                            stats = character.joinStats(combo.set),
+                            description = "(" + combo.score.toFixed(3) + "/15.9)<em>(" + _.values(stats).join("/") + ")</em>";
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
-                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
+                            title = title + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
-                        combo.title = $.trim(description);
+                        combo.description = $.trim(description);
+                        combo.title = $.trim(title);
                         if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
                             armorBuilds[combo.title] = combo;
                         }
