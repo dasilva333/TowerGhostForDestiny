@@ -1858,6 +1858,9 @@ tgd.locale = {
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
         menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
         menu_damage: "Damage",
         menu_donate: "Donate",
         menu_filter_by: "Filter By",
@@ -2004,6 +2007,9 @@ tgd.locale = {
         menu_destinydbmode: "DestinyDB Modus",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinystatus: "DestinyStatus Bericht",
+        menu_destinytrials: "DestinyTrials Bericht",
+        menu_destinytracker: "DestinyTracker Bericht",
+        menu_destinyguardiangg: "Guardian.GG Bericht",
         menu_donate: "Spenden",
         menu_filter_by: "Filtern",
         menu_filter_by_subclass_eq: "Unterklasse ausgerüstet",
@@ -2149,6 +2155,9 @@ tgd.locale = {
         menu_destinydbmode: "DestinyDB Modo",
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinystatus: "DestinyStatus Reporte",
+        menu_destinytrials: "DestinyTrials Reporte",
+        menu_destinytracker: "DestinyTracker Reporte",
+        menu_destinyguardiangg: "Guardian.GG Reporte",
         menu_donate: "Donar",
         menu_filter_by: "Filter By",
         menu_filter_by_subclass_eq: "Subclass Equipped",
@@ -2297,6 +2306,9 @@ tgd.locale = {
         menu_destinydbmode: "DestinyDB Mode",
         menu_destinydbtooltips: "DestinyDB infobulles",
         menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
         menu_donate: "Don",
         menu_filter_by: "Filter By",
         menu_filter_by_subclass_eq: "Subclass Equipped",
@@ -2438,6 +2450,9 @@ tgd.locale = {
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
         menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
         menu_damage: "Damage",
         menu_donate: "Donate",
         menu_filter_by: "Filter By",
@@ -2583,6 +2598,9 @@ tgd.locale = {
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
         menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
         menu_damage: "Damage",
         menu_donate: "Donate",
         menu_filter_by: "Filter By",
@@ -2728,6 +2746,9 @@ tgd.locale = {
         menu_destinydbtooltips: "DestinyDB Tooltips",
         menu_destinydbmode: "DestinyDB Mode",
         menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
         menu_damage: "Damage",
         menu_donate: "Donate",
         menu_filter_by: "Filter By",
@@ -2874,6 +2895,9 @@ tgd.locale = {
         menu_destinydbmode: "DestinyDB Modu",
         menu_destinydbtooltips: "DestinyDB Araçları",
         menu_destinystatus: "DestinyStatus Raporu",
+        menu_destinytrials: "DestinyTrials Raporu",
+        menu_destinytracker: "DestinyTracker Raporu",
+        menu_destinyguardiangg: "Guardian.GG Raporu",
         menu_donate: "Bağış",
         menu_filter_by: "Filter By",
         menu_filter_by_subclass_eq: "Subclass Equipped",
@@ -5550,6 +5574,7 @@ var app = function() {
         self.showDuplicate(tgd.defaults.showDuplicate);
         self.customFilter(tgd.defaults.customFilter);
         self.showArmorPerks(tgd.defaults.showArmorPerks);
+        self.armorViewBy(tgd.defaults.armorViewBy);
         $(element.target).removeClass("active");
         return false;
     };
@@ -5865,7 +5890,7 @@ var app = function() {
             });
         }
     };
-    this.toggleArmorByClassType = function(classType) {
+    this._toggleArmorClass = function(classType) {
         self.toggleBootstrapMenu();
         self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
         self.customFilter(self.activeClasses().length > 0);
@@ -5880,7 +5905,7 @@ var app = function() {
         }
     };
     this.toggleArmorClass = function(classType) {
-        return this.toggleArmorByClassType;
+        return this._toggleArmorClass;
     };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
@@ -5900,10 +5925,26 @@ var app = function() {
             self.showMissing(!self.showMissing());
         }
     };
-    this.openStatusReport = function() {
+    this._openStatusReport = function() {
         self.toggleBootstrapMenu();
-        window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
+        var sReportURL;
+        var prefSystem = self.preferredSystem().toLowerCase();
+        var info = self.bungie.systemIds[prefSystem];
+        var type = parseInt(this);
+        if (type === 1) {
+            sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
+        } else if (type === 2) {
+            sReportURL = "http://my.destinytrialsreport.com/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+        } else if (type === 3) {
+            sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+        } else if (type === 4) {
+            sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
+        }
+        window.open(sReportURL, "_system");
         return false;
+    };
+    this.openStatusReport = function(type) {
+        return this._openStatusReport.bind(type);
     };
     this._setArmorView = function(type) {
         self.armorViewBy(type);
@@ -5997,14 +6038,15 @@ var app = function() {
     this.setWeaponFilter = function(weaponType) {
         return this._setWeaponFilter;
     };
-    this._setArmorFilter = function(armorType) {
+    this._setArmorFilter = function() {
         self.toggleBootstrapMenu();
         self.activeView(2);
+        var armorType = this;
         tgd.localLog("armor type: " + armorType);
         self.armorFilter(armorType);
     }
     this.setArmorFilter = function(armorType) {
-        return this._setArmorFilter;
+        return this._setArmorFilter.bind(armorType);
     };
     this.setGeneralFilter = function(searchType) {
         self.toggleBootstrapMenu();

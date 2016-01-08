@@ -38,7 +38,10 @@
                         <li><a href="#" data-bind="fastclick: showDonate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
                         <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
                         <li class="divider"></li>
-                        <li><a href="#" data-bind="fastclick: openStatusReport"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
+                        <li><a href="#" data-bind="fastclick: openStatusReport(1)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
+                        <li><a href="#" data-bind="fastclick: openStatusReport(2)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinytrials">DestinyTrials Report</span></a></li>
+                        <li><a href="#" data-bind="fastclick: openStatusReport(3)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinytracker">DestinyTracker Report</span></a></li>
+                        <li><a href="#" data-bind="fastclick: openStatusReport(4)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinyguardiangg">Guardian.GG Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
                         <li class="divider"></li>
                         <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">

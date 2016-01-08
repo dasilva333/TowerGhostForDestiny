@@ -210,6 +210,7 @@ var app = function() {
         self.showDuplicate(tgd.defaults.showDuplicate);
         self.customFilter(tgd.defaults.customFilter);
         self.showArmorPerks(tgd.defaults.showArmorPerks);
+        self.armorViewBy(tgd.defaults.armorViewBy);
         $(element.target).removeClass("active");
         return false;
     };
@@ -560,10 +561,26 @@ var app = function() {
             self.showMissing(!self.showMissing());
         }
     };
-    this.openStatusReport = function() {
+    this._openStatusReport = function() {
         self.toggleBootstrapMenu();
-        window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
+        var sReportURL;
+        var prefSystem = self.preferredSystem().toLowerCase();
+        var info = self.bungie.systemIds[prefSystem];
+        var type = parseInt(this);
+        if (type === 1) {
+            sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
+        } else if (type === 2) {
+            sReportURL = "http://my.destinytrialsreport.com/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+        } else if (type === 3) {
+            sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+        } else if (type === 4) {
+            sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
+        }
+        window.open(sReportURL, "_system");
         return false;
+    };
+    this.openStatusReport = function(type) {
+        return this._openStatusReport.bind(type);
     };
     this._setArmorView = function(type) {
         self.armorViewBy(type);
@@ -657,14 +674,15 @@ var app = function() {
     this.setWeaponFilter = function(weaponType) {
         return this._setWeaponFilter;
     };
-    this._setArmorFilter = function(armorType) {
+    this._setArmorFilter = function() {
         self.toggleBootstrapMenu();
         self.activeView(2);
+        var armorType = this;
         tgd.localLog("armor type: " + armorType);
         self.armorFilter(armorType);
     }
     this.setArmorFilter = function(armorType) {
-        return this._setArmorFilter;
+        return this._setArmorFilter.bind(armorType);
     };
     this.setGeneralFilter = function(searchType) {
         self.toggleBootstrapMenu();
