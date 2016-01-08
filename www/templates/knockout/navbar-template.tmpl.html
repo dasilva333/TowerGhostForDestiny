@@ -8,9 +8,9 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#" data-bind="click: showWhatsNew">TGD <strong data-bind="visible: !isMobile && !isStaticBrowser"><span class="version" data-bind="text: tgd.version"></span></strong></a>
-            <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }">
+            <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }, scrollToView: false">
                 <div class="mobile-characters">
-                    <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id, scrollToView: false" src="about:blank">
+                    <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id" src="about:blank">
                 </div>
             </div>
         </div>

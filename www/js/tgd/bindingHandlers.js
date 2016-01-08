@@ -89,19 +89,22 @@ window.ko.bindingHandlers.scrollToView = {
         Hammer(element, {
                 time: 2000
             })
-            .on("tap", function() {
-                var index = $(element).index('.mobile-characters-image'),
+            .on("tap", function(ev) {
+                var target = tgd.getEventDelegate(ev.target, ".mobile-characters");
+                var index = $(target).index(),
                     distance = $(".profile:eq(" + index + ")");
                 if (distance.length > 0) {
                     distance = distance.position().top - 50;
                     app.scrollTo(distance);
                 }
             })
-            .on("press", function() {
+            .on("press", function(ev) {
+                var target = tgd.getEventDelegate(ev.target, ".mobile-characters-image");
+                var item = ko.contextFor(target).$data;
                 $.toaster({
                     priority: 'info',
                     title: 'Info',
-                    message: app.activeText().this_icon + viewModel.uniqueName(),
+                    message: app.activeText().this_icon + item.uniqueName(),
                     settings: {
                         timeout: tgd.defaults.toastTimeout
                     }
