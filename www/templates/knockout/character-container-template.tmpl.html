@@ -1,5 +1,5 @@
 <div class="container" id="charactersContainerParent" data-bind="style: { width: ccWidth }">
-    <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0">
+    <div class="container-fluid" id="charactersContainer" style="display:none" data-bind="visible: orderedCharacters().length > 0, moveItem: true">
         <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
             <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                 <div class="character">
