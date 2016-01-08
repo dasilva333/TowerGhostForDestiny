@@ -675,7 +675,7 @@ Profile.prototype = {
             };
             //console.log(highestSet); abort;
 
-            var adhoc = new tgd.Loadout();
+            var adhoc = new Loadout();
             _.each(highestSet, function(candidate) {
                 var itemEquipped = character.itemEquipped(candidate.bucketType);
                 if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {

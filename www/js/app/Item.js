@@ -116,61 +116,55 @@ Item.prototype = {
             if (item.perks.length > 0) {
                 var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
-                if (talentGrid && talentGrid.nodes) {
-                    _.each(item.perks, function(perk) {
-                        if (perk.perkHash in window._perkDefs) {
-                            var p = window._perkDefs[perk.perkHash];
-                            //There is an inconsistency between perkNames in Destiny for example:
-                            /* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
-                               This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
-                            */
-                            var nodeIndex = talentGrid.nodes.indexOf(
-                                _.filter(talentGrid.nodes, function(o) {
-                                    return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
-                                })[0]
-                            );
-                            itemObject.perks.push({
-                                iconPath: tgd.dataDir + p.displayIcon,
-                                name: p.displayName,
-                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-                                active: perk.isActive,
-                                isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
-                            });
-                        }
-                    });
-                    var perkHashes = _.pluck(item.perks, 'perkHash'),
-                        perkNames = _.pluck(itemObject.perks, 'name'),
-                        talentPerks = {};
-                    var talentGridNodes = talentGrid.nodes;
-                    _.each(item.nodes, function(node) {
-                        if (node.isActivated && node.hidden === false) {
-                            var nodes = _.findWhere(talentGridNodes, {
-                                nodeHash: node.nodeHash
-                            });
-                            if (nodes && nodes.steps) {
-                                var perk = nodes.steps[node.stepIndex];
-                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                    (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
-                                    talentPerks[perk.nodeStepName] = {
-                                        active: true,
-                                        name: perk.nodeStepName,
-                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                        iconPath: tgd.dataDir + perk.icon,
-                                        isExclusive: -1
-                                    };
-                                }
+                _.each(item.perks, function(perk) {
+                    if (perk.perkHash in window._perkDefs) {
+                        var p = window._perkDefs[perk.perkHash];
+                        var nodeIndex = talentGrid.nodes.indexOf(
+                            _.filter(talentGrid.nodes, function(o) {
+                                return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+                            })[0]
+                        );
+                        itemObject.perks.push({
+                            iconPath: tgd.dataDir + p.displayIcon,
+                            name: p.displayName,
+                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                            active: perk.isActive,
+                            isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
+                        });
+                    }
+                });
+                var perkHashes = _.pluck(item.perks, 'perkHash'),
+                    perkNames = _.pluck(itemObject.perks, 'name'),
+                    talentPerks = {};
+                var talentGridNodes = talentGrid.nodes;
+                _.each(item.nodes, function(node) {
+                    if (node.isActivated && node.hidden === false) {
+                        var nodes = _.findWhere(talentGridNodes, {
+                            nodeHash: node.nodeHash
+                        });
+                        if (nodes && nodes.steps) {
+                            var perk = nodes.steps[node.stepIndex];
+                            if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                (perkNames.indexOf(perk.nodeStepName) == -1) &&
+                                (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
+                                talentPerks[perk.nodeStepName] = {
+                                    active: true,
+                                    name: perk.nodeStepName,
+                                    description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+                                    iconPath: tgd.dataDir + perk.icon,
+                                    isExclusive: -1
+                                };
                             }
                         }
-                    });
-                    _.each(talentPerks, function(perk) {
-                        itemObject.perks.push(perk);
-                    });
-                }
+                    }
+                });
+                _.each(talentPerks, function(perk) {
+                    itemObject.perks.push(perk);
+                });
             }
             if (item.progression) {
                 itemObject.progression = _.filter(itemObject.perks, function(perk) {
-                    return perk.active === true || (perk.active === false && perk.isExclusive === -1);
+                    return perk.active == true || (perk.active == false && perk.isExclusive == -1)
                 }).length > 0;
             }
             if (item.stats.length > 0) {
@@ -184,11 +178,7 @@ Item.prototype = {
             }
             if (item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    var result = 0;
-                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
-                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
-                    }
-                    return result;
+                    return objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
                 })) * 100).toFixed(0) + "%";
                 var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
                 itemObject.primaryStat(primaryStat);
@@ -319,7 +309,7 @@ Item.prototype = {
                 weaponFilter = $parent.weaponFilter() == "0" || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
-                    return name && name.split(" ")[0];
+                    return name.split(" ")[0];
                 });
                 dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
@@ -829,7 +819,7 @@ Item.prototype = {
                 tgd.localLog(self._id + " error code 1642 no item slots using adhoc method for " + self.description);
                 x._reloadBucket(self.bucketType, undefined, function() {
                     y._reloadBucket(self.bucketType, undefined, function() {
-                        var adhoc = new tgd.Loadout();
+                        var adhoc = new Loadout();
                         if (self._id > 0) {
                             adhoc.addUniqueItem({
                                 id: self._id,
@@ -1059,7 +1049,7 @@ Item.prototype = {
                 }, 500);
             }
         } else {
-            var adhoc = new tgd.Loadout();
+            var adhoc = new Loadout();
             adhoc.addUniqueItem({
                 id: self._id,
                 bucketType: self.bucketType,

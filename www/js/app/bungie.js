@@ -37,7 +37,7 @@ var bungie = (function(cookieString, complete) {
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
             while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
         }
         //tgd.localLog("found no match");
         return "";
@@ -49,7 +49,7 @@ var bungie = (function(cookieString, complete) {
         event.initCustomEvent("request-cookie-from-ps", true, true, {});
         document.documentElement.dispatchEvent(event);
         self.requestCookieCB = callback;
-    };
+    }
 
     this.getCookie = function(name, callback) {
         if (isChrome) {
@@ -68,7 +68,7 @@ var bungie = (function(cookieString, complete) {
         } else {
             callback(readCookie('bungled'));
         }
-    };
+    }
 
     this.retryRequest = function(opts) {
         if (opts.retries) {
@@ -88,7 +88,7 @@ var bungie = (function(cookieString, complete) {
                 self.request(opts);
             }, 2000);
         }
-    };
+    }
 
     this.request = function(opts) {
         if (opts.route.indexOf("http") == -1)
@@ -110,7 +110,7 @@ var bungie = (function(cookieString, complete) {
                 /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload,
 				IOS 9 detection has provded difficult, disabling this for all IOS users until I can figure out a better fix
 				*/
-                if (isMobile && typeof cookieString == "string" && isIOS === false) {
+                if (isMobile && typeof cookieString == "string" && isIOS == false) {
                     _.each(cookieString.split(";"), function(cookie) {
                         try {
                             xhr.setRequestHeader('Cookie', cookie);
@@ -141,7 +141,7 @@ var bungie = (function(cookieString, complete) {
                 }
             }
         });
-    };
+    }
 
     this.vault = function(callback) {
         self.request({
@@ -149,7 +149,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
+    }
 
     this.logout = function(callback) {
         self.request({
@@ -157,8 +157,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
+    }
     this.login = function(callback) {
         tgd.localLog("bungie.login");
         self.request({
@@ -166,29 +165,25 @@ var bungie = (function(cookieString, complete) {
             method: "GET",
             complete: callback
         });
-    };
-
+    }
     this.getUrl = function() {
         return url;
-    };
+    }
 
     this.setsystem = function(type) {
         active = self.systemIds.xbl;
         if (type === 'PSN')
             active = self.systemIds.psn;
-    };
-
+    }
     this.getMemberId = function() {
         return membershipId;
-    };
-
+    }
     this.gamertag = function() {
         return active ? active.id : null;
-    };
-
+    }
     this.system = function() {
         return systemIds;
-    };
+    }
 
     this.user = function(callback) {
         self.request({
@@ -201,10 +196,10 @@ var bungie = (function(cookieString, complete) {
                         code: response.ErrorCode
                     });
                     return;
-                } else if (typeof res == "undefined") {
+                } else if (res == undefined) {
                     callback({
                         error: 'no response'
-                    });
+                    })
                     return;
                 }
 
@@ -225,8 +220,7 @@ var bungie = (function(cookieString, complete) {
                 callback(res);
             }
         });
-    };
-
+    }
     this.account = function(callback) {
         self.request({
             route: '/Destiny/' + active.type +
@@ -235,8 +229,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
+    }
     this.setlockstate = function(characterId, itemId, state, callback) {
         self.request({
             route: '/Destiny/SetLockState/',
@@ -249,8 +242,7 @@ var bungie = (function(cookieString, complete) {
             },
             complete: callback
         });
-    };
-
+    }
     this.transfer = function(characterId, itemId, itemHash, amount, toVault, callback) {
         self.request({
             route: '/Destiny/TransferItem/',
@@ -265,8 +257,7 @@ var bungie = (function(cookieString, complete) {
             },
             complete: callback
         });
-    };
-
+    }
     this.equip = function(characterId, itemId, callback) {
         self.request({
             route: '/Destiny/EquipItem/',
@@ -277,8 +268,8 @@ var bungie = (function(cookieString, complete) {
                 itemId: itemId
             },
             complete: callback
-        });
-    };
+        })
+    }
 
     this.getAccountSummary = function(callback) {
         self.request({
@@ -288,8 +279,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
+    }
     this.getItemDetail = function(characterId, instanceId, callback) {
         self.request({
             route: '/Destiny/' + active.type +
@@ -299,8 +289,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
+    }
     this.inventory = function(characterId, callback) {
         self.request({
             route: '/Destiny/' + active.type +
@@ -310,8 +299,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
+    }
     this.character = function(characterId, callback) {
         self.request({
             route: '/Destiny/' + active.type +
@@ -320,8 +308,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
+    }
     this.search = function(activeSystem, callback) {
         this.setsystem(activeSystem);
         if (active && active.type) {
@@ -337,7 +324,7 @@ var bungie = (function(cookieString, complete) {
                         } else {
                             callback({
                                 error: true
-                            });
+                            })
                             return;
                         }
 
@@ -347,7 +334,7 @@ var bungie = (function(cookieString, complete) {
                 self.account(callback);
             }
         }
-    };
+    }
 
     this.account = function(callback) {
         tgd.localLog(active.type + " log request to " + JSON.stringify(active.membership));
@@ -357,7 +344,7 @@ var bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
+    }
 
     this.flattenItemArray = function(buckets) {
         var items = [];
@@ -378,7 +365,7 @@ var bungie = (function(cookieString, complete) {
             });
         }
         return items;
-    };
+    }
 
     this.init = function() {
         if (!isChrome && !isMobile) {
@@ -401,7 +388,7 @@ var bungie = (function(cookieString, complete) {
                 complete(token);
             });
         });
-    };
+    }
 
 
     this.init();
