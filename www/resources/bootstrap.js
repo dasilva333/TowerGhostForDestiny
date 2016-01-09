@@ -44,10 +44,28 @@ if (isFirefox) {
         this.id = window.ffRequestId++;
         this.withCredentials = true;
 
-        this.open = function(type, url, async, username, password) {
+        this.processReply = function(event) {
+            var xhr = event.detail;
+            if (xhr.id == self.id) {
+                tgd.localLog("xhr-reply! " + self.request.url);
+                self.readyState = xhr.readyState;
+                self.status = xhr.status;
+                self.statusText = xhr.statusText;
+                self.responseText = xhr.responseText;
+                self.onreadystatechange();
+                window.removeEventListener("xhr-reply", self.processReply);
+            }
+        }
+
+        window.addEventListener("xhr-reply", self.processReply, false);
+        return self;
+    };
+
+    ffXHR.prototype = {
+        open: function(type, url, async, username, password) {
             tgd.localLog("opening a new request");
-            self.request = {
-                id: self.id,
+            this.request = {
+                id: this.id,
                 type: type,
                 url: url,
                 async: async,
@@ -55,20 +73,21 @@ if (isFirefox) {
                 password: password,
                 headers: []
             };
-        };
-        this.abort = function() {
+        },
+        abort: function() {
 
-        };
-        this.setRequestHeader = function(key, value) {
-            self.request.headers.push({
+        },
+        setRequestHeader: function(key, value) {
+            this.request.headers.push({
                 key: key,
                 value: value
             });
-        };
-        this.getAllResponseHeaders = function() {
+        },
+        getAllResponseHeaders: function() {
             return "";
-        };
-        this.send = function(payload) {
+        },
+        send: function(payload) {
+            var self = this;
             var send = function() {
                 if (payload)
                     self.request.payload = payload;
@@ -88,27 +107,15 @@ if (isFirefox) {
                     }
                 }, 1000);
             }
-        };
-        this.onreadystatechange = function() {
+        },
+        onreadystatechange: function() {
             //console.log("state changed");
-        };
-        window.addEventListener("xhr-reply", function(event) {
-            tgd.localLog("xhr-reply! " + self.request.url);
-            var xhr = event.detail;
-            if (xhr.id == self.id) {
-                self.readyState = xhr.readyState;
-                self.status = xhr.status;
-                self.statusText = xhr.statusText;
-                self.responseText = xhr.responseText;
-                self.onreadystatechange();
-            }
-        }, false);
-        return self;
-    };
+        }
+    }
 
     window.XMLHttpRequest = function() {
         return new ffXHR();
-    };;
+    };
     tgd.localLog("init firefox xhr");
 }
 /** 
