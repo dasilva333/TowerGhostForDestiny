@@ -32,7 +32,8 @@
             localRoot: 'app',
             serverRoot: serverRoot,
             mode: 'mirror',
-            cacheBuster: true
+            cacheBuster: true,
+            checkTimeout: 30 * 1000
         });
 
         // Check > Download > Update

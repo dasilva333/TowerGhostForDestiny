@@ -29,9 +29,9 @@
                             <div class="col-xs-13 text-right">
                                 <!-- ko foreach: { data: tgd.DestinyArmorStats, as: 'stat' } -->
                                 <div class="col-xs-24">
-                                    <span class="font-bold" data-bind="text: $root.activeText()[stat.statName.toLowerCase()].substring(0,3)"></span>
+                                    <span class="font-bold" data-bind="text: stat.statName.toLowerCase().substring(0,3)"></span>
                                     <span data-bind="text: character.equippedStats()[stat.statName]"></span>
-                                    <img data-bind="attr: { src: 'assets/' + stat.statName.toLowerCase() + '.png' }">
+                                    <img data-bind="attr: { src: 'assets/' + stat.statName + '.png' }, event: { error: function(){ $($element).remove() } }">
                                     <span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
                                 </div>
                                 <!--/ko  -->
