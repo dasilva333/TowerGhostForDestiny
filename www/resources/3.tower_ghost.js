@@ -5951,12 +5951,11 @@ var app = function() {
         }
     };
     this.openStatusReport = function(type) {
-        return function(type) {
+        return function() {
             self.toggleBootstrapMenu();
             var sReportURL;
             var prefSystem = self.preferredSystem().toLowerCase();
             var info = self.bungie.systemIds[prefSystem];
-            var type = parseInt(this);
             if (type === 1) {
                 sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
             } else if (type === 2) {
