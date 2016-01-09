@@ -593,13 +593,12 @@ tgd.bungie = (function(cookieString, complete) {
                 'x-csrf': self.bungled
             },
             beforeSend: function(xhr) {
-                /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload,
-				IOS 9 detection has provded difficult, disabling this for all IOS users until I can figure out a better fix
-				*/
-                if (isMobile && typeof cookieString == "string" && isIOS === false) {
+                /* this cookie needs to be trimmed in order to work properly on iPad (https://forum.ionicframework.com/t/solved-ios9-fails-with-setrequestheader-native-with-custom-headers-in-http-service/32399)*/
+                if (isMobile && typeof cookieString == "string") {
                     _.each(cookieString.split(";"), function(cookie) {
                         try {
-                            xhr.setRequestHeader('Cookie', cookie);
+                            var trimCookie = $.trim(cookie);
+                            xhr.setRequestHeader('Cookie', trimCookie);
                         } catch (e) {}
                     });
                 }
@@ -3135,7 +3134,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.7.3";
+tgd.version = "3.7.8.0";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
