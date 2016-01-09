@@ -3133,7 +3133,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.6.14";
+tgd.version = "3.7.7.1";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5925,26 +5925,25 @@ var app = function() {
             self.showMissing(!self.showMissing());
         }
     };
-    this._openStatusReport = function() {
-        self.toggleBootstrapMenu();
-        var sReportURL;
-        var prefSystem = self.preferredSystem().toLowerCase();
-        var info = self.bungie.systemIds[prefSystem];
-        var type = parseInt(this);
-        if (type === 1) {
-            sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
-        } else if (type === 2) {
-            sReportURL = "http://my.destinytrialsreport.com/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
-        } else if (type === 3) {
-            sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
-        } else if (type === 4) {
-            sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
-        }
-        window.open(sReportURL, "_system");
-        return false;
-    };
     this.openStatusReport = function(type) {
-        return this._openStatusReport.bind(type);
+        return function(type) {
+            self.toggleBootstrapMenu();
+            var sReportURL;
+            var prefSystem = self.preferredSystem().toLowerCase();
+            var info = self.bungie.systemIds[prefSystem];
+            var type = parseInt(this);
+            if (type === 1) {
+                sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
+            } else if (type === 2) {
+                sReportURL = "http://my.destinytrialsreport.com/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+            } else if (type === 3) {
+                sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+            } else if (type === 4) {
+                sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
+            }
+            window.open(sReportURL, "_system");
+            return false;
+        }
     };
     this._setArmorView = function(type) {
         self.armorViewBy(type);
@@ -6048,7 +6047,7 @@ var app = function() {
     this.setArmorFilter = function(armorType) {
         return this._setArmorFilter.bind(armorType);
     };
-    this.setGeneralFilter = function(searchType) {
+    this._setGeneralFilter = function(searchType) {
         self.toggleBootstrapMenu();
         if (searchType != "Engram") self.activeView(3);
         self.generalFilter(searchType);
@@ -6500,62 +6499,60 @@ var app = function() {
         } catch (e) {}
     };
 
-    this._openBungieWindow = function(type) {
-        var loop;
-        if (isNWJS) {
-            var gui = require('nw.gui');
-            var mainwin = gui.Window.get();
-            window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
-        } else if (isChrome || isMobile) {
-            window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
-        } else {
-            //window.ref = window.open('about:blank');
-            //window.ref.opener = null;
-            window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
-        }
-        if (isMobile) {
-            ref.addEventListener('loadstop', function(event) {
-                self.readBungieCookie(ref, loop);
-            });
-            ref.addEventListener('exit', function() {
-                if (_.isEmpty(self.bungie_cookies)) {
-                    self.readBungieCookie(ref, loop);
-                }
-            });
-        } else if (isNWJS) {
-            window.ref.on('loaded', function() {
-                location.reload();
-            });
-        } else {
-            clearInterval(loop);
-            loop = setInterval(function() {
-                if (window.ref.closed) {
-                    clearInterval(loop);
-                    if (!isMobile && !isChrome) {
-                        $.toaster({
-                            priority: 'success',
-                            title: 'Loading',
-                            message: "Please wait while Firefox acquires your arsenal",
-                            settings: {
-                                timeout: tgd.defaults.toastTimeout
-                            }
-                        });
-                        var event = new CustomEvent("request-cookie-from-ps", {});
-                        window.dispatchEvent(event);
-                        setTimeout(function() {
-                            tgd.localLog("loadData");
-                            self.loadData();
-                        }, 5000);
-                    } else {
-                        self.loadData();
-                    }
-                }
-            }, 100);
-        }
-    };
-
     this.openBungieWindow = function(type) {
-        return this._openBungieWindow;
+        return function() {
+            var loop;
+            if (isNWJS) {
+                var gui = require('nw.gui');
+                var mainwin = gui.Window.get();
+                window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
+            } else if (isChrome || isMobile) {
+                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
+            } else {
+                //window.ref = window.open('about:blank');
+                //window.ref.opener = null;
+                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
+            }
+            if (isMobile) {
+                ref.addEventListener('loadstop', function(event) {
+                    self.readBungieCookie(ref, loop);
+                });
+                ref.addEventListener('exit', function() {
+                    if (_.isEmpty(self.bungie_cookies)) {
+                        self.readBungieCookie(ref, loop);
+                    }
+                });
+            } else if (isNWJS) {
+                window.ref.on('loaded', function() {
+                    location.reload();
+                });
+            } else {
+                clearInterval(loop);
+                loop = setInterval(function() {
+                    if (window.ref.closed) {
+                        clearInterval(loop);
+                        if (!isMobile && !isChrome) {
+                            $.toaster({
+                                priority: 'success',
+                                title: 'Loading',
+                                message: "Please wait while Firefox acquires your arsenal",
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
+                            });
+                            var event = new CustomEvent("request-cookie-from-ps", {});
+                            window.dispatchEvent(event);
+                            setTimeout(function() {
+                                tgd.localLog("loadData");
+                                self.loadData();
+                            }, 5000);
+                        } else {
+                            self.loadData();
+                        }
+                    }
+                }, 100);
+            }
+        };
     };
 
     this.scrollTo = function(distance, callback) {
