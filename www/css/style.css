@@ -6,7 +6,7 @@
 	-ms-user-select: none;
 	user-select: none;
 }
-
+.font-bold {font-weight: bold;}
 input
 {
 	-webkit-user-select: auto !important;
@@ -416,12 +416,11 @@ input
 }
 .character-box .stats div {
 	font-size: 15px;
-    padding-top: 15px;
+    padding-top: 10px;
     padding-bottom: 10px;
 }
 .character-box .stats span {
 	font-size: 16px;
-    font-weight: bold;
 }
 .character-box .stats img {
 	height: 24px;

@@ -526,22 +526,22 @@ var app = function() {
             });
         }
     };
-    this._toggleArmorClass = function(classType) {
+    this.toggleArmorClass = function() {
+        var classType = this.toString();
         self.toggleBootstrapMenu();
         self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
         self.customFilter(self.activeClasses().length > 0);
         if (self.customFilter()) {
             self.activeView(2);
-            var classTypeNum = _.values(tgd.DestinyClass).indexOf(classType);
+            var classTypeNums = _.map(self.activeClasses(), function(className) {
+                return _.values(tgd.DestinyClass).indexOf(className);
+            });;
             _.each(app.characters(), function(character) {
                 _.each(character.armor(), function(item) {
-                    item.isFiltered(item.classType == classTypeNum);
+                    item.isFiltered(classTypeNums.indexOf(item.classType) > -1);
                 });
             });
         }
-    };
-    this.toggleArmorClass = function(classType) {
-        return this._toggleArmorClass;
     };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
@@ -581,25 +581,19 @@ var app = function() {
             return false;
         }
     };
-    this._setArmorView = function(type) {
+    this.setArmorView = function(type) {
+        var type = this.toString();
         self.armorViewBy(type);
     };
-    this.setArmorView = function(type) {
-        return this._setArmorView;
-    };
-    this._setVaultColumns = function(columns) {
+    this.setVaultColumns = function(columns) {
+        var columns = this.toString();
         self.vaultColumns(columns);
         self.redraw();
     };
-    this.setVaultColumns = function(columns) {
-        return this._setVaultColumns;
-    };
-    this._setVaultWidth = function(width) {
+    this.setVaultWidth = function() {
+        var width = this.toString();
         self.vaultWidth(width);
         self.redraw();
-    };
-    this.setVaultWidth = function(width) {
-        return this._setVaultWidth;
     };
     this.setCCWidth = function(model, evt) {
         var width = $(evt.target).text();
@@ -659,9 +653,10 @@ var app = function() {
             self.dmgFilter.remove(dmgType);
         }
     };
-    this.setTierFilter = function(model, event) {
+    this.setTierFilter = function() {
+        var tier = this.toString();
         self.toggleBootstrapMenu();
-        self.tierFilter(model.tier);
+        self.tierFilter(tier);
     };
     this._setWeaponFilter = function(weaponType) {
         self.toggleBootstrapMenu();
@@ -683,13 +678,11 @@ var app = function() {
     this.setArmorFilter = function(armorType) {
         return this._setArmorFilter.bind(armorType);
     };
-    this._setGeneralFilter = function(searchType) {
+    this.setGeneralFilter = function() {
+        var searchType = this.toString();
         self.toggleBootstrapMenu();
         if (searchType != "Engram") self.activeView(3);
         self.generalFilter(searchType);
-    }
-    this.setGeneralFilter = function(searchType) {
-        return this._setGeneralFilter;
     };
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -1634,7 +1627,8 @@ var app = function() {
         })).title(title).show(true);
     };
 
-    this._setVaultTo = function(pos) {
+    this.setVaultTo = function() {
+        var pos = this.toString();
         var vault = _.findWhere(self.characters(), {
             id: "Vault"
         });
@@ -1644,10 +1638,6 @@ var app = function() {
         } else {
             return false;
         }
-    }
-
-    this.setVaultTo = function(pos) {
-        return this._setVaultTo;
     };
 
     this.isVaultAt = function(pos) {
@@ -1693,13 +1683,10 @@ var app = function() {
         return ko.pureComputed(self._columnMode, character);
     };
 
-    this._setColumns = function(type, input) {
+    this.setColumns = function(input, ctx, evt) {
+        var type = this.toString();
         self[type + "Column"](tgd.bootstrapGridColumns / input.value);
         self.redraw();
-    };
-
-    this.setColumns = function(type, input) {
-        return this._setColumns;
     };
 
     this._btnActive = function() {
@@ -1961,6 +1948,9 @@ var app = function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.collectionSets = _.sortBy(Object.keys(_collections));
+        tgd.DestinyArmorStats = _.filter(_statDefs, function(stat) {
+            return tgd.DestinyArmorStats.indexOf(stat.statHash) > -1;
+        });
         if (!window.isStaticBrowser) {
             $(document).on("click", "a[target='_system']", function() {
                 window.open(this.href, "_system");

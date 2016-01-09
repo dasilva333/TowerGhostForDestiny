@@ -27,6 +27,10 @@ function Profile(character) {
     this.lostItems = ko.pureComputed(this._lostItems, this);
     this.equippedGear = ko.pureComputed(this._equippedGear, this);
     this.equippedStats = ko.pureComputed(this._equippedStats, this);
+    this.sumCSP = ko.pureComputed(this._sumCSP, this);
+    this.equippedSP = ko.pureComputed(this._equippedSP, this);
+    this.equippedTier = ko.pureComputed(this._equippedTier, this);
+    this.tierCSP = ko.pureComputed(this._tierCSP, this);
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
@@ -187,6 +191,26 @@ Profile.prototype = {
     },
     _equippedStats: function() {
         return this.joinStats(this.equippedGear());
+    },
+    _equippedSP: function() {
+        return _.filter(this.equippedStats(), function(value, stat) {
+            return _.where(tgd.DestinyArmorStats, {
+                statName: stat
+            }).length > 0;
+        });
+    },
+    _sumCSP: function() {
+        return tgd.sum(this.equippedSP());
+    },
+    _equippedTier: function() {
+        var theoreticalTier = Math.floor(this.sumCSP() / tgd.DestinySkillTier);
+        var effectiveTier = tgd.sum(_.map(this.equippedSP(), function(value) {
+            return Math.floor(value / tgd.DestinySkillTier);
+        }));
+        return effectiveTier + "/" + theoreticalTier;
+    },
+    _tierCSP: function() {
+        return this.equippedTier().split("/")[1] * tgd.DestinySkillTier;
     },
     _classLetter: function() {
         return this.classType()[0].toUpperCase();

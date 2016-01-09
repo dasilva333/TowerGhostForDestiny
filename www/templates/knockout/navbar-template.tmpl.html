@@ -193,11 +193,12 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: function(){ $root.setTierFilter({ tier: 0 }) }" value="0">
-                            <a href="#"><i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>									<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
+                        <li data-bind="css: tierFilter() == $($element).attr('value') ? 'active' : '', fastclick: $root.setTierFilter.bind(0)">
+                            <a href="#"><i class="fa" data-bind="css: tierFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
+							<span data-bind="text: $root.activeText().menu_all">All</span>								</a>
                         </li>
                         <!-- ko foreach: { data: tierTypes, as: 'tierType' } -->
-                        <li data-bind="css: $parent.tierFilter() == tierType.tier ? 'active' : '', fastclick: $parent.setTierFilter, value: tierType.tier" value="0">
+                        <li data-bind="css: $parent.tierFilter() == tierType.tier ? 'active' : '', fastclick: $parent.setTierFilter.bind(tierType.tier)">
                             <a href="#"><i class="fa" data-bind="css: $parent.tierFilter() == tierType.tier ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: tierType.name"></span></a>
                         </li>
                         <!--/ko  -->
@@ -312,7 +313,7 @@
                             </strong>
                         </li>
                         <!-- ko foreach: { data: _.values(tgd.DestinyClass), as: 'classType' } -->
-                        <li data-bind="css: $parent.showArmorClass(classType) ? 'active' : '', fastclick: $parent.toggleArmorClass(classType)">
+                        <li data-bind="css: $parent.showArmorClass(classType) ? 'active' : '', fastclick: $parent.toggleArmorClass.bind(classType)">
                             <a href="#">
                                 <i class="fa" data-bind="css: $parent.showArmorClass(classType) ? 'fa-check-square' : 'fa-square'"></i>
                                 <span data-bind="text: classType"></span>
@@ -325,13 +326,13 @@
                                 <span data-bind="text: $root.activeText().menu_view_by">View By</span>
                             </strong>
                         </li>
-                        <li data-bind="css: armorViewBy() == 'Light' ? 'active' : '', fastclick: setArmorView('Light')">
+                        <li data-bind="css: armorViewBy() == 'Light' ? 'active' : '', fastclick: setArmorView.bind('Light')">
                             <a href="#">
                                 <i class="fa" data-bind="css: armorViewBy() == 'Light' ? 'fa-check-square' : 'fa-square'"></i>
                                 <span data-bind="text: $root.activeText().menu_view_by_lightlvl">Light Level</span>
                             </a>
                         </li>
-                        <li data-bind="css: armorViewBy() == 'All' ? 'active' : '', fastclick: setArmorView('All')">
+                        <li data-bind="css: armorViewBy() == 'All' ? 'active' : '', fastclick: setArmorView.bind('All')">
                             <a href="#">
                                 <i class="fa" data-bind="css: armorViewBy() == 'All' ? 'fa-check-square' : 'fa-square'"></i>
                                 <span data-bind="text: $root.activeText().menu_view_by_stat_points">Combined Stat Points</span>
@@ -345,14 +346,14 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <li data-bind="css: generalFilter() == $($element).attr('value') ? 'active' : '', fastclick: setGeneralFilter(0)">
+                        <li data-bind="css: generalFilter() == $($element).attr('value') ? 'active' : '', fastclick: setGeneralFilter.bind(0)">
                             <a href="#">
                                 <i class="fa" data-bind="css: generalFilter() == 0 ? 'fa-check-square' : 'fa-square'"></i>
                                 <span data-bind="text: $root.activeText().menu_all">All</span>
                             </a>
                         </li>
                         <!-- ko foreach: { data: tgd.DestinyGeneralSearches, as: 'searchType' } -->
-                        <li data-bind="css: $parent.generalFilter() == searchType ? 'active' : '', fastclick: $parent.setGeneralFilter(searchType)">
+                        <li data-bind="css: $parent.generalFilter() == searchType ? 'active' : '', fastclick: $parent.setGeneralFilter.bind(searchType)">
                             <a href="#"><i class="fa" data-bind="css: $parent.generalFilter() == searchType ? 'fa-check-square' : 'fa-square'"></i>
 									<span data-bind="text: searchType"></span>
 								</a>

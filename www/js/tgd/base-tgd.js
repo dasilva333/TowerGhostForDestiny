@@ -25,6 +25,7 @@ tgd.invisibleItemsHelper = [2910404660, 2537120989];
 tgd.itemsNotIndexed = [];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
+tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
 tgd.DestinyNonUniqueBuckets = ["Consumables", "Materials"];

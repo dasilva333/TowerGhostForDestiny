@@ -12,32 +12,36 @@
                         </div>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
-                            <div class="col-xs-10">
-                                <span data-bind="text: $root.activeText().armor">Armor</span>
-                                <span data-bind="text: STAT_ARMOR.value"></span>
+                            <div class="col-xs-11 text-left">
+                                <div class="col-xs-24">
+                                    <span class="font-bold" data-bind="text: $root.activeText().armor">Armor</span>
+                                    <span data-bind="text: STAT_ARMOR.value"></span>
+                                </div>
+                                <div class="col-xs-24">
+                                    <span class="font-bold" data-bind="text: $root.activeText().agility">Agility</span>
+                                    <span data-bind="text: STAT_AGILITY.value"></span>
+                                </div>
+                                <div class="col-xs-24">
+                                    <span class="font-bold" data-bind="text: $root.activeText().recovery">Recovery</span>
+                                    <span data-bind="text: STAT_RECOVERY.value"></span>
+                                </div>
                             </div>
-                            <div class="col-xs-14 text-right">
-                                <span data-bind="text: $root.activeText().intellect">Intellect</span>
-                                <span data-bind="text: character.equippedStats()['Intellect']"></span>
-                                <img src="assets/intellect.png">
+                            <div class="col-xs-13 text-right">
+                                <!-- ko foreach: { data: tgd.DestinyArmorStats, as: 'stat' } -->
+                                <div class="col-xs-24">
+                                    <span class="font-bold" data-bind="text: $root.activeText()[stat.statName.toLowerCase()].substring(0,3)"></span>
+                                    <span data-bind="text: character.equippedStats()[stat.statName]"></span>
+                                    <img data-bind="attr: { src: 'assets/' + stat.statName.toLowerCase() + '.png' }">
+                                    <span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+                                </div>
+                                <!--/ko  -->
                             </div>
-                            <div class="col-xs-8">
-                                <span data-bind="text: $root.activeText().agility">Agility</span>
-                                <span data-bind="text: STAT_AGILITY.value"></span>
-                            </div>
-                            <div class="col-xs-16 text-right">
-                                <span data-bind="text: $root.activeText().discipline">Discipline</span>
-                                <span data-bind="text: character.equippedStats()['Discipline']"></span>
-                                <img src="assets/discipline.png">
-                            </div>
-                            <div class="col-xs-10">
-                                <span data-bind="text: $root.activeText().recovery">Recovery</span>
-                                <span data-bind="text: STAT_RECOVERY.value"></span>
-                            </div>
-                            <div class="col-xs-14 text-right">
-                                <span data-bind="text: $root.activeText().strength">Strength</span>
-                                <span data-bind="text: character.equippedStats()['Strength']"></span>
-                                <img src="assets/strength.png">
+                            <div class="col-xs-24 text-center" style="padding-top:1px; padding-bottom:1px;">
+                                <span class="font-bold">Tier</span>:
+                                <span data-bind="text: character.equippedTier" title="Effective Tier / Theoretical Tier"></span>
+                                (
+                                <span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span> /
+                                <span data-bind="text: character.tierCSP" title="Stat Points needed to reach Theoretical Tier"></span> )
                             </div>
                             <div class="col-xs-24 text-center">
                                 <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
