@@ -1,28 +1,3 @@
-window.ua = navigator.userAgent;
-window.isNWJS = (typeof require != "undefined");
-window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
-window.isFirefox = (/firefox/i.test(ua));
-window.isIOS = (/ios|iphone|ipod|ipad/i.test(ua));
-window.isiPad = (/ipad/i.test(ua));
-window.isAndroid = (/android/i.test(ua));
-window.isWindowsPhone = (/iemobile/i.test(ua));
-window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
-window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
-window.isStaticBrowser = location.protocol.indexOf("http") > -1 && location.href.indexOf("towerghostfordestiny.com/firefox") == -1;
-if (window.isStaticBrowser) {
-    window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
-}
-if (typeof window.tgd == "undefined") window.tgd = {};
-if (typeof tgd.dataDir == "undefined") tgd.dataDir = "data";
-if (isWindowsPhone) {
-    window.requestFileSystem = function() {};
-}
-tgd.localLogging = location.href.indexOf("debug") > -1;
-tgd.localLog = function(msg) {
-    if (tgd.localLogging) {
-        console.log(msg);
-    }
-};
 //TODO find all the remote http variables and have them use a single variable
 tgd.remoteServer = "https://towerghostfordestiny.com";
 tgd.remoteImagePath = tgd.remoteServer + "/www/";
@@ -3000,117 +2975,6 @@ tgd.StoreObj = function(key, compare, writeCallback) {
         if (writeCallback) writeCallback(newValue);
     };
 };
-(function() {
-
-    tgd.localLog("init auto updates");
-    try {
-
-        // Check for Cordova
-        var isCordova = typeof cordova !== 'undefined',
-            // CordovaPromiseFS
-            fs,
-            // CordovaFileLoader
-            loader,
-            // script-tag...
-            script,
-            // ...that contains the serverRoot
-            serverRoot;
-
-        // Get serverRoot from script tag.
-        script = document.querySelector('script[server]');
-        if (script) serverRoot = script.getAttribute('server');
-        if (!serverRoot) {
-            throw new Error('Add a "server" attribute to the bootstrap.js script!');
-        }
-
-        // Initialize filesystem and loader
-        fs = new CordovaPromiseFS({
-            persistent: isCordova || isFirefox, // Chrome should use temporary storage.
-            Promise: Promise
-        });
-
-        tgd.loader = new CordovaAppLoader({
-            fs: fs,
-            localRoot: 'app',
-            serverRoot: serverRoot,
-            mode: 'mirror',
-            cacheBuster: true,
-            checkTimeout: 30 * 1000
-        });
-
-        // Check > Download > Update
-        tgd.checkUpdates = function() {
-            $.toaster({
-                priority: 'info',
-                title: 'Info',
-                message: "Checking for updates",
-                settings: {
-                    timeout: tgd.defaults.toastTimeout
-                }
-            });
-            tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.appLocale || localStorage.locale || "en"))
-                .then(function(updateAvailable) {
-                    if (updateAvailable) {
-                        $.toaster({
-                            priority: 'info',
-                            title: 'Info',
-                            message: "Downloading updates",
-                            settings: {
-                                timeout: tgd.defaults.toastTimeout
-                            }
-                        });
-                        tgd.localLog("Downloading auto updates");
-                        $("#tgdLoader").show();
-                    }
-                    return tgd.loader.download(function(progress) {
-                        $("#tgdLoaderProgress").width((progress.percentage * 100).toFixed(0) + "%");
-                    });
-                })
-                .catch(function(e) {
-                    $("#tgdLoader").hide();
-                    $.toaster({
-                        priority: 'danger',
-                        title: 'Error',
-                        message: "Problem checking for updates: " + e.message,
-                        settings: {
-                            timeout: tgd.defaults.toastTimeout
-                        }
-                    });
-                })
-                .then(function(manifest) {
-                    $("#tgdLoader").hide();
-                    if (manifest) {
-                        $.toaster({
-                            priority: 'info',
-                            title: 'Info',
-                            message: "Installing updates",
-                            settings: {
-                                timeout: tgd.defaults.toastTimeout
-                            }
-                        });
-                    }
-                    return tgd.loader.update();
-                }, function(err) {
-                    $("#tgdLoader").hide();
-                    $.toaster({
-                        priority: 'danger',
-                        title: 'Error',
-                        message: 'Auto-update error:' + err,
-                        settings: {
-                            timeout: tgd.defaults.toastTimeout
-                        }
-                    });
-                });
-        };
-
-        if (localStorage.autoUpdates == "true" || (tgd.defaults.autoUpdates == "true" && _.isEmpty(localStorage.autoUpdates))) {
-            tgd.localLog("Checking for auto updates");
-            tgd.checkUpdates();
-        }
-    } catch (e) {
-        tgd.localLog("update crash" + e);
-    }
-})();
 tgd.cartesianProductOf = function(x) {
     return _.reduce(x, function(a, b) {
         return _.flatten(_.map(a, function(x) {
@@ -5951,12 +5815,11 @@ var app = function() {
         }
     };
     this.openStatusReport = function(type) {
-        return function(type) {
+        return function() {
             self.toggleBootstrapMenu();
             var sReportURL;
             var prefSystem = self.preferredSystem().toLowerCase();
             var info = self.bungie.systemIds[prefSystem];
-            var type = parseInt(this);
             if (type === 1) {
                 sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
             } else if (type === 2) {
@@ -7424,48 +7287,6 @@ if (isMobile) {
 } else {
     $(document).ready(app.init);
 }
-(function() {
-    var f = this,
-        g = function(a, d) {
-            var c = a.split("."),
-                b = window || f;
-            c[0] in b || !b.execScript || b.execScript("var " + c[0]);
-            for (var e; c.length && (e = c.shift());) c.length || void 0 === d ? b = b[e] ? b[e] : b[e] = {} : b[e] = d;
-        };
-    var h = function(a) {
-        var d = chrome.runtime.connect("nmmhkkegccagdldgiimedpiccmgmieda", {}),
-            c = !1;
-        d.onMessage.addListener(function(b) {
-            c = !0;
-            "response" in b && !("errorType" in b.response) ? a.success && a.success(b) : a.failure && a.failure(b);
-        });
-        d.onDisconnect.addListener(function() {
-            !c && a.failure && a.failure({
-                request: {},
-                response: {
-                    errorType: "INTERNAL_SERVER_ERROR"
-                }
-            });
-        });
-        d.postMessage(a);
-    };
-    g("google.payments.inapp.buy", function(a) {
-        a.method = "buy";
-        h(a);
-    });
-    g("google.payments.inapp.consumePurchase", function(a) {
-        a.method = "consumePurchase";
-        h(a);
-    });
-    g("google.payments.inapp.getPurchases", function(a) {
-        a.method = "getPurchases";
-        h(a);
-    });
-    g("google.payments.inapp.getSkuDetails", function(a) {
-        a.method = "getSkuDetails";
-        h(a);
-    });
-})();
 /*window.ga_debug = {
     trace: true
 };*/
