@@ -1,10 +1,35 @@
+window.ua = navigator.userAgent;
+window.isNWJS = (typeof require != "undefined");
+window.isChrome = /Chrome/.test(ua) && /Google Inc/.test(navigator.vendor) && typeof chrome != "undefined";
+window.isFirefox = (/firefox/i.test(ua));
+window.isIOS = (/ios|iphone|ipod|ipad/i.test(ua));
+window.isiPad = (/ipad/i.test(ua));
+window.isAndroid = (/android/i.test(ua));
+window.isWindowsPhone = (/iemobile/i.test(ua));
+window.isMobile = (window.isIOS || window.isAndroid || window.isWindowsPhone);
+window.isKindle = /Kindle/i.test(ua) || /Silk/i.test(ua) || /KFTT/i.test(ua) || /KFOT/i.test(ua) || /KFJWA/i.test(ua) || /KFJWI/i.test(ua) || /KFSOWI/i.test(ua) || /KFTHWA/i.test(ua) || /KFTHWI/i.test(ua) || /KFAPWA/i.test(ua) || /KFAPWI/i.test(ua);
+window.isStaticBrowser = location.protocol.indexOf("http") > -1 && location.href.indexOf("towerghostfordestiny.com/firefox") == -1;
+if (window.isStaticBrowser) {
+    window.isMobile = window.isWindowsPhone = window.isAndroid = window.isIOS = window.isFirefox = window.isChrome = window.isNWJS = false;
+}
+if (typeof window.tgd == "undefined") window.tgd = {};
+if (typeof tgd.dataDir == "undefined") tgd.dataDir = "data";
+if (isWindowsPhone) {
+    window.requestFileSystem = function() {};
+}
+tgd.localLogging = location.href.indexOf("debug") > -1;
+tgd.localLog = function(msg) {
+    if (tgd.localLogging) {
+        console.log(msg);
+    }
+};
 //TODO find all the remote http variables and have them use a single variable
 tgd.remoteServer = "https://towerghostfordestiny.com";
 tgd.remoteImagePath = tgd.remoteServer + "/www/";
-tgd.dataDir = "data";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinySkillTier = 60;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];
@@ -19,10 +44,13 @@ tgd.DestinyGeneralItems = {
     "Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
     "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
+tgd.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
+tgd.invisibleItemsHelper = [2910404660, 2537120989];
 //This is a list of items not indexed by DestinyDB
-tgd.itemsNotIndexed = [4097026463, 4158489060];
+tgd.itemsNotIndexed = [];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
+tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
 tgd.DestinyNonUniqueBuckets = ["Consumables", "Materials"];
@@ -81,8 +109,7 @@ tgd.DestinyGender = {
 tgd.DestinyClass = {
     "0": "Titan",
     "1": "Hunter",
-    "2": "Warlock",
-    "3": "Unknown"
+    "2": "Warlock"
 };
 tgd.DestinyClassNames = {};
 Object.keys(tgd.DestinyClass).forEach(function(key, index) {
@@ -224,9 +251,13 @@ tgd.defaults = {
     progressFilter: 0,
     showDuplicate: false,
     setFilter: [],
+    activeClasses: [],
     shareView: false,
     shareUrl: "",
     showMissing: false,
+    showArmorPerks: false,
+    showArmorSC: false,
+    customFilter: false,
     tooltipsEnabled: isMobile ? false : "true",
     advancedTooltips: isMobile ? false : "true",
     autoXferStacks: false,
@@ -247,8 +278,29 @@ tgd.defaults = {
     preferredSystem: "PSN",
     ccWidth: "",
     layoutMode: "even",
-    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false
+    autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
+    toastTimeout: 2600,
+    armorViewBy: "Light"
 };
+tgd.armorTemplateDescriptionBuilder = function(item) {
+    var description = item.description;
+
+    //Build the stats as (DIS:46, INT: 47)
+    var stats = _.compact(
+        _.map(item.stats, function(stat, type) {
+            return stat > 0 ? type.substring(0, 3).toUpperCase() + ":" + stat : "";
+        })
+    ).join(", ");
+
+    //Add the stats to the description
+    description = description + " <em>(" + stats + ")</em>";
+
+    //Make bold the exotics
+    description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
+
+    return description;
+};
+
 tgd.imageErrorHandler = function(src, element) {
     return function() {
         if (element && element.src && element.src !== "") {
@@ -274,7 +326,13 @@ tgd.getEventDelegate = function(target, selector) {
 
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        var icon = ko.unwrap(viewModel.icon);
+        var icon = ko.unwrap(valueAccessor());
+        element.src = icon;
+        element.onerror = tgd.imageErrorHandler(icon, element);
+    },
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var icon = ko.unwrap(valueAccessor());
+        element.src = icon;
         element.onerror = tgd.imageErrorHandler(icon, element);
     }
 };
@@ -320,19 +378,25 @@ window.ko.bindingHandlers.scrollToView = {
         Hammer(element, {
                 time: 2000
             })
-            .on("tap", function() {
-                var index = $(element).index('.mobile-characters-image'),
+            .on("tap", function(ev) {
+                var target = tgd.getEventDelegate(ev.target, ".mobile-characters");
+                var index = $(target).index(),
                     distance = $(".profile:eq(" + index + ")");
                 if (distance.length > 0) {
                     distance = distance.position().top - 50;
                     app.scrollTo(distance);
                 }
             })
-            .on("press", function() {
+            .on("press", function(ev) {
+                var target = tgd.getEventDelegate(ev.target, ".mobile-characters-image");
+                var item = ko.contextFor(target).$data;
                 $.toaster({
                     priority: 'info',
                     title: 'Info',
-                    message: app.activeText().this_icon + viewModel.uniqueName()
+                    message: app.activeText().this_icon + item.uniqueName(),
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             });
     }
@@ -388,7 +452,10 @@ window.ko.bindingHandlers.moveItem = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Warning',
-                                message: app.activeText().unable_create_loadout_for_type
+                                message: app.activeText().unable_create_loadout_for_type,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -465,9 +532,8 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.requestCookie = function(callback) {
         tgd.localLog("sending request-cookie-from-ps");
-        var event = document.createEvent('CustomEvent');
-        event.initCustomEvent("request-cookie-from-ps", true, true, {});
-        document.documentElement.dispatchEvent(event);
+        var event = new CustomEvent("request-cookie-from-ps", {});
+        window.dispatchEvent(event);
         self.requestCookieCB = callback;
     };
 
@@ -530,7 +596,7 @@ tgd.bungie = (function(cookieString, complete) {
                 /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload,
 				IOS 9 detection has provded difficult, disabling this for all IOS users until I can figure out a better fix
 				*/
-                if (isMobile && typeof cookieString == "string" && isIOS === false) {
+                if (isMobile && typeof cookieString == "string") {
                     _.each(cookieString.split(";"), function(cookie) {
                         try {
                             xhr.setRequestHeader('Cookie', cookie);
@@ -715,7 +781,7 @@ tgd.bungie = (function(cookieString, complete) {
             route: '/Destiny/' + active.type +
                 '/Account/' + active.membership +
                 '/Character/' + characterId +
-                '/Inventory/' + instanceId,
+                '/Inventory/' + instanceId + '/',
             method: 'GET',
             complete: callback
         });
@@ -736,7 +802,7 @@ tgd.bungie = (function(cookieString, complete) {
         self.request({
             route: '/Destiny/' + active.type +
                 '/Account/' + active.membership +
-                '/Character/' + characterId,
+                '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
         });
@@ -828,25 +894,30 @@ tgd.bungie = (function(cookieString, complete) {
 tgd.dialog = (function(options) {
     var self = this;
 
-    this.modal = null;
+    this.modal = new BootstrapDialog(options);
+    this.options = options;
 
-    this.title = function(title) {
-        self.modal = new BootstrapDialog(options);
-        self.modal.setTitle(title);
-        return self;
-    };
+    return self;
+});
 
-    this.content = function(content) {
-        self.modal.setMessage(content);
-        return self;
-    };
+tgd.dialog.prototype = {
+    title: function(title) {
+        this.modal.setTitle(title);
+        return this;
+    },
 
-    this.buttons = function(buttons) {
-        self.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
-        return self;
-    };
+    content: function(content) {
+        this.modal.setMessage(content);
+        return this;
+    },
 
-    this.show = function(excludeClick, onHide, onShown) {
+    buttons: function(buttons) {
+        this.modal.setClosable(true).enableButtons(true).setData("buttons", buttons);
+        return this;
+    },
+
+    show: function(excludeClick, onHide, onShown) {
+        var self = this;
         self.modal.open();
         var mdl = self.modal.getModal();
         if (!excludeClick) {
@@ -857,10 +928,8 @@ tgd.dialog = (function(options) {
         mdl.on("hide.bs.modal", onHide);
         mdl.on("shown.bs.modal", onShown);
         return self;
-    };
-
-    return self.modal;
-});
+    }
+};
 tgd.Layout = function(layout) {
     var self = this;
 
@@ -870,7 +939,11 @@ tgd.Layout = function(layout) {
     self.headerText = layout.headerText;
     self.array = layout.array;
     self.counts = layout.counts;
-    self.countText = function(character) {
+};
+
+tgd.Layout.prototype = {
+    countText: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             var text = "";
             if (self.array !== "" && character.id == 'Vault') {
@@ -883,12 +956,19 @@ tgd.Layout = function(layout) {
             }
             return text;
         });
-    };
-    self.isVisible = function(character) {
+    },
+    titleText: function(character) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText]);
+        });
+    },
+    isVisible: function(character) {
+        var self = this;
         return ko.pureComputed(function() {
             return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
         });
-    };
+    }
 };
 	tgd.loadoutId = 0;
 
@@ -961,10 +1041,10 @@ tgd.Layout = function(layout) {
 	            return item.doEquip() === true && item._id != loadoutItem.id;
 	        });
 	        /* if the item being equipped is an exotic then the other exotics become unequipped */
-	        if (item.tierType == 6 && item.doEquip()) {
+	        if (item.tierType == 6 && item.hasLifeExotic === false && item.doEquip()) {
 	            _.each(self.ids(), function(equip) {
 	                var itemFound = self.findItemById(equip.id);
-	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && equip.doEquip() && equip.id != item._id && (
+	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && itemFound.hasLifeExotic === false && equip.doEquip() && equip.id != item._id && (
 	                        (item.weaponIndex > -1 && itemFound.weaponIndex > -1) || (item.armorIndex > -1 && itemFound.armorIndex > -1)
 	                    )) {
 	                    existingItems.push(equip);
@@ -1419,7 +1499,7 @@ tgd.Layout = function(layout) {
 	            var targetGroups = _.groupBy(targetList, 'bucketType');
 	            masterSwapArray = _.flatten(_.map(sourceGroups, function(group, key) {
 	                var sourceBucket = sourceGroups[key];
-	                var targetBucket = targetGroups[key];
+	                var targetBucket = targetGroups[key] || [];
 	                var swapArray = [];
 	                if (sourceBucket && targetBucket) {
 	                    if (tgd.DestinyNonUniqueBuckets.indexOf(key) == -1) {
@@ -1604,6 +1684,8 @@ tgd.Layout = function(layout) {
 	                }
 	                return swapArray;
 	            }));
+	        } else {
+	            BootstrapDialog.alert("No source items available to transfer");
 	        }
 	        if (callback) {
 	            if (_.isFunction(callback)) callback(masterSwapArray);
@@ -1670,14 +1752,11 @@ tgd.Layout = function(layout) {
 	                    $.toaster({
 	                        settings: {
 	                            timeout: 15 * 1000
-	                        }
-	                    });
-	                    $.toaster({
+	                        },
 	                        priority: 'success',
 	                        title: 'Success',
 	                        message: app.activeText().loadouts_transferred
 	                    });
-	                    $.toaster.reset();
 	                    setTimeout(function() {
 	                        $(".donateLink").click(app.showDonate);
 	                    }, 1000);
@@ -1716,902 +1795,1188 @@ tgd.Layout = function(layout) {
 	};
 tgd.locale = {
     en: {
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
+        cancel: "Cancel",
+        cannot_equip: "Unknown error trying to equip ",
+        cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        error_loading_inventory: "Error loading inventory ",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Invalid amount entered: ",
+        inventory_armor: "Armor",
+        inventory_general: "General",
+        inventory_postmaster: "Post Master",
+        inventory_postmaster_messages: "Messages",
+        inventory_postmaster_lost_items: "Lost Items",
+        inventory_subclasses: "Sub Classes",
+        inventory_weapons: "Weapons",
+        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
+        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
+        light: "Light",
+        loadouts_alreadythere_pt1: " is already in the ",
+        loadouts_alreadythere_pt2: "'s bucket of ",
+        loadouts_delete: "Delete",
+        loadouts_desktop: "check",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
+        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
+        loadouts_mobile: "hold",
+        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
+        loadouts_no_transfer: " will not be moved",
+        loadouts_outofspace: " will not be moved, there is no space in ",
+        loadouts_save: "Save",
+        loadouts_save_new: "Save As",
+        loadouts_swap: " will be swapped with ",
+        loadouts_to_equip: " will be equipped.",
+        loadouts_to_moveequip: " will be moved and equipped.",
+        loadouts_to_transfer: " will be moved",
+        loadouts_transfer: "Transfer",
+        loadouts_transfer_confirm: "Transfer Confirm",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
+        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
+        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_loading_inventory: "Please wait, loading arsenal from Bungie",
+        login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_about: "About",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_all: "All",
+        menu_autorefresh: "Auto Refresh (5 min)",
+        menu_autotransfer: "Auto Transfer Stacks",
+        menu_clear: "Clear Filters",
+        menu_destinydbtooltips: "DestinyDB Tooltips",
+        menu_destinydbmode: "DestinyDB Mode",
+        menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
+        menu_damage: "Damage",
+        menu_donate: "Donate",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Help",
+        menu_language: "Language",
+        menu_loadouts: "Loadouts",
+        menu_loadouts_create: "Create",
+        menu_padheight: "Auto Pad Height",
+        menu_progress: "Progress",
+        menu_progress_1: "Missing Perks",
+        menu_progress_2: "Missing Border",
+        menu_progress_3: "Maxed",
+        menu_refresh: "Refresh (secs)",
+        menu_set: "Set",
+        menu_set_showmissing: "Show Missing Items",
+        menu_set_showduplicates: "Show Duplicate Items",
+        menu_settings: "Settings",
+        menu_shareurl: "Share URL with friends",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "Tier",
+        menu_usexbox: "Use Xbox Account",
+        menu_useps: "Use Playstation Account",
+        menu_view: "View",
+        menu_view_armor: "Armor",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_general: "General",
+        menu_view_options: "View Options",
+        menu_view_weapons: "Weapons",
+        missing_items: "Missing Items",
+        most_points: "Most Points",
+        movepopup_move: "Move",
+        movepopup_store: "store",
+        movepopup_equip: "equip",
+        movepopup_vault: "vault",
+        movepopup_extras: "extras",
+        normalize_title: "Normalize - equally distribute item across your characters",
+        paypal_code: "EN",
+        pick_a_set: "Please pick a Set before selecting this option",
+        strength: "Strength",
+        recovery: "Recovery",
+        str: "Str",
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        this_icon: "This icon is ",
+        tier_common: "Common",
+        tier_exotic: "Exotic",
+        tier_legendary: "Legendary",
+        tier_rare: "Rare",
+        tier_uncommon: "Uncommon",
+        transfer: "Transfer",
+        transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "One",
         unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
+        unable_unequip: "Unable to unequip ",
         unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
         unable_to_move_bucketitems: "This item cannot be transferred with the API.",
-        this_icon: "This icon is ",
-        pick_a_set: "Please pick a Set before selecting this option",
-        error_loading_inventory: "Error loading inventory ",
-        whats_new_title: "Tower Ghost for Destiny Updates",
-        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
-        invalid_transfer_amount: "Invalid amount entered: ",
-        normalize_title: "Normalize - equally distribute item across your characters",
-        transfer_amount: "Transfer Amount",
-        transfer_all: "All",
-        transfer_one: "One",
-        cancel: "Cancel",
-        cannot_unequip: "No more items to try to unequip the ",
-        unable_unequip: "Unable to unequip ",
-        cannot_equip: "Unknown error trying to equip ",
-        menu_clear: "Clear Filters",
-        menu_refresh: "Refresh (secs)",
-        menu_about: "About",
-        menu_help: "Help",
-        menu_donate: "Donate",
-        menu_language: "Language",
-        menu_loadouts: "Loadouts",
-        menu_loadouts_create: "Create",
-        menu_view: "View",
-        menu_all: "All",
-        menu_view_weapons: "Weapons",
-        menu_view_armor: "Armor",
-        menu_view_general: "General",
-        menu_view_options: "View Options",
-        menu_shareurl: "Share URL with friends",
-        menu_autorefresh: "Auto Refresh (5 min)",
-        menu_destinydbtooltips: "DestinyDB Tooltips",
-        menu_advancedtooltips: "Advanced Tooltips",
-        menu_destinydbmode: "DestinyDB Mode",
-        menu_autotransfer: "Auto Transfer Stacks",
-        menu_padheight: "Auto Pad Height",
-        menu_usexbox: "Use Xbox Account",
-        menu_useps: "Use Playstation Account",
-        menu_set: "Set",
-        menu_set_showmissing: "Show Missing Items",
-        menu_set_showduplicates: "Show Duplicate Items",
-        menu_tier: "Tier",
-        menu_progress: "Progress",
-        menu_progress_1: "Missing Perks",
-        menu_progress_2: "Missing Border",
-        menu_progress_3: "Maxed",
-        menu_damage: "Damage",
-        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
-        vo_number_of_columns: "Number of Columns",
-        vo_vault_first: "First/Left",
-        vo_vault_last: "Last/Right",
-        vo_vault_position: "Vault Position",
         vo_container_width: "Container Width",
         vo_layout_mode: "Vault Mode",
-        vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Missing Items",
-        login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
-        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
-        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
-        login_title: "Welcome to Tower Ghost for Destiny!",
-        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
-        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
-        movepopup_move: "Move",
-        movepopup_store: "store",
-        movepopup_equip: "equip",
-        movepopup_vault: "vault",
-        movepopup_extras: "extras",
-        inventory_weapons: "Weapons",
-        inventory_armor: "Armor",
-        inventory_subclasses: "Sub Classes",
-        inventory_general: "General",
-        inventory_postmaster: "Post Master",
-        inventory_postmaster_messages: "Messages",
-        inventory_postmaster_lost_items: "Lost Items",
-        loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
-        loadouts_delete: "Delete",
-        loadouts_close: "Close",
-        loadouts_transfer: "Transfer",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
-        loadouts_mobile: "hold",
-        loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
-        loadouts_to_transfer: " will be moved",
-        loadouts_no_transfer: " will not be moved",
-        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
-        loadouts_outofspace: " will not be moved, there is no space in ",
-        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
-        loadouts_alreadythere_pt1: " is already in the ",
-        loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_swap: " will be swapped with ",
-        loadouts_to_moveequip: " will be moved and equipped.",
-        loadouts_to_equip: " will be equipped.",
-        loadouts_transfer_confirm: "Transfer Confirm",
-        tier_uncommon: "Uncommon",
-        tier_common: "Common",
-        tier_rare: "Rare",
-        tier_legendary: "Legendary",
-        tier_exotic: "Exotic",
-        paypal_code: "EN",
-        menu_destinystatus: "DestinyStatus Report",
-        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
-        menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
-        donation_title: "Donations for Tower Ghost for Destiny!",
-        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
-    },
-    es: {
-        unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
-        unable_to_create_loadout_for_bucket: "No se puede crear un loadout con mas de 10 articulos en esta ranura: ",
-        unable_to_move_bucketitems: "Post Master no pueden ser transferidos con el programa.",
-        this_icon: "Este icono es ",
-        pick_a_set: "Por favor elija un Set antes de seleccionar esta opcion",
-        error_loading_inventory: "Error cargando inventario",
-        whats_new_title: "Tower Ghost for Destiny Noticias",
-        itemDefs_undefined: "Por favor informar el asunto a mi Github y asegurese de que su fuente se establece en Ingles.",
-        invalid_transfer_amount: "Cantidad no valida entrada: ",
-        normalize_title: "Normalizar - igualmente distribuir tema a traves de sus personajes",
-        transfer_amount: "Transferencia monto",
-        transfer_all: "Todos",
-        transfer_one: "Uno",
-        cancel: "Cancelar",
-        cannot_unequip: "No mas elementos para tratar de unequip la ",
-        unable_unequip: "Incapaz de inequippar ",
-        cannot_equip: "Error desconocido tratando de equipar ",
-        menu_clear: "Aclaro Filtro",
-        menu_refresh: "Refrescar (seg.)",
-        menu_about: "Acerca De",
-        menu_help: "Ayuda",
-        menu_donate: "Donar",
-        menu_language: "Language",
-        menu_loadouts: "Loadouts",
-        menu_loadouts_create: "Crear",
-        menu_view: "Vista",
-        menu_all: "Todo",
-        menu_view_weapons: "Armas",
-        menu_view_armor: "Armaduras",
-        menu_view_general: "General",
-        menu_view_options: "Opciones de Vista",
-        menu_shareurl: "Compartir Con Amigos",
-        menu_autorefresh: "Auto Refrescar (5 min)",
-        menu_destinydbtooltips: "DestinyDB Tooltips",
-        menu_advancedtooltips: "Advanced Tooltips",
-        menu_destinydbmode: "DestinyDB Modo",
-        menu_autotransfer: "Auto Mover Pilas",
-        menu_padheight: "Auto Adjusto Altura",
-        menu_usexbox: "Usa Xbox Cuenta",
-        menu_useps: "Usa Playstation Cuenta",
-        menu_set: "Conjunto",
-        menu_set_showmissing: "Monstrar articulos que faltan",
-        menu_set_showduplicates: "Monstrar articulos duplicados",
-        menu_tier: "Nivel",
-        menu_progress: "Progreso",
-        menu_progress_1: "Falta Perks",
-        menu_progress_2: "Completo Perks",
-        menu_progress_3: "Al Maxmimo",
-        menu_damage: "Da\xF1o",
-        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
-        vo_number_of_columns: "# de Columnas",
-        vo_vault_first: "Primero/Izquierda",
-        vo_vault_last: "Ultimo/Derecha",
-        vo_vault_position: "Position de Bodega",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
-        vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Articulos que faltan",
-        login_loading_inventory: "Por favor espere, cargando arsenal de Bungie",
-        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
-        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
-        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
-        login_title: "Bienvenido a Tower Ghost para Destiny!",
-        login_instructions: "Para empezar tendras que acceder a su cuenta a traves de Bungie.net:",
-        login_help: "Por favor, espere a que la ventana se cerra. TGD han preparado su informacion.",
-        movepopup_move: "Mover a",
-        movepopup_store: "almacenar",
-        movepopup_equip: "equipar",
-        movepopup_vault: "bodega",
-        movepopup_extras: "extras",
-        inventory_weapons: "Armas",
-        inventory_armor: "Armadura",
-        inventory_subclasses: "Subclases",
-        inventory_general: "General",
-        inventory_postmaster: "Post Master",
-        inventory_postmaster_messages: "Messages",
-        inventory_postmaster_lost_items: "Lost Items",
-        loadouts_save: "Guardar",
-        loadouts_delete: "Borrar",
-        loadouts_close: "Cerrar",
-        loadouts_transfer: "Transferir",
-        loadouts_instructions: "No hay articulos en loadout, haga clic en los articulos a anadir,",
-        loadouts_instructions_contd: "para equipar.",
-        loadouts_mobile: "sostener",
-        loadouts_desktop: "cheque",
-        loadouts_transferred: "<strong>Articulo(s) transferido con exito</strong><br> Si te gusta esta aplicacion, puedes <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">comprarme una cerveza.</a>",
-        loadouts_to_transfer: " sera trasladado",
-        loadouts_no_transfer: " no sera trasladado",
-        loadouts_no_replacement: " no sera trasladado. No hay otro para reemplazarlo.",
-        loadouts_outofspace: " no sera trasladado, no hay espacio en ",
-        loadouts_invalidbucket: " no sera trasladado, Debido a este cubo: ",
-        loadouts_alreadythere_pt1: " ya esta en el ",
-        loadouts_alreadythere_pt2: "'s cubo de ",
-        loadouts_swap: " sera intercambiado con ",
-        loadouts_to_moveequip: " sera trasladado y equipado.",
-        loadouts_to_equip: " sera equipado.",
-        loadouts_transfer_confirm: "Confirmar Transferencia",
-        tier_uncommon: "Poco com\xFAn",
-        tier_common: "Com\xFAn",
-        tier_rare: "Raro",
-        tier_legendary: "Legendario",
-        tier_exotic: "Ex\xF3tico",
-        paypal_code: "ES",
-        menu_destinystatus: "DestinyStatus Reporte",
-        language_text: "Esto cambiara el lenguage de la aplicacion y de los articulos.",
-        menu_settings: "Ajustes",
-        text_shareurl: "Tu iventoria es actualizado cuando hagas click a Compartir URL denuevo.",
-        donation_title: "Donaciones para Tower Ghost for Destiny!",
-        donation_instructions: "Este es un projecto non-commercial dedicado para Destiny. Si usted disfurat esta aplicacion proveve una donacion para supportar los gastos."
-    },
-    fr: {
-        unable_create_loadout_for_type: "Actuellement incapable de crer loadouts avec ce type d'article",
-        unable_to_create_loadout_for_bucket: "Vous ne pouvez pas crer un loadout avec plus de 10 articles dans cette fente: ",
-        unable_to_move_bucketitems: "Articles matre de poste ne peuvent tre transfrs avec l'API.",
-        this_icon: "Cette icne est ",
-        pick_a_set: "S'il vous plat choisir un ensemble avant de choisir cette option",
-        error_loading_inventory: "Erreur inventaire de chargement",
-        whats_new_title: "Tower Ghost for Destiny Nouvelles",
-        itemDefs_undefined: "S'il vous plat signaler le problme  mon Github et assurez-vous que votre police est l'anglais.",
-        invalid_transfer_amount: "Le montant indiqu est incorrect: ",
-        normalize_title: "Normalizar - igualmente distribuir tema a travs de sus personajes",
-        transfer_amount: "Transferencia monto",
-        transfer_all: "Tous",
-        transfer_one: "Un",
-        cancel: "Cancel",
-        cannot_unequip: "Peu plus d'lments pour tenter de dsquiper le ",
-        unable_unequip: "Impossible de dsquiper ",
-        cannot_equip: "Erreur inconnue essayant d'quiper ",
-        menu_clear: "Filtres effacer",
-        menu_refresh: "Actualisez (segundos)",
-        menu_about: "Propos",
-        menu_help: "Aide",
-        menu_donate: "Don",
-        menu_language: "Language",
-        menu_loadouts: "Loadouts",
-        menu_loadouts_create: "Crer",
-        menu_view: "Voir",
-        menu_all: "Tout",
-        menu_view_weapons: "Armes",
-        menu_view_armor: "Armure",
-        menu_view_general: "General",
-        menu_view_options: "Options d'affichage",
-        menu_shareurl: "Partager URL",
-        menu_autorefresh: "Auto Actualiser (5 min)",
-        menu_destinydbtooltips: "DestinyDB infobulles",
-        menu_destinydbmode: "DestinyDB Mode",
-        menu_autotransfer: "Auto transfert s'entasser",
-        menu_padheight: "Auto Pad Hauteur",
-        menu_usexbox: "Utiliser Xbox un compte",
-        menu_useps: "Utiliser Playstation un compte",
-        menu_set: "Ensemble",
-        menu_set_showmissing: "Afficher les lments manquants",
-        menu_set_showduplicates: "Afficher les doublons d'objets",
-        menu_tier: "chelon",
-        menu_progress: "Progrs",
-        menu_progress_1: "Missing Perks",
-        menu_progress_2: "Missing Border",
-        menu_progress_3: "Maxed",
-        menu_damage: "Dommages",
-        language_pack_downloaded: "Language Pack téléchargé, s'il vous plaît rafraîchir pour voir les changements",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
         vo_number_of_columns: "Number of Columns",
+        vo_vault_columns: "Vault Columns",
         vo_vault_first: "First/Left",
         vo_vault_last: "Last/Right",
         vo_vault_position: "Vault Position",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
         vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Articles manquant",
-        login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
-        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
-        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
-        login_title: "Bienvenue à Tower Ghost for Destiny!",
-        login_instructions: "Pour commencer, vous aurez besoin pour vous connecter à votre compte Bungie.net via:",
-        login_help: "S'il vous plaît attendre la fenêtre de connexion à proximité de l'automobile comme TGD prépare vos informations.",
-        movepopup_move: "Bouger",
-        movepopup_store: "dépôt",
-        movepopup_equip: "équiper",
-        movepopup_vault: "voûte",
-        movepopup_extras: "extras",
-        inventory_weapons: "Armes",
-        inventory_armor: "Armure",
-        inventory_subclasses: "Sous Classes",
-        inventory_general: "General",
-        inventory_postmaster: "Commis des postes",
-        inventory_postmaster_messages: "Messages",
-        inventory_postmaster_lost_items: "Objets Perdus",
-        loadouts_save: "Sauver",
-        loadouts_delete: "Rayer",
-        loadouts_close: "Fermer",
-        loadouts_transfer: "Transfert",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
-        loadouts_mobile: "hold",
-        loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Articles transféré avec succès</strong><br> Si vous aimez ce soft pensez à <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">achetez-moi une bière</a>",
-        loadouts_to_transfer: " will be moved",
-        loadouts_no_transfer: " will not be moved",
-        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
-        loadouts_outofspace: " will not be moved, there is no space in ",
-        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
-        loadouts_alreadythere_pt1: " is already in the ",
-        loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_swap: " will be swapped with ",
-        loadouts_to_moveequip: " will be moved and equipped.",
-        loadouts_to_equip: " will be equipped.",
-        loadouts_transfer_confirm: "Transfer Confirm",
-        tier_uncommon: "Uncommon",
-        tier_common: "Common",
-        tier_rare: "Rare",
-        tier_legendary: "Legendary",
-        tier_exotic: "Exotic",
-        paypal_code: "FR",
-        menu_destinystatus: "DestinyStatus Report",
-        language_text: "Cela va changer la langue pour tous les articles et l'interface pour certaines langues, d'autres langues seront ajoutées dans le futur.",
-        menu_settings: "Paramètres",
-        text_shareurl: "Votre inventaire est mis à jour en cliquant sur Partager URL dans le menu à nouveau.",
-        donation_title: "Dons pour Tower Ghost for Destiny!",
-        donation_instructions: "Ceci est un projet non commercial dédié au Destiny. Si vous aimez ce soft fournir un don de garder ce projet en vie et soutenir les coûts de maintenance."
-    },
-    it: {
-        unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
-        unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
-        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
-        this_icon: "This icon is ",
-        pick_a_set: "Please pick a Set before selecting this option",
-        error_loading_inventory: "Error loading inventory ",
-        whats_new_title: "Tower Ghost for Destiny Updates",
-        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
-        invalid_transfer_amount: "Invalid amount entered: ",
-        normalize_title: "Normalize - equally distribute item across your characters",
-        transfer_amount: "Transfer Amount",
-        transfer_all: "All",
-        transfer_one: "One",
-        cancel: "Cancel",
-        cannot_unequip: "No more items to try to unequip the ",
-        unable_unequip: "Unable to unequip ",
-        cannot_equip: "Unknown error trying to equip ",
-        menu_clear: "Clear Filters",
-        menu_refresh: "Refresh (secs)",
-        menu_about: "About",
-        menu_help: "Help",
-        menu_donate: "Donate",
-        menu_language: "Language",
-        menu_loadouts: "Loadouts",
-        menu_loadouts_create: "Create",
-        menu_view: "View",
-        menu_all: "All",
-        menu_view_weapons: "Weapons",
-        menu_view_armor: "Armor",
-        menu_view_general: "General",
-        menu_view_options: "View Options",
-        menu_shareurl: "Share URL with friends",
-        menu_autorefresh: "Auto Refresh (5 min)",
-        menu_destinydbtooltips: "DestinyDB Tooltips",
-        menu_advancedtooltips: "Advanced Tooltips",
-        menu_destinydbmode: "DestinyDB Mode",
-        menu_autotransfer: "Auto Transfer Stacks",
-        menu_padheight: "Auto Pad Height",
-        menu_usexbox: "Use Xbox Account",
-        menu_useps: "Use Playstation Account",
-        menu_set: "Set",
-        menu_set_showmissing: "Show Missing Items",
-        menu_set_showduplicates: "Show Duplicate Items",
-        menu_tier: "Tier",
-        menu_progress: "Progress",
-        menu_progress_1: "Missing Perks",
-        menu_progress_2: "Missing Border",
-        menu_progress_3: "Maxed",
-        menu_damage: "Damage",
-        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
-        vo_number_of_columns: "Number of Columns",
-        vo_vault_first: "First/Left",
-        vo_vault_last: "Last/Right",
-        vo_vault_position: "Vault Position",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
-        vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Missing Items",
-        login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
-        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
-        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
-        login_title: "Welcome to Tower Ghost for Destiny!",
-        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
-        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
-        movepopup_move: "Move",
-        movepopup_store: "store",
-        movepopup_equip: "equip",
-        movepopup_vault: "vault",
-        movepopup_extras: "extras",
-        inventory_weapons: "Weapons",
-        inventory_armor: "Armor",
-        inventory_subclasses: "Sub Classes",
-        inventory_general: "General",
-        inventory_postmaster: "Post Master",
-        inventory_postmaster_messages: "Messages",
-        inventory_postmaster_lost_items: "Lost Items",
-        loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
-        loadouts_delete: "Delete",
-        loadouts_close: "Close",
-        loadouts_transfer: "Transfer",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
-        loadouts_mobile: "hold",
-        loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
-        loadouts_to_transfer: " will be moved",
-        loadouts_no_transfer: " will not be moved",
-        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
-        loadouts_outofspace: " will not be moved, there is no space in ",
-        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
-        loadouts_alreadythere_pt1: " is already in the ",
-        loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_swap: " will be swapped with ",
-        loadouts_to_moveequip: " will be moved and equipped.",
-        loadouts_to_equip: " will be equipped.",
-        loadouts_transfer_confirm: "Transfer Confirm",
-        tier_uncommon: "Uncommon",
-        tier_common: "Common",
-        tier_rare: "Rare",
-        tier_legendary: "Legendary",
-        tier_exotic: "Exotic",
-        paypal_code: "IT",
-        menu_destinystatus: "DestinyStatus Report",
-        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
-        menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
-        donation_title: "Donations for Tower Ghost for Destiny!",
-        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
+        whats_new_title: "Tower Ghost for Destiny Updates"
     },
     de: {
-        unable_create_loadout_for_type: "Es ist aktuell nicht möglich Ausrüstungen mit diesem Gegenstand zu erstellen.",
-        unable_to_create_loadout_for_bucket: "Du kannst keine Ausrüstung mit mehr als 10 Gegenständen in diesem Platz ersellen: ",
-        unable_to_move_bucketitems: "Gegenstände in diesem Bucket können nicht mit dem API übertragen werden.",
-        this_icon: "Das Icon ist",
-        pick_a_set: "Bitte wähle ein Set bevor du diese Option auswählst",
-        error_loading_inventory: "Fehler beim Laden des Inventars ",
-        whats_new_title: "Tower Ghost für Destiny Updates",
-        itemDefs_undefined: "Konnte Gegenstandsinformationen nicht laden, bitte melde dieses Problem bei meinem GitHub und stelle sicher, dass deine Schrift aus Englisch gestellt ist.",
-        invalid_transfer_amount: "Ungültige Menge eingegeben: ",
-        normalize_title: "Normalisieren - Gegenstände gleichmäßig über deine Charaktere verteilen",
-        transfer_amount: "Menge Übertragen",
-        transfer_all: "Alle",
-        transfer_one: "Eins",
+        agility: "Agil",
+        armor: "Rstg",
+        best_combo: "Beste Komb.",
         cancel: "Abbrechen",
-        cannot_unequip: "Keine Gegenstände mehr zum Ablegen von ",
-        unable_unequip: "Ablegen unmöglich von ",
         cannot_equip: "Unbekannter Fehler beim Ausrüsten von ",
-        menu_clear: "Filter Zurücksetzen",
-        menu_refresh: "Aktualisieren (Sek)",
+        cannot_unequip: "Keine Gegenstände mehr zum Ablegen von ",
+        close_msg: "Schließen",
+        disc: "Dis",
+        discipline: "Dis",
+        donation_instructions: "Dies ist ein nicht-kommerzielles Projekt, das Destiny gewidmet ist. Wenn dir diese App gefällt, denke doch über eine Spende nach um das Projekt am Leben zu halten.",
+        donation_title: "Spenden an Tower Ghost für Destiny!",
+        error_loading_inventory: "Fehler beim Laden des Inventars ",
+        gear_with_highest: "Ausrüstung mit höchstem:",
+        inte: "Int",
+        intellect: "Int",
+        invalid_transfer_amount: "Ungültige Menge eingegeben: ",
+        inventory_armor: "Rüstung",
+        inventory_general: "Allgemein",
+        inventory_postmaster: "Post",
+        inventory_postmaster_lost_items: "Verlorene Gegenstände",
+        inventory_postmaster_messages: "Nachrichten",
+        inventory_subclasses: "Fokusse",
+        inventory_weapons: "Waffen",
+        itemDefs_undefined: "Konnte Gegenstandsinformationen nicht laden, bitte melde dieses Problem bei meinem GitHub und stelle sicher, dass deine Schrift auf Englisch gestellt ist.",
+        language_pack_downloaded: "Sprachpaket heruntergeladen, bitte aktualisiere um die Änderungen anzuzeigen",
+        language_text: "Dies wird die Sprache für alle Gegnstände und bei manchen Sprachen das Interface verändern, weitere Sprachen werden in der Zukunft hinzugefügt.",
+        light: "Licht",
+        loadouts_alreadythere_pt1: " ist bereits im ",
+        loadouts_alreadythere_pt2: "'s Bucket von ",
+        loadouts_delete: "Löschen",
+        loadouts_desktop: "prüfen",
+        loadouts_instructions: "Keine Gegenstände in der Ausrüstung, klicke Gegenstände um sie hinzuzufügen, ",
+        loadouts_instructions_contd: " zum Ausrüsten.",
+        loadouts_invalidbucket: " wird nicht verschoben. Wegen diesem Bucket: ",
+        loadouts_mobile: "halten",
+        loadouts_no_replacement: " wird nicht verschoben. Es gibt keinen Gegenstand als Ersatz.",
+        loadouts_no_transfer: " wird nicht verschoben",
+        loadouts_outofspace: " wird nicht verschoben, es ist kein Platz in ",
+        loadouts_save: "Speichern",
+        loadouts_save_new: "Speichern Als",
+        loadouts_swap: " wird ausgetauscht mit ",
+        loadouts_to_equip: " wird ausgerüstet.",
+        loadouts_to_moveequip: " wird verschoben und ausgerüstet.",
+        loadouts_to_transfer: " wird verschoben",
+        loadouts_transfer: "Übertragen",
+        loadouts_transfer_confirm: "Übertragungsbestätigung",
+        loadouts_transferred: "<strong>Gegenstände erfolgreich übertragen</strong><br> Wenn dir diese App gefällt, vergiss nicht <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">mir ein Bier zu kaufen</a>",
+        login_authenticating_pt1: "Bei Bungie einloggen... Bitte habe ein wenig Geduld.",
+        login_authenticating_pt2: "Wenn der Login Bildschirm für länger als 2 Minuten bleibt, nutze diese Links für",
+        login_authenticating_pt3: "um das Einloggen erneut zu versuchen. Wenn das Problem weiterhin besteht, installiere die App erneut.",
+        login_help: "Bitte warte bis sich das Loginfenster von selbst schließt, während TGD deine Daten vorbereitet.",
+        login_instructions: "Zu Beginn musst du dich bei deinem Bungie.net Account einloggen via:",
+        login_loading_inventory: "Bitte warten, lade Arsenal von Bungie",
+        login_loading_updates: "Bitte warten, lade automatische Updates",
+        login_title: "Willkommen bei Tower Ghost für Destiny!",
         menu_about: "Über",
-        menu_help: "Hilfe",
+        menu_advancedtooltips: "Erweiterte Tooltips",
+        menu_all: "Alle",
+        menu_autorefresh: "Automatisch Aktualiseren (5 min)",
+        menu_autotransfer: "Stacks Automatisch Übertragen",
+        menu_clear: "Filter Zurücksetzen",
+        menu_damage: "Schaden",
+        menu_destinydbmode: "DestinyDB Modus",
+        menu_destinydbtooltips: "DestinyDB Tooltips",
+        menu_destinystatus: "DestinyStatus Bericht",
+        menu_destinytrials: "DestinyTrials Bericht",
+        menu_destinytracker: "DestinyTracker Bericht",
+        menu_destinyguardiangg: "Guardian.GG Bericht",
         menu_donate: "Spenden",
+        menu_filter_by: "Filtern",
+        menu_filter_by_subclass_eq: "Unterklasse ausgerüstet",
+        menu_filter_by_weapon_eq: "Waffen ausgerüstet",
+        menu_filter_for_class: "Filter nach Klasse",
+        menu_help: "Hilfe",
         menu_language: "Sprache",
         menu_loadouts: "Ausrüstungen",
         menu_loadouts_create: "Erstellen",
-        menu_view: "Ansehen",
-        menu_all: "Todo",
-        menu_view_weapons: "Waffen",
-        menu_view_armor: "Rüstung",
-        menu_view_general: "Allgemein",
-        menu_view_options: "Optionen Anzeigen",
-        menu_shareurl: "URL mit Freunden teilen",
-        menu_autorefresh: "Automatisch Aktualiseren (5 min)",
-        menu_destinydbtooltips: "DestinyDB Tooltips",
-        menu_advancedtooltips: "Advanced Tooltips",
-        menu_destinydbmode: "DestinyDB Modus",
-        menu_autotransfer: "Stacks Automatisch Übertragen",
         menu_padheight: "Automatische Feldhöhe",
-        menu_usexbox: "Xbox Account Verwenden",
-        menu_useps: "Playstation Account Verwenden",
-        menu_set: "Setzen",
-        menu_set_showmissing: "Fehlende Gegenstände Anzeigen",
-        menu_set_showduplicates: "Doppelte Gegenstände Anzeigen",
-        menu_tier: "Seltenheit",
         menu_progress: "Fortschritt",
         menu_progress_1: "Fehlende Perks",
         menu_progress_2: "Volle Perks",
         menu_progress_3: "Voll",
-        menu_damage: "Schaden",
-        language_pack_downloaded: "Sprachpaket heruntergeladen, bitte aktualisere um die Änderungen anzuzeigen",
-        vo_number_of_columns: "Columns",
-        vo_vault_first: "Erste/Links",
-        vo_vault_last: "Letzte/Rechts",
-        vo_vault_position: "Vault Position",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
-        vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
+        menu_refresh: "Aktualisieren",
+        menu_set: "Setzen",
+        menu_set_showduplicates: "Doppelte anzeigen",
+        menu_set_showmissing: "Fehlende anzeigen",
+        menu_settings: "Einstellungen",
+        menu_shareurl: "URL mit Freunden teilen",
+        menu_sortby: "Sortieren",
+        menu_sortby_damage: "Schadenstyp",
+        menu_sortby_lightlvl: "Licht Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Typ",
+        menu_sortby_tier_type: "Seltenheit, Typ",
+        menu_tier: "Seltenheit",
+        menu_useps: "Playstation Account Verwenden",
+        menu_usexbox: "Xbox Account Verwenden",
+        menu_view: "Anzeige",
+        menu_view_armor: "Rüstung",
+        menu_view_by: "Anzeigen nach",
+        menu_view_by_lightlvl: "Licht Level",
+        menu_view_by_stat_points: "Komb Stat Pkte",
+        menu_view_general: "Allgemein",
+        menu_view_options: "Optionen Anzeigen",
+        menu_view_weapons: "Waffen",
         missing_items: "Fehlende Gegenstände",
-        login_loading_inventory: "Bitte warten, lade Arsenal von Bungie",
-        login_authenticating_pt1: "Bei Bungie einloggen... Bitte habe ein wenig Geduld.",
-        login_authenticating_pt2: "Wenn der Login Bildschirm für länger als 2 Minuten bleibt, nutze diese Links für",
-        login_authenticating_pt3: "um das Einloggen erneut zu versuchen. Wenn das problem weiterhin besteht, installiere die App erneut.",
-        login_title: "Willkommen bei Tower Ghost für Destiny!",
-        login_instructions: "Zu Beginn musst du dich bei deinem Bungie.net Account einloggen via:",
-        login_help: "Bitte warte bis sich das Loginfenster von selbst schließt, während TGD deine Daten vorbereitet.",
+        most_points: "Meisten Punkte",
+        movepopup_equip: "Ausrüsten",
+        movepopup_extras: "Extras",
         movepopup_move: "Verschieben",
         movepopup_store: "Lagern",
-        movepopup_equip: "Ausrüsten",
         movepopup_vault: "Tresor",
-        movepopup_extras: "Extras",
-        inventory_weapons: "Waffen",
-        inventory_armor: "Rüstung",
-        inventory_subclasses: "Fokusse",
-        inventory_general: "Allgemein",
-        inventory_postmaster: "Post",
-        inventory_postmaster_messages: "Nachrichten",
-        inventory_postmaster_lost_items: "Verlorene Gegenstände",
-        loadouts_save: "Speichern",
-        loadouts_delete: "Löschen",
-        loadouts_close: "Schließen",
-        loadouts_transfer: "Übertragen",
-        loadouts_instructions: "Keine Gegenstände in der Ausrüstung, klicke Gegenstände um sie hinzuzufügen,",
-        loadouts_instructions_contd: "zum Ausrüsten.",
-        loadouts_mobile: "halten",
-        loadouts_desktop: "prüfen",
-        loadouts_transferred: "<strong>Gegenstände erfolgreich übertragen</strong><br> Wenn dir diese App gefällt, vergiss nicht <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">mir ein Bier zu kaufen</a>",
-        loadouts_to_transfer: " wird verschoben",
-        loadouts_no_transfer: " wird nicht verschoben",
-        loadouts_no_replacement: " wird nicht verschoben. Es gibt keinen Gegenstand als Ersatz.",
-        loadouts_outofspace: " wird nicht verschoben, es ist kein Platz in ",
-        loadouts_invalidbucket: " wird nicht verschoben. Wegen diesem Bucket: ",
-        loadouts_alreadythere_pt1: " ist bereits im ",
-        loadouts_alreadythere_pt2: "'s Bucket von ",
-        loadouts_swap: " wird ausgetauscht mit ",
-        loadouts_to_moveequip: " wird verschoben und ausgerüstet.",
-        loadouts_to_equip: " wird ausgerüstet.",
-        loadouts_transfer_confirm: "Übertragungsbestätigung",
-        tier_uncommon: "Ungewöhnlich",
-        tier_common: "Gewöhnlich",
-        tier_rare: "Selten",
-        tier_legendary: "Legendär",
-        tier_exotic: "Exotisch",
+        normalize_title: "Normalisieren - Gegenstände gleichmäßig über deine Charaktere verteilen",
         paypal_code: "DE",
-        menu_destinystatus: "DestinyStatus Bericht",
-        language_text: "Dies wird die Sprache für alle Gegnstände und bei manchen Sprachen das Interface verändern, weitere Sprachen werden in der Zukunft hinzugefügt.",
-        menu_settings: "Einstellungen",
+        pick_a_set: "Bitte wähle ein Set bevor du diese Option auswählst",
+        recovery: "Erhlg",
+        str: "Stä",
+        strength: "Stä",
         text_shareurl: "Dein Inventar wird aktualisiert, indem du erneut auf URL teilen im Menü klickst.",
-        donation_title: "Spenden an Tower Ghost für Destiny!",
-        donation_instructions: "Dies ist ein nicht-kommerzielles Projekt, das Destiny gewidmet ist. Wenn dir diese App gefällt, denke doch über eine Spende nach um das Projekt am Leben zu halten."
+        this_icon: "Das Icon ist",
+        tier_common: "Gewöhnlich",
+        tier_exotic: "Exotisch",
+        tier_legendary: "Legendär",
+        tier_rare: "Selten",
+        tier_uncommon: "Ungewöhnlich",
+        transfer: "Übertrage",
+        transfer_all: "Alle",
+        transfer_amount: "Menge Übertragen",
+        transfer_ask: "Nicht erneut fragen",
+        transfer_consolidate: "Zusammenlegen (von allen Charakteren",
+        transfer_one: "Eins",
+        unable_create_loadout_for_type: "Es ist aktuell nicht möglich Ausrüstungen mit diesem Gegenstand zu erstellen.",
+        unable_to_create_loadout_for_bucket: "Du kannst keine Ausrüstung mit mehr als 10 Gegenständen in diesem Platz erstellen: ",
+        unable_to_move_bucketitems: "Gegenstände in diesem Bucket können nicht mit dem API übertragen werden.",
+        unable_unequip: "Ablegen unmöglich von ",
+        vo_container_width: "Container Breite",
+        vo_layout_mode: "Layout Modus",
+        vo_layout_mode_cust: "Angepasst",
+        vo_layout_mode_def: "Standard",
+        vo_number_of_columns: "Spalten",
+        vo_vault_columns: "Tresor Spalten",
+        vo_vault_first: "Erste/Links",
+        vo_vault_last: "Letzte/Rechts",
+        vo_vault_position: "Tresor Position",
+        vo_vault_width: "Tresor Breite",
+        whats_new_title: "Tower Ghost für Destiny Updates"
+    },
+    es: {
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
+        cancel: "Cancelar",
+        cannot_equip: "Error desconocido tratando de equipar ",
+        cannot_unequip: "No mas elementos para tratar de unequip la ",
+        close_msg: "Cerrar",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "Este es un projecto non-commercial dedicado para Destiny. Si usted disfurat esta aplicacion proveve una donacion para supportar los gastos.",
+        donation_title: "Donaciones para Tower Ghost for Destiny!",
+        error_loading_inventory: "Error cargando inventario",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Cantidad no valida entrada: ",
+        inventory_armor: "Armadura",
+        inventory_general: "General",
+        inventory_postmaster: "Post Master",
+        inventory_postmaster_lost_items: "Lost Items",
+        inventory_postmaster_messages: "Messages",
+        inventory_subclasses: "Subclases",
+        inventory_weapons: "Armas",
+        itemDefs_undefined: "Por favor informar el asunto a mi Github y asegurese de que su fuente se establece en Ingles.",
+        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
+        language_text: "Esto cambiara el lenguage de la aplicacion y de los articulos.",
+        light: "Light",
+        loadouts_alreadythere_pt1: " ya esta en el ",
+        loadouts_alreadythere_pt2: "'s cubo de ",
+        loadouts_delete: "Borrar",
+        loadouts_desktop: "cheque",
+        loadouts_instructions: "No hay articulos en loadout, haga clic en los articulos a anadir, ",
+        loadouts_instructions_contd: " para equipar.",
+        loadouts_invalidbucket: " no sera trasladado, Debido a este cubo: ",
+        loadouts_mobile: "sostener",
+        loadouts_no_replacement: " no sera trasladado. No hay otro para reemplazarlo.",
+        loadouts_no_transfer: " no sera trasladado",
+        loadouts_outofspace: " no sera trasladado, no hay espacio en ",
+        loadouts_save: "Guardar",
+        loadouts_save_new: "Guardar Como",
+        loadouts_swap: " sera intercambiado con ",
+        loadouts_to_equip: " sera equipado.",
+        loadouts_to_moveequip: " sera trasladado y equipado.",
+        loadouts_to_transfer: " sera trasladado",
+        loadouts_transfer: "Transferir",
+        loadouts_transfer_confirm: "Confirmar Transferencia",
+        loadouts_transferred: "<strong>Articulo(s) transferido con exito</strong><br> Si te gusta esta aplicacion, puedes <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">comprarme un ponchecrema.</a>",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
+        login_help: "Por favor, espere a que la ventana se cerra. TGD han preparado su informacion.",
+        login_instructions: "Para empezar tendras que acceder a su cuenta a traves de Bungie.net:",
+        login_loading_inventory: "Por favor espere, cargando arsenal de Bungie",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_title: "Bienvenido a Tower Ghost para Destiny!",
+        menu_about: "Acerca De",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_all: "Todo",
+        menu_autorefresh: "Auto Refrescar (5 min)",
+        menu_autotransfer: "Auto Mover Pilas",
+        menu_clear: "Aclaro Filtro",
+        menu_damage: "Da\xF1o",
+        menu_destinydbmode: "DestinyDB Modo",
+        menu_destinydbtooltips: "DestinyDB Tooltips",
+        menu_destinystatus: "DestinyStatus Reporte",
+        menu_destinytrials: "DestinyTrials Reporte",
+        menu_destinytracker: "DestinyTracker Reporte",
+        menu_destinyguardiangg: "Guardian.GG Reporte",
+        menu_donate: "Donar",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Ayuda",
+        menu_language: "Language",
+        menu_loadouts: "Loadouts",
+        menu_loadouts_create: "Crear",
+        menu_padheight: "Auto Adjusto Altura",
+        menu_progress: "Progreso",
+        menu_progress_1: "Falta Perks",
+        menu_progress_2: "Completo Perks",
+        menu_progress_3: "Al Maxmimo",
+        menu_refresh: "Refrescar (seg.)",
+        menu_set: "Conjunto",
+        menu_set_showduplicates: "Monstrar articulos duplicados",
+        menu_set_showmissing: "Monstrar articulos que faltan",
+        menu_settings: "Ajustes",
+        menu_shareurl: "Compartir Con Amigos",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "Nivel",
+        menu_useps: "Usa Playstation Cuenta",
+        menu_usexbox: "Usa Xbox Cuenta",
+        menu_view: "Vista",
+        menu_view_armor: "Armaduras",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_general: "General",
+        menu_view_options: "Opciones de Vista",
+        menu_view_weapons: "Armas",
+        missing_items: "Articulos que faltan",
+        most_points: "Most Points",
+        movepopup_equip: "equipar",
+        movepopup_extras: "extras",
+        movepopup_move: "Mover a",
+        movepopup_store: "almacenar",
+        movepopup_vault: "bodega",
+        normalize_title: "Normalizar - igualmente distribuir tema a traves de sus personajes",
+        paypal_code: "ES",
+        pick_a_set: "Por favor elija un Set antes de seleccionar esta opcion",
+        recovery: "Recovery",
+        str: "Str",
+        strength: "Strength",
+        text_shareurl: "Tu iventoria es actualizado cuando hagas click a Compartir URL denuevo.",
+        this_icon: "Este icono es ",
+        tier_common: "Com\xFAn",
+        tier_exotic: "Ex\xF3tico",
+        tier_legendary: "Legendario",
+        tier_rare: "Raro",
+        tier_uncommon: "Poco com\xFAn",
+        transfer: "Transfer",
+        transfer_all: "Todos",
+        transfer_amount: "Transferencia monto",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "Uno",
+        unable_create_loadout_for_type: "Actualmente no se puede crear loadouts con este tipo de elemento.",
+        unable_to_create_loadout_for_bucket: "No se puede crear un loadout con mas de 10 articulos en esta ranura: ",
+        unable_to_move_bucketitems: "Post Master no pueden ser transferidos con el programa.",
+        unable_unequip: "Incapaz de inequippar ",
+        vo_container_width: "Container Width",
+        vo_layout_mode: "Layout Mode",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
+        vo_number_of_columns: "# de Columnas",
+        vo_vault_columns: "Vault Columns",
+        vo_vault_first: "Primero/Izquierda",
+        vo_vault_last: "Ultimo/Derecha",
+        vo_vault_position: "Position de Bodega",
+        vo_vault_width: "Vault Width",
+        whats_new_title: "Tower Ghost for Destiny Noticias"
+    },
+    fr: {
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
+        cancel: "Cancel",
+        cannot_equip: "Erreur inconnue essayant d'quiper ",
+        cannot_unequip: "Peu plus d'lments pour tenter de dsquiper le ",
+        close_msg: "Fermer",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "Ceci est un projet non commercial dédié au Destiny. Si vous aimez ce soft fournir un don de garder ce projet en vie et soutenir les coûts de maintenance.",
+        donation_title: "Dons pour Tower Ghost for Destiny!",
+        error_loading_inventory: "Erreur inventaire de chargement",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Le montant indiqu est incorrect: ",
+        inventory_armor: "Armure",
+        inventory_general: "General",
+        inventory_postmaster: "Commis des postes",
+        inventory_postmaster_lost_items: "Objets Perdus",
+        inventory_postmaster_messages: "Messages",
+        inventory_subclasses: "Sous Classes",
+        inventory_weapons: "Armes",
+        itemDefs_undefined: "S'il vous plat signaler le problme  mon Github et assurez-vous que votre police est l'anglais.",
+        language_pack_downloaded: "Language Pack téléchargé, s'il vous plaît rafraîchir pour voir les changements",
+        language_text: "Cela va changer la langue pour tous les articles et l'interface pour certaines langues, d'autres langues seront ajoutées dans le futur.",
+        light: "Light",
+        loadouts_alreadythere_pt1: " is already in the ",
+        loadouts_alreadythere_pt2: "'s bucket of ",
+        loadouts_delete: "Rayer",
+        loadouts_desktop: "check",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
+        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
+        loadouts_mobile: "hold",
+        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
+        loadouts_no_transfer: " will not be moved",
+        loadouts_outofspace: " will not be moved, there is no space in ",
+        loadouts_save: "Sauver",
+        loadouts_save_new: "Sauver As",
+        loadouts_swap: " will be swapped with ",
+        loadouts_to_equip: " will be equipped.",
+        loadouts_to_moveequip: " will be moved and equipped.",
+        loadouts_to_transfer: " will be moved",
+        loadouts_transfer: "Transfert",
+        loadouts_transfer_confirm: "Transfer Confirm",
+        loadouts_transferred: "<strong>Articles transféré avec succès</strong><br> Si vous aimez ce soft pensez à <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">achetez-moi une bière</a>",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
+        login_help: "S'il vous plaît attendre la fenêtre de connexion à proximité de l'automobile comme TGD prépare vos informations.",
+        login_instructions: "Pour commencer, vous aurez besoin pour vous connecter à votre compte Bungie.net via:",
+        login_loading_inventory: "Please wait, loading arsenal from Bungie",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_title: "Bienvenue à Tower Ghost for Destiny!",
+        menu_about: "Propos",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_all: "Tout",
+        menu_autorefresh: "Auto Actualiser (5 min)",
+        menu_autotransfer: "Auto transfert s'entasser",
+        menu_clear: "Filtres effacer",
+        menu_damage: "Dommages",
+        menu_destinydbmode: "DestinyDB Mode",
+        menu_destinydbtooltips: "DestinyDB infobulles",
+        menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
+        menu_donate: "Don",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Aide",
+        menu_language: "Language",
+        menu_loadouts: "Loadouts",
+        menu_loadouts_create: "Crer",
+        menu_padheight: "Auto Pad Hauteur",
+        menu_progress: "Progrs",
+        menu_progress_1: "Missing Perks",
+        menu_progress_2: "Missing Border",
+        menu_progress_3: "Maxed",
+        menu_refresh: "Actualisez (segundos)",
+        menu_set: "Ensemble",
+        menu_set_showduplicates: "Afficher les doublons d'objets",
+        menu_set_showmissing: "Afficher les lments manquants",
+        menu_settings: "Paramètres",
+        menu_shareurl: "Partager URL",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "chelon",
+        menu_useps: "Utiliser Playstation un compte",
+        menu_usexbox: "Utiliser Xbox un compte",
+        menu_view: "Voir",
+        menu_view_armor: "Armure",
+        menu_view_general: "General",
+        menu_view_options: "Options d'affichage",
+        menu_view_weapons: "Armes",
+        missing_items: "Articles manquant",
+        most_points: "Most Points",
+        movepopup_equip: "équiper",
+        movepopup_extras: "extras",
+        movepopup_move: "Bouger",
+        movepopup_store: "dépôt",
+        movepopup_vault: "voûte",
+        normalize_title: "Normalizar - igualmente distribuir tema a travs de sus personajes",
+        paypal_code: "FR",
+        pick_a_set: "S'il vous plat choisir un ensemble avant de choisir cette option",
+        recovery: "Recovery",
+        str: "Str",
+        strength: "Strength",
+        text_shareurl: "Votre inventaire est mis à jour en cliquant sur Partager URL dans le menu à nouveau.",
+        this_icon: "Cette icne est ",
+        tier_common: "Common",
+        tier_exotic: "Exotic",
+        tier_legendary: "Legendary",
+        tier_rare: "Rare",
+        tier_uncommon: "Uncommon",
+        transfer: "Transfer",
+        transfer_all: "Tous",
+        transfer_amount: "Transferencia monto",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "Un",
+        unable_create_loadout_for_type: "Actuellement incapable de crer loadouts avec ce type d'article",
+        unable_to_create_loadout_for_bucket: "Vous ne pouvez pas crer un loadout avec plus de 10 articles dans cette fente: ",
+        unable_to_move_bucketitems: "Articles matre de poste ne peuvent tre transfrs avec l'API.",
+        unable_unequip: "Impossible de dsquiper ",
+        vo_container_width: "Container Width",
+        vo_layout_mode: "Layout Mode",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
+        vo_number_of_columns: "Number of Columns",
+        vo_vault_columns: "Vault Columns",
+        vo_vault_first: "First/Left",
+        vo_vault_last: "Last/Right",
+        vo_vault_position: "Vault Position",
+        vo_vault_width: "Vault Width",
+        whats_new_title: "Tower Ghost for Destiny Nouvelles"
+    },
+    it: {
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
+        cancel: "Cancel",
+        cannot_equip: "Unknown error trying to equip ",
+        cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        error_loading_inventory: "Error loading inventory ",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Invalid amount entered: ",
+        inventory_armor: "Armor",
+        inventory_general: "General",
+        inventory_postmaster: "Post Master",
+        inventory_postmaster_messages: "Messages",
+        inventory_postmaster_lost_items: "Lost Items",
+        inventory_subclasses: "Sub Classes",
+        inventory_weapons: "Weapons",
+        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
+        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
+        light: "Light",
+        loadouts_alreadythere_pt1: " is already in the ",
+        loadouts_alreadythere_pt2: "'s bucket of ",
+        loadouts_delete: "Delete",
+        loadouts_desktop: "check",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
+        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
+        loadouts_mobile: "hold",
+        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
+        loadouts_no_transfer: " will not be moved",
+        loadouts_outofspace: " will not be moved, there is no space in ",
+        loadouts_save: "Save",
+        loadouts_save_new: "Save As",
+        loadouts_swap: " will be swapped with ",
+        loadouts_to_equip: " will be equipped.",
+        loadouts_to_moveequip: " will be moved and equipped.",
+        loadouts_to_transfer: " will be moved",
+        loadouts_transfer: "Transfer",
+        loadouts_transfer_confirm: "Transfer Confirm",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
+        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
+        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
+        login_loading_inventory: "Please wait, loading arsenal from Bungie",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_about: "About",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_all: "All",
+        menu_autorefresh: "Auto Refresh (5 min)",
+        menu_autotransfer: "Auto Transfer Stacks",
+        menu_clear: "Clear Filters",
+        menu_destinydbtooltips: "DestinyDB Tooltips",
+        menu_destinydbmode: "DestinyDB Mode",
+        menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
+        menu_damage: "Damage",
+        menu_donate: "Donate",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Help",
+        menu_language: "Language",
+        menu_loadouts: "Loadouts",
+        menu_loadouts_create: "Create",
+        menu_padheight: "Auto Pad Height",
+        menu_progress: "Progress",
+        menu_progress_1: "Missing Perks",
+        menu_progress_2: "Missing Border",
+        menu_progress_3: "Maxed",
+        menu_refresh: "Refresh (secs)",
+        menu_set: "Set",
+        menu_set_showmissing: "Show Missing Items",
+        menu_set_showduplicates: "Show Duplicate Items",
+        menu_settings: "Settings",
+        menu_shareurl: "Share URL with friends",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "Tier",
+        menu_usexbox: "Use Xbox Account",
+        menu_useps: "Use Playstation Account",
+        menu_view: "View",
+        menu_view_armor: "Armor",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_general: "General",
+        menu_view_options: "View Options",
+        menu_view_weapons: "Weapons",
+        missing_items: "Missing Items",
+        most_points: "Most Points",
+        movepopup_move: "Move",
+        movepopup_store: "store",
+        movepopup_equip: "equip",
+        movepopup_vault: "vault",
+        movepopup_extras: "extras",
+        normalize_title: "Normalize - equally distribute item across your characters",
+        paypal_code: "EN",
+        pick_a_set: "Please pick a Set before selecting this option",
+        recovery: "Recovery",
+        str: "Str",
+        strength: "Strength",
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        this_icon: "This icon is ",
+        tier_common: "Common",
+        tier_exotic: "Exotic",
+        tier_legendary: "Legendary",
+        tier_rare: "Rare",
+        tier_uncommon: "Uncommon",
+        transfer: "Transfer",
+        transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "One",
+        unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
+        unable_unequip: "Unable to unequip ",
+        unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
+        unable_to_move_bucketitems: "This item cannot be transferred with the API.",
+        vo_container_width: "Container Width",
+        vo_layout_mode: "Vault Mode",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
+        vo_number_of_columns: "Number of Columns",
+        vo_vault_columns: "Vault Columns",
+        vo_vault_first: "First/Left",
+        vo_vault_last: "Last/Right",
+        vo_vault_position: "Vault Position",
+        vo_vault_width: "Vault Width",
+        whats_new_title: "Tower Ghost for Destiny Updates"
+    },
+    ja: {
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
+        cancel: "Cancel",
+        cannot_equip: "Unknown error trying to equip ",
+        cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        error_loading_inventory: "Error loading inventory ",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Invalid amount entered: ",
+        inventory_armor: "Armor",
+        inventory_general: "General",
+        inventory_postmaster: "Post Master",
+        inventory_postmaster_messages: "Messages",
+        inventory_postmaster_lost_items: "Lost Items",
+        inventory_subclasses: "Sub Classes",
+        inventory_weapons: "Weapons",
+        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
+        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
+        light: "Light",
+        loadouts_alreadythere_pt1: " is already in the ",
+        loadouts_alreadythere_pt2: "'s bucket of ",
+        loadouts_delete: "Delete",
+        loadouts_desktop: "check",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
+        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
+        loadouts_mobile: "hold",
+        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
+        loadouts_no_transfer: " will not be moved",
+        loadouts_outofspace: " will not be moved, there is no space in ",
+        loadouts_save: "Save",
+        loadouts_save_new: "Save As",
+        loadouts_swap: " will be swapped with ",
+        loadouts_to_equip: " will be equipped.",
+        loadouts_to_moveequip: " will be moved and equipped.",
+        loadouts_to_transfer: " will be moved",
+        loadouts_transfer: "Transfer",
+        loadouts_transfer_confirm: "Transfer Confirm",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
+        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
+        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
+        login_loading_inventory: "Please wait, loading arsenal from Bungie",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_about: "About",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_all: "All",
+        menu_autorefresh: "Auto Refresh (5 min)",
+        menu_autotransfer: "Auto Transfer Stacks",
+        menu_clear: "Clear Filters",
+        menu_destinydbtooltips: "DestinyDB Tooltips",
+        menu_destinydbmode: "DestinyDB Mode",
+        menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
+        menu_damage: "Damage",
+        menu_donate: "Donate",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Help",
+        menu_language: "Language",
+        menu_loadouts: "Loadouts",
+        menu_loadouts_create: "Create",
+        menu_padheight: "Auto Pad Height",
+        menu_progress: "Progress",
+        menu_progress_1: "Missing Perks",
+        menu_progress_2: "Missing Border",
+        menu_progress_3: "Maxed",
+        menu_refresh: "Refresh (secs)",
+        menu_set: "Set",
+        menu_set_showmissing: "Show Missing Items",
+        menu_set_showduplicates: "Show Duplicate Items",
+        menu_settings: "Settings",
+        menu_shareurl: "Share URL with friends",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "Tier",
+        menu_usexbox: "Use Xbox Account",
+        menu_useps: "Use Playstation Account",
+        menu_view: "View",
+        menu_view_armor: "Armor",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_general: "General",
+        menu_view_options: "View Options",
+        menu_view_weapons: "Weapons",
+        missing_items: "Missing Items",
+        most_points: "Most Points",
+        movepopup_move: "Move",
+        movepopup_store: "store",
+        movepopup_equip: "equip",
+        movepopup_vault: "vault",
+        movepopup_extras: "extras",
+        normalize_title: "Normalize - equally distribute item across your characters",
+        paypal_code: "EN",
+        pick_a_set: "Please pick a Set before selecting this option",
+        recovery: "Recovery",
+        str: "Str",
+        strength: "Strength",
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        this_icon: "This icon is ",
+        tier_common: "Common",
+        tier_exotic: "Exotic",
+        tier_legendary: "Legendary",
+        tier_rare: "Rare",
+        tier_uncommon: "Uncommon",
+        transfer: "Transfer",
+        transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "One",
+        unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
+        unable_unequip: "Unable to unequip ",
+        unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
+        unable_to_move_bucketitems: "This item cannot be transferred with the API.",
+        vo_container_width: "Container Width",
+        vo_layout_mode: "Vault Mode",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
+        vo_number_of_columns: "Number of Columns",
+        vo_vault_columns: "Vault Columns",
+        vo_vault_first: "First/Left",
+        vo_vault_last: "Last/Right",
+        vo_vault_position: "Vault Position",
+        vo_vault_width: "Vault Width",
+        whats_new_title: "Tower Ghost for Destiny Updates"
+    },
+    pt: {
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
+        cancel: "Cancel",
+        cannot_equip: "Unknown error trying to equip ",
+        cannot_unequip: "No more items to try to unequip the ",
+        close_msg: "Close",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs.",
+        donation_title: "Donations for Tower Ghost for Destiny!",
+        error_loading_inventory: "Error loading inventory ",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Invalid amount entered: ",
+        inventory_armor: "Armor",
+        inventory_general: "General",
+        inventory_postmaster: "Post Master",
+        inventory_postmaster_messages: "Messages",
+        inventory_postmaster_lost_items: "Lost Items",
+        inventory_subclasses: "Sub Classes",
+        inventory_weapons: "Weapons",
+        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
+        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
+        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
+        light: "Light",
+        loadouts_alreadythere_pt1: " is already in the ",
+        loadouts_alreadythere_pt2: "'s bucket of ",
+        loadouts_delete: "Delete",
+        loadouts_desktop: "check",
+        loadouts_instructions: "No items in loadout, click items to add, ",
+        loadouts_instructions_contd: " to equip.",
+        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
+        loadouts_mobile: "hold",
+        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
+        loadouts_no_transfer: " will not be moved",
+        loadouts_outofspace: " will not be moved, there is no space in ",
+        loadouts_save: "Save",
+        loadouts_save_new: "Save As",
+        loadouts_swap: " will be swapped with ",
+        loadouts_to_equip: " will be equipped.",
+        loadouts_to_moveequip: " will be moved and equipped.",
+        loadouts_to_transfer: " will be moved",
+        loadouts_transfer: "Transfer",
+        loadouts_transfer_confirm: "Transfer Confirm",
+        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
+        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
+        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
+        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
+        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
+        login_loading_inventory: "Please wait, loading arsenal from Bungie",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_about: "About",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_all: "All",
+        menu_autorefresh: "Auto Refresh (5 min)",
+        menu_autotransfer: "Auto Transfer Stacks",
+        menu_clear: "Clear Filters",
+        menu_destinydbtooltips: "DestinyDB Tooltips",
+        menu_destinydbmode: "DestinyDB Mode",
+        menu_destinystatus: "DestinyStatus Report",
+        menu_destinytrials: "DestinyTrials Report",
+        menu_destinytracker: "DestinyTracker Report",
+        menu_destinyguardiangg: "Guardian.GG Report",
+        menu_damage: "Damage",
+        menu_donate: "Donate",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Help",
+        menu_language: "Language",
+        menu_loadouts: "Loadouts",
+        menu_loadouts_create: "Create",
+        menu_padheight: "Auto Pad Height",
+        menu_progress: "Progress",
+        menu_progress_1: "Missing Perks",
+        menu_progress_2: "Missing Border",
+        menu_progress_3: "Maxed",
+        menu_refresh: "Refresh (secs)",
+        menu_set: "Set",
+        menu_set_showmissing: "Show Missing Items",
+        menu_set_showduplicates: "Show Duplicate Items",
+        menu_settings: "Settings",
+        menu_shareurl: "Share URL with friends",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "Tier",
+        menu_usexbox: "Use Xbox Account",
+        menu_useps: "Use Playstation Account",
+        menu_view: "View",
+        menu_view_armor: "Armor",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_general: "General",
+        menu_view_options: "View Options",
+        menu_view_weapons: "Weapons",
+        missing_items: "Missing Items",
+        most_points: "Most Points",
+        movepopup_move: "Move",
+        movepopup_store: "store",
+        movepopup_equip: "equip",
+        movepopup_vault: "vault",
+        movepopup_extras: "extras",
+        normalize_title: "Normalize - equally distribute item across your characters",
+        paypal_code: "EN",
+        pick_a_set: "Please pick a Set before selecting this option",
+        recovery: "Recovery",
+        str: "Str",
+        strength: "Strength",
+        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
+        this_icon: "This icon is ",
+        tier_common: "Common",
+        tier_exotic: "Exotic",
+        tier_legendary: "Legendary",
+        tier_rare: "Rare",
+        tier_uncommon: "Uncommon",
+        transfer: "Transfer",
+        transfer_all: "All",
+        transfer_amount: "Transfer Amount",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "One",
+        unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
+        unable_unequip: "Unable to unequip ",
+        unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
+        unable_to_move_bucketitems: "This item cannot be transferred with the API.",
+        vo_container_width: "Container Width",
+        vo_layout_mode: "Vault Mode",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
+        vo_number_of_columns: "Number of Columns",
+        vo_vault_columns: "Vault Columns",
+        vo_vault_first: "First/Left",
+        vo_vault_last: "Last/Right",
+        vo_vault_position: "Vault Position",
+        vo_vault_width: "Vault Width",
+        whats_new_title: "Tower Ghost for Destiny Updates"
     },
     tr: {
-        unable_create_loadout_for_type: "Bu öğe tipi ile teçhizat oluşturmak mümkün değil.",
-        unable_to_create_loadout_for_bucket: "Bu slot içerisinde 10'dan fazla öğe ile teçhizat oluşturamazsın: ",
-        unable_to_move_bucketitems: "Seçtiğin öğeler bu uygulama ile aktarılamaz.",
-        this_icon: "Bu ikon ",
-        pick_a_set: "Lütfen bir set seçin",
-        error_loading_inventory: "Cephaneniz yüklenirken hata oluştu ",
-        whats_new_title: "Tower Ghost for Destiny Güncellemeleri",
-        itemDefs_undefined: "Öğe tanımlanamadı, lütfen bu hatayı bana ingilizce olarak GitHub sayfamdan belirtin.",
-        invalid_transfer_amount: "Geçersiz miktar girildi: ",
-        normalize_title: "Normalize - bir öğeyi bütün karakterler arasında eşit olarak bölüştürür",
-        transfer_amount: "Aktarılacak Miktar",
-        transfer_all: "Hepsi",
-        transfer_one: "Bir Adet",
+        agility: "Agility",
+        armor: "Armor",
+        best_combo: "Best Combo",
         cancel: "Vazgeç",
-        cannot_unequip: "Üzerinizdekini bırakmak için öğe yok ",
-        unable_unequip: "Üzerinizden çıkartılamıyor ",
         cannot_equip: "Öğeyi donanırken hata oluştu ",
-        menu_clear: "Arama Filtrelerini Temizle",
-        menu_refresh: "Yenile",
+        cannot_unequip: "Üzerinizdekini bırakmak için öğe yok ",
+        close_msg: "Kapat",
+        disc: "Disc",
+        discipline: "Discipline",
+        donation_instructions: "Bu program tamamen ücretsiz ve Destiny ye bağışlanmış bir programdır.Herhangi bir ücret talep etmemektedir yani kelepirdir. Programımızı geliştirmek ve daha iyi bir deneyim sağlamamızı istiyorsanız,lütfen bağışlarınızı ve desteğinizi esirgemeyiniz.Teşekkürler.",
+        donation_title: "Destiny ye bağışlar!",
+        error_loading_inventory: "Cephaneniz yüklenirken hata oluştu ",
+        gear_with_highest: "Equip Gear With Highest:",
+        inte: "Int",
+        intellect: "Intellect",
+        invalid_transfer_amount: "Geçersiz miktar girildi: ",
+        inventory_armor: "Armorlar",
+        inventory_general: "Görevler",
+        inventory_postmaster: "Post Master",
+        inventory_postmaster_lost_items: "Kayıp Öğeler",
+        inventory_postmaster_messages: "Mesajlar",
+        inventory_subclasses: "Sub Klaslar",
+        inventory_weapons: "Silahlar",
+        itemDefs_undefined: "Öğe tanımlanamadı, lütfen bu hatayı bana ingilizce olarak GitHub sayfamdan belirtin.",
+        language_pack_downloaded: "Dil paketi indirildi,lütfen yenileyin ve değişikliklere göz atın.",
+        language_text: "Bu seçenek,programın bütün içeriğinin dilini değiştirecektir.Ileride programda daha fazla dil desteği olacaktır.",
+        light: "Light",
+        loadouts_alreadythere_pt1: "zaten bunun içerisinde ",
+        loadouts_alreadythere_pt2: "'s bucket of ",
+        loadouts_delete: "Sil",
+        loadouts_desktop: "kontrol",
+        loadouts_instructions: "Teçhizatında donanmak için öğe yok.Donanmak için tıkla, ",
+        loadouts_instructions_contd: " ekle.",
+        loadouts_invalidbucket: " aktarılmayacak. Çünkü seçtiğin bu öğeler yüzünden: ",
+        loadouts_mobile: "tut",
+        loadouts_no_replacement: " aktarılmayacak. Bu öğenin yerine koyabileceğimiz başka bir öğe yok.",
+        loadouts_no_transfer: " aktarılmayacak",
+        loadouts_outofspace: " aktarılmayacak, çünkü yandaki yerde yeterli alanın yok ",
+        loadouts_save: "Kaydet",
+        loadouts_save_new: "Kaydet As",
+        loadouts_swap: " ile takas yapılacak ",
+        loadouts_to_equip: " donanılacak.",
+        loadouts_to_moveequip: " aktarılacak ve donanılacak.",
+        loadouts_to_transfer: " aktarılacak",
+        loadouts_transfer: "Transfer",
+        loadouts_transfer_confirm: "Aktarmayı Onayla",
+        loadouts_transferred: "<strong>Öğe(ler) başarı ile aktarıldı!</strong><br> Eğer bu kolaylık hoşunuza gittiyse,<a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">bana bi çay ısmarlayın</a>",
+        login_authenticating_pt1: "Bungie'ye giriş yapılıyor.. Lütfen sabırlı olun :).",
+        login_authenticating_pt2: "Eğer yükleme ekranı 2 dakikadan uzun sürdüyse, Yenilemek için bu linkleri kullanın",
+        login_authenticating_pt3: "ve yeniden giriş yapmayı deneyin. Eğer sorun devam ederse,programı silip tekrar yükleyin.",
+        login_help: "Yükleme ekranının otomatik kapanmasını bekleyiniz.Yüklendikten sonra program sizi cephanenize yönlendirecektir.",
+        login_instructions: "Programı kullanabilmek için Bungie.Net hesabına giriş yapman gerekiyor:",
+        login_loading_inventory: "Lütfen Bekleyin, Cephaneniz Bungie tarafından yükleniyor",
+        login_loading_updates: "Please wait, downloading auto updates",
+        login_title: "Tower Ghost for Destiny ye Hoşgeldiniz!",
         menu_about: "Hakkında",
-        menu_help: "Yardım",
+        menu_advancedtooltips: "Advanced Tooltips",
+        menu_all: "Hepsi",
+        menu_autorefresh: "Otomatik yenileme (5 mins)",
+        menu_autotransfer: "Otomatik Transfer",
+        menu_clear: "Arama Filtrelerini Temizle",
+        menu_damage: "Hasar Türü",
+        menu_destinydbmode: "DestinyDB Modu",
+        menu_destinydbtooltips: "DestinyDB Araçları",
+        menu_destinystatus: "DestinyStatus Raporu",
+        menu_destinytrials: "DestinyTrials Raporu",
+        menu_destinytracker: "DestinyTracker Raporu",
+        menu_destinyguardiangg: "Guardian.GG Raporu",
         menu_donate: "Bağış",
+        menu_filter_by: "Filter By",
+        menu_filter_by_subclass_eq: "Subclass Equipped",
+        menu_filter_by_weapon_eq: "Weapons Equipped",
+        menu_filter_for_class: "Filter for Class",
+        menu_help: "Yardım",
         menu_language: "Dil",
         menu_loadouts: "Teçhizatlar",
         menu_loadouts_create: "Oluştur",
-        menu_view: "Görüntüle",
-        menu_all: "Hepsi",
-        menu_view_weapons: "Silahlar",
-        menu_view_armor: "Armorlar",
-        menu_view_general: "Görevler",
-        menu_view_options: "Görüntüleme Ayarları",
-        menu_shareurl: "URL'yi Arkadaşlarınla paylaş",
-        menu_autorefresh: "Otomatik yenileme (5 mins)",
-        menu_destinydbtooltips: "DestinyDB Araçları",
-        menu_destinydbmode: "DestinyDB Modu",
-        menu_autotransfer: "Otomatik Transfer",
         menu_padheight: "Otomatik Ped Yüksekliği",
-        menu_usexbox: "Xbox Hesabını Kullan",
-        menu_useps: "PlayStation Hesabını Kullan",
-        menu_set: "Set",
-        menu_set_showmissing: "Eksik Öğeleri Göster",
-        menu_set_showduplicates: "Birden Fazla Olan Öğeleri Göster",
-        menu_tier: "Öğe Türü",
         menu_progress: "Ilerleme",
         menu_progress_1: "Ilerlemesi eksik olan öğeler",
         menu_progress_2: "Ilerlemesi Tam olan öğeler",
         menu_progress_3: "Maksimum olan öğeler",
-        menu_damage: "Hasar Türü",
-        language_pack_downloaded: "Dil paketi indirildi,lütfen yenileyin ve değişikliklere göz atın.",
+        menu_refresh: "Yenile",
+        menu_set: "Set",
+        menu_set_showduplicates: "Birden Fazla Olan Öğeleri Göster",
+        menu_set_showmissing: "Eksik Öğeleri Göster",
+        menu_settings: "Ayarlar",
+        menu_shareurl: "URL'yi Arkadaşlarınla paylaş",
+        menu_sortby: "Sort By",
+        menu_sortby_damage: "Damage Type",
+        menu_sortby_lightlvl: "Light Level",
+        menu_sortby_name: "Name",
+        menu_sortby_type: "Type",
+        menu_sortby_tier_type: "Tier, Type",
+        menu_tier: "Öğe Türü",
+        menu_useps: "PlayStation Hesabını Kullan",
+        menu_usexbox: "Xbox Hesabını Kullan",
+        menu_view: "Görüntüle",
+        menu_view_armor: "Armorlar",
+        menu_view_by: "View By",
+        menu_view_by_lightlvl: "Light Level",
+        menu_view_by_stat_points: "Combined Stat Points",
+        menu_view_general: "Görevler",
+        menu_view_options: "Görüntüleme Ayarları",
+        menu_view_weapons: "Silahlar",
+        missing_items: "Kayıp Öğeler",
+        most_points: "Most Points",
+        movepopup_equip: "donan",
+        movepopup_extras: "ekstralar",
+        movepopup_move: "taşı",
+        movepopup_store: "al",
+        movepopup_vault: "vault",
+        normalize_title: "Normalize - bir öğeyi bütün karakterler arasında eşit olarak bölüştürür",
+        paypal_code: "TR",
+        pick_a_set: "Lütfen bir set seçin",
+        recovery: "Recovery",
+        str: "Str",
+        strength: "Strength",
+        text_shareurl: "Inventoriniz SHARE URL seçeneği ile tekrar yenilenebilir.",
+        this_icon: "Bu ikon ",
+        tier_common: "Yaygın",
+        tier_exotic: "Exotic",
+        tier_legendary: "Legendary",
+        tier_rare: "Rare",
+        tier_uncommon: "Nadir",
+        transfer: "Transfer",
+        transfer_all: "Hepsi",
+        transfer_amount: "Aktarılacak Miktar",
+        transfer_ask: "Don\'t ask in the future",
+        transfer_consolidate: "Consolidate (pull from all characters",
+        transfer_one: "Bir Adet",
+        unable_create_loadout_for_type: "Bu öğe tipi ile teçhizat oluşturmak mümkün değil.",
+        unable_to_create_loadout_for_bucket: "Bu slot içerisinde 10'dan fazla öğe ile teçhizat oluşturamazsın: ",
+        unable_to_move_bucketitems: "Seçtiğin öğeler bu uygulama ile aktarılamaz.",
+        unable_unequip: "Üzerinizden çıkartılamıyor ",
+        vo_container_width: "Container Width",
+        vo_layout_mode: "Layout Mode",
+        vo_layout_mode_cust: "Custom",
+        vo_layout_mode_def: "Default",
         vo_number_of_columns: "Columns",
+        vo_vault_columns: "Vault Columns",
         vo_vault_first: "Ilk/Sol",
         vo_vault_last: "Son/Sağ",
         vo_vault_position: "Vault pozisyonu",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
         vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Kayıp Öğeler",
-        login_loading_inventory: "Lütfen Bekleyin, Cephaneniz Bungie tarafından yükleniyor",
-        login_authenticating_pt1: "Bungie'ye giriş yapılıyor.. Lütfen sabırlı olun :).",
-        login_authenticating_pt2: "Eğer yükleme ekranı 2 dakikadan uzun sürdüyse, Yenilemek için bu linkleri kullanın",
-        login_authenticating_pt3: "ve yeniden giriş yapmayı deneyin. Eğer sorun devam ederse,programı silip tekrar yükleyin.",
-        login_title: "Tower Ghost for Destiny ye Hoşgeldiniz!",
-        login_instructions: "Programı kullanabilmek için Bungie.Net hesabına giriş yapman gerekiyor:",
-        login_help: "Yükleme ekranının otomatik kapanmasını bekleyiniz.Yüklendikten sonra program sizi cephanenize yönlendirecektir.",
-        movepopup_move: "taşı",
-        movepopup_store: "al",
-        movepopup_equip: "donan",
-        movepopup_vault: "vault",
-        movepopup_extras: "ekstralar",
-        inventory_weapons: "Silahlar",
-        inventory_armor: "Armorlar",
-        inventory_subclasses: "Sub Klaslar",
-        inventory_general: "Görevler",
-        inventory_postmaster: "Post Master",
-        inventory_postmaster_messages: "Mesajlar",
-        inventory_postmaster_lost_items: "Kayıp Öğeler",
-        loadouts_save: "Kaydet",
-        loadouts_delete: "Sil",
-        loadouts_close: "Kapat",
-        loadouts_transfer: "Transfer",
-        loadouts_instructions: "Teçhizatında donanmak için öğe yok.Donanmak için tıkla,",
-        loadouts_instructions_contd: "ekle.",
-        loadouts_mobile: "tut",
-        loadouts_desktop: "kontrol",
-        loadouts_transferred: "<strong>Öğe(ler) başarı ile aktarıldı!</strong><br> Eğer bu kolaylık hoşunuza gittiyse,<a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">bana bi çay ısmarlayın</a>",
-        loadouts_to_transfer: " aktarılacak",
-        loadouts_no_transfer: " aktarılmayacak",
-        loadouts_no_replacement: " aktarılmayacak. Bu öğenin yerine koyabileceğimiz başka bir öğe yok.",
-        loadouts_outofspace: " aktarılmayacak, çünkü yandaki yerde yeterli alanın yok ",
-        loadouts_invalidbucket: " aktarılmayacak. Çünkü seçtiğin bu öğeler yüzünden: ",
-        loadouts_alreadythere_pt1: "zaten bunun içerisinde ",
-        loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_swap: " ile takas yapılacak ",
-        loadouts_to_moveequip: " aktarılacak ve donanılacak.",
-        loadouts_to_equip: " donanılacak.",
-        loadouts_transfer_confirm: "Aktarmayı Onayla",
-        tier_uncommon: "Nadir",
-        tier_common: "Yaygın",
-        tier_rare: "Rare",
-        tier_legendary: "Legendary",
-        tier_exotic: "Exotic",
-        paypal_code: "TR",
-        menu_destinystatus: "DestinyStatus Raporu",
-        language_text: "Bu seçenek,programın bütün içeriğinin dilini değiştirecektir.Ileride programda daha fazla dil desteği olacaktır.",
-        menu_settings: "Ayarlar",
-        text_shareurl: "Inventoriniz SHARE URL seçeneği ile tekrar yenilenebilir.",
-        donation_title: "Destiny ye bağışlar!",
-        donation_instructions: "Bu program tamamen ücretsiz ve Destiny ye bağışlanmış bir programdır.Herhangi bir ücret talep etmemektedir yani kelepirdir. Programımızı geliştirmek ve daha iyi bir deneyim sağlamamızı istiyorsanız,lütfen bağışlarınızı ve desteğinizi esirgemeyiniz.Teşekkürler."
-    },
-    "pt": {
-        unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
-        unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
-        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
-        this_icon: "This icon is ",
-        pick_a_set: "Please pick a Set before selecting this option",
-        error_loading_inventory: "Error loading inventory ",
-        whats_new_title: "Tower Ghost for Destiny Updates",
-        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github and make sure your font is set to English.",
-        invalid_transfer_amount: "Invalid amount entered: ",
-        normalize_title: "Normalize - equally distribute item across your characters",
-        transfer_amount: "Transfer Amount",
-        transfer_all: "All",
-        transfer_one: "One",
-        cancel: "Cancel",
-        cannot_unequip: "No more items to try to unequip the ",
-        unable_unequip: "Unable to unequip ",
-        cannot_equip: "Unknown error trying to equip ",
-        menu_clear: "Clear Filters",
-        menu_refresh: "Refresh (secs)",
-        menu_about: "About",
-        menu_help: "Help",
-        menu_donate: "Donate",
-        menu_language: "Language",
-        menu_loadouts: "Loadouts",
-        menu_loadouts_create: "Create",
-        menu_view: "View",
-        menu_all: "Todo",
-        menu_view_weapons: "Weapons",
-        menu_view_armor: "Armor",
-        menu_view_general: "General",
-        menu_view_options: "View Options",
-        menu_shareurl: "Share URL with friends",
-        menu_autorefresh: "Auto Refresh (5 min)",
-        menu_destinydbtooltips: "DestinyDB Tooltips",
-        menu_advancedtooltips: "Advanced Tooltips",
-        menu_destinydbmode: "DestinyDB Mode",
-        menu_autotransfer: "Auto Transfer Stacks",
-        menu_padheight: "Auto Pad Height",
-        menu_usexbox: "Use Xbox Account",
-        menu_useps: "Use Playstation Account",
-        menu_set: "Set",
-        menu_set_showmissing: "Show Missing Items",
-        menu_set_showduplicates: "Show Duplicate Items",
-        menu_tier: "Tier",
-        menu_progress: "Progress",
-        menu_progress_1: "Missing Perks",
-        menu_progress_2: "Missing Border",
-        menu_progress_3: "Maxed",
-        menu_damage: "Damage",
-        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
-        vo_number_of_columns: "Number of Columns",
-        vo_vault_first: "First/Left",
-        vo_vault_last: "Last/Right",
-        vo_vault_position: "Vault Position",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
-        vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Missing Items",
-        login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
-        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
-        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
-        login_title: "Welcome to Tower Ghost for Destiny!",
-        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
-        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
-        movepopup_move: "Move",
-        movepopup_store: "store",
-        movepopup_equip: "equip",
-        movepopup_vault: "vault",
-        movepopup_extras: "extras",
-        inventory_weapons: "Weapons",
-        inventory_armor: "Armor",
-        inventory_subclasses: "Sub Classes",
-        inventory_general: "General",
-        inventory_postmaster: "Post Master",
-        inventory_postmaster_messages: "Messages",
-        inventory_postmaster_lost_items: "Lost Items",
-        loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
-        loadouts_delete: "Delete",
-        loadouts_close: "Close",
-        loadouts_transfer: "Transfer",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
-        loadouts_mobile: "hold",
-        loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
-        loadouts_to_transfer: " will be moved",
-        loadouts_no_transfer: " will not be moved",
-        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
-        loadouts_outofspace: " will not be moved, there is no space in ",
-        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
-        loadouts_alreadythere_pt1: " is already in the ",
-        loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_swap: " will be swapped with ",
-        loadouts_to_moveequip: " will be moved and equipped.",
-        loadouts_to_equip: " will be equipped.",
-        loadouts_transfer_confirm: "Transfer Confirm",
-        tier_uncommon: "Uncommon",
-        tier_common: "Common",
-        tier_rare: "Rare",
-        tier_legendary: "Legendary",
-        tier_exotic: "Exotic",
-        paypal_code: "pt_BR",
-        menu_destinystatus: "DestinyStatus Report",
-        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
-        menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
-        donation_title: "Donations for Tower Ghost for Destiny!",
-        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
-    },
-    ja: {
-        unable_create_loadout_for_type: "Currently unable to create loadouts with this item type.",
-        unable_to_create_loadout_for_bucket: "You cannot create a loadout with more than 10 items in this slot: ",
-        unable_to_move_bucketitems: "Items in this bucket cannot be transferred with the API.",
-        this_icon: "This icon is ",
-        pick_a_set: "Please pick a Set before selecting this option",
-        error_loading_inventory: "Error loading inventory ",
-        whats_new_title: "Tower Ghost for Destiny Updates",
-        itemDefs_undefined: "Could not load item definitions, please report the issue to my Github including the version number being used.",
-        invalid_transfer_amount: "Invalid amount entered: ",
-        normalize_title: "Normalize - equally distribute item across your characters",
-        transfer_amount: "Transfer Amount",
-        transfer_all: "All",
-        transfer_one: "One",
-        cancel: "Cancel",
-        cannot_unequip: "No more items to try to unequip the ",
-        unable_unequip: "Unable to unequip ",
-        cannot_equip: "Unknown error trying to equip ",
-        menu_clear: "Clear Filters",
-        menu_refresh: "Refresh (secs)",
-        menu_about: "About",
-        menu_help: "Help",
-        menu_donate: "Donate",
-        menu_language: "Language",
-        menu_loadouts: "Loadouts",
-        menu_loadouts_create: "Create",
-        menu_view: "View",
-        menu_all: "Todo",
-        menu_view_weapons: "Weapons",
-        menu_view_armor: "Armor",
-        menu_view_general: "General",
-        menu_view_options: "View Options",
-        menu_shareurl: "Share URL with friends",
-        menu_autorefresh: "Auto Refresh (5 min)",
-        menu_destinydbtooltips: "DestinyDB Tooltips",
-        menu_advancedtooltips: "Advanced Tooltips",
-        menu_destinydbmode: "DestinyDB Mode",
-        menu_autotransfer: "Auto Transfer Stacks",
-        menu_padheight: "Auto Pad Height",
-        menu_usexbox: "Use Xbox Account",
-        menu_useps: "Use Playstation Account",
-        menu_set: "Set",
-        menu_set_showmissing: "Show Missing Items",
-        menu_set_showduplicates: "Show Duplicate Items",
-        menu_tier: "Tier",
-        menu_progress: "Progress",
-        menu_progress_1: "Missing Perks",
-        menu_progress_2: "Missing Border",
-        menu_progress_3: "Maxed",
-        menu_damage: "Damage",
-        language_pack_downloaded: "Language Pack downloaded, please refresh to see the changes",
-        vo_number_of_columns: "Number of Columns",
-        vo_vault_first: "First/Left",
-        vo_vault_last: "Last/Right",
-        vo_vault_position: "Vault Position",
-        vo_container_width: "Container Width",
-        vo_layout_mode: "Layout Mode",
-        vo_vault_width: "Vault Width",
-        vo_vault_columns: "Vault Columns",
-        missing_items: "Missing Items",
-        login_loading_inventory: "Please wait, loading arsenal from Bungie",
-        login_authenticating_pt1: "Logging into Bungie... Please be patient.",
-        login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
-        login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
-        login_title: "Welcome to Tower Ghost for Destiny!",
-        login_instructions: "To get started you'll need to log in to your Bungie.net account via:",
-        login_help: "Please wait for the login window to auto close as TGD prepares your information.",
-        movepopup_move: "Move",
-        movepopup_store: "store",
-        movepopup_equip: "equip",
-        movepopup_vault: "vault",
-        movepopup_extras: "extras",
-        inventory_weapons: "Weapons",
-        inventory_armor: "Armor",
-        inventory_subclasses: "Sub Classes",
-        inventory_general: "General",
-        inventory_postmaster: "Post Master",
-        inventory_postmaster_messages: "Messages",
-        inventory_postmaster_lost_items: "Lost Items",
-        loadouts_save: "Save",
-        loadouts_save_new: "Save as New",
-        loadouts_delete: "Delete",
-        loadouts_close: "Close",
-        loadouts_transfer: "Transfer",
-        loadouts_instructions: "No items in loadout, click items to add,",
-        loadouts_instructions_contd: "to equip.",
-        loadouts_mobile: "hold",
-        loadouts_desktop: "check",
-        loadouts_transferred: "<strong>Item(s) transferred</strong><br> If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>",
-        loadouts_to_transfer: " will be moved",
-        loadouts_no_transfer: " will not be moved",
-        loadouts_no_replacement: " will not be moved. There is no item to replace it.",
-        loadouts_outofspace: " will not be moved, there is no space in ",
-        loadouts_invalidbucket: " will not be moved. Because of this bucket: ",
-        loadouts_alreadythere_pt1: " is already in the ",
-        loadouts_alreadythere_pt2: "'s bucket of ",
-        loadouts_swap: " will be swapped with ",
-        loadouts_to_moveequip: " will be moved and equipped.",
-        loadouts_to_equip: " will be equipped.",
-        loadouts_transfer_confirm: "Transfer Confirm",
-        tier_uncommon: "Uncommon",
-        tier_common: "Common",
-        tier_rare: "Rare",
-        tier_legendary: "Legendary",
-        tier_exotic: "Exotic",
-        paypal_code: "ja_JP",
-        menu_destinystatus: "DestinyStatus Report",
-        language_text: "This will change the language for all items and the interface for some languages, more languages will be added in the future.",
-        menu_settings: "Settings",
-        text_shareurl: "Your inventory is updated by clicking on Share URL from the menu again.",
-        donation_title: "Donations for Tower Ghost for Destiny!",
-        donation_instructions: "This is a non-commercial project dedicated to Destiny. If you like this app provide a donation to keep this project alive and support the maintenance costs."
+        whats_new_title: "Tower Ghost for Destiny Güncellemeleri"
     }
 };
 tgd.getStoredValue = function(key) {
@@ -2670,7 +3035,8 @@ tgd.StoreObj = function(key, compare, writeCallback) {
             localRoot: 'app',
             serverRoot: serverRoot,
             mode: 'mirror',
-            cacheBuster: true
+            cacheBuster: true,
+            checkTimeout: 30 * 1000
         });
 
         // Check > Download > Update
@@ -2678,7 +3044,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
             $.toaster({
                 priority: 'info',
                 title: 'Info',
-                message: "Checking for updates"
+                message: "Checking for updates",
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
             tgd.loader.check(serverRoot + "bootstrap.json?locale=" + (localStorage.appLocale || localStorage.locale || "en"))
                 .then(function(updateAvailable) {
@@ -2686,7 +3055,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Downloading updates"
+                            message: "Downloading updates",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                         tgd.localLog("Downloading auto updates");
                         $("#tgdLoader").show();
@@ -2700,7 +3072,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
-                        message: "Problem checking for updates: " + e.message
+                        message: "Problem checking for updates: " + e.message,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 })
                 .then(function(manifest) {
@@ -2709,7 +3084,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                         $.toaster({
                             priority: 'info',
                             title: 'Info',
-                            message: "Installing updates"
+                            message: "Installing updates",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     }
                     return tgd.loader.update();
@@ -2718,7 +3096,10 @@ tgd.StoreObj = function(key, compare, writeCallback) {
                     $.toaster({
                         priority: 'danger',
                         title: 'Error',
-                        message: 'Auto-update error:' + err
+                        message: 'Auto-update error:' + err,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 });
         };
@@ -2754,7 +3135,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.0.2";
+tgd.version = "3.7.7.3";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -2773,7 +3154,10 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
-                    message: app.activeText().unable_create_loadout_for_type
+                    message: app.activeText().unable_create_loadout_for_type,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             } else if (item._id === "0") {
                 app.activeLoadout().addGenericItem({
@@ -2793,7 +3177,10 @@ tgd.moveItemPositionHandler = function(element, item) {
                 $.toaster({
                     priority: 'danger',
                     title: 'Error',
-                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType
+                    message: app.activeText().unable_to_create_loadout_for_bucket + item.bucketType,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         }
@@ -2805,7 +3192,10 @@ tgd.moveItemPositionHandler = function(element, item) {
             $.toaster({
                 priority: 'danger',
                 title: 'Error',
-                message: app.activeText().unable_to_move_bucketitems
+                message: app.activeText().unable_to_move_bucketitems,
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
             return;
         }
@@ -2864,37 +3254,11 @@ var Item = function(model, profile) {
     this.init(model);
 
     this.characterId = ko.observable(self.character.id);
-    this.isDuplicate = ko.observable(false);
+    this.isFiltered = ko.observable(false);
     this.isVisible = ko.pureComputed(this._isVisible, this);
+    this.columnMode = ko.computed(this._columnMode, this);
+    this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-    this.columnMode = ko.computed(function() {
-        var className = "";
-        if (self.characterId() == 'Vault') {
-            className = 'col-xs-' + app.vaultColumns();
-        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
-        } else {
-            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
-        }
-        if (self.isGridComplete) {
-            className += ' complete';
-        }
-        return className;
-    });
-    this.isEquippable = function(avatarId) {
-        return ko.pureComputed(function() {
-            //rules for how subclasses can be equipped
-            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
-            //if it's in this character and it's equippable
-            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
-        });
-    };
-    this.isStoreable = function(avatarId) {
-        return ko.pureComputed(function() {
-            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
-                (self.isEquipped() && self.character.id == avatarId);
-        });
-    };
 };
 
 Item.prototype = {
@@ -2956,21 +3320,20 @@ Item.prototype = {
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
                 icon: tgd.dataDir + info.icon,
-                isUnique: false
+                isUnique: false,
+                primaryValues: {}
             };
-            if (item.primaryStat) {
-                if (item.primaryStat && item.primaryStat.value) {
-                    itemObject.primaryStat(item.primaryStat.value);
-                } else {
-                    itemObject.primaryStat(item.primaryStat);
-                }
-            }
             //hack for issue #442
             if (itemObject.bucketType == "Artifact") {
                 itemObject.classType = tgd.DestinyClassNames[itemObject.typeName.split(" ")[0]];
             }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
+            if (itemObject.armorIndex > -1) {
+                app.armorViewBy.subscribe(function(type) {
+                    self.primaryStat(self.primaryValues[type == "Light" ? "Default" : "Stats"]);
+                });
+            }
             if (item.id) {
                 itemObject.perks = item.perks;
             } else if (item.perks.length > 0) {
@@ -2980,9 +3343,13 @@ Item.prototype = {
                     _.each(item.perks, function(perk) {
                         if (perk.perkHash in window._perkDefs) {
                             var p = window._perkDefs[perk.perkHash];
+                            //There is an inconsistency between perkNames in Destiny for example:
+                            /* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
+                               This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
+                            */
                             var nodeIndex = talentGrid.nodes.indexOf(
                                 _.filter(talentGrid.nodes, function(o) {
-                                    return _.pluck(o.steps, 'nodeStepName').indexOf(p.displayName) > -1;
+                                    return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
                                 })[0]
                             );
                             itemObject.perks.push({
@@ -3032,6 +3399,16 @@ Item.prototype = {
                     return perk.active === false && perk.isExclusive === -1;
                 }).length === 0;
             }
+            if (item.primaryStat) {
+                if (item.primaryStat && item.primaryStat.value) {
+                    itemObject.primaryStat(item.primaryStat.value);
+                } else {
+                    itemObject.primaryStat(item.primaryStat);
+                    if (_.isObject(item.stats)) {
+                        itemObject.primaryValues['Stats'] = tgd.sum(_.values(item.stats));
+                    }
+                }
+            }
             if (item.stats.length > 0) {
                 itemObject.stats = {};
                 _.each(item.stats, function(stat) {
@@ -3040,6 +3417,7 @@ Item.prototype = {
                         itemObject.stats[p.statName] = stat.value;
                     }
                 });
+                itemObject.primaryValues['Stats'] = tgd.sum(_.values(itemObject.stats));
             }
             if (item && item.objectives && item.objectives.length > 0) {
                 var progress = (tgd.average(_.map(item.objectives, function(objective) {
@@ -3062,8 +3440,43 @@ Item.prototype = {
             } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
                 itemObject.primaryStat(item.stackSize);
             }
+            itemObject.primaryValues['Default'] = itemObject.primaryStat();
             $.extend(self, itemObject);
         }
+    },
+    _opacity: function() {
+        return (this.equipRequiredLevel <= this.character.level() || this.character.id == 'Vault') ? 1 : 0.3;
+    },
+    _columnMode: function() {
+        var self = this;
+        var className = "";
+        if (self.characterId() == 'Vault') {
+            className = 'col-xs-' + app.vaultColumns();
+        } else if (tgd.DestinyBucketColumns[self.bucketType] == 4) {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 4);
+        } else {
+            className = 'col-xs-' + (tgd.bootstrapGridColumns / 3);
+        }
+        if (self.isGridComplete) {
+            className += ' complete';
+        }
+        return className;
+    },
+    isEquippable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            //rules for how subclasses can be equipped
+            var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
+            //if it's in this character and it's equippable
+            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+        });
+    },
+    isStoreable: function(avatarId) {
+        var self = this;
+        return ko.pureComputed(function() {
+            return (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType !== 'Subclasses' && self.transferStatus < 2) ||
+                (self.isEquipped() && self.character.id == avatarId);
+        });
     },
     clone: function() {
         var self = this;
@@ -3174,7 +3587,7 @@ Item.prototype = {
                 weaponFilter = $parent.weaponFilter() == "0" || $parent.weaponFilter() == self.typeName;
             } else {
                 var types = _.map(_.pluck(self.perks, 'name'), function(name) {
-                    return name.split(" ")[0];
+                    return name && name.split(" ")[0];
                 });
                 dmgFilter = $parent.dmgFilter().length === 0 || _.intersection($parent.dmgFilter(), types).length > 0;
                 armorFilter = $parent.armorFilter() == "0" || $parent.armorFilter() == self.bucketType;
@@ -3182,7 +3595,7 @@ Item.prototype = {
             progressFilter = $parent.progressFilter() == "0" || self.hashProgress($parent.progressFilter());
         }
         generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
-        showDuplicate = $parent.showDuplicate() === false || ($parent.showDuplicate() === true && self.isDuplicate() === true);
+        showDuplicate = $parent.customFilter() === false || ($parent.customFilter() === true && self.isFiltered() === true);
 
         var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
         //console.timeEnd("isVisible");
@@ -3223,7 +3636,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: app.activeText().cannot_unequip + self.description
+                                message: app.activeText().cannot_unequip + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                         return;
@@ -3272,7 +3688,10 @@ Item.prototype = {
                                     $.toaster({
                                         priority: 'danger',
                                         title: 'Error',
-                                        message: app.activeText().unable_unequip + itemEquipped.description
+                                        message: app.activeText().unable_unequip + itemEquipped.description,
+                                        settings: {
+                                            timeout: tgd.defaults.toastTimeout
+                                        }
                                     });
                                     callback(false);
                                 }
@@ -3335,7 +3754,10 @@ Item.prototype = {
                         $.toaster({
                             priority: 'info',
                             title: 'Error',
-                            message: result.Message
+                            message: result.Message,
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     }
                     //TODO perhaps log this condition and determine the cause
@@ -3620,7 +4042,10 @@ Item.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Error',
-                    message: result.Message
+                    message: result.Message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         });
@@ -3724,7 +4149,10 @@ Item.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Error',
-                    message: result.Message
+                    message: result.Message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
         };
@@ -3750,7 +4178,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: "Unable to unequip " + self.description
+                                message: "Unable to unequip " + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -3783,7 +4214,10 @@ Item.prototype = {
                             $.toaster({
                                 priority: 'danger',
                                 title: 'Error',
-                                message: "Unable to unequip " + self.description
+                                message: "Unable to unequip " + self.description,
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
                         }
                     }
@@ -3829,8 +4263,8 @@ Item.prototype = {
                                 '</div>' +
                                 '<div><hr></div>' +
                                 '<div class="controls controls-row">' +
-                                '<label><input type="checkbox" id="consolidate" /> Consolidate (pull from all characters (' + itemTotal + '))</label>' +
-                                '<br><label><input type="checkbox" id="neverAsk" /> Don\'t ask in the future </label>' +
+                                '<label><input type="checkbox" id="consolidate" /> ' + app.activeText().transfer_consolidate + ' (' + itemTotal + '))</label>' +
+                                '<br><label><input type="checkbox" id="neverAsk" /> ' + app.activeText().transfer_ask + ' </label>' +
                                 '</div></div>');
                             var btnDec = $content.find('#dec');
                             btnDec.click(function() {
@@ -3878,18 +4312,18 @@ Item.prototype = {
                             return $content;
                         },
                         buttons: [{
-                            label: 'Transfer',
+                            label: app.activeText().transfer,
                             cssClass: 'btn-primary',
                             action: function() {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: 'Close',
+                            label: app.activeText().close,
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
                         }]
-                    })).title("Transfer " + self.description).show(true),
+                    })).title(app.activeText().transfer + " " + self.description).show(true),
                     finishTransfer = function(consolidate) {
                         if (consolidate) {
                             self.consolidate(targetCharacterId, self.description);
@@ -3930,14 +4364,14 @@ Item.prototype = {
     normalize: function(characters) {
         app.normalizeSingle(this.description, characters, false, undefined);
     },
-    consolidate: function(targetCharacterId, description) {
+    consolidate: function(targetCharacterId, description, selectedCharacters) {
         //tgd.localLog(targetCharacterId);
         //tgd.localLog(description);
-
+        var activeCharacters = (typeof selectedCharacters == "undefined") ? [] : selectedCharacters;
         var getNextStack = (function() {
             var i = 0;
             var chars = _.filter(app.orderedCharacters(), function(c) {
-                return c.id !== targetCharacterId;
+                return (c.id !== targetCharacterId && activeCharacters.length === 0) || (activeCharacters.indexOf(c.id) > -1);
             });
             var stacks = _.flatten(_.map(chars, function(c) {
                 return _.filter(c.items(), {
@@ -3951,6 +4385,7 @@ Item.prototype = {
 
         var nextTransfer = function(callback) {
             var theStack = getNextStack();
+
             if (typeof theStack == "undefined") {
                 //tgd.localLog("all items consolidated");
                 if (callback !== undefined) {
@@ -3959,19 +4394,24 @@ Item.prototype = {
                 return;
             }
 
-            //tgd.localLog("xfer " + theStack.primaryStat() + " from: " + theStack.character.id + ", to: " + targetCharacterId);
+            //transferAmount needs to be defined once and reused bc querying the primaryStat value mid-xfers results in merging qty amounts with existing stacks.
+            var transferAmount = theStack.primaryStat();
+
+            //tgd.localLog("xfer " + transferAmount + " from: " + theStack.character.id + ", to: " + targetCharacterId);
 
             if (targetCharacterId == "Vault") {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
+                theStack.transfer(theStack.character.id, "Vault", transferAmount, function() {
                     nextTransfer(callback);
                 });
             } else if (theStack.character.id == "Vault") {
-                theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
+                theStack.transfer("Vault", targetCharacterId, transferAmount, function() {
                     nextTransfer(callback);
                 });
+            } else if (theStack.character.id == targetCharacterId) {
+                nextTransfer(callback);
             } else {
-                theStack.transfer(theStack.character.id, "Vault", theStack.primaryStat(), function() {
-                    theStack.transfer("Vault", targetCharacterId, theStack.primaryStat(), function() {
+                theStack.transfer(theStack.character.id, "Vault", transferAmount, function() {
+                    theStack.transfer("Vault", targetCharacterId, transferAmount, function() {
                         nextTransfer(callback);
                     });
                 });
@@ -4048,6 +4488,16 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }, {
+                label: 'Consolidate',
+                cssClass: 'btn-primary',
+                action: function(dialogItself) {
+                    var characters = _.pluck(_.filter(app.orderedCharacters(), function(c) {
+                        return selectedStatus[c.id] === true;
+                    }), 'id');
+                    self.consolidate(self.character.id, self.description, characters);
+                    dialogItself.close();
+                }
+            }, {
                 label: 'Close',
                 action: function(dialogItself) {
                     dialogItself.close();
@@ -4116,15 +4566,15 @@ function Profile(character) {
     this.lostItems = ko.pureComputed(this._lostItems, this);
     this.equippedGear = ko.pureComputed(this._equippedGear, this);
     this.equippedStats = ko.pureComputed(this._equippedStats, this);
+    this.sumCSP = ko.pureComputed(this._sumCSP, this);
+    this.equippedSP = ko.pureComputed(this._equippedSP, this);
+    this.equippedTier = ko.pureComputed(this._equippedTier, this);
+    this.tierCSP = ko.pureComputed(this._tierCSP, this);
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
-    this.iconBG = ko.pureComputed(function() {
-        return app.makeBackgroundUrl(self.icon(), true);
-    });
+    this.iconBG = ko.pureComputed(this._iconBG, this);
     this.container = ko.observable();
-    this.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
-    this.invisibleItemsHelper = [2910404660, 2537120989];
     this.reloadBucket = _.bind(this._reloadBucket, this);
     this.init(character);
 
@@ -4180,6 +4630,7 @@ Profile.prototype = {
         }
     },
     refresh: function(profile, event) {
+        tgd.localLog("refresh event called");
         var self = this;
         if (self.id == "Vault") {
             self._reloadBucket(self, event);
@@ -4198,9 +4649,9 @@ Profile.prototype = {
             return "";
         } else if (item.location !== 4) {
             return tgd.DestinyBucketTypes[info.bucketTypeHash];
-        } else if (item.isEquipment || self.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
+        } else if (item.isEquipment || tgd.lostItemsHelper.indexOf(item.itemHash) > -1 || (item.location == 4 && item.itemInstanceId > 0)) {
             return "Lost Items";
-        } else if (self.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
+        } else if (tgd.invisibleItemsHelper.indexOf(item.itemHash) > -1) {
             return "Invisible";
         }
         return "Messages";
@@ -4280,11 +4731,34 @@ Profile.prototype = {
     _equippedStats: function() {
         return this.joinStats(this.equippedGear());
     },
+    _equippedSP: function() {
+        return _.filter(this.equippedStats(), function(value, stat) {
+            return _.where(tgd.DestinyArmorStats, {
+                statName: stat
+            }).length > 0;
+        });
+    },
+    _sumCSP: function() {
+        return tgd.sum(this.equippedSP());
+    },
+    _equippedTier: function() {
+        var theoreticalTier = Math.floor(this.sumCSP() / tgd.DestinySkillTier);
+        var effectiveTier = tgd.sum(_.map(this.equippedSP(), function(value) {
+            return Math.floor(value / tgd.DestinySkillTier);
+        }));
+        return effectiveTier + "/" + theoreticalTier;
+    },
+    _tierCSP: function() {
+        return this.equippedTier().split("/")[1] * tgd.DestinySkillTier;
+    },
     _classLetter: function() {
         return this.classType()[0].toUpperCase();
     },
     _uniqueName: function() {
         return this.level() + " " + this.race() + " " + this.gender() + " " + this.classType();
+    },
+    _iconBG: function() {
+        return app.makeBackgroundUrl(this.icon(), true);
     },
     _powerLevel: function() {
         if (this.id == "Vault") return "";
@@ -4301,7 +4775,10 @@ Profile.prototype = {
             $.toaster({
                 priority: 'info',
                 title: 'Success',
-                message: 'Refreshing ' + self.uniqueName()
+                message: 'Refreshing ' + self.uniqueName(),
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
 
         var buckets = [];
@@ -4340,7 +4817,10 @@ Profile.prototype = {
                     $.toaster({
                         priority: 'info',
                         title: 'Success',
-                        message: 'Refresh completed for ' + self.uniqueName()
+                        message: 'Refresh completed for ' + self.uniqueName(),
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
             }
 
@@ -4570,7 +5050,7 @@ Profile.prototype = {
         });
         var sumSetValues = _.sortBy(_.map(availableSets, function(combo) {
             var score = tgd.sum(_.map(combo.sumSet, function(value, key) {
-                var result = Math.floor(value / 60);
+                var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
             }));
             combo.sum = tgd.sum(_.values(combo.sumSet));
@@ -4581,28 +5061,58 @@ Profile.prototype = {
         var highestSetObj = sumSetValues[sumSetValues.length - 1];
         return [highestSetObj.sum, highestSetObj.set];
     },
-    findBestArmorSet: function(items) {
-        var buckets = [].concat(tgd.DestinyArmorPieces);
-        var sets = [],
+    findBestArmorSetV2: function(items) {
+        var buckets = [].concat(tgd.DestinyArmorPieces),
+            sets = [],
             bestSets = [],
             backups = [],
-            candidates;
-        var character = this;
+            groups = {},
+            candidates,
+            statGroups = {},
+            highestArmorTier = 0,
+            highestArmorValue = 0,
+            highestTierValue = 0,
+            character = this;
 
-        //console.time("finding candidates");
+
         _.each(buckets, function(bucket) {
-            candidates = _.filter(items, function(item) {
+            groups[bucket] = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
                     (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
                 );
             });
-            tgd.localLog(bucket + " total candidates " + candidates.length);
+            var csps = _.map(groups[bucket], function(item) {
+                return item.getValue("All");
+            });
+            statGroups[bucket] = {
+                max: _.max(csps),
+                min: _.min(csps)
+            };
+        });
+
+        highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
+            return stat.max;
+        }));
+        //console.log("highestArmorValue:"+highestArmorValue);
+
+        highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
+        //console.log("highestArmorTier :"+highestArmorTier );
+
+        highestTierValue = highestArmorTier * tgd.DestinySkillTier;
+        //console.log("highestTierValue :"+highestTierValue );
+
+        _.each(groups, function(items, bucketType) {
+            var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
+            //console.log(bucketType+":"+minCSP +",before:" + items.length);
+            candidates = _.filter(items, function(item) {
+                return item.getValue("All") >= minCSP;
+            });
+            //console.log("after:" + candidates.length);
             _.each(candidates, function(candidate) {
                 sets.push([candidate]);
             });
         });
 
-        tgd.localLog("total sets " + sets.length);
         backups = _.flatten(sets);
 
         _.each(sets, function(set) {
@@ -4620,7 +5130,7 @@ Profile.prototype = {
             var sums = _.map(combos, function(combo) {
                 var tmp = character.joinStats(combo);
                 var score = tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / 60);
+                    var result = Math.floor(value / tgd.DestinySkillTier);
                     return result > 5 ? 5 : result;
                 }));
                 var subScore = (tgd.sum(_.values(tmp)) / 1000);
@@ -4718,15 +5228,12 @@ Profile.prototype = {
         var character = this;
 
         $.toaster({
-            settings: {
-                timeout: 10 * 1000
-            }
-        });
-
-        $.toaster({
             priority: 'success',
             title: 'Result',
-            message: " The highest set available for " + type + "  is  " + highestSetValue
+            message: " The highest set available for " + type + "  is  " + highestSetValue,
+            settings: {
+                timeout: 7 * 1000
+            }
         });
 
         var count = 0;
@@ -4737,11 +5244,13 @@ Profile.prototype = {
                 tgd.localLog(msa);
                 adhoc.swapItems(msa, character.id, function() {
                     $.toaster({
+                        settings: {
+                            timeout: 7 * 1000
+                        },
                         priority: 'success',
                         title: 'Result',
                         message: " Completed equipping the highest " + type + " set at " + highestSetValue
                     });
-                    $.toaster.reset();
                 });
             }
         };
@@ -4766,7 +5275,10 @@ Profile.prototype = {
                 $.toaster({
                     priority: 'info',
                     title: 'Equip',
-                    message: message
+                    message: message,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
                 done();
             } else {
@@ -4791,19 +5303,21 @@ Profile.prototype = {
             var bestWeaponSets;
 
             if (type == "Best") {
-                var bestSets = character.findBestArmorSet(items);
+                var bestSets = character.findBestArmorSetV2(items);
                 var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title, description = "",
-                            stats = character.joinStats(combo.set);
+                        var title = "",
+                            stats = character.joinStats(combo.set),
+                            description = "(" + combo.score.toFixed(3) + "/15.9)<em>(" + _.values(stats).join("/") + ")</em>";
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
-                            description = description + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / 60);
+                            title = title + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
-                        combo.title = $.trim(description);
+                        combo.description = $.trim(description);
+                        combo.title = $.trim(title);
                         if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
                             armorBuilds[combo.title] = combo;
                         }
@@ -4885,6 +5399,7 @@ var app = function() {
     this.loadoutMode = ko.observable(false);
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
+    this.viewOptionsEnabled = ko.observable(false);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -4920,10 +5435,15 @@ var app = function() {
     this.dmgFilter = ko.observableArray(tgd.defaults.dmgFilter);
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
+    this.activeClasses = ko.observableArray(tgd.defaults.activeClasses);
     this.shareView = ko.observable(tgd.defaults.shareView);
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
+    this.customFilter = ko.observable(tgd.defaults.customFilter);
     this.showDuplicate = ko.observable(tgd.defaults.showDuplicate);
+    this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
+    this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
+    this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
 
     this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
@@ -5078,6 +5598,9 @@ var app = function() {
         self.shareUrl(tgd.defaults.shareUrl);
         self.showMissing(tgd.defaults.showMissing);
         self.showDuplicate(tgd.defaults.showDuplicate);
+        self.customFilter(tgd.defaults.customFilter);
+        self.showArmorPerks(tgd.defaults.showArmorPerks);
+        self.armorViewBy(tgd.defaults.armorViewBy);
         $(element.target).removeClass("active");
         return false;
     };
@@ -5111,13 +5634,14 @@ var app = function() {
             /* Add Required Level if provided */
             if (activeItem.equipRequiredLevel) {
                 var classType = (activeItem.classType == 3) ? '' : (' for  ' + tgd.DestinyClass[activeItem.classType]);
+                $content.find(".destt-required-level").remove();
                 $content.find(".destt-title").after('<span class="destt-info" style="float:right;">Required Level: <span>' + activeItem.equipRequiredLevel + classType + '</span></span>');
             }
             /* Type using locale */
             $content.find("h3.destt-has-icon").text(activeItem.typeName);
             /* Primary Stat and Stat Type */
             var primaryStatMin = $content.find(".destt-primary-min");
-            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1)) {
+            if (primaryStatMin.length === 0 && (activeItem.armorIndex > -1 || activeItem.weaponIndex > -1) && activeItem.primaryStat() !== "") {
                 var statType = (activeItem.armorIndex > -1) ? "DEFENSE" : "ATTACK";
                 var statBlock = '<div class="destt-primary"><div class="destt-primary-min">' + activeItem.primaryStat() + '</div><div class="destt-primary-max destt-primary-no-max">' + statType + '</div></div>';
                 $content.find(".destt-desc").before(statBlock);
@@ -5198,7 +5722,7 @@ var app = function() {
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
-                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true);
+                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true); //&& perk.isExclusive == -1
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
@@ -5269,9 +5793,8 @@ var app = function() {
 
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
-        $("#viewOptions").toggle();
-        var isVisible = $("#viewOptions").is(":visible");
-        if (isVisible) {
+        self.viewOptionsEnabled(!self.viewOptionsEnabled());
+        if (self.viewOptionsEnabled()) {
             $(".character").css("margin", 'auto');
             $(".character-box").css("position", 'relative');
         } else {
@@ -5329,6 +5852,7 @@ var app = function() {
     this.toggleDuplicates = function(model, event) {
         self.toggleBootstrapMenu();
         self.showDuplicate(!self.showDuplicate());
+        self.customFilter(self.showDuplicate());
         if (self.showDuplicate()) {
             var items = _.flatten(_.map(app.characters(), function(avatar) {
                 return avatar.items();
@@ -5338,9 +5862,79 @@ var app = function() {
                 var itemCount = _.filter(ids, function(id) {
                     return id == item.id;
                 }).length;
-                item.isDuplicate(itemCount > 1);
+                item.isFiltered(itemCount > 1);
             });
         }
+    };
+    this.toggleArmorPerks = function() {
+        self.toggleBootstrapMenu();
+        self.showArmorPerks(!self.showArmorPerks());
+        self.customFilter(self.showArmorPerks());
+        if (self.showArmorPerks()) {
+            self.activeView(2);
+            _.each(app.characters(), function(character) {
+                var weaponsEquipped = _.filter(character.weapons(), function(item) {
+                    return item.isEquipped();
+                });
+                var weaponTypes = _.map(weaponsEquipped, function(item) {
+                    return item && item.typeName && item.typeName.split(" ")[0];
+                });
+                _.each(character.armor(), function(item) {
+                    var itemPerks = _.pluck(item.perks, 'name');
+                    var matches = _.filter(itemPerks, function(perk) {
+                        return _.filter(perk.split(" "), function(name) {
+                            return weaponTypes.indexOf(name) > -1;
+                        }).length > 0;
+                    });
+                    item.isFiltered(matches.length > 0);
+                });
+            });
+        }
+    };
+    this.toggleArmorSC = function() {
+        self.toggleBootstrapMenu();
+        self.showArmorSC(!self.showArmorSC());
+        self.customFilter(self.showArmorSC());
+        if (self.showArmorSC()) {
+            self.activeView(2);
+            _.each(app.characters(), function(character) {
+                var damagedBasedSubclass = _.filter(character.items(), function(item) {
+                    return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
+                });
+                if (damagedBasedSubclass.length > 0) {
+                    damagedBasedSubclass = damagedBasedSubclass[0].damageTypeName;
+                    _.each(character.armor(), function(item) {
+                        var itemPerks = _.pluck(item.perks, 'name');
+                        var matches = _.filter(itemPerks, function(perk) {
+                            return _.filter(perk.split(" "), function(name) {
+                                return damagedBasedSubclass.indexOf(name) > -1;
+                            }).length > 0;
+                        });
+                        item.isFiltered(matches.length > 0);
+                    });
+                }
+            });
+        }
+    };
+    this.toggleArmorClass = function() {
+        var classType = this.toString();
+        self.toggleBootstrapMenu();
+        self.activeClasses[self.activeClasses().indexOf(classType) == -1 ? "push" : "remove"](classType);
+        self.customFilter(self.activeClasses().length > 0);
+        if (self.customFilter()) {
+            self.activeView(2);
+            var classTypeNums = _.map(self.activeClasses(), function(className) {
+                return _.values(tgd.DestinyClass).indexOf(className);
+            });;
+            _.each(app.characters(), function(character) {
+                _.each(character.armor(), function(item) {
+                    item.isFiltered(classTypeNums.indexOf(item.classType) > -1);
+                });
+            });
+        }
+    };
+    this.showArmorClass = function(classType) {
+        return self.activeClasses().indexOf(classType) > -1;
     };
     this.toggleShowMissing = function() {
         self.toggleBootstrapMenu();
@@ -5348,28 +5942,48 @@ var app = function() {
             $.toaster({
                 priority: 'danger',
                 title: 'Warning',
-                message: self.activeText().pick_a_set
+                message: self.activeText().pick_a_set,
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
         } else {
             self.showMissing(!self.showMissing());
         }
     };
-    this.openStatusReport = function() {
-        self.toggleBootstrapMenu();
-        window.open("http://destinystatus.com/" + self.preferredSystem().toLowerCase() + "/" + self.bungie.gamertag(), "_system");
-        return false;
+    this.openStatusReport = function(type) {
+        return function(type) {
+            self.toggleBootstrapMenu();
+            var sReportURL;
+            var prefSystem = self.preferredSystem().toLowerCase();
+            var info = self.bungie.systemIds[prefSystem];
+            var type = parseInt(this);
+            if (type === 1) {
+                sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
+            } else if (type === 2) {
+                sReportURL = "http://my.destinytrialsreport.com/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+            } else if (type === 3) {
+                sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
+            } else if (type === 4) {
+                sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
+            }
+            window.open(sReportURL, "_system");
+            return false;
+        }
+    };
+    this.setArmorView = function(type) {
+        var type = this.toString();
+        self.armorViewBy(type);
     };
     this.setVaultColumns = function(columns) {
-        return function() {
-            self.vaultColumns(columns);
-            self.redraw();
-        };
+        var columns = this.toString();
+        self.vaultColumns(columns);
+        self.redraw();
     };
-    this.setVaultWidth = function(width) {
-        return function() {
-            self.vaultWidth(width);
-            self.redraw();
-        };
+    this.setVaultWidth = function() {
+        var width = this.toString();
+        self.vaultWidth(width);
+        self.redraw();
     };
     this.setCCWidth = function(model, evt) {
         var width = $(evt.target).text();
@@ -5377,39 +5991,40 @@ var app = function() {
         self.ccWidth(width);
         self.redraw();
     };
-    this.setSetFilter = function(collection) {
-        return function() {
-            self.toggleBootstrapMenu();
-            if (collection in _collections || collection == "All") {
-                if (collection == "Year 2 Items" || collection == "Year 1 Items") {
-                    _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
-                        return character.items();
-                    })), function(item) {
-                        if (collection == "Year 2 Items") {
-                            return item.primaryStatValue() > tgd.DestinyY1Cap || _collections[collection].indexOf(item.id) > -1;
-                        } else {
-                            return item.primaryStatValue() <= tgd.DestinyY1Cap && _collections["Year 2 Items"].indexOf(item.id) == -1;
-                        }
+    this._setSetFilter = function(collection) {
+        self.toggleBootstrapMenu();
+        if (collection in _collections || collection == "All") {
+            if (collection == "Year 2 Items" || collection == "Year 1 Items") {
+                _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
+                    return character.items();
+                })), function(item) {
+                    if (collection == "Year 2 Items") {
+                        return item.primaryStatValue() > tgd.DestinyY1Cap || _collections[collection].indexOf(item.id) > -1;
+                    } else {
+                        return item.primaryStatValue() <= tgd.DestinyY1Cap && _collections["Year 2 Items"].indexOf(item.id) == -1;
+                    }
 
-                    }), 'id');
-                }
-                self.setFilter(collection == "All" ? [] : _collections[collection]);
-                if (collection == "All") {
-                    self.showMissing(false);
-                } else if (collection.indexOf("Weapons") > -1) {
-                    self.activeView(1);
-                    self.armorFilter(0);
-                    self.generalFilter(0);
-                } else if (collection.indexOf("Armor") > -1) {
-                    self.activeView(2);
-                    self.weaponFilter(0);
-                    self.generalFilter(0);
-                }
-            } else {
-                self.setFilter([]);
-                self.showMissing(false);
+                }), 'id');
             }
-        };
+            self.setFilter(collection == "All" ? [] : _collections[collection]);
+            if (collection == "All") {
+                self.showMissing(false);
+            } else if (collection.indexOf("Weapons") > -1) {
+                self.activeView(1);
+                self.armorFilter(0);
+                self.generalFilter(0);
+            } else if (collection.indexOf("Armor") > -1) {
+                self.activeView(2);
+                self.weaponFilter(0);
+                self.generalFilter(0);
+            }
+        } else {
+            self.setFilter([]);
+            self.showMissing(false);
+        }
+    }
+    this.setSetFilter = function(collection) {
+        return this._setSetFilter;
     };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
@@ -5428,33 +6043,36 @@ var app = function() {
             self.dmgFilter.remove(dmgType);
         }
     };
-    this.setTierFilter = function(model, event) {
+    this.setTierFilter = function() {
+        var tier = this.toString();
         self.toggleBootstrapMenu();
-        self.tierFilter(model.tier);
+        self.tierFilter(tier);
+    };
+    this._setWeaponFilter = function(weaponType) {
+        self.toggleBootstrapMenu();
+        self.activeView(1);
+        var type = weaponType.name;
+        tgd.localLog("weapon type: " + type);
+        self.weaponFilter(type);
     };
     this.setWeaponFilter = function(weaponType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            self.activeView(1);
-            var type = weaponType.name;
-            tgd.localLog("weapon type: " + type);
-            self.weaponFilter(type);
-        };
+        return this._setWeaponFilter;
     };
+    this._setArmorFilter = function() {
+        self.toggleBootstrapMenu();
+        self.activeView(2);
+        var armorType = this;
+        tgd.localLog("armor type: " + armorType);
+        self.armorFilter(armorType);
+    }
     this.setArmorFilter = function(armorType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            self.activeView(2);
-            tgd.localLog("armor type: " + armorType);
-            self.armorFilter(armorType);
-        };
+        return this._setArmorFilter.bind(armorType);
     };
-    this.setGeneralFilter = function(searchType) {
-        return function() {
-            self.toggleBootstrapMenu();
-            if (searchType != "Engram") self.activeView(3);
-            self.generalFilter(searchType);
-        };
+    this.setGeneralFilter = function() {
+        var searchType = this.toString();
+        self.toggleBootstrapMenu();
+        if (searchType != "Engram") self.activeView(3);
+        self.generalFilter(searchType);
     };
     this.setProgressFilter = function(model, event) {
         self.toggleBootstrapMenu();
@@ -5549,7 +6167,6 @@ var app = function() {
             return;
         }
         loadingData = true;
-        tgd.duplicates.removeAll();
         var total = 0,
             count = 0,
             profiles = [];
@@ -5662,9 +6279,7 @@ var app = function() {
                         $.toaster({
                             settings: {
                                 timeout: 10 * 1000
-                            }
-                        });
-                        $.toaster({
+                            },
                             priority: 'info',
                             title: 'Info',
                             message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
@@ -5676,7 +6291,6 @@ var app = function() {
                                 self.useXboxAccount();
                             }
                         });
-                        $.toaster.reset();
                     }
                     self.locale(self.activeUser().user.locale);
                     self.loadingUser(false);
@@ -5707,6 +6321,20 @@ var app = function() {
 
     this.refresh = function() {
         if (self.bungie.gamertag()) {
+            var count = 0,
+                finish = function() {
+                    count++;
+                    if (count == self.characters().length) {
+                        $.toaster({
+                            priority: 'success',
+                            title: 'Success',
+                            message: "All the inventory has been updated.",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
+                        });
+                    }
+                };
             self.bungie.account(function(result) {
                 if (result && result.data && result.data.characters) {
                     var characters = result.data.characters;
@@ -5717,7 +6345,7 @@ var app = function() {
                             })[0];
                             character.updateCharacter(result);
                         }
-                        character._reloadBucket(character);
+                        character._reloadBucket(character, undefined, finish, true);
                     });
                 } else {
                     tgd.localLog(result);
@@ -5926,11 +6554,13 @@ var app = function() {
                             $.toaster({
                                 priority: 'success',
                                 title: 'Loading',
-                                message: "Please wait while Firefox acquires your arsenal"
+                                message: "Please wait while Firefox acquires your arsenal",
+                                settings: {
+                                    timeout: tgd.defaults.toastTimeout
+                                }
                             });
-                            var event = document.createEvent('CustomEvent');
-                            event.initCustomEvent("request-cookie", true, true, {});
-                            document.documentElement.dispatchEvent(event);
+                            var event = new CustomEvent("request-cookie-from-ps", {});
+                            window.dispatchEvent(event);
                             setTimeout(function() {
                                 tgd.localLog("loadData");
                                 self.loadData();
@@ -5965,7 +6595,10 @@ var app = function() {
             $.toaster({
                 priority: 'info',
                 title: 'View',
-                message: tgd.DestinyViews[newIndex]
+                message: tgd.DestinyViews[newIndex],
+                settings: {
+                    timeout: tgd.defaults.toastTimeout
+                }
             });
         });
     };
@@ -6026,7 +6659,10 @@ var app = function() {
                         $.toaster({
                             priority: 'success',
                             title: 'Saved',
-                            message: "Loadouts saved to the cloud"
+                            message: "Loadouts saved to the cloud",
+                            settings: {
+                                timeout: tgd.defaults.toastTimeout
+                            }
                         });
                     } else BootstrapDialog.alert("Error has occurred saving loadouts");
                 }
@@ -6129,7 +6765,10 @@ var app = function() {
                 $.toaster({
                     priority: 'danger',
                     title: 'Warning',
-                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters."
+                    message: "Cannot distribute " + itemTotal + " " + description + " between " + characterStatus.length + " characters.",
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
             if (callback !== undefined) {
@@ -6170,7 +6809,10 @@ var app = function() {
                 $.toaster({
                     priority: 'success',
                     title: 'Result',
-                    message: description + " already normalized as best as possible."
+                    message: description + " already normalized as best as possible.",
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
             }
             if (typeof callback !== "undefined") {
@@ -6200,7 +6842,10 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
-                        message: "All items normalized as best as possible"
+                        message: "All items normalized as best as possible",
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                 }
                 if (callback !== undefined) {
@@ -6305,7 +6950,10 @@ var app = function() {
                     $.toaster({
                         priority: 'success',
                         title: 'Result',
-                        message: "All items normalized as best as possible"
+                        message: "All items normalized as best as possible",
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
                     });
                     return;
                 }
@@ -6369,18 +7017,17 @@ var app = function() {
         })).title(title).show(true);
     };
 
-    this.setVaultTo = function(pos) {
-        return function() {
-            var vault = _.findWhere(self.characters(), {
-                id: "Vault"
-            });
-            if (vault) {
-                self.vaultPos(pos);
-                vault.order(pos);
-            } else {
-                return false;
-            }
-        };
+    this.setVaultTo = function() {
+        var pos = this.toString();
+        var vault = _.findWhere(self.characters(), {
+            id: "Vault"
+        });
+        if (vault) {
+            self.vaultPos(pos);
+            vault.order(pos);
+        } else {
+            return false;
+        }
     };
 
     this.isVaultAt = function(pos) {
@@ -6402,38 +7049,43 @@ var app = function() {
         });
     };
 
+    this._columnMode = function() {
+        var character = this;
+        var totalCharacters = 3,
+            totalColumns = tgd.bootstrapGridColumns,
+            vaultColumns,
+            characterColumns;
+        if (self.layoutMode() == 'uneven') {
+            vaultColumns = self.vaultWidth();
+            characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
+        } else {
+            vaultColumns = self.lgColumn();
+            characterColumns = self.lgColumn();
+        }
+        if (character.id == "Vault") {
+            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+        } else {
+            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+        }
+    }
+
     this.columnMode = function(character) {
-        return ko.pureComputed(function() {
-            var totalCharacters = 3,
-                totalColumns = tgd.bootstrapGridColumns,
-                vaultColumns,
-                characterColumns;
-            if (self.layoutMode() == 'uneven') {
-                vaultColumns = self.vaultWidth();
-                characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
-            } else {
-                vaultColumns = self.lgColumn();
-                characterColumns = self.lgColumn();
-            }
-            if (character.id == "Vault") {
-                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
-            } else {
-                return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
-            }
-        });
+        return ko.pureComputed(self._columnMode, character);
     };
 
-    this.setColumns = function(type, input) {
-        return function() {
-            self[type + "Column"](tgd.bootstrapGridColumns / input.value);
-            self.redraw();
-        };
+    this.setColumns = function(input, ctx, evt) {
+        var type = this.toString();
+        self[type + "Column"](tgd.bootstrapGridColumns / input.value);
+        self.redraw();
     };
 
+    this._btnActive = function() {
+        var input = this;
+        return ((tgd.bootstrapGridColumns / input.value) == self[input.kind + "Column"]()) ? "btn-primary" : "";
+    }
     this.btnActive = function(type, input) {
-        return ko.pureComputed(function() {
-            return ((tgd.bootstrapGridColumns / input.value) == self[type + "Column"]()) ? "btn-primary" : "";
-        });
+        input.kind = type;
+        return ko.pureComputed(self._btnActive, input);
     };
 
     this.generateStatic = function() {
@@ -6507,7 +7159,10 @@ var app = function() {
                 $.toaster({
                     priority: 'info',
                     title: 'Transfer',
-                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName()
+                    message: arg.item.description + " will be " + action + "d to " + destination.character.uniqueName(),
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
                 });
                 arg.item[action](destination.character.id);
             }
@@ -6550,6 +7205,17 @@ var app = function() {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
         });
 
+        $.toaster({
+            settings: {
+                toaster: {
+                    css: {
+                        top: "45px"
+                    }
+                },
+                timeout: tgd.defaults.toastTimeout
+            }
+        });
+
         if (window.isStaticBrowser) {
             $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {
@@ -6560,9 +7226,7 @@ var app = function() {
             $(document).on("idle.idleTimer", function(event, elem, obj) {
                 clearInterval(self.refreshInterval);
             });
-            $(document).on("active.idleTimer", function(event, elem, obj, triggerevent) {
-                self.refreshHandler();
-            });
+            $(document).on("active.idleTimer", self.refreshHandler);
         }
 
         if (self.lgColumn() == "3" || self.mdColumn() == "4") {
@@ -6588,13 +7252,6 @@ var app = function() {
                 content = self.activeText().language_text + content;
             }
             tgd[templateName] = _.template(content);
-        });
-
-        tgd.duplicates = ko.observableArray().extend({
-            rateLimit: {
-                timeout: 5000,
-                method: "notifyWhenChangesStop"
-            }
         });
         if (!window.isStaticBrowser) {
             self.doRefresh.subscribe(self.refreshHandler);
@@ -6660,8 +7317,9 @@ var app = function() {
                     cursor: "pointer",
                     appendTo: "body"
                 };
+            } else {
+                ko.bindingHandlers.sortable = ko.bindingHandlers.foreach;
             }
-
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({
@@ -6680,6 +7338,9 @@ var app = function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.collectionSets = _.sortBy(Object.keys(_collections));
+        tgd.DestinyArmorStats = _.filter(_statDefs, function(stat) {
+            return tgd.DestinyArmorStats.indexOf(stat.statHash) > -1;
+        });
         if (!window.isStaticBrowser) {
             $(document).on("click", "a[target='_system']", function() {
                 window.open(this.href, "_system");
@@ -6705,7 +7366,7 @@ var app = function() {
                     .on("tap", self.globalClickHandler);
 
                 //This ensures that the top status bar color matches the app
-                if (typeof StatusBar !== "undefined" && !window.isiPad) {
+                if (typeof StatusBar !== "undefined" && !(window.isiPad || (/ipad/i.test(ua)))) {
                     StatusBar.styleBlackOpaque();
                     StatusBar.backgroundColorByHexString("#272B30");
                     if (window.device && device.platform === "iOS" && device.version >= 7.0) {
@@ -6736,13 +7397,6 @@ var app = function() {
 
 window.app = new app();
 
-window.zam_tooltips = {
-    addIcons: false,
-    colorLinks: false,
-    renameLinks: false,
-    renderCallback: app.renderCallback,
-    isEnabled: app.tooltipsEnabled()
-};
 BootstrapDialog.defaultOptions.nl2br = false;
 
 if (isMobile) {
@@ -6771,4 +7425,768 @@ if (isMobile) {
 } else {
     $(document).ready(app.init);
 }
+(function() {
+    var f = this,
+        g = function(a, d) {
+            var c = a.split("."),
+                b = window || f;
+            c[0] in b || !b.execScript || b.execScript("var " + c[0]);
+            for (var e; c.length && (e = c.shift());) c.length || void 0 === d ? b = b[e] ? b[e] : b[e] = {} : b[e] = d;
+        };
+    var h = function(a) {
+        var d = chrome.runtime.connect("nmmhkkegccagdldgiimedpiccmgmieda", {}),
+            c = !1;
+        d.onMessage.addListener(function(b) {
+            c = !0;
+            "response" in b && !("errorType" in b.response) ? a.success && a.success(b) : a.failure && a.failure(b);
+        });
+        d.onDisconnect.addListener(function() {
+            !c && a.failure && a.failure({
+                request: {},
+                response: {
+                    errorType: "INTERNAL_SERVER_ERROR"
+                }
+            });
+        });
+        d.postMessage(a);
+    };
+    g("google.payments.inapp.buy", function(a) {
+        a.method = "buy";
+        h(a);
+    });
+    g("google.payments.inapp.consumePurchase", function(a) {
+        a.method = "consumePurchase";
+        h(a);
+    });
+    g("google.payments.inapp.getPurchases", function(a) {
+        a.method = "getPurchases";
+        h(a);
+    });
+    g("google.payments.inapp.getSkuDetails", function(a) {
+        a.method = "getSkuDetails";
+        h(a);
+    });
+})();
+/*window.ga_debug = {
+    trace: true
+};*/
+
+_ga = new(function() {
+    var self = this;
+
+    this.init = function() {
+        var ga_options = {
+            'cookieDomain': 'none'
+        };
+
+        if (isMobile) {
+            ga_options = {
+                'storage': 'none',
+                'clientId': device.uuid
+            };
+        }
+
+        ga('create', 'UA-61575166-1', ga_options);
+        //Allow tracking in extensions, mobile devices etc
+        ga('set', 'checkProtocolTask', function() { /* nothing */ });
+        ga('set', 'appVersion', tgd.version);
+        ga(function(tracker) {
+            // Grab a reference to the default sendHitTask function.
+            var originalSendHitTask = tracker.get('sendHitTask');
+            // Modifies sendHitTask to send a copy of the request to a local server after
+            // sending the normal request to www.google-analytics.com/collect.
+            tracker.set('sendHitTask', function(model) {
+                originalSendHitTask(model);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', tgd.remoteServer + '/ga.cfm', true);
+                xhr.send(model.get('hitPayload'));
+            });
+        });
+        ga('send', 'pageview');
+        self.loadListeners();
+    };
+
+    this.loadListeners = function() {
+        // Track basic JavaScript errors
+        window.addEventListener('error', function(e) {
+            /* This is a problem I keep seeing in the exception logs let's see where it comes from */
+            /*if (e.message.indexOf("Maximum call") > -1) {
+                ga('send', 'exception', {
+                    'exDescription': e.error.stack,
+                    'exFatal': true,
+                    'appName': e.message,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        console.log("crash reported");
+                    }
+                });
+            }*/
+            /* don't log known issue with InAppBrowser using 0.6.0 supposedly fixed since 0.5.4*/
+            if (e.filename.toLowerCase().indexOf("inappbrowser") == -1 && e.filename.toLowerCase().indexOf("cordova") == -1 && e.filename.toLowerCase().indexOf("libraries") == -1) {
+                ga('send', 'exception', {
+                    'exDescription': e.message,
+                    'exFatal': true,
+                    'appName': e.filename + ':  ' + e.lineno,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        console.log("crash reported " + e.message);
+                        console.log(e);
+                    }
+                });
+            }
+        });
+        var unwantedCodes = [0, 503, 504, 522, 524, 525, 526, 502, 400, 409, 500];
+        // Track AJAX errors (jQuery API)
+        $(document).ajaxError(function(evt, request, settings, err) {
+            if (unwantedCodes.indexOf(request.status) == -1) {
+                ga('send', 'exception', {
+                    'exDescription': request.status + " ajax error at " + settings.url + " " + settings.data + " " + err,
+                    'exFatal': true,
+                    'appVersion': tgd.version,
+                    'hitCallback': function() {
+                        tgd.localLog(request.status + " ajax error at " + settings.url + " " + settings.data + " " + err);
+                    }
+                });
+            } else {
+                tgd.localLog(request.status + " ajax error (code 0) at " + settings.url + " " + settings.data + " " + err);
+            }
+        });
+    };
+});
+
+if (isMobile) {
+    document.addEventListener('deviceready', _ga.init, false);
+} else {
+    $(document).ready(_ga.init);
+}
+window.zam_tooltips = {
+    addIcons: false,
+    colorLinks: false,
+    renameLinks: false,
+    renderCallback: app.renderCallback,
+    isEnabled: app.tooltipsEnabled()
+};
+
+tgd.Tooltip = function(id) {
+    var self = this;
+
+    var info = _itemDefs[id];
+    this.class = "destt-q" + info.tierType;
+    this.icon = tgd.tooltipsIconTemplate({
+        item: info
+    });
+    this.id = id;
+    this.name = unescape(info.itemName);
+    this.site = "destinydb";
+    this.tooltip = tgd.tooltipsTemplate({
+        item: info
+    });
+    this.type = "items";
+};
+
+window.$ZamTooltips = function() {
+    this.addIcons = false;
+    this.renameLinks = false;
+    this.colorLinks = false;
+    this.isEnabled = true;
+    this.enabled = function() {
+        return this.isEnabled;
+    };
+    this.renderCallback = function(context, content, element, cb) {
+        cb(content);
+    };
+    if (typeof zam_tooltips == 'object') {
+        if (zam_tooltips.addIcons) {
+            this.addIcons = true;
+        }
+        if (zam_tooltips.renderCallback) {
+            this.renderCallback = zam_tooltips.renderCallback;
+        }
+        if (zam_tooltips.renameLinks) {
+            this.renameLinks = true;
+        }
+        if (zam_tooltips.colorLinks) {
+            this.colorLinks = true;
+        }
+        if ("isEnabled" in zam_tooltips) {
+            this.isEnabled = zam_tooltips.isEnabled;
+        }
+    }
+    var remote = (typeof FH == 'undefined');
+    var sites = {
+        d3head: {
+            url: 'd3head.com',
+            cdn: 'https://d3css.zamimg.com',
+            tt: '<div class="fhtt d3h d3h-custom"><div class="d3htt-cont">@text@</div><div class="d3htt-right"></div><div class="d3htt-bottomright"></div><div class="d3htt-bottom"></div></div>',
+            ttFluid: '<div class="fhtt d3h d3h-fluid"><div class="d3htt-cont">@text@</div><div class="d3htt-right"></div><div class="d3htt-bottomright"></div><div class="d3htt-bottom"></div></div>',
+            types: ['achievement', 'class', 'crafting', 'item', 'lore', 'npc', 'quest', 'recipe', 'rune', 'skill', 'zone', 'custom']
+        },
+        esohead: {
+            url: 'esohead.com',
+            cdn: 'https://esocss.zamimg.com',
+            tt: '<div class="fhtt eh"><div class="ehtt-cont">@text@</div><div class="ehtt-right"></div><div class="ehtt-bottomright"></div><div class="ehtt-bottom"></div></div>',
+            ttFluid: '<div class="fhtt eh eh-fluid"><div class="ehtt-cont">@text@</div><div class="ehtt-right"></div><div class="ehtt-bottomright"></div><div class="ehtt-bottom"></div></div>',
+            types: ['abilities', 'achievements', 'books', 'classes', 'items', 'itemsets', 'monsters', 'races', 'recipes', 'skills', 'tradeskills', 'zones', 'custom', 'poi', 'skyshards', 'mundus-stones']
+        },
+        heroking: {
+            url: 'heroking.net',
+            cdn: 'https://hkcss.zamimg.com',
+            tt: '<div class="fhtt hk"><div class="hktt-cont">@text@</div><div class="hktt-right"></div><div class="hktt-bottomright"></div><div class="hktt-bottom"></div></div>',
+            ttFluid: '<div class="fhtt hk hk-fluid"><div class="hktt-cont">@text@</div><div class="hktt-right"></div><div class="hktt-bottomright"></div><div class="hktt-bottom"></div></div>',
+            types: ['heroes', 'achievements', 'abilities', 'mounts', 'talents', 'rewards', 'bundles']
+        },
+        destinydb: {
+            url: 'destinydb.com',
+            cdn: 'https://descss.zamimg.com',
+            tt: '<div class="fhtt des"><div class="destt-cont">@text@</div><div class="destt-right"></div><div class="destt-bottomright"></div><div class="destt-bottom"></div></div>',
+            ttFluid: '<div class="fhtt des des-fluid"><div class="destt-cont">@text@</div><div class="destt-right"></div><div class="destt-bottomright"></div><div class="destt-bottom"></div></div>',
+            types: ['talents', 'talent-child', 'items', 'classes', 'races', 'activities', 'vendors', 'grimoire', 'destinations', 'places', 'medals', 'players', 'guardians', 'events', 'snapshots']
+        },
+        overking: {
+            url: 'overking.com',
+            cdn: 'https://okcss.zamimg.com',
+            tt: '<div class="fhtt des"><div class="destt-cont">@text@</div><div class="destt-right"></div><div class="destt-bottomright"></div><div class="destt-bottom"></div></div>',
+            ttFluid: '<div class="fhtt des des-fluid"><div class="destt-cont">@text@</div><div class="destt-right"></div><div class="destt-bottomright"></div><div class="destt-bottom"></div></div>',
+            types: ['heroes', 'abilities']
+        }
+    };
+    var reAllSites;
+    var reLocalUrl;
+    var cache = this.cache = {};
+    var container;
+    var lastEvent;
+    var activeTooltip = false;
+    var attachedTo = false;
+    var addEvent = function(obj, evt, callback) {
+        if (obj.addEventListener) {
+            obj.addEventListener(evt, callback, true);
+        } else {
+            obj.attachEvent('on' + evt, callback);
+        }
+    };
+    var removeEvent = function(obj, evt, callback) {
+        if (obj.removeEventListener) {
+            obj.removeEventListener(evt, callback, true);
+        } else {
+            obj.detachEvent('on' + evt, callback);
+        }
+    };
+    var addResource = function(res) {
+        if (document.head) {
+            document.head.appendChild(res);
+        } else {
+            document.body.appendChild(res);
+        }
+    };
+    var getCanonicalName = function(site, type, id) {
+        if (!sites[site]) {
+            return false;
+        }
+        return sites[site].url + '/' + type + '/' + id;
+    };
+    var getMousePos = function(event) {
+        var windowInfo = getWindowInfo();
+        if (!event) {
+            return {
+                x: -9999,
+                y: -9999
+            };
+        }
+        var x = event.pageX !== undefined ? event.pageX : windowInfo.left + event.clientX;
+        var y = event.pageY !== undefined ? event.pageY : windowInfo.top + event.clientY;
+        return {
+            x: x,
+            y: y
+        };
+    };
+    var getElementDimensions = function(t) {
+        var x = t.offsetLeft;
+        var y = t.offsetTop;
+        var temp = t;
+        while (temp.offsetParent) {
+            x += temp.offsetParent.offsetLeft;
+            y += temp.offsetParent.offsetTop;
+            if (temp.tagName == 'BODY') {
+                break;
+            }
+            temp = temp.offsetParent;
+        }
+        return {
+            x: x,
+            y: y,
+            w: t.offsetWidth,
+            h: t.offsetHeight
+        };
+    };
+    var getWindowInfo = function() {
+        var left = typeof window.pageXOffset != 'undefined' ? window.pageXOffset : document.body.scrollLeft;
+        var top = typeof window.pageYOffset != 'undefined' ? window.pageYOffset : document.body.scrollTop;
+        var width = window.innerWidth ? window.innerWidth : document.body.clientWidth;
+        var height = window.innerHeight ? window.innerHeight : document.body.clientHeight;
+        return {
+            left: left,
+            top: top,
+            right: left + width,
+            bottom: top + height
+        };
+    };
+    var getServerUrl = function() {
+        return 'https://' + location.hostname + (location.port == 80 ? '' : ':' + location.port);
+    };
+    var ready = false;
+    this.init = function() {
+        if (ready) {
+            return;
+        }
+        var domains = [];
+        for (var s in sites) {
+            if (!sites.hasOwnProperty(s)) {
+                continue;
+            }
+            domains.push(sites[s].url);
+            sites[s].typeHash = {};
+            var numTypes = sites[s].types.length;
+            for (var i = 0; i < numTypes; i++) {
+                sites[s].typeHash[sites[s].types[i]] = true;
+            }
+            sites[s].re = new RegExp(sites[s].url + '/(' + sites[s].types.join('|') + ')/([^?&#;-]+)');
+        }
+        reAllSites = new RegExp('^https?://[^/]*\\.?(' + domains.join('|') + ')/');
+        reLocalUrl = new RegExp('^(https?://)' + location.host + '(/.+)');
+        addEvent(document, 'mouseover', onMouseover);
+        var div = document.createElement('div');
+        div.id = 'zam-tooltip';
+        div.setAttribute('style', 'display:none;position:absolute;left:0;top:0;z-index:9999999999');
+        try {
+            document.body.insertBefore(div, document.body.childNodes[0]);
+            container = div;
+            ready = true;
+            if (!remote || this.addIcons || this.colorLinks || this.renameLinks) {
+                this.preload();
+            } else if (remote) {
+                this.preload(true);
+            }
+        } catch (e) {
+            //last seen crash: Unable to get property 'insertBefore' of undefined or null reference
+            ga('send', 'exception', {
+                'exDescription': "tooltips crashed > " + e.toString(),
+                'exFatal': false,
+                'appVersion': tgd.version,
+                'hitCallback': function() {
+                    console.log("crash reported");
+                }
+            });
+        }
+    };
+    var parseMatches = function(matches, tags) {
+        var numTags = tags.length;
+        for (var i = 0; i < numTags; i++) {
+            var a = tags[i];
+            var match = scan(a, true);
+            if (match !== false) {
+                if (!matches[match.site]) {
+                    matches[match.site] = {};
+                }
+                if (!matches[match.site][match.type]) {
+                    matches[match.site][match.type] = [];
+                }
+                if (matches[match.site][match.type].indexOf(match.id) == -1) {
+                    matches[match.site][match.type].push(match.id);
+                }
+            }
+        }
+    };
+    this.getContainer = function() {
+        return container;
+    };
+    this.preload = function(cssOnly) {
+        if (!ready) {
+            return;
+        }
+        var aTags = document.body.getElementsByTagName('a');
+        var dataTags = document.querySelectorAll('[data-zamtooltip]');
+        var matches = {};
+        parseMatches(matches, dataTags);
+        parseMatches(matches, aTags);
+        for (var site in matches) {
+            if (!matches.hasOwnProperty(site)) {
+                continue;
+            }
+            // loadCss(site);
+            if (cssOnly) {
+                continue;
+            }
+            for (var type in matches[site]) {
+                if (type == "custom") {
+                    continue;
+                }
+                if (!matches[site].hasOwnProperty(type)) {
+                    continue;
+                }
+                var ids = matches[site][type];
+                var finalIDs = [];
+                for (var i = 0, id; id == ids[i]; i++) {
+                    if (!cache[getCanonicalName(site, type, ids[i])]) {
+                        finalIDs.push(id);
+                    }
+                }
+                for (var ii = 0, x = finalIDs.length; ii < x; ii += 50) {
+                    ids = finalIDs.slice(ii, ii + 50);
+                    var url = '/' + type + '/tooltip/' + ids.join(';');
+                    if (remote || FH.DOMAIN != site) {
+                        if (!sites[site]) {
+                            continue;
+                        }
+                        url = 'https://' + sites[site].url + url;
+                    } else {
+                        url = getServerUrl() + url;
+                    }
+                    var script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.src = url;
+                    addResource(script);
+                    var numIds = ids.length;
+                    for (var j = 0; j < numIds; ++j) {
+                        cache[getCanonicalName(site, type, ids[j])] = true;
+                    }
+                }
+            }
+        }
+    };
+    this.updateLinks = function(site, type) {
+        if (!this.addIcons && !this.colorLinks && !this.renameLinks) {
+            return;
+        }
+        for (var tags = document.getElementsByTagName('a'), i = tags.length; i--;) {
+            var a = tags[i];
+            var opts = a.rel.split(' ');
+            if (a.zamModified) {
+                continue;
+            }
+            var match = scan(a, true, true);
+            if (!match || match.site != site || match.type != type || a.attributes['data-zamtooltip']) {
+                continue;
+            }
+            var canonical = getCanonicalName(match.site, match.type, match.id);
+            if (!cache[canonical]) {
+                continue;
+            }
+            var info = cache[canonical];
+            if (info === true) {
+                continue;
+            }
+            a.zamModified = true;
+            if ((this.renameLinks || opts.indexOf('rename')) && info.name && opts.indexOf('protect') == -1 && opts.indexOf('!rename') == -1) {
+                a.innerHTML = info.name;
+            }
+            if ((this.renameLinks || opts.indexOf('color')) && info['class'] && opts.indexOf('protect') == -1 && opts.indexOf('!color') == -1) {
+                a.className += ' ' + info['class'];
+            }
+            if ((this.addIcons || opts.indexOf('icon')) && info.icon && opts.indexOf('protect') == -1 && opts.indexOf('!icon') == -1) {
+                var span = document.createElement('span');
+                span.innerHTML = info.icon;
+                var link = span.getElementsByTagName('a')[0];
+                if (link) {
+                    link.zamModified = true;
+                    link.setAttribute('data-' + match.site, match.type + '=' + match.id);
+                    if (a.href) {
+                        link.href = a.href;
+                    }
+                }
+                a.parentNode.insertBefore(span, a);
+            }
+        }
+    };
+
+    this.lastElement = null;
+
+    this.show = function(site, type, id, attach, element) {
+
+        if ($("#move-popup").is(':visible')) {
+            return false;
+        }
+
+        if (element) this.lastElement = element;
+        var canonical = getCanonicalName(site, type, id);
+        if (type == 'custom') {
+            cache[canonical] = id;
+        }
+        if (!cache[canonical]) {
+            fetch(site, type, id);
+        }
+        var info = cache[canonical];
+        if (!info) {
+            return;
+        }
+        if (!container) return;
+        if (info === true) {
+            container.innerHTML = sites[site].tt.replace('@text@', 'Loading...');
+        } else if (type == "custom") {
+            container.innerHTML = sites[site].ttFluid.replace('@text@', info);
+        } else {
+            container.innerHTML = info.tooltip.replace(/\/\/desimg.zamimg.com/g, 'https://desimg.zamimg.com');
+            this.renderCallback(info, container.innerHTML, this.lastElement, function(newContent) {
+                container.innerHTML = newContent;
+            });
+        }
+        activeTooltip = canonical;
+        attachedTo = attach;
+        this.update();
+    };
+    this.update = function() {
+        container.style.display = 'block';
+        container.onclick = function() {
+            $ZamTooltips.hide();
+        };
+        var win = getWindowInfo();
+        var tempcontainer = container.getBoundingClientRect();
+        var w = tempcontainer.width,
+            h = tempcontainer.height;
+        var pos;
+        if (attachedTo) {
+            var dim = getElementDimensions(attachedTo);
+            pos = reposition(dim, win, w, h);
+        } else {
+            var mousePos = getMousePos(lastEvent);
+            pos = reposition({
+                x: mousePos.x,
+                y: mousePos.y,
+                w: 0,
+                h: 0
+            }, win, w, h);
+        }
+        container.style.left = pos.left + 'px';
+        container.style.top = pos.top + 'px';
+    };
+    this.scanAtCursor = function(event) {
+        var x = event.clientX,
+            y = event.clientY;
+        var target = document.elementFromPoint(x, y);
+        if (target) {
+            onMouseover({
+                target: target
+            });
+        }
+    };
+    this.hide = function() {
+        activeTooltip = false;
+        attachedTo = false;
+        if (container && container.style) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+        }
+    };
+    this.add = function(site, id, tooltip) {
+        var canonical = getCanonicalName(site, "custom", id);
+        cache[canonical] = tooltip;
+    };
+    this.onTooltip = function(tooltips) {
+        if (!tooltips.length) {
+            return;
+        }
+        var site, type;
+        var numTooltips = tooltips.length;
+        for (var i = 0; i < numTooltips; i++) {
+            var info = tooltips[i];
+            if (!info.site || !info.type || !info.id || !info.tooltip) {
+                continue;
+            }
+            var canonical = getCanonicalName(info.site, info.type, info.id);
+            cache[canonical] = info;
+            site = info.site;
+            type = info.type;
+            if (activeTooltip == canonical) {
+                //console.log('about to show via onTooltip');
+                this.show(info.site, info.type, info.id, attachedTo);
+            }
+        }
+        this.updateLinks(site, type);
+    };
+    var onMouseover = function(event) {
+        if ($ZamTooltips.enabled() === true) {
+            var t = event.target ? event.target : event.srcElement;
+            lastEvent = event;
+            var i = 0;
+            while (t && i < 5 && !scan(t)) {
+                t = t.parentNode;
+                i++;
+            }
+        }
+    };
+    var onMousemove = function(event) {
+        if ($ZamTooltips.enabled() === true) {
+            lastEvent = event;
+            $ZamTooltips.update();
+        }
+    };
+    var onMouseout = function(event) {
+        if ($ZamTooltips.enabled() === true) {
+            lastEvent = event;
+            $ZamTooltips.hide();
+            var t = event.target ? event.target : event.srcElement;
+            removeEvent(t, 'mousemove', onMousemove);
+            removeEvent(t, 'mouseout', onMouseout);
+        }
+    };
+    var padding = {
+        x: 10,
+        y: 4
+    };
+    var reposition = function(dim, win, w, h) {
+        var left = dim.x + dim.w + padding.x;
+        var top = dim.y - h - padding.y;
+        if (left + w > win.right) {
+            left = dim.x - w - padding.x;
+            if (left < win.left) {
+                left = win.right - w - padding.x;
+            }
+        }
+        if (dim.y + h + padding.y > win.bottom && top < win.top) {
+            top = win.top - padding.y;
+        } else if (top < win.top) {
+            top = dim.y + dim.h + padding.y;
+        }
+        return {
+            left: left,
+            top: top
+        };
+    };
+    var fetchLocal = function(id) {
+        var tooltips = [new tgd.Tooltip(id)];
+        $ZamTooltips.onTooltip(tooltips);
+    };
+    var fetch = function(site, type, id) {
+        // loadCss(site);
+        var canonical = getCanonicalName(site, type, id);
+        cache[canonical] = true;
+        if (tgd.itemsNotIndexed.indexOf(parseFloat(id)) > -1) {
+            fetchLocal(id);
+        } else {
+            var url = '/' + type + '/tooltip/' + id;
+            if (!remote && FH.DOMAIN == site) {
+                url = getServerUrl() + url;
+            } else {
+                if (!sites[site]) {
+                    return false;
+                }
+                url = 'https://' + sites[site].url + url;
+            }
+
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = url;
+            var isLoaded = false;
+            script.onload = script.onreadystatechange = function() {
+                if (!this.readyState || this.readyState == "loaded" || this.readyState == "complete") {
+                    // script successfully loaded
+                    isLoaded = true;
+                }
+                if (!isLoaded || !_.isObject(cache[canonical])) {
+                    fetchLocal(id);
+                }
+            };
+            addResource(script);
+            setTimeout(function() {
+                if (!_.isObject(cache[canonical])) {
+                    fetchLocal(id);
+                }
+            }, 3 * 1000);
+        }
+
+        return true;
+    };
+    // var loadCss = function(site) {
+    //     if ((!remote && site == FH.DOMAIN) || sites[site].css) {
+    //         return;
+    //     }
+    //     var link = document.createElement('link');
+    //     link.rel = 'stylesheet';
+    //     link.type = 'text/css';
+    //     link.href = sites[site].cdn + '/asset/css/tooltips.min.css';
+    //     addResource(link);
+    //     sites[site].css = true;
+    // };
+    var scan = function(t, partOfPreload, basicScan) {
+        if (!t.attributes || !t.attributes['data-zamtooltip']) {
+            if (t.nodeName != 'A' || (t.href.length === 0 && t.rel.length === 0) || t.rel.indexOf('nott') != -1 || t.rel.indexOf('!tt') != -1 || t.href.indexOf(location.href + '#') != -1) {
+                return false;
+            }
+        }
+        var url = t.href;
+        if (!url) {
+            var as = t.getElementsByTagName('a');
+            for (var i = 0, a; a = as[i]; i++) {
+                url = a.href;
+                if (url) break;
+            }
+            if (!url) {
+                return false;
+            }
+        }
+        if (remote && !url.match(reAllSites)) {
+            return false;
+        } else if (!remote && sites[FH.DOMAIN]) {
+            url = url.replace(reLocalUrl, sites[FH.DOMAIN].url + '$2');
+        }
+        var match = testDataAttrib(t);
+        if (!match) {
+            match = testUrl(url);
+        }
+        if (!match) {
+            return false;
+        }
+        if (!partOfPreload) {
+            addEvent(t, 'mouseout', onMouseout);
+            var attach = false;
+            if (t.parentNode.className.indexOf('fh-icon') > -1) {
+                attach = t.parentNode;
+            } else if (t.className.indexOf('fh-icon') > -1 || t.getAttribute('data-fhttattach') == 'true') {
+                attach = t;
+            }
+            addEvent(t, 'mousemove', onMousemove);
+            //console.log('About to show via scan');
+            $ZamTooltips.show(match.site, match.type, match.id, attach, t);
+            return true;
+        } else if (!t.preloaded || basicScan) {
+            t.preloaded = true;
+            return match;
+        } else {
+            return match;
+        }
+    };
+    var testUrl = function(url) {
+        for (var s in sites) {
+            if (!sites.hasOwnProperty(s)) {
+                continue;
+            }
+            var site = sites[s];
+            var match = site.re.exec(url);
+            if (match) {
+                return {
+                    site: s,
+                    type: match[1],
+                    id: match[2]
+                };
+            }
+        }
+        return false;
+    };
+    var testDataAttrib = function(t) {
+        var attr = t.attributes['data-zamtooltip'];
+        if (attr) {
+            var split = attr.value.split('=');
+            if (split.length == 2 && sites[split[0]]) {
+                return {
+                    site: split[0],
+                    type: "custom",
+                    id: split[1]
+                };
+            }
+            return false;
+        }
+        return false;
+    };
+};
+
+window.$ZamTooltips = new $ZamTooltips();
 //# sourceMappingURL=3.tower_ghost.js.map
