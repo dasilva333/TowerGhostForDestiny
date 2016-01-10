@@ -763,8 +763,6 @@
 	                        }
 	                    });
 	                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId, indexes));
-	                } else {
-	                    BootstrapDialog.alert("No swap candidates available");
 	                }
 	            }
 	        });
