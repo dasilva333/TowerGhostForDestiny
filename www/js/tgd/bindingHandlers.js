@@ -1,24 +1,3 @@
-tgd.armorTemplateDescriptionBuilder = function(item) {
-    var description = item.description;
-
-    /* Not needed after making them links
-        //Build the stats as (DIS:46, INT: 47)
-        var stats = _.compact(
-            _.map(item.stats, function(stat, type) {
-                return stat > 0 ? type.substring(0, 3).toUpperCase() + ":" + stat : "";
-            })
-        ).join(", ");
-	
-        //Add the stats to the description
-        description = description + " <em>(" + stats + ")</em>";
-    */
-
-    //Make bold the exotics
-    description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
-
-    return '<a href="' + item.href + '">' + description + '</a>';
-};
-
 tgd.imageErrorHandler = function(src, element) {
     return function() {
         if (element && element.src && element.src !== "") {

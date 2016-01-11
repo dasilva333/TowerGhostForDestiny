@@ -769,18 +769,18 @@ Profile.prototype = {
                     armorBuilds = {};
                 _.each(bestSets, function(combo) {
                     if (combo.score >= highestTier) {
-                        var title = "",
-                            stats = character.joinStats(combo.set),
-                            description = "(" + combo.score.toFixed(3) + "/15.9)<em>(" + _.values(stats).join("/") + ")</em>";
+                        var statTiers = "",
+                            stats = character.joinStats(combo.set);
                         combo.stats = [];
                         _.each(stats, function(stat, name) {
-                            title = title + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
+                            statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
-                        combo.description = $.trim(description);
-                        combo.title = $.trim(title);
-                        if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
-                            armorBuilds[combo.title] = combo;
+                        combo.light = character.calculatePowerLevelWithItems(combo.set);
+                        combo.statTiers = $.trim(statTiers);
+                        combo.statValues = _.values(stats).join("/");
+                        if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
+                            armorBuilds[combo.statTiers] = combo;
                         }
                     }
                 });
@@ -816,7 +816,19 @@ Profile.prototype = {
                                 dialog.close();
                             }
                         }]
-                    })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true);
+                    })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                        $("a.itemLink").each(function() {
+                            var element = $(this);
+                            var itemId = element.attr("itemId");
+                            element.click(false);
+                            Hammer(element[0], {
+                                time: 2000
+                            }).on("press", function(ev) {
+                                $ZamTooltips.lastElement = element;
+                                $ZamTooltips.show("destinydb", "items", itemId, element);
+                            });
+                        });
+                    });
                     return;
                 }
             } else if (type == "Light") {
