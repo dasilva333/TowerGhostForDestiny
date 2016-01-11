@@ -764,6 +764,9 @@ Profile.prototype = {
             var bestWeaponSets;
 
             if (type == "Best") {
+                var weaponsEquipped = _.filter(character.equippedGear(), function(item) {
+                    return item.weaponIndex > -1
+                });
                 var bestSets = character.findBestArmorSetV2(items);
                 var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                     armorBuilds = {};
@@ -776,7 +779,7 @@ Profile.prototype = {
                             statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
                             combo.stats.push(stat);
                         });
-                        combo.light = character.calculatePowerLevelWithItems(combo.set);
+                        combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
                         combo.statTiers = $.trim(statTiers);
                         combo.statValues = _.values(stats).join("/");
                         if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
