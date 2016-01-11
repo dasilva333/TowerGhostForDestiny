@@ -12,7 +12,7 @@
                     </div>
                     <div class="col-xs-12">
                         <span class="font-bold">Score</span>
-                        <span class="text-primary"><%= build.score %> / 15.9</span>
+                        <span class="text-primary"><%= build.score.toFixed(3) %> / 15.9</span>
                     </div>
                     <div class="col-xs-12">
                         <span class="font-bold">Stat Tiers</span>
@@ -28,6 +28,15 @@
 								<img class="itemImage" src="<%= item.icon %>">
 							</a>
                             <%}) %>
+                    </div>
+					<div>
+						<% _.each(build.perks, function(perk){	%>
+							<div class="col-xs-12">
+								<img width="30" src="<%= perk.iconPath %>"> 
+								<span class="text-muted"><%= perk.bucketType %></span>
+								<span class="text-primary font-smaller-1"><%= perk.name %></span>
+							</div>
+						<%}) %>
                     </div>
                 </div>
             </div>

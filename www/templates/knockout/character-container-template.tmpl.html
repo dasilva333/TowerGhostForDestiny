@@ -3,7 +3,7 @@
         <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
             <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                 <div class="character">
-                    <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh">
+                    <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh, clickBubble: false">
                         <img class="emblem" data-bind="itemImageHandler: icon">
                         <div class="class" data-bind="text: classType"></div>
                         <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false, visible: level() != ''">
@@ -46,13 +46,13 @@
                             <div class="col-xs-24 text-center">
                                 <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
                                 <br>
-                                <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light')" class="btn btn-default">Light</a>
-                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect')" class="btn btn-default">Int</a>
-                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline')" class="btn btn-default">Disc</a>
-                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength')" class="btn btn-default">Str</a>
+                                <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default">Light</a>
+                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default">Int</a>
+                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default">Disc</a>
+                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default">Str</a>
                                 <hr style="margin:3px; padding:6px;">
-                                <a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All')" class="btn btn-default btn-sm">Most Points</a> |
-                                <a data-bind="text: $root.activeText().best_combo, click: character.equipHighest('Best')" class="btn btn-default btn-sm">Best Combo</a>
+                                <a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm">Most Points</a> |
+                                <a data-bind="text: $root.activeText().best_combo, click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm">Best Combo</a>
                             </div>
                         </div>
                     </div>

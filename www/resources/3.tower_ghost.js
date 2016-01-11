@@ -3113,7 +3113,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.8.2";
+tgd.version = "3.7.8.3";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5279,78 +5279,97 @@ Profile.prototype = {
             var highestSetValue;
             var bestArmorSets;
             var bestWeaponSets;
-
             if (type == "Best") {
-                var weaponsEquipped = _.filter(character.equippedGear(), function(item) {
-                    return item.weaponIndex > -1
-                });
-                var bestSets = character.findBestArmorSetV2(items);
-                var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
-                    armorBuilds = {};
-                _.each(bestSets, function(combo) {
-                    if (combo.score >= highestTier) {
-                        var statTiers = "",
-                            stats = character.joinStats(combo.set);
-                        combo.stats = [];
-                        _.each(stats, function(stat, name) {
-                            statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
-                            combo.stats.push(stat);
-                        });
-                        combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
-                        combo.statTiers = $.trim(statTiers);
-                        combo.statValues = _.values(stats).join("/");
-                        if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
-                            armorBuilds[combo.statTiers] = combo;
+                var bestSets,
+                    weaponsEquipped = _.filter(character.equippedGear(), function(item) {
+                        return item.weaponIndex > -1
+                    }),
+                    weaponTypes = _.map(app.weaponTypes(), function(type) {
+                        return type.name.split(" ")[0];
+                    }).concat(tgd.DestinyWeaponPieces);
+                $("body").css("cursor", "progress");
+                setTimeout(function() {
+                    bestSets = character.findBestArmorSetV2(items);
+                    var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
+                        armorBuilds = {};
+                    _.each(bestSets, function(combo) {
+                        if (combo.score >= highestTier) {
+                            var statTiers = "",
+                                stats = character.joinStats(combo.set);
+                            combo.stats = [];
+                            _.each(stats, function(stat, name) {
+                                statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
+                                combo.stats.push(stat);
+                            });
+                            combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
+                            combo.statTiers = $.trim(statTiers);
+                            combo.statValues = _.values(stats).join("/");
+                            combo.perks = _.filter(
+                                _.flatten(
+                                    _.map(combo.set, function(item) {
+                                        return _.map(item.perks, function(perk) {
+                                            perk.bucketType = item.bucketType;
+                                            return perk;
+                                        });
+                                    })
+                                ),
+                                function(perk) {
+                                    return perk.active === true && _.intersection(weaponTypes, perk.name.split(" ")).length > 0;
+                                }
+                            );
+                            if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
+                                armorBuilds[combo.statTiers] = combo;
+                            }
                         }
-                    }
-                });
-                armorBuilds = _.sortBy(armorBuilds, function(combo) {
-                    return _.max(combo.stats) * -1;
-                });
-                if (armorBuilds.length === 1) {
-                    highestSet = bestSets[bestSets.length - 1].set;
-                    highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
-                    character.equipAction(type, highestSetValue, highestSet);
-                } else {
-                    var $template = tgd.armorTemplates({
-                        builds: armorBuilds
                     });
-                    (new tgd.dialog({
-                        buttons: [{
-                            label: app.activeText().movepopup_equip,
-                            action: function(dialog) {
-                                if ($("input.armorBuild:checked").length === 0) {
-                                    BootstrapDialog.alert("Error: Please select one armor build to equip.");
-                                } else {
-                                    var selectedBuild = $("input.armorBuild:checked").val();
-                                    highestCombo = _.findWhere(armorBuilds, {
-                                        title: selectedBuild
-                                    });
-                                    character.equipAction(type, highestCombo.score, highestCombo.set);
+                    armorBuilds = _.sortBy(armorBuilds, function(combo) {
+                        return _.max(combo.stats) * -1;
+                    });
+                    if (armorBuilds.length === 1) {
+                        highestSet = bestSets[bestSets.length - 1].set;
+                        highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
+                        character.equipAction(type, highestSetValue, highestSet);
+                    } else {
+                        var $template = tgd.armorTemplates({
+                            builds: armorBuilds
+                        });
+                        (new tgd.dialog({
+                            buttons: [{
+                                label: app.activeText().movepopup_equip,
+                                action: function(dialog) {
+                                    if ($("input.armorBuild:checked").length === 0) {
+                                        BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                                    } else {
+                                        var selectedBuild = $("input.armorBuild:checked").val();
+                                        highestCombo = _.findWhere(armorBuilds, {
+                                            title: selectedBuild
+                                        });
+                                        character.equipAction(type, highestCombo.score, highestCombo.set);
+                                        dialog.close();
+                                    }
+                                }
+                            }, {
+                                label: app.activeText().cancel,
+                                action: function(dialog) {
                                     dialog.close();
                                 }
-                            }
-                        }, {
-                            label: app.activeText().cancel,
-                            action: function(dialog) {
-                                dialog.close();
-                            }
-                        }]
-                    })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
-                        $("a.itemLink").each(function() {
-                            var element = $(this);
-                            var itemId = element.attr("itemId");
-                            element.click(false);
-                            Hammer(element[0], {
-                                time: 2000
-                            }).on("press", function(ev) {
-                                $ZamTooltips.lastElement = element;
-                                $ZamTooltips.show("destinydb", "items", itemId, element);
+                            }]
+                        })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                            $("a.itemLink").each(function() {
+                                var element = $(this);
+                                var itemId = element.attr("itemId");
+                                element.click(false);
+                                Hammer(element[0], {
+                                    time: 2000
+                                }).on("press", function(ev) {
+                                    $ZamTooltips.lastElement = element;
+                                    $ZamTooltips.show("destinydb", "items", itemId, element);
+                                });
                             });
                         });
-                    });
-                    return;
-                }
+                    }
+                    $("body").css("cursor", "default");
+                }, 300);
             } else if (type == "Light") {
                 bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];
                 tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
@@ -5378,6 +5397,7 @@ Profile.prototype = {
                 }
                 character.equipAction(type, highestSetValue, highestSet);
             }
+
         };
     }
 };

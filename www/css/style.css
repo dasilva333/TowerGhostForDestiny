@@ -7,6 +7,8 @@
 	user-select: none;
 }
 .font-bold {font-weight: bold;}
+.font-smaller-1 { font-size: 0.9em; }
+.font-smaller-2 { font-size: 0.8em; }
 input
 {
 	-webkit-user-select: auto !important;
