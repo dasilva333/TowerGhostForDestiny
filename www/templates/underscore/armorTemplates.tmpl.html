@@ -22,18 +22,20 @@
                         <span class="font-bold">Stat Values</span>
                         <span class="text-primary"><%= build.statValues %></span>
                     </div>
-                    <div>
+                    <div class="col-xs-24">
                         <% _.each(_.sortBy(build.set,'bucketType').reverse(), function(item){	%>
                             <a class="itemLink" itemId="<%= item.id %>" href="<%= item.href %>">
 								<img class="itemImage" src="<%= item.icon %>">
 							</a>
                             <%}) %>
                     </div>
-					<div>
+					<div class="col-xs-24" style="margin-top: 5px">
 						<% _.each(build.perks, function(perk){	%>
 							<div class="col-xs-12">
-								<img width="30" src="<%= perk.iconPath %>"> 
-								<span class="text-muted"><%= perk.bucketType %></span>
+								<% if (!isMobile){	%>
+									<img width="24" src="<%= perk.iconPath %>"> 
+									<span class="text-muted"><%= perk.bucketType %></span>
+								<%} %>
 								<span class="text-primary font-smaller-1"><%= perk.name %></span>
 							</div>
 						<%}) %>
