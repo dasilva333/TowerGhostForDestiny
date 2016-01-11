@@ -1180,7 +1180,7 @@ Item.prototype = {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: app.activeText().close,
+                            label: app.activeText().close_msg,
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
