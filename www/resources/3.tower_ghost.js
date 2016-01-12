@@ -3114,7 +3114,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.9.0";
+tgd.version = "3.7.9.1";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -7229,6 +7229,13 @@ var app = function() {
     this.init = function() {
         _.each(ko.templates, function(content, name) {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
+        });
+        var providedTemplates = _.keys(ko.templates);
+        $("div[data-bind*=template]").map(function(i, e) {
+            var template = $(e).attr("data-bind").match(/'(.*)'/)[1];
+            if (providedTemplates.indexOf(template) == -1) {
+                $(e).remove();
+            }
         });
 
         $.toaster({

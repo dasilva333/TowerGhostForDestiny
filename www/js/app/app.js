@@ -1813,6 +1813,13 @@ var app = function() {
         _.each(ko.templates, function(content, name) {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
         });
+        var providedTemplates = _.keys(ko.templates);
+        $("div[data-bind*=template]").map(function(i, e) {
+            var template = $(e).attr("data-bind").match(/'(.*)'/)[1];
+            if (providedTemplates.indexOf(template) == -1) {
+                $(e).remove();
+            }
+        });
 
         $.toaster({
             settings: {
