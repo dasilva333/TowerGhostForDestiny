@@ -184,10 +184,10 @@
 	        var itemFound;
 	        app.characters().forEach(function(character) {
 	            var match = _.filter(character.items(), function(item) {
-					if (characterId)
-	                return item.id == hash && item.characterId() == characterId;
-					else
-					return item.id == hash;
+	                if (characterId)
+	                    return item.id == hash && item.characterId() == characterId;
+	                else
+	                    return item.id == hash;
 	            })[0];
 	            if (match) itemFound = _.clone(match);
 	        });

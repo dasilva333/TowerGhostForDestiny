@@ -423,11 +423,12 @@ window.ko.bindingHandlers.moveItem = {
                                     doEquip: false
                                 });
                             } else {
-                                app.activeLoadout().addGenericItem({
+                                var payload = {
                                     hash: item.id,
                                     bucketType: item.bucketType,
-                                    primaryStat: item.primaryStat()
-                                });
+                                    characterId: item.characterId()
+                                };
+                                app.activeLoadout().addGenericItem(payload);
                             }
                         } else {
                             $.toaster({
@@ -986,7 +987,7 @@ tgd.Layout.prototype = {
 	        });
 	        _.each(self.generics(), function(item) {
 	            if (item && item.hash) {
-	                var itemFound = self.findItemByHash(item.hash);
+	                var itemFound = self.findItemByHash(item.hash, item.characterId);
 	                if (itemFound) {
 	                    itemFound.doEquip = item.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
@@ -1132,12 +1133,15 @@ tgd.Layout.prototype = {
 	    addGenericItem: function(obj) {
 	        this.generics.push(new tgd.LoadoutItem(obj));
 	    },
-	    findItemByHash: function(hash) {
+	    findItemByHash: function(hash, characterId) {
 	        var itemFound;
 	        app.characters().forEach(function(character) {
-	            var match = _.findWhere(character.items(), {
-	                id: hash
-	            });
+	            var match = _.filter(character.items(), function(item) {
+	                if (characterId)
+	                    return item.id == hash && item.characterId() == characterId;
+	                else
+	                    return item.id == hash;
+	            })[0];
 	            if (match) itemFound = _.clone(match);
 	        });
 	        return itemFound;
@@ -1315,7 +1319,6 @@ tgd.Layout.prototype = {
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
 	                if (typeof item == "undefined") {
-	                    console.log(ref);
 	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
 	                } else if (ref.bucketType == "Subclasses") {
 	                    return fnHasFreeSpace();
@@ -3111,7 +3114,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.8.5";
+tgd.version = "3.7.9.0";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3120,12 +3123,25 @@ tgd.moveItemPositionHandler = function(element, item) {
         return false;
     } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
-        var existingItem = _.findWhere(app.activeLoadout().ids(), {
-            id: item._id
-        });
-        if (existingItem)
-            app.activeLoadout().ids.remove(existingItem);
-        else {
+        var existingItem, itemFound = false;
+        if (item._id > 0) {
+            existingItem = _.findWhere(app.activeLoadout().ids(), {
+                id: item._id
+            });
+            if (existingItem) {
+                app.activeLoadout().ids.remove(existingItem);
+                itemFound = true;
+            }
+        } else {
+            existingItem = _.filter(app.activeLoadout().generics(), function(itm) {
+                return item.id == item.id && item.primaryStat() == itm.primaryStat;
+            });
+            if (existingItem.length > 0) {
+                app.activeLoadout().generics.removeAll(existingItem);
+                itemFound = true;
+            }
+        }
+        if (itemFound == false) {
             if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
                 $.toaster({
                     priority: 'danger',
@@ -3139,7 +3155,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 app.activeLoadout().addGenericItem({
                     hash: item.id,
                     bucketType: item.bucketType,
-                    primaryStat: item.primaryStat()
+                    characterId: item.characterId()
                 });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
@@ -4095,7 +4111,7 @@ Item.prototype = {
                             adhoc.addGenericItem({
                                 hash: self.id,
                                 bucketType: self.bucketType,
-                                primaryStat: self.primaryStat()
+                                characterId: self.characterId()
                             });
                         }
                         var msa = adhoc.transfer(targetCharacterId, true);
