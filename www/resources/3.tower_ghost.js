@@ -3114,7 +3114,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.9.2";
+tgd.version = "3.7.9.3";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3134,7 +3134,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         } else {
             existingItem = _.filter(app.activeLoadout().generics(), function(itm) {
-                return item.id == item.id && item.primaryStat() == itm.primaryStat;
+                return item.id == itm.hash && item.characterId() == itm.characterId;
             });
             if (existingItem.length > 0) {
                 app.activeLoadout().generics.removeAll(existingItem);

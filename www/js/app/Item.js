@@ -17,7 +17,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         } else {
             existingItem = _.filter(app.activeLoadout().generics(), function(itm) {
-                return item.id == item.id && item.primaryStat() == itm.primaryStat;
+                return item.id == itm.hash && item.characterId() == itm.characterId;
             });
             if (existingItem.length > 0) {
                 app.activeLoadout().generics.removeAll(existingItem);
