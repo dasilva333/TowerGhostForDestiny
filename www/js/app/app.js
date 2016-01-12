@@ -3,7 +3,6 @@ window.Hammer.Tap.prototype.defaults.threshold = 9;
 var app = function() {
     var self = this;
 
-    this.retryCount = ko.observable(0);
     this.loadingUser = ko.observable(false);
     this.hiddenWindowOpen = ko.observable(false);
     this.loadoutMode = ko.observable(false);
@@ -14,7 +13,6 @@ var app = function() {
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
-    this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.appLocale = ko.pureComputed(new tgd.StoreObj("appLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
     this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
@@ -114,7 +112,7 @@ var app = function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("Help").content(tgd.helpTemplate()).show();
+        (new tgd.dialog()).title(self.activeText().menu_help).content(tgd.helpTemplate()).show();
     };
 
     this.showLanguageSettings = function() {
@@ -124,10 +122,9 @@ var app = function() {
                 locale: self.currentLocale(),
                 languages: tgd.languages
             })
-        })).title("Set Language").show(true, function() {}, function() {
+        })).title(self.activeText().menu_language).show(true, function() {}, function() {
             tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
-                console.log("changing locale to " + this.value);
                 self.appLocale(this.value);
                 self.autoUpdates(true);
                 tgd.checkUpdates();
@@ -188,7 +185,7 @@ var app = function() {
 
     this.showAbout = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("About").content(tgd.aboutTemplate()).show();
+        (new tgd.dialog()).title(self.activeText().menu_about).content(tgd.aboutTemplate()).show();
     };
 
     this.clearFilters = function(model, element) {
@@ -643,9 +640,9 @@ var app = function() {
         self.toggleBootstrapMenu();
         self.activeView($(event.target).closest('li').attr("value"));
     };
-    this.setDmgFilter = function(model, event) {
+    this.setDmgFilter = function() {
         self.toggleBootstrapMenu();
-        var dmgType = $(event.target).closest('li').attr("value");
+        var dmgType = this.toString();
         if (self.dmgFilter.indexOf(dmgType) == -1) {
             self.dmgFilter.push(dmgType);
         } else {
@@ -1528,7 +1525,7 @@ var app = function() {
                         dialogItself.close();
                     }
                 }]
-            })).title("Normalize Materials/Consumables").show(true);
+            })).title(self.activeText().normalize_title).show(true);
         } else {
             nextTransfer(callback);
         }

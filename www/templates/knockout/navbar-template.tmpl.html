@@ -233,18 +233,13 @@
                         <span data-bind="html: $root.activeText().menu_damage">Damage</span>
                         <span class="caret"></span>
                     </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Kinetic">
-                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Kinetic') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/kinetic.png" class="icon">Kinetic (None)</a>
-                        </li>
-                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Solar">
-                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Solar') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/solar.png" class="icon">Solar</a>
-                        </li>
-                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Arc">
-                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Arc') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/arc.png" class="icon">Arc</a>
-                        </li>
-                        <li data-bind="css: dmgFilter().indexOf($($element).attr('value')) > -1 ? 'active' : '', fastclick: setDmgFilter" value="Void">
-                            <a href="#"><i class="fa" data-bind="css: dmgFilter().indexOf('Void') > -1 ? 'fa-check-square' : 'fa-square'"></i><img src="assets/void.png" class="icon">Void</a>
+                    <ul class="dropdown-menu" role="menu" data-bind="foreach: { data: _.values(tgd.DestinyDamageTypes).splice(1,4), as: 'dmgType' }">					
+                        <li data-bind="css: $parent.dmgFilter().indexOf(dmgType) > -1 ? 'active' : '', fastclick: $parent.setDmgFilter.bind(dmgType)">
+                            <a href="#">
+								<i class="fa" data-bind="css: $parent.dmgFilter().indexOf(dmgType) > -1 ? 'fa-check-square' : 'fa-square'"></i>
+								<img class="icon" data-bind="attr: { src: 'assets/' + dmgType.toLowerCase() + '.png' }">
+								<span data-bind="text: dmgType"></span>
+							</a>
                         </li>
                     </ul>
                 </li>
