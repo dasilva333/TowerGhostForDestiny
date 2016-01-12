@@ -282,25 +282,6 @@ tgd.defaults = {
     toastTimeout: 2600,
     armorViewBy: "Light"
 };
-tgd.armorTemplateDescriptionBuilder = function(item) {
-    var description = item.description;
-
-    //Build the stats as (DIS:46, INT: 47)
-    var stats = _.compact(
-        _.map(item.stats, function(stat, type) {
-            return stat > 0 ? type.substring(0, 3).toUpperCase() + ":" + stat : "";
-        })
-    ).join(", ");
-
-    //Add the stats to the description
-    description = description + " <em>(" + stats + ")</em>";
-
-    //Make bold the exotics
-    description = item.tierType == 6 ? ("<strong>" + description + "</strong>") : description;
-
-    return description;
-};
-
 tgd.imageErrorHandler = function(src, element) {
     return function() {
         if (element && element.src && element.src !== "") {
@@ -442,11 +423,12 @@ window.ko.bindingHandlers.moveItem = {
                                     doEquip: false
                                 });
                             } else {
-                                app.activeLoadout().addGenericItem({
+                                var payload = {
                                     hash: item.id,
                                     bucketType: item.bucketType,
-                                    primaryStat: item.primaryStat()
-                                });
+                                    characterId: item.characterId()
+                                };
+                                app.activeLoadout().addGenericItem(payload);
                             }
                         } else {
                             $.toaster({
@@ -593,13 +575,12 @@ tgd.bungie = (function(cookieString, complete) {
                 'x-csrf': self.bungled
             },
             beforeSend: function(xhr) {
-                /* for some reason this crashes on iOS 9 and causes ajax requests to return status code 0 after a location.reload,
-				IOS 9 detection has provded difficult, disabling this for all IOS users until I can figure out a better fix
-				*/
+                /* this cookie needs to be trimmed in order to work properly on iPad (https://forum.ionicframework.com/t/solved-ios9-fails-with-setrequestheader-native-with-custom-headers-in-http-service/32399)*/
                 if (isMobile && typeof cookieString == "string") {
                     _.each(cookieString.split(";"), function(cookie) {
                         try {
-                            xhr.setRequestHeader('Cookie', cookie);
+                            var trimCookie = $.trim(cookie);
+                            xhr.setRequestHeader('Cookie', trimCookie);
                         } catch (e) {}
                     });
                 }
@@ -1006,7 +987,7 @@ tgd.Layout.prototype = {
 	        });
 	        _.each(self.generics(), function(item) {
 	            if (item && item.hash) {
-	                var itemFound = self.findItemByHash(item.hash);
+	                var itemFound = self.findItemByHash(item.hash, item.characterId);
 	                if (itemFound) {
 	                    itemFound.doEquip = item.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
@@ -1152,12 +1133,15 @@ tgd.Layout.prototype = {
 	    addGenericItem: function(obj) {
 	        this.generics.push(new tgd.LoadoutItem(obj));
 	    },
-	    findItemByHash: function(hash) {
+	    findItemByHash: function(hash, characterId) {
 	        var itemFound;
 	        app.characters().forEach(function(character) {
-	            var match = _.findWhere(character.items(), {
-	                id: hash
-	            });
+	            var match = _.filter(character.items(), function(item) {
+	                if (characterId)
+	                    return item.id == hash && item.characterId() == characterId;
+	                else
+	                    return item.id == hash;
+	            })[0];
 	            if (match) itemFound = _.clone(match);
 	        });
 	        return itemFound;
@@ -1335,7 +1319,6 @@ tgd.Layout.prototype = {
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
 	                if (typeof item == "undefined") {
-	                    console.log(ref);
 	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
 	                } else if (ref.bucketType == "Subclasses") {
 	                    return fnHasFreeSpace();
@@ -1684,8 +1667,6 @@ tgd.Layout.prototype = {
 	                }
 	                return swapArray;
 	            }));
-	        } else {
-	            BootstrapDialog.alert("No source items available to transfer");
 	        }
 	        if (callback) {
 	            if (_.isFunction(callback)) callback(masterSwapArray);
@@ -1735,8 +1716,6 @@ tgd.Layout.prototype = {
 	                        }
 	                    });
 	                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId, indexes));
-	                } else {
-	                    BootstrapDialog.alert("No swap candidates available");
 	                }
 	            }
 	        });
@@ -3135,7 +3114,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.7.3";
+tgd.version = "3.7.8.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3144,12 +3123,25 @@ tgd.moveItemPositionHandler = function(element, item) {
         return false;
     } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
-        var existingItem = _.findWhere(app.activeLoadout().ids(), {
-            id: item._id
-        });
-        if (existingItem)
-            app.activeLoadout().ids.remove(existingItem);
-        else {
+        var existingItem, itemFound = false;
+        if (item._id > 0) {
+            existingItem = _.findWhere(app.activeLoadout().ids(), {
+                id: item._id
+            });
+            if (existingItem) {
+                app.activeLoadout().ids.remove(existingItem);
+                itemFound = true;
+            }
+        } else {
+            existingItem = _.filter(app.activeLoadout().generics(), function(itm) {
+                return item.id == item.id && item.primaryStat() == itm.primaryStat;
+            });
+            if (existingItem.length > 0) {
+                app.activeLoadout().generics.removeAll(existingItem);
+                itemFound = true;
+            }
+        }
+        if (itemFound == false) {
             if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
                 $.toaster({
                     priority: 'danger',
@@ -3163,7 +3155,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 app.activeLoadout().addGenericItem({
                     hash: item.id,
                     bucketType: item.bucketType,
-                    primaryStat: item.primaryStat()
+                    characterId: item.characterId()
                 });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
@@ -4119,7 +4111,7 @@ Item.prototype = {
                             adhoc.addGenericItem({
                                 hash: self.id,
                                 bucketType: self.bucketType,
-                                primaryStat: self.primaryStat()
+                                characterId: self.characterId()
                             });
                         }
                         var msa = adhoc.transfer(targetCharacterId, true);
@@ -4318,7 +4310,7 @@ Item.prototype = {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: app.activeText().close,
+                            label: app.activeText().close_msg,
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
@@ -5301,63 +5293,97 @@ Profile.prototype = {
             var highestSetValue;
             var bestArmorSets;
             var bestWeaponSets;
-
             if (type == "Best") {
-                var bestSets = character.findBestArmorSetV2(items);
-                var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
-                    armorBuilds = {};
-                _.each(bestSets, function(combo) {
-                    if (combo.score >= highestTier) {
-                        var title = "",
-                            stats = character.joinStats(combo.set),
-                            description = "(" + combo.score.toFixed(3) + "/15.9)<em>(" + _.values(stats).join("/") + ")</em>";
-                        combo.stats = [];
-                        _.each(stats, function(stat, name) {
-                            title = title + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
-                            combo.stats.push(stat);
-                        });
-                        combo.description = $.trim(description);
-                        combo.title = $.trim(title);
-                        if (combo.title in armorBuilds && combo.score > armorBuilds[combo.title].score || !(combo.title in armorBuilds)) {
-                            armorBuilds[combo.title] = combo;
+                var bestSets,
+                    weaponsEquipped = _.filter(character.equippedGear(), function(item) {
+                        return item.weaponIndex > -1
+                    }),
+                    weaponTypes = _.map(app.weaponTypes(), function(type) {
+                        return type.name.split(" ")[0];
+                    }).concat(tgd.DestinyWeaponPieces);
+                $("body").css("cursor", "progress");
+                setTimeout(function() {
+                    bestSets = character.findBestArmorSetV2(items);
+                    var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
+                        armorBuilds = {};
+                    _.each(bestSets, function(combo) {
+                        if (combo.score >= highestTier) {
+                            var statTiers = "",
+                                stats = character.joinStats(combo.set);
+                            combo.stats = [];
+                            _.each(stats, function(stat, name) {
+                                statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
+                                combo.stats.push(stat);
+                            });
+                            combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
+                            combo.statTiers = $.trim(statTiers);
+                            combo.statValues = _.values(stats).join("/");
+                            combo.perks = _.filter(
+                                _.flatten(
+                                    _.map(combo.set, function(item) {
+                                        return _.map(item.perks, function(perk) {
+                                            perk.bucketType = item.bucketType;
+                                            return perk;
+                                        });
+                                    })
+                                ),
+                                function(perk) {
+                                    return perk.active === true && _.intersection(weaponTypes, perk.name.split(" ")).length > 0;
+                                }
+                            );
+                            if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
+                                armorBuilds[combo.statTiers] = combo;
+                            }
                         }
-                    }
-                });
-                armorBuilds = _.sortBy(armorBuilds, function(combo) {
-                    return _.max(combo.stats) * -1;
-                });
-                if (armorBuilds.length === 1) {
-                    highestSet = bestSets[bestSets.length - 1].set;
-                    highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
-                    character.equipAction(type, highestSetValue, highestSet);
-                } else {
-                    var $template = tgd.armorTemplates({
-                        builds: armorBuilds
                     });
-                    (new tgd.dialog({
-                        buttons: [{
-                            label: app.activeText().movepopup_equip,
-                            action: function(dialog) {
-                                if ($("input.armorBuild:checked").length === 0) {
-                                    BootstrapDialog.alert("Error: Please select one armor build to equip.");
-                                } else {
-                                    var selectedBuild = $("input.armorBuild:checked").val();
-                                    highestCombo = _.findWhere(armorBuilds, {
-                                        title: selectedBuild
-                                    });
-                                    character.equipAction(type, highestCombo.score, highestCombo.set);
+                    armorBuilds = _.sortBy(armorBuilds, function(combo) {
+                        return _.max(combo.stats) * -1;
+                    });
+                    if (armorBuilds.length === 1) {
+                        highestSet = bestSets[bestSets.length - 1].set;
+                        highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
+                        character.equipAction(type, highestSetValue, highestSet);
+                    } else {
+                        var $template = tgd.armorTemplates({
+                            builds: armorBuilds
+                        });
+                        (new tgd.dialog({
+                            buttons: [{
+                                label: app.activeText().movepopup_equip,
+                                action: function(dialog) {
+                                    if ($("input.armorBuild:checked").length === 0) {
+                                        BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                                    } else {
+                                        var selectedBuild = $("input.armorBuild:checked").val();
+                                        highestCombo = _.findWhere(armorBuilds, {
+                                            statTiers: selectedBuild
+                                        });
+                                        character.equipAction(type, highestCombo.score, highestCombo.set);
+                                        dialog.close();
+                                    }
+                                }
+                            }, {
+                                label: app.activeText().cancel,
+                                action: function(dialog) {
                                     dialog.close();
                                 }
-                            }
-                        }, {
-                            label: app.activeText().cancel,
-                            action: function(dialog) {
-                                dialog.close();
-                            }
-                        }]
-                    })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true);
-                    return;
-                }
+                            }]
+                        })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                            $("a.itemLink").each(function() {
+                                var element = $(this);
+                                var itemId = element.attr("itemId");
+                                element.click(false);
+                                Hammer(element[0], {
+                                    time: 2000
+                                }).on("press", function(ev) {
+                                    $ZamTooltips.lastElement = element;
+                                    $ZamTooltips.show("destinydb", "items", itemId, element);
+                                });
+                            });
+                        });
+                    }
+                    $("body").css("cursor", "default");
+                }, 300);
             } else if (type == "Light") {
                 bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];
                 tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
@@ -5385,6 +5411,7 @@ Profile.prototype = {
                 }
                 character.equipAction(type, highestSetValue, highestSet);
             }
+
         };
     }
 };
@@ -5952,12 +5979,11 @@ var app = function() {
         }
     };
     this.openStatusReport = function(type) {
-        return function(type) {
+        return function() {
             self.toggleBootstrapMenu();
             var sReportURL;
             var prefSystem = self.preferredSystem().toLowerCase();
             var info = self.bungie.systemIds[prefSystem];
-            var type = parseInt(this);
             if (type === 1) {
                 sReportURL = "http://destinystatus.com/" + prefSystem + "/" + info.id;
             } else if (type === 2) {
