@@ -1664,8 +1664,6 @@ tgd.Layout.prototype = {
 	                }
 	                return swapArray;
 	            }));
-	        } else {
-	            BootstrapDialog.alert("No source items available to transfer");
 	        }
 	        if (callback) {
 	            if (_.isFunction(callback)) callback(masterSwapArray);
@@ -3113,7 +3111,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.8.4";
+tgd.version = "3.7.8.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -4296,7 +4294,7 @@ Item.prototype = {
                                 finishTransfer($("input#consolidate")[0].checked);
                             }
                         }, {
-                            label: app.activeText().close,
+                            label: app.activeText().close_msg,
                             action: function(dialogItself) {
                                 dialogItself.close();
                             }
@@ -5342,7 +5340,7 @@ Profile.prototype = {
                                     } else {
                                         var selectedBuild = $("input.armorBuild:checked").val();
                                         highestCombo = _.findWhere(armorBuilds, {
-                                            title: selectedBuild
+                                            statTiers: selectedBuild
                                         });
                                         character.equipAction(type, highestCombo.score, highestCombo.set);
                                         dialog.close();

@@ -825,7 +825,7 @@ Profile.prototype = {
                                     } else {
                                         var selectedBuild = $("input.armorBuild:checked").val();
                                         highestCombo = _.findWhere(armorBuilds, {
-                                            title: selectedBuild
+                                            statTiers: selectedBuild
                                         });
                                         character.equipAction(type, highestCombo.score, highestCombo.set);
                                         dialog.close();

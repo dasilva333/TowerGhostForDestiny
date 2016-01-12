@@ -6,12 +6,26 @@ tgd.moveItemPositionHandler = function(element, item) {
         return false;
     } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
-        var existingItem = _.findWhere(app.activeLoadout().ids(), {
-            id: item._id
-        });
-        if (existingItem)
-            app.activeLoadout().ids.remove(existingItem);
-        else {
+		var existingItem, itemFound = false;
+		if (item._id > 0){
+			existingItem = _.findWhere(app.activeLoadout().ids(), {
+	            id: item._id
+	        });
+	        if (existingItem){
+	            app.activeLoadout().ids.remove(existingItem);
+				itemFound = true;
+			}	
+		}
+		else {
+			existingItem = _.filter(app.activeLoadout().generics(), function(itm){
+	            return item.id == item.id && item.primaryStat() == itm.primaryStat;
+	        });
+	        if (existingItem.length > 0){
+	            app.activeLoadout().generics.removeAll(existingItem);
+				itemFound = true;
+			}	
+		}
+        if (itemFound == false){
             if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
                 $.toaster({
                     priority: 'danger',
@@ -25,7 +39,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 app.activeLoadout().addGenericItem({
                     hash: item.id,
                     bucketType: item.bucketType,
-                    primaryStat: item.primaryStat()
+                    characterId: item.characterId()
                 });
             } else if (_.where(app.activeLoadout().items(), {
                     bucketType: item.bucketType
@@ -981,7 +995,7 @@ Item.prototype = {
                             adhoc.addGenericItem({
                                 hash: self.id,
                                 bucketType: self.bucketType,
-                                primaryStat: self.primaryStat()
+                                characterId: self.characterId()
                             });
                         }
                         var msa = adhoc.transfer(targetCharacterId, true);

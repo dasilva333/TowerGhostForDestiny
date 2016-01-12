@@ -34,7 +34,7 @@
 	        });
 	        _.each(self.generics(), function(item) {
 	            if (item && item.hash) {
-	                var itemFound = self.findItemByHash(item.hash);
+	                var itemFound = self.findItemByHash(item.hash, item.characterId);
 	                if (itemFound) {
 	                    itemFound.doEquip = item.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
@@ -180,12 +180,15 @@
 	    addGenericItem: function(obj) {
 	        this.generics.push(new tgd.LoadoutItem(obj));
 	    },
-	    findItemByHash: function(hash) {
+	    findItemByHash: function(hash, characterId) {
 	        var itemFound;
 	        app.characters().forEach(function(character) {
-	            var match = _.findWhere(character.items(), {
-	                id: hash
-	            });
+	            var match = _.filter(character.items(), function(item) {
+					if (characterId)
+	                return item.id == hash && item.characterId() == characterId;
+					else
+					return item.id == hash;
+	            })[0];
 	            if (match) itemFound = _.clone(match);
 	        });
 	        return itemFound;
@@ -363,7 +366,6 @@
 	            var checkAndMakeFreeSpace = function(ref, spaceNeeded, fnHasFreeSpace) {
 	                var item = ref;
 	                if (typeof item == "undefined") {
-	                    console.log(ref);
 	                    return BootstrapDialog.alert(self.description + ": Item not found while attempting to transfer the item " + ref.description);
 	                } else if (ref.bucketType == "Subclasses") {
 	                    return fnHasFreeSpace();
@@ -712,8 +714,6 @@
 	                }
 	                return swapArray;
 	            }));
-	        } else {
-	            BootstrapDialog.alert("No source items available to transfer");
 	        }
 	        if (callback) {
 	            if (_.isFunction(callback)) callback(masterSwapArray);

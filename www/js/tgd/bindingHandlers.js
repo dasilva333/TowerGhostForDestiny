@@ -139,11 +139,12 @@ window.ko.bindingHandlers.moveItem = {
                                     doEquip: false
                                 });
                             } else {
-                                app.activeLoadout().addGenericItem({
+                                var payload = {
                                     hash: item.id,
                                     bucketType: item.bucketType,
-                                    primaryStat: item.primaryStat()
-                                });
+                                    characterId: item.characterId()
+                                };
+                                app.activeLoadout().addGenericItem(payload);
                             }
                         } else {
                             $.toaster({
