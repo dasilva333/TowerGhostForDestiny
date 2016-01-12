@@ -3114,7 +3114,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.9.1";
+tgd.version = "3.7.9.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5243,6 +5243,7 @@ Profile.prototype = {
                         title: 'Result',
                         message: " Completed equipping the highest " + type + " set at " + highestSetValue
                     });
+                    character.statsShowing(false);
                 });
             }
         };
@@ -5368,7 +5369,7 @@ Profile.prototype = {
                                     dialog.close();
                                 }
                             }]
-                        })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                        })).title("Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
                             $("a.itemLink").each(function() {
                                 var element = $(this);
                                 var itemId = element.attr("itemId");

@@ -712,6 +712,7 @@ Profile.prototype = {
                         title: 'Result',
                         message: " Completed equipping the highest " + type + " set at " + highestSetValue
                     });
+                    character.statsShowing(false);
                 });
             }
         };
@@ -837,7 +838,7 @@ Profile.prototype = {
                                     dialog.close();
                                 }
                             }]
-                        })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                        })).title("Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
                             $("a.itemLink").each(function() {
                                 var element = $(this);
                                 var itemId = element.attr("itemId");
