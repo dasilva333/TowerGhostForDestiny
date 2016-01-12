@@ -75,7 +75,6 @@ input
     height: 77px;
     background-color: rgba(21, 13, 13, 1);
     cursor: default;
-	overflow: hidden;
 }
 
 .move-popup .item-name {
