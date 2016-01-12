@@ -1820,7 +1820,7 @@ tgd.locale = {
         loadouts_to_transfer: " will be moved",
         loadouts_transfer: "Transfer",
         loadouts_transfer_confirm: "Transfer Confirm",
-        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        loadouts_transferred: "<strong>Item(s) Transferred!</strong><br>If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>.",
         login_authenticating_pt1: "Logging into Bungie... Please be patient.",
         login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
         login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
@@ -2116,7 +2116,7 @@ tgd.locale = {
         loadouts_to_transfer: " sera trasladado",
         loadouts_transfer: "Transferir",
         loadouts_transfer_confirm: "Confirmar Transferencia",
-        loadouts_transferred: "<strong>Articulo(s) transferido con exito</strong><br> Si te gusta esta aplicacion, puedes <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">comprarme un ponchecrema.</a>",
+        loadouts_transferred: "<strong>Articulo(s) transferido con exito</strong><br> Si te gusta esta aplicacion, puedes <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">comprarme una cervezita.</a>",
         login_authenticating_pt1: "Logging into Bungie... Please be patient.",
         login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
         login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
@@ -2412,7 +2412,7 @@ tgd.locale = {
         loadouts_to_transfer: " will be moved",
         loadouts_transfer: "Transfer",
         loadouts_transfer_confirm: "Transfer Confirm",
-        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        loadouts_transferred: "<strong>Item(s) Transferred!</strong><br>If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>.",
         login_authenticating_pt1: "Logging into Bungie... Please be patient.",
         login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
         login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
@@ -2560,7 +2560,7 @@ tgd.locale = {
         loadouts_to_transfer: " will be moved",
         loadouts_transfer: "Transfer",
         loadouts_transfer_confirm: "Transfer Confirm",
-        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        loadouts_transferred: "<strong>Item(s) Transferred!</strong><br>If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>.",
         login_authenticating_pt1: "Logging into Bungie... Please be patient.",
         login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
         login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
@@ -2708,7 +2708,7 @@ tgd.locale = {
         loadouts_to_transfer: " will be moved",
         loadouts_transfer: "Transfer",
         loadouts_transfer_confirm: "Transfer Confirm",
-        loadouts_transferred: "<strong>Happy Holidays!</strong><br>If you like this app remember to <a style=\"color:#FCE794; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me an eggnog</a>.",
+        loadouts_transferred: "<strong>Item(s) Transferred!</strong><br>If you like this app remember to <a style=\"color:#3080CF; cursor:pointer;\" class=\"donateLink\" target=\"_system\">buy me a beer</a>.",
         login_authenticating_pt1: "Logging into Bungie... Please be patient.",
         login_authenticating_pt2: "If log in screen remains for 2+ minutes, use these links for",
         login_authenticating_pt3: "to retry login. If the problem persists, reinstall the app.",
@@ -3114,7 +3114,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.7.8.5";
+tgd.version = "3.8.0.0";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3134,7 +3134,7 @@ tgd.moveItemPositionHandler = function(element, item) {
             }
         } else {
             existingItem = _.filter(app.activeLoadout().generics(), function(itm) {
-                return item.id == item.id && item.primaryStat() == itm.primaryStat;
+                return item.id == itm.hash && item.characterId() == itm.characterId;
             });
             if (existingItem.length > 0) {
                 app.activeLoadout().generics.removeAll(existingItem);
@@ -5243,6 +5243,7 @@ Profile.prototype = {
                         title: 'Result',
                         message: " Completed equipping the highest " + type + " set at " + highestSetValue
                     });
+                    character.statsShowing(false);
                 });
             }
         };
@@ -5368,7 +5369,7 @@ Profile.prototype = {
                                     dialog.close();
                                 }
                             }]
-                        })).title("Multiple Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                        })).title("Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
                             $("a.itemLink").each(function() {
                                 var element = $(this);
                                 var itemId = element.attr("itemId");
@@ -5420,7 +5421,6 @@ window.Hammer.Tap.prototype.defaults.threshold = 9;
 var app = function() {
     var self = this;
 
-    this.retryCount = ko.observable(0);
     this.loadingUser = ko.observable(false);
     this.hiddenWindowOpen = ko.observable(false);
     this.loadoutMode = ko.observable(false);
@@ -5431,7 +5431,6 @@ var app = function() {
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
     this.preferredSystem = ko.pureComputed(new tgd.StoreObj("preferredSystem"));
-    this.itemDefs = ko.pureComputed(new tgd.StoreObj("itemDefs"));
     this.appLocale = ko.pureComputed(new tgd.StoreObj("appLocale"));
     this.locale = ko.pureComputed(new tgd.StoreObj("locale"));
     this.layoutMode = ko.pureComputed(new tgd.StoreObj("layoutMode"));
@@ -5531,7 +5530,7 @@ var app = function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("Help").content(tgd.helpTemplate()).show();
+        (new tgd.dialog()).title(self.activeText().menu_help).content(tgd.helpTemplate()).show();
     };
 
     this.showLanguageSettings = function() {
@@ -5541,10 +5540,9 @@ var app = function() {
                 locale: self.currentLocale(),
                 languages: tgd.languages
             })
-        })).title("Set Language").show(true, function() {}, function() {
+        })).title(self.activeText().menu_language).show(true, function() {}, function() {
             tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
-                console.log("changing locale to " + this.value);
                 self.appLocale(this.value);
                 self.autoUpdates(true);
                 tgd.checkUpdates();
@@ -5605,7 +5603,7 @@ var app = function() {
 
     this.showAbout = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title("About").content(tgd.aboutTemplate()).show();
+        (new tgd.dialog()).title(self.activeText().menu_about).content(tgd.aboutTemplate()).show();
     };
 
     this.clearFilters = function(model, element) {
@@ -6060,9 +6058,9 @@ var app = function() {
         self.toggleBootstrapMenu();
         self.activeView($(event.target).closest('li').attr("value"));
     };
-    this.setDmgFilter = function(model, event) {
+    this.setDmgFilter = function() {
         self.toggleBootstrapMenu();
-        var dmgType = $(event.target).closest('li').attr("value");
+        var dmgType = this.toString();
         if (self.dmgFilter.indexOf(dmgType) == -1) {
             self.dmgFilter.push(dmgType);
         } else {
@@ -6945,7 +6943,7 @@ var app = function() {
                         dialogItself.close();
                     }
                 }]
-            })).title("Normalize Materials/Consumables").show(true);
+            })).title(self.activeText().normalize_title).show(true);
         } else {
             nextTransfer(callback);
         }
@@ -7229,6 +7227,13 @@ var app = function() {
     this.init = function() {
         _.each(ko.templates, function(content, name) {
             $("<script></script").attr("type", "text/html").attr("id", name).html(content).appendTo("head");
+        });
+        var providedTemplates = _.keys(ko.templates);
+        $("div[data-bind*=template]").map(function(i, e) {
+            var template = $(e).attr("data-bind").match(/'(.*)'/)[1];
+            if (providedTemplates.indexOf(template) == -1) {
+                $(e).remove();
+            }
         });
 
         $.toaster({
