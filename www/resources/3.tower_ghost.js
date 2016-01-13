@@ -3123,7 +3123,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.8.0.1";
+tgd.version = "3.8.0.2";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -5740,22 +5740,29 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
-                if (self.advancedTooltips() === true && activeItem.weaponIndex > -1 && itemStats) {
+                if (self.advancedTooltips() === true && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last");
-                    var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction"];
-                    _.each(desireableStats, function(statName) {
-                        var statObj = _.findWhere(itemStats, {
-                            name: statName
-                        });
-                        if (statObj) {
-                            var clonedRow = magazineRow.clone();
-                            clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                            if (statObj.minimum > 0 && statObj.maximum > 0) {
-                                clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                    if (activeItem.weaponIndex > -1) {
+                        var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction"];
+                        _.each(desireableStats, function(statName) {
+                            var statObj = _.findWhere(itemStats, {
+                                name: statName
+                            });
+                            if (statObj) {
+                                var clonedRow = magazineRow.clone();
+                                clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                                if (statObj.minimum > 0 && statObj.maximum > 0) {
+                                    clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                                }
+                                magazineRow.before(clonedRow);
                             }
-                            magazineRow.before(clonedRow);
-                        }
-                    });
+                        });
+                    } else if (activeItem.armorIndex > -1) {
+                        var clonedRow = magazineRow.clone();
+                        clonedRow.find(".stat-bar-label").html("Total Points:" + activeItem.getValue("All"));
+                        clonedRow.find(".stat-bar-static-value").html("Max : " + tgd.DestinyMaxCSP[activeItem.bucketType]);
+                        magazineRow.after(clonedRow);
+                    }
                 }
             }
             if (activeItem.perks.length > 0) {
