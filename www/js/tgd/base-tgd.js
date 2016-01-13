@@ -157,6 +157,15 @@ tgd.DestinyBucketColumns = {
     "Emote": 3,
     "Horn": 3
 };
+tgd.DestinyMaxCSP = {
+	"Helmet": 102,
+	"Gauntlet": 102,
+	"Chest": 137,
+	"Boots": 152,
+	"Class Items": 57,
+	"Artifact": 123,
+	"Ghost": 57
+}
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
     "Special": 13.04,

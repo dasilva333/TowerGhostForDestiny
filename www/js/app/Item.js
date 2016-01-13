@@ -284,7 +284,7 @@ Item.prototype = {
                     }
                 }
             }
-            if (item.stats.length > 0) {
+            if (item.stats && item.stats.length && item.stats.length > 0) {
                 itemObject.stats = {};
                 _.each(item.stats, function(stat) {
                     if (stat.statHash in window._statDefs) {
