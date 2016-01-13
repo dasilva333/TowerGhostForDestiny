@@ -182,6 +182,15 @@ tgd.DestinyBucketColumns = {
     "Emote": 3,
     "Horn": 3
 };
+tgd.DestinyMaxCSP = {
+    "Helmet": 102,
+    "Gauntlet": 102,
+    "Chest": 137,
+    "Boots": 152,
+    "Class Items": 57,
+    "Artifact": 123,
+    "Ghost": 57
+}
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
     "Special": 13.04,
@@ -3114,7 +3123,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.8.0.0";
+tgd.version = "3.8.0.1";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -3323,7 +3332,12 @@ Item.prototype = {
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
             if (itemObject.armorIndex > -1) {
                 app.armorViewBy.subscribe(function(type) {
-                    self.primaryStat(self.primaryValues[type == "Light" ? "Default" : "Stats"]);
+                    var statType = type == "Light" ? "Default" : "Stats";
+                    var primaryStat = self.primaryValues[statType];
+                    if (statType == "Stats" && primaryStat) {
+                        primaryStat = primaryStat + "/" + tgd.DestinyMaxCSP[self.bucketType];
+                    }
+                    self.primaryStat(primaryStat);
                 });
             }
             if (item.id) {
@@ -3401,7 +3415,7 @@ Item.prototype = {
                     }
                 }
             }
-            if (item.stats.length > 0) {
+            if (item.stats && item.stats.length && item.stats.length > 0) {
                 itemObject.stats = {};
                 _.each(item.stats, function(stat) {
                     if (stat.statHash in window._statDefs) {

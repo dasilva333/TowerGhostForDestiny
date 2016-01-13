@@ -206,7 +206,12 @@ Item.prototype = {
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
             if (itemObject.armorIndex > -1) {
                 app.armorViewBy.subscribe(function(type) {
-                    self.primaryStat(self.primaryValues[type == "Light" ? "Default" : "Stats"]);
+                    var statType = type == "Light" ? "Default" : "Stats";
+                    var primaryStat = self.primaryValues[statType];
+                    if (statType == "Stats" && primaryStat) {
+                        primaryStat = primaryStat + "/" + tgd.DestinyMaxCSP[self.bucketType];
+                    }
+                    self.primaryStat(primaryStat);
                 });
             }
             if (item.id) {
