@@ -5185,9 +5185,6 @@ Profile.prototype = {
         });
 
         _.each(backups, function(spare) {
-            candidates = _.filter(backups, function(item) {
-                return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
-            });
             var maxCandidate = primaryStats[spare.bucketType];
             if (maxCandidate < spare.getValue(type)) {
                 //console.log("adding backup " + spare.description);
