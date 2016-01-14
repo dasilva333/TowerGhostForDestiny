@@ -632,14 +632,18 @@ Profile.prototype = {
         //console.log("backups");
         //console.log(backups);
 
+        var primaryStats = {};
+        _.each(_.groupBy(_.flatten(sets), 'bucketType'), function(items, bucketType) {
+            primaryStats[bucketType] = _.max(_.map(items, function(item) {
+                return item.getValue(type);
+            }));
+        });
+
         _.each(backups, function(spare) {
             candidates = _.filter(backups, function(item) {
                 return item.bucketType == spare.bucketType && ((spare.tierType != 6) || (spare.tierType == 6 && item.tierType != 6)) && item._id != spare._id;
             });
-            primaryStats = _.map(candidates, function(item) {
-                return item.getValue(type);
-            });
-            var maxCandidate = _.max(primaryStats);
+            var maxCandidate = primaryStats[spare.bucketType];
             if (maxCandidate < spare.getValue(type)) {
                 //console.log("adding backup " + spare.description);
                 sets.push([spare]);
