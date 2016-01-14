@@ -3123,7 +3123,7 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.8.0.3";
+tgd.version = "3.8.0.4";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -6222,7 +6222,6 @@ var app = function() {
             count++;
             if (count == total) {
                 self.characters(profiles);
-                self.loadLoadouts();
                 self.tierTypes.sort(function(a, b) {
                     return a.tier - b.tier;
                 });
@@ -6238,6 +6237,10 @@ var app = function() {
                 loadingData = false;
                 self.loadingUser(false);
                 $ZamTooltips.init();
+                setTimeout(function() {
+                    self.loadLoadouts();
+                }, 5000);
+
                 //console.timeEnd("new profile");
             }
         }
@@ -6728,10 +6731,34 @@ var app = function() {
             } else {
                 _loadouts = [];
             }
+            var maxCSP = "";
+            try {
+                maxCSP = _.map(
+                    _.groupBy(
+                        _.sortBy(
+                            _.filter(
+                                _.flatten(
+                                    _.map(self.characters(), function(character) {
+                                        return character.items()
+                                    })
+                                ),
+                                function(item) {
+                                    return item.armorIndex > -1;
+                                }), 'bucketType'), 'bucketType'),
+                    function(items, bucketType) {
+                        return String.fromCharCode(_.max(_.map(items, function(item) {
+                            return item.getValue("All")
+                        })));
+                    }).join("");
+            } catch (e) {
+
+            }
             self.apiRequest({
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId)
+                membershipId: parseFloat(self.activeUser().user.membershipId),
+                //Crowd Sourced values for maxCSP
+                maxCSP: maxCSP
                     /*this one applies only to your current profile
 				accountId: self.bungie.getMemberId()*/
             }, function(results) {
