@@ -174,11 +174,9 @@ Profile.prototype = {
                 return item.bucketType in weights;
             });
             var primaryStatsGear = _.map(eligibleGear, function(item) {
-                var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
-                return value;
+                return item.primaryStatValue() * (weights[item.bucketType] / 100);
             });
-            var sumLightGear = tgd.sum(primaryStatsGear);
-            var powerLevel = Math.floor(sumLightGear);
+            var powerLevel = Math.floor(tgd.sum(primaryStatsGear));
             return powerLevel;
         } else {
             return 0;
