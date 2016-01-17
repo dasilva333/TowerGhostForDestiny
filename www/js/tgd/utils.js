@@ -10,14 +10,14 @@ tgd.cartesianProductOf = function(x) {
     ]);
 };
 
-tgd.sum = _.memoize(function(arr) {
+tgd.sum = function(arr) {
     return _.reduce(arr, function(memo, num) {
         return memo + num;
     }, 0);
-});
+};
 
-tgd.average = _.memoize(function(arr) {
+tgd.average = function(arr) {
     return _.reduce(arr, function(memo, num) {
         return memo + num;
     }, 0) / arr.length;
-});
+};
