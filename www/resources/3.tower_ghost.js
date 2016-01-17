@@ -3112,17 +3112,17 @@ tgd.cartesianProductOf = function(x) {
     ]);
 };
 
-tgd.sum = function(arr) {
+tgd.sum = _.memoize(function(arr) {
     return _.reduce(arr, function(memo, num) {
         return memo + num;
     }, 0);
-};
+});
 
-tgd.average = function(arr) {
+tgd.average = _.memoize(function(arr) {
     return _.reduce(arr, function(memo, num) {
         return memo + num;
     }, 0) / arr.length;
-};
+});
 tgd.version = "3.8.0.5";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
@@ -4719,11 +4719,9 @@ Profile.prototype = {
                 return item.bucketType in weights;
             });
             var primaryStatsGear = _.map(eligibleGear, function(item) {
-                var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
-                return value;
+                return item.primaryStatValue() * (weights[item.bucketType] / 100);
             });
-            var sumLightGear = tgd.sum(primaryStatsGear);
-            var powerLevel = Math.floor(sumLightGear);
+            var powerLevel = Math.floor(tgd.sum(primaryStatsGear));
             return powerLevel;
         } else {
             return 0;
@@ -4962,6 +4960,65 @@ Profile.prototype = {
         });
         return tmp;
     },
+    queryRolls: function(items, callback) {
+        var count = 0;
+
+        function done() {
+            count++;
+            if (items.length == count) {
+                callback();
+            }
+        }
+
+        function getRolls(item, callback) {
+            app.bungie.getItemDetail(item.characterId(), item._id, function(detail) {
+                item.rolls = _.reduce(detail.data.statsOnNodes, function(rolls, stat, key, stats) {
+                    var index = _.keys(stats).indexOf(key);
+                    _.each(stat.currentNodeStats, function(node) {
+                        _.each(rolls, function(roll, rollIndex) {
+                            var key = _statDefs[node.statHash].statName;
+                            if (index == 0 || (index == 1 && rollIndex == 0))
+                                roll[key] = (roll[key] || 0) + node.value;
+                        });
+                    });
+                    _.each(stat.nextNodeStats, function(node) {
+                        _.each(rolls, function(roll, rollIndex) {
+                            var key = _statDefs[node.statHash].statName;
+                            if (rollIndex == 1)
+                                roll[key] = (roll[key] || 0) + node.value;
+                        });
+                    });
+                    return rolls;
+                }, [{}, {}]);
+                window.localStorage.setItem("rolls_" + item._id, JSON.stringify(item.rolls));
+                callback();
+            });
+        }
+        _.each(items, function(item) {
+            if (!item.rolls) {
+                var cachedRolls = window.localStorage.getItem("rolls_" + item._id);
+                if (cachedRolls) {
+                    item.rolls = JSON.parse(cachedRolls);
+                    if (tgd.sum(item.rolls[0]) != tgd.sum(item.stats)) {
+                        console.log("getting new rolls");
+                        getRolls(item, done);
+                    } else {
+                        console.log("applying cached rolls");
+                        done();
+                    }
+                } else {
+                    if (_.keys(item.stats).length == 1) {
+                        item.rolls = [item.stats];
+                        done();
+                    } else {
+                        getRolls(item, done);
+                    }
+                }
+            } else {
+                done();
+            }
+        });
+    },
     reduceMaxSkill: function(type, buckets, items) {
         var character = this;
         tgd.localLog("highest set is above max cap");
@@ -5121,34 +5178,47 @@ Profile.prototype = {
 
         backups = _.flatten(sets);
 
-        _.each(sets, function(set) {
-            var mainPiece = set[0],
-                subSets = [
-                    [mainPiece]
-                ];
-            candidates = _.groupBy(_.filter(backups, function(item) {
-                return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
-            }), 'bucketType');
-            _.each(candidates, function(items) {
-                subSets.push(items);
-            });
-            var combos = tgd.cartesianProductOf(subSets);
-            var sums = _.map(combos, function(combo) {
-                var tmp = character.joinStats(combo);
-                var score = tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / tgd.DestinySkillTier);
-                    return result > 5 ? 5 : result;
-                }));
-                var subScore = (tgd.sum(_.values(tmp)) / 1000);
-                return score + subScore;
-            });
-            var highestScore = _.max(sums);
-            var highestScoringSet = combos[sums.indexOf(highestScore)];
-            bestSets.push({
-                score: highestScore,
-                set: highestScoringSet
+        character.queryRolls(backups, function() {
+            _.each(sets, function(set) {
+                var subSets, mainPiece = set[0];
+                //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
+                _.each(mainPiece.rolls, function(roll) {
+                    subSets = [
+                        [mainPiece]
+                    ];
+                    candidates = _.groupBy(_.filter(backups, function(item) {
+                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                    }), 'bucketType');
+                    _.each(candidates, function(items) {
+                        subSets.push(items);
+                    });
+                    var combos = tgd.cartesianProductOf(subSets);
+                    var sums = _.map(combos, function(combo) {
+                        var tmp = _.reduce(combo, function(memo, item) {
+                            var stat = (item._id == mainPiece._id) ? roll : item.stats;
+                            _.each(stat, function(value, key) {
+                                if (!(key in memo)) memo[key] = 0;
+                                memo[key] += value;
+                            });
+                            return memo;
+                        }, {});
+                        var score = tgd.sum(_.map(tmp, function(value, key) {
+                            var result = Math.floor(value / tgd.DestinySkillTier);
+                            return result > 5 ? 5 : result;
+                        }));
+                        var subScore = (tgd.sum(_.values(tmp)) / 1000);
+                        return score + subScore;
+                    });
+                    var highestScore = _.max(sums);
+                    var highestScoringSet = combos[sums.indexOf(highestScore)];
+                    bestSets.push({
+                        score: highestScore,
+                        set: highestScoringSet
+                    });
+                });
             });
         });
+
 
         return _.sortBy(bestSets, 'score');
     },
