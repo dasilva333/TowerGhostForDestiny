@@ -264,5 +264,6 @@ tgd.defaults = {
     layoutMode: "even",
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
     toastTimeout: 2600,
-    armorViewBy: "Light"
+    armorViewBy: "Light",
+    sectionsTemplate: "sections-template"
 };

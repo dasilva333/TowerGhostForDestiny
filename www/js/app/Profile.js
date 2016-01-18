@@ -354,8 +354,10 @@ Profile.prototype = {
             return (item.bucketType == type && item.isEquipped() == isEquipped);
         };
     },
-    get: function(type) {
-        var items = this.items().filter(this.filterItemByType(type, false));
+    all: function(type) {
+        var items = _.where(this.items(), {
+            bucketType: type
+        });
         var activeSort = parseInt(app.activeSort());
         /* Tier, Type */
         if (activeSort === 0) {
@@ -389,8 +391,10 @@ Profile.prototype = {
                 return item.description;
             });
         }
-
         return items;
+    },
+    get: function(type) {
+        return this.all(type).filter(this.filterItemByType(type, false));
     },
     getVisible: function(type) {
         return _.filter(this.get(type), function(item) {

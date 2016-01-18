@@ -72,7 +72,7 @@
                                     <i title="Click to refresh this area" class="fa fa-refresh text-success" data-bind="fastclick: character.reloadBucket, clickBubble: false"></i>
                                 </div>
                             </div>
-                            <div class="sections" data-bind="template: { name: 'sections-template', foreach: layout.bucketTypes, as: 'bucketType' }"></div>
+                            <div class="sections" data-bind="template: { name: $root.sectionsTemplate, foreach: layout.bucketTypes, as: 'bucketType' }"></div>
                         </div>
                         <!--/ko  -->
                         <!--/ko  -->

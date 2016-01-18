@@ -1,0 +1,16 @@
+<table class="table table-striped table-hover" data-bind="visible: character.get(bucketType).length > 0">
+	<thead>
+		<tr>
+		  <th>Description</th>
+		  <th>Stat</th>
+		  <th>Type</th>
+		</tr>
+	</thead>
+	<tbody data-bind="sortable: { data: character.all(bucketType), as: 'item' }">
+		<tr data-bind="css: isEquipped() ? 'active' : ''">
+		  <td data-bind="text: item.description"></td>
+		  <td data-bind="text: item.primaryStat"></td>
+		  <td data-bind="text: item.bucketType"></td>
+		</tr>
+	</body>
+</table>	

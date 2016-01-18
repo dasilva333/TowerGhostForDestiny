@@ -289,7 +289,8 @@ tgd.defaults = {
     layoutMode: "even",
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
     toastTimeout: 2600,
-    armorViewBy: "Light"
+    armorViewBy: "Light",
+    sectionsTemplate: "sections-template"
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -4899,8 +4900,10 @@ Profile.prototype = {
             return (item.bucketType == type && item.isEquipped() == isEquipped);
         };
     },
-    get: function(type) {
-        var items = this.items().filter(this.filterItemByType(type, false));
+    all: function(type) {
+        var items = _.where(this.items(), {
+            bucketType: type
+        });
         var activeSort = parseInt(app.activeSort());
         /* Tier, Type */
         if (activeSort === 0) {
@@ -4934,8 +4937,10 @@ Profile.prototype = {
                 return item.description;
             });
         }
-
         return items;
+    },
+    get: function(type) {
+        return this.all(type).filter(this.filterItemByType(type, false));
     },
     getVisible: function(type) {
         return _.filter(this.get(type), function(item) {
@@ -5465,6 +5470,7 @@ var app = function() {
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
+    this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));

@@ -32,6 +32,7 @@ var app = function() {
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
+    this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
         $ZamTooltips.isEnabled = newValue;
     }));
