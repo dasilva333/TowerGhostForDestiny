@@ -220,6 +220,22 @@ input
     background-color: #B184C5;
 }
 
+.table .Kinetic {
+    color: #BBB;
+}
+
+.table .Arc {
+    color: #85C5EC;
+}
+
+.table .Solar {
+    color: #C48A01;
+}
+
+.table .Void {
+    color: #B184C5;
+}
+
 .bucket-item a {
     display: block;
     padding-top: 100%;
