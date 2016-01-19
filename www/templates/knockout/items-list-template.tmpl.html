@@ -1,0 +1,43 @@
+<table class="table table-striped table-hover" data-bind="visible: character.get(bucketType).length > 0">
+	<thead>
+		<tr>
+		  <th colspan="3">
+			<span data-bind="text: $root.getBucketName(bucketType)"></span>
+			<!-- ko if: ( character.id !== 'Vault' ) -->
+			<!-- ko if: !(bucketType == 'Materials' || bucketType == 'Quests' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
+			(
+			<span data-bind="text: character.get(bucketType).length + (character.itemEquipped(bucketType) ? 1 : 0)"></span>/10)
+			<!--/ko  -->
+			<!-- ko if: (bucketType == 'Bounties') -->
+			(
+			<span data-bind="text: character.get(bucketType).length"></span>/16)
+			<!--/ko  -->
+			<!-- ko if: (bucketType == 'Quests') -->
+			(
+			<span data-bind="text: character.get(bucketType).length"></span>/32)
+			<!--/ko  -->
+			<!-- ko if: ( bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' ) -->
+			(
+			<span data-bind="text: character.get(bucketType).length"></span>/20)
+			<!--/ko  -->
+			<!--/ko  -->		  
+		  </th>
+		</tr>
+	</thead>
+	<tbody data-bind="sortable: { data: character.all(bucketType), as: 'item' }">
+		<tr data-bind="css: isEquipped() ? 'active' : ''">
+		  <td><a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, text: description, fastclick: function(){ return false }"></a></td>
+		  <td data-bind="css: damageTypeName, text: item.primaryStat"></td>
+		  <td class="text-right">
+		  	<span data-bind="if: item.weaponIndex > -1">
+				<span data-bind="text:item.typeName.split(' ')[0]"></span>
+			</span>
+			<div data-bind="if: item.armorIndex > -1" style="width: 36px;">
+				<!-- ko foreach: item.perks  -->
+					<img data-bind="attr: { src: iconPath, title: name }" width="16">
+				<!--/ko  -->
+			</div>
+		  </td>
+		</tr>
+	</body>
+</table>	

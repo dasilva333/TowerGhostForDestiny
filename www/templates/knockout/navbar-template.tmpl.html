@@ -121,6 +121,24 @@
                                 <span data-bind="text: $root.activeText().menu_view_general">General</span>
                             </a>
                         </li>
+						<li class="divider"></li>
+                        <li>
+                            <strong style="padding-left: 10px;">
+                                <span data-bind="text: $root.activeText().menu_viewformat">View Format</span>
+                            </strong>
+                        </li>
+						<li data-bind="fastclick: setViewFormat" value="image-grid-template">
+                            <a href="#">
+                                <i class="fa" data-bind="css: sectionsTemplate() == 'image-grid-template' ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_viewimagegrid">Image Grid</span>
+                            </a>
+                        </li>
+                        <li data-bind="fastclick: setViewFormat" value="items-list-template">
+                            <a href="#">
+                                <i class="fa" data-bind="css: sectionsTemplate() == 'items-list-template' ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_viewitemlist">Items List</span>
+                            </a>
+                        </li>
                         <li class="divider"></li>
                         <li>
                             <strong style="padding-left: 10px;">

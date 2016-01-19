@@ -640,6 +640,10 @@ var app = function() {
     this.setSetFilter = function(collection) {
         return this._setSetFilter;
     };
+    this.setViewFormat = function(model, event) {
+        self.toggleBootstrapMenu();
+        self.sectionsTemplate($(event.target).closest('li').attr("value"));
+    };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
         self.activeSort($(event.target).closest('li').attr("value"));
@@ -1052,7 +1056,7 @@ var app = function() {
     };
 
     this.globalClickHandler = function(e) {
-        if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+        if ($("#move-popup").is(":visible") && e.target.className !== "itemLink" && e.target.parentNode.className !== "itemLink") {
             $("#move-popup").hide();
             tgd.activeElement = null;
         }
