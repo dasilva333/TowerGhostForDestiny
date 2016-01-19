@@ -290,7 +290,7 @@ tgd.defaults = {
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
     toastTimeout: 2600,
     armorViewBy: "Light",
-    sectionsTemplate: "sections-template"
+    sectionsTemplate: "image-grid-template"
 };
 tgd.imageErrorHandler = function(src, element) {
     return function() {
@@ -1839,6 +1839,9 @@ tgd.locale = {
         login_loading_updates: "Please wait, downloading auto updates",
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
         login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "About",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "All",
@@ -1987,6 +1990,9 @@ tgd.locale = {
         login_loading_inventory: "Bitte warten, lade Arsenal von Bungie",
         login_loading_updates: "Bitte warten, lade automatische Updates",
         login_title: "Willkommen bei Tower Ghost für Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "Über",
         menu_advancedtooltips: "Erweiterte Tooltips",
         menu_all: "Alle",
@@ -2135,6 +2141,9 @@ tgd.locale = {
         login_loading_inventory: "Por favor espere, cargando arsenal de Bungie",
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Bienvenido a Tower Ghost para Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "Acerca De",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "Todo",
@@ -2283,6 +2292,9 @@ tgd.locale = {
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Bienvenue à Tower Ghost for Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "Propos",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_view_by: "View By",
@@ -2431,6 +2443,9 @@ tgd.locale = {
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "About",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "All",
@@ -2579,6 +2594,9 @@ tgd.locale = {
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "About",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "All",
@@ -2727,6 +2745,9 @@ tgd.locale = {
         login_loading_inventory: "Please wait, loading arsenal from Bungie",
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Welcome to Tower Ghost for Destiny!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "About",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "All",
@@ -2875,6 +2896,9 @@ tgd.locale = {
         login_loading_inventory: "Lütfen Bekleyin, Cephaneniz Bungie tarafından yükleniyor",
         login_loading_updates: "Please wait, downloading auto updates",
         login_title: "Tower Ghost for Destiny ye Hoşgeldiniz!",
+        menu_viewformat: "View Format",
+        menu_viewimagegrid: "Image Grid",
+        menu_viewitemlist: "Items List",
         menu_about: "Hakkında",
         menu_advancedtooltips: "Advanced Tooltips",
         menu_all: "Hepsi",
@@ -6078,6 +6102,10 @@ var app = function() {
     this.setSetFilter = function(collection) {
         return this._setSetFilter;
     };
+    this.setViewFormat = function(model, event) {
+        self.toggleBootstrapMenu();
+        self.sectionsTemplate($(event.target).closest('li').attr("value"));
+    };
     this.setSort = function(model, event) {
         self.toggleBootstrapMenu();
         self.activeSort($(event.target).closest('li').attr("value"));
@@ -6490,7 +6518,7 @@ var app = function() {
     };
 
     this.globalClickHandler = function(e) {
-        if ($("#move-popup").is(":visible") && e.target.className !== "itemImage") {
+        if ($("#move-popup").is(":visible") && e.target.className !== "itemLink" && e.target.parentNode.className !== "itemLink") {
             $("#move-popup").hide();
             tgd.activeElement = null;
         }
