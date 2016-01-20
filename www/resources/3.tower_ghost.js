@@ -7322,7 +7322,6 @@ var app = function() {
     };
 
     this.farmItemHandler = function(items) {
-        console.log("farmItemHandler");
         var targetCharacterId = "Vault";
         var engrams = _.filter(items, function(item) {
             return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items";
@@ -7357,7 +7356,6 @@ var app = function() {
     }
 
     this.vaultItemHandler = function(items) {
-        console.log("vaultItemHandler");
         var sortedItems = _.groupBy(_.map(items, function(item) {
             var bucketType = item.bucketType;
             item.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
@@ -7389,11 +7387,9 @@ var app = function() {
         });
     }
 
-    this.farmModeHandler = function(newValue) {
-        var subscriptions = [];
-        console.log("farmModeHandler: " + newValue);
-        if (newValue == true) {
-            console.log("subscribing to characters");
+    var subscriptions = [];
+    this.farmModeHandler = function(isEnabled) {
+        if (isEnabled == true) {
             _.each(self.characters(), function(character) {
                 if (character.id == "Vault") {
                     subscriptions.push(character.items.subscribe(self.vaultItemHandler));

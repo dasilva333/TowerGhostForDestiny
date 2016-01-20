@@ -1917,11 +1917,9 @@ var app = function() {
         });
     }
 
-    this.farmModeHandler = function(newValue) {
-        var subscriptions = [];
-        console.log("farmModeHandler: " + newValue);
-        if (newValue == true) {
-            console.log("subscribing to characters");
+    var subscriptions = [];
+    this.farmModeHandler = function(isEnabled) {
+        if (isEnabled == true) {
             _.each(self.characters(), function(character) {
                 if (character.id == "Vault") {
                     subscriptions.push(character.items.subscribe(self.vaultItemHandler));
