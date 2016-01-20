@@ -1,3 +1,40 @@
 @import "../bower_components/bootstrap/less/bootstrap.less";
 @import "variables.less";
 @import "bootswatch.less";
+
+//Tower Ghost Customizations
+
+//== Components
+@padding-base-vertical:     4px;
+@padding-base-horizontal:   8px;
+
+@padding-large-vertical:    10px;
+@padding-large-horizontal:  12px;
+
+@padding-small-vertical:    3px;
+@padding-small-horizontal:  7px;
+
+@padding-xs-vertical:       1px;
+@padding-xs-horizontal:     4px;
+
+//== Media queries breakpoints
+
+@screen-xs:                  0px;
+@screen-sm:                  470px;
+@screen-md:                  720px;
+@screen-lg:                  1024px;
+
+//== Grid system
+
+@grid-columns:              24;
+@grid-gutter-width:         10px;
+@grid-float-breakpoint:     @screen-lg-min;
+
+//== Container sizes
+
+@container-tablet:             (470px + @grid-gutter-width);
+@container-desktop:            (720px + @grid-gutter-width);
+@container-large-desktop:      (1024px);
+
+//== Navbar
+@navbar-height:                    50px;
