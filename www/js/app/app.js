@@ -31,6 +31,7 @@ var app = function() {
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
@@ -434,6 +435,10 @@ var app = function() {
             location.reload();
         }
     };
+    this.toggleFarmMode = function() {
+        self.toggleBootstrapMenu();
+        self.farmMode(!self.farmMode());
+    };
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
         self.autoXferStacks(!self.autoXferStacks());
@@ -812,7 +817,8 @@ var app = function() {
                 setTimeout(function() {
                     self.loadLoadouts();
                 }, 5000);
-
+                //self.farmMode.subscribe(self.farmModeHandler);
+                //self.farmModeHandler(self.farmMode());
                 //console.timeEnd("new profile");
             }
         }
@@ -1844,6 +1850,72 @@ var app = function() {
             }
         );
     };
+
+    this.farmItemHandler = function(items) {
+        console.log("farmItemHandler");
+        var targetCharacterId = "Vault";
+        var engrams = _.filter(items, function(item) {
+            return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items";
+        });
+        var glimmerTokens = _.filter(items, function(item) {
+            return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
+        });
+
+        var adhoc = new tgd.Loadout();
+        var items = engrams.concat(glimmerTokens);
+        _.each(items, function(item) {
+            if (item._id > 0) {
+                adhoc.addUniqueItem({
+                    id: item._id,
+                    bucketType: item.bucketType,
+                    doEquip: false
+                });
+            } else {
+                adhoc.addGenericItem({
+                    hash: item.id,
+                    bucketType: item.bucketType,
+                    characterId: item.characterId()
+                });
+            }
+        });
+        var msa = adhoc.transfer(targetCharacterId, true);
+        adhoc.swapItems(msa, targetCharacterId, function() {
+
+        });
+    }
+
+    this.vaultItemHandler = function(items) {
+        console.log("vaultItemHandler");
+        /* detect the quantity amounts, if full then disable farmMode */
+        var armor = _.filter(items, "");
+        var weapons = _.filter(items, "");
+        var general = _.filter(items, "");
+        var totalArmorSlots = 0;
+        var totalWeaponSlots = 0;
+        var totalGeneralSlots = 0;
+        if (armor.length == totalArmorSlots || weapons.length == totalWeaponSlots || general.length == totalGeneralSlots) {
+            self.farmMode(false);
+        }
+    }
+
+    this.farmModeHandler = function(newValue) {
+        var subscriptions = [];
+        console.log("farmModeHandler: " + newValue);
+        if (newValue == true) {
+            console.log("subscribing to characters");
+            _.each(self.characters(), function(character) {
+                if (character.id == "Vault") {
+                    subscriptions.push(character.items.subscribe(self.vaultItemHandler));
+                } else {
+                    subscriptions.push(character.items.subscribe(self.farmItemHandler));
+                }
+            });
+        } else {
+            _.each(subscriptions, function(subscription) {
+                subscription.dispose();
+            })
+        }
+    }
 
     this.init = function() {
         _.each(ko.templates, function(content, name) {

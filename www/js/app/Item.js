@@ -1403,6 +1403,12 @@ Item.prototype = {
             }
         });
     },
+    openInArmory: function() {
+        window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, "_system");
+    },
+    openInDestinyDB: function() {
+        window.open(this.href, "_system");
+    },
     getValue: function(type) {
         var value;
         if (type == "Light") {

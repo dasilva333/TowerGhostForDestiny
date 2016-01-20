@@ -265,5 +265,6 @@ tgd.defaults = {
     autoUpdates: (isFirefox || isIOS || isAndroid || isChrome) ? "true" : false,
     toastTimeout: 2600,
     armorViewBy: "Light",
-    sectionsTemplate: "image-grid-template"
+    sectionsTemplate: "image-grid-template",
+    farmMode: false
 };
