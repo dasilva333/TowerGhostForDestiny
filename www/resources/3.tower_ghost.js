@@ -3474,6 +3474,11 @@ Item.prototype = {
                 itemObject.primaryStat(item.stackSize);
             }
             itemObject.primaryValues['Default'] = itemObject.primaryStat();
+            itemObject.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
+                if ((layout.bucketTypes.indexOf(itemObject.bucketType) > -1 && layout.extras.indexOf(itemObject.bucketType) == -1) || (layout.bucketTypes.indexOf(itemObject.bucketType) == -1 && layout.extras.indexOf(itemObject.bucketType) > -1))
+                    memo = layout.array;
+                return memo;
+            }, "");
             $.extend(self, itemObject);
         }
     },
@@ -4826,6 +4831,7 @@ Profile.prototype = {
         } else if (model instanceof tgd.Layout) {
             buckets.push.apply(buckets, model.bucketTypes);
         } else if (model instanceof Profile) {
+            //TODO Investigate the implications of not using the extras property of layout to fix Ghost/Artifacts
             _.each(tgd.DestinyLayout, function(layout) {
                 buckets.push.apply(buckets, layout.bucketTypes);
             });
@@ -7356,16 +7362,7 @@ var app = function() {
     }
 
     this.vaultItemHandler = function(items) {
-        var sortedItems = _.groupBy(_.map(items, function(item) {
-            var bucketType = item.bucketType;
-            item.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
-                if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
-                    memo = layout.array;
-                return memo;
-            }, "");
-            return item;
-        }), 'actualBucketType');
-
+        var sortedItems = _.groupBy(items, 'actualBucketType');
         /* detect the quantity amounts, if full then disable farmMode */
         _.each(tgd.DestinyLayout, function(layout) {
             var group = _.findWhere(sortedItems, {

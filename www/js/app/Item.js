@@ -321,6 +321,11 @@ Item.prototype = {
                 itemObject.primaryStat(item.stackSize);
             }
             itemObject.primaryValues['Default'] = itemObject.primaryStat();
+            itemObject.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
+                if ((layout.bucketTypes.indexOf(itemObject.bucketType) > -1 && layout.extras.indexOf(itemObject.bucketType) == -1) || (layout.bucketTypes.indexOf(itemObject.bucketType) == -1 && layout.extras.indexOf(itemObject.bucketType) > -1))
+                    memo = layout.array;
+                return memo;
+            }, "");
             $.extend(self, itemObject);
         }
     },

@@ -1886,16 +1886,7 @@ var app = function() {
     }
 
     this.vaultItemHandler = function(items) {
-        var sortedItems = _.groupBy(_.map(items, function(item) {
-            var bucketType = item.bucketType;
-            item.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
-                if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
-                    memo = layout.array;
-                return memo;
-            }, "");
-            return item;
-        }), 'actualBucketType');
-
+        var sortedItems = _.groupBy(items, 'actualBucketType');
         /* detect the quantity amounts, if full then disable farmMode */
         _.each(tgd.DestinyLayout, function(layout) {
             var group = _.findWhere(sortedItems, {

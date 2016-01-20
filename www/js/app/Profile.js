@@ -248,6 +248,7 @@ Profile.prototype = {
         } else if (model instanceof tgd.Layout) {
             buckets.push.apply(buckets, model.bucketTypes);
         } else if (model instanceof Profile) {
+            //TODO Investigate the implications of not using the extras property of layout to fix Ghost/Artifacts
             _.each(tgd.DestinyLayout, function(layout) {
                 buckets.push.apply(buckets, layout.bucketTypes);
             });
