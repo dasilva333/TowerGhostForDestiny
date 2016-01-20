@@ -2,7 +2,7 @@ tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
         tgd.localLog("destinyDbMode");
-        window.open(item.href, "_system");
+        window.open(item.href, tgd.openTabAs);
         return false;
     } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
@@ -1404,10 +1404,10 @@ Item.prototype = {
         });
     },
     openInArmory: function() {
-        window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, "_system");
+        window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, tgd.openTabAs);
     },
     openInDestinyDB: function() {
-        window.open(this.href, "_system");
+        window.open(this.href, tgd.openTabAs);
     },
     getValue: function(type) {
         var value;

@@ -26,6 +26,7 @@ tgd.localLog = function(msg) {
 //TODO find all the remote http variables and have them use a single variable
 tgd.remoteServer = "https://towerghostfordestiny.com";
 tgd.remoteImagePath = tgd.remoteServer + "/www/";
+tgd.openTabAs = window.isMobile ? "_system" : "_blank";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
@@ -3149,12 +3150,12 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
-tgd.version = "3.8.0.7";
+tgd.version = "3.8.0.8";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
         tgd.localLog("destinyDbMode");
-        window.open(item.href, "_system");
+        window.open(item.href, tgd.openTabAs);
         return false;
     } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
@@ -4556,10 +4557,10 @@ Item.prototype = {
         });
     },
     openInArmory: function() {
-        window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, "_system");
+        window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, tgd.openTabAs);
     },
     openInDestinyDB: function() {
-        window.open(this.href, "_system");
+        window.open(this.href, tgd.openTabAs);
     },
     getValue: function(type) {
         var value;
@@ -5624,7 +5625,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, function() {}, function() {
             $("a.donatePaypal").click(function() {
-                window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", "_system");
+                window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", tgd.openTabAs);
                 return false;
             });
             $("div.supportsIAB").toggle(isChrome === true || isAndroid === true || isIOS === true);
@@ -6055,7 +6056,7 @@ var app = function() {
             } else if (type === 4) {
                 sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
             }
-            window.open(sReportURL, "_system");
+            window.open(sReportURL, tgd.openTabAs);
             return false;
         }
     };
@@ -6286,8 +6287,8 @@ var app = function() {
                 setTimeout(function() {
                     self.loadLoadouts();
                 }, 5000);
-                //self.farmMode.subscribe(self.farmModeHandler);
-                //self.farmModeHandler(self.farmMode());
+                self.farmMode.subscribe(self.farmModeHandler);
+                self.farmModeHandler(self.farmMode());
                 //console.timeEnd("new profile");
             }
         }
@@ -7348,23 +7349,44 @@ var app = function() {
             }
         });
         var msa = adhoc.transfer(targetCharacterId, true);
-        adhoc.swapItems(msa, targetCharacterId, function() {
+        if (msa.length > 0) {
+            adhoc.swapItems(msa, targetCharacterId, function() {
 
-        });
+            });
+        }
     }
 
     this.vaultItemHandler = function(items) {
         console.log("vaultItemHandler");
+        var sortedItems = _.groupBy(_.map(items, function(item) {
+            var bucketType = item.bucketType;
+            item.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
+                if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
+                    memo = layout.array;
+                return memo;
+            }, "");
+            return item;
+        }), 'actualBucketType');
+
         /* detect the quantity amounts, if full then disable farmMode */
-        var armor = _.filter(items, "");
-        var weapons = _.filter(items, "");
-        var general = _.filter(items, "");
-        var totalArmorSlots = 0;
-        var totalWeaponSlots = 0;
-        var totalGeneralSlots = 0;
-        if (armor.length == totalArmorSlots || weapons.length == totalWeaponSlots || general.length == totalGeneralSlots) {
-            self.farmMode(false);
-        }
+        _.each(tgd.DestinyLayout, function(layout) {
+            var group = _.findWhere(sortedItems, {
+                actualBucketType: layout.array
+            });
+            if (group && group.length == layout.counts[0] && self.farmMode() == true) {
+                self.farmMode(false);
+                var warning_msg = layout.name + " is full, disabling Farm Mode.";
+                tgd.localLog(warning_msg);
+                $.toaster({
+                    priority: 'danger',
+                    title: 'Warning',
+                    message: warning_msg,
+                    settings: {
+                        timeout: tgd.defaults.toastTimeout
+                    }
+                });
+            }
+        });
     }
 
     this.farmModeHandler = function(newValue) {
@@ -7536,7 +7558,7 @@ var app = function() {
         });
         if (!window.isStaticBrowser) {
             $(document).on("click", "a[target='_system']", function() {
-                window.open(this.href, "_system");
+                window.open(this.href, tgd.openTabAs);
                 return false;
             });
         }

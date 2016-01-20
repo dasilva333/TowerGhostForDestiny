@@ -1,6 +1,7 @@
 //TODO find all the remote http variables and have them use a single variable
 tgd.remoteServer = "https://towerghostfordestiny.com";
 tgd.remoteImagePath = tgd.remoteServer + "/www/";
+tgd.openTabAs = window.isMobile ? "_system" : "_blank";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
