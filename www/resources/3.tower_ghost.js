@@ -7431,9 +7431,12 @@ var app = function() {
         var glimmerTokens = _.filter(items, function(item) {
             return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
         });
-
+        /* Trash items are defined as items of rarity less than legendary that are not locked in the account */
+        var trashItems = _.filter(items, function(item) {
+            return item.tierType <= 4 && item.locked() == false;
+        });
         var adhoc = new tgd.Loadout();
-        var items = engrams.concat(glimmerTokens);
+        var items = engrams.concat(glimmerTokens).concat(trashItems);
         _.each(items, function(item) {
             if (item._id > 0) {
                 adhoc.addUniqueItem({
