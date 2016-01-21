@@ -6293,7 +6293,6 @@ var app = function() {
                 setTimeout(function() {
                     self.loadLoadouts();
                 }, 5000);
-                self.farmMode.subscribe(self.farmModeHandler);
                 self.farmModeHandler(self.farmMode());
                 //console.timeEnd("new profile");
             }
@@ -7467,6 +7466,7 @@ var app = function() {
             self.loadoutMode.subscribe(self.refreshHandler);
         }
 
+        self.farmMode.subscribe(self.farmModeHandler);
         self.padBucketHeight.subscribe(self.redraw);
         self.refreshHandler();
 
