@@ -7433,7 +7433,7 @@ var app = function() {
         });
         /* Trash items are defined as items of rarity less than legendary that are not locked in the account */
         var trashItems = _.filter(items, function(item) {
-            return item.tierType <= 4 && item.locked() == false;
+            return item.tierType <= 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1);
         });
         var adhoc = new tgd.Loadout();
         var items = engrams.concat(glimmerTokens).concat(trashItems);
@@ -7464,9 +7464,7 @@ var app = function() {
         var sortedItems = _.groupBy(items, 'actualBucketType');
         /* detect the quantity amounts, if full then disable farmMode */
         _.each(tgd.DestinyLayout, function(layout) {
-            var group = _.findWhere(sortedItems, {
-                actualBucketType: layout.array
-            });
+            var group = sortedItems[layout.array];
             if (group && group.length == layout.counts[0] && self.farmMode() == true) {
                 self.farmMode(false);
                 var warning_msg = layout.name + " is full, disabling Farm Mode.";
