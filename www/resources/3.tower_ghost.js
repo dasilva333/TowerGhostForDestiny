@@ -3172,7 +3172,7 @@ tgd.joinStats = function(arrItems) {
     });
     return tmp;
 }
-tgd.version = "3.8.0.10";
+tgd.version = "3.8.0.20";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
@@ -7268,6 +7268,7 @@ var app = function() {
     this._columnMode = function() {
         var character = this;
         var totalCharacters = 3,
+            lgColumn,
             totalColumns = tgd.bootstrapGridColumns,
             vaultColumns,
             characterColumns;
@@ -7279,10 +7280,16 @@ var app = function() {
             characterColumns = self.lgColumn();
         }
         if (character.id == "Vault") {
-            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
+            //if Vault set to Right and LG columns set to 3 then make the vault full width 
+            if ((self.vaultPos() == 4) && (self.lgColumn() == 8)) {
+                lgColumn = 24;
+            } else {
+                lgColumn = vaultColumns;
+            }
         } else {
-            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+            lgColumn = characterColumns;
         }
+        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + lgColumn;
     }
 
     this.columnMode = function(character) {

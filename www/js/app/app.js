@@ -1702,6 +1702,7 @@ var app = function() {
     this._columnMode = function() {
         var character = this;
         var totalCharacters = 3,
+            lgColumn,
             totalColumns = tgd.bootstrapGridColumns,
             vaultColumns,
             characterColumns;
@@ -1713,19 +1714,16 @@ var app = function() {
             characterColumns = self.lgColumn();
         }
         if (character.id == "Vault") {
-			if ((self.vaultPos() == 4) && (self.vaultColumns() != 6) ){
-					var temp = "";
-					temp = temp +  "col-xs-" + ((self.xsColumn() == 8)	? "24" : self.xsColumn()); 
-					temp = temp + " col-sm-" + ((self.smColumn() == 8)	? "24" : self.smColumn()); 
-					temp = temp + " col-md-" + ((self.mdColumn() == 8)	? "24" : self.mdColumn()); 
-					temp = temp + " col-lg-" + ((vaultColumns == 8)	? "24" : vaultColumns); 
-				  return temp;
-			} else {
-					return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + vaultColumns;
-			}
+            //if Vault set to Right and LG columns set to 3 then make the vault full width 
+            if ((self.vaultPos() == 4) && (self.lgColumn() == 8)) {
+                lgColumn = 24;
+            } else {
+                lgColumn = vaultColumns;
+            }
         } else {
-            return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + characterColumns;
+            lgColumn = characterColumns;
         }
+        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + lgColumn;
     }
 
     this.columnMode = function(character) {
