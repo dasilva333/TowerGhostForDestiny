@@ -3172,7 +3172,7 @@ tgd.joinStats = function(arrItems) {
     });
     return tmp;
 }
-tgd.version = "3.8.0.20";
+tgd.version = "3.8.0.30";
 tgd.moveItemPositionHandler = function(element, item) {
     tgd.localLog("moveItemPositionHandler");
     if (app.destinyDbMode() === true) {
