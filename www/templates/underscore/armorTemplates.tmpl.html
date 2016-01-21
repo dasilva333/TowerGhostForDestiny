@@ -1,3 +1,4 @@
+<p>Tip: The green border indicates the stats should remain unchanged, red border requires you to toggle the stats in game. </p>
 <ul class="list-group">
     <%_.each(builds, function(build){ %>
         <li class="list-group-item">
@@ -24,8 +25,8 @@
                     </div>
                     <div class="col-xs-24">
                         <% _.each(_.sortBy(build.set,'bucketType').reverse(), function(item){	%>
-                            <a class="itemLink" itemId="<%= item.id %>" href="<%= item.href %>">
-								<img class="itemImage" src="<%= item.icon %>">
+                            <a class="itemLink" itemId="<%= item.id %>" instanceId="<%= item._id %>" href="<%= item.href %>">
+								<img class="itemImage" src="<%= item.icon %>" style="border:1px solid <%= item.isActiveRoll || (!('activeRoll' in item)) ? 'green':'red' %>">
 							</a>
                             <%}) %>
                     </div>

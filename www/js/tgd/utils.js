@@ -21,3 +21,14 @@ tgd.average = function(arr) {
         return memo + num;
     }, 0) / arr.length;
 };
+
+tgd.joinStats = function(arrItems) {
+    var tmp = {};
+    _.each(arrItems, function(item) {
+        _.each(item.activeRoll || item.stats, function(value, key) {
+            if (!(key in tmp)) tmp[key] = 0;
+            tmp[key] += value;
+        });
+    });
+    return tmp;
+}

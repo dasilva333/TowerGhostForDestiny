@@ -1378,8 +1378,8 @@ var app = function() {
 
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
-            var version = parseInt(tgd.version.replace(/\./g, ''));
-            var cookie = window.localStorage.getItem("whatsnew");
+            var version = parseInt(tgd.version.replace(/\./g, '').substring(0, 4));
+            var cookie = window.localStorage.getItem("whatsnew").substring(0, 4);
             if (_.isEmpty(cookie) || parseInt(cookie) < version) {
                 self.showWhatsNew(function() {
                     window.localStorage.setItem("whatsnew", version.toString());

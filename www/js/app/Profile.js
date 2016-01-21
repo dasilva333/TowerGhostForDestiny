@@ -174,11 +174,9 @@ Profile.prototype = {
                 return item.bucketType in weights;
             });
             var primaryStatsGear = _.map(eligibleGear, function(item) {
-                var value = item.primaryStatValue() * (weights[item.bucketType] / 100);
-                return value;
+                return item.primaryStatValue() * (weights[item.bucketType] / 100);
             });
-            var sumLightGear = tgd.sum(primaryStatsGear);
-            var powerLevel = Math.floor(sumLightGear);
+            var powerLevel = Math.floor(tgd.sum(primaryStatsGear));
             return powerLevel;
         } else {
             return 0;
@@ -190,7 +188,7 @@ Profile.prototype = {
         });
     },
     _equippedStats: function() {
-        return this.joinStats(this.equippedGear());
+        return tgd.joinStats(this.equippedGear());
     },
     _equippedSP: function() {
         return _.filter(this.equippedStats(), function(value, stat) {
@@ -392,6 +390,7 @@ Profile.prototype = {
                 return item.description;
             });
         }
+
         return items;
     },
     get: function(type) {
@@ -412,15 +411,63 @@ Profile.prototype = {
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
     },
-    joinStats: function(arrItems) {
-        var tmp = {};
-        _.each(arrItems, function(item) {
-            _.each(item.stats, function(value, key) {
-                if (!(key in tmp)) tmp[key] = 0;
-                tmp[key] += value;
+    queryRolls: function(items, callback) {
+        var count = 0;
+
+        function done() {
+            count++;
+            if (items.length == count) {
+                callback();
+            }
+        }
+
+        function getRolls(item, callback) {
+            app.bungie.getItemDetail(item.characterId(), item._id, function(detail) {
+                item.rolls = _.reduce(detail.data.statsOnNodes, function(rolls, stat, key, stats) {
+                    var index = _.keys(stats).indexOf(key);
+                    _.each(stat.currentNodeStats, function(node) {
+                        _.each(rolls, function(roll, rollIndex) {
+                            var key = _statDefs[node.statHash].statName;
+                            if (index == 0 || (index > 0 && rollIndex == 0))
+                                roll[key] = (roll[key] || 0) + node.value;
+                        });
+                    });
+                    _.each(stat.nextNodeStats, function(node) {
+                        _.each(rolls, function(roll, rollIndex) {
+                            var key = _statDefs[node.statHash].statName;
+                            if (rollIndex == 1)
+                                roll[key] = (roll[key] || 0) + node.value;
+                        });
+                    });
+                    return rolls;
+                }, [{}, {}]);
+                window.localStorage.setItem("rolls_" + item._id, JSON.stringify(item.rolls));
+                callback();
             });
+        }
+        _.each(items, function(item) {
+            if (!item.rolls) {
+                var cachedRolls = window.localStorage.getItem("rolls_" + item._id);
+                if (cachedRolls) {
+                    item.rolls = JSON.parse(cachedRolls);
+                    if (tgd.sum(item.rolls[0]) != tgd.sum(item.stats)) {
+                        console.log("getting new rolls");
+                        getRolls(item, done);
+                    } else {
+                        done();
+                    }
+                } else {
+                    if (_.keys(item.stats).length == 1) {
+                        item.rolls = [item.stats];
+                        done();
+                    } else {
+                        getRolls(item, done);
+                    }
+                }
+            } else {
+                done();
+            }
         });
-        return tmp;
     },
     reduceMaxSkill: function(type, buckets, items) {
         var character = this;
@@ -505,7 +552,7 @@ Profile.prototype = {
         });
         var availableSets = [];
         _.map(fullSets, function(set) {
-            var sumSet = character.joinStats(set);
+            var sumSet = tgd.joinStats(set);
             if (sumSet[type] >= tgd.DestinySkillCap) {
                 availableSets.push({
                     set: set,
@@ -581,36 +628,56 @@ Profile.prototype = {
 
         backups = _.flatten(sets);
 
-        _.each(sets, function(set) {
-            var mainPiece = set[0],
-                subSets = [
-                    [mainPiece]
-                ];
-            candidates = _.groupBy(_.filter(backups, function(item) {
-                return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
-            }), 'bucketType');
-            _.each(candidates, function(items) {
-                subSets.push(items);
-            });
-            var combos = tgd.cartesianProductOf(subSets);
-            var sums = _.map(combos, function(combo) {
-                var tmp = character.joinStats(combo);
-                var score = tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / tgd.DestinySkillTier);
-                    return result > 5 ? 5 : result;
-                }));
-                var subScore = (tgd.sum(_.values(tmp)) / 1000);
-                return score + subScore;
-            });
-            var highestScore = _.max(sums);
-            var highestScoringSet = combos[sums.indexOf(highestScore)];
-            bestSets.push({
-                score: highestScore,
-                set: highestScoringSet
+        character.queryRolls(backups, function() {
+            _.each(sets, function(set) {
+                var mainPiece = set[0];
+                //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
+                var arrRolls = _.map(mainPiece.rolls, function(roll) {
+                    var mainClone = _.clone(mainPiece, true);
+                    var subSets = [
+                        [mainClone]
+                    ];
+                    mainClone.activeRoll = roll;
+                    mainClone.isActiveRoll = _.reduce(mainClone.stats, function(isActiveRoll, value, key) {
+                        return isActiveRoll == true && (mainClone.activeRoll[key] || 0) == value;
+                    }, true);
+                    return subSets;
+                });
+                _.each(arrRolls, function(subSets) {
+                    candidates = _.groupBy(_.filter(backups, function(item) {
+                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                    }), 'bucketType');
+                    _.each(candidates, function(items) {
+                        subSets.push(items);
+                    });
+                    var combos = tgd.cartesianProductOf(subSets);
+                    var scoredCombos = _.map(combos, function(items) {
+                        var tmp = tgd.joinStats(items);
+                        return {
+                            set: items,
+                            score: tgd.sum(_.map(tmp, function(value, key) {
+                                var result = Math.floor(value / tgd.DestinySkillTier);
+                                return result > 5 ? 5 : result;
+                            })) + (tgd.sum(_.values(tmp)) / 1000)
+                        };
+                    });
+                    var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+                    _.each(scoredCombos, function(combo) {
+                        if (combo.score >= highestScore) {
+                            bestSets.push(combo);
+                        }
+                    });
+                });
             });
         });
-
-        return _.sortBy(bestSets, 'score');
+        var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
+        var lastSets = [];
+        _.each(bestSets, function(combo) {
+            if (combo.score >= highestFinalScore) {
+                lastSets.push(combo);
+            }
+        });
+        return _.sortBy(lastSets, 'score');
     },
     findHighestItemBy: function(type, buckets, items) {
         var character = this;
@@ -785,11 +852,12 @@ Profile.prototype = {
                     _.each(bestSets, function(combo) {
                         if (combo.score >= highestTier) {
                             var statTiers = "",
-                                stats = character.joinStats(combo.set);
+                                stats = tgd.joinStats(combo.set),
+                                sortedKeys = _.sortBy(_.keys(stats));
                             combo.stats = [];
-                            _.each(stats, function(stat, name) {
-                                statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
-                                combo.stats.push(stat);
+                            _.each(sortedKeys, function(name) {
+                                statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stats[name] / tgd.DestinySkillTier);
+                                combo.stats.push(stats[name]);
                             });
                             combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
                             combo.statTiers = $.trim(statTiers);
@@ -834,7 +902,7 @@ Profile.prototype = {
                                         highestCombo = _.findWhere(armorBuilds, {
                                             statTiers: selectedBuild
                                         });
-                                        character.equipAction(type, highestCombo.score, highestCombo.set);
+                                        character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                                         dialog.close();
                                     }
                                 }
