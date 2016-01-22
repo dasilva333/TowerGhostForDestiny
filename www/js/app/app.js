@@ -1378,11 +1378,13 @@ var app = function() {
 
     this.whatsNew = function() {
         if ($("#showwhatsnew").text() == "true") {
-            var version = parseInt(tgd.version.replace(/\./g, '').substring(0, 4));
-            var cookie = window.localStorage.getItem("whatsnew").substring(0, 4);
-            if (_.isEmpty(cookie) || parseInt(cookie) < version) {
+            var version = tgd.version.replace(/\./g, '');
+            if (version.length == 4) version = version + "0";
+            var cookie = window.localStorage.getItem("whatsnew");
+            if (cookie && cookie.length && cookie.length == 4) cookie = cookie + "0";
+            if (_.isEmpty(cookie) || parseInt(cookie) < parseInt(version)) {
                 self.showWhatsNew(function() {
-                    window.localStorage.setItem("whatsnew", version.toString());
+                    window.localStorage.setItem("whatsnew", version);
                 });
             }
         }

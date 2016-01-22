@@ -1408,6 +1408,9 @@ Item.prototype = {
             }
         });
     },
+    openInDestinyTracker: function() {
+        window.open("http://db.destinytracker.com/items/" + this.id, tgd.openTabAs);
+    },
     openInArmory: function() {
         window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, tgd.openTabAs);
     },
