@@ -447,6 +447,18 @@ h1,h2,h3,h4,h5,h6
 .mobile-characters
 {
 	display: inline-block;
+	position: relative;
+}
+.mobile-characters-letter {
+	position: absolute;
+	font-size: 0.8em;
+	padding: 2px;
+	bottom: 0;
+	left: 1px;
+	background-color: white;
+	opacity: 0.9;
+	color: black;
+	font-weight: bold;
 }
 .mobile-characters-image
 {

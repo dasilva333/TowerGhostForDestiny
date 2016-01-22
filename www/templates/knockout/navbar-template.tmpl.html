@@ -11,6 +11,7 @@
             <div class="quickScrollView" data-bind="foreach: { data: $root.orderedCharacters, as: 'avatar' }, scrollToView: false">
                 <div class="mobile-characters">
                     <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id" src="about:blank">
+					<div class="mobile-characters-letter" data-bind="text: classLetter"></div>
                 </div>
             </div>
         </div>
