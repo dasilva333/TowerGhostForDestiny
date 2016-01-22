@@ -1,8 +1,11 @@
 module.exports = function(grunt) {
 	
-	grunt.config.set('concat_sourcemap', {
+	grunt.config.set('uglify', {
 		js: {
 		  options: {
+			mangle: false,
+			sourceMap: true,
+			sourceMapIncludeSources: false
 		  },
 		  files: {
 			'../www/resources/1.libraries.js': [
@@ -29,6 +32,9 @@ module.exports = function(grunt) {
 		},
 		wp: {
 		  options: {
+			mangle: false,
+			sourceMap: true,
+			sourceMapIncludeSources: false
 		  },
 		  files: {
 			'../www/resources/1.libraries.js': [
@@ -56,6 +62,8 @@ module.exports = function(grunt) {
 		},
 		definitions: {
 		  options: {
+			mangle: false,
+			sourceMap: false
 		  },
 		  files: {
 			'../www/resources/en/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/en/*.json'],
@@ -66,25 +74,8 @@ module.exports = function(grunt) {
 			'../www/resources/ja/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/ja/*.json'],
 			'../www/resources/pt-br/definitions.json': ['../www/data/definitions/setDefs.json','../www/data/definitions/pt-br/*.json']
 		  }
-		},
-		css: {
-		  options: {
-		  },
-		  files: {
-			'../www/resources/tower_ghost.css': 
-			[
-				'../www/css/bootstrap.min.css',
-				'../www/css/style.css',
-				'../www/css/tooltip.css',
-				'../www/css/style_new.css'
-			],
-			'../www/resources/base.css': 
-			[
-				'../www/css/base.css'
-			]
-		  }
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-concat-sourcemap');
+	grunt.loadNpmTasks('grunt-contrib-uglify');
 };

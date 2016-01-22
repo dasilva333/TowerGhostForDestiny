@@ -1704,28 +1704,28 @@ var app = function() {
     this._columnMode = function() {
         var character = this;
         var totalCharacters = 3,
-            lgColumn,
+            xsColumn = self.xsColumn(),
+            smColumn = self.smColumn(),
+            mdColumn = self.mdColumn(),
+            lgColumn = self.lgColumn(),
+            vaultColumns = self.lgColumn(),
             totalColumns = tgd.bootstrapGridColumns,
-            vaultColumns,
             characterColumns;
         if (self.layoutMode() == 'uneven') {
             vaultColumns = self.vaultWidth();
             characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
-        } else {
-            vaultColumns = self.lgColumn();
-            characterColumns = self.lgColumn();
         }
         if (character.id == "Vault") {
-            //if Vault set to Right and LG columns set to 3 then make the vault full width 
-            if ((self.vaultPos() == 4) && (self.lgColumn() == 8)) {
-                lgColumn = 24;
+            //if Vault set to Right and # columns set to 3 then make the vault full width 
+            if ((self.vaultPos() == 4) && (self.lgColumn() == 8 || self.mdColumn() == 8 || self.smColumn() == 8)) {
+                if (self.lgColumn() == 8) lgColumn = 24;
+                if (self.mdColumn() == 8) mdColumn = 24;
+                if (self.smColumn() == 8) smColumn = 24;
             } else {
                 lgColumn = vaultColumns;
             }
-        } else {
-            lgColumn = characterColumns;
         }
-        return "col-xs-" + self.xsColumn() + " col-sm-" + self.smColumn() + " col-md-" + self.mdColumn() + " col-lg-" + lgColumn;
+        return "col-xs-" + xsColumn + " col-sm-" + smColumn + " col-md-" + mdColumn + " col-lg-" + lgColumn;
     }
 
     this.columnMode = function(character) {
