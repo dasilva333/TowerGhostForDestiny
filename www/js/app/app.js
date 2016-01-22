@@ -1733,6 +1733,7 @@ var app = function() {
     }
 
     this.columnMode = function(character) {
+		var orientation = ko.unwrap(self.orientation);
         return ko.pureComputed(self._columnMode, character);
     };
 
@@ -2085,6 +2086,7 @@ var app = function() {
             window.onorientationchange = function() {
                 self.orientation(Math.abs(window.orientation) === 90 ? "landscape" : "portrait");
             }
+			window.onorientationchange();
         }
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
