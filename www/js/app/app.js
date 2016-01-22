@@ -54,6 +54,7 @@ var app = function() {
     this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
     this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
     this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
+    this.orientation = ko.observable("");
 
     this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
@@ -1723,6 +1724,9 @@ var app = function() {
                 if (self.smColumn() == 8) smColumn = 24;
             } else {
                 lgColumn = vaultColumns;
+                if (self.orientation() == "portrait") {
+                    lgColumn = self.vaultColumns();
+                }
             }
         }
         return "col-xs-" + xsColumn + " col-sm-" + smColumn + " col-md-" + mdColumn + " col-lg-" + lgColumn;
@@ -2077,6 +2081,11 @@ var app = function() {
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);
         $(window).resize(_.throttle(self.bucketSizeHandler, 500));
+        if (_.has(window, 'onorientationchange')) {
+            window.onorientationchange = function() {
+                self.orientation(Math.abs(window.orientation) === 90 ? "landscape" : "portrait");
+            }
+        }
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.collectionSets = _.sortBy(Object.keys(_collections));
