@@ -98,7 +98,7 @@ var downloadDatabase = function(callback){
 	var count = 0;
 	var options = { method: 'GET', hostname: 'www.bungie.net', path: manifestURL, headers: { 'X-API-Key':  apikey } };
 	console.log('making request ' + JSON.stringify(options));
-	var req = http.request(options, function(res) {
+	var req = https.request(options, function(res) {
 		console.log("querying manifest");
 		var data = []; // List of Buffer objects
 		res.on("data", function(chunk) {

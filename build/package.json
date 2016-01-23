@@ -1,48 +1,49 @@
 {
-    "license": "BSD", 
-    "name": "tower-ghost-builder", 
-    "repository": {
-        "url": "https://github.com/dasilva333/TowerGhostForDestiny", 
-        "type": "git"
-    }, 
-    "author": "Richard Pinedo", 
-    "bugs": {
-        "url": "https://github.com/dasilva333/TowerGhostForDestiny/issues"
-    }, 
-    "version": "12.0.0", 
-    "dependencies": {
-        "grunt-contrib-cssmin": "^0.14.0", 
-        "grunt-contrib-watch": "~0.6.1", 
-        "lodash": "3.7.0", 
-        "js-beautify": "^1.5.5", 
-        "grunt-script-link-tags": "^1.0.2", 
-        "grunt-contrib-jshint": "^0.11.3", 
-        "express": "~4.7.2", 
-        "request": "^2.67.0", 
-        "cordova-app-loader": "^0.17.0", 
-        "include-all": "^0.1.6", 
-        "grunt-jsbeautifier": "^0.2.10", 
-        "q": "^1.4.1", 
-        "sqlite3": "^3.0.10", 
-        "jag": "^1.0.7", 
-        "grunt": "~0.4.5", 
-        "grunt-concat-sourcemap": "^0.4.3", 
-        "node-zip": "~1.1.0", 
-        "grunt-contrib-sass": "~0.7.3"
-    }, 
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    }, 
-    "keywords": [
-        "companion", 
-        "app", 
-        "destiny", 
-        "item", 
-        "viewer", 
-        "tower ghost"
-    ], 
-    "devDependencies": {}, 
-    "main": "update_definitions.js", 
-    "id": "jid1-WzKEROv2MLrbXA", 
-    "description": "This is the file for building, compiling, maintaining and updating Tower Ghost and all it's components"
+  "license": "BSD",
+  "name": "tower-ghost-builder",
+  "repository": {
+    "url": "https://github.com/dasilva333/TowerGhostForDestiny",
+    "type": "git"
+  },
+  "author": "Richard Pinedo",
+  "bugs": {
+    "url": "https://github.com/dasilva333/TowerGhostForDestiny/issues"
+  },
+  "version": "12.0.0",
+  "dependencies": {
+    "cordova-app-loader": "^0.17.0",
+    "express": "~4.7.2",
+    "grunt": "~0.4.5",
+    "grunt-concat-sourcemap": "^0.4.3",
+    "grunt-contrib-cssmin": "^0.14.0",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-sass": "~0.7.3",
+    "grunt-contrib-uglify": "^0.11.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-jsbeautifier": "^0.2.10",
+    "grunt-script-link-tags": "^1.0.2",
+    "include-all": "^0.1.6",
+    "jag": "^1.0.7",
+    "js-beautify": "^1.5.5",
+    "lodash": "3.7.0",
+    "node-zip": "~1.1.0",
+    "q": "^1.4.1",
+    "request": "^2.67.0",
+    "sqlite3": "^3.0.10"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "companion",
+    "app",
+    "destiny",
+    "item",
+    "viewer",
+    "tower ghost"
+  ],
+  "devDependencies": {},
+  "main": "update_definitions.js",
+  "id": "jid1-WzKEROv2MLrbXA",
+  "description": "This is the file for building, compiling, maintaining and updating Tower Ghost and all it's components"
 }
