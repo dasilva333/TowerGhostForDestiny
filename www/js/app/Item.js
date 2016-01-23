@@ -1008,6 +1008,8 @@ Item.prototype = {
                             });
                         }
                         var msa = adhoc.transfer(targetCharacterId, true);
+                        if (msa.length > 0)
+                            tgd.localLog(msa[0]);
                         adhoc.swapItems(msa, targetCharacterId, function() {
                             if (cb) cb(y, x);
                         });

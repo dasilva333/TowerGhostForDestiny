@@ -1871,7 +1871,7 @@ var app = function() {
         });
         /* Trash items are defined as items of rarity less than legendary that are not locked in the account */
         var trashItems = _.filter(items, function(item) {
-            return item.tierType <= 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1);
+            return item.tierType <= 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
         });
         var adhoc = new tgd.Loadout();
         var items = engrams.concat(glimmerTokens).concat(trashItems);
