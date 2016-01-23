@@ -1724,6 +1724,8 @@ var app = function() {
             } else {
                 lgColumn = vaultColumns;
             }
+        } else {
+            lgColumn = characterColumns;
         }
         return "col-xs-" + xsColumn + " col-sm-" + smColumn + " col-md-" + mdColumn + " col-lg-" + lgColumn;
     }
