@@ -32,6 +32,7 @@ var app = function() {
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
+    this.farmItems = ko.pureComputed(new tgd.StoreObj("farmItems"));
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
@@ -1860,22 +1861,21 @@ var app = function() {
             }
         );
     };
-
+	
     this.farmItemHandler = function(items) {
         var targetCharacterId = "Vault";
-        var engrams = _.filter(items, function(item) {
-            return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items";
-        });
-        var glimmerTokens = _.filter(items, function(item) {
-            return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
-        });
-        /* Trash items are defined as items of rarity less than legendary that are not locked in the account */
-        var trashItems = _.filter(items, function(item) {
-            return item.tierType <= 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
-        });
+		var itemsToTransfer = [];
+		var selectedFarmItems = self.farmItems();
+		_.each(selectedFarmItems, function(itemType){
+			var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
+			itemsToTransfer = itemsToTransfer.concat(filteredItems);
+			tgd.farmItemCounts[itemType] = (tgd.farmItemCounts[itemType] || 0) + filteredItems.length;
+		});
+		if (itemsToTransfer.length == 0){
+			return;
+		}
         var adhoc = new tgd.Loadout();
-        var items = engrams.concat(glimmerTokens).concat(trashItems);
-        _.each(items, function(item) {
+        _.each(itemsToTransfer, function(item) {
             if (item._id > 0) {
                 adhoc.addUniqueItem({
                     id: item._id,

@@ -1,3 +1,28 @@
+<div data-bind="if: farmMode">
+	<form class="form-horizontal" data-bind="visible: farmMode" style="display:none">
+		<fieldset>
+			<legend>Farm Mode</legend>
+			<div class="col-xs-12 col-xs-offset-6">
+				<div class="col-xs-3">
+					<img src="assets/control_play.png">
+					<img src="assets/control_stop.png">
+				</div>
+				<div class="col-xs-9">
+					<input type="checkbox"> Engrams
+					<input type="checkbox"> Glimmer
+					<input type="checkbox"> Blues
+					<input type="checkbox"> Greens
+				</div>
+				<div class="col-xs'12">
+					<span class="text-success">Farm Mode Active</span>
+					Collected <u>12></u> engrams so far
+				</div>
+			</div>
+		</fieldset>
+	</form>
+</div>
+
+	
 <div class="alert alert-dismissible alert-info" data-bind="visible: isStaticBrowser, if: isStaticBrowser" style="display:none;">
     <button type="button" class="close" data-dismiss="alert">×</button>
     <strong>Create your own share URL!</strong> <a href="/index.php/downloads/" target="_blank">Install the app</a> for Chrome, Firefox, iOS, Android or Windows-Phone.
