@@ -879,19 +879,19 @@ Profile.prototype = {
                                         return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active == true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent == false);
                                     }
                                 );
-                                combo.similarScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
+                                combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
                                     return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
                                 }), function(perk) {
                                     return _.intersection(weaponTypes, perk.name.split(" "))[0]
                                 })));
-                                combo.similarScore = (3 / combo.similarScore.length) + tgd.sum(combo.similarScore);
+                                combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
                                 if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
                                     armorBuilds[combo.statTiers] = combo;
                                 }
                             }
                         });
                         armorBuilds = _.sortBy(armorBuilds, function(combo) {
-                            return [combo.similarScore, combo.score];
+                            return [combo.similarityScore, combo.score];
                         }).reverse();
                         var $template = tgd.armorTemplates({
                             builds: armorBuilds
