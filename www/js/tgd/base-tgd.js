@@ -267,5 +267,21 @@ tgd.defaults = {
     toastTimeout: 2600,
     armorViewBy: "Light",
     sectionsTemplate: "image-grid-template",
-    farmMode: false
+    farmMode: false,
+    farmItems: ["Engrams", "Glimmer", "Rare", "Uncommon"]
 };
+tgd.farmItemCounts = 0;
+tgd.farmItemFilters = {
+    "Engrams": function(item) {
+        return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items";
+    },
+    "Glimmer": function(item) {
+        return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
+    },
+    "Rare": function(item) {
+        return item.tierType == 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
+    },
+    "Uncommon": function(item) {
+        return item.tierType == 3 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
+    }
+}

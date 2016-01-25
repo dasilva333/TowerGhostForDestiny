@@ -63,7 +63,7 @@ Profile.prototype = {
 
         self.items(processedItems);
         if (self.id != "Vault" && typeof profile.processed == "undefined") {
-            self._reloadBucket(self, undefined, function() {}, true);
+            self._reloadBucket(self, undefined, _.noop, true);
         }
     },
     updateCharacter: function(profile) {
@@ -360,11 +360,9 @@ Profile.prototype = {
         var activeSort = parseInt(app.activeSort());
         /* Tier, Type */
         if (activeSort === 0) {
-            items = _.sortBy(_.sortBy(items, function(item) {
-                return item.type;
-            }), function(item) {
-                return item.tierType * -1;
-            });
+            items = _.sortBy(items, function(item) {
+                return [item.tierType * -1, item.type];
+            }).reverse();
         }
         /* Type */
         else if (activeSort === 1) {
@@ -390,7 +388,18 @@ Profile.prototype = {
                 return item.description;
             });
         }
-
+        /* Tier, Light */
+        else if (activeSort === 5) {
+            items = _.sortBy(items, function(item) {
+                return [item.tierType * -1, item.primaryStatValue() * -1];
+            }).reverse();
+        }
+        /* Tier, Name */
+        else if (activeSort === 6) {
+            items = _.sortBy(items, function(item) {
+                return [item.tierType * -1, item.description * -1];
+            }).reverse();
+        }
         return items;
     },
     get: function(type) {
@@ -873,60 +882,60 @@ Profile.prototype = {
                                         })
                                     ),
                                     function(perk) {
-                                        return perk.active === true && _.intersection(weaponTypes, perk.name.split(" ")).length > 0;
+                                        return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active == true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent == false);
                                     }
                                 );
+                                combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
+                                    return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
+                                }), function(perk) {
+                                    return _.intersection(weaponTypes, perk.name.split(" "))[0]
+                                })));
+                                combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
                                 if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
                                     armorBuilds[combo.statTiers] = combo;
                                 }
                             }
                         });
                         armorBuilds = _.sortBy(armorBuilds, function(combo) {
-                            return _.max(combo.stats) * -1;
+                            return [combo.similarityScore, combo.score];
+                        }).reverse();
+                        var $template = tgd.armorTemplates({
+                            builds: armorBuilds
                         });
-                        if (armorBuilds.length === 1) {
-                            highestSet = bestSets[bestSets.length - 1].set;
-                            highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
-                            character.equipAction(type, highestSetValue, highestSet);
-                        } else {
-                            var $template = tgd.armorTemplates({
-                                builds: armorBuilds
-                            });
-                            (new tgd.dialog({
-                                buttons: [{
-                                    label: app.activeText().movepopup_equip,
-                                    action: function(dialog) {
-                                        if ($("input.armorBuild:checked").length === 0) {
-                                            BootstrapDialog.alert("Error: Please select one armor build to equip.");
-                                        } else {
-                                            var selectedBuild = $("input.armorBuild:checked").val();
-                                            highestCombo = _.findWhere(armorBuilds, {
-                                                statTiers: selectedBuild
-                                            });
-                                            character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
-                                            dialog.close();
-                                        }
-                                    }
-                                }, {
-                                    label: app.activeText().cancel,
-                                    action: function(dialog) {
+                        (new tgd.dialog({
+                            buttons: [{
+                                label: app.activeText().movepopup_equip,
+                                action: function(dialog) {
+                                    if ($("input.armorBuild:checked").length === 0) {
+                                        BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                                    } else {
+                                        var selectedBuild = $("input.armorBuild:checked").val();
+                                        highestCombo = _.findWhere(armorBuilds, {
+                                            statTiers: selectedBuild
+                                        });
+                                        character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                                         dialog.close();
                                     }
-                                }]
-                            })).title("Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
-                                $("a.itemLink").each(function() {
-                                    var element = $(this);
-                                    var itemId = element.attr("itemId");
-                                    element.click(false);
-                                    Hammer(element[0], {
-                                        time: 2000
-                                    }).on("press", function(ev) {
-                                        $ZamTooltips.lastElement = element;
-                                        $ZamTooltips.show("destinydb", "items", itemId, element);
-                                    });
+                                }
+                            }, {
+                                label: app.activeText().cancel,
+                                action: function(dialog) {
+                                    dialog.close();
+                                }
+                            }]
+                        })).title("Armor Build" + (armorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
+                            $("a.itemLink").each(function() {
+                                var element = $(this);
+                                var itemId = element.attr("itemId");
+                                element.click(false);
+                                Hammer(element[0], {
+                                    time: 2000
+                                }).on("press", function(ev) {
+                                    $ZamTooltips.lastElement = element;
+                                    $ZamTooltips.show("destinydb", "items", itemId, element);
                                 });
                             });
-                        }
+                        });
                         $("body").css("cursor", "default");
                     });
                 }, 300);

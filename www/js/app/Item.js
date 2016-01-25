@@ -222,7 +222,7 @@ Item.prototype = {
                 if (talentGrid && talentGrid.nodes) {
                     _.each(item.perks, function(perk) {
                         if (perk.perkHash in window._perkDefs) {
-                            var p = window._perkDefs[perk.perkHash];
+                            var isInherent, p = window._perkDefs[perk.perkHash];
                             //There is an inconsistency between perkNames in Destiny for example:
                             /* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
                                This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
@@ -232,12 +232,24 @@ Item.prototype = {
                                     return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
                                 })[0]
                             );
+                            if (nodeIndex > 0) {
+                                isInherent = _.reduce(talentGrid.nodes[nodeIndex].steps, function(memo, step) {
+                                    if (memo == false) {
+                                        var isPerk = _.values(step.perkHashes).indexOf(p.perkHash) > -1;
+                                        if (isPerk && step.activationRequirement.gridLevel == 0) {
+                                            memo = true;
+                                        }
+                                    }
+                                    return memo;
+                                }, false);
+                            }
                             itemObject.perks.push({
                                 iconPath: tgd.dataDir + p.displayIcon,
                                 name: p.displayName,
                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                                 active: perk.isActive,
-                                isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex)
+                                isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex),
+                                isInherent: isInherent
                             });
                         }
                     });

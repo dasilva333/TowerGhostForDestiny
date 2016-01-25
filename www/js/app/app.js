@@ -32,6 +32,7 @@ var app = function() {
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
+    this.farmItems = ko.pureComputed(new tgd.StoreObj("farmItems"));
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
@@ -124,7 +125,7 @@ var app = function() {
                 locale: self.currentLocale(),
                 languages: tgd.languages
             })
-        })).title(self.activeText().menu_language).show(true, function() {}, function() {
+        })).title(self.activeText().menu_language).show(true, _.noop, function() {
             tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
                 self.appLocale(this.value);
@@ -153,7 +154,7 @@ var app = function() {
 
     this.showDonate = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, function() {}, function() {
+        (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, _.noop, function() {
             $("a.donatePaypal").click(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", tgd.openTabAs);
                 return false;
@@ -177,7 +178,7 @@ var app = function() {
                         function() {
                             BootstrapDialog.alert("Donation accepted, thank you for your support");
                         },
-                        function() {},
+                        _.noop,
                         $(this).attr("sku")
                     );
                 }
@@ -1866,19 +1867,18 @@ var app = function() {
 
     this.farmItemHandler = function(items) {
         var targetCharacterId = "Vault";
-        var engrams = _.filter(items, function(item) {
-            return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items";
+        var itemsToTransfer = [];
+        var selectedFarmItems = self.farmItems();
+        _.each(selectedFarmItems, function(itemType) {
+            var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
+            itemsToTransfer = itemsToTransfer.concat(filteredItems);
+            tgd.farmItemCounts[itemType] = (tgd.farmItemCounts[itemType] || 0) + filteredItems.length;
         });
-        var glimmerTokens = _.filter(items, function(item) {
-            return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
-        });
-        /* Trash items are defined as items of rarity less than legendary that are not locked in the account */
-        var trashItems = _.filter(items, function(item) {
-            return item.tierType <= 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
-        });
+        if (itemsToTransfer.length == 0) {
+            return;
+        }
         var adhoc = new tgd.Loadout();
-        var items = engrams.concat(glimmerTokens).concat(trashItems);
-        _.each(items, function(item) {
+        _.each(itemsToTransfer, function(item) {
             if (item._id > 0) {
                 adhoc.addUniqueItem({
                     id: item._id,
@@ -1895,9 +1895,7 @@ var app = function() {
         });
         var msa = adhoc.transfer(targetCharacterId, true);
         if (msa.length > 0) {
-            adhoc.swapItems(msa, targetCharacterId, function() {
-
-            });
+            adhoc.swapItems(msa, targetCharacterId, _.noop);
         }
     }
 
@@ -2123,7 +2121,7 @@ var app = function() {
 
                 //This sets up inAppBilling donations for iOS/Android
                 if (typeof inappbilling != "undefined") {
-                    inappbilling.init(function() {}, function() {}, {
+                    inappbilling.init(_.noop, _.noop, {
                         showLog: false
                     }, ['small', 'medium', 'large']);
                 }
