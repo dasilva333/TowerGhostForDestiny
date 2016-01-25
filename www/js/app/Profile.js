@@ -873,17 +873,21 @@ Profile.prototype = {
                                         })
                                     ),
                                     function(perk) {
-                                        return perk.active === true && _.intersection(weaponTypes, perk.name.split(" ")).length > 0;
+                                        return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active == true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent == false);
                                     }
                                 );
+                                combo.similarScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
+                                    return perk.bucketType != "Class Items";
+                                }), function(perk) {
+                                    return _.intersection(weaponTypes, perk.name.split(" "))[0]
+                                })));
+                                combo.similarScore = (3 / combo.similarScore.length) + tgd.sum(combo.similarScore);
                                 if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
                                     armorBuilds[combo.statTiers] = combo;
                                 }
                             }
                         });
-                        armorBuilds = _.sortBy(armorBuilds, function(combo) {
-                            return _.max(combo.stats) * -1;
-                        });
+                        armorBuilds = _.sortBy(armorBuilds, 'similarScore').reverse();
                         if (armorBuilds.length === 1) {
                             highestSet = bestSets[bestSets.length - 1].set;
                             highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
