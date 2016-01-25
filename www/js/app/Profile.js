@@ -360,11 +360,9 @@ Profile.prototype = {
         var activeSort = parseInt(app.activeSort());
         /* Tier, Type */
         if (activeSort === 0) {
-            items = _.sortBy(_.sortBy(items, function(item) {
-                return item.type;
-            }), function(item) {
-                return item.tierType * -1;
-            });
+            items = _.sortBy(items, function(item) {
+                return [item.tierType * -1, item.type];
+            }).reverse();
         }
         /* Type */
         else if (activeSort === 1) {
@@ -390,7 +388,12 @@ Profile.prototype = {
                 return item.description;
             });
         }
-
+        /* Tier, Light */
+        else if (activeSort === 5) {
+            items = _.sortBy(items, function(item) {
+                return [item.tierType * -1, item.primaryStatValue() * -1];
+            }).reverse();
+        }
         return items;
     },
     get: function(type) {
