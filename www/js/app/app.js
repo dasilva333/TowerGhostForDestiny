@@ -1711,8 +1711,9 @@ var app = function() {
             lgColumn = self.lgColumn(),
             vaultColumns = lgColumn,
             totalColumns = tgd.bootstrapGridColumns,
-            characterColumns;
-        if (self.layoutMode() == 'uneven') {
+            characterColumns,
+            layoutMode = self.layoutMode();
+        if (layoutMode == 'uneven') {
             vaultColumns = self.vaultWidth();
             characterColumns = Math.floor((totalColumns - vaultColumns) / totalCharacters);
         } else {
@@ -1721,7 +1722,7 @@ var app = function() {
         }
         if (character.id == "Vault") {
             //if Vault set to Right and # columns set to 3 then make the vault full width 
-            if ((self.vaultPos() == 4) && (lgColumn == 8 || mdColumn == 8 || smColumn == 8)) {
+            if ((layoutMode == 'even' && self.vaultPos() == 4) && (lgColumn == 8 || mdColumn == 8 || smColumn == 8)) {
                 if (lgColumn == 8) lgColumn = 24;
                 if (mdColumn == 8) mdColumn = 24;
                 if (smColumn == 8) smColumn = 24;
