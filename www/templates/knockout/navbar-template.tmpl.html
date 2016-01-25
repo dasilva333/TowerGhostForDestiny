@@ -158,6 +158,12 @@
                                 <span data-bind="text: $root.activeText().menu_sortby_tier_light">Tier, Light</span>
                             </a>
                         </li>
+						<li data-bind="fastclick: setSort" value="6">
+                            <a href="#">
+                                <i class="fa" data-bind="css: activeSort() == 6 ? 'fa-check-square' : 'fa-square'"></i>
+                                <span data-bind="text: $root.activeText().menu_sortby_tier_name">Tier, Name</span>
+                            </a>
+                        </li>
                         <li data-bind="fastclick: setSort" value="1">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 1 ? 'fa-check-square' : 'fa-square'"></i>

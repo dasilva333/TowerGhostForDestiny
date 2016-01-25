@@ -394,6 +394,12 @@ Profile.prototype = {
                 return [item.tierType * -1, item.primaryStatValue() * -1];
             }).reverse();
         }
+        /* Tier, Name */
+        else if (activeSort === 6) {
+            items = _.sortBy(items, function(item) {
+                return [item.tierType * -1, item.description * -1];
+            }).reverse();
+        }
         return items;
     },
     get: function(type) {
