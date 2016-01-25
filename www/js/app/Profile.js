@@ -880,7 +880,7 @@ Profile.prototype = {
                                     }
                                 );
                                 combo.similarScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
-                                    return perk.bucketType != "Class Items";
+                                    return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
                                 }), function(perk) {
                                     return _.intersection(weaponTypes, perk.name.split(" "))[0]
                                 })));
@@ -890,50 +890,46 @@ Profile.prototype = {
                                 }
                             }
                         });
-                        armorBuilds = _.sortBy(armorBuilds, 'similarScore').reverse();
-                        if (armorBuilds.length === 1) {
-                            highestSet = bestSets[bestSets.length - 1].set;
-                            highestSetValue = bestSets[bestSets.length - 1].score.toFixed(2) + "/15.9";
-                            character.equipAction(type, highestSetValue, highestSet);
-                        } else {
-                            var $template = tgd.armorTemplates({
-                                builds: armorBuilds
-                            });
-                            (new tgd.dialog({
-                                buttons: [{
-                                    label: app.activeText().movepopup_equip,
-                                    action: function(dialog) {
-                                        if ($("input.armorBuild:checked").length === 0) {
-                                            BootstrapDialog.alert("Error: Please select one armor build to equip.");
-                                        } else {
-                                            var selectedBuild = $("input.armorBuild:checked").val();
-                                            highestCombo = _.findWhere(armorBuilds, {
-                                                statTiers: selectedBuild
-                                            });
-                                            character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
-                                            dialog.close();
-                                        }
-                                    }
-                                }, {
-                                    label: app.activeText().cancel,
-                                    action: function(dialog) {
+                        armorBuilds = _.sortBy(armorBuilds, function(combo) {
+                            return [combo.similarScore, combo.score];
+                        }).reverse();
+                        var $template = tgd.armorTemplates({
+                            builds: armorBuilds
+                        });
+                        (new tgd.dialog({
+                            buttons: [{
+                                label: app.activeText().movepopup_equip,
+                                action: function(dialog) {
+                                    if ($("input.armorBuild:checked").length === 0) {
+                                        BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                                    } else {
+                                        var selectedBuild = $("input.armorBuild:checked").val();
+                                        highestCombo = _.findWhere(armorBuilds, {
+                                            statTiers: selectedBuild
+                                        });
+                                        character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                                         dialog.close();
                                     }
-                                }]
-                            })).title("Armor Builds Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
-                                $("a.itemLink").each(function() {
-                                    var element = $(this);
-                                    var itemId = element.attr("itemId");
-                                    element.click(false);
-                                    Hammer(element[0], {
-                                        time: 2000
-                                    }).on("press", function(ev) {
-                                        $ZamTooltips.lastElement = element;
-                                        $ZamTooltips.show("destinydb", "items", itemId, element);
-                                    });
+                                }
+                            }, {
+                                label: app.activeText().cancel,
+                                action: function(dialog) {
+                                    dialog.close();
+                                }
+                            }]
+                        })).title("Armor Build" + (armorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                            $("a.itemLink").each(function() {
+                                var element = $(this);
+                                var itemId = element.attr("itemId");
+                                element.click(false);
+                                Hammer(element[0], {
+                                    time: 2000
+                                }).on("press", function(ev) {
+                                    $ZamTooltips.lastElement = element;
+                                    $ZamTooltips.show("destinydb", "items", itemId, element);
                                 });
                             });
-                        }
+                        });
                         $("body").css("cursor", "default");
                     });
                 }, 300);
