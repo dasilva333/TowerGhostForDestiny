@@ -63,7 +63,7 @@ Profile.prototype = {
 
         self.items(processedItems);
         if (self.id != "Vault" && typeof profile.processed == "undefined") {
-            self._reloadBucket(self, undefined, function() {}, true);
+            self._reloadBucket(self, undefined, _.noop, true);
         }
     },
     updateCharacter: function(profile) {
@@ -923,7 +923,7 @@ Profile.prototype = {
                                     dialog.close();
                                 }
                             }]
-                        })).title("Armor Build" + (armorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, function() {}, function() {
+                        })).title("Armor Build" + (armorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
                             $("a.itemLink").each(function() {
                                 var element = $(this);
                                 var itemId = element.attr("itemId");

@@ -125,7 +125,7 @@ var app = function() {
                 locale: self.currentLocale(),
                 languages: tgd.languages
             })
-        })).title(self.activeText().menu_language).show(true, function() {}, function() {
+        })).title(self.activeText().menu_language).show(true, _.noop, function() {
             tgd.localLog("showed modal");
             $(".btn-setLanguage").on("click", function() {
                 self.appLocale(this.value);
@@ -154,7 +154,7 @@ var app = function() {
 
     this.showDonate = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, function() {}, function() {
+        (new tgd.dialog()).title(self.activeText().donation_title).content(tgd.donateTemplate()).show(true, _.noop, function() {
             $("a.donatePaypal").click(function() {
                 window.open("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=XGW27FTAXSY62&lc=" + self.activeText().paypal_code + "&no_note=1&no_shipping=1&currency_code=USD", tgd.openTabAs);
                 return false;
@@ -178,7 +178,7 @@ var app = function() {
                         function() {
                             BootstrapDialog.alert("Donation accepted, thank you for your support");
                         },
-                        function() {},
+                        _.noop,
                         $(this).attr("sku")
                     );
                 }
@@ -1892,9 +1892,7 @@ var app = function() {
         });
         var msa = adhoc.transfer(targetCharacterId, true);
         if (msa.length > 0) {
-            adhoc.swapItems(msa, targetCharacterId, function() {
-
-            });
+            adhoc.swapItems(msa, targetCharacterId, _.noop);
         }
     }
 
@@ -2120,9 +2118,7 @@ var app = function() {
 
                 //This sets up inAppBilling donations for iOS/Android
                 if (typeof inappbilling != "undefined") {
-                    inappbilling.init(function() {}, function() {}, {
-                        showLog: false
-                    }, ['small', 'medium', 'large']);
+                    inappbilling.init(_.noop, _.noop, {showLog: false}, ['small', 'medium', 'large']);
                 }
 
                 //Prevent the user from pressing the back button to reload the app
