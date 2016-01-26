@@ -443,14 +443,14 @@ Profile.prototype = {
                     _.each(stat.currentNodeStats, function(node) {
                         _.each(rolls, function(roll, rollIndex) {
                             var key = _statDefs[node.statHash].statName;
-                            if (index == 0 || (index > 0 && rollIndex == 0))
+                            if (index === 0 || (index > 0 && rollIndex === 0))
                                 roll[key] = (roll[key] || 0) + node.value;
                         });
                     });
                     _.each(stat.nextNodeStats, function(node) {
                         _.each(rolls, function(roll, rollIndex) {
                             var key = _statDefs[node.statHash].statName;
-                            if (rollIndex == 1)
+                            if (rollIndex === 1)
                                 roll[key] = (roll[key] || 0) + node.value;
                         });
                     });
@@ -654,7 +654,7 @@ Profile.prototype = {
                     ];
                     mainClone.activeRoll = roll;
                     mainClone.isActiveRoll = _.reduce(mainClone.stats, function(isActiveRoll, value, key) {
-                        return isActiveRoll == true && (mainClone.activeRoll[key] || 0) == value;
+                        return isActiveRoll === true && (mainClone.activeRoll[key] || 0) == value;
                     }, true);
                     return subSets;
                 });
@@ -699,7 +699,7 @@ Profile.prototype = {
         var character = this;
         var sets = [];
         var backups = [];
-        var primaryStats;
+        var primaryStats = {};
         var candidates;
 
         _.each(buckets, function(bucket) {
@@ -720,7 +720,6 @@ Profile.prototype = {
         //console.log("backups");
         //console.log(backups);
 
-        var primaryStats = {};
         _.each(_.groupBy(_.flatten(sets), 'bucketType'), function(items, bucketType) {
             primaryStats[bucketType] = _.max(_.map(items, function(item) {
                 return item.getValue(type);
@@ -855,7 +854,7 @@ Profile.prototype = {
             if (type == "Best") {
                 var bestSets,
                     weaponsEquipped = _.filter(character.equippedGear(), function(item) {
-                        return item.weaponIndex > -1
+                        return item.weaponIndex > -1;
                     }),
                     weaponTypes = _.map(app.weaponTypes(), function(type) {
                         return type.name.split(" ")[0];
@@ -888,13 +887,13 @@ Profile.prototype = {
                                         })
                                     ),
                                     function(perk) {
-                                        return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active == true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent == false);
+                                        return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
                                     }
                                 );
                                 combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
                                     return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
                                 }), function(perk) {
-                                    return _.intersection(weaponTypes, perk.name.split(" "))[0]
+                                    return _.intersection(weaponTypes, perk.name.split(" "))[0];
                                 })));
                                 combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
                                 if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {

@@ -160,13 +160,13 @@ tgd.DestinyBucketColumns = {
 };
 tgd.DestinyMaxCSP = {
     "Helmet": 104,
-    "Gauntlet": 102,
+    "Gauntlet": 93,
     "Chest": 138,
-    "Boots": 152,
+    "Boots": 128,
     "Class Items": 58,
     "Artifact": 124,
     "Ghost": 58
-}
+};
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
     "Special": 13.04,
@@ -279,9 +279,9 @@ tgd.farmItemFilters = {
         return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
     },
     "Rare": function(item) {
-        return item.tierType == 4 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
+        return item.tierType == 4 && item.locked() === false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
     },
     "Uncommon": function(item) {
-        return item.tierType == 3 && item.locked() == false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
+        return item.tierType == 3 && item.locked() === false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
     }
-}
+};

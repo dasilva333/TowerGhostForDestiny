@@ -553,7 +553,7 @@ var app = function() {
             self.activeView(2);
             var classTypeNums = _.map(self.activeClasses(), function(className) {
                 return _.values(tgd.DestinyClass).indexOf(className);
-            });;
+            });
             _.each(app.characters(), function(character) {
                 _.each(character.armor(), function(item) {
                     item.isFiltered(classTypeNums.indexOf(item.classType) > -1);
@@ -596,13 +596,13 @@ var app = function() {
             }
             window.open(sReportURL, tgd.openTabAs);
             return false;
-        }
+        };
     };
-    this.setArmorView = function(type) {
+    this.setArmorView = function() {
         var type = this.toString();
         self.armorViewBy(type);
     };
-    this.setVaultColumns = function(columns) {
+    this.setVaultColumns = function() {
         var columns = this.toString();
         self.vaultColumns(columns);
         self.redraw();
@@ -649,7 +649,7 @@ var app = function() {
             self.setFilter([]);
             self.showMissing(false);
         }
-    }
+    };
     this.setSetFilter = function(collection) {
         return this._setSetFilter;
     };
@@ -695,7 +695,7 @@ var app = function() {
         var armorType = this;
         tgd.localLog("armor type: " + armorType);
         self.armorFilter(armorType);
-    }
+    };
     this.setArmorFilter = function(armorType) {
         return this._setArmorFilter.bind(armorType);
     };
@@ -1324,7 +1324,7 @@ var app = function() {
                             _.filter(
                                 _.flatten(
                                     _.map(self.characters(), function(character) {
-                                        return character.items()
+                                        return character.items();
                                     })
                                 ),
                                 function(item) {
@@ -1332,7 +1332,7 @@ var app = function() {
                                 }), 'bucketType'), 'bucketType'),
                     function(items, bucketType) {
                         return String.fromCharCode(_.max(_.map(items, function(item) {
-                            return item.getValue("All")
+                            return item.getValue("All");
                         })));
                     }).join("");
             } catch (e) {
@@ -1740,7 +1740,7 @@ var app = function() {
             lgColumn = characterColumns;
         }
         return "col-xs-" + xsColumn + " col-sm-" + smColumn + " col-md-" + mdColumn + " col-lg-" + lgColumn;
-    }
+    };
 
     this.columnMode = function(character) {
         return ko.pureComputed(self._columnMode, character);
@@ -1755,7 +1755,8 @@ var app = function() {
     this._btnActive = function() {
         var input = this;
         return ((tgd.bootstrapGridColumns / input.value) == self[input.kind + "Column"]()) ? "btn-primary" : "";
-    }
+    };
+
     this.btnActive = function(type, input) {
         input.kind = type;
         return ko.pureComputed(self._btnActive, input);
@@ -1884,7 +1885,7 @@ var app = function() {
                 farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
         });
         self.farmItemCounts(farmItemCounts);
-        if (itemsToTransfer.length == 0) {
+        if (itemsToTransfer.length === 0) {
             return;
         }
         console.log(itemsToTransfer);
@@ -1913,18 +1914,18 @@ var app = function() {
                 tgd.autoTransferStacks = false;
             });
         }
-    }
+    };
 
     this.farmItemHandler = function(items) {
         self.transferFarmItems("Vault", items);
-    }
+    };
 
     this.vaultItemHandler = function(items) {
         var sortedItems = _.groupBy(items, 'actualBucketType');
         /* detect the quantity amounts, if full then disable farmMode */
         _.each(tgd.DestinyLayout, function(layout) {
             var group = sortedItems[layout.array];
-            if (group && group.length == layout.counts[0] && self.farmMode() == true) {
+            if (group && group.length == layout.counts[0] && self.farmMode() === true) {
                 self.farmMode(false);
                 var warning_msg = layout.name + " is full, disabling Farm Mode.";
                 tgd.localLog(warning_msg);
@@ -1938,12 +1939,12 @@ var app = function() {
                 });
             }
         });
-    }
+    };
 
     var subscriptions = [];
     this.farmModeHandler = function(isEnabled) {
-        if (isEnabled == true) {
-            if (self.doRefresh() == false) {
+        if (isEnabled === true) {
+            if (self.doRefresh() === false) {
                 self.doRefresh(true);
             }
             _.each(self.characters(), function(character) {
@@ -1956,9 +1957,9 @@ var app = function() {
         } else {
             _.each(subscriptions, function(subscription) {
                 subscription.dispose();
-            })
+            });
         }
-    }
+    };
 
     this.init = function() {
         _.each(ko.templates, function(content, name) {

@@ -24,7 +24,7 @@ tgd.moveItemPositionHandler = function(element, item) {
                 itemFound = true;
             }
         }
-        if (itemFound == false) {
+        if (itemFound === false) {
             if (item.transferStatus >= 2 && item.bucketType != "Subclasses") {
                 $.toaster({
                     priority: 'danger',
@@ -216,7 +216,7 @@ Item.prototype = {
             }
             if (item.id) {
                 itemObject.perks = item.perks;
-            } else if (item.perks.length > 0) {
+            } else if (_.isArray(item.perks) && item.perks.length > 0) {
                 var talentGrid = _talentGridDefs[item.talentGridHash];
                 itemObject.perks = [];
                 if (talentGrid && talentGrid.nodes) {
@@ -234,9 +234,9 @@ Item.prototype = {
                             );
                             if (nodeIndex > 0) {
                                 isInherent = _.reduce(talentGrid.nodes[nodeIndex].steps, function(memo, step) {
-                                    if (memo == false) {
+                                    if (memo === false) {
                                         var isPerk = _.values(step.perkHashes).indexOf(p.perkHash) > -1;
-                                        if (isPerk && step.activationRequirement.gridLevel == 0) {
+                                        if (isPerk && step.activationRequirement.gridLevel === 0) {
                                             memo = true;
                                         }
                                     }

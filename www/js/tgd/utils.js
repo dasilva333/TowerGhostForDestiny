@@ -31,4 +31,4 @@ tgd.joinStats = function(arrItems) {
         });
     });
     return tmp;
-}
+};
