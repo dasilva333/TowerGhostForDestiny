@@ -1943,6 +1943,9 @@ var app = function() {
     var subscriptions = [];
     this.farmModeHandler = function(isEnabled) {
         if (isEnabled == true) {
+            if (self.doRefresh() == false) {
+                self.doRefresh(true);
+            }
             _.each(self.characters(), function(character) {
                 if (character.id == "Vault") {
                     subscriptions.push(character.items.subscribe(self.vaultItemHandler));
