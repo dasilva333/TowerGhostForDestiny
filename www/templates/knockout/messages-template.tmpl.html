@@ -1,26 +1,32 @@
-<!--- <div data-bind="if: farmMode">
-	<form class="form-horizontal" data-bind="visible: farmMode" style="display:none">
-		<fieldset>
-			<legend>Farm Mode</legend>
-			<div class="col-xs-12 col-xs-offset-6">
-				<div class="col-xs-3">
-					<img src="assets/control_play.png">
-					<img src="assets/control_stop.png">
+<div class="container well well-sm" data-bind="if: farmViewEnabled, visible: farmViewEnabled">
+    <div class="container-fluid">
+		<form class="form-horizontal">
+			<fieldset>
+				<div class="col-xs-24 text-center">
+					<div class="col-xs-8">
+						<span data-bind="text: farmMode() ? 'Farm Mode Enabled' : 'Farm Mode Disabled', css: farmMode() ? 'text-success' : 'text-danger'"></span>
+						<button data-bind="click: function(){ farmMode(!farmMode()) }"><img data-bind="attr: { src: farmMode() ? 'assets/control_stop.png' : 'assets/control_play.png' }"></button>
+						<button data-bind="click: refresh"><i class="fa fa-refresh text-success"></i></button>
+						<button data-bind="click: showFarmHelp"><i class="fa fa-question"></i></button>
+					</div>
+					<div class="col-xs-8">
+						<!-- ko foreach: { data: _.keys(tgd.farmItemFilters), as: 'itemType' } -->
+							<input type="checkbox" data-bind="checked: $root.farmItems, value: itemType"> <span data-bind="text: itemType"></span>
+						<!--/ko  -->
+					</div>
+					<div class="col-xs-8">
+						<div data-bind="foreach: { data: orderedCharacters, as: 'avatar' }, visible: farmMode() == false">
+			                <div class="mobile-characters" data-bind="if: avatar.id != 'Vault', click: transferFarmItemsToVault.bind(avatar)">
+			                    <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id" src="about:blank">
+								<div class="mobile-characters-letter" data-bind="text: classLetter"></div>
+			                </div>
+			            </div>
+					</div>
 				</div>
-				<div class="col-xs-9">
-					<input type="checkbox"> Engrams
-					<input type="checkbox"> Glimmer
-					<input type="checkbox"> Blues
-					<input type="checkbox"> Greens
-				</div>
-				<div class="col-xs'12">
-					<span class="text-success">Farm Mode Active</span>
-					Collected <u>12></u> engrams so far
-				</div>
-			</div>
-		</fieldset>
-	</form>
-</div> --->
+			</fieldset>
+		</form>
+	</div>
+</div>
 
 	
 <div class="alert alert-dismissible alert-info" data-bind="visible: isStaticBrowser, if: isStaticBrowser" style="display:none;">

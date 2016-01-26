@@ -273,7 +273,7 @@ tgd.defaults = {
 tgd.farmItemCounts = 0;
 tgd.farmItemFilters = {
     "Engrams": function(item) {
-        return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items";
+        return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items" && item.isEquipment === false;
     },
     "Glimmer": function(item) {
         return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;

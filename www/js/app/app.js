@@ -9,6 +9,7 @@ var app = function() {
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
     this.viewOptionsEnabled = ko.observable(false);
+    this.farmViewEnabled = ko.observable(false);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -32,7 +33,7 @@ var app = function() {
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
-    this.farmItems = ko.pureComputed(new tgd.StoreObj("farmItems"));
+    this.farmItems = ko.observableArray(); //data-bind: checked requires an observeableArray
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
@@ -113,9 +114,14 @@ var app = function() {
         self.createLoadout();
     };
 
+    this.showFarmHelp = function() {
+        self.toggleBootstrapMenu();
+        (new tgd.dialog()).title(self.activeText().menu_help + " for Farm Mode").content(tgd.farmhelpTemplate()).show();
+    };
+
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title(self.activeText().menu_help).content(tgd.helpTemplate()).show();
+        (new tgd.dialog()).title(self.activeText().menu_hel).content(tgd.helpTemplate()).show();
     };
 
     this.showLanguageSettings = function() {
@@ -438,7 +444,7 @@ var app = function() {
     };
     this.toggleFarmMode = function() {
         self.toggleBootstrapMenu();
-        self.farmMode(!self.farmMode());
+        self.farmViewEnabled(!self.farmViewEnabled());
     };
     this.toggleTransferStacks = function() {
         self.toggleBootstrapMenu();
@@ -1866,8 +1872,7 @@ var app = function() {
         );
     };
 
-    this.farmItemHandler = function(items) {
-        var targetCharacterId = "Vault";
+    this.transferFarmItems = function(targetCharacterId, items) {
         var itemsToTransfer = [];
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
@@ -1898,6 +1903,10 @@ var app = function() {
         if (msa.length > 0) {
             adhoc.swapItems(msa, targetCharacterId, _.noop);
         }
+    }
+
+    this.farmItemHandler = function(items) {
+        self.transferFarmItems("Vault", items);
     }
 
     this.vaultItemHandler = function(items) {
@@ -2002,6 +2011,13 @@ var app = function() {
             self.doRefresh.subscribe(self.refreshHandler);
             self.refreshSeconds.subscribe(self.refreshHandler);
             self.loadoutMode.subscribe(self.refreshHandler);
+            //farmItems needs to be an observableArray attached to localStorage
+            tgd.farmItems = new tgd.StoreObj("farmItems");
+            var savedSelections = tgd.farmItems.read();
+            self.farmItems(_.isArray(savedSelections) ? savedSelections : savedSelections.split(","));
+            self.farmItems.subscribe(function(newValues) {
+                tgd.farmItems.write(newValues);
+            });
         }
 
         self.farmMode.subscribe(self.farmModeHandler);

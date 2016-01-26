@@ -66,6 +66,12 @@ Profile.prototype = {
             self._reloadBucket(self, undefined, _.noop, true);
         }
     },
+    transferFarmItemsToVault: function() {
+        var vault = _.findWhere(app.characters(), {
+            id: "Vault"
+        });
+        app.transferFarmItems(this.id, vault.items());
+    },
     updateCharacter: function(profile) {
         var self = this;
         if (profile && profile.processed) {
