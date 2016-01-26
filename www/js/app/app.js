@@ -1951,8 +1951,13 @@ var app = function() {
             }
             clearInterval(remainingInterval);
             remainingInterval = setInterval(function() {
-                var seconds = Math.floor(self.refreshSeconds() - ((((new Date()).getTime()) - tgd.autoRefreshTime) / 1000));
-                $("#timeRemainingForRefresh").html(seconds + "s");
+                var timeRemaining = Math.floor(self.refreshSeconds() - ((((new Date()).getTime()) - tgd.autoRefreshTime) / 1000));
+                if (timeRemaining > 60) {
+                    timeRemaining = Math.floor(timeRemaining / 60) + "m" + (timeRemaining % 60) + "s";
+                } else {
+                    timeRemaining = timeRemaining + "s";
+                }
+                $("#timeRemainingForRefresh").html(timeRemaining);
             }, 1000);
             _.each(self.characters(), function(character) {
                 if (character.id == "Vault") {
