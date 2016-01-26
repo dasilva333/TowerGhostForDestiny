@@ -268,6 +268,7 @@ tgd.defaults = {
     armorViewBy: "Light",
     sectionsTemplate: "image-grid-template",
     farmMode: false,
+    farmViewEnabled: false,
     farmItems: ["Engrams", "Glimmer", "Rare", "Uncommon"]
 };
 tgd.farmItemFilters = {

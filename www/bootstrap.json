@@ -106,11 +106,11 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "85b5edf7c28571407684ee6ecc5e75cb5fba6e9dbd1f36406b92c4ab56d7db0b"
+      "version": "4b88b79c2c0a886703bf084dea87d7b5afbb80d0864361a6b3dc8717c3237d60"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "33d59681a10ce24af643d40fb59ebb5d10acd4aca57e432e16f5f509f389591a"
+      "version": "974131fb8c2c13f16df55f22507694e2a259c50a74929ee12fa17ddf28d0e3ae"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -118,7 +118,7 @@
     },
     "base-tgd.js": {
       "filename": "js/tgd/base-tgd.js",
-      "version": "68b0ef737caff6eb4d19ef306dcfb23112c16e4933d4841b222d08aed2636f6b"
+      "version": "8b36f166b2acafbd0a3e3a25e29a7110526cac4f2b25aa1aee5d6bdedd0d03e3"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -170,7 +170,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "a1f413590a8e9abe184d3cc16fab9194e71330e74f5f1ff198c32ccbc38377d1"
+      "version": "e572687a4d46fc0ecf57dc2c414795a276adc9a6716aabdd247978e9beb903f9"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

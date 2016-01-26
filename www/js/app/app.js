@@ -9,7 +9,6 @@ var app = function() {
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
     this.viewOptionsEnabled = ko.observable(false);
-    this.farmViewEnabled = ko.observable(false);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -32,6 +31,7 @@ var app = function() {
     this.autoXferStacks = ko.pureComputed(new tgd.StoreObj("autoXferStacks", "true"));
     this.padBucketHeight = ko.pureComputed(new tgd.StoreObj("padBucketHeight", "true"));
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
+    this.farmViewEnabled = ko.pureComputed(new tgd.StoreObj("farmViewEnabled", "true"));
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
     this.farmItems = ko.observableArray(); //data-bind: checked requires an observeableArray
     this.farmItemCounts = ko.observable({});
@@ -1880,8 +1880,8 @@ var app = function() {
         _.each(selectedFarmItems, function(itemType) {
             var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
-			if (targetCharacterId == "Vault")
-				farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
+            if (targetCharacterId == "Vault")
+                farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
         });
         self.farmItemCounts(farmItemCounts);
         if (itemsToTransfer.length == 0) {
