@@ -3,10 +3,12 @@
 		<form class="form-horizontal">
 			<fieldset>
 				<div class="col-xs-24 text-center">
-					<span id="timeRemainingForRefresh" title="Time until next refresh" class="pull-left text-primary"></span>
-					<div class="col-xs-7 clearfix">
+					<div class="col-xs-7">
 						<div class="col-xs-24 col-sm-24 col-md-8 col-lg-10">
 							<span data-bind="text: farmMode() ? 'Enabled' : 'Disabled', css: farmMode() ? 'text-success' : 'text-danger'"></span>
+							<span data-bind="visible: farmMode">
+								(<span id="timeRemainingForRefresh" title="Time until next refresh" class="text-muted"></span>)
+							</span>
 						</div>
 						<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
 							<button title="Enable/Disable" data-bind="click: function(){ farmMode(!farmMode()) }"><img data-bind="attr: { src: farmMode() ? 'assets/control_stop.png' : 'assets/control_play.png' }"></button>
