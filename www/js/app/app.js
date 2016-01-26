@@ -1880,7 +1880,8 @@ var app = function() {
         _.each(selectedFarmItems, function(itemType) {
             var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
-            farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
+			if (targetCharacterId == "Vault")
+				farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
         });
         self.farmItemCounts(farmItemCounts);
         if (itemsToTransfer.length == 0) {
