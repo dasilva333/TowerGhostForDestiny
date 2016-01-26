@@ -1003,6 +1003,7 @@ var app = function() {
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
                 self.refresh();
+                tgd.autoRefreshTime = (new Date()).getTime();
             }, self.refreshSeconds() * 1000);
         }
     };
@@ -1941,12 +1942,18 @@ var app = function() {
         });
     };
 
-    var subscriptions = [];
+    var subscriptions = [],
+        remainingInterval;
     this.farmModeHandler = function(isEnabled) {
         if (isEnabled === true) {
             if (self.doRefresh() === false) {
                 self.doRefresh(true);
             }
+            clearInterval(remainingInterval);
+            remainingInterval = setInterval(function() {
+                var seconds = Math.floor(self.refreshSeconds() - ((((new Date()).getTime()) - tgd.autoRefreshTime) / 1000));
+                $("#timeRemainingForRefresh").html(seconds + "s");
+            }, 1000);
             _.each(self.characters(), function(character) {
                 if (character.id == "Vault") {
                     subscriptions.push(character.items.subscribe(self.vaultItemHandler));
@@ -1955,6 +1962,7 @@ var app = function() {
                 }
             });
         } else {
+            clearInterval(remainingInterval);
             _.each(subscriptions, function(subscription) {
                 subscription.dispose();
             });
@@ -2107,6 +2115,7 @@ var app = function() {
                 self.loadData();
             }
         }
+        tgd.autoRefreshTime = (new Date()).getTime();
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);

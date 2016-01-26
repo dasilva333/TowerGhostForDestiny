@@ -3,7 +3,8 @@
 		<form class="form-horizontal">
 			<fieldset>
 				<div class="col-xs-24 text-center">
-					<div class="col-xs-7">
+					<span id="timeRemainingForRefresh" title="Time until next refresh" class="pull-left text-primary"></span>
+					<div class="col-xs-7 clearfix">
 						<div class="col-xs-24 col-sm-24 col-md-8 col-lg-10">
 							<span data-bind="text: farmMode() ? 'Enabled' : 'Disabled', css: farmMode() ? 'text-success' : 'text-danger'"></span>
 						</div>
