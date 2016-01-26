@@ -34,6 +34,7 @@ var app = function() {
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
     this.farmItems = ko.observableArray(); //data-bind: checked requires an observeableArray
+    this.farmItemCounts = ko.observable({});
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
     this.tooltipsEnabled = ko.pureComputed(new tgd.StoreObj("tooltipsEnabled", "true", function(newValue) {
@@ -1873,17 +1874,23 @@ var app = function() {
     };
 
     this.transferFarmItems = function(targetCharacterId, items) {
-        var itemsToTransfer = [];
+        var itemsToTransfer = [],
+            farmItemCounts = {};
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
             var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
-            tgd.farmItemCounts[itemType] = (tgd.farmItemCounts[itemType] || 0) + filteredItems.length;
+            farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
         });
+        self.farmItemCounts(farmItemCounts);
         if (itemsToTransfer.length == 0) {
             return;
         }
+        console.log(itemsToTransfer);
+        console.log(_.pluck(itemsToTransfer, 'description'));
+        /*return;*/
         var adhoc = new tgd.Loadout();
+        tgd.autoTransferStacks = true;
         _.each(itemsToTransfer, function(item) {
             if (item._id > 0) {
                 adhoc.addUniqueItem({
@@ -1901,7 +1908,9 @@ var app = function() {
         });
         var msa = adhoc.transfer(targetCharacterId, true);
         if (msa.length > 0) {
-            adhoc.swapItems(msa, targetCharacterId, _.noop);
+            adhoc.swapItems(msa, targetCharacterId, function() {
+                tgd.autoTransferStacks = false;
+            });
         }
     }
 

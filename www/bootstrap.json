@@ -10,7 +10,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
+      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
     },
     "style_new.css": {
       "filename": "css/style_new.css",
@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
+      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -106,11 +106,11 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "e4580afabf1f5d3d1f37d1e52291b92151e806f9c2bbf40955d53eda297842d9"
+      "version": "85b5edf7c28571407684ee6ecc5e75cb5fba6e9dbd1f36406b92c4ab56d7db0b"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "9952ddc06250f726445f0f513bd623f90c27e9a5aaf468ad3087ff23c5e50722"
+      "version": "33d59681a10ce24af643d40fb59ebb5d10acd4aca57e432e16f5f509f389591a"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -118,7 +118,7 @@
     },
     "base-tgd.js": {
       "filename": "js/tgd/base-tgd.js",
-      "version": "d04f0f85313dc25a97b1df1e1c2877638966674c707ad7a877aee1b37f62f762"
+      "version": "68b0ef737caff6eb4d19ef306dcfb23112c16e4933d4841b222d08aed2636f6b"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -170,7 +170,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "b2826408125029c821c4a22b791ed10e58e8d0549dd6f145843fe870d39e261e"
+      "version": "a1f413590a8e9abe184d3cc16fab9194e71330e74f5f1ff198c32ccbc38377d1"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

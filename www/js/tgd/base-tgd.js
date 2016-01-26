@@ -270,7 +270,6 @@ tgd.defaults = {
     farmMode: false,
     farmItems: ["Engrams", "Glimmer", "Rare", "Uncommon"]
 };
-tgd.farmItemCounts = 0;
 tgd.farmItemFilters = {
     "Engrams": function(item) {
         return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items" && item.isEquipment === false;
