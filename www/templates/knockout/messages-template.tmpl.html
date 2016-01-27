@@ -11,20 +11,24 @@
 							</span>
 						</div>
 						<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
-							<button title="Enable/Disable" data-bind="click: function(){ farmMode(!farmMode()) }"><img data-bind="attr: { src: farmMode() ? 'assets/control_stop.png' : 'assets/control_play.png' }"></button>
+							<button title="Enable/Disable" data-bind="click: function(){ farmMode(!farmMode()) }">
+								<span data-bind="css: farmMode() ? 'fa-stop text-danger' : 'fa-play text-success'" class="fa"></span>
+							</button>
 							<button title="Refresh Inventory" data-bind="click: refresh"><i class="fa fa-refresh text-success"></i></button>
 						</div>
 						<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
-							<button title="Show Help" data-bind="click: showFarmHelp"><i class="fa fa-question"></i></button>
-							<button title="Close Farm Mode Controls" data-bind="click: toggleFarmMode"><i class="fa fa-times"></i></button>
+							<button title="Show Help" data-bind="click: showFarmHelp"><i class="fa fa-question text-info"></i></button>
+							<button title="Close Farm Mode Controls" data-bind="click: toggleFarmMode"><i class="fa fa-times text-danger"></i></button>
 						</div>
 					</div>
 					<div class="col-xs-12">
 						<!-- ko foreach: { data: _.keys(tgd.farmItemFilters), as: 'itemType' } -->
 							<div class="col-xs-24 col-sm-12 col-md-6 col-lg-6 text-left">
-								<input type="checkbox" data-bind="checked: $root.farmItems, value: itemType"> 
-								<span data-bind="text: itemType" class="text-primary"></span>
-								<span data-bind="text: $root.farmItemCounts()[itemType]" class="text-info"></span>
+								<label>
+									<input type="checkbox" data-bind="checked: $root.farmItems, value: itemType"> 
+									<span data-bind="text: itemType" class="text-primary"></span>
+									<span data-bind="text: $root.farmItemCounts()[itemType]" class="text-info"></span>
+								</label>
 							</div>
 						<!--/ko  -->
 					</div>

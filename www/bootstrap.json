@@ -6,7 +6,7 @@
     },
     "definitions.json": {
       "filename": "resources/en/definitions.json",
-      "version": "e6582e7f7dc5d9dc5fac13cc9c6009d5ec48dd6cabdecef324181c0f98c9e697"
+      "version": "8c3ac2fb81c03e64b2c9b8a810a30af967eea81051cfcd8e33f6ac9e3c349e7b"
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
@@ -14,11 +14,11 @@
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "6b21d67e09a6271947be94447702ce533dedd15d830b969b70c565af8bc25124"
+      "version": "b594dab5d592fe23a9d98fc206db891fdf110aa05e6580fd8a25fa2b6f59af5f"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "fd33f69605e92dbcb4d3f36fdd74bfad707e51c7415810f885c2ea957527f138"
+      "version": "5c3abe399c56ecc1977b57157ec0cd3f0b0d8ef74b4169bf4208b07f8b682614"
     }
   },
   "load": [
