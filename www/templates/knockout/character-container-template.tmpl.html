@@ -13,25 +13,25 @@
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
                             <div class="col-xs-11 text-left">
-                                <div class="col-xs-24">
+                                <div>
                                     <span class="font-bold" data-bind="text: $root.activeText().armor">Armor</span>
                                     <span data-bind="text: STAT_ARMOR.value"></span>
                                 </div>
-                                <div class="col-xs-24">
+                                <div>
                                     <span class="font-bold" data-bind="text: $root.activeText().agility">Agility</span>
                                     <span data-bind="text: STAT_AGILITY.value"></span>
                                 </div>
-                                <div class="col-xs-24">
+                                <div>
                                     <span class="font-bold" data-bind="text: $root.activeText().recovery">Recovery</span>
                                     <span data-bind="text: STAT_RECOVERY.value"></span>
                                 </div>
                             </div>
                             <div class="col-xs-13 text-right">
                                 <!-- ko foreach: { data: tgd.DestinyArmorStats, as: 'stat' } -->
-                                <div class="col-xs-24">
+                                <div>
                                     <span class="font-bold" data-bind="text: stat.statName.toLowerCase().substring(0,3)"></span>
                                     <span data-bind="text: character.equippedStats()[stat.statName]"></span>
-                                    <img data-bind="attr: { src: 'assets/' + stat.statName + '.png' }, event: { error: function(){ $($element).remove() } }">
+									<img data-bind="attr: { src: 'assets/' + stat.statName + '.png' }, event: { error: function(){ $($element).remove() } }">
                                     <span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
                                 </div>
                                 <!--/ko  -->

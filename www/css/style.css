@@ -429,7 +429,12 @@ input
 }
 
 .character-box .stats {
-	position: absolute; top: 51px; left: 20px; background: rgba(18, 21, 20, .8); z-index: 2; width: 96% !important;
+	position: absolute;     
+	top: 45px;
+    left: 5px; 
+	background: rgba(18, 21, 20, .8); 
+	z-index: 2; 
+	width: 99% !important;
 }
 .character-box .stats div {
 	font-size: 15px;

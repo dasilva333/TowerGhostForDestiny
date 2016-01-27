@@ -1877,7 +1877,7 @@ var app = function() {
 
     this.transferFarmItems = function(targetCharacterId, items) {
         var itemsToTransfer = [],
-            farmItemCounts = {};
+            farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
             var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
@@ -1889,9 +1889,6 @@ var app = function() {
         if (itemsToTransfer.length === 0) {
             return;
         }
-        console.log(itemsToTransfer);
-        console.log(_.pluck(itemsToTransfer, 'description'));
-        /*return;*/
         var adhoc = new tgd.Loadout();
         tgd.autoTransferStacks = true;
         _.each(itemsToTransfer, function(item) {
