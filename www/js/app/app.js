@@ -116,7 +116,6 @@ var app = function() {
     };
 
     this.showFarmHelp = function() {
-        self.toggleBootstrapMenu();
         (new tgd.dialog()).title(self.activeText().menu_help + " for Farm Mode").content(tgd.farmhelpTemplate()).show();
     };
 
