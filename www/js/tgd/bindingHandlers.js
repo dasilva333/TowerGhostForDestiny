@@ -3,7 +3,7 @@ tgd.imageErrorHandler = function(src, element) {
         if (element && element.src && element.src !== "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
-                element.src = tgd.remoteImagePath + src;
+                element.src = tgd.remoteImagePath + src.replace(tgd.dataDir, 'data/');
             }
         }
     };
