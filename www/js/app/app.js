@@ -1981,17 +1981,6 @@ var app = function() {
             }
         });
 
-        $.toaster({
-            settings: {
-                toaster: {
-                    css: {
-                        top: "45px"
-                    }
-                },
-                timeout: tgd.defaults.toastTimeout
-            }
-        });
-
         if (window.isStaticBrowser) {
             $ZamTooltips.init();
             self.bungie = new tgd.bungie('', function() {

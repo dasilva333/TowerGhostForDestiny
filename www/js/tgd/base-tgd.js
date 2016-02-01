@@ -285,3 +285,19 @@ tgd.farmItemFilters = {
         return item.tierType == 3 && item.locked() === false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
     }
 };
+
+/*
+	WARNING:
+	This needs to be the first call prior to any notif, failure to do so results in a #toaster element created with improper settings, 
+	attempting to change notif settings on the fly requires manual removal of html element
+*/
+$.toaster({
+    settings: {
+        toaster: {
+            css: {
+                top: "45px"
+            }
+        },
+        timeout: tgd.defaults.toastTimeout
+    }
+});
