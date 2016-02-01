@@ -899,12 +899,23 @@ Profile.prototype = {
                                 if (!(combo.statTiers in armorBuilds)) {
                                     armorBuilds[combo.statTiers] = [];
                                 }
+                                combo.hash = _.pluck(_.sortBy(combo.set, 'bucketType'), '_id').join(",")
                                 combo.id = tgd.hashCode(combo.statTiers);
                                 armorBuilds[combo.statTiers].push(combo);
                             }
                         });
                         _.each(armorBuilds, function(statTiers, key) {
-                            armorBuilds[key] = _.sortBy(statTiers, function(combo) {
+                            var hashes = _.pluck(statTiers, 'hash');
+                            var newTiers = _.filter(statTiers, function(combo) {
+                                var hashIndex = hashes.indexOf(combo.hash);
+                                _.each(hashes, function(hash, index) {
+                                    if (hash == combo.hash) {
+                                        hashes.splice(index, 1);
+                                    }
+                                });
+                                return hashIndex > -1;
+                            });
+                            armorBuilds[key] = _.sortBy(newTiers, function(combo) {
                                 [combo.similarityScore, combo.score];
                             }).reverse();
                         });
