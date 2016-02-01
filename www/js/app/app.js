@@ -200,7 +200,6 @@ var app = function() {
     this.clearFilters = function(model, element) {
         self.toggleBootstrapMenu();
         self.activeView(tgd.defaults.activeView);
-        self.activeSort(tgd.defaults.activeSort);
         self.searchKeyword(tgd.defaults.searchKeyword);
         self.refreshSeconds(tgd.defaults.refreshSeconds);
         self.tierFilter(tgd.defaults.tierFilter);
