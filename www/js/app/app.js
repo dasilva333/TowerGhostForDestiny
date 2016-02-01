@@ -443,7 +443,6 @@ var app = function() {
         }
     };
     this.toggleFarmMode = function() {
-        self.toggleBootstrapMenu();
         self.farmViewEnabled(!self.farmViewEnabled());
     };
     this.toggleTransferStacks = function() {

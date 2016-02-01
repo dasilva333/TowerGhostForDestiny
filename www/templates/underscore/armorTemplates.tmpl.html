@@ -4,7 +4,7 @@
         <li class="list-group-item">
 			<%_.each(sets, function(build, index){ %>
 	            <div class="row" style="display:<%= index == 0 ? '' : 'none' %>" id="<%= build.id + '_' + index %>">
-	                <div class="text-left col-xs-24 col-md-3">
+	                <div class="text-center col-xs-24 col-md-3">
 						<div class="col-xs-8 col-md-24">
 		                    <input class="armorBuild form-control" name="armorBuild" type="radio" value="<%= build.statTiers + '_' + index %>">
 						</div>
