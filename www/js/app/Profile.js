@@ -905,16 +905,13 @@ Profile.prototype = {
                             }
                         });
                         _.each(armorBuilds, function(statTiers, key) {
-                            var hashes = _.pluck(statTiers, 'hash');
-                            var newTiers = _.filter(statTiers, function(combo) {
-                                var hashIndex = hashes.indexOf(combo.hash);
-                                _.each(hashes, function(hash, index) {
-                                    if (hash == combo.hash) {
-                                        hashes.splice(index, 1);
-                                    }
-                                });
-                                return hashIndex > -1;
-                            });
+                            var newTiers = _.reduce(statTiers, function(memo, combo) {
+                                if (!_.findWhere(memo, {
+                                        hash: combo.hash
+                                    }))
+                                    memo.push(combo);
+                                return memo;
+                            }, []);
                             armorBuilds[key] = _.sortBy(newTiers, function(combo) {
                                 [combo.similarityScore, combo.score];
                             }).reverse();
