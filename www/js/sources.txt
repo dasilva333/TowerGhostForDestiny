@@ -11,7 +11,7 @@
         "fileName": "bootstrap-dialog.js",
         "link": "https://raw.githubusercontent.com/nakupanda/bootstrap3-dialog/master/dist/js/bootstrap-dialog.js",
         "localHash": "822c465080c509499dfd057125a064facdf139574e61c3b1270a169a8d30d0f1",
-        "remoteHash": "822c465080c509499dfd057125a064facdf139574e61c3b1270a169a8d30d0f1"
+        "remoteHash": "a05a9ddc18b2f6af90d378fce3a4e4ac8d1da599405ca586d0d34a4e186c51f8"
     },
     {
         "currentFile": "../www/js//libraries/secondary/bootstrap.js",
@@ -32,7 +32,7 @@
         "fileName": "hammer.js",
         "link": "http://hammerjs.github.io/dist/hammer.min.js",
         "localHash": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e",
-        "remoteHash": "8500d605a74853787e140b8e1fcc945de816b28bda06093a3a9d3a9fe00b9b6e"
+        "remoteHash": "55ffe374e0804596013419ce6ffc150b104072d7d82e153bb31c1d3c17ce97d5"
     },
     {
         "currentFile": "../www/js//core/idb.filesystem.js",
@@ -73,7 +73,7 @@
         "currentFile": "../www/js//plugins/jquery.toaster.js",
         "fileName": "jquery.toaster.js",
         "link": "https://raw.githubusercontent.com/scottoffen/jquery.toaster/master/jquery.toaster.js",
-        "localHash": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf",
+        "localHash": "e3ecf75f1e9d87d101a17751cf63a9feb62697e38235a6c7c87b7c2c08a33d73",
         "remoteHash": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf"
     },
     {
