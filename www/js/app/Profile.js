@@ -899,7 +899,7 @@ Profile.prototype = {
                                 if (!(combo.statTiers in armorBuilds)) {
                                     armorBuilds[combo.statTiers] = [];
                                 }
-                                combo.hash = _.pluck(_.sortBy(combo.set, 'bucketType'), '_id').join(",")
+                                combo.hash = _.pluck(_.sortBy(combo.set, 'bucketType'), '_id').join(",");
                                 combo.id = tgd.hashCode(combo.statTiers);
                                 armorBuilds[combo.statTiers].push(combo);
                             }
