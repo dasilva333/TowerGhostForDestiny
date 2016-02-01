@@ -913,7 +913,7 @@ Profile.prototype = {
                                 return memo;
                             }, []);
                             armorBuilds[key] = _.sortBy(newTiers, function(combo) {
-                                [combo.similarityScore, combo.score];
+                                return [combo.similarityScore, combo.score];
                             }).reverse();
                         });
                         var $template = $(tgd.armorTemplates({
