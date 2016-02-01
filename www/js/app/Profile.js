@@ -896,16 +896,23 @@ Profile.prototype = {
                                     return _.intersection(weaponTypes, perk.name.split(" "))[0];
                                 })));
                                 combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
-                                if (combo.statTiers in armorBuilds && combo.score > armorBuilds[combo.statTiers].score || !(combo.statTiers in armorBuilds)) {
-                                    armorBuilds[combo.statTiers] = combo;
+                                if (!(combo.statTiers in armorBuilds)) {
+                                    armorBuilds[combo.statTiers] = [];
                                 }
+                                combo.id = tgd.hashCode(combo.statTiers);
+                                armorBuilds[combo.statTiers].push(combo);
                             }
                         });
-                        armorBuilds = _.sortBy(armorBuilds, function(combo) {
-                            return [combo.similarityScore, combo.score];
-                        }).reverse();
-                        var $template = tgd.armorTemplates({
+                        _.each(armorBuilds, function(statTiers, key) {
+                            armorBuilds[key] = _.sortBy(statTiers, function(combo) {
+                                [combo.similarityScore, combo.score];
+                            }).reverse();
+                        });
+                        var $template = $(tgd.armorTemplates({
                             builds: armorBuilds
+                        }));
+                        $template.find(".itemImage,.perkImage").bind("error", function() {
+                            tgd.imageErrorHandler(this.src.replace(location.origin, '').replace("www/", ""), this)();
                         });
                         (new tgd.dialog({
                             buttons: [{
@@ -915,9 +922,9 @@ Profile.prototype = {
                                         BootstrapDialog.alert("Error: Please select one armor build to equip.");
                                     } else {
                                         var selectedBuild = $("input.armorBuild:checked").val();
-                                        highestCombo = _.findWhere(armorBuilds, {
-                                            statTiers: selectedBuild
-                                        });
+                                        var selectedStatTier = selectedBuild.split("_")[0];
+                                        var selectedIndex = selectedBuild.split("_")[1];
+                                        highestCombo = armorBuilds[selectedStatTier][selectedIndex];
                                         character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                                         dialog.close();
                                     }
@@ -939,6 +946,20 @@ Profile.prototype = {
                                     $ZamTooltips.lastElement = element;
                                     $ZamTooltips.show("destinydb", "items", itemId, element);
                                 });
+                            });
+                            $(".prevCombo").bind("click", function() {
+                                var currentRow = $(this).parents(".row");
+                                var currentId = currentRow.attr("id");
+                                var newId = currentId.split("_")[0] + "_" + (parseInt(currentId.split("_")[1]) - 1);
+                                currentRow.hide();
+                                $("#" + newId).show();
+                            });
+                            $(".nextCombo").bind("click", function() {
+                                var currentRow = $(this).parents(".row");
+                                var currentId = currentRow.attr("id");
+                                var newId = currentId.split("_")[0] + "_" + (parseInt(currentId.split("_")[1]) + 1);
+                                currentRow.hide();
+                                $("#" + newId).show();
                             });
                         });
                         $("body").css("cursor", "default");
