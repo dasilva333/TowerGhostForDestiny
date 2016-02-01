@@ -31,7 +31,7 @@
                                 <div>
                                     <span class="font-bold" data-bind="text: stat.statName.toLowerCase().substring(0,3)"></span>
                                     <span data-bind="text: character.equippedStats()[stat.statName]"></span>
-									<img data-bind="attr: { src: 'assets/' + stat.statName + '.png' }, event: { error: function(){ $($element).remove() } }">
+									<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
                                     <span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
                                 </div>
                                 <!--/ko  -->
