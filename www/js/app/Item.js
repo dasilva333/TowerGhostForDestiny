@@ -6,21 +6,21 @@ tgd.moveItemPositionHandler = function(element, item) {
         return false;
     } else if (app.loadoutMode() === true) {
         tgd.localLog("loadoutMode");
-        var existingItem, itemFound = false;
+        var existingItem, itemFound = false, activeLoadout = app.activeLoadout();
         if (item._id > 0) {
-            existingItem = _.findWhere(app.activeLoadout().ids(), {
+            existingItem = _.findWhere(activeLoadout.uniques(), {
                 id: item._id
             });
             if (existingItem) {
-                app.activeLoadout().ids.remove(existingItem);
+                activeLoadout.uniques.remove(existingItem);
                 itemFound = true;
             }
         } else {
-            existingItem = _.filter(app.activeLoadout().generics(), function(itm) {
+            existingItem = _.filter(activeLoadout.generics(), function(itm) {
                 return item.id == itm.hash && item.characterId() == itm.characterId;
             });
             if (existingItem.length > 0) {
-                app.activeLoadout().generics.removeAll(existingItem);
+                activeLoadout.generics.removeAll(existingItem);
                 itemFound = true;
             }
         }
@@ -35,16 +35,16 @@ tgd.moveItemPositionHandler = function(element, item) {
                     }
                 });
             } else if (item._id === "0") {
-                app.activeLoadout().addGenericItem({
+                activeLoadout.addGenericItem({
                     hash: item.id,
                     bucketType: item.bucketType,
                     characterId: item.characterId()
                 });
-            } else if (_.where(app.activeLoadout().items(), {
+            } else if (_.where(activeLoadout.items(), {
                     bucketType: item.bucketType
                 }).length < 10) {
-                app.activeLoadout().addUniqueItem({
-                    id: item._id,
+                activeLoadout.addUniqueItem({
+                    itemInstanceId: item._id,
                     bucketType: item.bucketType,
                     doEquip: false
                 });
@@ -1009,7 +1009,7 @@ Item.prototype = {
                         var adhoc = new tgd.Loadout();
                         if (self._id > 0) {
                             adhoc.addUniqueItem({
-                                id: self._id,
+                                itemInstanceId: self._id,
                                 bucketType: self.bucketType,
                                 doEquip: false
                             });
@@ -1249,7 +1249,7 @@ Item.prototype = {
         } else {
             var adhoc = new tgd.Loadout();
             adhoc.addUniqueItem({
-                id: self._id,
+                itemInstanceId: self._id,
                 bucketType: self.bucketType,
                 doEquip: false
             });

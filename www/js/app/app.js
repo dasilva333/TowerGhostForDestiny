@@ -819,9 +819,9 @@ var app = function() {
                 loadingData = false;
                 self.loadingUser(false);
                 $ZamTooltips.init();
-                setTimeout(function() {
-                    self.loadLoadouts();
-                }, 5000);
+                /*setTimeout(function() {
+                    tgd.Loadouts();
+                }, 5000);*/
                 self.farmModeHandler(self.farmMode());
                 //console.timeEnd("new profile");
             }
@@ -1275,102 +1275,6 @@ var app = function() {
                 callback(response);
             }
         });
-    };
-
-    this.saveLoadouts = function(includeMessage) {
-        var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-        if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
-            var params = {
-                action: "save",
-                membershipId: parseFloat(self.activeUser().user.membershipId),
-                loadouts: ko.toJSON(self.loadouts())
-            };
-            self.apiRequest(params, function(results) {
-                if (_includeMessage === true) {
-                    if (results.success) {
-                        $.toaster({
-                            priority: 'success',
-                            title: 'Saved',
-                            message: "Loadouts saved to the cloud",
-                            settings: {
-                                timeout: tgd.defaults.toastTimeout
-                            }
-                        });
-                    } else BootstrapDialog.alert("Error has occurred saving loadouts");
-                }
-            });
-        } else {
-            BootstrapDialog.alert("Error reading your membershipId, could not save loadouts");
-        }
-    };
-
-    this.loadLoadouts = function() {
-        if (self.loadouts().length === 0) {
-            var _loadouts = window.localStorage.getItem("loadouts");
-            if (!_.isEmpty(_loadouts)) {
-                _loadouts = _.map(JSON.parse(_loadouts), function(loadout) {
-                    return new tgd.Loadout(loadout);
-                });
-            } else {
-                _loadouts = [];
-            }
-            var maxCSP = "";
-            try {
-                maxCSP = _.map(
-                    _.groupBy(
-                        _.sortBy(
-                            _.filter(
-                                _.flatten(
-                                    _.map(self.characters(), function(character) {
-                                        return character.items();
-                                    })
-                                ),
-                                function(item) {
-                                    return item.armorIndex > -1;
-                                }), 'bucketType'), 'bucketType'),
-                    function(items, bucketType) {
-                        return String.fromCharCode(_.max(_.map(items, function(item) {
-                            return item.getValue("All");
-                        })));
-                    }).join("");
-            } catch (e) {
-
-            }
-            self.apiRequest({
-                action: "load",
-                //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),
-                //Crowd Sourced values for maxCSP
-                maxCSP: maxCSP
-                    /*this one applies only to your current profile
-				accountId: self.bungie.getMemberId()*/
-            }, function(results) {
-                var _results = [];
-                if (results && results.loadouts) {
-                    _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
-                    _results = _.map(_results, function(loadout) {
-                        loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
-                        loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
-                        loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
-                        return new tgd.Loadout(loadout);
-                    });
-                }
-                /* one time migrate joins the two arrays and clears the local one */
-                if (_loadouts.length > 0) {
-                    _results = _loadouts.concat(_results);
-                    window.localStorage.setItem("loadouts", "");
-                }
-                self.loadouts(_results);
-                /* one time migrate saves the new joined array to the cloud */
-                if (_loadouts.length > 0) {
-                    self.saveLoadouts(false);
-                }
-                /*if (results && results.itemDefs) {
-					tgd.localLog("downloading locale update");
-					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-				}*/
-            });
-        }
     };
 
     this.showWhatsNew = function(callback) {
