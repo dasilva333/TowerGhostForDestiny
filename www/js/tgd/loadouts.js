@@ -35,20 +35,18 @@
 	        });
 	        /* if the item being equipped is an exotic then find the other exotics to become unequipped */
 	        if (item.tierType == 6 && item.hasLifeExotic === false && item.doEquip()) {
-	            _.each(self.loadout.uniques(), function(itemFound) {
+	            existingItems = _.reduce(self.loadout.uniques(), function(memo, itemFound) {
 	                if (itemFound && itemFound.tierType && itemFound.tierType == 6 && itemFound.hasLifeExotic === false && itemFound.doEquip() && itemFound.instanceId != itemFound.instanceId && (
 	                        (item.weaponIndex > -1 && itemFound.weaponIndex > -1) || (item.armorIndex > -1 && itemFound.armorIndex > -1)
 	                    )) {
-	                    existingItems.push(equip);
+	                    memo.push(itemFound);
 	                }
-	            });
+	            }, existingItems);
 	        }
 			//All the existingItems collected will now be marked as unequipped
-	        if (existingItems.length > 0) {
-	            _.each(existingItems, function(loadoutItem) {
-	                loadoutItem.doEquip(false);
-	            });
-	        }
+	        _.each(existingItems, function(loadoutItem) {
+				loadoutItem.doEquip(false);
+			});
 			
 	        item.doEquip(true);
 			return true;
