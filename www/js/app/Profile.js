@@ -163,9 +163,14 @@ Profile.prototype = {
                 });
                 done();
             } else {
-                done();
-                app.refresh();
-                return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
+                if (results && results.ErrorCode && results.ErrorCode == 99) {
+                    done();
+                    return BootstrapDialog.alert(results.Message);
+                } else {
+                    done();
+                    app.refresh();
+                    return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
+                }
             }
         };
     },
@@ -916,13 +921,61 @@ Profile.prototype = {
                                 return [combo.similarityScore, combo.score];
                             }).reverse();
                         });
-                        var $template = $(tgd.armorTemplates({
-                            builds: armorBuilds
-                        }));
-                        $template.find(".itemImage,.perkImage").bind("error", function() {
-                            tgd.imageErrorHandler(this.src.replace(location.origin, '').replace("www/", ""), this)();
-                        });
-                        (new tgd.dialog({
+
+                        var renderTemplate = function(builds) {
+                            var _template = $(tgd.armorTemplates({
+                                builds: builds
+                            }));
+                            _template.find(".itemImage,.perkImage").bind("error", function() {
+                                tgd.imageErrorHandler(this.src.replace(location.origin, '').replace("www/", ""), this)();
+                            });
+                            return _template;
+                        }
+
+                        var assignBindingHandlers = function() {
+                            $("a.itemLink").each(function() {
+                                var element = $(this);
+                                var itemId = element.attr("itemId");
+                                var instanceId = element.attr("instanceId");
+                                element.click(false);
+                                Hammer(element[0], {
+                                    time: 2000
+                                }).on("tap", function(ev) {
+                                    $ZamTooltips.lastElement = element;
+                                    $ZamTooltips.show("destinydb", "items", itemId, element);
+                                }).on("press", function(ev) {
+                                    var newArmorBuilds = _.reduce(armorBuilds, function(memo, sets, key) {
+                                        memo[key] = _.filter(sets, function(combos) {
+                                            return _.pluck(combos.set, '_id').indexOf(instanceId) > -1;
+                                        });
+                                        if (memo[key].length == 0) {
+                                            delete memo[key];
+                                        }
+                                        return memo;
+                                    }, armorBuilds);
+                                    armorTemplateDialog.content(renderTemplate(newArmorBuilds));
+                                    setTimeout(assignBindingHandlers, 500);
+                                });
+                            });
+                            $(".prevCombo").bind("click", function() {
+                                var currentRow = $(this).parents(".row");
+                                var currentId = currentRow.attr("id");
+                                var newId = currentId.split("_")[0] + "_" + (parseInt(currentId.split("_")[1]) - 1);
+                                currentRow.hide();
+                                $("#" + newId).show();
+                            });
+                            $(".nextCombo").bind("click", function() {
+                                var currentRow = $(this).parents(".row");
+                                var currentId = currentRow.attr("id");
+                                var newId = currentId.split("_")[0] + "_" + (parseInt(currentId.split("_")[1]) + 1);
+                                currentRow.hide();
+                                $("#" + newId).show();
+                            });
+                        }
+
+                        var $template = renderTemplate(armorBuilds);
+
+                        var armorTemplateDialog = (new tgd.dialog({
                             buttons: [{
                                 label: app.activeText().movepopup_equip,
                                 action: function(dialog) {
@@ -944,31 +997,7 @@ Profile.prototype = {
                                 }
                             }]
                         })).title("Armor Build" + (armorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
-                            $("a.itemLink").each(function() {
-                                var element = $(this);
-                                var itemId = element.attr("itemId");
-                                element.click(false);
-                                Hammer(element[0], {
-                                    time: 2000
-                                }).on("press", function(ev) {
-                                    $ZamTooltips.lastElement = element;
-                                    $ZamTooltips.show("destinydb", "items", itemId, element);
-                                });
-                            });
-                            $(".prevCombo").bind("click", function() {
-                                var currentRow = $(this).parents(".row");
-                                var currentId = currentRow.attr("id");
-                                var newId = currentId.split("_")[0] + "_" + (parseInt(currentId.split("_")[1]) - 1);
-                                currentRow.hide();
-                                $("#" + newId).show();
-                            });
-                            $(".nextCombo").bind("click", function() {
-                                var currentRow = $(this).parents(".row");
-                                var currentId = currentRow.attr("id");
-                                var newId = currentId.split("_")[0] + "_" + (parseInt(currentId.split("_")[1]) + 1);
-                                currentRow.hide();
-                                $("#" + newId).show();
-                            });
+                            assignBindingHandlers();
                         });
                         $("body").css("cursor", "default");
                     });
