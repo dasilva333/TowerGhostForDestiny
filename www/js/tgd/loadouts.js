@@ -138,7 +138,6 @@
 				}
 				
 				/* step 4: determine if the item can fit in the destination */
-				var sourceBucket = _.where( targetCharacterItems, { bucketType: bucketType });
 				var targetIsFull = (loadoutGroups[bucketType].length + targetBucketSize) > maxBucketSize;
 				
 				/* can't fit all the items in the loadout into the destination */
