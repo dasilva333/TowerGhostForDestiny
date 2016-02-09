@@ -81,6 +81,12 @@
 		this.uniques = ko.observableArray();
 		this.generics = ko.observableArray();
 		this.items = ko.computed(this._items, this);
+		this.options = {
+			keepOpenSlots: false,
+			transferLockedItems: true,
+			transferTaggedItems: true,
+			transferClassItems: false
+		}
 	};
 	
 	tgd.Loadout.prototype = {
@@ -91,6 +97,190 @@
 			});
 			return _items;
 		},
+		createTransferPlan: function(targetCharacterId){
+			var self = this;
+			var targetCharacter = _.findWhere(app.characters(), {
+	            id: targetCharacterId
+	        });
+	        if (typeof targetCharacter == "undefined") {
+	            return BootstrapDialog.alert("Target character not found");
+	        }
+			var targetCharacterItems = targetCharacter.items();
+			var targetCharacterIcon = targetCharacter.icon();
+			var loadoutItems = self.items();
+			var loadoutGroups = _.groupBy(loadoutItems, 'bucketType');
+			//Remap loadoutItems to an array of what the transfer plan is going to be
+			var masterSwapArray = _.reduce(loadoutItems, function(memo, item){
+				var transferPlan = {};
+				/* step 1: determine the bucket and section it will be moved to */
+				var bucketType = item.bucketType, section = item.actualBucketType;
+				
+				/* step 2: determine the sizes of the destination blocks */
+				var targetBucketSize = _.where( targetCharacterItems, { bucketType: bucketType }).length;
+				
+				var targetSectionSize = _.where( targetCharacterItems, { actualBucketType: section }).length;
+				
+				console.log("targetBucketSize",targetBucketSize,"targetSectionSize",targetSectionSize);
+				
+				/* step 3: determine the max size of the destination */
+				var maxBucketSize;
+				if ( targetCharacterId == "Vault" ){
+					maxBucketSize = _.findWhere(tgd.DestinyLayout, { array: section }).counts[0];
+				}
+				else {
+					if (tgd.DestinyNonUniqueBuckets.indexOf(bucketType) == -1) {
+						maxBucketSize = 10;
+					}
+					/* materials and consumables use their own sizes*/
+					else {
+						maxBucketSize = 20;
+					}
+				}
+				
+				/* step 4: determine if the item can fit in the destination */
+				var sourceBucket = _.where( targetCharacterItems, { bucketType: bucketType });
+				var targetIsFull = (loadoutGroups[bucketType].length + targetBucketSize) > maxBucketSize;
+				
+				/* can't fit all the items in the loadout into the destination */
+				if (targetIsFull) {
+					//TODO: Come up with a safe and reliable way to get a unique swap candidate for each item
+					var swapItem = item;
+					transferPlan = {
+						targetItem: item,
+						swapItem: swapItem,
+						description: item.description + app.activeText().loadouts_swap + swapItem.description,
+						actionIcon: "assets/swap.png"
+					};
+				}
+				/* at this point all the items selected fit neatly into the destination */
+				else {
+					/*
+					1) there is 3 open slots, and 3 items that need to be xfered in, and keepOpenSlots=false. result: to-transfer 3 items
+					2) there is 3 open slots, and 3 items that need to be xfered in, and keepOpenSlots=true. result: swap 3 items
+					3) there is 3 open slots, and 4 items that need to be xfered in, and keepOpenSlots=true. result: swap 4 items
+					4) there is 3 open slots, and 8 items that need to be xfered in, and keepOpenSlots=true. result: swap 8 items, ignore open slots request
+					5) there is 1 open slot, and 3 items that need to be xfered in, and keepOpenSlots=true. result: swap 3 items 
+					6) there is 1 open slot, and 3 items that need to be xfered in, and keepOpenSlots=false. result: swap 2 items, xfer 1 item
+					*/
+					transferPlan = {
+						targetItem: item,
+						description: item.description + app.activeText().loadouts_to_transfer,
+						swapIcon: targetCharacterIcon,
+						actionIcon: "assets/to-transfer.png"
+					};
+				}
+				
+				memo.push(transferPlan);
+				
+				return memo;
+			}, []);
+			
+			return masterSwapArray;
+		},
+		transfer: function(targetCharacterId, callback) {
+			var self = this;
+			
+			var masterSwapArray = self.createTransferPlan(targetCharacterId);
+			
+			console.log(masterSwapArray);
+			
+			if (callback) {
+	            if (_.isFunction(callback)){
+					callback(masterSwapArray);
+				}
+	            else {
+					return masterSwapArray;
+				}
+	        } else {
+	            self.promptUserConfirm(masterSwapArray, targetCharacterId);
+	        }
+	    },
+	    generateTemplate: function(masterSwapArray, targetCharacterId, indexes) {
+	        var self = this;
+	        var html = $(tgd.swapTemplate({
+	            swapArray: masterSwapArray
+	        }) + $(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
+	        var targetCharacter = _.findWhere(app.characters(), {
+	            id: targetCharacterId
+	        });
+	        var swapIds = _.pluck(_.pluck(masterSwapArray, 'swapItem'), '_id');
+	        html.find(".item").click(false);
+	        html.find(".swapItem").click(function() {
+	            var instanceId = $(this).attr("instanceid");
+	            var item = self.findItemById(instanceId);
+	            if (item) {
+	                var items = targetCharacter.get(item.bucketType);
+	                var candidates = _.filter(items, function(candidate) {
+	                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2;
+	                });
+	                if (candidates.length > 0) {
+	                    _.each(masterSwapArray, function(pair) {
+	                        if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
+	                            var targetId = pair.targetItem._id;
+	                            if (targetId in indexes && (indexes[targetId] + 1 < candidates.length)) {
+	                                indexes[targetId]++;
+	                            } else {
+	                                indexes[targetId] = 0;
+	                            }
+	                            pair.swapItem = candidates[indexes[targetId]];
+	                        }
+	                    });
+	                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId, indexes));
+	                }
+	            }
+	        });
+	        return html;
+	    },
+	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
+	        if (masterSwapArray.length > 0) {
+	            var self = this;
+	            self.indexes = {};
+	            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
+	            var transfer = function(dialog) {
+	                self.swapItems(masterSwapArray, targetCharacterId, function() {
+	                    $.toaster({
+	                        settings: {
+	                            timeout: 15 * 1000
+	                        },
+	                        priority: 'success',
+	                        title: 'Success',
+	                        message: app.activeText().loadouts_transferred
+	                    });
+	                    setTimeout(function() {
+	                        $(".donateLink").click(app.showDonate);
+	                    }, 1000);
+	                    app.dynamicMode(false);
+	                    dialog.close();
+	                });
+	            };
+	            self.loadoutsDialog = (new tgd.dialog({
+	                buttons: [{
+	                    label: app.activeText().loadouts_transfer,
+	                    action: function(dialog) {
+	                        transfer(dialog);
+	                    }
+	                }, {
+	                    label: app.activeText().cancel,
+	                    action: function(dialog) {
+	                        dialog.close();
+	                    }
+	                }]
+	            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
+	                function() { //onHide
+	                    $(document).unbind("keyup.dialog");
+	                },
+	                function() { //onShown
+	                    //to prevent multiple binding
+	                    $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
+	                        var code = e.which;
+	                        if (code == 13) {
+	                            transfer(self.loadoutsDialog.modal);
+	                            $(document).unbind("keyup.dialog");
+	                        }
+	                    });
+	                });
+	        }
+	    },
 	    addUniqueItem: function(obj) {
 	        this.uniques.push(new tgd.LoadoutItem(obj, this));
 	    },
