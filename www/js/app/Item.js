@@ -199,10 +199,6 @@ Item.prototype = {
                 isUnique: false,
                 primaryValues: {}
             };
-            //hack for issue #442
-            if (itemObject.bucketType == "Artifact") {
-                itemObject.classType = tgd.DestinyClassNames[itemObject.typeName.split(" ")[0]];
-            }
             itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
             itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
             if (itemObject.armorIndex > -1) {
