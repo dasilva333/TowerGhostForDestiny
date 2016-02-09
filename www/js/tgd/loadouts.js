@@ -97,6 +97,28 @@
 			});
 			return _items;
 		},
+		useTransferPlan: function(transferPlan, targetCharacterId, callback) {
+			/*
+			--start of sequence--
+			1. clear {x} space on vault
+			{x} is dependent on:
+			if vault is not full then 0
+			if vault is full then
+			  if transferPlan has a swapItem = 2
+			  else if transferPlan is only transfers = 1
+			--start of transfer--
+			2. target to vault
+			3. swap to vault
+			4. target to destination
+			5. swap to source
+			--end transfer--
+			6. repeat steps 2-5 for next item
+			7. return 2 space to vault
+			--end of sequence--
+			call the callback function
+			*/
+			
+		},
 		createTransferPlan: function(targetCharacterId){
 			var self = this;
 			var targetCharacter = _.findWhere(app.characters(), {
@@ -110,7 +132,7 @@
 			var loadoutItems = self.items();
 			var loadoutGroups = _.groupBy(loadoutItems, 'bucketType');
 			//Remap loadoutItems to an array of what the transfer plan is going to be
-			var masterSwapArray = _.reduce(loadoutItems, function(memo, item){
+			var masterTransferPlan = _.reduce(loadoutItems, function(memo, item){
 				var transferPlan = {};
 				/* step 1: determine the bucket and section it will be moved to */
 				var bucketType = item.bucketType, section = item.actualBucketType;
@@ -174,7 +196,7 @@
 				return memo;
 			}, []);
 			
-			return masterSwapArray;
+			return masterTransferPlan;
 		},
 		transfer: function(targetCharacterId, callback) {
 			var self = this;
