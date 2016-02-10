@@ -28,6 +28,8 @@
 	<gap:plugin name="org.apache.cordova.globalization" />
 	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
 	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
+	<gap:plugin name="cordova-plugin-crosswalk-webview" source="npm" />
+	<gap:plugin name="cordova-plugin-splashscreen" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" />
 	<gap:plugin name="org.apache.cordova.file-transfer" />
