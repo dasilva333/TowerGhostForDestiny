@@ -22,15 +22,6 @@
     <preference name="show-splash-screen-spinner" value="true" />
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
-	<gap:plugin name="org.apache.cordova.globalization" />
-	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
-	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
-	<gap:plugin name="cordova-plugin-splashscreen" source="npm" />
-    <gap:plugin name="org.apache.cordova.statusbar" />
-    <gap:plugin name="org.apache.cordova.device" />
-	<gap:plugin name="org.apache.cordova.file-transfer" />
-	<gap:plugin name="org.apache.cordova.file" />
-
 
     <icon src="icon.png" />
 
