@@ -117,7 +117,38 @@
 			--end of sequence--
 			call the callback function
 			*/
+			var vaultSlotsToFree = 0;
+			var clearVaultSpace = function(){};
+			var targetToVault = function(){};
+			var swapToVault = function(){};
+			var targetToDestination = function(){};
+			var swapToDestination = function(){};
+			var returnVaultSpace = function(){
+				callback(transferPlan);
+			};
+			var transferNextItem = function(){
+				targetToVault(function(){
+					swapToVault(function(){
+						targetToDestination(function(){
+							swapToDestination(function(){
+								if ( 1==1 ){
+									transferNextItem();
+								} else {
+									returnVaultSpace();
+								}
+							})
+						})
+					})
+				})
+			}
 			
+			_.each(transferPlan, function(plan){
+				//TODO determine how to properly set vaultSlotsToFree to the right value
+			});
+			
+			clearVaultSpace(function(){
+				transferNextItem();
+			});
 		},
 		createTransferPlan: function(targetCharacterId){
 			var self = this;
