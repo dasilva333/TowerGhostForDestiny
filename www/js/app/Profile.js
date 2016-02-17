@@ -66,7 +66,7 @@ Profile.prototype = {
             self._reloadBucket(self, undefined, _.noop, true);
         }
     },
-    transferFarmItemsToVault: function() {
+    transferFarmItemsFromVault: function() {
         var vault = _.findWhere(app.characters(), {
             id: "Vault"
         });
@@ -866,7 +866,10 @@ Profile.prototype = {
                     }).concat(tgd.DestinyWeaponPieces);
                 $("body").css("cursor", "progress");
                 setTimeout(function() {
-                    character.findBestArmorSetV2(items, function(bestSets) {
+                    var activeItems = _.filter(items, function(item) {
+                        return item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id);
+                    });
+                    character.findBestArmorSetV2(activeItems, function(bestSets) {
                         var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                             armorBuilds = {};
                         _.each(bestSets, function(combo) {
@@ -954,7 +957,7 @@ Profile.prototype = {
                                         return memo;
                                     }, armorBuilds);
                                     armorTemplateDialog.content(renderTemplate(newArmorBuilds));
-                                    setTimeout(assignBindingHandlers, 500);
+                                    setTimeout(assignBindingHandlers, 10);
                                 });
                             });
                             $(".prevCombo").bind("click", function() {

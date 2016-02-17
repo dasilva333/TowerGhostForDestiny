@@ -589,7 +589,7 @@ var app = function() {
             } else if (type === 3) {
                 sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
             } else if (type === 4) {
-                sReportURL = "http://guardian.gg/profile/" + info.type + "/" + info.id;
+                sReportURL = "http://guardian.gg/en/profile/" + info.type + "/" + info.id;
             }
             window.open(sReportURL, tgd.openTabAs);
             return false;

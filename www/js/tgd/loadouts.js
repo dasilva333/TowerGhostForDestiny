@@ -205,9 +205,6 @@
 	    },
 	    swapItems: function(swapArray, targetCharacterId, callback) {
 	        var self = this;
-	        var onlyEquipped = function(item) {
-	            return item.doEquip() === true;
-	        };
 	        tgd.autoTransferStacks = true;
 	        var itemIndex = -1,
 	            increments = parseInt(Math.round(95 / (1.0 * swapArray.length))),
@@ -305,8 +302,10 @@
 	                if (targetItem) {
 	                    var action = (_.where(self.ids(), {
 	                        id: targetItem._id
-	                    }).filter(onlyEquipped).length === 0) ? "store" : "equip";
-	                    tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId);
+	                    }).filter(function(item) {
+	                        return item.doEquip() === true;
+	                    }).length === 0) ? "store" : "equip";
+	                    tgd.localLog(targetItem.description + " transferTargetItemToDestination " + targetCharacterId + " action: " + action);
 	                    if (targetCharacterId == "Vault" && targetItem.character.id == "Vault") {
 	                        tgd.localLog("transferTargetItemToDestination: item needs to be in Vault and is already in Vault");
 	                        complete();
@@ -768,7 +767,7 @@
 	        });
 	        return html;
 	    },
-	    promptUserConfirm: function(masterSwapArray, targetCharacterId) {
+	    promptUserConfirm: function(masterSwapArray, targetCharacterId, callback) {
 	        if (masterSwapArray.length > 0) {
 	            var self = this;
 	            self.indexes = {};
@@ -788,6 +787,12 @@
 	                    }, 1000);
 	                    app.dynamicMode(false);
 	                    dialog.close();
+	                    if (callback) {
+	                        var targetCharacter = _.findWhere(app.characters(), {
+	                            id: targetCharacterId
+	                        });
+	                        callback(targetCharacter);
+	                    }
 	                });
 	            };
 	            self.loadoutsDialog = (new tgd.dialog({
