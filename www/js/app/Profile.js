@@ -70,7 +70,7 @@ Profile.prototype = {
         var vault = _.findWhere(app.characters(), {
             id: "Vault"
         });
-        app.farmTarget(this.id);
+		app.farmTarget(this.id);
         app.transferFarmItems(this.id, vault.items());
     },
     updateCharacter: function(profile) {
@@ -733,7 +733,8 @@ Profile.prototype = {
         });
 
         _.each(backups, function(spare) {
-            var maxCandidate = primaryStats[spare.bucketType];
+			//if the user has no exotics the sets array is empty and primaryStats is an empty object therefore maxCandidate should be 0 and not undefined
+            var maxCandidate = primaryStats[spare.bucketType] || 0;
             if (maxCandidate < spare.getValue(type)) {
                 //console.log("adding backup " + spare.description);
                 sets.push([spare]);
