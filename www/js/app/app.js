@@ -33,6 +33,7 @@ var app = function() {
     this.dragAndDrop = ko.pureComputed(new tgd.StoreObj("dragAndDrop", "true"));
     this.farmViewEnabled = ko.pureComputed(new tgd.StoreObj("farmViewEnabled", "true"));
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
+    this.farmTarget = ko.pureComputed(new tgd.StoreObj("farmTarget"));
     this.farmItems = ko.observableArray(); //data-bind: checked requires an observeableArray
     this.farmItemCounts = ko.observable({});
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
@@ -1873,19 +1874,39 @@ var app = function() {
     };
 
     this.transferFarmItems = function(targetCharacterId, items) {
+		console.log("targetCharacterId", targetCharacterId);
         var itemsToTransfer = [],
             farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
             var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
-            if (targetCharacterId == "Vault")
+            if (targetCharacterId == "Vault"){
                 farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
+			}
+			else {
+				var spaceAvailable = _.countBy(_.findWhere( self.characters(), { id: targetCharacterId }).items(),'bucketType');
+				itemsToTransfer = _.filter(itemsToTransfer, function(item){
+					var slotsAvailable = spaceAvailable[item.bucketType];
+					var maxSpaceAvailable = (tgd.DestinyNonUniqueBuckets.indexOf(item.bucketType) > -1) ? 20 : 10;
+					if ( slotsAvailable < maxSpaceAvailable ){
+						console.log(item.bucketType, slotsAvailable, maxSpaceAvailable);
+						spaceAvailable[item.bucketType]++;
+						return true;
+					}
+					else {
+						return false;
+					}
+				});
+			}
         });
         self.farmItemCounts(farmItemCounts);
         if (itemsToTransfer.length === 0) {
             return;
         }
+		console.log(_.pluck(itemsToTransfer,'description'));
+		console.log(_.pluck(itemsToTransfer,'bucketType'));
+		return;
         var adhoc = new tgd.Loadout();
         tgd.autoTransferStacks = true;
         _.each(itemsToTransfer, function(item) {
@@ -1912,7 +1933,7 @@ var app = function() {
     };
 
     this.farmItemHandler = function(items) {
-        self.transferFarmItems("Vault", items);
+        self.transferFarmItems(self.farmTarget(), items);
     };
 
     this.vaultItemHandler = function(items) {
@@ -1920,7 +1941,7 @@ var app = function() {
         /* detect the quantity amounts, if full then disable farmMode */
         _.each(tgd.DestinyLayout, function(layout) {
             var group = sortedItems[layout.array];
-            if (group && group.length == layout.counts[0] && self.farmMode() === true) {
+            if (group && group.length == layout.counts[0] && self.farmMode() === true && self.farmTarget() == "Vault") {
                 self.farmMode(false);
                 var warning_msg = layout.name + " is full, disabling Farm Mode.";
                 tgd.localLog(warning_msg);
@@ -1954,7 +1975,7 @@ var app = function() {
                 $("#timeRemainingForRefresh").html(timeRemaining);
             }, 1000);
             _.each(self.characters(), function(character) {
-                if (character.id == "Vault") {
+                if (character.id == "Vault" && self.farmTarget() == "Vault") {
                     subscriptions.push(character.items.subscribe(self.vaultItemHandler));
                 } else {
                     subscriptions.push(character.items.subscribe(self.farmItemHandler));

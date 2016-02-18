@@ -70,6 +70,7 @@ Profile.prototype = {
         var vault = _.findWhere(app.characters(), {
             id: "Vault"
         });
+        app.farmTarget(this.id);
         app.transferFarmItems(this.id, vault.items());
     },
     updateCharacter: function(profile) {
