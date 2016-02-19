@@ -10,7 +10,7 @@
 	    this.doEquip = ko.observable(_doEquip);
 	};
 
-	tgd.Loadout = function(model) {
+	tgd.Loadout = function(model, isItems) {
 	    var self = this;
 
 	    _.each(model, function(value, key) {
@@ -93,8 +93,26 @@
 	        return true;
 	    };
 
-	    /* loader/migrate code */
-	    if (model && model.ids && model.ids.length > 0) {
+	    /* inits a Loadouts object with an Items array */
+	    if ( isItems ){
+			_.each(model, function(item) {
+				if (item._id > 0) {
+					self.addUniqueItem({
+						id: item._id,
+						bucketType: item.bucketType,
+						doEquip: false
+					});
+				} else {
+					self.addGenericItem({
+						hash: item.id,
+						bucketType: item.bucketType,
+						characterId: item.characterId()
+					});
+				}
+			});
+		}
+		/* loader/migrate code */
+		else if (model && model.ids && model.ids.length > 0) {
 	        var firstItem = model.ids[0];
 	        if (firstItem && _.isString(firstItem)) {
 	            //tgd.localLog("this model needs a migration " + JSON.stringify(model));
