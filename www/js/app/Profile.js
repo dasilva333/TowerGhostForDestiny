@@ -69,13 +69,6 @@ Profile.prototype = {
     setFarmTarget: function() {
         app.farmTarget(this.id);
     },
-    transferFarmItemsFromVault: function() {
-        var vault = _.findWhere(app.characters(), {
-            id: "Vault"
-        });
-        app.farmTarget(this.id);
-        app.transferFarmItems(this.id, vault.items());
-    },
     updateCharacter: function(profile) {
         var self = this;
         if (profile && profile.processed) {

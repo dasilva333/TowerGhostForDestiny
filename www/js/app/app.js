@@ -244,7 +244,7 @@ var app = function() {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);
             /* Sub title for materials and consumables */
-            if (tgd.DestinyGeneralItems["GlimmerConsumables"].indexOf(activeItem.id) > -1) {
+            if (tgd.DestinyGeneralItems["Glimmer Credit"].indexOf(activeItem.id) > -1) {
                 $content.find("div.destt-info span").after(" valued at " + (activeItem.primaryStat() * 200) + "G");
             }
             /* Add Required Level if provided */
@@ -1874,7 +1874,7 @@ var app = function() {
     };
 
     this.transferFarmItems = function(targetCharacterId, items) {
-        console.log("targetCharacterId", targetCharacterId);
+        //console.log("targetCharacterId", targetCharacterId);
         var itemsToTransfer = [],
             farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
@@ -1904,8 +1904,8 @@ var app = function() {
         if (itemsToTransfer.length === 0) {
             return;
         }
-        console.log(_.pluck(itemsToTransfer, 'description'));
-        console.log(_.pluck(itemsToTransfer, 'bucketType'));
+        //console.log(_.pluck(itemsToTransfer, 'description'));
+        //console.log(_.pluck(itemsToTransfer, 'bucketType'));
         var adhoc = new tgd.Loadout();
         tgd.autoTransferStacks = true;
         _.each(itemsToTransfer, function(item) {

@@ -10,21 +10,21 @@ tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
 tgd.DestinyUnwantedNodes = ["Infuse", "Upgrade Damage", "Upgrade Defense", "Arc Damage", "Void Damage", "Solar Damage", "Kinetic Damage", "Ascend", "Reforge Ready", "Twist Fate", "Scabbard", "Increase Intellect", "Increase Strength", "Increase Discipline"];
 tgd.DestinyGeneralItems = {
-    "GlimmerConsumables": [3632619276, 269776572, 2904517731, 1932910919], //Network Keys, Axiomatic Beads, House Banners, Silken Codex
+    "Glimmer Credit": [3632619276, 269776572, 2904517731, 1932910919], //Network Keys, Axiomatic Beads, House Banners, Silken Codex
+    "Glimmer Buffs": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
     "Synths": [211861343, 928169143, 2180254632],
     "Parts": [1898539128],
     "Motes": [937555249],
     "Coins": [417308266, 1738186005, 605475555], //Passage Coins, Strange Coins, 3 of Coins
     "Runes": [1565194903, 2620224196, 1556533319, 1314217221, 2906158273], //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
-    "Planetary Resources": [2254123540, 2882093969, 3164836592, 3242866270, 1797491610], //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments
-    "Glimmer Consumables": [3446457162, 1043138475, 1772853454, 3783295803], //Resupply Codes, Black Wax Idol, Blue Polyphage, Ether Seeds
+    "Planetary Resources": [2254123540, 2882093969, 3164836592, 3242866270, 1797491610], //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments    
     "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
 };
 tgd.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
 tgd.invisibleItemsHelper = [2910404660, 2537120989];
 //This is a list of items not indexed by DestinyDB
 tgd.itemsNotIndexed = [];
-tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Consumables", "Telemetries", "Engram"];
+tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Buffs", "Glimmer Credit", "Telemetries", "Engrams"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
@@ -277,7 +277,7 @@ tgd.farmItemFilters = {
         return item.description.indexOf("Engram") > -1 && item.bucketType != "Lost Items" && item.isEquipment === false;
     },
     "Glimmer": function(item) {
-        return tgd.DestinyGeneralItems.GlimmerConsumables.indexOf(item.id) > -1;
+        return tgd.DestinyGeneralItems["Glimmer Credit"].indexOf(item.id) > -1;
     },
     "Rare": function(item) {
         return item.tierType == 4 && item.locked() === false && (item.armorIndex > -1 || item.weaponIndex > -1) && item.transferStatus < 2;
