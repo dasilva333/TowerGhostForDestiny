@@ -866,7 +866,10 @@ Profile.prototype = {
                     }).concat(tgd.DestinyWeaponPieces);
                 $("body").css("cursor", "progress");
                 setTimeout(function() {
-                    character.findBestArmorSetV2(items, function(bestSets) {
+                    var currentItems = _.filter(items, function(item) {
+                        return item.characterId() == character.id;
+                    });
+                    character.findBestArmorSetV2(currentItems, function(bestSets) {
                         var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                             armorBuilds = {};
                         _.each(bestSets, function(combo) {

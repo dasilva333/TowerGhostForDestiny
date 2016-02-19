@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3840" version="3.8.4" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3850" version="3.8.5" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
 		This app allows you to transfer items between profiles, with various filters.
@@ -9,7 +9,7 @@
     </author>
 
     <content src="index.html" />
-	<preference name="phonegap-version" value="3.7.0" /> 
+	<preference name="phonegap-version" value="cli-6.0.0" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
@@ -22,12 +22,14 @@
     <preference name="show-splash-screen-spinner" value="true" />
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
-    <gap:plugin name="org.apache.cordova.globalization" />
+	<gap:plugin name="org.apache.cordova.globalization" />
+	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
 	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
+	<gap:plugin name="cordova-plugin-splashscreen" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
-    <gap:plugin name="org.apache.cordova.device" version="0.2.3" />
-	<gap:plugin name="org.apache.cordova.file-transfer" version="0.4.6" />
-	<gap:plugin name="org.apache.cordova.file" version="1.3.1" />
+    <gap:plugin name="org.apache.cordova.device" />
+	<gap:plugin name="org.apache.cordova.file-transfer" />
+	<gap:plugin name="org.apache.cordova.file" />
 
     <icon src="icon.png" />
 
