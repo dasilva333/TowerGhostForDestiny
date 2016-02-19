@@ -869,7 +869,8 @@ Profile.prototype = {
                     });
                     character.findBestArmorSetV2(activeItems, function(bestSets) {
                         var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
-                            armorBuilds = {};
+                            armorBuilds = {},
+                            arrArmorBuilds = [];
                         _.each(bestSets, function(combo) {
                             if (combo.score >= highestTier) {
                                 var statTiers = "",
@@ -918,11 +919,17 @@ Profile.prototype = {
                                     memo.push(combo);
                                 return memo;
                             }, []);
-                            armorBuilds[key] = _.sortBy(newTiers, function(combo) {
+                            arrArmorBuilds.push(_.sortBy(newTiers, function(combo) {
                                 return [combo.similarityScore, combo.score];
-                            }).reverse();
+                            }).reverse());
                         });
-
+						//reset armorBuilds so it doesn't take up memory after it's been transformed into an array
+						armorBuilds = {};
+						
+                        arrArmorBuilds = _.sortBy(arrArmorBuilds, function(builds) {
+							return _.max(_.pluck(builds, 'similarityScore')) * -1;
+                        });
+						
                         var renderTemplate = function(builds) {
                             var _template = $(tgd.armorTemplates({
                                 builds: builds
@@ -945,15 +952,15 @@ Profile.prototype = {
                                     $ZamTooltips.lastElement = element;
                                     $ZamTooltips.show("destinydb", "items", itemId, element);
                                 }).on("press", function(ev) {
-                                    var newArmorBuilds = _.reduce(armorBuilds, function(memo, sets, key) {
-                                        memo[key] = _.filter(sets, function(combos) {
+                                    var newArmorBuilds = _.map(_.filter(arrArmorBuilds, function(sets) {
+                                        return _.filter(sets, function(combos) {
+                                            return _.pluck(combos.set, '_id').indexOf(instanceId) > -1;
+                                        }).length > 0;
+                                    }), function(sets) {
+                                        return _.filter(sets, function(combos) {
                                             return _.pluck(combos.set, '_id').indexOf(instanceId) > -1;
                                         });
-                                        if (memo[key].length == 0) {
-                                            delete memo[key];
-                                        }
-                                        return memo;
-                                    }, armorBuilds);
+                                    });
                                     armorTemplateDialog.content(renderTemplate(newArmorBuilds));
                                     setTimeout(assignBindingHandlers, 10);
                                 });
@@ -974,7 +981,7 @@ Profile.prototype = {
                             });
                         }
 
-                        var $template = renderTemplate(armorBuilds);
+                        var $template = renderTemplate(arrArmorBuilds);
 
                         var armorTemplateDialog = (new tgd.dialog({
                             buttons: [{
@@ -986,7 +993,9 @@ Profile.prototype = {
                                         var selectedBuild = $("input.armorBuild:checked").val();
                                         var selectedStatTier = selectedBuild.split("_")[0];
                                         var selectedIndex = selectedBuild.split("_")[1];
-                                        highestCombo = armorBuilds[selectedStatTier][selectedIndex];
+                                        highestCombo = _.findWhere(arrArmorBuilds, {
+                                            statTiers: selectedStatTier
+                                        })[selectedIndex];
                                         character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                                         dialog.close();
                                     }
@@ -997,7 +1006,7 @@ Profile.prototype = {
                                     dialog.close();
                                 }
                             }]
-                        })).title("Armor Build" + (armorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
+                        })).title("Armor Build" + (arrArmorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
                             assignBindingHandlers();
                         });
                         $("body").css("cursor", "default");
