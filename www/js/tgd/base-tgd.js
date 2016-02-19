@@ -269,7 +269,8 @@ tgd.defaults = {
     sectionsTemplate: "image-grid-template",
     farmMode: false,
     farmViewEnabled: false,
-    farmItems: ["Engrams", "Glimmer", "Rare", "Uncommon"]
+    farmItems: ["Engrams", "Glimmer", "Rare", "Uncommon"],
+    farmTarget: "Vault"
 };
 tgd.farmItemFilters = {
     "Engrams": function(item) {

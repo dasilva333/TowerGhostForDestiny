@@ -66,10 +66,14 @@ Profile.prototype = {
             self._reloadBucket(self, undefined, _.noop, true);
         }
     },
-    transferFarmItemsToVault: function() {
+    setFarmTarget: function() {
+        app.farmTarget(this.id);
+    },
+    transferFarmItemsFromVault: function() {
         var vault = _.findWhere(app.characters(), {
             id: "Vault"
         });
+        app.farmTarget(this.id);
         app.transferFarmItems(this.id, vault.items());
     },
     updateCharacter: function(profile) {
@@ -732,7 +736,8 @@ Profile.prototype = {
         });
 
         _.each(backups, function(spare) {
-            var maxCandidate = primaryStats[spare.bucketType];
+            //if the user has no exotics the sets array is empty and primaryStats is an empty object therefore maxCandidate should be 0 and not undefined
+            var maxCandidate = primaryStats[spare.bucketType] || 0;
             if (maxCandidate < spare.getValue(type)) {
                 //console.log("adding backup " + spare.description);
                 sets.push([spare]);
@@ -866,10 +871,10 @@ Profile.prototype = {
                     }).concat(tgd.DestinyWeaponPieces);
                 $("body").css("cursor", "progress");
                 setTimeout(function() {
-                    var currentItems = _.filter(items, function(item) {
-                        return item.characterId() == character.id;
+                    var activeItems = _.filter(items, function(item) {
+                        return item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id);
                     });
-                    character.findBestArmorSetV2(currentItems, function(bestSets) {
+                    character.findBestArmorSetV2(activeItems, function(bestSets) {
                         var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                             armorBuilds = {};
                         _.each(bestSets, function(combo) {
@@ -957,7 +962,7 @@ Profile.prototype = {
                                         return memo;
                                     }, armorBuilds);
                                     armorTemplateDialog.content(renderTemplate(newArmorBuilds));
-                                    setTimeout(assignBindingHandlers, 500);
+                                    setTimeout(assignBindingHandlers, 10);
                                 });
                             });
                             $(".prevCombo").bind("click", function() {

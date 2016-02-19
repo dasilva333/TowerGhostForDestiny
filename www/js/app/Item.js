@@ -1251,7 +1251,7 @@ Item.prototype = {
             });
             var result = adhoc.transfer(targetCharacterId, true)[0];
             if (result && result.swapItem) {
-                adhoc.promptUserConfirm([result], targetCharacterId);
+                adhoc.promptUserConfirm([result], targetCharacterId, callback);
             } else {
                 done();
             }

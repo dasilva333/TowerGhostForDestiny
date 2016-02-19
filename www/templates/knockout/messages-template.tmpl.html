@@ -32,9 +32,9 @@
 							</div>
 						<!--/ko  -->
 					</div>
-					<div class="col-xs-5" data-bind="visible: farmMode() == false">
+					<div class="col-xs-5">
 						<div data-bind="foreach: { data: orderedCharacters, as: 'avatar' }">
-			                <div class="mobile-characters" data-bind="if: avatar.id != 'Vault', click: transferFarmItemsToVault.bind(avatar)">
+			                <div class="mobile-characters" data-bind="visible: avatar.id == $root.farmTarget() && $root.farmMode() == true || $root.farmMode() == false, style: { border: $root.farmTarget() == avatar.id ? '1px solid green' : '' }, click: setFarmTarget.bind(avatar)">
 			                    <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id" src="about:blank">
 								<div class="mobile-characters-letter" data-bind="text: classLetter"></div>
 			                </div>
