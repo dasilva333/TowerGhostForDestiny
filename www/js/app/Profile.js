@@ -923,13 +923,13 @@ Profile.prototype = {
                                 return [combo.similarityScore, combo.score];
                             }).reverse());
                         });
-						//reset armorBuilds so it doesn't take up memory after it's been transformed into an array
-						armorBuilds = {};
-						
+                        //reset armorBuilds so it doesn't take up memory after it's been transformed into an array
+                        armorBuilds = {};
+
                         arrArmorBuilds = _.sortBy(arrArmorBuilds, function(builds) {
-							return _.max(_.pluck(builds, 'similarityScore')) * -1;
+                            return _.max(_.pluck(builds, 'similarityScore')) * -1;
                         });
-						
+
                         var renderTemplate = function(builds) {
                             var _template = $(tgd.armorTemplates({
                                 builds: builds
@@ -993,9 +993,9 @@ Profile.prototype = {
                                         var selectedBuild = $("input.armorBuild:checked").val();
                                         var selectedStatTier = selectedBuild.split("_")[0];
                                         var selectedIndex = selectedBuild.split("_")[1];
-                                        highestCombo = _.findWhere(arrArmorBuilds, {
-                                            statTiers: selectedStatTier
-                                        })[selectedIndex];
+                                        highestCombo = _.filter(arrArmorBuilds, function(sets) {
+                                            return sets[0].statTiers == selectedStatTier
+                                        })[0][selectedIndex];
                                         character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                                         dialog.close();
                                     }

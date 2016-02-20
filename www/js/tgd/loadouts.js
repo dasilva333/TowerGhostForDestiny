@@ -94,25 +94,25 @@
 	    };
 
 	    /* inits a Loadouts object with an Items array */
-	    if ( isItems ){
-			_.each(model, function(item) {
-				if (item._id > 0) {
-					self.addUniqueItem({
-						id: item._id,
-						bucketType: item.bucketType,
-						doEquip: false
-					});
-				} else {
-					self.addGenericItem({
-						hash: item.id,
-						bucketType: item.bucketType,
-						characterId: item.characterId()
-					});
-				}
-			});
-		}
-		/* loader/migrate code */
-		else if (model && model.ids && model.ids.length > 0) {
+	    if (isItems) {
+	        _.each(model, function(item) {
+	            if (item._id > 0) {
+	                self.addUniqueItem({
+	                    id: item._id,
+	                    bucketType: item.bucketType,
+	                    doEquip: false
+	                });
+	            } else {
+	                self.addGenericItem({
+	                    hash: item.id,
+	                    bucketType: item.bucketType,
+	                    characterId: item.characterId()
+	                });
+	            }
+	        });
+	    }
+	    /* loader/migrate code */
+	    else if (model && model.ids && model.ids.length > 0) {
 	        var firstItem = model.ids[0];
 	        if (firstItem && _.isString(firstItem)) {
 	            //tgd.localLog("this model needs a migration " + JSON.stringify(model));

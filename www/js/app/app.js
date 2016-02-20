@@ -1875,7 +1875,7 @@ var app = function() {
 
     this.transferFarmItems = function(targetCharacterId, items) {
         //console.log("targetCharacterId", targetCharacterId);
-		if ( tgd.transferringFarmItems ) return;
+        if (tgd.transferringFarmItems) return;
         var itemsToTransfer = [],
             farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
@@ -1905,21 +1905,14 @@ var app = function() {
         if (itemsToTransfer.length === 0) {
             return;
         }
-        console.log(_.pluck(itemsToTransfer, 'description'));
-        console.log(_.pluck(itemsToTransfer, 'bucketType'));
-		console.log(itemsToTransfer);
         var adhoc = new tgd.Loadout(itemsToTransfer, true);
         tgd.autoTransferStacks = true;
-		tgd.transferringFarmItems = true;
-		console.log(adhoc);
-		console.log("handler to: " + targetCharacterId);
+        tgd.transferringFarmItems = true;
         var msa = adhoc.transfer(targetCharacterId, true);
-		console.log(msa);
-		//return;
         if (msa.length > 0) {
             adhoc.swapItems(msa, targetCharacterId, function() {
                 tgd.autoTransferStacks = false;
-				tgd.transferringFarmItems = false;
+                tgd.transferringFarmItems = false;
             });
         }
     };

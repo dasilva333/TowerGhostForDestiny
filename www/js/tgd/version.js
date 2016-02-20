@@ -1,1 +1,1 @@
-tgd.version = "3.8.5.1";
+tgd.version = "3.8.5.2";
