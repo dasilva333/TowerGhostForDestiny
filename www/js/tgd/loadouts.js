@@ -159,6 +159,10 @@
 	        delete copy.items;
 	        return copy;
 	    },
+	    compareLoadout: function() {
+	        var ids = _.pluck(this.items(), 'id').join(",");
+	        window.open("http://db.destinytracker.com/compare/" + ids, tgd.openTabAs);
+	    },
 	    setActive: function() {
 	        app.loadoutMode(true);
 	        app.dynamicMode(false);
