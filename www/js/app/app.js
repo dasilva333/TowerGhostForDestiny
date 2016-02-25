@@ -320,18 +320,48 @@ var app = function() {
                 if (self.advancedTooltips() === true && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last");
                     if (activeItem.weaponIndex > -1) {
-                        var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction"];
+                        var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction", "Inventory Size"];
                         _.each(desireableStats, function(statName) {
                             var statObj = _.findWhere(itemStats, {
                                 name: statName
                             });
                             if (statObj) {
-                                var clonedRow = magazineRow.clone();
-                                clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
-                                if (statObj.minimum > 0 && statObj.maximum > 0) {
-                                    clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                                }
-                                magazineRow.before(clonedRow);
+								var clonedRow = magazineRow.clone();
+								if ( statName == "Inventory Size" && activeItem.typeName == "Rocket Launcher" ){
+									var rocketsAvailable = 2, maxRocketsAvailable = 2;
+									var inventorySize = statObj.value;
+									//TODO determine if this number changes with Tripod
+									var magazineSize = activeItem.stats.Magazine;
+									/* Look for Field Scout Perk on activeItem */
+									if ( _.pluck(activeItem.perks,'name').indexOf('Field Scout') > -1 ){
+										inventorySize = inventorySize + 50;
+									}
+									/* Look for Heavy/RL perks on Boots/Chest */
+									/* RL Ammo Boots Adds 10 or 40 */
+									/* RL Ammo Chest Adds 60 or 100 */
+									/* RL Mags Chest Adds 60 */
+									
+									/* thanks to Hercules for coming up with these numbers */
+									if ( inventorySize >= 80 && inventorySize <= 110 ){
+										maxRocketsAvailable = 3;
+										rocketsAvailable = magazineSize + 1;
+									}
+									else if ( inventorySize >= 120 ){
+										maxRocketsAvailable = 4;
+										rocketsAvailable = magazineSize + 2;
+									}
+									rocketsAvailable = Math.min(rocketsAvailable, maxRocketsAvailable);
+									clonedRow.find(".stat-bar-label").html("Rockets (" + inventorySize + "):" + rocketsAvailable);
+									clonedRow.find(".stat-bar-static-value").html("");
+									magazineRow.before(clonedRow);
+								}
+								else if ( statName !== "Inventory Size" ){
+									clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+									if (statObj.minimum > 0 && statObj.maximum > 0) {
+										clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+									}
+									magazineRow.before(clonedRow);
+								}
                             }
                         });
                     } else if (activeItem.armorIndex > -1) {
