@@ -246,7 +246,8 @@ Item.prototype = {
                                 description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
                                 active: perk.isActive,
                                 isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex),
-                                isInherent: isInherent
+                                isInherent: isInherent,
+                                hash: p.perkHash
                             });
                         }
                     });
@@ -269,7 +270,8 @@ Item.prototype = {
                                         name: perk.nodeStepName,
                                         description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
                                         iconPath: tgd.dataDir + perk.icon,
-                                        isExclusive: -1
+                                        isExclusive: -1,
+                                        hash: perk.icon.match(/icons\/(.*)\.png/)[1]
                                     };
                                 }
                             }
