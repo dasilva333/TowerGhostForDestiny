@@ -27,12 +27,6 @@ tgd.itemsNotIndexed = [];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Buffs", "Glimmer Credit", "Telemetries", "Engrams"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
-/*
-Heavy Weapon Mags - 2426858846
-Rocket Launcher Ammo - 3129120313
-Rocket Launcher Mags - 652662008
-Field Scout - 35980ac9df6187d7dee9082b69fb394f //not a solid key
-*/
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
 tgd.DestinyNonUniqueBuckets = ["Consumables", "Materials"];

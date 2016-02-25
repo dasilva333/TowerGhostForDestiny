@@ -327,7 +327,10 @@ var app = function() {
                             });
                             if (statObj) {
 								var clonedRow = magazineRow.clone();
+								/* thanks to Mercules904 for coming up with these numbers */
 								if ( statName == "Inventory Size" && activeItem.typeName == "Rocket Launcher" ){
+									var chest = activeItem.character.itemEquipped("Chest");
+									var boots = activeItem.character.itemEquipped("Boots");
 									var rocketsAvailable = 2, maxRocketsAvailable = 2;
 									var inventorySize = statObj.value;
 									//Magazine size returned is native even if Tripod is active and selected
@@ -339,11 +342,27 @@ var app = function() {
 									if ( _.pluck(activeItem.perks,'name').indexOf('Field Scout') > -1 ){
 										inventorySize = inventorySize + 50;
 									}
-									/* Look for Heavy/RL perks on Boots/Chest */
-									/* RL Ammo Boots Adds 10 or 40 */
-									/* RL Ammo Chest Adds 60 or 100 */
-									/* RL Mags Chest Adds 60 */
-									/* thanks to Mercules904 for coming up with these numbers */
+									/* Look for Heavy/RL perks on Boots/Chest if hovering over a character */
+									if ( chest && chest.perks ){
+										/* Official Perk Names & Hashes
+											Rocket Launcher Ammo - 3129120313
+											Heavy Weapon Mags - 2426858846
+											Rocket Launcher Mags - 652662008
+											Field Scout - 35980ac9df6187d7dee9082b69fb394f //not a solid key
+										*/
+										/* RL Ammo Perk Exclusive to Boots Adds 40 */
+										if ( _.pluck(boots.perks,'hash').indexOf(3129120313) > -1 ){
+											inventorySize = inventorySize + 40;
+										}
+										/* Heavy Weapon Mags Chest(?) Adds 100 */
+										if ( _.pluck(chest.perks,'hash').indexOf(652662008) > -1 ){
+											inventorySize = inventorySize + 100;
+										}
+										/* Heavy Ammo Mags Chest or Boots Adds 60 */
+										if ( _.pluck(chest.perks,'hash').indexOf(2426858846) > -1 ){
+											inventorySize = inventorySize + 60;
+										}
+									}									
 									if ( inventorySize >= 60 && inventorySize <= 70 ){
 										rocketsAvailable = maxRocketsAvailable = Math.max(magazineSize,2);
 									}
