@@ -330,8 +330,11 @@ var app = function() {
 								if ( statName == "Inventory Size" && activeItem.typeName == "Rocket Launcher" ){
 									var rocketsAvailable = 2, maxRocketsAvailable = 2;
 									var inventorySize = statObj.value;
-									//TODO determine if this number changes with Tripod
+									//Magazine size returned is native even if Tripod is active and selected
 									var magazineSize = activeItem.stats.Magazine;
+									if ( _.pluck(activeItem.perks,'name').indexOf("Tripod") > -1 ){
+										magazineSize = 3;
+									}
 									/* Look for Field Scout Perk on activeItem */
 									if ( _.pluck(activeItem.perks,'name').indexOf('Field Scout') > -1 ){
 										inventorySize = inventorySize + 50;
@@ -340,9 +343,11 @@ var app = function() {
 									/* RL Ammo Boots Adds 10 or 40 */
 									/* RL Ammo Chest Adds 60 or 100 */
 									/* RL Mags Chest Adds 60 */
-									
-									/* thanks to Hercules for coming up with these numbers */
-									if ( inventorySize >= 80 && inventorySize <= 110 ){
+									/* thanks to Mercules904 for coming up with these numbers */
+									if ( inventorySize >= 60 && inventorySize <= 70 ){
+										rocketsAvailable = maxRocketsAvailable = Math.max(magazineSize,2);
+									}
+									else if ( inventorySize >= 80 && inventorySize <= 110 ){
 										maxRocketsAvailable = 3;
 										rocketsAvailable = magazineSize + 1;
 									}
