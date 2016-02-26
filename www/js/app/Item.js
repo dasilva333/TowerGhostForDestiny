@@ -308,6 +308,9 @@ Item.prototype = {
                         itemObject.stats[p.statName] = stat.value;
                     }
                 });
+				if ( _.pluck(itemObject.perks,'name').indexOf("Tripod") > -1 ){
+					itemObject.stats.Magazine = 3;
+				}
                 itemObject.primaryValues['Stats'] = tgd.sum(_.values(itemObject.stats));
             }
             if (item && item.objectives && item.objectives.length > 0) {

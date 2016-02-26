@@ -303,13 +303,13 @@ var app = function() {
                         if (labelText in activeItem.stats) {
                             label.text(labelText + ": " + activeItem.stats[labelText]);
                             if ($stat.find(".stat-bar-static-value").length > 0) {
-                                $stat.find(".stat-bar-static-value").text(" Min/Max: " + $stat.find(".stat-bar-static-value").text());
+                                $stat.find(".stat-bar-static-value").text(" DDB: " + $stat.find(".stat-bar-static-value").text());
                             } else {
                                 var statObj = _.findWhere(itemStats, {
                                     name: labelText
                                 });
                                 if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
-                                    $stat.find(".stat-bar-empty").text(" Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                                    $stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(" Min/Max: " + statObj.minimum + "/" + statObj.maximum).parent().html()+$stat.find(".stat-bar-empty").html());
                                 }
                             }
 
@@ -375,7 +375,7 @@ var app = function() {
 										rocketsAvailable = magazineSize + 2;
 									}
 									rocketsAvailable = Math.min(rocketsAvailable, maxRocketsAvailable);
-									clonedRow.find(".stat-bar-label").html("Rockets (" + inventorySize + "):" + rocketsAvailable);
+									clonedRow.find(".stat-bar-label").html("Rockets : " + rocketsAvailable + " (" + inventorySize + ")");
 									clonedRow.find(".stat-bar-static-value").html("");
 									magazineRow.before(clonedRow);
 								}
@@ -390,7 +390,7 @@ var app = function() {
                         });
                     } else if (activeItem.armorIndex > -1) {
                         var clonedRow = magazineRow.clone();
-                        clonedRow.find(".stat-bar-label").html("Total Points:" + activeItem.getValue("All"));
+                        clonedRow.find(".stat-bar-label").html("Total Points : " + activeItem.getValue("All"));
                         clonedRow.find(".stat-bar-static-value").html("Max : " + tgd.DestinyMaxCSP[activeItem.bucketType]);
                         magazineRow.after(clonedRow);
                     }
