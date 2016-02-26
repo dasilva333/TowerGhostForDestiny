@@ -375,11 +375,12 @@ var app = function() {
                                         rocketsAvailable = magazineSize + 2;
                                     }
                                     rocketsAvailable = Math.min(rocketsAvailable, maxRocketsAvailable);
-                                    clonedRow.find(".stat-bar-label").html("Rockets : " + rocketsAvailable + " (" + inventorySize + ")");
+                                    clonedRow.find(".stat-bar-label").html("Rockets: " + rocketsAvailable + " (" + inventorySize + ")");
                                     clonedRow.find(".stat-bar-static-value").html("");
                                     magazineRow.before(clonedRow);
                                 } else if (statName !== "Inventory Size") {
-                                    clonedRow.find(".stat-bar-label").html(statObj.name + ":" + statObj.value);
+                                    var label = (statName == "Recoil direction") ? "Recoil" : statObj.name;
+                                    clonedRow.find(".stat-bar-label").html(label + ":" + statObj.value);
                                     if (statObj.minimum > 0 && statObj.maximum > 0) {
                                         clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
                                     }
