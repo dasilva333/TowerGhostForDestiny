@@ -331,16 +331,21 @@ var app = function() {
                                 if (statName == "Inventory Size" && activeItem.typeName == "Rocket Launcher") {
                                     var chest = activeItem.character.itemEquipped("Chest");
                                     var boots = activeItem.character.itemEquipped("Boots");
-                                    var rocketsAvailable = 2,
-                                        maxRocketsAvailable = 2;
+                                    var rocketsAvailable = 2;
                                     var inventorySize = statObj.value;
                                     //Magazine size returned is native even if Tripod is active and selected
                                     var magazineSize = activeItem.stats.Magazine;
-                                    if (_.pluck(activeItem.perks, 'name').indexOf("Tripod") > -1) {
+                                    if (_.findWhere(activeItem.perks, {
+                                            name: 'Tripod',
+                                            active: true
+                                        })) {
                                         magazineSize = 3;
                                     }
                                     /* Look for Field Scout Perk on activeItem */
-                                    if (_.pluck(activeItem.perks, 'name').indexOf('Field Scout') > -1) {
+                                    if (_.findWhere(activeItem.perks, {
+                                            name: 'Field Scout',
+                                            active: true
+                                        })) {
                                         inventorySize = inventorySize + 50;
                                     }
                                     /* Look for Heavy/RL perks on Boots/Chest if hovering over a character */
@@ -352,11 +357,20 @@ var app = function() {
                                         	Field Scout - 35980ac9df6187d7dee9082b69fb394f //not a solid key
                                         */
                                         /* RL Ammo Perk Exclusive to Boots Adds 10 */
-                                        if (_.pluck(boots.perks, 'hash').indexOf(3129120313) > -1) {
+                                        if (_.findWhere(boots.perks, {
+                                                hash: 3129120313,
+                                                active: true
+                                            })) {
                                             inventorySize = inventorySize + 10;
                                         }
                                         /* Heavy Ammo Mags Chest or Boots Adds 100, does not stack */
-                                        if (_.pluck(chest.perks, 'hash').indexOf(2426858846) > -1 || _.pluck(boots.perks, 'hash').indexOf(2426858846) > -1) {
+                                        if (_.findWhere(chest.perks, {
+                                                hash: 2426858846,
+                                                active: true
+                                            }) || _.findWhere(boots.perks, {
+                                                hash: 2426858846,
+                                                active: true
+                                            })) {
                                             inventorySize = inventorySize + 100;
                                         }
 
@@ -366,15 +380,12 @@ var app = function() {
                                         }*/
                                     }
                                     if (inventorySize >= 30 && inventorySize <= 60) {
-                                        rocketsAvailable = maxRocketsAvailable = Math.max(magazineSize, 2);
+                                        rocketsAvailable = Math.max(magazineSize, 2);
                                     } else if (inventorySize >= 70 && inventorySize <= 120) {
-                                        maxRocketsAvailable = 3;
-                                        rocketsAvailable = magazineSize + 1;
+                                        rocketsAvailable = Math.max(magazineSize + 1, 3)
                                     } else if (inventorySize >= 130) {
-                                        maxRocketsAvailable = 4;
-                                        rocketsAvailable = magazineSize + 2;
+                                        rocketsAvailable = Math.max(magazineSize + 2, 4)
                                     }
-                                    rocketsAvailable = Math.min(rocketsAvailable, maxRocketsAvailable);
                                     clonedRow.find(".stat-bar-label").html("Rockets: " + inventorySize);
                                     clonedRow.find(".stat-bar-static-value").html("PVP: " + rocketsAvailable + " PVE: " + rocketsAvailable);
                                     magazineRow.before(clonedRow);
