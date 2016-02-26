@@ -308,7 +308,11 @@ Item.prototype = {
                         itemObject.stats[p.statName] = stat.value;
                     }
                 });
-                if (_.pluck(itemObject.perks, 'name').indexOf("Tripod") > -1) {
+                //Truth has a bug where it displays a Mag size of 2 when it's actually 3, all other RL don't properly reflect the mag size of 3 when Tripod is enabled
+                if (_.findWhere(itemObject.perks, {
+                        name: "Tripod",
+                        active: true
+                    }) || [1274330686, 2808364178].indexOf(itemObject.id) > -1) {
                     itemObject.stats.Magazine = 3;
                 }
                 itemObject.primaryValues['Stats'] = tgd.sum(_.values(itemObject.stats));

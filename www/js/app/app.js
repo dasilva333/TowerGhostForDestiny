@@ -365,21 +365,25 @@ var app = function() {
                                         	inventorySize = inventorySize + 100;
                                         }*/
                                     }
-                                    if (inventorySize >= 60 && inventorySize <= 70) {
+                                    if (inventorySize >= 30 && inventorySize <= 60) {
                                         rocketsAvailable = maxRocketsAvailable = Math.max(magazineSize, 2);
-                                    } else if (inventorySize >= 80 && inventorySize <= 110) {
+                                    } else if (inventorySize >= 70 && inventorySize <= 120) {
                                         maxRocketsAvailable = 3;
                                         rocketsAvailable = magazineSize + 1;
-                                    } else if (inventorySize >= 120) {
+                                    } else if (inventorySize >= 130) {
                                         maxRocketsAvailable = 4;
                                         rocketsAvailable = magazineSize + 2;
                                     }
                                     rocketsAvailable = Math.min(rocketsAvailable, maxRocketsAvailable);
-                                    clonedRow.find(".stat-bar-label").html("Rockets: " + rocketsAvailable + " (" + inventorySize + ")");
-                                    clonedRow.find(".stat-bar-static-value").html("");
+                                    clonedRow.find(".stat-bar-label").html("Rockets: " + inventorySize);
+                                    clonedRow.find(".stat-bar-static-value").html("PVP: " + rocketsAvailable + " PVE: " + rocketsAvailable);
                                     magazineRow.before(clonedRow);
                                 } else if (statName !== "Inventory Size") {
-                                    var label = (statName == "Recoil direction") ? "Recoil" : statObj.name;
+                                    var label = statObj.name;
+                                    if (statName == "Recoil direction")
+                                        label = "Recoil";
+                                    else if (statName == "Aim assistance")
+                                        label = "Aim Assist";
                                     clonedRow.find(".stat-bar-label").html(label + ":" + statObj.value);
                                     if (statObj.minimum > 0 && statObj.maximum > 0) {
                                         clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
