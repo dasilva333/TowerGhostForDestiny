@@ -387,7 +387,7 @@ var app = function() {
                                         rocketsAvailable = Math.max(magazineSize + 2, 4)
                                     }
                                     clonedRow.find(".stat-bar-label").html("Rockets: " + inventorySize);
-                                    clonedRow.find(".stat-bar-static-value").html("PVP: " + rocketsAvailable + " PVE: " + rocketsAvailable);
+                                    clonedRow.find(".stat-bar-static-value").html("PVP: " + rocketsAvailable /*+ " PVE: " + rocketsAvailable*/ );
                                     magazineRow.before(clonedRow);
                                 } else if (statName !== "Inventory Size") {
                                     var label = statObj.name;
