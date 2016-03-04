@@ -854,7 +854,7 @@ Profile.prototype = {
             var highestSetValue;
             var bestArmorSets;
             var bestWeaponSets;
-            if (type == "Best") {
+            if (type == "Best" || type == "OptimizedBest") {
                 var bestSets,
                     weaponsEquipped = _.filter(character.equippedGear(), function(item) {
                         return item.weaponIndex > -1;
@@ -863,10 +863,27 @@ Profile.prototype = {
                         return type.name.split(" ")[0];
                     }).concat(tgd.DestinyWeaponPieces);
                 $("body").css("cursor", "progress");
+                //console.time("best combo timer");
                 setTimeout(function() {
-                    var activeItems = _.filter(items, function(item) {
-                        return item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id);
-                    });
+                    var activeItems;
+                    if (type == "Best") {
+                        activeItems = _.filter(items, function(item) {
+                            return item.armorIndex > -1;
+                        });;
+                    } else if (type == "OptimizedBest") {
+                        /* Only consider Armor within your own character, and all Ghosts anywhere */
+                        activeItems = _.filter(items, function(item) {
+                            return item.armorIndex > -1 && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
+                        });
+                        /* Only consider the top 2 items sorted by CSP of the results provided */
+                        activeItems = _.reduce(_.groupBy(activeItems, 'bucketType'), function(memo, group) {
+                            var sortedItems = _.sortBy(group, function(item) {
+                                return item.getValue("All") * -1;
+                            });
+                            memo = memo.concat(_.first(sortedItems, 2));
+                            return memo;
+                        }, []);
+                    }
                     character.findBestArmorSetV2(activeItems, function(bestSets) {
                         var highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
                             armorBuilds = {},
@@ -1009,6 +1026,7 @@ Profile.prototype = {
                         })).title("Armor Build" + (arrArmorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
                             assignBindingHandlers();
                         });
+                        //console.timeEnd("best combo timer");
                         $("body").css("cursor", "default");
                     });
                 }, 300);

@@ -44,15 +44,16 @@
                                 <span data-bind="text: character.tierCSP" title="Stat Points needed to reach Theoretical Tier"></span> )
                             </div>
                             <div class="col-xs-24 text-center">
-                                <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
+                                <span data-bind="text: $root.activeText().gear_with_highest">Equip Armor With Most:</span>
                                 <br>
                                 <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default">Light</a>
                                 <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default">Int</a>
                                 <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default">Disc</a>
                                 <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default">Str</a>
                                 <hr style="margin:3px; padding:6px;">
-                                <a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm">Most Points</a> |
-                                <a data-bind="text: $root.activeText().best_combo, click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm">Best Combo</a>
+                                <a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm">Points</a> |
+                                <a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm">BC-Full</a> |
+								<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm">BC-Quick</a>
                             </div>
                         </div>
                     </div>
