@@ -899,16 +899,18 @@ Profile.prototype = {
                         _.each(bestSets, function(combo) {
                             if (combo.score >= highestTier) {
                                 var statTiers = "",
+									statValues = "",
                                     stats = tgd.joinStats(combo.set),
                                     sortedKeys = _.sortBy(_.keys(stats));
                                 combo.stats = [];
                                 _.each(sortedKeys, function(name) {
                                     statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stats[name] / tgd.DestinySkillTier);
-                                    combo.stats.push(stats[name]);
+                                    statValues = statValues + stats[name] + "/";
+									combo.stats.push(stats[name]);
                                 });
                                 combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
                                 combo.statTiers = $.trim(statTiers);
-                                combo.statValues = _.values(stats).join("/");
+                                combo.statValues = statValues.substring(0,statValues.length-1);
                                 combo.perks = _.filter(
                                     _.flatten(
                                         _.map(combo.set, function(item) {
@@ -1031,7 +1033,10 @@ Profile.prototype = {
                                     dialog.close();
                                 }
                             }]
-                        })).title("Armor Build" + (arrArmorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, _.noop, function() {
+                        })).title("Armor Build" + (arrArmorBuilds.length > 1 ? "s" : "") + " Found for Tier " + highestTier).content($template).show(true, function(){
+							armorBuilds = null;
+							arrArmorBuilds = null;
+						}, function() {
                             assignBindingHandlers();
                         });
                         //console.timeEnd("best combo timer");
