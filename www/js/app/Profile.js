@@ -31,6 +31,7 @@ function Profile(character) {
     this.equippedSP = ko.pureComputed(this._equippedSP, this);
     this.equippedTier = ko.pureComputed(this._equippedTier, this);
     this.tierCSP = ko.pureComputed(this._tierCSP, this);
+    this.potentialCSP = ko.pureComputed(this._potentialCSP, this);
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
@@ -217,6 +218,13 @@ Profile.prototype = {
     },
     _tierCSP: function() {
         return this.equippedTier().split("/")[1] * tgd.DestinySkillTier;
+    },
+    _potentialCSP: function() {
+        return tgd.sum(_.map(_.filter(this.equippedGear(), function(item) {
+            return item.armorIndex > -1;
+        }), function(item) {
+            return Math.floor(tgd.calculateStatRoll(item, tgd.DestinyLightCap, true));
+        }));
     },
     _classLetter: function() {
         return this.classType()[0].toUpperCase();

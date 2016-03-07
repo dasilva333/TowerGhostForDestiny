@@ -1,13 +1,13 @@
-tgd.calculateStatRoll = function(item, targetLight, withBonus){
-	var currentLight = item.primaryStatValue();
-	var currentBonus = tgd.bonusStatPoints(item.armorIndex, item.primaryStatValue());
-	var targetBonus = tgd.bonusStatPoints(item.armorIndex, targetLight);
-	//console.log("currentLight is " + currentLight + " bonus is " + bonus);
-	var newStats = (item.getValue("All") - currentBonus) * targetLight / currentLight;
-	//console.log("newStats", newStats);
-	var finalStat = newStats + (withBonus ? targetBonus : 0);
-	//console.log("Stat at " + targetLight + " is " + finalStat);
-	return finalStat;
+tgd.calculateStatRoll = function(item, targetLight, withBonus) {
+    var currentLight = item.primaryStatValue();
+    var currentBonus = tgd.bonusStatPoints(item.armorIndex, item.primaryStatValue());
+    var targetBonus = tgd.bonusStatPoints(item.armorIndex, targetLight);
+    //console.log("currentLight is " + currentLight + " bonus is " + bonus);
+    var newStats = (item.getValue("All") - currentBonus) * targetLight / currentLight;
+    //console.log("newStats", newStats);
+    var finalStat = newStats + (withBonus ? targetBonus : 0);
+    //console.log("Stat at " + targetLight + " is " + finalStat);
+    return finalStat;
 }
 
 tgd.bonusStatPoints = function(armorIndex, light) {

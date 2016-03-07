@@ -5,6 +5,7 @@ tgd.openTabAs = window.isMobile ? "_system" : "_blank";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
+tgd.DestinyLightCap = 320;
 tgd.DestinySkillTier = 60;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
