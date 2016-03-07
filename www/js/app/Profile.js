@@ -873,22 +873,17 @@ Profile.prototype = {
                 $("body").css("cursor", "progress");
                 //console.time("best combo timer");
                 setTimeout(function() {
-                    var activeItems;
-                    if (type == "Best") {
-                        activeItems = _.filter(items, function(item) {
-                            return item.armorIndex > -1;
-                        });;
-                    } else if (type == "OptimizedBest") {
-                        /* Only consider Armor within your own character, and all Ghosts anywhere */
-                        activeItems = _.filter(items, function(item) {
-                            return item.armorIndex > -1 && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
-                        });
+                    /* Only consider Armor within your own character, and all Ghosts anywhere */
+                    var activeItems = _.filter(items, function(item) {
+                        return item.armorIndex > -1 && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
+                    });
+                    if (type == "OptimizedBest") {
                         /* Only consider the top 2 items sorted by CSP of the results provided */
                         activeItems = _.reduce(_.groupBy(activeItems, 'bucketType'), function(memo, group) {
                             var sortedItems = _.sortBy(group, function(item) {
                                 return item.getValue("All") * -1;
                             });
-                            memo = memo.concat(_.first(sortedItems, 2));
+                            memo = memo.concat(_.first(sortedItems, 3));
                             return memo;
                         }, []);
                     }
@@ -946,9 +941,9 @@ Profile.prototype = {
                                     memo.push(combo);
                                 return memo;
                             }, []);
-                            arrArmorBuilds.push(_.sortBy(newTiers, function(combo) {
+                            arrArmorBuilds.push(_.first(_.sortBy(newTiers, function(combo) {
                                 return [combo.similarityScore, combo.score];
-                            }).reverse());
+                            }).reverse(), 200));
                         });
                         //reset armorBuilds so it doesn't take up memory after it's been transformed into an array
                         armorBuilds = {};
