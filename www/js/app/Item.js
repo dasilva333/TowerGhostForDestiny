@@ -251,18 +251,21 @@ Item.prototype = {
                             });
                         }
                     });
-                    var perkHashes = _.pluck(item.perks, 'perkHash'),
+                    var statNames = _.pluck(tgd.DestinyArmorStats, 'statName'),
+                        perkHashes = _.pluck(item.perks, 'perkHash'),
                         perkNames = _.pluck(itemObject.perks, 'name'),
                         talentPerks = {};
+                    itemObject.inactiveStats = [];
                     var talentGridNodes = talentGrid.nodes;
                     _.each(item.nodes, function(node) {
-                        if (node.isActivated && node.hidden === false) {
+                        if (node.hidden === false) {
                             var nodes = _.findWhere(talentGridNodes, {
                                 nodeHash: node.nodeHash
                             });
                             if (nodes && nodes.steps) {
                                 var perk = nodes.steps[node.stepIndex];
-                                if ((tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+                                if (node.isActivated &&
+                                    (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
                                     (perkNames.indexOf(perk.nodeStepName) == -1) &&
                                     (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
                                     talentPerks[perk.nodeStepName] = {
@@ -273,6 +276,11 @@ Item.prototype = {
                                         isExclusive: -1,
                                         hash: perk.icon.match(/icons\/(.*)\.png/)[1]
                                     };
+                                } else if (node.isActivated == false && node.state == 1) {
+                                    itemObject.inactiveStats = itemObject.inactiveStats.concat(_.intersection(perk.nodeStepName.split(" "), statNames));
+                                    /*if ( item.itemInstanceId == '6917529077987207416' || item.itemInstanceId == '6917529071282298139'){
+                                    	console.log(itemObject.description, perk.nodeStepName, node);
+                                    }*/
                                 }
                             }
                         }

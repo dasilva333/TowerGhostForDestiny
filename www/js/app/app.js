@@ -303,16 +303,15 @@ var app = function() {
                         if (labelText in activeItem.stats) {
                             label.text(labelText + ": " + activeItem.stats[labelText]);
                             if ($stat.find(".stat-bar-static-value").length > 0) {
-                                $stat.find(".stat-bar-static-value").text(" DDB: " + $stat.find(".stat-bar-static-value").text());
-                            } else {
+                                var newLabelText = "DDB: " + $stat.find(".stat-bar-static-value").text().replace(/ /g, '');
                                 var statObj = _.findWhere(itemStats, {
                                     name: labelText
                                 });
                                 if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
-                                    $stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(" Min/Max: " + statObj.minimum + "/" + statObj.maximum).parent().html() + $stat.find(".stat-bar-empty").html());
+                                    newLabelText = newLabelText + " Armory: " + statObj.minimum + "/" + statObj.maximum;
                                 }
+                                $stat.find(".stat-bar-static-value").text(newLabelText);
                             }
-
                         }
                         return $stat.html();
                     }).get().join("")
@@ -406,13 +405,14 @@ var app = function() {
                     } else if (activeItem.armorIndex > -1) {
                         var clonedRow = magazineRow.clone();
                         var maxLightLevel = tgd.DestinyLightCap;
+                        var isItemLeveled = activeItem.inactiveStats.length == 0;
                         var itemCSP = activeItem.getValue("All");
                         //console.log(activeItem);
                         var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
                         //console.log("maxBonusPoints", maxBonusPoints);
                         var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryStatValue());
                         //console.log("currentBonusPoints", currentBonusPoints);
-                        var currentBaseStat = itemCSP - currentBonusPoints;
+                        var currentBaseStat = itemCSP - (isItemLeveled ? currentBonusPoints : 0);
                         //console.log("currentBaseStat", currentBaseStat);
                         var maxBaseStat = tgd.calculateStatRoll(activeItem, maxLightLevel, false);
                         //console.log("maxBaseStat", maxBaseStat);
