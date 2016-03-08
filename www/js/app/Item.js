@@ -276,9 +276,9 @@ Item.prototype = {
                                         isExclusive: -1,
                                         hash: perk.icon.match(/icons\/(.*)\.png/)[1]
                                     };
-                                } else if (node.isActivated == false && node.state == 1) {
+                                } else if (node.isActivated == false && [7,1].indexOf(node.state) > -1) {
                                     itemObject.inactiveStats = itemObject.inactiveStats.concat(_.intersection(perk.nodeStepName.split(" "), statNames));
-                                    /*if ( item.itemInstanceId == '6917529077987207416' || item.itemInstanceId == '6917529071282298139'){
+                                    /*if ( item.itemInstanceId == '6917529081902791923' ){
                                     	console.log(itemObject.description, perk.nodeStepName, node);
                                     }*/
                                 }

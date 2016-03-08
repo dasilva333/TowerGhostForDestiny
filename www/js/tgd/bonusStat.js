@@ -1,6 +1,6 @@
 tgd.calculateStatRoll = function(item, targetLight, withBonus) {
     var currentLight = item.primaryStatValue();
-    var isItemLeveled = item.inactiveStats.length == 0;
+    var isItemLeveled = item.inactiveStats.length <= 1;
     var currentBonus = tgd.bonusStatPoints(item.armorIndex, item.primaryStatValue());
     var targetBonus = tgd.bonusStatPoints(item.armorIndex, targetLight);
     //console.log("currentLight is " + currentLight + " bonus is " + bonus);
