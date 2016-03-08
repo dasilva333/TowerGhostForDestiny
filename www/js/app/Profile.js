@@ -448,46 +448,52 @@ Profile.prototype = {
 
         function getRolls(item, callback) {
             app.bungie.getItemDetail(item.characterId(), item._id, function(detail) {
+                var emptyRolls = [{
+                    calculated: {},
+                    base: {}
+                }, {
+                    calculated: {},
+                    base: {}
+                }];
                 item.rolls = _.reduce(detail.data.statsOnNodes, function(rolls, stat, key, stats) {
                     var index = _.keys(stats).indexOf(key);
                     _.each(stat.currentNodeStats, function(node) {
                         _.each(rolls, function(roll, rollIndex) {
                             var key = _statDefs[node.statHash].statName;
-                            if (index === 0 || (index > 0 && rollIndex === 0))
-                                roll[key] = (roll[key] || 0) + node.value;
+                            if (index === 0 || (index > 0 && rollIndex === 0)) {
+                                roll.calculated[key] = (roll.calculated[key] || 0) + node.value;
+								if ( index === 0 ){
+									roll.base[key] = (roll.base[key] || 0) + node.value;
+								}
+                            }
                         });
                     });
                     _.each(stat.nextNodeStats, function(node) {
                         _.each(rolls, function(roll, rollIndex) {
                             var key = _statDefs[node.statHash].statName;
-                            if (rollIndex === 1)
-                                roll[key] = (roll[key] || 0) + node.value;
+                            if (rollIndex === 1) {
+                                roll.calculated[key] = (roll.calculated[key] || 0) + node.value;
+                            }
                         });
                     });
                     return rolls;
-                }, [{}, {}]);
-                window.localStorage.setItem("rolls_" + item._id, JSON.stringify(item.rolls));
+                }, emptyRolls);
+                window.localStorage.setItem("statrolls_" + item._id, JSON.stringify(item.rolls));
                 callback();
             });
         }
         _.each(items, function(item) {
             if (!item.rolls) {
-                var cachedRolls = window.localStorage.getItem("rolls_" + item._id);
+                var cachedRolls = window.localStorage.getItem("statrolls_" + item._id);
                 if (cachedRolls) {
                     item.rolls = JSON.parse(cachedRolls);
-                    if (tgd.sum(item.rolls[0]) != tgd.sum(item.stats)) {
-                        console.log("getting new rolls");
+                    if (tgd.sum(item.rolls[0].calculated) != tgd.sum(item.stats)) {
                         getRolls(item, done);
                     } else {
                         done();
                     }
                 } else {
-                    if (_.keys(item.stats).length == 1) {
-                        item.rolls = [item.stats];
-                        done();
-                    } else {
-                        getRolls(item, done);
-                    }
+                    getRolls(item, done);
                 }
             } else {
                 done();
@@ -620,7 +626,7 @@ Profile.prototype = {
                 );
             });
             var csps = _.map(groups[bucket], function(item) {
-                return item.getValue("All");
+                return tgd.calculateStatRoll(item, tgd.DestinyLightCap, true);
             });
             statGroups[bucket] = {
                 max: _.max(csps),
@@ -643,7 +649,7 @@ Profile.prototype = {
             var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
             //console.log(bucketType+":"+minCSP +",before:" + items.length);
             candidates = _.filter(items, function(item) {
-                return item.getValue("All") >= minCSP;
+                return tgd.calculateStatRoll(item, tgd.DestinyLightCap, true) >= minCSP;
             });
             //console.log("after:" + candidates.length);
             _.each(candidates, function(candidate) {
@@ -664,7 +670,7 @@ Profile.prototype = {
                     ];
                     mainClone.activeRoll = roll;
                     mainClone.isActiveRoll = _.reduce(mainClone.stats, function(isActiveRoll, value, key) {
-                        return isActiveRoll === true && (mainClone.activeRoll[key] || 0) == value;
+                        return isActiveRoll === true && (mainClone.activeRoll.calculated[key] || 0) == value;
                     }, true);
                     return subSets;
                 });
@@ -677,7 +683,30 @@ Profile.prototype = {
                     });
                     var combos = tgd.cartesianProductOf(subSets);
                     var scoredCombos = _.map(combos, function(items) {
-                        var tmp = tgd.joinStats(items);
+						/*var itms = _.map(items, function(item){
+							item.activeRoll = (item.activeRoll && item.activeRoll.calculated) ? item.activeRoll.calculated : item.stats;
+							return item;
+						});*/
+						var itms = _.map(items, function(item){
+							var currentLight = item.primaryStatValue();
+							var targetBonus = tgd.bonusStatPoints(item.armorIndex, tgd.DestinyLightCap);
+							var count = 0;
+							//console.log("base rolls", item.rolls[0].base);
+							var newStats = _.reduce(item.rolls[0].base, function(memo, baseStat, key, index){
+								var newStat = Math.floor(baseStat * tgd.DestinyLightCap / currentLight);
+								memo[key] = newStat + (count == 0 ? targetBonus : 0);
+								count++;
+								return memo;
+							}, {});
+							item.activeRoll = newStats;
+							item.activeRoll.isFutureRoll = 0;
+							
+							/*console.log("old-stats", item.stats);
+							console.log("new-stats", newStats);
+							abort;*/
+							return item;
+						});
+                        var tmp = tgd.joinStats(itms);
                         return {
                             set: items,
                             score: tgd.sum(_.map(tmp, function(value, key) {
