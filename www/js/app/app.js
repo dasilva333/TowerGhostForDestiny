@@ -303,12 +303,12 @@ var app = function() {
                         if (labelText in activeItem.stats) {
                             label.text(labelText + ": " + activeItem.stats[labelText]);
                             if ($stat.find(".stat-bar-static-value").length > 0) {
-                                var newLabelText = "DDB: " + $stat.find(".stat-bar-static-value").text().replace(/ /g, '');
+                                var newLabelText = "D: " + $stat.find(".stat-bar-static-value").text().replace(/ /g, '');
                                 var statObj = _.findWhere(itemStats, {
                                     name: labelText
                                 });
                                 if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
-                                    newLabelText = newLabelText + " Armory: " + statObj.minimum + "/" + statObj.maximum;
+                                    newLabelText = newLabelText + " A: " + statObj.minimum + "/" + statObj.maximum;
                                 }
                                 $stat.find(".stat-bar-static-value").text(newLabelText);
                             }
@@ -410,7 +410,7 @@ var app = function() {
                         //console.log(activeItem);
                         var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
                         //console.log("maxBonusPoints", maxBonusPoints);
-                        var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryStatValue());
+                        var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryValues.Default);
                         //console.log("currentBonusPoints", currentBonusPoints);
                         var currentBaseStat = itemCSP - (isItemLeveled ? currentBonusPoints : 0);
                         //console.log("currentBaseStat", currentBaseStat);
@@ -421,6 +421,7 @@ var app = function() {
                         var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
                         //console.log("maxRollStats", maxRollStats);
                         var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
+                        //console.log("statDetails", statDetails);
                         clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
                         clonedRow.find(".stat-bar-static-value").html(statDetails);
                         magazineRow.after(clonedRow);

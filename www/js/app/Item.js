@@ -1448,7 +1448,7 @@ Item.prototype = {
     getValue: function(type) {
         var value;
         if (type == "Light") {
-            value = this.primaryStatValue();
+            value = this.primaryValues.Default;
         } else if (type == "All") {
             value = tgd.sum(_.values(this.stats));
         } else if (_.isObject(this.stats) && type in this.stats) {
