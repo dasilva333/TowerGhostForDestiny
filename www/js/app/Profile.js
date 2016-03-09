@@ -1037,7 +1037,7 @@ Profile.prototype = {
                         //console.timeEnd("best combo timer");
                         $("body").css("cursor", "default");
                     });
-                }, 300);
+                }, 600);
             } else if (type == "Light") {
                 bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];
                 tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
