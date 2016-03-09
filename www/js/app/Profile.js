@@ -637,31 +637,39 @@ Profile.prototype = {
         highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
             return stat.max;
         }));
-        //console.log("highestArmorValue:"+highestArmorValue);
+		console.log(_.object(_.map(statGroups, function(stat, key) { return [key, stat.max]; })));
+        console.log("highestArmorValue:"+highestArmorValue);
 
         highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
-        //console.log("highestArmorTier :"+highestArmorTier );
+        console.log("highestArmorTier :"+highestArmorTier );
 
         highestTierValue = highestArmorTier * tgd.DestinySkillTier;
-        //console.log("highestTierValue :"+highestTierValue );
-
+        console.log("highestTierValue :"+highestTierValue );
+		
         _.each(groups, function(items, bucketType) {
             var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
-            //console.log(bucketType+":"+minCSP +",before:" + items.length);
+            console.log(bucketType+":"+minCSP +",before:" + items.length);
             candidates = _.filter(items, function(item) {
-                return tgd.calculateStatRoll(item, tgd.DestinyLightCap, true) >= minCSP;
+				if ( bucketType == "Helmet") {
+					console.log(item.description, item, item.getValue("MaxLight"), minCSP);
+				}
+                return item.getValue("MaxLight") >= minCSP;
             });
-            //console.log("after:" + candidates.length);
+            console.log("after:" + candidates.length);
+			if ( bucketType == "Helmet") {
+				console.log(candidates);
+			}
             _.each(candidates, function(candidate) {
                 sets.push([candidate]);
             });
         });
-
+		
         backups = _.flatten(sets);
 
         character.queryRolls(backups, function() {
             _.each(sets, function(set) {
-                var mainPiece = set[0];
+                var mainPiece = set[0], mainPieceMaxLight = mainPiece.getValue("MaxLight");
+				//console.log("mainPiece", mainPiece.description, mainPieceMaxLight);
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
                 var arrRolls = _.map(mainPiece.rolls, function(roll) {
                     var mainClone = _.clone(mainPiece, true);
@@ -676,30 +684,38 @@ Profile.prototype = {
                 });
                 _.each(arrRolls, function(subSets) {
                     candidates = _.groupBy(_.filter(backups, function(item) {
-                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+						//668 - 94 = 574 - 87 = 487
+						var minCSP = statGroups[item.bucketType].max;
+						
+						//console.log(item.bucketType, item.description, minCSP, item.getValue("MaxLight"));
+                        return item.bucketType != mainPiece.bucketType && item.getValue("MaxLight") >= minCSP && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
                     }), 'bucketType');
                     _.each(candidates, function(items) {
                         subSets.push(items);
                     });
+					//console.log(subSets);
+					//abort;
                     var combos = tgd.cartesianProductOf(subSets);
                     var scoredCombos = _.map(combos, function(items) {
 						/*var itms = _.map(items, function(item){
 							item.activeRoll = (item.activeRoll && item.activeRoll.calculated) ? item.activeRoll.calculated : item.stats;
 							return item;
 						});*/
+						//console.log("pre", tgd.sum(tgd.joinStats(_.map(items, function(itm){ itm.activeRoll = itm.stats; return itm; }))));
 						var itms = _.map(items, function(item){
 							var currentLight = item.primaryStatValue();
 							var targetBonus = tgd.bonusStatPoints(item.armorIndex, tgd.DestinyLightCap);
 							var count = 0;
 							//console.log("base rolls", item.rolls[0].base);
 							var newStats = _.reduce(item.rolls[0].base, function(memo, baseStat, key, index){
-								var newStat = Math.floor(baseStat * tgd.DestinyLightCap / currentLight);
+								var newStat = baseStat * tgd.DestinyLightCap / currentLight;
 								memo[key] = newStat + (count == 0 ? targetBonus : 0);
 								count++;
 								return memo;
 							}, {});
+							//console.log("newStats", newStats, item.rolls[0].base, item.stats, item.getValue("MaxLight"));
 							item.activeRoll = newStats;
-							item.activeRoll.isFutureRoll = 0;
+							//item.activeRoll.isFutureRoll = 0;
 							
 							/*console.log("old-stats", item.stats);
 							console.log("new-stats", newStats);
@@ -707,13 +723,19 @@ Profile.prototype = {
 							return item;
 						});
                         var tmp = tgd.joinStats(itms);
-                        return {
-                            set: items,
+						/*console.log("itms", itms);
+						console.log("tmp", tmp);
+						console.log("post", tgd.sum(tmp));*/
+                        var result = {
+                            set: itms,
                             score: tgd.sum(_.map(tmp, function(value, key) {
                                 var result = Math.floor(value / tgd.DestinySkillTier);
                                 return result > 5 ? 5 : result;
-                            })) + (tgd.sum(_.values(tmp)) / 1000)
+                            })) + (tgd.sum(tmp) / 1000)
                         };
+						//console.log(result);
+						//abort;
+						return result;
                     });
                     var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
                     _.each(scoredCombos, function(combo) {

@@ -1451,6 +1451,8 @@ Item.prototype = {
             value = this.primaryStatValue();
         } else if (type == "All") {
             value = tgd.sum(_.values(this.stats));
+        } else if (type == "MaxLight") {
+            value = tgd.calculateStatRoll(this, tgd.DestinyLightCap, true);
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);
         } else {
