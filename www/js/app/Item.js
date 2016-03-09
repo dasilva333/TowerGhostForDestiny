@@ -156,7 +156,6 @@ Item.prototype = {
             tgd.localLog(item.itemHash);
         }
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-
             var description, tierTypeName, itemDescription, itemTypeName;
             try {
                 description = decodeURIComponent(info.itemName);
@@ -256,7 +255,7 @@ Item.prototype = {
                         perkHashes = _.pluck(item.perks, 'perkHash'),
                         perkNames = _.pluck(itemObject.perks, 'name'),
                         talentPerks = {};
-                    itemObject.skillStatus = {};
+                    itemObject.inactiveStats = [];
                     var talentGridNodes = talentGrid.nodes;
                     _.each(item.nodes, function(node) {
                         if (node.hidden === false) {
@@ -265,10 +264,6 @@ Item.prototype = {
                             });
                             if (nodes && nodes.steps) {
                                 var perk = nodes.steps[node.stepIndex];
-									if ( item.itemInstanceId == '6917529071282298139' ){
-										console.log(itemObject.description, perk.nodeStepName, node);
-									}
-								var skillName = _.intersection(perk.nodeStepName.split(" "), statNames);
                                 if (node.isActivated &&
                                     (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
                                     (perkNames.indexOf(perk.nodeStepName) == -1) &&
@@ -281,8 +276,11 @@ Item.prototype = {
                                         isExclusive: -1,
                                         hash: perk.icon.match(/icons\/(.*)\.png/)[1]
                                     };
-                                } else if (skillName.length > 0) {
-                                    itemObject.skillStatus[skillName[0]] = { active: node.isActivated, state: node.state };
+                                } else if (node.isActivated == false && [7, 1].indexOf(node.state) > -1) {
+                                    itemObject.inactiveStats = itemObject.inactiveStats.concat(_.intersection(perk.nodeStepName.split(" "), statNames));
+                                    /*if ( item.itemInstanceId == '6917529081902791923' ){
+                                    	console.log(itemObject.description, perk.nodeStepName, node);
+                                    }*/
                                 }
                             }
                         }
@@ -313,18 +311,9 @@ Item.prototype = {
             if (item.stats && item.stats.length && item.stats.length > 0) {
                 itemObject.stats = {};
                 _.each(item.stats, function(stat) {
-                    if (stat.statHash in window._statDefs && stat.value > 0) {
+                    if (stat.statHash in window._statDefs) {
                         var p = window._statDefs[stat.statHash];
-						var skillStatus = itemObject.skillStatus[p.statName];
-						var bonus = tgd.bonusStatPoints(itemObject.armorIndex, itemObject.primaryStat());
-                        itemObject.stats[p.statHash] = {
-							name: p.statName,
-							hash: p.statHash,
-							value: stat.value,
-							base: stat.value - (skillStatus.active ? bonus : 0),
-							active: skillStatus.active,
-							state: skillStatus.state
-						}
+                        itemObject.stats[p.statName] = stat.value;
                     }
                 });
                 //Truth has a bug where it displays a Mag size of 2 when it's actually 3, all other RL don't properly reflect the mag size of 3 when Tripod is enabled
@@ -1462,8 +1451,6 @@ Item.prototype = {
             value = this.primaryStatValue();
         } else if (type == "All") {
             value = tgd.sum(_.values(this.stats));
-        } else if (type == "MaxLight") {
-            value = tgd.calculateStatRoll(this, tgd.DestinyLightCap, true);
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);
         } else {
