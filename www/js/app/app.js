@@ -413,6 +413,9 @@ var app = function() {
                         var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryValues.Default);
                         //console.log("currentBonusPoints", currentBonusPoints);
                         var currentBaseStat = itemCSP - (isItemLeveled ? currentBonusPoints : 0);
+                        if (!isItemLeveled) {
+                            itemCSP = itemCSP + "(" + (itemCSP + currentBonusPoints) + ")";
+                        }
                         //console.log("currentBaseStat", currentBaseStat);
                         var maxBaseStat = tgd.calculateStatRoll(activeItem, maxLightLevel, false);
                         //console.log("maxBaseStat", maxBaseStat);
