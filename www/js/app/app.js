@@ -288,7 +288,7 @@ var app = function() {
                     }));
                     stats = $content.find(".destt-stat");
                 }
-                var itemStats, itemDef = _itemDefs[activeItem.itemHash];
+                var itemStats, itemDef = _itemDefs[activeItem.id];
                 if (itemDef && itemDef.stats) {
                     itemStats = _.map(itemDef.stats, function(obj, key) {
                         obj.name = _statDefs[key].statName;
@@ -405,7 +405,10 @@ var app = function() {
                     } else if (activeItem.armorIndex > -1) {
                         var clonedRow = magazineRow.clone();
                         var maxLightLevel = tgd.DestinyLightCap;
-                        var isItemLeveled = activeItem.inactiveStats.length <= 1;
+                        var isItemLeveled = _.where(activeItem.perks, {
+                            isStat: true,
+                            enabled: true
+                        }).length > 0;
                         var itemCSP = activeItem.getValue("All");
                         //console.log(activeItem);
                         var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
@@ -434,7 +437,10 @@ var app = function() {
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
-                        return perk.active === true || (perk.active === false && self.advancedTooltips() === true); //&& perk.isExclusive == -1
+                        var hasStat = _.has(perk, 'isStat');
+                        return perk.active === true && hasStat == false ||
+                            (perk.active === false && self.advancedTooltips() === true && hasStat == false) ||
+                            hasStat == true && perk.isStat == false;
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
