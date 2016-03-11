@@ -121,9 +121,10 @@ var Item = function(model, profile) {
         model.isEquipment = true;
     }
 
+	/* TODO: Determine why this is needed
     _.each(model, function(value, key) {
         self[key] = value;
-    });
+    });*/
 
     this.character = profile;
 
@@ -156,7 +157,11 @@ Item.prototype = {
             tgd.localLog(item.itemHash);
         }
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
-            var description, tierTypeName, itemDescription, itemTypeName;
+            //some weird stuff shows up under this bucketType w/o this filter
+            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
+                return;
+            }		
+            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -168,14 +173,12 @@ Item.prototype = {
                 itemDescription = info.itemDescription;
                 itemTypeName = info.itemTypeName;
             }
-            //some weird stuff shows up under this bucketType w/o this filter
-            if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
-                return;
-            }
-            if (info.icon === "") {
-                info.icon = "/img/misc/missing_icon.png";
-            }
-            var itemObject = {
+            info.icon = (info.icon === "") ? "/img/misc/missing_icon.png" : info.icon;
+			perks = self.parsePerks(item.id, item.talentGridHash, item.perks);
+			stats = self.parseStats(perks, item.stats, item.itemHash, item.nodes);
+			bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
+			primaryStat = self.parsePrimaryStat(item, bucketType);
+            $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
                 _id: item.itemInstanceId,
@@ -184,177 +187,164 @@ Item.prototype = {
                 damageTypeName: tgd.DestinyDamageTypes[item.damageType],
                 isEquipment: item.isEquipment,
                 isEquipped: ko.observable(item.isEquipped),
-                primaryStat: ko.observable(""),
                 isGridComplete: item.isGridComplete,
                 locked: ko.observable(item.locked),
                 description: description,
                 itemDescription: itemDescription,
                 classType: info.classType,
-                bucketType: item.bucketType || self.character.getBucketTypeHelper(item, info),
+                bucketType: bucketType,
                 type: info.itemSubType,
                 typeName: itemTypeName,
                 tierType: info.tierType,
                 tierTypeName: tierTypeName,
                 icon: tgd.dataDir + info.icon,
-                isUnique: false,
-                primaryValues: {}
-            };
-            itemObject.weaponIndex = tgd.DestinyWeaponPieces.indexOf(itemObject.bucketType);
-            itemObject.armorIndex = tgd.DestinyArmorPieces.indexOf(itemObject.bucketType);
-            if (itemObject.armorIndex > -1) {
-                app.armorViewBy.subscribe(function(type) {
-                    var statType = type == "Light" ? "Default" : "Stats";
-                    var primaryStat = self.primaryValues[statType];
-                    if (statType == "Stats" && primaryStat) {
-                        primaryStat = primaryStat + "/" + tgd.DestinyMaxCSP[self.bucketType];
-                    }
-                    self.primaryStat(primaryStat);
-                });
-            }
-            if (item.id) {
-                itemObject.perks = item.perks;
-            } else if (_.isArray(item.perks) && item.perks.length > 0) {
-                var talentGrid = _talentGridDefs[item.talentGridHash];
-                itemObject.perks = [];
-                if (talentGrid && talentGrid.nodes) {
-                    _.each(item.perks, function(perk) {
-                        if (perk.perkHash in window._perkDefs) {
-                            var isInherent, p = window._perkDefs[perk.perkHash];
-                            //There is an inconsistency between perkNames in Destiny for example:
-                            /* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
-                               This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
-                            */
-                            var nodeIndex = talentGrid.nodes.indexOf(
-                                _.filter(talentGrid.nodes, function(o) {
-                                    return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
-                                })[0]
-                            );
-                            if (nodeIndex > 0) {
-                                isInherent = _.reduce(talentGrid.nodes[nodeIndex].steps, function(memo, step) {
-                                    if (memo === false) {
-                                        var isPerk = _.values(step.perkHashes).indexOf(p.perkHash) > -1;
-                                        if (isPerk && step.activationRequirement.gridLevel === 0) {
-                                            memo = true;
-                                        }
-                                    }
-                                    return memo;
-                                }, false);
-                            }
-                            itemObject.perks.push({
-                                iconPath: tgd.dataDir + p.displayIcon,
-                                name: p.displayName,
-                                description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
-                                active: perk.isActive,
-                                isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex),
-                                isInherent: isInherent,
-                                hash: p.perkHash
-                            });
-                        }
-                    });
-                    var statNames = _.pluck(tgd.DestinyArmorStats, 'statName'),
-                        perkHashes = _.pluck(item.perks, 'perkHash'),
-                        perkNames = _.pluck(itemObject.perks, 'name'),
-                        talentPerks = {};
-                    itemObject.inactiveStats = [];
-                    var talentGridNodes = talentGrid.nodes;
-                    _.each(item.nodes, function(node) {
-                        if (node.hidden === false) {
-                            var nodes = _.findWhere(talentGridNodes, {
-                                nodeHash: node.nodeHash
-                            });
-                            if (nodes && nodes.steps) {
-                                var perk = nodes.steps[node.stepIndex];
-                                if (node.isActivated &&
-                                    (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
-                                    (perkNames.indexOf(perk.nodeStepName) == -1) &&
-                                    (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
-                                    talentPerks[perk.nodeStepName] = {
-                                        active: true,
-                                        name: perk.nodeStepName,
-                                        description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
-                                        iconPath: tgd.dataDir + perk.icon,
-                                        isExclusive: -1,
-                                        hash: perk.icon.match(/icons\/(.*)\.png/)[1]
-                                    };
-                                } else if (node.isActivated == false && [7, 1].indexOf(node.state) > -1) {
-                                    itemObject.inactiveStats = itemObject.inactiveStats.concat(_.intersection(perk.nodeStepName.split(" "), statNames));
-                                    /*if ( item.itemInstanceId == '6917529081902791923' ){
-                                    	console.log(itemObject.description, perk.nodeStepName, node);
-                                    }*/
-                                }
-                            }
-                        }
-                    });
-                    _.each(talentPerks, function(perk) {
-                        itemObject.perks.push(perk);
-                    });
-                }
-            }
-            itemObject.hasLifeExotic = _.where(itemObject.perks, {
-                name: "The Life Exotic"
-            }).length > 0;
-            if (item.progression) {
-                itemObject.progression = _.filter(itemObject.perks, function(perk) {
-                    return perk.active === false && perk.isExclusive === -1;
-                }).length === 0;
-            }
-            if (item.primaryStat) {
-                if (item.primaryStat && item.primaryStat.value) {
-                    itemObject.primaryStat(item.primaryStat.value);
-                } else {
-                    itemObject.primaryStat(item.primaryStat);
-                    if (_.isObject(item.stats)) {
-                        itemObject.primaryValues['Stats'] = tgd.sum(_.values(item.stats));
-                    }
-                }
-            }
-            if (item.stats && item.stats.length && item.stats.length > 0) {
-                itemObject.stats = {};
-                _.each(item.stats, function(stat) {
-                    if (stat.statHash in window._statDefs) {
-                        var p = window._statDefs[stat.statHash];
-                        itemObject.stats[p.statName] = stat.value;
-                    }
-                });
-                //Truth has a bug where it displays a Mag size of 2 when it's actually 3, all other RL don't properly reflect the mag size of 3 when Tripod is enabled
-                if (_.findWhere(itemObject.perks, {
-                        name: "Tripod",
-                        active: true
-                    }) || [1274330686, 2808364178].indexOf(itemObject.id) > -1) {
-                    itemObject.stats.Magazine = 3;
-                }
-                itemObject.primaryValues['Stats'] = tgd.sum(_.values(itemObject.stats));
-            }
-            if (item && item.objectives && item.objectives.length > 0) {
-                var progress = (tgd.average(_.map(item.objectives, function(objective) {
-                    var result = 0;
-                    if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
-                        result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
-                    }
-                    return result;
-                })) * 100).toFixed(0) + "%";
-                var primaryStat = (itemObject.primaryStat() === "") ? progress : itemObject.primaryStat() + "/" + progress;
-                itemObject.primaryStat(primaryStat);
-            }
-
-            if (itemObject.typeName && itemObject.typeName == "Emblem") {
-                itemObject.backgroundPath = app.makeBackgroundUrl(info.secondaryIcon);
-            }
-            if (itemObject.bucketType == "Materials" || itemObject.bucketType == "Consumables") {
-                itemObject.primaryStat(item.stackSize);
-                itemObject.maxStackSize = info.maxStackSize;
-            } else if ((itemObject.bucketType == "Lost Items" || itemObject.bucketType == "Invisible") && item.stackSize > 1) {
-                itemObject.primaryStat(item.stackSize);
-            }
-            itemObject.primaryValues['Default'] = itemObject.primaryStat();
-            itemObject.actualBucketType = _.reduce(tgd.DestinyLayout, function(memo, layout) {
-                if ((layout.bucketTypes.indexOf(itemObject.bucketType) > -1 && layout.extras.indexOf(itemObject.bucketType) == -1) || (layout.bucketTypes.indexOf(itemObject.bucketType) == -1 && layout.extras.indexOf(itemObject.bucketType) > -1))
-                    memo = layout.array;
-                return memo;
-            }, "");
-            $.extend(self, itemObject);
+				maxStackSize: info.maxStackSize,
+				equipRequiredLevel: item.equipRequiredLevel,
+				weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
+				armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
+				perks: perks,
+				stats: stats,
+				hasLifeExotic: _.where(perks, { name: "The Life Exotic" }).length > 0,
+				perksInProgress: _.filter(perks, function(perk) { return perk.active === false && perk.isExclusive === -1; }).length === 0,
+				primaryStat: ko.observable(primaryStat),
+                primaryValues: {
+					"Stats": tgd.sum(_.values(stats)),
+					'Default': primaryStat
+				},
+				backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
+				actualBucketType: _.reduce(tgd.DestinyLayout, function(memo, layout) {
+					if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
+						memo = layout.array;
+					return memo;
+				}, "")
+            });
         }
     },
+	parsePrimaryStat: function(item, bucketType){
+		var primaryStat = "";
+		if (item.primaryStat) {
+			if (item.primaryStat && item.primaryStat.value) {
+				primaryStat = item.primaryStat.value;
+			} else {
+				primaryStat = item.primaryStat;
+			}
+		}           
+		if (item && item.objectives && item.objectives.length > 0) {
+			var progress = (tgd.average(_.map(item.objectives, function(objective) {
+				var result = 0;
+				if (objective.objectiveHash in _objectiveDefs && _objectiveDefs[objective.objectiveHash] && _objectiveDefs[objective.objectiveHash].completionValue) {
+					result = objective.progress / _objectiveDefs[objective.objectiveHash].completionValue;
+				}
+				return result;
+			})) * 100).toFixed(0) + "%";
+			primaryStat = (primaryStat === "") ? progress : primaryStat + "/" + progress;
+		}
+		if (bucketType == "Materials" || bucketType == "Consumables" || ((bucketType == "Lost Items" || bucketType == "Invisible") && item.stackSize > 1)) {
+			primaryStat = item.stackSize;
+		}
+		return primaryStat;
+	},
+	parseStats: function(perks, stats, itemHash){
+		var stats = {};
+		if (stats && stats.length && stats.length > 0) {
+			_.each(stats, function(stat) {
+				if (stat.statHash in window._statDefs) {
+					var p = window._statDefs[stat.statHash];
+					stats[p.statName] = stat.value;
+				}
+			});
+			//Truth has a bug where it displays a Mag size of 2 when it's actually 3, all other RL don't properly reflect the mag size of 3 when Tripod is enabled
+			if (_.findWhere(perks, {
+					name: "Tripod",
+					active: true
+				}) || [1274330686, 2808364178].indexOf(itemHash) > -1) {
+				stats.Magazine = 3;
+			}
+		}
+		return stats;
+	},
+	parsePerks: function(id, talentGridHash, perks, nodes){
+		var parsedPerks = [];
+		if (id) {
+			parsedPerks = item.perks;
+		} else if (_.isArray(perks) && perks.length > 0) {
+			var talentGrid = _talentGridDefs[talentGridHash];
+			if (talentGrid && talentGrid.nodes) {
+				_.each(perks, function(perk) {
+					if (perk.perkHash in window._perkDefs) {
+						var isInherent, p = window._perkDefs[perk.perkHash];
+						//There is an inconsistency between perkNames in Destiny for example:
+						/* Boolean Gemini - Has two perks David/Goliath which is also called One Way/Or Another
+						   This type of inconsistency leads to issues with filtering therefore p.perkHash must be used
+						*/
+						var nodeIndex = talentGrid.nodes.indexOf(
+							_.filter(talentGrid.nodes, function(o) {
+								return _.flatten(_.pluck(o.steps, 'perkHashes')).indexOf(p.perkHash) > -1;
+							})[0]
+						);
+						if (nodeIndex > 0) {
+							isInherent = _.reduce(talentGrid.nodes[nodeIndex].steps, function(memo, step) {
+								if (memo === false) {
+									var isPerk = _.values(step.perkHashes).indexOf(p.perkHash) > -1;
+									if (isPerk && step.activationRequirement.gridLevel === 0) {
+										memo = true;
+									}
+								}
+								return memo;
+							}, false);
+						}
+						parsedPerks.push({
+							iconPath: tgd.dataDir + p.displayIcon,
+							name: p.displayName,
+							description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+							active: perk.isActive,
+							isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex),
+							isInherent: isInherent,
+							hash: p.perkHash
+						});
+					}
+				});
+				var statNames = _.pluck(tgd.DestinyArmorStats, 'statName'),
+					perkHashes = _.pluck(parsedPerks, 'hash'),
+					perkNames = _.pluck(parsedPerks, 'name'),
+					talentPerks = {};
+				//itemObject.inactiveStats = [];
+				var talentGridNodes = talentGrid.nodes;
+				_.each(nodes, function(node) {
+					if (node.hidden === false) {
+						var nodes = _.findWhere(talentGridNodes, {
+							nodeHash: node.nodeHash
+						});
+						if (nodes && nodes.steps) {
+							var perk = nodes.steps[node.stepIndex];
+							if (node.isActivated &&
+								(tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
+								(perkNames.indexOf(perk.nodeStepName) == -1) &&
+								(perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
+								talentPerks[perk.nodeStepName] = {
+									active: true,
+									name: perk.nodeStepName,
+									description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
+									iconPath: tgd.dataDir + perk.icon,
+									isExclusive: -1,
+									hash: perk.icon.match(/icons\/(.*)\.png/)[1]
+								};
+							} else if (node.isActivated == false && [7, 1].indexOf(node.state) > -1) {
+								//itemObject.inactiveStats = itemObject.inactiveStats.concat(_.intersection(perk.nodeStepName.split(" "), statNames));
+								/*if ( item.itemInstanceId == '6917529081902791923' ){
+									console.log(itemObject.description, perk.nodeStepName, node);
+								}*/
+							}
+						}
+					}
+				});
+				_.each(talentPerks, function(perk) {
+					parsedPerks.push(perk);
+				});
+			}
+		}
+		return parsedPerks;
+	},
     _opacity: function() {
         return (this.equipRequiredLevel <= this.character.level() || this.character.id == 'Vault') ? 1 : 0.3;
     },
