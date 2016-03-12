@@ -337,7 +337,6 @@ Item.prototype = {
                                 var statName = isSkill[0];
                                 talentPerks[statName] = {
                                     active: node.isActivated == true && [7, 1].indexOf(node.state) == -1,
-                                    enabled: node.state == 9,
                                     name: statName,
 									description: "",
 									iconPath: "",

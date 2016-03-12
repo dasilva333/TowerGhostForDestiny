@@ -407,7 +407,7 @@ var app = function() {
                         var maxLightLevel = tgd.DestinyLightCap;
                         var isItemLeveled = _.where(activeItem.perks, {
                             isStat: true,
-                            enabled: true
+                            active: true
                         }).length > 0;
                         var itemCSP = activeItem.getValue("All");
                         //console.log(activeItem);
