@@ -159,7 +159,7 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
-            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat;
+            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -174,6 +174,7 @@ Item.prototype = {
             info.icon = (info.icon === "") ? "/img/misc/missing_icon.png" : info.icon;
             perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
             stats = self.parseStats(perks, item.stats, item.itemHash);
+			statPerks = _.where(perks, { isStat: true });
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
             primaryStat = self.parsePrimaryStat(item, bucketType);
             $.extend(self, {
@@ -219,7 +220,8 @@ Item.prototype = {
                     if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
                         memo = layout.array;
                     return memo;
-                }, "")
+                }, ""),
+				hasUnlockedStats: _.where(statPerks, { active: true }).length > 0 || statPerks.length == 0
             });
         }
     },
