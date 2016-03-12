@@ -200,6 +200,7 @@ Item.prototype = {
                 equipRequiredLevel: item.equipRequiredLevel,
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
                 armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
+                transferStatus: item.transferStatus,
                 perks: perks,
                 stats: stats,
                 hasLifeExotic: _.where(perks, {
