@@ -174,7 +174,9 @@ Item.prototype = {
             info.icon = (info.icon === "") ? "/img/misc/missing_icon.png" : info.icon;
             perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
             stats = self.parseStats(perks, item.stats, item.itemHash);
-			statPerks = _.where(perks, { isStat: true });
+            statPerks = _.where(perks, {
+                isStat: true
+            });
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
             primaryStat = self.parsePrimaryStat(item, bucketType);
             $.extend(self, {
@@ -221,7 +223,9 @@ Item.prototype = {
                         memo = layout.array;
                     return memo;
                 }, ""),
-				hasUnlockedStats: _.where(statPerks, { active: true }).length > 0 || statPerks.length == 0
+                hasUnlockedStats: _.where(statPerks, {
+                    active: true
+                }).length > 0 || statPerks.length == 0
             });
         }
     },
@@ -340,8 +344,8 @@ Item.prototype = {
                                 talentPerks[statName] = {
                                     active: node.isActivated == true && [7, 1].indexOf(node.state) == -1,
                                     name: statName,
-									description: "",
-									iconPath: "",
+                                    description: "",
+                                    iconPath: "",
                                     isExclusive: -1,
                                     isStat: true,
                                     hash: _.findWhere(tgd.DestinyArmorStats, {

@@ -405,7 +405,7 @@ var app = function() {
                     } else if (activeItem.armorIndex > -1) {
                         var clonedRow = magazineRow.clone();
                         var maxLightLevel = tgd.DestinyLightCap;
-						var isItemLeveled = activeItem.hasUnlockedStats;
+                        var isItemLeveled = activeItem.hasUnlockedStats;
                         var itemCSP = activeItem.getValue("All");
                         //console.log(activeItem);
                         var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
