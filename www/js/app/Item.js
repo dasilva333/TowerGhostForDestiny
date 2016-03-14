@@ -159,7 +159,7 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
-            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks;
+            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks, rolls;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -177,6 +177,7 @@ Item.prototype = {
             statPerks = _.where(perks, {
                 isStat: true
             });
+			rolls = self.normalizeRolls(stats, statPerks, primaryStat)
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
             primaryStat = self.parsePrimaryStat(item, bucketType);
             $.extend(self, {
@@ -214,8 +215,9 @@ Item.prototype = {
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
                 primaryValues: {
-                    "Stats": tgd.sum(_.values(stats)),
-                    'Default': primaryStat
+                    CSP: tgd.sum(_.values(stats)),
+					rolls: rolls,
+                    Default: primaryStat
                 },
                 backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
                 actualBucketType: _.reduce(tgd.DestinyLayout, function(memo, layout) {
@@ -229,6 +231,9 @@ Item.prototype = {
             });
         }
     },
+	normalizeRolls function(){
+		//statPerks.length == 0 ? [ 
+	},
     parsePrimaryStat: function(item, bucketType) {
         var primaryStat = "";
         if (item.primaryStat) {
