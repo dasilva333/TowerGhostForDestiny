@@ -159,7 +159,7 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
-            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat;
+            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks, rolls;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -174,6 +174,10 @@ Item.prototype = {
             info.icon = (info.icon === "") ? "/img/misc/missing_icon.png" : info.icon;
             perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
             stats = self.parseStats(perks, item.stats, item.itemHash);
+            statPerks = _.where(perks, {
+                isStat: true
+            });
+			rolls = self.normalizeRolls(stats, statPerks, primaryStat)
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
             primaryStat = self.parsePrimaryStat(item, bucketType);
             $.extend(self, {
@@ -200,6 +204,7 @@ Item.prototype = {
                 equipRequiredLevel: item.equipRequiredLevel,
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
                 armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
+                transferStatus: item.transferStatus,
                 perks: perks,
                 stats: stats,
                 hasLifeExotic: _.where(perks, {
@@ -210,18 +215,25 @@ Item.prototype = {
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
                 primaryValues: {
-                    "Stats": tgd.sum(_.values(stats)),
-                    'Default': primaryStat
+                    CSP: tgd.sum(_.values(stats)),
+					rolls: rolls,
+                    Default: primaryStat
                 },
                 backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
                 actualBucketType: _.reduce(tgd.DestinyLayout, function(memo, layout) {
                     if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
                         memo = layout.array;
                     return memo;
-                }, "")
+                }, ""),
+                hasUnlockedStats: _.where(statPerks, {
+                    active: true
+                }).length > 0 || statPerks.length == 0
             });
         }
     },
+	normalizeRolls function(){
+		//statPerks.length == 0 ? [ 
+	},
     parsePrimaryStat: function(item, bucketType) {
         var primaryStat = "";
         if (item.primaryStat) {
@@ -336,8 +348,9 @@ Item.prototype = {
                                 var statName = isSkill[0];
                                 talentPerks[statName] = {
                                     active: node.isActivated == true && [7, 1].indexOf(node.state) == -1,
-                                    enabled: node.state == 9,
                                     name: statName,
+                                    description: "",
+                                    iconPath: "",
                                     isExclusive: -1,
                                     isStat: true,
                                     hash: _.findWhere(tgd.DestinyArmorStats, {
