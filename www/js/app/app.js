@@ -329,7 +329,7 @@ var app = function() {
 								if ((ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) || (ddbLabelText.indexOf("/") == -1 && armoryLabelText.split("/")[0] != ddbLabelText && armoryLabelText.split("/")[1] != ddbLabelText)) {
 									newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
 								} else {
-									newLabelText = "Min/Max: " + ddbLabelText;
+									newLabelText = "Min/Max: " + armoryLabelText;
 								}
 								$stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(newLabelText).parent().html() + $stat.find(".stat-bar-empty").html());
 							}
@@ -337,7 +337,6 @@ var app = function() {
                         return $stat.html();
                     }).get().join("")
                 );
-                console.log(stats);
                 if (self.advancedTooltips() === true && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last");
                     if (activeItem.weaponIndex > -1) {

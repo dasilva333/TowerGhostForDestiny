@@ -231,8 +231,15 @@ Item.prototype = {
             });
         }
     },
-	normalizeRolls function(){
-		//statPerks.length == 0 ? [ 
+	normalizeRolls: function(stats, statPerks, primaryStat){
+		var arrRolls = [];
+		if ( statPerks.length == 0 ){
+			arrRolls = [ stats ];
+		}
+		else {
+			arrRolls = [];
+		}
+		return arrRolls;
 	},
     parsePrimaryStat: function(item, bucketType) {
         var primaryStat = "";
