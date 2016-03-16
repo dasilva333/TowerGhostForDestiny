@@ -1995,7 +1995,7 @@ var app = function() {
             farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
-            var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
+            var filteredItems = _.sortBy(_.filter(items, tgd.farmItemFilters[itemType]), 'tierType');
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
             if (targetCharacterId == "Vault") {
                 farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;

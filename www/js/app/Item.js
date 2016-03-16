@@ -202,6 +202,7 @@ Item.prototype = {
                 icon: tgd.dataDir + info.icon,
                 maxStackSize: info.maxStackSize,
                 equipRequiredLevel: item.equipRequiredLevel,
+                canEquip: item.canEquip,
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
                 armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
                 transferStatus: item.transferStatus,
