@@ -4,13 +4,13 @@
             <div class="stat-bar-label">
                 <%= key %>
             </div>
-			<div class="stat-bar-static-value" style="display: <%= ['Magazine'].indexOf(key) > -1 ? '' : 'none'  %>">
+			<div class="stat-bar-static-value" style="display: <%= ['Magazine'].indexOf(key) > -1 ? 'block' : 'none'  %>">
 				<%= stats[key] %>
 			</div>
-			<div class="stat-bar-empty" style="display: <%= ['Magazine'].indexOf(key) == -1 ? '' : 'none'  %>">
+			<div class="stat-bar-empty" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none'  %>">
 				<div class="stat-bar-fill" style="width:<%= stats[key] %>%"></div>
 			</div>
-			<div class="stat-bar-value" style="display: <%= ['Magazine'].indexOf(key) == -1 ? '' : 'none' %>">
+			<div class="stat-bar-value" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none' %>">
 				<%= stats[key] %>
 			</div>
         </div>

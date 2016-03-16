@@ -303,40 +303,41 @@ var app = function() {
                             label = $stat.find(".stat-bar-label"),
                             labelText = $.trim(label.text());
                         if (labelText in activeItem.stats) {
-							var newLabelText, armoryLabelText, ddbLabelText;
-							//Rate Of Fire: 23 (23 is the Item's value)
+                            var newLabelText, armoryLabelText, ddbLabelText;
+                            //Rate Of Fire: 23 (23 is the Item's value)
                             label.text(labelText + ": " + activeItem.stats[labelText]);
-							//Look for Armory Stats
-							var statObj = _.findWhere(itemStats, {
-								name: labelText
-							});
-							if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
-								armoryLabelText = statObj.minimum + "/" + statObj.maximum;
-							}
-							
-                            if ($stat.find(".stat-bar-static-value:visible").length > 0) {
-                                ddbLabelText = $.trim($stat.find(".stat-bar-static-value").text().replace(/ /g, ''));
-								if ((ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) || (ddbLabelText.indexOf("/") == -1 && armoryLabelText.split("/")[0] != ddbLabelText && armoryLabelText.split("/")[1] != ddbLabelText)) {
-									newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
-								} else {
-									newLabelText = "Min/Max: " + ddbLabelText;
-								}
-                                $stat.find(".stat-bar-static-value").text(newLabelText);
+                            //Look for Armory Stats
+                            var statObj = _.findWhere(itemStats, {
+                                name: labelText
+                            });
+                            if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
+                                armoryLabelText = statObj.minimum + "/" + statObj.maximum;
                             }
-							else {
-								var ddbStatBar = $stat.find(".stat-bar-empty").html(), 
-									ddbLabelText = $.trim($stat.find(".stat-bar-value").text().replace(/ /g, ''));
-								if ((ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) || (ddbLabelText.indexOf("/") == -1 && armoryLabelText.split("/")[0] != ddbLabelText && armoryLabelText.split("/")[1] != ddbLabelText)) {
-									newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
-								} else {
-									newLabelText = "Min/Max: " + armoryLabelText;
-								}
-								$stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(newLabelText).parent().html() + $stat.find(".stat-bar-empty").html());
-							}
+                            if ($stat.find(".stat-bar-static-value").css("display") == "block") {
+                                ddbLabelText = $.trim($stat.find(".stat-bar-static-value").text().replace(/ /g, ''));
+                                if ((ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) || (ddbLabelText.indexOf("/") == -1 && ddbLabelText > 0 && armoryLabelText.split("/")[0] != ddbLabelText && armoryLabelText.split("/")[1] != ddbLabelText)) {
+                                    newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
+                                } else if (ddbLabelText.indexOf("/") == -1) {
+                                    newLabelText = "Min/Max: " + armoryLabelText;
+                                } else {
+                                    newLabelText = "Min/Max: " + ddbLabelText;
+                                }
+                                $stat.find(".stat-bar-static-value").text(newLabelText);
+                            } else {
+                                var ddbStatBar = $stat.find(".stat-bar-empty").html(),
+                                    ddbLabelText = $.trim($stat.find(".stat-bar-value").text().replace(/ /g, ''));
+                                if (ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) {
+                                    newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
+                                } else {
+                                    newLabelText = "Min/Max: " + armoryLabelText;
+                                }
+                                $stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(newLabelText).parent().html() + $stat.find(".stat-bar-empty").html());
+                            }
                         }
                         return $stat.html();
                     }).get().join("")
                 );
+                //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last");
                     if (activeItem.weaponIndex > -1) {
@@ -447,7 +448,8 @@ var app = function() {
                         var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
                         //console.log("statDetails", statDetails);
                         clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
-                        clonedRow.find(".stat-bar-static-value").html(statDetails);
+                        clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                        clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         magazineRow.after(clonedRow);
                     }
                 }
