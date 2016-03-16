@@ -177,7 +177,7 @@ Item.prototype = {
             statPerks = _.where(perks, {
                 isStat: true
             });
-			rolls = self.normalizeRolls(stats, statPerks, primaryStat)
+            rolls = self.normalizeRolls(stats, statPerks, primaryStat)
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
             primaryStat = self.parsePrimaryStat(item, bucketType);
             $.extend(self, {
@@ -202,6 +202,7 @@ Item.prototype = {
                 icon: tgd.dataDir + info.icon,
                 maxStackSize: info.maxStackSize,
                 equipRequiredLevel: item.equipRequiredLevel,
+                canEquip: item.canEquip,
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
                 armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
                 transferStatus: item.transferStatus,
@@ -216,7 +217,7 @@ Item.prototype = {
                 primaryStat: ko.observable(primaryStat),
                 primaryValues: {
                     CSP: tgd.sum(_.values(stats)),
-					rolls: rolls,
+                    rolls: rolls,
                     Default: primaryStat
                 },
                 backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
@@ -231,19 +232,15 @@ Item.prototype = {
             });
         }
     },
-	normalizeRolls function(stats, statPerks, primaryStat){
-		var arrRolls = [];
-		if ( statPerks.length == 0 ){
-			arrRolls = [ stats ];
-		}
-		else {
-			arrRols = _.map(statPerks, function(stat){
-				console.log(stat);
-				return stat;
-			});
-		}
-		return arrRolls;
-	},
+    normalizeRolls: function(stats, statPerks, primaryStat) {
+        var arrRolls = [];
+        if (statPerks.length == 0) {
+            arrRolls = [stats];
+        } else {
+            arrRolls = [];
+        }
+        return arrRolls;
+    },
     parsePrimaryStat: function(item, bucketType) {
         var primaryStat = "";
         if (item.primaryStat) {
@@ -290,7 +287,7 @@ Item.prototype = {
     parsePerks: function(id, talentGridHash, perks, nodes, itemInstanceId) {
         var parsedPerks = [];
         if (id) {
-            parsedPerks = item.perks;
+            parsedPerks = perks;
         } else if (_.isArray(perks) && perks.length > 0) {
             var talentGrid = _talentGridDefs[talentGridHash];
             if (talentGrid && talentGrid.nodes) {
@@ -1473,7 +1470,7 @@ Item.prototype = {
         if (type == "Light") {
             value = this.primaryValues.Default;
         } else if (type == "All") {
-            value = this.primaryValues.CSP;
+            value = tgd.sum(_.values(this.stats));
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);
         } else {

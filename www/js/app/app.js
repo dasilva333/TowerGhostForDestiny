@@ -226,6 +226,8 @@ var app = function() {
         content = content.replace(/(<img\ssrc=")(.*?)("\s?>)/g, '');
         var instanceId = $(lastElement).attr("instanceId"),
             activeItem, query, $content = $("<div>" + content + "</div>");
+        /*console.log($content.html());
+        return callback($content.html());*/
         if (instanceId > 0) {
             query = {
                 '_id': instanceId
@@ -301,21 +303,41 @@ var app = function() {
                             label = $stat.find(".stat-bar-label"),
                             labelText = $.trim(label.text());
                         if (labelText in activeItem.stats) {
+                            var newLabelText, armoryLabelText, ddbLabelText;
+                            //Rate Of Fire: 23 (23 is the Item's value)
                             label.text(labelText + ": " + activeItem.stats[labelText]);
-                            if ($stat.find(".stat-bar-static-value").length > 0) {
-                                var newLabelText = "D: " + $stat.find(".stat-bar-static-value").text().replace(/ /g, '');
-                                var statObj = _.findWhere(itemStats, {
-                                    name: labelText
-                                });
-                                if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
-                                    newLabelText = newLabelText + " A: " + statObj.minimum + "/" + statObj.maximum;
+                            //Look for Armory Stats
+                            var statObj = _.findWhere(itemStats, {
+                                name: labelText
+                            });
+                            if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
+                                armoryLabelText = statObj.minimum + "/" + statObj.maximum;
+                            }
+                            if ($stat.find(".stat-bar-static-value").css("display") == "block") {
+                                ddbLabelText = $.trim($stat.find(".stat-bar-static-value").text().replace(/ /g, ''));
+                                if ((ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) || (ddbLabelText.indexOf("/") == -1 && ddbLabelText > 0 && armoryLabelText.split("/")[0] != ddbLabelText && armoryLabelText.split("/")[1] != ddbLabelText)) {
+                                    newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
+                                } else if (ddbLabelText.indexOf("/") == -1) {
+                                    newLabelText = "Min/Max: " + armoryLabelText;
+                                } else {
+                                    newLabelText = "Min/Max: " + ddbLabelText;
                                 }
                                 $stat.find(".stat-bar-static-value").text(newLabelText);
+                            } else {
+                                var ddbStatBar = $stat.find(".stat-bar-empty").html(),
+                                    ddbLabelText = $.trim($stat.find(".stat-bar-value").text().replace(/ /g, ''));
+                                if (ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) {
+                                    newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
+                                } else {
+                                    newLabelText = "Min/Max: " + armoryLabelText;
+                                }
+                                $stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(newLabelText).parent().html() + $stat.find(".stat-bar-empty").html());
                             }
                         }
                         return $stat.html();
                     }).get().join("")
                 );
+                //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last");
                     if (activeItem.weaponIndex > -1) {
@@ -426,7 +448,8 @@ var app = function() {
                         var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
                         //console.log("statDetails", statDetails);
                         clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
-                        clonedRow.find(".stat-bar-static-value").html(statDetails);
+                        clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                        clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         magazineRow.after(clonedRow);
                     }
                 }
@@ -1972,7 +1995,7 @@ var app = function() {
             farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
-            var filteredItems = _.filter(items, tgd.farmItemFilters[itemType]);
+            var filteredItems = _.sortBy(_.filter(items, tgd.farmItemFilters[itemType]), 'tierType');
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
             if (targetCharacterId == "Vault") {
                 farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
