@@ -248,8 +248,9 @@ Item.prototype = {
                 active: true
             }).length == 0;
             futureRolls = _.map(statPerks, function(statPerk) {
-                var tmp = _.clone(stats), sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
+                var tmp = _.clone(stats);
 				tmp[statPerk.name] = tmp[statPerk.name] - (statPerk.active ? currentBonus : 0);
+				var sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
 				tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + (statPerk.active || allStatsLocked ? futureBonus : 0);
 				var otherStatName = _.reduce(stats, function(memo, stat, name) {
 					return (name != statPerk.name && stat > 0) ? name : memo;
@@ -257,10 +258,10 @@ Item.prototype = {
 				tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                 return tmp;
             });
-            if ( description == "Twilight Garrison" ){
+            /*if ( description == "Twilight Garrison" ){
             	console.log(description, stats, primaryStat, currentBonus, futureBonus, futureRolls);
-				abort;
-            }
+				//abort;
+            }*/
         }
 		return futureRolls;
 	},

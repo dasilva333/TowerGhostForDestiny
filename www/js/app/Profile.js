@@ -662,7 +662,7 @@ Profile.prototype = {
             //character.queryRolls(backups, function() {
             _.each(sets, function(set) {
                 var mainPiece = set[0];
-				console.log(mainPiece.description, mainPiece.primaryValues, mainPiece);
+				//console.log(mainPiece.description, mainPiece.primaryValues, mainPiece);
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
                 var arrRolls = _.map(mainPiece.futureRolls, function(roll) {
                     var mainClone = _.clone(mainPiece, true);
@@ -678,13 +678,11 @@ Profile.prototype = {
 						if (mainPiece._id != item._id){
 							console.log("candidate", item.description, item.bucketType, minCSP, item.primaryValues, item);
 						}
-                        return item.bucketType != mainPiece.bucketType && item.getValue("MaxLightCSP") >= minCSP && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                        return item.bucketType != mainPiece.bucketType /*&& item.getValue("MaxLightCSP") >= minCSP*/ && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
                     }), 'bucketType');
                     _.each(candidates, function(items) {
                         subSets.push(items);
                     });
-					console.log("subSets", subSets);
-					abort;
                     var combos = tgd.cartesianProductOf(subSets);
                     var scoredCombos = _.map(combos, function(items) {
 						/*var itms = _.map(items, function(item){
