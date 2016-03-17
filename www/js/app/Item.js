@@ -249,17 +249,22 @@ Item.prototype = {
             }).length == 0;
             futureRolls = _.map(statPerks, function(statPerk) {
                 var tmp = _.clone(stats);
-				tmp[statPerk.name] = tmp[statPerk.name] - (statPerk.active ? currentBonus : 0);
-				var sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
-				tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + (statPerk.active || allStatsLocked ? futureBonus : 0);
+				var isStatActive = statPerk.active;
+				//Figure out the stat name of the other node
 				var otherStatName = _.reduce(stats, function(memo, stat, name) {
 					return (name != statPerk.name && stat > 0) ? name : memo;
 				}, '');
+				//Normalize stats by removing the bonus stat 
+				tmp[isStatActive ? statPerk.name : otherStatName] = tmp[isStatActive ? statPerk.name : otherStatName] - (allStatsLocked ? 0: currentBonus);
+				//Figure out the sum of points and the weight of each side
+				var sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
+				//Calculate both stats at Max Light (LL320) with bonus
+				tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
 				tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                 return tmp;
             });
-            /*if ( description == "Twilight Garrison" ){
-            	console.log(description, stats, primaryStat, currentBonus, futureBonus, futureRolls);
+            /*if ( description == "Graviton Forfeit" ){
+            	console.log(description, stats, statPerks, primaryStat, currentBonus, futureBonus, futureRolls);
 				//abort;
             }*/
         }
