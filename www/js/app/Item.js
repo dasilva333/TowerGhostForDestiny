@@ -159,7 +159,7 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
-            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks, rolls;
+            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks, rolls, bonus, armorIndex;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -177,9 +177,11 @@ Item.prototype = {
             statPerks = _.where(perks, {
                 isStat: true
             });
-            rolls = self.normalizeRolls(stats, statPerks, primaryStat)
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
+            armorIndex = tgd.DestinyArmorPieces.indexOf(bucketType);
             primaryStat = self.parsePrimaryStat(item, bucketType);
+            bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
+            rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -204,7 +206,7 @@ Item.prototype = {
                 equipRequiredLevel: item.equipRequiredLevel,
                 canEquip: item.canEquip,
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
-                armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
+                armorIndex: armorIndex,
                 transferStatus: item.transferStatus,
                 perks: perks,
                 stats: stats,
@@ -215,9 +217,10 @@ Item.prototype = {
                     return perk.active === false && perk.isExclusive === -1;
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
+                rolls: rolls,
                 primaryValues: {
                     CSP: tgd.sum(_.values(stats)),
-                    rolls: rolls,
+                    bonus: bonus,
                     Default: primaryStat
                 },
                 backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
@@ -232,12 +235,31 @@ Item.prototype = {
             });
         }
     },
-    normalizeRolls: function(stats, statPerks, primaryStat) {
+    normalizeRolls: function(stats, statPerks, primaryStat, bonus, description) {
         var arrRolls = [];
         if (statPerks.length == 0) {
             arrRolls = [stats];
         } else {
-            arrRolls = [];
+            var hasUnlockedStats = _.where(statPerks, {
+                active: true
+            }).length > 0;
+
+            arrRolls = _.map(statPerks, function(statPerk) {
+                var tmp = _.clone(stats);
+                if (hasUnlockedStats && statPerk.active == false) {
+                    var otherStatName = _.reduce(stats, function(memo, stat, name) {
+                        return (name != statPerk.name && stat > 0) ? name : memo;
+                    }, '');
+                    tmp[otherStatName] = tmp[otherStatName] - bonus;
+                    tmp[statPerk.name] = tmp[statPerk.name] + bonus;
+                } else if (hasUnlockedStats == false) {
+                    tmp[statPerk.name] = tmp[statPerk.name] + bonus;
+                }
+                return tmp;
+            });
+            /*if ( description == "Jasper Carcanet" ){
+            	console.log(description, stats, statPerks, primaryStat, bonus, arrRolls);
+            }*/
         }
         return arrRolls;
     },

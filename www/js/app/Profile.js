@@ -653,56 +653,56 @@ Profile.prototype = {
 
         backups = _.flatten(sets);
 
-        character.queryRolls(backups, function() {
-            _.each(sets, function(set) {
-                var mainPiece = set[0];
-                //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
-                var arrRolls = _.map(mainPiece.rolls, function(roll) {
-                    var mainClone = _.clone(mainPiece, true);
-                    var subSets = [
-                        [mainClone]
-                    ];
-                    mainClone.activeRoll = roll;
-                    mainClone.isActiveRoll = _.reduce(mainClone.stats, function(isActiveRoll, value, key) {
-                        return isActiveRoll === true && (mainClone.activeRoll[key] || 0) == value;
-                    }, true);
-                    return subSets;
+        //character.queryRolls(backups, function() {
+        _.each(sets, function(set) {
+            var mainPiece = set[0];
+            //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
+            var arrRolls = _.map(mainPiece.rolls, function(roll) {
+                var mainClone = _.clone(mainPiece, true);
+                var subSets = [
+                    [mainClone]
+                ];
+                mainClone.activeRoll = roll;
+                mainClone.isActiveRoll = _.reduce(mainClone.stats, function(isActiveRoll, value, key) {
+                    return isActiveRoll === true && (mainClone.activeRoll[key] || 0) == value;
+                }, true);
+                return subSets;
+            });
+            _.each(arrRolls, function(subSets) {
+                candidates = _.groupBy(_.filter(backups, function(item) {
+                    return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                }), 'bucketType');
+                _.each(candidates, function(items) {
+                    subSets.push(items);
                 });
-                _.each(arrRolls, function(subSets) {
-                    candidates = _.groupBy(_.filter(backups, function(item) {
-                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
-                    }), 'bucketType');
-                    _.each(candidates, function(items) {
-                        subSets.push(items);
-                    });
-                    var combos = tgd.cartesianProductOf(subSets);
-                    var scoredCombos = _.map(combos, function(items) {
-                        var tmp = tgd.joinStats(items);
-                        return {
-                            set: items,
-                            score: tgd.sum(_.map(tmp, function(value, key) {
-                                var result = Math.floor(value / tgd.DestinySkillTier);
-                                return result > 5 ? 5 : result;
-                            })) + (tgd.sum(_.values(tmp)) / 1000)
-                        };
-                    });
-                    var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-                    _.each(scoredCombos, function(combo) {
-                        if (combo.score >= highestScore) {
-                            bestSets.push(combo);
-                        }
-                    });
+                var combos = tgd.cartesianProductOf(subSets);
+                var scoredCombos = _.map(combos, function(items) {
+                    var tmp = tgd.joinStats(items);
+                    return {
+                        set: items,
+                        score: tgd.sum(_.map(tmp, function(value, key) {
+                            var result = Math.floor(value / tgd.DestinySkillTier);
+                            return result > 5 ? 5 : result;
+                        })) + (tgd.sum(_.values(tmp)) / 1000)
+                    };
+                });
+                var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+                _.each(scoredCombos, function(combo) {
+                    if (combo.score >= highestScore) {
+                        bestSets.push(combo);
+                    }
                 });
             });
-            var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
-            var lastSets = [];
-            _.each(bestSets, function(combo) {
-                if (combo.score >= highestFinalScore) {
-                    lastSets.push(combo);
-                }
-            });
-            callback(_.sortBy(lastSets, 'score'));
         });
+        var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
+        var lastSets = [];
+        _.each(bestSets, function(combo) {
+            if (combo.score >= highestFinalScore) {
+                lastSets.push(combo);
+            }
+        });
+        callback(_.sortBy(lastSets, 'score'));
+        // });
 
     },
     findHighestItemBy: function(type, buckets, items) {
