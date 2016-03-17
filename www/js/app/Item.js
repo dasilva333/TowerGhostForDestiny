@@ -182,6 +182,7 @@ Item.prototype = {
             primaryStat = self.parsePrimaryStat(item, bucketType);
             bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
             rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
+			futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -218,6 +219,7 @@ Item.prototype = {
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
                 rolls: rolls,
+				futureRolls: futureRolls,
                 primaryValues: {
                     CSP: tgd.sum(_.values(stats)),
                     bonus: bonus,
@@ -233,8 +235,35 @@ Item.prototype = {
                     active: true
                 }).length > 0 || statPerks.length == 0
             });
+			self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
         }
     },
+	calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description){
+		var futureRolls = [];
+        if (statPerks.length == 0) {
+            futureRolls = [stats];
+        } else {
+			var futureBonus = tgd.bonusStatPoints(armorIndex, tgd.DestinyLightCap);
+			var allStatsLocked = _.where(statPerks, {
+                active: true
+            }).length == 0;
+            futureRolls = _.map(statPerks, function(statPerk) {
+                var tmp = _.clone(stats), sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
+				tmp[statPerk.name] = tmp[statPerk.name] - (statPerk.active ? currentBonus : 0);
+				tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + (statPerk.active || allStatsLocked ? futureBonus : 0);
+				var otherStatName = _.reduce(stats, function(memo, stat, name) {
+					return (name != statPerk.name && stat > 0) ? name : memo;
+				}, '');
+				tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
+                return tmp;
+            });
+            if ( description == "Twilight Garrison" ){
+            	console.log(description, stats, primaryStat, currentBonus, futureBonus, futureRolls);
+				abort;
+            }
+        }
+		return futureRolls;
+	},
     normalizeRolls: function(stats, statPerks, primaryStat, bonus, description) {
         var arrRolls = [];
         if (statPerks.length == 0) {
@@ -1491,6 +1520,8 @@ Item.prototype = {
         var value;
         if (type == "Light") {
             value = this.primaryValues.Default;
+        } else if (type == "MaxLightCSP") {
+            value = this.primaryValues.MaxLightCSP;
         } else if (type == "All") {
             value = this.primaryValues.CSP;
         } else if (_.isObject(this.stats) && type in this.stats) {
