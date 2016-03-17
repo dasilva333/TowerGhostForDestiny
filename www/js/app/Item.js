@@ -1470,7 +1470,7 @@ Item.prototype = {
         if (type == "Light") {
             value = this.primaryValues.Default;
         } else if (type == "All") {
-            value = tgd.sum(_.values(this.stats));
+            value = this.primaryValues.CSP;
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);
         } else {
