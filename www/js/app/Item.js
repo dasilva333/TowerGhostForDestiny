@@ -182,7 +182,7 @@ Item.prototype = {
             primaryStat = self.parsePrimaryStat(item, bucketType);
             bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
             rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
-			futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
+            futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -219,7 +219,7 @@ Item.prototype = {
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
                 rolls: rolls,
-				futureRolls: futureRolls,
+                futureRolls: futureRolls,
                 primaryValues: {
                     CSP: tgd.sum(_.values(stats)),
                     bonus: bonus,
@@ -235,33 +235,33 @@ Item.prototype = {
                     active: true
                 }).length > 0 || statPerks.length == 0
             });
-			self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
+            self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
         }
     },
-	calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description){
-		var futureRolls = [];
+    calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
+        var futureRolls = [];
         if (statPerks.length == 0) {
             futureRolls = [stats];
         } else {
-			var futureBonus = tgd.bonusStatPoints(armorIndex, tgd.DestinyLightCap);
-			var allStatsLocked = _.where(statPerks, {
+            var futureBonus = tgd.bonusStatPoints(armorIndex, tgd.DestinyLightCap);
+            var allStatsLocked = _.where(statPerks, {
                 active: true
             }).length == 0;
             futureRolls = _.map(statPerks, function(statPerk) {
                 var tmp = _.clone(stats);
-				var isStatActive = statPerk.active;
-				//Figure out the stat name of the other node
-				var otherStatName = _.reduce(stats, function(memo, stat, name) {
-					return (name != statPerk.name && stat > 0) ? name : memo;
-				}, '');
-				//Normalize stats by removing the bonus stat 
-				tmp[isStatActive ? statPerk.name : otherStatName] = tmp[isStatActive ? statPerk.name : otherStatName] - (allStatsLocked ? 0: currentBonus);
-				//Figure out the sum of points and the weight of each side
-				var sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
-				//Calculate both stats at Max Light (LL320) with bonus
-				tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
-				//This is the easiest way to calculate the other stat pair using the inverse 1-weight multiplier otherwise id have to query the otherStatValue
-				tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
+                var isStatActive = statPerk.active;
+                //Figure out the stat name of the other node
+                var otherStatName = _.reduce(stats, function(memo, stat, name) {
+                    return (name != statPerk.name && stat > 0) ? name : memo;
+                }, '');
+                //Normalize stats by removing the bonus stat 
+                tmp[isStatActive ? statPerk.name : otherStatName] = tmp[isStatActive ? statPerk.name : otherStatName] - (allStatsLocked ? 0 : currentBonus);
+                //Figure out the sum of points and the weight of each side
+                var sum = tgd.sum(tmp),
+                    weight = (tmp[statPerk.name] / sum);
+                //Calculate both stats at Max Light (LL320) with bonus
+                tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
+                tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                 return tmp;
             });
             /*if ( description == "Graviton Forfeit" ){
@@ -269,8 +269,8 @@ Item.prototype = {
 				//abort;
             }*/
         }
-		return futureRolls;
-	},
+        return futureRolls;
+    },
     normalizeRolls: function(stats, statPerks, primaryStat, bonus, description) {
         var arrRolls = [];
         if (statPerks.length == 0) {
