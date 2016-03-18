@@ -602,8 +602,7 @@ Profile.prototype = {
     findMaxLightSet: function(items, callback) {
         var buckets = [].concat(tgd.DestinyArmorPieces),
             sets = [],
-            bestSets = [],
-            backups = [],
+			bestSets = [],
             groups = {},
             candidates,
             statGroups = {},
@@ -650,87 +649,21 @@ Profile.prototype = {
                 candidates = _.filter(items, function(item) {
                     return item.getValue("MaxLightCSP") >= minCSP;
                 });
-                /*console.log("after:" + candidates.length);
-				if ( bucketType == "Ghost") {
-					console.log(candidates);
-				}*/
-                _.each(candidates, function(candidate) {
-                    sets.push([candidate]);
-                });
+                sets = sets.concat(candidates);
             });
-
-            backups = _.flatten(sets);
-
-            //character.queryRolls(backups, function() {
-            _.each(sets, function(set) {
-                var mainPiece = set[0],
-                    highestSetValue = (highestArmorValue - (statGroups[mainPiece.bucketType].max - mainPiece.getValue("MaxLightCSP")));
-                console.log(mainPiece.description, mainPiece.primaryValues, highestSetValue);
-                //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
-                var arrRolls = _.map(mainPiece.futureRolls, function(roll) {
-                    var mainClone = _.clone(mainPiece, true);
-                    var subSets = [
-                        [mainClone]
-                    ];
-                    mainClone.activeRoll = roll;
-                    return subSets;
-                });
-                _.each(arrRolls, function(subSets) {
-                    candidates = _.groupBy(_.filter(backups, function(item) {
-                        var minCSP = highestSetValue - (statGroups[item.bucketType].max - item.getValue("MaxLightCSP"));
-                        var isCandidate = item.bucketType != mainPiece.bucketType && minCSP >= highestTierValue && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
-                        if (isCandidate) {
-                            console.log("candidate", item.description, item.bucketType, minCSP, item.primaryValues, item);
-                        }
-                        return isCandidate;
-                    }), 'bucketType');
-                    _.each(candidates, function(items) {
-                        subSets.push(items);
-                    });
-                    var combos = tgd.cartesianProductOf(subSets);
-                    var scoredCombos = _.map(combos, function(items) {
-                        /*var itms = _.map(items, function(item){
-                        	//var currentLight = item.primaryStatValue();
-                        	//var targetBonus = tgd.bonusStatPoints(item.armorIndex, tgd.DestinyLightCap);
-                        	//var count = 0;
-                        	//console.log("base rolls", item.rolls[0].base);
-                        	var newStats = _.map(item.activeRoll, function(memo, baseStat, key, index){
-                        		var newStat = baseStat * tgd.DestinyLightCap / currentLight;
-                        		memo[key] = newStat + (count == 0 ? targetBonus : 0);
-                        		count++;
-                        		return memo;
-                        	}, {});
-                        	console.log("newStats", newStats, item.rolls[0].base, item.stats, item.getValue("MaxLight"));
-                        	item.activeRoll = newStats;
-                        	//item.activeRoll.isFutureRoll = 0;
-                        	
-                        	console.log("old-stats", item.stats);
-                        	console.log("new-stats", newStats);
-                        	abort;
-                        	return item;
-                        });	*/
-                        var tmp = tgd.joinStats(items);
-                        var result = {
-                            set: items,
-                            points: _.pluck(_.pluck(items, 'primaryValues'), 'MaxLightCSP'),
-                            score: tgd.sum(_.map(tmp, function(value, key) {
-                                var result = Math.floor(value / tgd.DestinySkillTier);
-                                return result > 5 ? 5 : result;
-                            })) + (tgd.sum(_.values(tmp)) / 1000)
-                        };
-                        return result;
-                    });
-                    var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-                    var highestPoints = Math.floor(_.max(_.pluck(scoredCombos, 'points')));
-                    console.log(highestScore, highestPoints);
-                    abort;
-                    _.each(scoredCombos, function(combo) {
-                        if (combo.score >= highestScore) {
-                            bestSets.push(combo);
-                        }
-                    });
-                });
-            });
+			sets = _.flatten(_.map(sets, function(item){
+				return _.map(item.futureRolls, function(roll){
+					var itemClone = _.clone(item);
+					itemClone.activeRoll = roll;
+					return itemClone
+				});
+			}));
+			
+			bestSets = _.groupBy(sets,'bucketType');
+			
+			console.log(bestSets);
+			
+            return;
 
             var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
             console.log("highestFinalScore", highestFinalScore);
