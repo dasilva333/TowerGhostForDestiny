@@ -260,6 +260,7 @@ Item.prototype = {
 				var sum = tgd.sum(tmp), weight = (tmp[statPerk.name] / sum);
 				//Calculate both stats at Max Light (LL320) with bonus
 				tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
+				//This is the easiest way to calculate the other stat pair using the inverse 1-weight multiplier otherwise id have to query the otherStatValue
 				tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                 return tmp;
             });
