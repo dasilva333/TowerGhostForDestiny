@@ -517,7 +517,7 @@ Item.prototype = {
         }
     },
     hasGeneral: function(type) {
-        if (type == "Engram" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
+        if (type == "Engrams" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
             return true;
         } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;

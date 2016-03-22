@@ -815,7 +815,7 @@ var app = function() {
     this.setGeneralFilter = function() {
         var searchType = this.toString();
         self.toggleBootstrapMenu();
-        if (searchType != "Engram") self.activeView(3);
+        if (searchType != "Engrams") self.activeView(3);
         self.generalFilter(searchType);
     };
     this.setProgressFilter = function(model, event) {
