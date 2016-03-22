@@ -602,7 +602,7 @@ Profile.prototype = {
     findMaxLightSet: function(items, callback) {
         var buckets = [].concat(tgd.DestinyArmorPieces),
             sets = [],
-			bestSets = [],
+            bestSets = [],
             groups = {},
             candidates,
             statGroups = {},
@@ -651,18 +651,18 @@ Profile.prototype = {
                 });
                 sets = sets.concat(candidates);
             });
-			sets = _.flatten(_.map(sets, function(item){
-				return _.map(item.futureRolls, function(roll){
-					var itemClone = _.clone(item);
-					itemClone.activeRoll = roll;
-					return itemClone
-				});
-			}));
-			
-			bestSets = _.groupBy(sets,'bucketType');
-			
-			console.log(bestSets);
-			
+            sets = _.flatten(_.map(sets, function(item) {
+                return _.map(item.futureRolls, function(roll) {
+                    var itemClone = _.clone(item);
+                    itemClone.activeRoll = roll;
+                    return itemClone
+                });
+            }));
+
+            bestSets = _.groupBy(sets, 'bucketType');
+
+            console.log(bestSets);
+
             return;
 
             var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
@@ -683,18 +683,18 @@ Profile.prototype = {
     },
     findBestArmorSetV2: function(items, callback) {
         $("body").css("cursor", "progress");
-            var buckets = [].concat(tgd.DestinyArmorPieces),
-                sets = [],
-                bestSets = [],
-                backups = [],
-                groups = {},
-                candidates,
-                statGroups = {},
-                highestArmorTier = 0,
-                highestArmorValue = 0,
-                highestTierValue = 0,
-                character = this;
-						
+        var buckets = [].concat(tgd.DestinyArmorPieces),
+            sets = [],
+            bestSets = [],
+            backups = [],
+            groups = {},
+            candidates,
+            statGroups = {},
+            highestArmorTier = 0,
+            highestArmorValue = 0,
+            highestTierValue = 0,
+            character = this;
+
         setTimeout(function() {
             _.each(buckets, function(bucket) {
                 groups[bucket] = _.filter(items, function(item) {
@@ -1106,9 +1106,9 @@ Profile.prototype = {
             }, []);
         }
         if (type == "Best" || type == "OptimizedBest") {
-            character.findBestArmorSetV2(activeItems, function(sets){
-				character.renderBestSets(sets);
-			});
+            character.findBestArmorSetV2(activeItems, function(sets) {
+                character.renderBestSets(sets);
+            });
         } else if (type == "MaxLight") {
             character.findMaxLightSet(activeItems, character.renderBestSets);
         }

@@ -119,10 +119,10 @@ var Item = function(model, profile) {
         model.isEquipment = true;
     }
 
-    /* TODO: Determine why this is needed
+    /* TODO: Determine why this is needed */
     _.each(model, function(value, key) {
         self[key] = value;
-    });*/
+    });
 
     this.character = profile;
 
@@ -182,7 +182,7 @@ Item.prototype = {
             primaryStat = self.parsePrimaryStat(item, bucketType);
             bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
             rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
-            futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
+            //futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -219,7 +219,7 @@ Item.prototype = {
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
                 rolls: rolls,
-                futureRolls: futureRolls,
+                //futureRolls: futureRolls,
                 primaryValues: {
                     CSP: tgd.sum(_.values(stats)),
                     bonus: bonus,
@@ -822,6 +822,14 @@ Item.prototype = {
         y = characters[ids.indexOf(targetCharacterId)];
         if (_.isUndefined(y)) {
             return app.refresh();
+        }
+        //This is a stop-gap measure because materials/consumables don't have the replacement tech built-in
+        var itemsInDestination = _.where(y.items(), {
+            bucketType: self.bucketType
+        }).length;
+        var maxBucketSize = self.bucketType in tgd.DestinyBucketSizes ? tgd.DestinyBucketSizes[self.bucketType] : 10;
+        if (itemsInDestination == maxBucketSize) {
+            return BootstrapDialog.alert("Cannot transfer " + self.description + " because " + self.bucketType + " is full.");
         }
         //tgd.localLog( self.description );
         app.bungie.transfer(isVault ? sourceCharacterId : targetCharacterId, self._id, self.id, amount, isVault, function(e, result) {

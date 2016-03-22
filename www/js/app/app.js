@@ -1634,7 +1634,7 @@ var app = function() {
                 }
                 return;
             }
-            /* all the surplus characters' items that match the description. might be multiple stacks. */
+            /* TODO: all the surplus characters' items that match the description. might be multiple stacks, need to loop over each item, perhaps more testing required */
             var surplusItems = _.filter(surplusCharacter.character.items(), {
                 description: description
             });
