@@ -683,7 +683,6 @@ Profile.prototype = {
     },
     findBestArmorSetV2: function(items, callback) {
         $("body").css("cursor", "progress");
-        setTimeout(function() {
             var buckets = [].concat(tgd.DestinyArmorPieces),
                 sets = [],
                 bestSets = [],
@@ -695,8 +694,8 @@ Profile.prototype = {
                 highestArmorValue = 0,
                 highestTierValue = 0,
                 character = this;
-
-
+						
+        setTimeout(function() {
             _.each(buckets, function(bucket) {
                 groups[bucket] = _.filter(items, function(item) {
                     return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
@@ -741,7 +740,7 @@ Profile.prototype = {
             _.each(sets, function(set) {
                 var mainPiece = set[0];
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
-                var arrRolls = _.map(mainPiece.rolls, function(roll) {
+                var arrRolls = _.map(mainPiece.futureRolls, function(roll) {
                     var mainClone = _.clone(mainPiece, true);
                     var subSets = [
                         [mainClone]
@@ -1107,7 +1106,9 @@ Profile.prototype = {
             }, []);
         }
         if (type == "Best" || type == "OptimizedBest") {
-            character.findBestArmorSetV2(activeItems, character.renderBestSets);
+            character.findBestArmorSetV2(activeItems, function(sets){
+				character.renderBestSets(sets);
+			});
         } else if (type == "MaxLight") {
             character.findMaxLightSet(activeItems, character.renderBestSets);
         }
