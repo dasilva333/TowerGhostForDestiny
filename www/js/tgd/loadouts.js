@@ -17,7 +17,7 @@
 	        self[key] = value;
 	    });
 	    this.loadoutId = tgd.loadoutId++;
-	    this.name = self.name || "";
+	    this.name = ko.observable(self.name || "");
 	    this.ids = ko.observableArray();
 	    this.generics = ko.observableArray();
 	    this.items = ko.pureComputed(function() {

@@ -740,7 +740,7 @@ Profile.prototype = {
             _.each(sets, function(set) {
                 var mainPiece = set[0];
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
-                var arrRolls = _.map(mainPiece.futureRolls, function(roll) {
+                var arrRolls = _.map(mainPiece.rolls, function(roll) {
                     var mainClone = _.clone(mainPiece, true);
                     var subSets = [
                         [mainClone]
@@ -933,7 +933,7 @@ Profile.prototype = {
             }
         });
     },
-    renderBestSets: function(bestSets) {
+    renderBestSets: function(type, bestSets) {
         var character = this,
             weaponsEquipped = _.filter(character.equippedGear(), function(item) {
                 return item.weaponIndex > -1;
@@ -1027,7 +1027,7 @@ Profile.prototype = {
                     $ZamTooltips.lastElement = element;
                     $ZamTooltips.show("destinydb", "items", itemId, element);
                 }).on("press", function(ev) {
-                    var newArmorBuilds = _.map(_.filter(arrArmorBuilds, function(sets) {
+                    arrArmorBuilds = _.map(_.filter(arrArmorBuilds, function(sets) {
                         return _.filter(sets, function(combos) {
                             return _.pluck(combos.set, '_id').indexOf(instanceId) > -1;
                         }).length > 0;
@@ -1036,7 +1036,7 @@ Profile.prototype = {
                             return _.pluck(combos.set, '_id').indexOf(instanceId) > -1;
                         });
                     });
-                    armorTemplateDialog.content(renderTemplate(newArmorBuilds));
+                    armorTemplateDialog.content(renderTemplate(arrArmorBuilds));
                     setTimeout(assignBindingHandlers, 10);
                 });
             });
@@ -1076,6 +1076,31 @@ Profile.prototype = {
                     }
                 }
             }, {
+                label: "Save",
+                action: function(dialog) {
+                    if ($("input.armorBuild:checked").length === 0) {
+                        BootstrapDialog.alert("Error: Please select one armor build to equip.");
+                    } else {
+                        var selectedBuild = $("input.armorBuild:checked").val();
+                        var selectedStatTier = selectedBuild.split("_")[0];
+                        var selectedIndex = selectedBuild.split("_")[1];
+                        highestCombo = _.filter(arrArmorBuilds, function(sets) {
+                            return sets[0].statTiers == selectedStatTier
+                        })[0][selectedIndex];
+                        app.createLoadout();
+                        var loadoutName = highestCombo.score + " " + $("<div></div>").html(highestCombo.statTiers).text();
+                        app.activeLoadout().name(loadoutName);
+                        _.each(highestCombo.set, function(item) {
+                            app.activeLoadout().addUniqueItem({
+                                id: item._id,
+                                bucketType: item.bucketType,
+                                doEquip: true
+                            });
+                        });
+                        dialog.close();
+                    }
+                }
+            }, {
                 label: app.activeText().cancel,
                 action: function(dialog) {
                     dialog.close();
@@ -1107,7 +1132,7 @@ Profile.prototype = {
         }
         if (type == "Best" || type == "OptimizedBest") {
             character.findBestArmorSetV2(activeItems, function(sets) {
-                character.renderBestSets(sets);
+                character.renderBestSets(type, sets);
             });
         } else if (type == "MaxLight") {
             character.findMaxLightSet(activeItems, character.renderBestSets);
