@@ -641,10 +641,14 @@ Profile.prototype = {
 
         groups = _.object(_.map(groups, function(items, bucketType) {
             var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
-            console.log(bucketType + ":" + minCSP + ",before:" + items.length, items);
-            return [bucketType, _.filter(items, function(item) {
-                return item.getValue("MaxLightCSP") >= minCSP;
-            })];
+            return [
+                bucketType,
+                _.sortBy(_.filter(items, function(item) {
+                    return item.getValue("MaxLightCSP") >= minCSP;
+                }), function(item) {
+                    return item.getValue("MaxLightCSP") * -1;
+                })
+            ];
         }));
 
         callback(groups);
