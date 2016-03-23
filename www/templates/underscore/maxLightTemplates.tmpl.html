@@ -1,10 +1,23 @@
 <%_.each(groups, function(items, key){ %>
 	<div class="panel panel-default">
-	  <div class="panel-heading"><%= key %> Currently Selected: 100</div>
+	  <div class="panel-heading"><%= key %> Currently Selected: <%= items[0].getValue('MaxLightCSP') %></div>
 	  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
-		<%_.each(items, function(item, index){ %>
-			<img class="itemImage" src="<%= item.icon %>" style="padding: 2px; border:1px solid <%= index == 0 ? 'green':'red' %>">
-		<%}) %>
+		<table>
+			<tr>
+				<%_.each(items, function(item, index){ %>
+					<td>
+						<img class="itemImage" src="<%= item.icon %>" style="padding: 2px; border:1px solid <%= index == 0 ? 'green':'red' %>">	
+					</td>
+				<%}) %>
+			</tr>
+			<tr>
+				<%_.each(items, function(item, index){ %>
+					<td>
+						<%= item.getValue('MaxLightCSP') %>/<%= Math.round((item.getValue('MaxLightCSP') / tgd.DestinyMaxCSP[item.bucketType]) * 100) %>%
+					</td>
+				<%}) %>
+			</tr>
+		</table>
 	  </div>
 	</div>
 <%}) %>
