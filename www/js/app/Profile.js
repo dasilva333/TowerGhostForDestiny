@@ -644,26 +644,60 @@ Profile.prototype = {
             console.log("highestTierValue :" + highestTierValue);
 
             _.each(groups, function(items, bucketType) {
-                var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
-                //console.log(bucketType+":"+minCSP +",before:" + items.length);
+                var minCSP = statGroups[bucketType].max;
+                console.log(bucketType+":"+minCSP +",before:" + items.length, items);
                 candidates = _.filter(items, function(item) {
-                    return item.getValue("MaxLightCSP") >= minCSP;
+                    return item.getValue("MaxLightCSP") == minCSP;
                 });
-                sets = sets.concat(candidates);
+                console.log("after:" + candidates.length, candidates[0].description, candidates[0].getValue("MaxLightCSP"));
+                _.each(candidates, function(candidate) {
+					_.each(candidate.futureRolls, function(roll){
+						var clone = _.clone(candidate);
+						clone.activeRoll = roll;
+						sets.push([clone]);
+					});
+                });
             });
-            sets = _.flatten(_.map(sets, function(item) {
-                return _.map(item.futureRolls, function(roll) {
-                    var itemClone = _.clone(item);
-                    itemClone.activeRoll = roll;
-                    return itemClone
-                });
-            }));
 
-            bestSets = _.groupBy(sets, 'bucketType');
+            backups = _.flatten(sets);
+            //character.queryRolls(backups, function() {
+            _.each(sets, function(mainItem) {
+				var mainPiece = mainItem[0];
+				//console.log("mainPiece", mainPiece);
+				var subSets = [ [ mainPiece ] ];
+                candidates = _.groupBy(_.filter(backups, function(item) {
+					return item.bucketType != mainPiece.bucketType && mainPiece._id != item._id;
+				}), 'bucketType');
+				//console.log("candidates", candidates);
+				_.each(candidates, function(items) {
+					subSets.push(items);
+				});
+				//console.log("subSets", subSets);
+				var combos = tgd.cartesianProductOf(subSets);
+				var scoredCombos = _.map(combos, function(items) {
+					var tmp = tgd.joinStats(items);
+					return {
+						set: items,
+						score: tgd.sum(_.map(tmp, function(value, key) {
+							var result = Math.floor(value / tgd.DestinySkillTier);
+							return result > 5 ? 5 : result;
+						})) + (tgd.sum(_.values(tmp)) / 1000)
+					};
+				});
+				var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+				//console.log("highestScore", highestScore);
+				//console.log(scoredCombos);
+				//abort;
+				_.each(scoredCombos, function(combo) {
+					if (combo.score >= highestScore) {
+						bestSets.push(combo);
+					}
+				});
+            });
+
+            //bestSets = _.groupBy(sets, 'bucketType');
 
             console.log(bestSets);
-
-            return;
 
             var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
             console.log("highestFinalScore", highestFinalScore);
@@ -675,6 +709,9 @@ Profile.prototype = {
                 }
             });
 
+			console.log(lastSets);
+			abort;
+			
             callback(_.sortBy(lastSets, 'score'));
 
             $("body").css("cursor", "default");

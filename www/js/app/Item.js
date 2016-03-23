@@ -182,7 +182,7 @@ Item.prototype = {
             primaryStat = self.parsePrimaryStat(item, bucketType);
             bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
             rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
-            //futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
+            futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -219,7 +219,7 @@ Item.prototype = {
                 }).length === 0,
                 primaryStat: ko.observable(primaryStat),
                 rolls: rolls,
-                //futureRolls: futureRolls,
+                futureRolls: futureRolls,
                 primaryValues: {
                     CSP: tgd.sum(_.values(stats)),
                     bonus: bonus,
