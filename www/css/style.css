@@ -275,7 +275,7 @@ input
     left: 5px;
 }
 
-.list-group-item .itemImage {
+.list-group-item .itemImage, .panel-body .itemImage {
     width: 48px;
 }
 

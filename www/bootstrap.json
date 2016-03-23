@@ -6,7 +6,7 @@
     },
     "style.css": {
       "filename": "css/style.css",
-      "version": "69c238ef65a109f70d60987a7d9eaefec0932b891394dbd8f5c35c677a5eb2d7"
+      "version": "e8d16b0b3b0746b1e21be557d267dd8d38dd27cf668de8121e3747f40f4012ef"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
@@ -106,7 +106,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "41c1d4f293d590b4396e98f2c30870fae9f5d7717cccf850d4efe99cc7fcdfc2"
+      "version": "6816ddd9a06a3578ff1ea2519708b27d68d657b6b7e88c571445b97a006b4c37"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
