@@ -601,122 +601,53 @@ Profile.prototype = {
     },
     findMaxLightSet: function(items, callback) {
         var buckets = [].concat(tgd.DestinyArmorPieces),
-            sets = [],
-            bestSets = [],
             groups = {},
-            candidates,
             statGroups = {},
             highestArmorTier = 0,
             highestArmorValue = 0,
             highestTierValue = 0,
             character = this;
-        $("body").css("cursor", "progress");
-        setTimeout(function() {
-            _.each(buckets, function(bucket) {
-                groups[bucket] = _.filter(items, function(item) {
-                    return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
-                        (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
-                    );
-                });
-                var csps = _.map(groups[bucket], function(item) {
-                    return item.getValue("MaxLightCSP");
-                });
-                statGroups[bucket] = {
-                    max: _.max(csps),
-                    min: _.min(csps)
-                };
+
+        _.each(buckets, function(bucket) {
+            groups[bucket] = _.filter(items, function(item) {
+                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
+                    (item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1 && item.typeName.indexOf(character.classType()) > -1) || (item.weaponIndex > -1) || item.bucketType == "Ghost"
+                );
             });
-
-            highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
-                return stat.max;
-            }));
-
-            console.log(statGroups);
-            console.log("highestArmorValue:" + highestArmorValue);
-            console.log(_.object(_.map(statGroups, function(stat, key) {
-                return [key, stat.max];
-            })));
-
-            highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
-            console.log("highestArmorTier :" + highestArmorTier);
-
-            highestTierValue = highestArmorTier * tgd.DestinySkillTier;
-            console.log("highestTierValue :" + highestTierValue);
-
-            _.each(groups, function(items, bucketType) {
-                var minCSP = statGroups[bucketType].max;
-                console.log(bucketType+":"+minCSP +",before:" + items.length, items);
-                candidates = _.filter(items, function(item) {
-                    return item.getValue("MaxLightCSP") == minCSP;
-                });
-                console.log("after:" + candidates.length, candidates[0].description, candidates[0].getValue("MaxLightCSP"));
-                _.each(candidates, function(candidate) {
-					_.each(candidate.futureRolls, function(roll){
-						var clone = _.clone(candidate);
-						clone.activeRoll = roll;
-						sets.push([clone]);
-					});
-                });
+            var csps = _.map(groups[bucket], function(item) {
+                return item.getValue("MaxLightCSP");
             });
+            statGroups[bucket] = {
+                max: _.max(csps),
+                min: _.min(csps)
+            };
+        });
 
-            backups = _.flatten(sets);
-            //character.queryRolls(backups, function() {
-            _.each(sets, function(mainItem) {
-				var mainPiece = mainItem[0];
-				//console.log("mainPiece", mainPiece);
-				var subSets = [ [ mainPiece ] ];
-                candidates = _.groupBy(_.filter(backups, function(item) {
-					return item.bucketType != mainPiece.bucketType && mainPiece._id != item._id;
-				}), 'bucketType');
-				//console.log("candidates", candidates);
-				_.each(candidates, function(items) {
-					subSets.push(items);
-				});
-				//console.log("subSets", subSets);
-				var combos = tgd.cartesianProductOf(subSets);
-				var scoredCombos = _.map(combos, function(items) {
-					var tmp = tgd.joinStats(items);
-					return {
-						set: items,
-						score: tgd.sum(_.map(tmp, function(value, key) {
-							var result = Math.floor(value / tgd.DestinySkillTier);
-							return result > 5 ? 5 : result;
-						})) + (tgd.sum(_.values(tmp)) / 1000)
-					};
-				});
-				var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-				//console.log("highestScore", highestScore);
-				//console.log(scoredCombos);
-				//abort;
-				_.each(scoredCombos, function(combo) {
-					if (combo.score >= highestScore) {
-						bestSets.push(combo);
-					}
-				});
-            });
+        highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
+            return stat.max;
+        }));
 
-            //bestSets = _.groupBy(sets, 'bucketType');
+        console.log(statGroups);
+        console.log("highestArmorValue:" + highestArmorValue);
+        console.log(_.object(_.map(statGroups, function(stat, key) {
+            return [key, stat.max];
+        })));
 
-            console.log(bestSets);
+        highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
+        console.log("highestArmorTier :" + highestArmorTier);
 
-            var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
-            console.log("highestFinalScore", highestFinalScore);
+        highestTierValue = highestArmorTier * tgd.DestinySkillTier;
+        console.log("highestTierValue :" + highestTierValue);
 
-            var lastSets = [];
-            _.each(bestSets, function(combo) {
-                if (combo.score >= highestFinalScore) {
-                    lastSets.push(combo);
-                }
-            });
+        groups = _.object(_.map(groups, function(items, bucketType) {
+            var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
+            console.log(bucketType + ":" + minCSP + ",before:" + items.length, items);
+            return [bucketType, _.filter(items, function(item) {
+                return item.getValue("MaxLightCSP") >= minCSP;
+            })];
+        }));
 
-			console.log(lastSets);
-			abort;
-			
-            callback(_.sortBy(lastSets, 'score'));
-
-            $("body").css("cursor", "default");
-        }, 600);
-
+        callback(groups);
     },
     findBestArmorSetV2: function(items, callback) {
         $("body").css("cursor", "progress");
@@ -970,6 +901,43 @@ Profile.prototype = {
             }
         });
     },
+    renderBestGroups: function(groups) {
+        console.log("renderBestGroups", groups);
+        var renderTemplate = function() {
+            var _template = $(tgd.maxLightTemplates({
+                groups: groups
+            }));
+            _template.find(".itemImage,.perkImage").bind("error", function() {
+                tgd.imageErrorHandler(this.src.replace(location.origin, '').replace("www/", ""), this)();
+            });
+            return _template;
+        }
+
+        var $template = renderTemplate();
+
+        var armorTemplateDialog = (new tgd.dialog({
+            buttons: [{
+                label: app.activeText().movepopup_equip,
+                action: function(dialog) {
+
+                }
+            }, {
+                label: app.activeText().loadouts_save,
+                action: function(dialog) {
+
+                }
+            }, {
+                label: app.activeText().cancel,
+                action: function(dialog) {
+                    dialog.close();
+                }
+            }]
+        })).title("Armor Builds for Max Light Level").content($template).show(true, function() {
+            groups = null;
+        }, function() {
+            //assignBindingHandlers();
+        });
+    },
     renderBestSets: function(type, bestSets) {
         var character = this,
             weaponsEquipped = _.filter(character.equippedGear(), function(item) {
@@ -1113,7 +1081,7 @@ Profile.prototype = {
                     }
                 }
             }, {
-                label: "Save",
+                label: app.activeText().loadouts_save,
                 action: function(dialog) {
                     if ($("input.armorBuild:checked").length === 0) {
                         BootstrapDialog.alert("Error: Please select one armor build to equip.");
@@ -1172,7 +1140,9 @@ Profile.prototype = {
                 character.renderBestSets(type, sets);
             });
         } else if (type == "MaxLight") {
-            character.findMaxLightSet(activeItems, character.renderBestSets);
+            character.findMaxLightSet(activeItems, function(groups) {
+                character.renderBestGroups(groups);
+            });
         }
     },
     equipHighest: function(type) {

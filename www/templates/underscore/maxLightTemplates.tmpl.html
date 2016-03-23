@@ -1,0 +1,12 @@
+<ul class="list-group">
+    <%_.each(groups, function(items, key){ %>
+        <li class="list-group-item">
+			<h3><%= key %></h3>
+			<div style="overflow:hidden; width: 100%">
+				<%_.each(items, function(item){ %>
+					<img class="itemImage" src="<%= item.icon %>">
+				<%}) %>
+			</div>
+        </li>
+	<%}) %>
+</ul>

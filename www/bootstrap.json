@@ -106,7 +106,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "476cdef6b39e739d85006568ddf50815183d6341d5456a126540766f87fabfc1"
+      "version": "41c1d4f293d590b4396e98f2c30870fae9f5d7717cccf850d4efe99cc7fcdfc2"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -166,11 +166,11 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "7eada1ef86fc1629fa2cfa9cdcf4f3c49dcde58ffcf0e4ff0ce25a073d2fe40b"
+      "version": "102848c173860cbf099b62c169aab1084048e71de4ccdbd7d2b948e260d0a82f"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "4ac9152be6fbf2b22ddfeaacfbb687a18834ccbdbaeb109f446b48bb113a0297"
+      "version": "f7810583bcd8e017d0cf48f53de195d7a74ed71ae66ad2fe45a77902f6697b41"
     },
     "app.js": {
       "filename": "js/app/app.js",
