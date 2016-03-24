@@ -1,44 +1,34 @@
 <div id="container_<%= id %>">
 	<div>
 		<div class="row">
-			<div class="col-xs-6">Combined Stat Points</div>
-			<div class="col-xs-6"><span data-bind="text: combinedStatPoints"></span> Points</div>
+			<div class="col-xs-12">Combined Stat Points</div>
+			<div class="col-xs-12"><span data-bind="text: combinedStatPoints"></span> Points</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6">Stat Tiers</div>
-			<div class="col-xs-6"><span data-bind="html: statTiers"></span></div>
+			<div class="col-xs-12">Stat Tiers</div>
+			<div class="col-xs-12"><span data-bind="html: statTiers"></span></div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6">Stat Values</div>
-			<div class="col-xs-6"><span data-bind="text: statValues"></span></div>
+			<div class="col-xs-12">Stat Values</div>
+			<div class="col-xs-12"><span data-bind="text: statValues"></span></div>
 		</div>
-		<div class="row">
-			<div class="col-xs-6">Projected Light Level</div>
-			<div class="col-xs-6"><span data-bind="text: projectedLightLevel"></span></div>
-		</div>
-		<div class="row">
-			<div class="col-xs-6">Current Light Level</div>
-			<div class="col-xs-6"><span data-bind="text: currentLightLevel"></span></div>
-		</div>
-	</<div>
+	</div>
 	<div data-bind="foreach: { data: armorGroups, as: 'armor' }">
 		<div class="panel panel-default">
 		  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> Currently Selected: <span data-bind="text: armor.selectedItem().getValue('MaxLightCSP')"></span></div>
 		  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
-			<table>
-				<tr data-bind="foreach: { data: armor.items, as: 'item' }">
-					<td>
+				<div class="row" data-bind="foreach: { data: armor.items, as: 'item' }">
+					<div class="col-xs-4">
 						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: select">
 							<img class="itemImage" data-bind="itemImageHandler: item.icon, css: item.css" style="padding: 2px;">
 						</a>						
-					</td>
-				</tr>
-				<tr data-bind="foreach: { data: armor.items, as: 'item' }">
-					<td>
-						<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
-					</td>
-				</tr>
-			</table>
+					</div>
+				</div>
+				<div class="row" data-bind="foreach: { data: armor.items, as: 'item' }">
+					<div class="col-xs-4">
+						<span data-bind="text: item.getValue('MaxLightCSP')"></span> / <span data-bind="text: item.getValue('MaxLightPercent')"></span>%
+					</div>
+				</div>
 		  </div>
 		</div>
 	</div>

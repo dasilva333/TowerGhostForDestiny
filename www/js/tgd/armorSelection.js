@@ -67,12 +67,6 @@ tgd.armorSelection = function(groups) {
             }).join("/");
         }).join(", ");
     });
-    self.projectedLightLevel = ko.computed(function() {
-        return tgd.DestinyLightCap;
-    });
-    self.currentLightLevel = ko.computed(function() {
-        return 10;
-    });
 }
 
 tgd.armorGroup = function(bucketType, items, groups) {
