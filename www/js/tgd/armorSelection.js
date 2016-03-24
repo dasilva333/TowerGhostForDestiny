@@ -1,3 +1,35 @@
+tgd.calculateBestSets = function(items) {
+    var combos = tgd.cartesianProductOf(_.map(items, function(item) {
+        return _.map(item.futureRolls, function(roll) {
+            var itemClone = _.clone(item);
+            itemClone.activeRoll = roll;
+            return itemClone;
+        });
+    }));
+    var scoredCombos = _.map(combos, function(items) {
+        var tmp = tgd.joinStats(items);
+        return {
+            set: items,
+            stats: tmp,
+            statTiers: _.map(_.sortBy(_.keys(tmp)), function(name) {
+                return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
+            }).join(" "),
+            score: tgd.sum(_.map(tmp, function(value, key) {
+                var result = Math.floor(value / tgd.DestinySkillTier);
+                return result > 5 ? 5 : result;
+            })) + (tgd.sum(_.values(tmp)) / 1000)
+        };
+    });
+    var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+    console.log("highestScore", highestScore);
+    var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
+        return combo.score >= highestScore;
+    }), false, function(combo) {
+        return combo.statTiers;
+    });
+    return bestSets;
+};
+
 tgd.ArmorSelection = function(groups) {
     var self = this;
 
@@ -19,38 +51,10 @@ tgd.ArmorSelection = function(groups) {
             return item.getValue("MaxLightCSP");
         }));
     });
-	self.bestSets = ko.computed(function(){
-		var combos = tgd.cartesianProductOf(_.map(self.selectedItems(), function(item) {
-            var itemClone1 = _.clone(item),
-                itemClone2 = _.clone(item);
-            itemClone1.activeRoll = item.futureRolls[0];
-            itemClone2.activeRoll = item.futureRolls[1];
-            return [itemClone1, itemClone2];
-        }));
-        var scoredCombos = _.map(combos, function(items) {
-            var tmp = tgd.joinStats(items);
-            return {
-                set: items,
-                stats: tmp,
-                statTiers: _.map(_.sortBy(_.keys(tmp)), function(name) {
-                    return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
-                }).join(" "),
-                score: tgd.sum(_.map(tmp, function(value, key) {
-                    var result = Math.floor(value / tgd.DestinySkillTier);
-                    return result > 5 ? 5 : result;
-                })) + (tgd.sum(_.values(tmp)) / 1000)
-            };
-        });
-        var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-		console.log("highestScore", highestScore);
-        var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
-            return combo.score >= highestScore;
-        }), false, function(combo) {
-            return combo.statTiers;
-        });
-		
-		return bestSets;
-	});
+    self.bestSets = ko.computed(function() {
+        var bestSets = tgd.calculateBestSets(self.selectedItems());
+        return bestSets;
+    });
     self.statTiers = ko.computed(function() {
         return _.map(self.bestSets(), function(combo) {
             return combo.statTiers;
@@ -59,8 +63,8 @@ tgd.ArmorSelection = function(groups) {
     self.statValues = ko.computed(function() {
         return _.map(self.bestSets(), function(combo) {
             return _.map(combo.stats, function(stat, name) {
-				return stat;
-			}).join("/");
+                return stat;
+            }).join("/");
         }).join(", ");
     });
     self.projectedLightLevel = ko.computed(function() {
@@ -95,11 +99,18 @@ tgd.armorItem = function(item, selectedItem, groups) {
     });
     var isDisabled = ko.computed(function() {
         //first pass be based on csp, second pass will be based on sum of tiers
-        var totalCSP = tgd.sum(_.map(groups(), function(group) {
+        /*var totalCSP = tgd.sum(_.map(groups(), function(group) {
             return group.bucketType == self.bucketType ? 0 : group.selectedItem().getValue("MaxLightCSP");
         })) + self.getValue("MaxLightCSP");
-        return tgd.maxTierPointsPossible >= totalCSP;
+        return tgd.maxTierPointsPossible >= totalCSP;*/
         /* the second pass will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
+        var items = _.map(groups(), function(group) {
+            return group.bucketType == self.bucketType ? self : group.selectedItem();
+        });
+        var bestSets = tgd.calculateBestSets(items);
+        return _.filter(bestSets, function(combo) {
+            return Math.floor(combo.score) >= tgd.maxTierPossible;
+        }).length == 0;
     });
     self.css = ko.computed(function() {
         return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
@@ -112,28 +123,3 @@ tgd.armorItem = function(item, selectedItem, groups) {
         }
     }
 }
-
-/*
-combos = tgd.cartesianProductOf(_.map(temp1.selectedItems(), function(item){
-var itemClone1 = _.clone(item), itemClone2 = _.clone(item);
-itemClone1.activeRoll = item.futureRolls[0];
-itemClone2.activeRoll = item.futureRolls[1];
-return [ itemClone1, itemClone2 ];
-}));
- var scoredCombos = _.map(combos, function(items) {
-                        var tmp = tgd.joinStats(items);
-                        return {
-                            set: items,
-                            score: tgd.sum(_.map(tmp, function(value, key) {
-                                var result = Math.floor(value / tgd.DestinySkillTier);
-                                return result > 5 ? 5 : result;
-                            })) + (tgd.sum(_.values(tmp)) / 1000)
-                        };
-                    });
-var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-_.each(scoredCombos, function(combo) {
-                        if (combo.score >= highestScore) {
-                            bestSets.push(combo);
-                        }
-                    });
-*/
