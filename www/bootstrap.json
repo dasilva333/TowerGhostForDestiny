@@ -10,7 +10,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "style_new.css": {
       "filename": "css/style_new.css",
@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
+      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -106,11 +106,15 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "df3ee3d276e06a425346d2d60702de4c2d92190aa368c3c7dbe77910db79985f"
+      "version": "84f4b62b1aaeb1042c35dcde620852472aa2c140e46ab591f3c6e652ccf53b72"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
       "version": "0c4429045036a45994dddc3a9ac765310b5a5b01867b17a120eae4799c018346"
+    },
+    "armorSelection.js": {
+      "filename": "js/tgd/armorSelection.js",
+      "version": "2b89a07c9aa72c066c662a914980d6d8cde89f67da3e29e2bc94152ff08c8b6c"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -166,11 +170,11 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "102848c173860cbf099b62c169aab1084048e71de4ccdbd7d2b948e260d0a82f"
+      "version": "10b944bed2b526976c99faf9d2fe125c7b4d5c2310d5dd18c0e1b7d8b86f995d"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "064bd899b3d76d2c8475e08fb7fa2e901b1f29c9d0207d9242e67edd49faf5bc"
+      "version": "d5a06ea3f6c7d6218b70341ad39b3ed7bc1c1fc6da91ef2f1aea73621d23dbea"
     },
     "app.js": {
       "filename": "js/app/app.js",
@@ -218,6 +222,7 @@
     "js/plugins/knockout-sortable.js",
     "js/templates/dynamic-templates.js",
     "js/templates/templates.js",
+    "js/tgd/armorSelection.js",
     "js/tgd/base-definitions.js",
     "js/tgd/base-tgd.js",
     "js/tgd/bindingHandlers.js",

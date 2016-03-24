@@ -907,17 +907,11 @@ Profile.prototype = {
     },
     renderBestGroups: function(groups) {
         console.log("renderBestGroups", groups);
-        var renderTemplate = function() {
-            var _template = $(tgd.maxLightTemplates({
-                groups: groups
-            }));
-            _template.find(".itemImage,.perkImage").bind("error", function() {
-                tgd.imageErrorHandler(this.src.replace(location.origin, '').replace("www/", ""), this)();
-            });
-            return _template;
-        }
+        var id = new Date().getTime();
 
-        var $template = renderTemplate();
+        var $template = $(tgd.maxLightTemplates({
+            id: id
+        }));
 
         var armorTemplateDialog = (new tgd.dialog({
             buttons: [{
@@ -939,7 +933,7 @@ Profile.prototype = {
         })).title("Armor Builds for Max Light Level").content($template).show(true, function() {
             groups = null;
         }, function() {
-            //assignBindingHandlers();
+            ko.applyBindings(new tgd.ArmorSelection(groups), document.getElementById('container_' + id));
         });
     },
     renderBestSets: function(type, bestSets) {

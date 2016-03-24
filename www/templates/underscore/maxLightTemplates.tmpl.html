@@ -1,47 +1,47 @@
-<%_.each(groups, function(items, key){ %>
-	<div class="panel panel-default">
-	  <div class="panel-heading"><%= key %> Currently Selected: <%= items[0].getValue('MaxLightCSP') %></div>
-	  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
-		<table>
-			<tr>
-				<%_.each(items, function(item, index){ %>
-					<td>
-						<img class="itemImage" src="<%= item.icon %>" style="padding: 2px; border:1px solid <%= index == 0 ? 'green':'red' %>">	
-					</td>
-				<%}) %>
-			</tr>
-			<tr>
-				<%_.each(items, function(item, index){ %>
-					<td>
-						<%= item.getValue('MaxLightCSP') %>/<%= Math.round((item.getValue('MaxLightCSP') / tgd.DestinyMaxCSP[item.bucketType]) * 100) %>%
-					</td>
-				<%}) %>
-			</tr>
-		</table>
-	  </div>
-	</div>
-<%}) %>
-<table class="table table-striped table-hover ">
+<table class="table table-striped table-hover" id="container_<%= id %>">
+	<tbody data-bind="foreach: { data: armorGroups, as: 'armor' }">
+		<tr>
+			<td>
+				<div class="panel panel-default">
+				  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> Currently Selected: <span data-bind="text: armor.selectedItem().getValue('MaxLightCSP')"></span></div>
+				  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
+					<table>
+						<tr data-bind="foreach: { data: armor.items, as: 'item' }">
+							<td>
+								<img class="itemImage" data-bind="attr: { src: item.icon }, css: item.css" style="padding: 2px;">	
+							</td>
+						</tr>
+						<tr data-bind="foreach: { data: armor.items, as: 'item' }">
+							<td>
+								<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
+							</td>
+						</tr>
+					</table>
+				  </div>
+				</div>			
+			</td>
+		</tr>
+	</tbody>
 	<tbody>
 		<tr>
 			<td>Combined Stat Points</td>
-			<td>672 Points</td>
+			<td><span data-bind="text: combinedStatPoints"></span> Points</td>
 		</tr>
 		<tr>
 			<td>Stat Tiers</td>
-			<td>T5 Int T5 Dis T1 Str</td>
+			<td><span data-bind="text: statTiers"></span></td>
 		</tr>
 		<tr>
 			<td>Stat Values</td>
-			<td>306 Int 300 Dis 67 Str</td>
+			<td><span data-bind="text: statValues"></span></td>
 		</tr>
 		<tr>
 			<td>Projected Light Level</td>
-			<td>320</td>
+			<td><span data-bind="text: projectedLightLevel"></span></td>
 		</tr>
 		<tr>
 			<td>Current Light Level</td>
-			<td>307</td>
+			<td><span data-bind="text: currentLightLevel"></span></td>
 		</tr>
 	</tbody>
 </table>

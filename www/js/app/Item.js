@@ -236,6 +236,7 @@ Item.prototype = {
                 }).length > 0 || statPerks.length == 0
             });
             self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
+            self.primaryValues.MaxLightPercent = Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100);
         }
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
@@ -1537,6 +1538,10 @@ Item.prototype = {
             value = this.primaryValues.Default;
         } else if (type == "MaxLightCSP") {
             value = this.primaryValues.MaxLightCSP;
+
+        } else if (type == "MaxLightPercent") {
+            value = this.primaryValues.MaxLightPercent;
+
         } else if (type == "All") {
             value = this.primaryValues.CSP;
         } else if (_.isObject(this.stats) && type in this.stats) {

@@ -600,3 +600,6 @@ span.skill { height: 16px; width: 16px; background-size: cover; }
 	text-align:center;
 	width: 100%;
 }
+.bootstrap-dialog-message { overflow: hidden; }
+.itemImage.selected { border:1px solid green }
+.itemImage.not-selected { border:1px solid red }
