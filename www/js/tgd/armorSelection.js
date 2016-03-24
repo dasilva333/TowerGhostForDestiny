@@ -19,7 +19,7 @@ tgd.ArmorSelection = function(groups) {
             return item.getValue("MaxLightCSP");
         }));
     });
-	/* this code is currently using item.stats, should be using item.futureRolls or item.activeRoll */
+    /* this code is currently using item.stats, should be using item.futureRolls or item.activeRoll */
     self.currentStats = ko.computed(function() {
         return tgd.joinStats(self.selectedItems());
     });
@@ -69,7 +69,7 @@ tgd.armorItem = function(item, selectedItem, groups) {
             return group.bucketType == self.bucketType ? 0 : group.selectedItem().getValue("MaxLightCSP");
         })) + self.getValue("MaxLightCSP");
         return tgd.maxTierPointsPossible >= totalCSP;
-		/* the second pass will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
+        /* the second pass will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
     });
     self.css = ko.computed(function() {
         return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
