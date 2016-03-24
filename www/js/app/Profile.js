@@ -916,16 +916,31 @@ Profile.prototype = {
             id: id
         }));
 
+        var armorSelection = new tgd.armorSelection(groups);
+        console.log("armorSelection", armorSelection);
+
         var armorTemplateDialog = (new tgd.dialog({
             buttons: [{
                 label: app.activeText().movepopup_equip,
                 action: function(dialog) {
-
+                    character.equipAction("Max Light", "Tier " + tgd.maxTierPossible, armorSelection.selectedItems());
+                    dialog.close();
                 }
             }, {
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
-
+                    armorSelection.save();
+                    app.createLoadout();
+                    var loadoutName = "MLMT Build";
+                    app.activeLoadout().name(loadoutName);
+                    _.each(armorSelection.selectedItems(), function(item) {
+                        app.activeLoadout().addUniqueItem({
+                            id: item._id,
+                            bucketType: item.bucketType,
+                            doEquip: true
+                        });
+                    });
+                    dialog.close();
                 }
             }, {
                 label: app.activeText().cancel,
@@ -936,8 +951,6 @@ Profile.prototype = {
         })).title("Armor Builds for Max Light Level").content($template).show(true, function() {
             groups = null;
         }, function() {
-            var armorSelection = new tgd.ArmorSelection(groups);
-            console.log(armorSelection);
             ko.applyBindings(armorSelection, document.getElementById('container_' + id));
         });
     },

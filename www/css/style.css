@@ -601,6 +601,6 @@ span.skill { height: 16px; width: 16px; background-size: cover; }
 	width: 100%;
 }
 .bootstrap-dialog-message { overflow: hidden; }
-.itemImage.selected { border:1px solid green }
-.itemImage.disabled { opacity: 0.5; border:1px solid gray !important; }
-.itemImage.not-selected { border:1px solid red }
+.itemImage.selected { border:2px solid green }
+.itemImage.not-selected { border:1px solid yellow; }
+.itemImage.disabled { opacity: 0.5; border:1px solid red !important; }

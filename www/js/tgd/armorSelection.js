@@ -21,7 +21,7 @@ tgd.calculateBestSets = function(items) {
         };
     });
     var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-    console.log("highestScore", highestScore);
+    //console.log("highestScore", highestScore);
     var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
         return combo.score >= highestScore;
     }), false, function(combo) {
@@ -30,7 +30,7 @@ tgd.calculateBestSets = function(items) {
     return bestSets;
 };
 
-tgd.ArmorSelection = function(groups) {
+tgd.armorSelection = function(groups) {
     var self = this;
 
     self.groups = groups;
@@ -98,12 +98,7 @@ tgd.armorItem = function(item, selectedItem, groups) {
         return self == selectedItem();
     });
     var isDisabled = ko.computed(function() {
-        //first pass be based on csp, second pass will be based on sum of tiers
-        /*var totalCSP = tgd.sum(_.map(groups(), function(group) {
-            return group.bucketType == self.bucketType ? 0 : group.selectedItem().getValue("MaxLightCSP");
-        })) + self.getValue("MaxLightCSP");
-        return tgd.maxTierPointsPossible >= totalCSP;*/
-        /* the second pass will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
+        /* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
         var items = _.map(groups(), function(group) {
             return group.bucketType == self.bucketType ? self : group.selectedItem();
         });
