@@ -933,7 +933,9 @@ Profile.prototype = {
         })).title("Armor Builds for Max Light Level").content($template).show(true, function() {
             groups = null;
         }, function() {
-            ko.applyBindings(new tgd.ArmorSelection(groups), document.getElementById('container_' + id));
+            var armorSelection = new tgd.ArmorSelection(groups);
+            console.log(armorSelection);
+            ko.applyBindings(armorSelection, document.getElementById('container_' + id));
         });
     },
     renderBestSets: function(type, bestSets) {

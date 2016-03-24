@@ -1,47 +1,43 @@
-<table class="table table-striped table-hover" id="container_<%= id %>">
-	<tbody data-bind="foreach: { data: armorGroups, as: 'armor' }">
-		<tr>
-			<td>
-				<div class="panel panel-default">
-				  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> Currently Selected: <span data-bind="text: armor.selectedItem().getValue('MaxLightCSP')"></span></div>
-				  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
-					<table>
-						<tr data-bind="foreach: { data: armor.items, as: 'item' }">
-							<td>
-								<img class="itemImage" data-bind="attr: { src: item.icon }, css: item.css" style="padding: 2px;">	
-							</td>
-						</tr>
-						<tr data-bind="foreach: { data: armor.items, as: 'item' }">
-							<td>
-								<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
-							</td>
-						</tr>
-					</table>
-				  </div>
-				</div>			
-			</td>
-		</tr>
-	</tbody>
-	<tbody>
-		<tr>
-			<td>Combined Stat Points</td>
-			<td><span data-bind="text: combinedStatPoints"></span> Points</td>
-		</tr>
-		<tr>
-			<td>Stat Tiers</td>
-			<td><span data-bind="text: statTiers"></span></td>
-		</tr>
-		<tr>
-			<td>Stat Values</td>
-			<td><span data-bind="text: statValues"></span></td>
-		</tr>
-		<tr>
-			<td>Projected Light Level</td>
-			<td><span data-bind="text: projectedLightLevel"></span></td>
-		</tr>
-		<tr>
-			<td>Current Light Level</td>
-			<td><span data-bind="text: currentLightLevel"></span></td>
-		</tr>
-	</tbody>
-</table>
+<div id="container_<%= id %>">
+	<div>
+		<div class="row">
+			<div class="col-xs-6">Combined Stat Points</div>
+			<div class="col-xs-6"><span data-bind="text: combinedStatPoints"></span> Points</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">Stat Tiers</div>
+			<div class="col-xs-6"><span data-bind="text: statTiers"></span></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">Stat Values</div>
+			<div class="col-xs-6"><span data-bind="text: statValues"></span></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">Projected Light Level</div>
+			<div class="col-xs-6"><span data-bind="text: projectedLightLevel"></span></div>
+		<div>
+		<div class="row">
+			<div class="col-xs-6">Current Light Level</div>
+			<div class="col-xs-6"><span data-bind="text: currentLightLevel"></span></div>
+		</div>
+	</<div>
+	<div data-bind="foreach: { data: armorGroups, as: 'armor' }">
+		<div class="panel panel-default">
+		  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> Currently Selected: <span data-bind="text: armor.selectedItem().getValue('MaxLightCSP')"></span></div>
+		  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
+			<table>
+				<tr data-bind="foreach: { data: armor.items, as: 'item' }">
+					<td>
+						<img class="itemImage" data-bind="attr: { src: item.icon }, css: item.css, click: select" style="padding: 2px;">	
+					</td>
+				</tr>
+				<tr data-bind="foreach: { data: armor.items, as: 'item' }">
+					<td>
+						<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
+					</td>
+				</tr>
+			</table>
+		  </div>
+		</div>
+	</div>
+</div>	

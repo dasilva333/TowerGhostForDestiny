@@ -7,7 +7,9 @@ tgd.ArmorSelection = function(groups) {
         return new tgd.armorGroup(bucketType, items);
     }));
     self.combinedStatPoints = ko.computed(function() {
-        return 10;
+        return tgd.sum(_.map(self.armorGroups(), function(group) {
+            return group.selectedItem().getValue("MaxLightCSP");
+        }));
     });
     self.statTiers = ko.computed(function() {
         return 10;
@@ -28,21 +30,27 @@ tgd.armorGroup = function(bucketType, items) {
 
     self.bucketType = bucketType;
 
-	var selectedIndex = 0;
-	
+    var selectedIndex = 0;
+
+    self.selectedItem = ko.observable();
+
     self.items = _.map(items, function(item, index) {
-        return new tgd.armorItem(item, index == selectedIndex);
+        return new tgd.armorItem(item, self.selectedItem);
     });
 
-    self.selectedItem = ko.observable(self.items[selectedIndex]);
-
+    self.selectedItem(self.items[selectedIndex]);
 }
 
-tgd.armorItem = function(item, isSelected) {
+tgd.armorItem = function(item, selectedItem) {
     var self = this
     _.extend(self, item);
-	var isSelected = ko.observable(isSelected);
+    var isSelected = ko.computed(function() {
+        return self == selectedItem();
+    });
     self.css = ko.computed(function() {
         return isSelected() ? "selected" : "not-selected";
     });
+    this.select = function() {
+        selectedItem(self);
+    }
 }
