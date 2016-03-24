@@ -24,9 +24,41 @@ tgd.ArmorSelection = function(groups) {
         return tgd.joinStats(self.selectedItems());
     });
     self.statTiers = ko.computed(function() {
-        return _.map(self.currentStats(), function(stat, name) {
+        /*return _.map(self.currentStats(), function(stat, name) {
             return "<strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
-        }).join("/");
+        }).join("/");*/
+
+
+        var combos = tgd.cartesianProductOf(_.map(self.selectedItems(), function(item) {
+            var itemClone1 = _.clone(item),
+                itemClone2 = _.clone(item);
+            itemClone1.activeRoll = item.futureRolls[0];
+            itemClone2.activeRoll = item.futureRolls[1];
+            return [itemClone1, itemClone2];
+        }));
+        var scoredCombos = _.map(combos, function(items) {
+            var tmp = tgd.joinStats(items);
+            return {
+                set: items,
+                stats: tmp,
+                statTiers: _.map(_.sortBy(_.keys(tmp)), function(name) {
+                    return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
+                }).join(" "),
+                score: tgd.sum(_.map(tmp, function(value, key) {
+                    var result = Math.floor(value / tgd.DestinySkillTier);
+                    return result > 5 ? 5 : result;
+                })) + (tgd.sum(_.values(tmp)) / 1000)
+            };
+        });
+        var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+        var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
+            return combo.score >= highestScore;
+        }), false, function(combo) {
+            return combo.statTiers;
+        });
+        return _.map(bestSets, function(combo) {
+            return combo.statTiers;
+        });
     });
     self.statValues = ko.computed(function() {
         return _.map(self.currentStats(), function(stat, name) {
@@ -101,4 +133,9 @@ return [ itemClone1, itemClone2 ];
                         };
                     });
 var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+_.each(scoredCombos, function(combo) {
+                        if (combo.score >= highestScore) {
+                            bestSets.push(combo);
+                        }
+                    });
 */
