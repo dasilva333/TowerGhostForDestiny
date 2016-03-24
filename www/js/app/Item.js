@@ -829,7 +829,7 @@ Item.prototype = {
             bucketType: self.bucketType
         }).length;
         var maxBucketSize = self.bucketType in tgd.DestinyBucketSizes ? tgd.DestinyBucketSizes[self.bucketType] : 10;
-        if (itemsInDestination == maxBucketSize) {
+        if (itemsInDestination == maxBucketSize && y.id != "Vault") {
             return BootstrapDialog.alert("Cannot transfer " + self.description + " because " + self.bucketType + " is full.");
         }
         //tgd.localLog( self.description );
