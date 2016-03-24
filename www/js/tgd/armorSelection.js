@@ -9,19 +9,31 @@ tgd.ArmorSelection = function(groups) {
         return new tgd.armorGroup(bucketType, items, self.armorGroups);
     }));
 
+    self.selectedItems = ko.computed(function() {
+        return _.map(self.armorGroups(), function(group) {
+            return group.selectedItem();
+        });
+    });
     self.combinedStatPoints = ko.computed(function() {
-        return tgd.sum(_.map(self.armorGroups(), function(group) {
-            return group.selectedItem().getValue("MaxLightCSP");
+        return tgd.sum(_.map(self.selectedItems(), function(item) {
+            return item.getValue("MaxLightCSP");
         }));
     });
+    self.currentStats = ko.computed(function() {
+        return tgd.joinStats(self.selectedItems());
+    });
     self.statTiers = ko.computed(function() {
-        return 10;
+        return _.map(self.currentStats(), function(stat, name) {
+            return "<strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
+        }).join("/");
     });
     self.statValues = ko.computed(function() {
-        return 10;
+        return _.map(self.currentStats(), function(stat, name) {
+            return stat;
+        }).join("/");
     });
     self.projectedLightLevel = ko.computed(function() {
-        return 10;
+        return tgd.DestinyLightCap;
     });
     self.currentLightLevel = ko.computed(function() {
         return 10;
