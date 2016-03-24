@@ -49,10 +49,12 @@
                                 <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default">Disc</a>
                                 <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default">Str</a>
                                 <hr style="margin:3px; padding:6px;">
-                                <a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm">Points</a> |
-                                <a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm">BC-Full</a> |
-								<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm">BC-Quick</a>
-								<a data-bind="click: character.equipHighest('MaxLight'), clickBubble: false" class="btn btn-default btn-sm">MLMT</a>
+								<div>
+									<a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
+									<a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">BC-Full</a>
+									<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">BC-Quick</a>
+									<a data-bind="click: character.equipHighest('MaxLight'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">MLMT</a>
+								</div>
                             </div>
                         </div>
                     </div>
