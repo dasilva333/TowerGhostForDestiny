@@ -19,17 +19,8 @@ tgd.ArmorSelection = function(groups) {
             return item.getValue("MaxLightCSP");
         }));
     });
-    /* this code is currently using item.stats, should be using item.futureRolls or item.activeRoll */
-    self.currentStats = ko.computed(function() {
-        return tgd.joinStats(self.selectedItems());
-    });
-    self.statTiers = ko.computed(function() {
-        /*return _.map(self.currentStats(), function(stat, name) {
-            return "<strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stat / tgd.DestinySkillTier);
-        }).join("/");*/
-
-
-        var combos = tgd.cartesianProductOf(_.map(self.selectedItems(), function(item) {
+	self.bestSets = ko.computed(function(){
+		var combos = tgd.cartesianProductOf(_.map(self.selectedItems(), function(item) {
             var itemClone1 = _.clone(item),
                 itemClone2 = _.clone(item);
             itemClone1.activeRoll = item.futureRolls[0];
@@ -51,19 +42,26 @@ tgd.ArmorSelection = function(groups) {
             };
         });
         var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+		console.log("highestScore", highestScore);
         var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
             return combo.score >= highestScore;
         }), false, function(combo) {
             return combo.statTiers;
         });
-        return _.map(bestSets, function(combo) {
+		
+		return bestSets;
+	});
+    self.statTiers = ko.computed(function() {
+        return _.map(self.bestSets(), function(combo) {
             return combo.statTiers;
-        });
+        }).join(", ");
     });
     self.statValues = ko.computed(function() {
-        return _.map(self.currentStats(), function(stat, name) {
-            return stat;
-        }).join("/");
+        return _.map(self.bestSets(), function(combo) {
+            return _.map(combo.stats, function(stat, name) {
+				return stat;
+			}).join("/");
+        }).join(", ");
     });
     self.projectedLightLevel = ko.computed(function() {
         return tgd.DestinyLightCap;
