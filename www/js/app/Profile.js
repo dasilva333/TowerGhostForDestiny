@@ -608,6 +608,9 @@ Profile.prototype = {
             highestTierValue = 0,
             character = this;
 
+        tgd.maxTierPossible = Math.floor(tgd.sum(tgd.DestinyMaxCSP) / tgd.DestinySkillTier);
+        tgd.maxTierPointsPossible = Math.floor(tgd.sum(tgd.DestinyMaxCSP) / tgd.DestinySkillTier) * tgd.DestinySkillTier;
+
         _.each(buckets, function(bucket) {
             groups[bucket] = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (

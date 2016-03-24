@@ -3,9 +3,12 @@ tgd.ArmorSelection = function(groups) {
 
     self.groups = groups;
 
-    self.armorGroups = ko.observableArray(_.map(groups, function(items, bucketType) {
-        return new tgd.armorGroup(bucketType, items);
+    self.armorGroups = ko.observableArray();
+
+    self.armorGroups(_.map(groups, function(items, bucketType) {
+        return new tgd.armorGroup(bucketType, items, self.armorGroups);
     }));
+
     self.combinedStatPoints = ko.computed(function() {
         return tgd.sum(_.map(self.armorGroups(), function(group) {
             return group.selectedItem().getValue("MaxLightCSP");
@@ -25,7 +28,7 @@ tgd.ArmorSelection = function(groups) {
     });
 }
 
-tgd.armorGroup = function(bucketType, items) {
+tgd.armorGroup = function(bucketType, items, groups) {
     var self = this;
 
     self.bucketType = bucketType;
@@ -35,22 +38,33 @@ tgd.armorGroup = function(bucketType, items) {
     self.selectedItem = ko.observable();
 
     self.items = _.map(items, function(item, index) {
-        return new tgd.armorItem(item, self.selectedItem);
+        return new tgd.armorItem(item, self.selectedItem, groups);
     });
 
     self.selectedItem(self.items[selectedIndex]);
 }
 
-tgd.armorItem = function(item, selectedItem) {
+tgd.armorItem = function(item, selectedItem, groups) {
     var self = this
     _.extend(self, item);
     var isSelected = ko.computed(function() {
         return self == selectedItem();
     });
+    var isDisabled = ko.computed(function() {
+        //first pass be based on csp, second pass will be based on sum of tiers
+        var totalCSP = tgd.sum(_.map(groups(), function(group) {
+            return group.bucketType == self.bucketType ? 0 : group.selectedItem().getValue("MaxLightCSP");
+        })) + self.getValue("MaxLightCSP");
+        return tgd.maxTierPointsPossible >= totalCSP;
+    });
     self.css = ko.computed(function() {
-        return isSelected() ? "selected" : "not-selected";
+        return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
     });
     this.select = function() {
-        selectedItem(self);
+        if (isDisabled()) {
+            BootstrapDialog.alert("This item cannot be selected to maintain the max tier");
+        } else {
+            selectedItem(self);
+        }
     }
 }

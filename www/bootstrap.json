@@ -6,11 +6,11 @@
     },
     "style.css": {
       "filename": "css/style.css",
-      "version": "c72ef6a1a55bd22e19faf0202b72e4f9f87a97c85850e8d451d95044905f095d"
+      "version": "f233422182adc7cfdb524101a1dfb9a7e0f44acd2f1d3262d2b7a76ba9904dfc"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
+      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
     },
     "style_new.css": {
       "filename": "css/style_new.css",
@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
+      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -106,15 +106,15 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "fb58bafa6f60aa404b3d3cf4606267689810f9fd3a361faeff6531fa27ce4386"
+      "version": "a8e10e50e20e82171114c393dfc652f640f2aa641c25704e5a95d62d65715a3a"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "0c4429045036a45994dddc3a9ac765310b5a5b01867b17a120eae4799c018346"
+      "version": "c84392fb77495081283344c01eb424992feb1b11b0650da0ded835f55e45224c"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "c619c2e8c9943b38df3e56df20f9a1b359c5a60b3e618b0a8896be99b4fb4e1f"
+      "version": "365605b73ddf10c718668394faeafd9fca8932307c67f5c7743580d5b425ab41"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -174,7 +174,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "2317c24eb9edabbdeb9567562b9d6ad364ff561f66fb5d1189d46dd2391c3b3d"
+      "version": "69fc481278e373794c8e6a28adc653e02246528a60cc648435450d01aa223cc4"
     },
     "app.js": {
       "filename": "js/app/app.js",

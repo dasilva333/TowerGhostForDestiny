@@ -28,7 +28,9 @@
 			<table>
 				<tr data-bind="foreach: { data: armor.items, as: 'item' }">
 					<td>
-						<img class="itemImage" data-bind="attr: { src: item.icon }, css: item.css, click: select" style="padding: 2px;">	
+						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }">
+							<img class="itemImage" data-bind="attr: { src: item.icon }, css: item.css, click: select" style="padding: 2px;">
+						</a>						
 					</td>
 				</tr>
 				<tr data-bind="foreach: { data: armor.items, as: 'item' }">
