@@ -602,5 +602,5 @@ span.skill { height: 16px; width: 16px; background-size: cover; }
 }
 .bootstrap-dialog-message { overflow: hidden; }
 .itemImage.selected { border:1px solid green }
-.itemImage.disabled { background-color: gray; border:1px solid gray !important; }
+.itemImage.disabled { opacity: 0.5; border:1px solid gray !important; }
 .itemImage.not-selected { border:1px solid red }
