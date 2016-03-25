@@ -1,8 +1,11 @@
 <div id="container_<%= id %>">
 	<p>
-		What you see below you is the gear with the <strong>highest potential to reach tier {11} at {320} Light Level</strong>.<br> 
-		From the selected items the {Helmets, Boots, Chest} are still not {320}, once infused to the highest light level you will be able to achieve the following stat distributions {statTiers}.<br>
-		This tool is meant as a planner to help guide you in finding what gear to invest your time infusing to achieve your desirable stat distributions.
+		What you see below you is the gear with the <strong>highest potential to reach tier 
+		<span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
+		From the <strong class="label label-success">selected</strong> items the <span class="label label-default" data-bind="text: unleveledBucketTypes">{Helmets, Boots, Chest}</span> are still not 
+		<span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span>, once infused to <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> light level 
+		you will be able to achieve the following stat distributions <span class="label label-default" data-bind="html: statTiers"></span>.<br>
+		This tool is meant as a planner to help guide you in finding what gear to invest your time and resources in infusing to achieve your desirable stat distributions.
 	</p>
 	<div>
 		<div class="row">
@@ -11,7 +14,11 @@
 		</div>
 		<div class="row">
 			<div class="col-xs-12">Stat Tiers</div>
-			<div class="col-xs-12"><span data-bind="html: statTiers"></span></div>
+			<div class="col-xs-12">
+				<span data-bind="foreach: { data: bestSets, as: 'combo' }">
+					<button class="btn btn-default btn-sm" data-bind="text: combo.statTiers"></button>
+				</span>
+			</div>
 		</div>
 		<div class="row">
 			<div class="col-xs-12">Stat Values</div>

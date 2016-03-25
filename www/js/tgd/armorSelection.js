@@ -46,6 +46,12 @@ tgd.armorSelection = function(groups) {
             return group.selectedItem();
         });
     });
+    self.unleveledBucketTypes = ko.computed(function() {
+        return _.pluck(_.filter(self.selectedItems(), function(item) {
+            return item.getValue("Light") != tgd.DestinyLightCap;
+        }), 'bucketType').join(", ");
+    });
+
     self.combinedStatPoints = ko.computed(function() {
         return tgd.sum(_.map(self.selectedItems(), function(item) {
             return item.getValue("MaxLightCSP");
