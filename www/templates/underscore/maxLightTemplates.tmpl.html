@@ -13,16 +13,14 @@
 			<div class="col-xs-12"><span data-bind="text: combinedStatPoints"></span> Points</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-12">Stat Tiers</div>
+			<div class="col-xs-12">Combinations Available</div>
 			<div class="col-xs-12">
 				<span data-bind="foreach: { data: bestSets, as: 'combo' }">
-					<button class="btn btn-default btn-sm" data-bind="text: combo.statTiers"></button>
+					<div class="col-xs-24">
+						<button class="btn btn-default btn-sm" data-bind="text: combo.statTiers + ' (' + combo.statValues + ')'"></button>
+					</div>
 				</span>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12">Stat Values</div>
-			<div class="col-xs-12"><span data-bind="text: statValues"></span></div>
 		</div>
 	</div>
 	<div data-bind="foreach: { data: armorGroups, as: 'armor' }">

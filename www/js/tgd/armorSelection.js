@@ -8,10 +8,14 @@ tgd.calculateBestSets = function(items) {
     }));
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
+        var sortedKeys = _.sortBy(_.keys(tmp));
         return {
             set: items,
             stats: tmp,
-            statTiers: _.map(_.sortBy(_.keys(tmp)), function(name) {
+            statValues: _.map(sortedKeys, function(name) {
+                return tmp[name];
+            }).join("/"),
+            statTiers: _.map(sortedKeys, function(name) {
                 return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
             }).join(" "),
             score: tgd.sum(_.map(tmp, function(value, key) {
@@ -64,13 +68,6 @@ tgd.armorSelection = function(groups) {
     self.statTiers = ko.computed(function() {
         return _.map(self.bestSets(), function(combo) {
             return combo.statTiers;
-        }).join(", ");
-    });
-    self.statValues = ko.computed(function() {
-        return _.map(self.bestSets(), function(combo) {
-            return _.map(combo.stats, function(stat, name) {
-                return stat;
-            }).join("/");
         }).join(", ");
     });
 }
