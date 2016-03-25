@@ -9,17 +9,31 @@
 	</p>
 	<div>
 		<div class="row">
-			<div class="col-xs-12">Combined Stat Points</div>
-			<div class="col-xs-12"><span data-bind="text: combinedStatPoints"></span> Points</div>
+			<div class="col-xs-6">Combined Stat Points</div>
+			<div class="col-xs-18"><span data-bind="text: combinedStatPoints"></span> Points</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-12">Combinations Available</div>
-			<div class="col-xs-12">
+			<div class="col-xs-6">Combinations Available</div>
+			<div class="col-xs-18">
 				<span data-bind="foreach: { data: bestSets, as: 'combo' }">
 					<div class="col-xs-24">
 						<button class="btn btn-default btn-sm" data-bind="text: combo.statTiers + ' (' + combo.statValues + ')'"></button>
 					</div>
 				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-6">Combination Selected</div>
+			<div class="col-xs-18">
+				<div data-bind="with: firstSet">
+					<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: perks, as: 'perk' }">
+						<div class="col-xs-12 font-smaller-1">
+							<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
+							<span class="text-muted" data-bind="text: perk.bucketType"></span>:
+							<span class="text-primary" data-bind="text: perk.name"></span>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

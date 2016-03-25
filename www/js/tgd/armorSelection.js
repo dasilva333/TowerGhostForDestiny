@@ -9,7 +9,7 @@ tgd.calculateBestSets = function(items) {
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
         var sortedKeys = _.sortBy(_.keys(tmp));
-        return {
+        var combo = {
             set: items,
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
@@ -21,8 +21,28 @@ tgd.calculateBestSets = function(items) {
             score: tgd.sum(_.map(tmp, function(value, key) {
                 var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
-            })) + (tgd.sum(_.values(tmp)) / 1000)
+            })) + (tgd.sum(_.values(tmp)) / 1000),
+            perks: _.filter(
+                _.flatten(
+                    _.map(items, function(item) {
+                        return _.map(item.perks, function(perk) {
+                            perk.bucketType = item.bucketType;
+                            return perk;
+                        });
+                    })
+                ),
+                function(perk) {
+                    return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(tgd.weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
+                }
+            )
         };
+        combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
+            return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
+        }), function(perk) {
+            return _.intersection(tgd.weaponTypes, perk.name.split(" "))[0];
+        })));
+        combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
+        return combo;
     });
     var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
     //console.log("highestScore", highestScore);
@@ -64,6 +84,9 @@ tgd.armorSelection = function(groups) {
     self.bestSets = ko.computed(function() {
         var bestSets = tgd.calculateBestSets(self.selectedItems());
         return bestSets;
+    });
+    self.firstSet = ko.computed(function() {
+        return _.first(self.bestSets());
     });
     self.statTiers = ko.computed(function() {
         return _.map(self.bestSets(), function(combo) {
@@ -109,7 +132,7 @@ tgd.armorItem = function(item, selectedItem, groups) {
     });
     this.select = function() {
         if (isDisabled()) {
-            BootstrapDialog.alert("This item cannot be selected to maintain the max tier");
+            BootstrapDialog.alert("This item cannot be selected to maintain the max tier: " + tgd.maxTierPossible);
         } else {
             selectedItem(self);
         }
