@@ -9,12 +9,12 @@
 	</p>
 	<div>
 		<div class="row">
-			<div class="col-xs-6">Combined Stat Points</div>
-			<div class="col-xs-18"><span data-bind="text: combinedStatPoints"></span> Points</div>
+			<div class="col-xs-24">Combined Stat Points</div>
+			<div class="col-xs-17"><span data-bind="text: combinedStatPoints"></span> Points</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6">Combinations Available</div>
-			<div class="col-xs-18">
+			<div class="col-xs-24">Tiers Available</div>
+			<div class="col-xs-24">
 				<span data-bind="foreach: { data: bestSets, as: 'combo' }">
 					<div class="col-xs-24">
 						<button class="btn btn-default btn-sm" data-bind="text: combo.statTiers + ' (' + combo.statValues + ')'"></button>
@@ -23,8 +23,8 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-6">Combination Selected</div>
-			<div class="col-xs-18">
+			<div class="col-xs-24">Perks Selected</div>
+			<div class="col-xs-24">
 				<div data-bind="with: firstSet">
 					<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: perks, as: 'perk' }">
 						<div class="col-xs-12 font-smaller-1">

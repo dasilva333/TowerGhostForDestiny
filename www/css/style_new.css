@@ -75,10 +75,9 @@ h1,h2,h3,h4,h5,h6
 {
 	clear: both;
 }
+
 #charactersContainer .profile .character-box div.emblem,
 #charactersContainer .profile .character-box div.class,
-#charactersContainer .profile .character-box div.level,
-#charactersContainer .profile .character-box div.light,
 #charactersContainer .profile .character-box div.power,
 #charactersContainer .profile .character-box div.progression
 {

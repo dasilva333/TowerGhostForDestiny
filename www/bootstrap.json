@@ -6,15 +6,15 @@
     },
     "style.css": {
       "filename": "css/style.css",
-      "version": "b700083ced9f2d07941fd5c90eff22cfb1318b6ff7d86aa96b792f7c1f1e7ff1"
+      "version": "04522eb5d5eb89d0d6f0e05964779d8229be4c96c8c2feeb21a6cbf794f55857"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "style_new.css": {
       "filename": "css/style_new.css",
-      "version": "d9e1a7417053f460be09c7a042b29c21c1ffb7731aef7f97c0c2a72070f431d9"
+      "version": "bd18b16b8d040a5f7ab7222bea3054213092c7b83d9401d6872db861ab4252b5"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -70,7 +70,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
+      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -106,7 +106,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "3b8ec9e82813b70a0b92517c19fa034aabdf4c373c9be587e1c2e36504db6b98"
+      "version": "da5022ded77ba081a3e68667e64328bac1aa6ff03c9f596709304d8eb29d156a"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
