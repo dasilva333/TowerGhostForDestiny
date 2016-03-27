@@ -76,14 +76,21 @@ tgd.armorSelection = function(groups) {
 
     self.bestSets = ko.computed(function() {
         var bestSets = tgd.calculateBestSets(self.selectedItems());
-        bestSets = _.filter(bestSets, function(combo) {
-            return Math.floor(combo.score) >= tgd.maxTierPossible;
-        });
         return bestSets;
     });
 
+    self.firstSet = ko.computed(function() {
+        return _.first(self.bestSets());
+    });
+
+    self.maxSets = ko.computed(function() {
+        return _.filter(self.bestSets(), function(combo) {
+            return Math.floor(combo.score) >= tgd.maxTierPossible;
+        });
+    });
+
     self.armorGroups(_.map(groups, function(items, bucketType) {
-        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.bestSets);
+        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets);
     }));
 
     self.unleveledBucketTypes = ko.computed(function() {
