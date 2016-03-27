@@ -1,42 +1,63 @@
 <div id="container_<%= id %>">
 	<p>
-		What you see below you is the gear with the <strong>highest potential to reach tier 
-		<span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
-		From the <strong class="label label-success">selected</strong> items the <span class="label label-default" data-bind="text: unleveledBucketTypes">{Helmets, Boots, Chest}</span> are still not 
-		<span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span>, once infused to <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> light level 
-		you will be able to achieve the following stat distributions listed below.<br>
-		This tool is meant as a planner to help guide you in finding what gear to invest your time and resources in infusing to achieve your desirable stat distributions.
+		The gear listed within has the <strong>highest potential to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> 
+		at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
+		From the selected items the <span class="label label-default" data-bind="text: unleveledBucketTypes">{Helmets, Boots, Chest}</span> are still not 
+		<span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span>.<br>
+		This tool is meant as a planner to help guide you in finding what gear to invest your time and resources in infusing to achieve your desirable stat distributions.<br>
 	</p>
-	<div>
-		<table class="table table-striped table-hover ">
-		  <thead>
-		    <tr>
-		      <th>#</th>
-		      <th>Score</th>
-		      <th>Stats</th>
-		      <th>Tiers</th>
-			  <th>Perks</th>
-		    </tr>
-		  </thead>		  
-		  <tbody data-bind="foreach: { data: bestSets, as: 'combo' }"
-		    <tr>
-		      <td><input type="Button" class="btn btn-sm" value="View"></td>
-		      <td data-bind="text: combo.score"></td>
-		      <td data-bind="text: combo.statValues"></td>
-		      <td data-bind="text: combo.statTiers"></td>
-			  <td>
-				<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: combo.perks, as: 'perk' }">
-					<div class="col-xs-24 font-smaller-1">
-						<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
-						<span class="text-muted" data-bind="text: perk.bucketType"></span>:
-						<span class="text-primary" data-bind="text: perk.name"></span>
+	<hr>
+	<p>
+		The <strong>first number</strong> listed indicates how many points the item currently has, the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
+		<strong>Blue Border</strong> - Indicates it is a one of the items listed in the possible combinations table.<br>
+		<strong>Green Border</strong> - Indicates the item is currently selected.<br>
+		<strong>Red Border</strong> - Indicates the item cannot be used to maintain the current max tier.<br>
+		<strong>Yellow Border</strong> - Indicates the item is a potential candidate that may be used to alter your set.<br>
+		<strong>Tip</strong> You may also unselect an item with a green border to indicate you want the tool to calculate all items for that armor type.
+	</p>
+	<hr>
+	<table class="table table-striped table-hover ">
+	  <thead>
+	    <tr>
+	      <th>#</th>
+	      <th>Score</th>
+	      <th>Stats</th>
+	      <th>Tiers</th>
+		  <th>Perks</th>
+	    </tr>
+	  </thead>		  
+	  <tbody data-bind="foreach: { data: bestSets, as: 'combo' }">
+	    <tr data-bind="attr:{id:'details_'+combo.id}">
+	      <td><input type="Button" class="btn btn-sm" value="View" data-bind="click: function(){ $('#armor_' + combo.id).show(); $('#details_' + combo.id).hide(); }"></td>
+	      <td data-bind="text: combo.score"></td>
+	      <td data-bind="text: combo.statValues"></td>
+	      <td data-bind="text: combo.statTiers"></td>
+		  <td>
+			<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: combo.perks, as: 'perk' }">
+				<div class="col-xs-24 font-smaller-1">
+					<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
+					<span class="text-muted" data-bind="text: perk.bucketType"></span>:
+					<span class="text-primary" data-bind="text: perk.name"></span>
+				</div>
+			</div>
+		  </td>
+	    </tr>
+		<tr style="display:none" data-bind="attr:{id:'armor_'+combo.id}">			
+			<td colspan="5">
+				<div class="col-xs-3">
+					<input type="Button" class="btn btn-sm" value="Hide" data-bind="click: function(){ $('#armor_' + combo.id).hide(); $('#details_' + combo.id).show(); }">
+				</div>
+				<div data-bind="foreach: { data: combo.set, as: 'item' }">
+					<div class="col-xs-3">
+						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }">
+							<img class="itemImage" data-bind="itemImageHandler: item.icon" style="padding: 2px; width:48px;">
+						</a>						
 					</div>
 				</div>
-			  </td>
-		    </tr>
-		  </tbody>
-		</table>
-	</div>
+			</td>
+		</tr>
+	  </tbody>
+	</table>	
 	<div data-bind="foreach: { data: armorGroups, as: 'armor' }">
 		<div class="panel panel-default">
 		  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> </div>

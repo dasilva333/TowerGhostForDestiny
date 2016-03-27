@@ -14,15 +14,17 @@ tgd.calculateBestSets = function(items) {
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
         var sortedKeys = _.sortBy(_.keys(tmp));
+        var statTiers = _.map(sortedKeys, function(name) {
+            return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
+        }).join(" ");
         var combo = {
             set: items,
+            id: Math.floor(tgd.hashCode(statTiers)),
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
             }).join("/"),
-            statTiers: _.map(sortedKeys, function(name) {
-                return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
-            }).join(" "),
+            statTiers: statTiers,
             score: tgd.sum(_.map(tmp, function(value, key) {
                 var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
@@ -150,7 +152,7 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets) {
         return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
     });
     self.css2 = ko.computed(function() {
-        return (isInBestSets() ? "candidate" : "not-candidate");
+        return (!isSelected() && isInBestSets() ? "candidate" : "not-candidate");
     });
     this.select = function() {
         if (isDisabled()) {
