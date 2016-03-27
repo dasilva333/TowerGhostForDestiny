@@ -610,3 +610,4 @@ span.skill { height: 16px; width: 16px; background-size: cover; }
 .itemImage.selected { border:2px solid green }
 .itemImage.not-selected { border:1px solid yellow; }
 .itemImage.disabled { opacity: 0.5; border:1px solid red !important; }
+.itemLink.candidate { border:1px solid blue !important; display:inline-block; }

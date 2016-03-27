@@ -1,11 +1,16 @@
 tgd.calculateBestSets = function(items) {
-    var combos = tgd.cartesianProductOf(_.map(items, function(item) {
-        return _.map(item.futureRolls, function(roll) {
-            var itemClone = _.clone(item);
-            itemClone.activeRoll = roll;
-            return itemClone;
-        });
-    }));
+    var combos = _.map(items, function(selection) {
+        var choices = selection.futureRolls ? [selection] : selection;
+        var x = _.flatten(_.map(choices, function(item) {
+            return _.map(item.futureRolls, function(roll) {
+                var itemClone = _.clone(item);
+                itemClone.activeRoll = roll;
+                return itemClone;
+            });
+        }));
+        return x;
+    });
+    combos = tgd.cartesianProductOf(combos);
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
         var sortedKeys = _.sortBy(_.keys(tmp));
@@ -61,41 +66,32 @@ tgd.armorSelection = function(groups) {
 
     self.armorGroups = ko.observableArray();
 
-    self.armorGroups(_.map(groups, function(items, bucketType) {
-        return new tgd.armorGroup(bucketType, items, self.armorGroups);
-    }));
-
     self.selectedItems = ko.computed(function() {
         return _.map(self.armorGroups(), function(group) {
-            return group.selectedItem();
+            return group.selectedItem() || group.items;
         });
     });
-    self.unleveledBucketTypes = ko.computed(function() {
-        return _.pluck(_.filter(self.selectedItems(), function(item) {
-            return item.getValue("Light") != tgd.DestinyLightCap;
-        }), 'bucketType').join(", ");
-    });
 
-    self.combinedStatPoints = ko.computed(function() {
-        return tgd.sum(_.map(self.selectedItems(), function(item) {
-            return item.getValue("MaxLightCSP");
-        }));
-    });
     self.bestSets = ko.computed(function() {
         var bestSets = tgd.calculateBestSets(self.selectedItems());
+        bestSets = _.filter(bestSets, function(combo) {
+            return Math.floor(combo.score) >= tgd.maxTierPossible;
+        });
         return bestSets;
     });
-    self.firstSet = ko.computed(function() {
-        return _.first(self.bestSets());
-    });
-    self.statTiers = ko.computed(function() {
-        return _.map(self.bestSets(), function(combo) {
-            return combo.statTiers;
-        }).join(", ");
+
+    self.armorGroups(_.map(groups, function(items, bucketType) {
+        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.bestSets);
+    }));
+
+    self.unleveledBucketTypes = ko.computed(function() {
+        return _.pluck(_.filter(self.selectedItems(), function(item) {
+            return item && item.getValue && item.getValue("Light") != tgd.DestinyLightCap;
+        }), 'bucketType').join(", ");
     });
 }
 
-tgd.armorGroup = function(bucketType, items, groups) {
+tgd.armorGroup = function(bucketType, items, groups, bestSets) {
     var self = this;
 
     self.bucketType = bucketType;
@@ -104,14 +100,31 @@ tgd.armorGroup = function(bucketType, items, groups) {
 
     self.selectedItem = ko.observable();
 
+    if (["Class Items", "Ghost", "Artifact"].indexOf(bucketType) > -1) {
+        items = _.map(_.reduce(items, function(memo, item) {
+            var key = _.sortBy(_.reduce(item.stats, function(memo, stat, name) {
+                if (stat > 0) memo.push(name);
+                return memo;
+            }, [])).join("_");
+            if (!(key in memo))
+                memo[key] = [];
+            memo[key].push(item);
+            return memo;
+        }, {}), function(items) {
+            return _.first(items);
+        });
+    }
+
     self.items = _.map(items, function(item, index) {
-        return new tgd.armorItem(item, self.selectedItem, groups);
+        return new tgd.armorItem(item, self.selectedItem, groups, bestSets);
     });
 
-    self.selectedItem(self.items[selectedIndex]);
+    if (["Class Items", "Ghost", "Artifact"].indexOf(bucketType) == -1) {
+        self.selectedItem(self.items[selectedIndex]);
+    }
 }
 
-tgd.armorItem = function(item, selectedItem, groups) {
+tgd.armorItem = function(item, selectedItem, groups, bestSets) {
     var self = this
     _.extend(self, item);
     var isSelected = ko.computed(function() {
@@ -120,21 +133,34 @@ tgd.armorItem = function(item, selectedItem, groups) {
     var isDisabled = ko.computed(function() {
         /* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
         var items = _.map(groups(), function(group) {
-            return group.bucketType == self.bucketType ? self : group.selectedItem();
+            return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
         });
-        var bestSets = tgd.calculateBestSets(items);
-        return _.filter(bestSets, function(combo) {
+        var validSets = tgd.calculateBestSets(items);
+        return _.filter(validSets, function(combo) {
             return Math.floor(combo.score) >= tgd.maxTierPossible;
         }).length == 0;
     });
+    var isInBestSets = ko.computed(function() {
+        return _.filter(bestSets(), function(combo) {
+            return _.pluck(combo.set, '_id').indexOf(self._id) > -1;
+        }).length > 0;
+    });
+    /* if the item is in bestSets then color it blue to denote its the found item */
     self.css = ko.computed(function() {
         return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
+    });
+    self.css2 = ko.computed(function() {
+        return (isInBestSets() ? "candidate" : "not-candidate");
     });
     this.select = function() {
         if (isDisabled()) {
             BootstrapDialog.alert("This item cannot be selected to maintain the max tier: " + tgd.maxTierPossible);
         } else {
-            selectedItem(self);
+            if (selectedItem() == self) {
+                selectedItem(null);
+            } else {
+                selectedItem(self);
+            }
         }
     }
 }

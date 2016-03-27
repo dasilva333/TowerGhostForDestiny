@@ -6,7 +6,7 @@
     },
     "style.css": {
       "filename": "css/style.css",
-      "version": "04522eb5d5eb89d0d6f0e05964779d8229be4c96c8c2feeb21a6cbf794f55857"
+      "version": "98a09ea7d958d6919195e31e1da7f02c5a2f8c4d3317c073a71f42d2cf22973a"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
@@ -106,7 +106,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "da5022ded77ba081a3e68667e64328bac1aa6ff03c9f596709304d8eb29d156a"
+      "version": "14ad513ea1b94eb6f3c1bd140bc23e20510eee2d8ca34b4c76410f51e02c9700"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -114,7 +114,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "bfe526e890a40b5433f1cba70614db4bd1f71f05ab5313845e428e668d4c40cb"
+      "version": "d3795a32bb6822d2c50c5b513acc38dc35bedacae10d2a421e0c51c412ed212b"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",

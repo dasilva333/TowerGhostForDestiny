@@ -4,46 +4,46 @@
 		<span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
 		From the <strong class="label label-success">selected</strong> items the <span class="label label-default" data-bind="text: unleveledBucketTypes">{Helmets, Boots, Chest}</span> are still not 
 		<span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span>, once infused to <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> light level 
-		you will be able to achieve the following stat distributions <span class="label label-default" data-bind="html: statTiers"></span>.<br>
+		you will be able to achieve the following stat distributions listed below.<br>
 		This tool is meant as a planner to help guide you in finding what gear to invest your time and resources in infusing to achieve your desirable stat distributions.
 	</p>
 	<div>
-		<div class="row">
-			<div class="col-xs-24">Combined Stat Points</div>
-			<div class="col-xs-17"><span data-bind="text: combinedStatPoints"></span> Points</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-24">Tiers Available</div>
-			<div class="col-xs-24">
-				<span data-bind="foreach: { data: bestSets, as: 'combo' }">
-					<div class="col-xs-24">
-						<button class="btn btn-default btn-sm" data-bind="text: combo.statTiers + ' (' + combo.statValues + ')'"></button>
-					</div>
-				</span>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-24">Perks Selected</div>
-			<div class="col-xs-24">
-				<div data-bind="with: firstSet">
-					<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: perks, as: 'perk' }">
-						<div class="col-xs-12 font-smaller-1">
-							<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
-							<span class="text-muted" data-bind="text: perk.bucketType"></span>:
-							<span class="text-primary" data-bind="text: perk.name"></span>
-						</div>
+		<table class="table table-striped table-hover ">
+		  <thead>
+		    <tr>
+		      <th>#</th>
+		      <th>Score</th>
+		      <th>Stats</th>
+		      <th>Tiers</th>
+			  <th>Perks</th>
+		    </tr>
+		  </thead>		  
+		  <tbody data-bind="foreach: { data: bestSets, as: 'combo' }"
+		    <tr>
+		      <td><input type="Button" class="btn btn-sm" value="View"></td>
+		      <td data-bind="text: combo.score"></td>
+		      <td data-bind="text: combo.statValues"></td>
+		      <td data-bind="text: combo.statTiers"></td>
+			  <td>
+				<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: combo.perks, as: 'perk' }">
+					<div class="col-xs-24 font-smaller-1">
+						<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
+						<span class="text-muted" data-bind="text: perk.bucketType"></span>:
+						<span class="text-primary" data-bind="text: perk.name"></span>
 					</div>
 				</div>
-			</div>
-		</div>
+			  </td>
+		    </tr>
+		  </tbody>
+		</table>
 	</div>
 	<div data-bind="foreach: { data: armorGroups, as: 'armor' }">
 		<div class="panel panel-default">
-		  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> Currently Selected: <span data-bind="text: armor.selectedItem().getValue('MaxLightCSP')"></span></div>
+		  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> </div>
 		  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
 				<div class="row" data-bind="foreach: { data: armor.items, as: 'item' }">
 					<div class="col-xs-4">
-						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: select">
+						<a class="itemLink" data-bind="css: item.css2, attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: select">
 							<img class="itemImage" data-bind="itemImageHandler: item.icon, css: item.css" style="padding: 2px;">
 						</a>						
 					</div>
