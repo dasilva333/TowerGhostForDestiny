@@ -6,10 +6,11 @@
                     <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh, clickBubble: false">
                         <img class="emblem" data-bind="itemImageHandler: icon">
                         <div class="class" data-bind="text: classType"></div>
-                        <div class="level" style="cursor:pointer;" data-bind="click: toggleStats, clickBubble: false, visible: level() != ''">
+                        <div class="level" style="cursor:pointer;" data-bind="visible: level() != ''">
                             <div class="light" data-bind="text: level"></div>
                             <div class="power" data-bind="text: character.powerLevel"></div>
                         </div>
+						<i class="fa fa-angle-double-down font-larger-4" data-bind="click: toggleStats, clickBubble: false"></i>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
                             <div class="col-xs-11 text-left">

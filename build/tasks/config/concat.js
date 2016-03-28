@@ -8,9 +8,8 @@ module.exports = function(grunt) {
 			'../www/resources/tower_ghost.css': 
 			[
 				'../www/css/bootstrap.min.css',
-				'../www/css/style.css',
-				'../www/css/tooltip.css',
-				'../www/css/style_new.css'
+				'../www/css/app/*.css',
+				'../www/css/tooltip.css'
 			],
 			'../www/resources/base.css': 
 			[

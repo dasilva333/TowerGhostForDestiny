@@ -1,0 +1,414 @@
+*
+{
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+input
+{
+	-webkit-user-select: auto !important;
+	-khtml-user-select: auto !important;
+	-moz-user-select: auto !important;
+	-ms-user-select: auto !important;
+	user-select: auto !important;
+}
+li a {
+    color: #3080CF
+}
+
+/* Used throughout the app for various purposes */
+.no-gutter [class*='col-'] {
+    padding-right: 0;
+    padding-left: 0;
+}
+.clearfix:before,.clearfix:after
+{
+	content: " ";
+	display: table;
+}
+.clearfix:after
+{
+	clear: both;
+}
+.pull-right
+{
+	float: right !important;
+}
+.pull-left
+{
+	float: left !important;
+}
+.label {
+    white-space: normal;
+}
+.alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+.font-bold {font-weight: bold;}
+.font-smaller-1 { font-size: 0.9em; }
+.font-smaller-2 { font-size: 0.8em; }
+.font-larger-4 { font-size: 5em; }
+
+.itemImage {
+    border: 2px solid white;
+}
+
+.list-group-item .itemImage, .panel-body .itemImage {
+    width: 48px;
+}
+.form-control
+{
+	padding: 8px;
+}
+/* Used by the navbar */
+@media (min-width: 1024px) and (max-width: 1181px)
+{
+	.nav .clear-filters-text,.nav .refresh-text
+	{
+		display: none;
+	}
+}
+@media (min-width: 1024px)
+{
+	.nav .settings-text
+	{
+		display: none;
+	}
+}
+
+.icon {
+    width: 24px;
+}
+.navbar-brand {
+    font-size: 0.8em
+}
+.navbar-brand
+{
+	font-size: 0.8em;
+}
+.navbar-brand img
+{
+	float: left;
+	margin-right: 4px;
+	position: relative;
+	top: -6px;
+	width: 32px;
+}
+.nav>li>a
+{
+	padding: 15px 10px;
+}
+.navbar-default .navbar-nav>li>a:hover,.navbar-default .navbar-nav>li>a:focus
+{
+	background: rgba(0,0,0,0.3);
+}
+.navbar-nav>li
+{
+	font-size: 0.9em;
+}
+.navbar
+{
+	text-shadow: none;
+}
+.navbar-toggle
+{
+	background-color: #f3db55 !important;
+}
+.navbar-toggle:hover
+{
+	background-color: #f0d125 !important;
+}
+.navbar-toggle:active,.navbar-toggle:focus
+{
+	background-color: #d3b50f !important;
+}
+.navbar-toggle .icon-bar
+{
+	background-color: #383e43 !important;
+}
+.dropdown-menu>li>a
+{
+	padding: 3px 20px 3px 12px;
+}
+.dropdown-menu>li>a .icon
+{
+	margin-right: 8px;
+}
+.dropdown-menu>li>a .fa
+{
+	margin-right: 3px;
+	text-align: center;
+	width: 1.3em;
+}
+@media (max-width: 1024px) {
+	.navbar-collapse.collapse.in:after {
+		content: "\f078";
+		display: block;
+		position: absolute;
+		bottom: 0;
+		left: 50%;
+		text-align: center;
+		font: normal normal normal 14px/1 FontAwesome;
+		font-size: inherit;
+		text-rendering: auto;
+		-webkit-font-smoothing: antialiased;
+	}	
+}
+
+/* Used by the app for Drag and Drop */
+.item-placeholder {
+    box-shadow:0 0 2px #000;
+	width: 54px;
+	height: 54px;
+	margin: 2px;
+	border: 1px solid white;
+	display: inline-block;
+}
+/* Used by the Help section */
+.help strong { font-size: 1.1em; }
+/* Used throughout the app for the bottom left text styling */
+.attkIcon {
+    position: relative;
+}
+.attkIcon > div {
+    pointer-events: none;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    color: #333;
+    font-weight: bold;
+    font-size: 0.85em;
+    line-height: 1;
+    padding-top: 2px;
+    padding-left: 2px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+	border-radius: 1px 0 0 0;
+	webkit-border-radius: 1px 0 0 0;
+}
+.attkIcon .None {
+    background-color: #BBB;
+}
+
+.attkIcon .Kinetic {
+    background-color: #BBB;
+}
+
+.attkIcon .Arc {
+    background-color: #85C5EC;
+}
+
+.attkIcon .Solar {
+    background-color: #C48A01;
+}
+
+.attkIcon .Void {
+    background-color: #B184C5;
+}
+@media (max-width: 1020px)
+{
+	.attkIcon>div
+	{
+		font-size: 0.75em;
+	}
+}
+
+/* Used by the Image-Grid-Template */
+.lockIcon {
+    position: absolute;
+    left: 3px;
+    top: 5px;
+	opacity: 0.5;
+}
+.bucket-item {
+    padding: 1px !important;
+}
+.bucket-item a {
+    display: block;
+    padding-top: 100%;
+    position: relative;
+}
+.itemBucket .itemBucketBG {
+    background: rgba(255, 255, 255, .1);
+}
+
+.itemBucket .itemBucketBG.active {
+    background: rgba(255, 255, 255, .5);
+}
+.container .title {
+    #text-transform: uppercase;
+    position: relative;
+    margin-top: 12px;
+    margin-bottom: 2px;
+    /* border-bottom: 2px solid rgba(245,245,245,.6); */
+    
+    font-size: 15px;
+    font-weight: 500;
+    color: rgba(245, 245, 245, .6);
+    background: rgba(0, 0, 0, .2);
+    padding-left: 5px;
+}
+
+.container .titleRefresh {
+    margin-right: 4px;
+    float: right;
+}
+.complete .itemImage {
+    border-color: #f5dc56;
+}
+/* Used by the Items-List-Template */
+.table .Kinetic {
+    color: #BBB;
+}
+
+.table .Arc {
+    color: #85C5EC;
+}
+
+.table .Solar {
+    color: #C48A01;
+}
+
+.table .Void {
+    color: #B184C5;
+}
+/* Used by the app on mobile for the quickScrollView */
+.quickScrollView {
+    position: relative;
+    top: 5px;
+    left: 5px;
+    display: none;
+}
+
+.quickScrollView .activeProfile {
+    border: 3px solid white;
+}
+
+/* 960 px is the breakpoint for 4 columns */
+
+@media (max-width: 959px) {
+    .quickScrollView {
+        display: inline
+    }
+}
+
+.quickScrollView
+{
+	display: none;
+	height: 36px;
+	left: 5px;
+	margin-top: 7px;
+	position: relative;
+}
+.quickScrollView:before,.quickScrollView:after
+{
+	content: " ";
+	display: table;
+}
+.quickScrollView:after
+{
+	clear: both;
+}
+@media (max-width: 959px)
+{
+	.quickScrollView
+	{
+		display: inline-block;
+	}
+}
+/* Used by the tooltips */
+.stat-bar-minmax { 
+	position:absolute;
+	color: white;
+	z-index: 10;
+	text-align:center;
+	width: 100%;
+}
+
+/* Used by MLMT */
+.itemImage.selected { border:2px solid green }
+.itemImage.not-selected { border:1px solid yellow; }
+.itemImage.disabled { opacity: 0.5; border:1px solid red !important; }
+.itemLink.candidate { border:1px solid blue !important; display:inline-block; }
+
+/* Used by the messages-template for the initial message */
+#loginForm
+{
+	background: #fff;
+	border-color: #42b142;
+	color: #000;
+	margin-top: 20px;
+}
+#loginForm .panel-heading
+{
+	border-color: #42b142;
+}
+#loginForm .btn-padding
+{
+	display: block;
+	margin: 0 auto;
+	max-width: 200px;
+}
+#loginForm .btn
+{
+	text-shadow: none;
+}
+#loginForm .btn img
+{
+	margin-right: 5px;
+	max-width: 35px;
+}
+#loginForm .btn:hover
+{
+	background: rgba(0,0,0,0.05);
+}
+.bootstrap-dialog-header .close
+{
+	color: #fff;
+	opacity: 1;
+}
+.bootstrap-dialog-header .close:hover
+{
+	opacity: 0.5;
+}
+/* used by quickScrollView and farmItemMode */
+
+.mobile-characters
+{
+	display: inline-block;
+	position: relative;
+}
+.mobile-characters-letter {
+	position: absolute;
+	font-size: 0.8em;
+	padding: 2px;
+	bottom: 0;
+	left: 1px;
+	background-color: white;
+	opacity: 0.9;
+	color: black;
+	font-weight: bold;
+}
+.mobile-characters-image
+{
+	border: 1px solid rgba(0,0,0,0.6);
+	border-radius: 4px;
+	cursor: pointer;
+	height: 36px;
+	webkit-border-radius: 4px;
+	width: 36px;
+}
+.mobile-characters-image:hover
+{
+	opacity: 0.7;
+}
+.mobile-characters-image.activeProfile
+{
+	border: 2px solid white;
+}

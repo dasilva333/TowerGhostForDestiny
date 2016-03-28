@@ -1,0 +1,124 @@
+#move-popup.mobile .attkIcon {
+    height: 65px;
+}
+#move-popup.mobile .locations img {
+	height: 100%;
+}
+
+.desktop .move-popup {
+    position: absolute;
+    z-index: 1004;
+    top: -75px;
+    width: 380px;
+    height: 77px;
+    background-color: rgba(21, 13, 13, 1);
+    cursor: default;
+}
+
+.move-popup .item-name {
+    color: #000;
+    background-color: white;
+    margin: 1px;
+    padding: 1px;
+    padding-left: 3px;
+}
+
+.lower-left {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    bottom: 0px;
+    right: initial;
+    padding: 2px;
+    padding-top: 3px;
+    left: 0px;
+    opacity: 0.9;
+}
+
+.move-popup .attkIcon div.icon-banner {
+    background-color: rgba(255, 255, 255, .6);
+    padding: 1px;
+    width: 97%;
+    text-align: center;
+    top: 0px;
+    bottom: initial;
+    left: 0px;
+}
+
+.list-group-item .attkIcon div.icon-banner {
+    background-color: rgba(255,255,255,.6);
+    padding: 1px;
+    width: 97%;
+    text-align: center;
+    top: 0px;
+    bottom: initial;
+    left: 0px;
+}
+.list-group-item .item-name {
+    margin: 1px;
+    padding: 1px;
+    padding-left: 3px;
+}
+.move-popup .item-name
+{
+	background-color: white;
+	color: #000;
+	margin: 1px;
+	padding: 1px;
+	padding-left: 3px;
+}
+.move-popup .attkIcon
+{
+	background: #1e242b;
+	cursor: pointer;
+	display: block;
+	text-shadow: none;
+}
+.move-popup .attkIcon:before,.move-popup .attkIcon:after
+{
+	content: " ";
+	display: table;
+}
+.move-popup .attkIcon:after
+{
+	clear: both;
+}
+.move-popup .attkIcon div
+{
+	border-radius: 0;
+	webkit-border-radius: 0;
+}
+.move-popup .attkIcon div.icon-banner
+{
+	background-color: rgba(255,255,255,0.8);
+	bottom: initial;
+	left: 0px;
+	padding: 1px;
+	text-align: center;
+	text-shadow: none;
+	top: 0px;
+	width: 100%;
+}
+.move-popup .locations img
+{
+	display: block;
+	margin: 0 auto;
+	max-height: 96px;
+	max-width: 100%;
+	width: auto;
+}
+.move-popup div.lower-left,.lower-left
+{
+	background-color: rgba(255,255,255,0.9);
+	bottom: 0px;
+	left: 0px;
+	opacity: 0.9;
+	padding: 2px;
+	padding-top: 3px;
+	position: absolute;
+	right: initial;
+	text-shadow: none;
+}
+#move-popup.desktop
+{
+	position: relative;
+}

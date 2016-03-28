@@ -57,9 +57,8 @@ module.exports = function(grunt) {
         },
         src: [
 			'css/bootstrap.min.css',
-			'css/style.css',
+			'css/tgd/*.css',
 			'css/tooltip.css',
-			'css/style_new.css',
 			'data/definitions/en/*.json',
 			'data/definitions/*.json',
 			'js/libraries/primary/*.js',
