@@ -912,6 +912,7 @@ Profile.prototype = {
     },
     renderBestGroups: function(groups) {
         console.log("renderBestGroups", groups);
+		var character = this;
         var id = new Date().getTime();
 
         var $template = $(tgd.maxLightTemplates({
@@ -931,7 +932,6 @@ Profile.prototype = {
             }, {
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
-                    armorSelection.save();
                     app.createLoadout();
                     var loadoutName = "MLMT Build";
                     app.activeLoadout().name(loadoutName);
