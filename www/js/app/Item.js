@@ -159,7 +159,8 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
-            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat, statPerks, rolls, bonus, armorIndex;
+            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat,
+                statPerks, rolls, bonus, armorIndex, hasUnlockedStats, bonusStatOn;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -183,6 +184,12 @@ Item.prototype = {
             bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
             rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
             futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
+            hasUnlockedStats = _.where(statPerks, {
+                active: true
+            }).length > 0;
+            bonusStatOn = hasUnlockedStats ? _.findWhere(statPerks, {
+                active: true
+            }).name : "";
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -231,9 +238,8 @@ Item.prototype = {
                         memo = layout.array;
                     return memo;
                 }, ""),
-                hasUnlockedStats: _.where(statPerks, {
-                    active: true
-                }).length > 0 || statPerks.length == 0
+                hasUnlockedStats: hasUnlockedStats || statPerks.length == 0,
+                bonusStatOn: bonusStatOn
             });
             self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
             self.primaryValues.MaxLightPercent = Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100);
@@ -262,6 +268,7 @@ Item.prototype = {
                     weight = (tmp[statPerk.name] / sum);
                 //Calculate both stats at Max Light (LL320) with bonus
                 tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
+                tmp["bonusOn"] = statPerk.name;
                 tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                 return tmp;
             });

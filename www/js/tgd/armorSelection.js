@@ -13,6 +13,7 @@ tgd.calculateBestSets = function(items) {
     combos = tgd.cartesianProductOf(combos);
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
+        delete tmp["bonusOn"];
         var sortedKeys = _.sortBy(_.keys(tmp));
         var statTiers = _.map(sortedKeys, function(name) {
             return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
@@ -68,22 +69,22 @@ tgd.armorSelection = function(groups) {
 
     self.armorGroups = ko.observableArray();
 
-    self.selectedItems = ko.computed(function() {
+    self.selectedItems = ko.pureComputed(function() {
         return _.map(self.armorGroups(), function(group) {
             return group.selectedItem() || group.items;
         });
     });
 
-    self.bestSets = ko.computed(function() {
+    self.bestSets = ko.pureComputed(function() {
         var bestSets = tgd.calculateBestSets(self.selectedItems());
         return bestSets;
     });
 
-    self.firstSet = ko.computed(function() {
+    self.firstSet = ko.pureComputed(function() {
         return _.first(self.bestSets());
     });
 
-    self.maxSets = ko.computed(function() {
+    self.maxSets = ko.pureComputed(function() {
         return _.filter(self.bestSets(), function(combo) {
             return Math.floor(combo.score) >= tgd.maxTierPossible;
         });
@@ -93,7 +94,7 @@ tgd.armorSelection = function(groups) {
         return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets);
     }));
 
-    self.unleveledBucketTypes = ko.computed(function() {
+    self.unleveledBucketTypes = ko.pureComputed(function() {
         return _.pluck(_.filter(self.selectedItems(), function(item) {
             return item && item.getValue && item.getValue("Light") != tgd.DestinyLightCap;
         }), 'bucketType').join(", ");
@@ -128,6 +129,7 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets) {
         return new tgd.armorItem(item, self.selectedItem, groups, bestSets);
     });
 
+    //Adding this condition opens up the criteria to be wider at the cost of initial load time
     if (["Class Items", "Ghost", "Artifact"].indexOf(bucketType) == -1) {
         self.selectedItem(self.items[selectedIndex]);
     }
@@ -136,10 +138,10 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets) {
 tgd.armorItem = function(item, selectedItem, groups, bestSets) {
     var self = this
     _.extend(self, item);
-    var isSelected = ko.computed(function() {
+    var isSelected = ko.pureComputed(function() {
         return self == selectedItem();
     });
-    var isDisabled = ko.computed(function() {
+    var isDisabled = ko.pureComputed(function() {
         /* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
         var items = _.map(groups(), function(group) {
             return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
@@ -149,16 +151,16 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets) {
             return Math.floor(combo.score) >= tgd.maxTierPossible;
         }).length == 0;
     });
-    var isInBestSets = ko.computed(function() {
+    var isInBestSets = ko.pureComputed(function() {
         return _.filter(bestSets(), function(combo) {
             return _.pluck(combo.set, '_id').indexOf(self._id) > -1;
         }).length > 0;
     });
     /* if the item is in bestSets then color it blue to denote its the found item */
-    self.css = ko.computed(function() {
+    self.css = ko.pureComputed(function() {
         return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
     });
-    self.css2 = ko.computed(function() {
+    self.css2 = ko.pureComputed(function() {
         return (!isSelected() && isInBestSets() ? "candidate" : "not-candidate");
     });
     this.select = function() {

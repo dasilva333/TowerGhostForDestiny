@@ -172,6 +172,7 @@ tgd.DestinyMaxCSP = {
     "Artifact": 124,
     "Ghost": 58
 };
+//tgd.DestinyMaxCSP = {"Helmet":108,"Gauntlet":97,"Chest":143,"Boots":133,"Class Items":60,"Artifact":128,"Ghost":60};
 tgd.DestinyBucketWeights = [{
     "Primary": 13.04,
     "Special": 13.04,
