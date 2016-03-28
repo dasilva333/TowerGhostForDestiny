@@ -392,10 +392,10 @@ Profile.prototype = {
                 return item.primaryStatValue() * -1;
             });
         }
-        /* Damage */
+        /* Type, Light */
         else if (activeSort === 3) {
             items = _.sortBy(items, function(item) {
-                return item.damageType;
+                return [item.type, item.primaryStatValue() * -1];
             });
         }
         /* Name */
@@ -926,23 +926,29 @@ Profile.prototype = {
             buttons: [{
                 label: app.activeText().movepopup_equip,
                 action: function(dialog) {
-                    character.equipAction("Max Light", "Tier " + tgd.maxTierPossible, armorSelection.selectedItems());
-                    dialog.close();
+                    var firstSet = armorSelection.firstSet();
+                    if (firstSet) {
+                        character.equipAction("Max Light Max Tier", firstSet.score, firstSet.set);
+                        dialog.close();
+                    }
                 }
             }, {
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
                     app.createLoadout();
-                    var loadoutName = "MLMT Build";
-                    app.activeLoadout().name(loadoutName);
-                    _.each(armorSelection.selectedItems(), function(item) {
-                        app.activeLoadout().addUniqueItem({
-                            id: item._id,
-                            bucketType: item.bucketType,
-                            doEquip: true
+                    var firstSet = armorSelection.firstSet();
+                    if (firstSet) {
+                        var loadoutName = firstSet.score + " " + firstSet.StatTiers;
+                        app.activeLoadout().name(loadoutName);
+                        _.each(firstSet.set, function(item) {
+                            app.activeLoadout().addUniqueItem({
+                                id: item._id,
+                                bucketType: item.bucketType,
+                                doEquip: true
+                            });
                         });
-                    });
-                    dialog.close();
+                        dialog.close();
+                    }
                 }
             }, {
                 label: app.activeText().cancel,
@@ -950,7 +956,7 @@ Profile.prototype = {
                     dialog.close();
                 }
             }]
-        })).title("Armor Builds for Max Light Level").content($template).show(true, function() {
+        })).title("Armor Builds at Max Light Level for Tier " + tgd.maxTierPossible).content($template).show(true, function() {
             groups = null;
         }, function() {
             ko.applyBindings(armorSelection, document.getElementById('container_' + id));
