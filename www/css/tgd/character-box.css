@@ -62,8 +62,21 @@
 .character-box .level {
     position: absolute;
     top: 4px;
-    right: 3px;
+    right: 35px;
     height: 36px;
+}
+.character-box .statsTool {
+    position: absolute;
+    top: 4px;
+    right: 2px;
+	margin-left:2px;
+	border-left:1px solid white;
+    height: 36px;
+	cursor:pointer;
+}
+.character-box .statsTool:hover {
+	border-left:1px solid yellow;
+	color: yellow;
 }
 
 .character-box .level .light {

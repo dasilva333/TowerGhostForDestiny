@@ -6,7 +6,7 @@
     },
     "character-box.css": {
       "filename": "css/tgd/character-box.css",
-      "version": "ea1cd43eaba0a1ac5279eb2b1c143079b85b39b6770a14eeaad8153ab4ff4e69"
+      "version": "e1d240fb22842994beea5b6e9ca192b7b7d165fdb9552cd7facdd227d626c407"
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
@@ -18,7 +18,7 @@
     },
     "style.css": {
       "filename": "css/tgd/style.css",
-      "version": "beed73ec34196ee39edb3c2ee32a7d03bdc12e781b34ede27dd9cf3bfcdd9742"
+      "version": "f77e2608d000c5f45030ad213070facb2741e40bceaabcb26bba7d62b0f51112"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
@@ -118,7 +118,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "18a16607270cbca5a42b707b93c8ed1e4c6f35e87f8f075202c1e8411cf0a2a6"
+      "version": "b7dd2b8f97b63ede59a13ea98049c6a5e564bdc8ded6c654054887dc046c950a"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
