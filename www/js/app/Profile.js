@@ -919,7 +919,7 @@ Profile.prototype = {
             id: id
         }));
 
-        var armorSelection = new tgd.armorSelection(groups);
+        var armorSelection = new tgd.armorSelection(groups, character);
         console.log("armorSelection", armorSelection);
 
         var armorTemplateDialog = (new tgd.dialog({
@@ -928,25 +928,16 @@ Profile.prototype = {
                 action: function(dialog) {
                     var firstSet = armorSelection.firstSet();
                     if (firstSet) {
-                        character.equipAction("Max Light Max Tier", firstSet.score, firstSet.set);
+                        armorSelection.equipSelectedCombo(firstSet);
                         dialog.close();
                     }
                 }
             }, {
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
-                    app.createLoadout();
                     var firstSet = armorSelection.firstSet();
                     if (firstSet) {
-                        var loadoutName = firstSet.score + " " + firstSet.StatTiers;
-                        app.activeLoadout().name(loadoutName);
-                        _.each(firstSet.set, function(item) {
-                            app.activeLoadout().addUniqueItem({
-                                id: item._id,
-                                bucketType: item.bucketType,
-                                doEquip: true
-                            });
-                        });
+                        armorSelection.saveSelectedCombo(firstSet);
                         dialog.close();
                     }
                 }

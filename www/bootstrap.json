@@ -6,23 +6,23 @@
     },
     "character-box.css": {
       "filename": "css/tgd/character-box.css",
-      "version": "e1d240fb22842994beea5b6e9ca192b7b7d165fdb9552cd7facdd227d626c407"
+      "version": "56d58bac412060bb2b2b16a7c641b207f12411610070cdf38fdb479553109d02"
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
-      "version": "11cb7a8b55d08950056799a4afb391573579d35559455ee7dbf130392df34748"
+      "version": "8e98dc663e60b7a861a0d84c67a67b766d7852ac20163ac04c93c6284bf59593"
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
+      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
-      "version": "f77e2608d000c5f45030ad213070facb2741e40bceaabcb26bba7d62b0f51112"
+      "version": "021bbe021656c049195634d7735ab880096552869036bbadf59372a379a4f727"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -78,7 +78,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
+      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -114,7 +114,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "16d2b7403ac25c78a4f611594a113e1a155f12945d6270d8d41675f2bcac2de1"
+      "version": "5b9ed14c9896c626544c3bb2761c60fc75e59543aea39ea1461fabd99e65f696"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -122,7 +122,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "ef9c942c1a541d017a51cb891578bcb8015a41577b1b333d21f724f93c5085c6"
+      "version": "18f6223b9e54a6d9439efc917a259783e5ce1eaa2ef23e34daaa7f642919b376"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -182,7 +182,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "1917651a737a4ecc77410abec767148e69914a9fc1098f54347dcfa5fe02666b"
+      "version": "c07657ebc3d7937fa3b16332eb20bd8004d1ad6d3d6214c77739e48a83325140"
     },
     "app.js": {
       "filename": "js/app/app.js",

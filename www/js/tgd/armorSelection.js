@@ -62,10 +62,11 @@ tgd.calculateBestSets = function(items) {
     return bestSets;
 };
 
-tgd.armorSelection = function(groups) {
+tgd.armorSelection = function(groups, character) {
     var self = this;
 
     self.groups = groups;
+    self.character = character;
 
     self.armorGroups = ko.observableArray();
 
@@ -99,6 +100,22 @@ tgd.armorSelection = function(groups) {
             return item && item.getValue && item.getValue("Light") != tgd.DestinyLightCap;
         }), 'bucketType').join(", ");
     });
+    self.saveSelectedCombo = function(combo) {
+        app.createLoadout();
+        var loadoutName = combo.score + " " + combo.statTiers;
+        console.log("loadoutName", loadoutName);
+        app.activeLoadout().name(loadoutName);
+        _.each(combo.set, function(item) {
+            app.activeLoadout().addUniqueItem({
+                id: item._id,
+                bucketType: item.bucketType,
+                doEquip: true
+            });
+        });
+    }
+    self.equipSelectedCombo = function(combo) {
+        self.character.equipAction("Max Light Max Tier", combo.score, combo.set);
+    }
 }
 
 tgd.armorGroup = function(bucketType, items, groups, bestSets) {

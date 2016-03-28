@@ -75,8 +75,8 @@
 	cursor:pointer;
 }
 .character-box .statsTool:hover {
-	border-left:1px solid yellow;
-	color: yellow;
+	border-left:1px solid rgb(245, 220, 86);
+	color: rgb(245, 220, 86);
 }
 
 .character-box .level .light {
