@@ -912,7 +912,7 @@ Profile.prototype = {
     },
     renderBestGroups: function(groups) {
         console.log("renderBestGroups", groups);
-		var character = this;
+        var character = this;
         var id = new Date().getTime();
 
         var $template = $(tgd.maxLightTemplates({
