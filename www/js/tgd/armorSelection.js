@@ -76,7 +76,9 @@ tgd.armorSelection = function(groups, character) {
         if (self.foundFirstSet().length == 0) {
             var set = _.clone(armorGroups);
             set.unshift([helmet]);
-            var combos = tgd.calculateBestSets(set);
+            var combos = _.filter(tgd.calculateBestSets(set), function(combo) {
+				return Math.floor(combo.score) >= tgd.maxTierPossible;
+			});
             if (combos.length > 0) {
                 self.foundFirstSet(combos[0].set);
             }
@@ -105,9 +107,9 @@ tgd.armorSelection = function(groups, character) {
     });
 
     self.armorGroups(_.map(groups, function(items, bucketType) {
-		var selectedIndex = _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
+		var selectedIndex = self.foundFirstSet().length > 0 ? _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
-        })._id);
+        })._id) : 0;
         return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex);
     }));
 
