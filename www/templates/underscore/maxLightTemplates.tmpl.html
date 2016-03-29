@@ -7,7 +7,7 @@
 		This tool is meant as a planner to help guide you in finding what gear to invest your time and resources in infusing to achieve your desirable stat distributions.<br>
 	</p>
 	<hr>
-	<div data-bind="visible: maxSets().length == 0" style="display:none;">
+	<div data-bind="visible: foundFirstSet().length == 0" style="display:none;">
 		Currently this character does not have any armor that can be infused to <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> and provide
 		enough stat points to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span>.<br>
 		
@@ -36,7 +36,7 @@
 			</div>
 		</div>
 	</div>
-	<div data-bind="visible: maxSets().length > 0" style="display:none;">
+	<div data-bind="visible: foundFirstSet().length > 0" style="display:none;">
 		<p>
 			The <strong>first number</strong> listed indicates how many points the item currently has, the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
 			<strong>Blue Border</strong> - Indicates it is a one of the items listed in the possible combinations table.<br>

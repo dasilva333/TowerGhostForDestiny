@@ -632,27 +632,42 @@ Profile.prototype = {
             return stat.max;
         }));
 
-        console.log(statGroups);
-        console.log("highestArmorValue:" + highestArmorValue);
-        console.log(_.object(_.map(statGroups, function(stat, key) {
+        //console.log(statGroups);
+        //console.log("highestArmorValue:" + highestArmorValue);
+        /*console.log(_.object(_.map(statGroups, function(stat, key) {
             return [key, stat.max];
-        })));
+        })));*/
 
         highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
-        console.log("highestArmorTier :" + highestArmorTier);
+        //console.log("highestArmorTier :" + highestArmorTier);
 
         highestTierValue = highestArmorTier * tgd.DestinySkillTier;
-        console.log("highestTierValue :" + highestTierValue);
+        //console.log("highestTierValue :" + highestTierValue);
 
         groups = _.object(_.map(groups, function(items, bucketType) {
             var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
+            var newItems = _.sortBy(_.filter(items, function(item) {
+                return item.getValue("MaxLightCSP") >= minCSP;
+            }), function(item) {
+                return item.getValue("MaxLightCSP") * -1;
+            });
+            if (["Class Items", "Ghost", "Artifact"].indexOf(bucketType) > -1) {
+                newItems = _.map(_.reduce(newItems, function(memo, item) {
+                    var key = _.sortBy(_.reduce(item.stats, function(memo, stat, name) {
+                        if (stat > 0) memo.push(name);
+                        return memo;
+                    }, [])).join("_");
+                    if (!(key in memo))
+                        memo[key] = [];
+                    memo[key].push(item);
+                    return memo;
+                }, {}), function(items) {
+                    return _.first(items);
+                });
+            }
             return [
                 bucketType,
-                _.sortBy(_.filter(items, function(item) {
-                    return item.getValue("MaxLightCSP") >= minCSP;
-                }), function(item) {
-                    return item.getValue("MaxLightCSP") * -1;
-                })
+                newItems
             ];
         }));
 
@@ -911,7 +926,7 @@ Profile.prototype = {
         });
     },
     renderBestGroups: function(groups) {
-        console.log("renderBestGroups", groups);
+        //console.log("renderBestGroups", groups);
         var character = this;
         var id = new Date().getTime();
 

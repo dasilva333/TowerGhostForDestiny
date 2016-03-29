@@ -65,10 +65,23 @@ tgd.calculateBestSets = function(items) {
 tgd.armorSelection = function(groups, character) {
     var self = this;
 
-    self.groups = groups;
     self.character = character;
 
+    self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
+
+    var armorGroups = _.map(groups),
+        helmets = armorGroups.shift();
+    _.each(helmets, function(helmet) {
+        if (self.foundFirstSet().length == 0) {
+            var set = _.clone(armorGroups);
+            set.unshift([helmet]);
+            var combos = tgd.calculateBestSets(set);
+            if (combos.length > 0) {
+                self.foundFirstSet(combos[0].set);
+            }
+        }
+    });
 
     self.selectedItems = ko.pureComputed(function() {
         return _.map(self.armorGroups(), function(group) {
@@ -92,7 +105,10 @@ tgd.armorSelection = function(groups, character) {
     });
 
     self.armorGroups(_.map(groups, function(items, bucketType) {
-        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets);
+		var selectedIndex = _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
+            bucketType: bucketType
+        })._id);
+        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex);
     }));
 
     self.unleveledBucketTypes = ko.pureComputed(function() {
@@ -103,7 +119,6 @@ tgd.armorSelection = function(groups, character) {
     self.saveSelectedCombo = function(combo) {
         app.createLoadout();
         var loadoutName = combo.score + " " + combo.statTiers;
-        console.log("loadoutName", loadoutName);
         app.activeLoadout().name(loadoutName);
         _.each(combo.set, function(item) {
             app.activeLoadout().addUniqueItem({
@@ -118,38 +133,20 @@ tgd.armorSelection = function(groups, character) {
     }
 }
 
-tgd.armorGroup = function(bucketType, items, groups, bestSets) {
+tgd.armorGroup = function(bucketType, items, groups, bestSets, index) {
     var self = this;
 
     self.bucketType = bucketType;
 
-    var selectedIndex = 0;
+    var selectedIndex = index == -1 ? 0 : index;
 
     self.selectedItem = ko.observable();
-
-    if (["Class Items", "Ghost", "Artifact"].indexOf(bucketType) > -1) {
-        items = _.map(_.reduce(items, function(memo, item) {
-            var key = _.sortBy(_.reduce(item.stats, function(memo, stat, name) {
-                if (stat > 0) memo.push(name);
-                return memo;
-            }, [])).join("_");
-            if (!(key in memo))
-                memo[key] = [];
-            memo[key].push(item);
-            return memo;
-        }, {}), function(items) {
-            return _.first(items);
-        });
-    }
 
     self.items = _.map(items, function(item, index) {
         return new tgd.armorItem(item, self.selectedItem, groups, bestSets);
     });
 
-    //Adding this condition opens up the criteria to be wider at the cost of initial load time
-    if (["Class Items", "Ghost", "Artifact"].indexOf(bucketType) == -1) {
-        self.selectedItem(self.items[selectedIndex]);
-    }
+    self.selectedItem(self.items[selectedIndex]);
 }
 
 tgd.armorItem = function(item, selectedItem, groups, bestSets) {
