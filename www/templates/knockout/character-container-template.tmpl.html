@@ -46,13 +46,13 @@
                             </div>
                             <div class="col-xs-24 text-center">
                                 <span data-bind="text: $root.activeText().gear_with_highest">Equip Armor With Most:</span>
-                                <br>
-                                <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default">Light</a>
-                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default">Int</a>
-                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default">Disc</a>
-                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default">Str</a>
-                                <hr style="margin:3px; padding:6px;">
-								<div>
+                                <div class="btn-group btn-group-justified">
+	                                <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default">Light</a>
+	                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default">Int</a>
+	                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default">Disc</a>
+	                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default">Str</a>
+								</div>
+								<div class="btn-group">
 									<a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
 									<a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">BC-Full</a>
 									<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">BC-Quick</a>
