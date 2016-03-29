@@ -269,7 +269,9 @@ Item.prototype = {
                 //Calculate both stats at Max Light (LL320) with bonus
                 tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
                 tmp["bonusOn"] = statPerk.name;
-                tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
+				if ( otherStatName != "" ){
+	                tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
+				}
                 return tmp;
             });
             /*if ( description == "Graviton Forfeit" ){
