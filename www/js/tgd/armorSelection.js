@@ -66,24 +66,49 @@ tgd.armorSelection = function(groups, character) {
     var self = this;
 
     self.character = character;
+    self.groups = groups;
 
+    //self.loading = ko.observable(true);
+    //self.loadingStatus = ko.observable("Calculating most points combo");
     self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
 
     var armorGroups = _.map(groups),
-        helmets = armorGroups.shift();
-    _.each(helmets, function(helmet) {
-        if (self.foundFirstSet().length == 0) {
-            var set = _.clone(armorGroups);
-            set.unshift([helmet]);
-            var combos = _.filter(tgd.calculateBestSets(set), function(combo) {
-				return Math.floor(combo.score) >= tgd.maxTierPossible;
-			});
-            if (combos.length > 0) {
-                self.foundFirstSet(combos[0].set);
+        mostPoints = _.map(armorGroups, function(items) {
+            return _.first(items, 2);
+        }),
+        combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints), function(combo) {
+            return Math.floor(combo.score) >= tgd.maxTierPossible;
+        }), 'similarityScore');
+
+    if (combos.length > 0) {
+        //self.loadingStatus("Most points combo used");
+        self.foundFirstSet(combos[0].set);
+    } else {
+        var helmets = armorGroups.shift();
+        //self.loadingStatus("Analyzing " + (helmets.length - 1) + " helmets");
+        _.each(helmets, function(helmet, index) {
+            if (self.foundFirstSet().length == 0) {
+                var set = _.map(_.clone(armorGroups), function(items) {
+                    return _.first(items, 4);
+                });
+                set.unshift([helmet]);
+                //console.log(helmet.description,"considering helmet");
+                console.time("calculateBestSets " + helmet.description);
+                var combos = _.filter(tgd.calculateBestSets(set), function(combo) {
+                    return Math.floor(combo.score) >= tgd.maxTierPossible;
+                });
+                //self.loadingStatus("Analyzed helmet " + index + " out of " + (helmets.length - 1));
+                console.timeEnd("calculateBestSets " + helmet.description);
+                //console.log(combos);
+                if (combos.length > 0) {
+                    //self.loadingStatus("Found a combo " + combos[0].statTiers);
+                    self.foundFirstSet(combos[0].set);
+                }
             }
-        }
-    });
+        });
+    }
+    //self.loading(false);
 
     self.selectedItems = ko.pureComputed(function() {
         return _.map(self.armorGroups(), function(group) {
@@ -107,7 +132,7 @@ tgd.armorSelection = function(groups, character) {
     });
 
     self.armorGroups(_.map(groups, function(items, bucketType) {
-		var selectedIndex = self.foundFirstSet().length > 0 ? _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
+        var selectedIndex = self.foundFirstSet().length > 0 ? _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
         })._id) : 0;
         return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex);
