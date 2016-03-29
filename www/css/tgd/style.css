@@ -335,7 +335,7 @@ li a {
 .itemImage.selected { border:2px solid green }
 .itemImage.not-selected { border:1px solid yellow; }
 .itemImage.disabled { opacity: 0.5; border:1px solid red !important; }
-.itemLink.candidate { border:1px solid blue !important; display:inline-block; }
+.itemImage.candidate { border:1px solid blue !important; display:inline-block; }
 
 /* Used by the messages-template for the initial message */
 #loginForm

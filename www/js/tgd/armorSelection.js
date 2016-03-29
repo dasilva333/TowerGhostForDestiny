@@ -175,10 +175,26 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets) {
     });
     /* if the item is in bestSets then color it blue to denote its the found item */
     self.css = ko.pureComputed(function() {
-        return (isSelected() ? "selected" : "not-selected") + " " + (isDisabled() ? "disabled" : "not-disabled");
-    });
-    self.css2 = ko.pureComputed(function() {
-        return (!isSelected() && isInBestSets() ? "candidate" : "not-candidate");
+		/* allowable combinations: green, yellow, red, blue 
+		.itemImage.selected { border:2px solid green }
+		.itemImage.not-selected { border:1px solid yellow; }
+		.itemImage.disabled { opacity: 0.5; border:1px solid red !important; }
+		.itemImage.candidate { border:1px solid blue !important; display:inline-block; }		
+		*/
+		var css = "";
+		if ( isSelected() ){
+			css = "selected";
+		}
+		else if ( !isSelected() && isInBestSets() ){
+			css = "candidate";
+		}
+		else if ( isDisabled() ){
+			css = "disabled";
+		}
+		else {
+			css = "not-selected";
+		}
+        return css;
     });
     this.select = function() {
         if (isDisabled()) {

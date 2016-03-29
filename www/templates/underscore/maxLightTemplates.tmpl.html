@@ -60,8 +60,8 @@
 		    <tr data-bind="attr:{id:'details_'+combo.id}">
 		      <td>
 			  		<input type="Button" class="btn btn-sm" value="View" data-bind="click: function(){ $('#armor_' + combo.id).show(); $('#details_' + combo.id).hide(); }">
-			  		<input type="Button" class="btn btn-sm" value="Save" data-bind="click: $root.saveSelectedCombo.bind(combo);" style="display:none;" data-bind="visible: maxSets().length > 1">
-					<input type="Button" class="btn btn-sm" value="Equip" data-bind="click: $root.equipSelectedCombo.bind(combo);" style="display:none;" data-bind="visible: maxSets().length > 1">
+			  		<input type="Button" class="btn btn-sm" value="Save" data-bind="click: $root.saveSelectedCombo.bind(combo), $root.maxSets().length > 1" style="display:none;">
+					<input type="Button" class="btn btn-sm" value="Equip" data-bind="click: $root.equipSelectedCombo.bind(combo), $root.maxSets().length > 1" style="display:none;">
 			  </td>
 		      <td data-bind="text: combo.score"></td>
 		      <td data-bind="text: combo.statValues"></td>
