@@ -26,10 +26,10 @@ tgd.calculateBestSets = function(items) {
                 return tmp[name];
             }).join("/"),
             statTiers: statTiers,
-            score: tgd.sum(_.map(tmp, function(value, key) {
+            score: parseFloat((tgd.sum(_.map(tmp, function(value, key) {
                 var result = Math.floor(value / tgd.DestinySkillTier);
                 return result > 5 ? 5 : result;
-            })) + (tgd.sum(_.values(tmp)) / 1000),
+            })) + (tgd.sum(_.values(tmp)) / 1000)).toFixed(3)),
             perks: _.filter(
                 _.flatten(
                     _.map(items, function(item) {
