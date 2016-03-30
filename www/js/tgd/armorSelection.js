@@ -14,7 +14,7 @@ tgd.calculateBestSets = function(items) {
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
         delete tmp["bonusOn"];
-        var sortedKeys = _.pluck(tgd.DestinyArmorStats,'statName');
+        var sortedKeys = _.pluck(tgd.DestinyArmorStats, 'statName');
         var statTiers = _.map(sortedKeys, function(name) {
             return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
         }).join(" ");
@@ -144,19 +144,28 @@ tgd.armorSelection = function(groups, character) {
         }), 'bucketType').join(", ");
     });
     self.saveSelectedCombo = function(combo) {
-        app.createLoadout();
-        var loadoutName = combo.score + " " + combo.statTiers;
-        app.activeLoadout().name(loadoutName);
-        _.each(combo.set, function(item) {
-            app.activeLoadout().addUniqueItem({
-                id: item._id,
-                bucketType: item.bucketType,
-                doEquip: true
+        if (confirm("Are you sure you want to save this loadout? Doing so will close this pop up dialog")) {
+            app.createLoadout();
+            var loadoutName = combo.score + " " + combo.statTiers;
+            app.activeLoadout().name(loadoutName);
+            _.each(combo.set, function(item) {
+                app.activeLoadout().addUniqueItem({
+                    id: item._id,
+                    bucketType: item.bucketType,
+                    doEquip: true
+                });
             });
-        });
+            self.dialog.close();
+        }
     }
     self.equipSelectedCombo = function(combo) {
-        self.character.equipAction("Max Light Max Tier", combo.score, combo.set);
+        if (confirm("Are you sure you want to equip this loadout? Doing so will close this pop up dialog")) {
+            self.character.equipAction("Max Light Max Tier", combo.score, combo.set);
+            self.dialog.close();
+        }
+    }
+    self.setDialog = function(dialog) {
+        self.dialog = dialog.modal;
     }
 }
 

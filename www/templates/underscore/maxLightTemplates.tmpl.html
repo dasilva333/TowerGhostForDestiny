@@ -38,7 +38,8 @@
 	</div>
 	<div data-bind="visible: foundFirstSet().length > 0" style="display:none;">
 		<p>
-			The <strong>first number</strong> listed indicates how many points the item currently has, the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
+			The <strong>first number</strong> listed indicates how many points the item currently has, 
+			the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
 			<strong>Blue Border</strong> - Indicates it is a one of the items listed in the possible combinations table.<br>
 			<strong>Green Border</strong> - Indicates the item is currently selected.<br>
 			<strong>Red Border</strong> - Indicates the item cannot be used to maintain the current max tier.<br>
@@ -60,8 +61,8 @@
 		    <tr data-bind="attr:{id:'details_'+combo.id}">
 		      <td>
 			  		<input type="Button" class="btn btn-sm" value="View" data-bind="click: function(){ $('#armor_' + combo.id).show(); $('#details_' + combo.id).hide(); }">
-			  		<input type="Button" class="btn btn-sm" value="Save" data-bind="click: $root.saveSelectedCombo.bind(combo), $root.maxSets().length > 1" style="display:none;">
-					<input type="Button" class="btn btn-sm" value="Equip" data-bind="click: $root.equipSelectedCombo.bind(combo), $root.maxSets().length > 1" style="display:none;">
+			  		<input type="Button" class="btn btn-sm" value="Save" data-bind="click: $root.saveSelectedCombo.bind(combo), visible: $root.maxSets().length > 1" style="display:none;">
+					<input type="Button" class="btn btn-sm" value="Equip" data-bind="click: $root.equipSelectedCombo.bind(combo), visible: $root.maxSets().length > 1" style="display:none;">
 			  </td>
 		      <td data-bind="text: combo.score"></td>
 		      <td data-bind="text: combo.statValues"></td>

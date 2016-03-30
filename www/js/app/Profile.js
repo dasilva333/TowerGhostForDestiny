@@ -951,6 +951,7 @@ Profile.prototype = {
         })).title("Armor Builds at Max Light Level for Tier " + tgd.maxTierPossible).content($template).show(true, function() {
             groups = null;
         }, function() {
+            armorSelection.setDialog(armorTemplateDialog);
             ko.applyBindings(armorSelection, document.getElementById('container_' + id));
         });
     },
@@ -970,7 +971,7 @@ Profile.prototype = {
                 var statTiers = "",
                     statValues = "",
                     stats = tgd.joinStats(combo.set),
-                    sortedKeys = _.pluck(tgd.DestinyArmorStats,'statName');
+                    sortedKeys = _.pluck(tgd.DestinyArmorStats, 'statName');
                 combo.stats = [];
                 _.each(sortedKeys, function(name) {
                     statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stats[name] / tgd.DestinySkillTier);
