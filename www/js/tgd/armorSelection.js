@@ -14,7 +14,7 @@ tgd.calculateBestSets = function(items) {
     var scoredCombos = _.map(combos, function(items) {
         var tmp = tgd.joinStats(items);
         delete tmp["bonusOn"];
-        var sortedKeys = _.sortBy(_.keys(tmp));
+        var sortedKeys = _.pluck(tgd.DestinyArmorStats,'statName');
         var statTiers = _.map(sortedKeys, function(name) {
             return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
         }).join(" ");

@@ -970,7 +970,7 @@ Profile.prototype = {
                 var statTiers = "",
                     statValues = "",
                     stats = tgd.joinStats(combo.set),
-                    sortedKeys = _.sortBy(_.keys(stats));
+                    sortedKeys = _.pluck(tgd.DestinyArmorStats,'statName');
                 combo.stats = [];
                 _.each(sortedKeys, function(name) {
                     statTiers = statTiers + " <strong>" + name.substring(0, 3) + "</strong> T" + Math.floor(stats[name] / tgd.DestinySkillTier);
