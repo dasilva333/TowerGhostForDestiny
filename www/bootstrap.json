@@ -6,7 +6,7 @@
     },
     "character-box.css": {
       "filename": "css/tgd/character-box.css",
-      "version": "d1027958fd2e97df7868efa3f1e876f9337a193a27c390353d82a57d4f20debc"
+      "version": "cefbba70c3185e0eacf7e7fe5f781e9479e46ef7ab4ff4028eb6a72af53a3341"
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
@@ -118,7 +118,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "5bb255f519394a9e8e5f55375216265046375f5ae499f66559a934031b3e84e4"
+      "version": "27a1b57536e5f194a799c605b866d0e2e5b2b8637b20aea4433099df6fb9eeeb"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",

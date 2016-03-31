@@ -15,7 +15,7 @@
 						</div>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
-                            <div class="col-xs-11 text-left">
+                            <div class="col-xs-11 text-left skillStatRow">
                                 <div>
                                     <span class="font-bold" data-bind="text: $root.activeText().armor">Armor</span>
                                     <span data-bind="text: STAT_ARMOR.value"></span>
@@ -30,31 +30,31 @@
                                 </div>
                             </div>
                             <div class="col-xs-13 text-right">
-                                <!-- ko foreach: { data: tgd.DestinyArmorStats, as: 'stat' } -->
-                                <div>
-                                    <span class="font-bold" data-bind="text: stat.statName.toLowerCase().substring(0,3)"></span>
-                                    <span data-bind="text: character.equippedStats()[stat.statName]"></span>
-									<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
-                                    <span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+                                <div data-bind="foreach: { data: tgd.DestinyArmorStats, as: 'stat' }" class="skillStatRow">
+									<div>
+										<span class="font-bold" data-bind="text: stat.statName.toLowerCase().substring(0,3)"></span>
+										<span data-bind="text: character.equippedStats()[stat.statName]"></span>
+										<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
+										<span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+									</div>
                                 </div>
-                                <!--/ko  -->
                             </div>
-                            <div class="col-xs-24 text-center" style="padding-top:1px; padding-bottom:1px;">
+                            <div class="col-xs-24 text-center">
                                 <span class="font-bold">Tier</span>:
                                 <span data-bind="text: character.equippedTier" title="Effective Tier / Theoretical Tier"></span>
                                 (<span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span>/<span data-bind="text: character.tierCSP" title="Stat Points needed to reach Theoretical Tier"></span>/<span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>)
                             </div>
                             <div class="col-xs-24 text-center">
-                                <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
-                                <div class="btn-group">
+                                <span class="font-bold col-xs-24">Equip Gear With Highest</span>
+                                <div class="btn-group col-xs-24">
 	                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
 	                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
 	                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Str</a>
 									<a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
 									<a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
 								</div>
-								<span>Armor Set Builder</span>
-								 <div class="btn-group btn-group-justified">
+								<span class="font-bold col-xs-24">Armor Set Builder</span>
+								<div class="btn-group btn-group-justified col-xs-24">
 									<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Quick</a>
 									<a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Full</a>
 									<a data-bind="click: character.equipHighest('MaxLight'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Max Tier</a>

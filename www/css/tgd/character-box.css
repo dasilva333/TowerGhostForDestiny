@@ -107,11 +107,15 @@
 	background: rgba(18, 21, 20, .8); 
 	z-index: 2; 
 	width: 99% !important;
-}
-.character-box .stats div {
 	font-size: 15px;
-    padding-top: 7px;
-    padding-bottom: 7px;
+}
+.character-box .stats .skillStatRow div {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.character-box .stats .btn-group {
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 .character-box .stats span {
 	font-size: 16px;
