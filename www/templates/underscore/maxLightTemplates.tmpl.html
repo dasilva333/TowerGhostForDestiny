@@ -69,8 +69,8 @@
 				  <div class="col-xs-5">
 					<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: combo.perks, as: 'perk' }">
 						<div class="col-xs-24 font-smaller-1">
-							<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
-							<span class="text-muted" data-bind="text: perk.bucketType"></span>:
+							<img width="24" data-bind="attr: { src: perk.iconPath }, visible: !isMobile" class="perkImage"> 
+							<span class="text-muted" data-bind="text: perk.bucketType, visible: !isMobile"></span>:
 							<span class="text-primary" data-bind="text: perk.name"></span>
 						</div>
 					</div>
