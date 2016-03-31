@@ -24,7 +24,7 @@ tgd.calculateBestSets = function(items) {
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
-            }).join("/"),
+            }).join("/ "),
             statTiers: statTiers,
             score: parseFloat((tgd.sum(_.map(tmp, function(value, key) {
                 var result = Math.floor(value / tgd.DestinySkillTier);
