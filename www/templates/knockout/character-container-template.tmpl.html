@@ -10,7 +10,7 @@
                             <div class="light" data-bind="text: level"></div>
                             <div class="power" data-bind="text: character.powerLevel"></div>
                         </div>
-						<div class="statsTool" data-bind="click: toggleStats, clickBubble: false">
+						<div class="statsTool" data-bind="visible: id != 'Vault', click: toggleStats, clickBubble: false">
 							<i class="fa fa-angle-double-down font-larger-4"></i>
 						</div>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>

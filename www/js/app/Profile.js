@@ -948,7 +948,7 @@ Profile.prototype = {
                     dialog.close();
                 }
             }]
-        })).title("Armor Builds at Max Light Level for Tier " + tgd.maxTierPossible).content($template).show(true, function() {
+        })).title("Armor Builds for Tier " + tgd.maxTierPossible).content($template).show(true, function() {
             groups = null;
         }, function() {
             armorSelection.setDialog(armorTemplateDialog);

@@ -1,9 +1,5 @@
 <div id="container_<%= id %>">
 	<p>
-		The gear listed within has the <strong>highest potential to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> 
-		at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
-		From the selected items the <span class="label label-default" data-bind="text: unleveledBucketTypes">{Helmets, Boots, Chest}</span> are still not 
-		<span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span>.<br>
 		This tool is meant as a planner to help guide you in finding what gear to invest your time and resources in infusing to achieve your desirable stat distributions.<br>
 	</p>
 	<hr>
@@ -37,6 +33,10 @@
 		</div>
 	</div>
 	<div data-bind="visible: foundFirstSet().length > 0" style="display:none;">
+		The gear listed within has the <strong>highest potential to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> 
+		at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
+		From the selected items the <span class="label label-default" data-bind="text: unleveledBucketTypes">{Helmets, Boots, Chest}</span> are still not 
+		<span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span>. Click on View Help for usage information on how this tool works.<br>
 		<input type="button" class="btn btn-info" value="View Help" data-bind="click: function(){ $('.maxLightHelp').toggle(); }">
 		<p class="maxLightHelp" style="display:none;">
 			The <strong>first number</strong> listed indicates how many points the item currently has, 
@@ -49,7 +49,7 @@
 			<hr>
 		</p>
 		<div class="row">
-			<div class="font-bold col-xs-24">
+			<div class="font-bold col-xs-24" style="border-bottom: 1px solid white">
 			  <div class="col-xs-5">#</div>
 			  <div class="col-xs-5">Score</div>
 			  <div class="col-xs-5">Stats</div>
@@ -57,20 +57,22 @@
 			  <div class="col-xs-5">Perks</div>
 			</div> 
 			<div data-bind="foreach: { data: maxSets, as: 'combo' }">
-				<div data-bind="attr:{id:'details_'+combo.id}" class="col-xs-24">
+				<div data-bind="attr:{id:'details_'+combo.id}" class="col-xs-24" style="padding-top:3px">
 				  <div class="col-xs-5">
-						<input type="Button" class="btn btn-sm" value="View" data-bind="click: function(){ $('#armor_' + combo.id).show(); $('#details_' + combo.id).hide(); }">
-						<input type="Button" class="btn btn-sm" value="Save" data-bind="click: $root.saveSelectedCombo.bind(combo), visible: $root.maxSets().length > 1" style="display:none;">
-						<input type="Button" class="btn btn-sm" value="Equip" data-bind="click: $root.equipSelectedCombo.bind(combo), visible: $root.maxSets().length > 1" style="display:none;">
+						<input type="Button" class="btn btn-sm btn-default" value="View" data-bind="click: function(){ $('#armor_' + combo.id).show(); $('#details_' + combo.id).hide(); }">
+						<input type="Button" class="btn btn-sm btn-default" value="Save" data-bind="click: $root.saveSelectedCombo.bind(combo), visible: $root.maxSets().length > 1" style="display:none;">
+						<input type="Button" class="btn btn-sm btn-default" value="Equip" data-bind="click: $root.equipSelectedCombo.bind(combo), visible: $root.maxSets().length > 1" style="display:none;">
 				  </div>
 				  <div class="col-xs-5" data-bind="text: combo.score"></div>
 				  <div class="col-xs-5" data-bind="text: combo.statValues"></div>
 				  <div class="col-xs-4" data-bind="text: combo.statTiers" width="60"></div>
 				  <div class="col-xs-5">
-					<div class="col-xs-24" style="margin-top: 5px" data-bind="foreach: { data: combo.perks, as: 'perk' }">
-						<div class="col-xs-24 font-smaller-1">
-							<img width="24" data-bind="attr: { src: perk.iconPath }, visible: !isMobile" class="perkImage"> 
-							<span class="text-muted" data-bind="text: perk.bucketType, visible: !isMobile"></span>:
+					<div data-bind="foreach: { data: combo.perks, as: 'perk' }">
+						<div class="font-smaller-1">
+							<span data-bind="visible: !isMobile">
+								<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
+								<span class="text-muted" data-bind="text: perk.bucketType"></span>:
+							</span>
 							<span class="text-primary" data-bind="text: perk.name"></span>
 						</div>
 					</div>
@@ -79,7 +81,7 @@
 				<div style="display:none" data-bind="attr:{id:'armor_'+combo.id}">			
 					<div class="col-xs-24">
 						<div class="col-xs-5">
-							<input type="Button" class="btn btn-sm" value="Hide" data-bind="click: function(){ $('#armor_' + combo.id).hide(); $('#details_' + combo.id).show(); }">
+							<input type="Button" class="btn btn-sm btn-default" value="Hide" data-bind="click: function(){ $('#armor_' + combo.id).hide(); $('#details_' + combo.id).show(); }">
 						</div>
 						<div class="col-xs-19" data-bind="foreach: { data: combo.set, as: 'item' }">
 							<div class="col-xs-3">
