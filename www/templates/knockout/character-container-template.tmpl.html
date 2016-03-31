@@ -45,18 +45,19 @@
                                 (<span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span>/<span data-bind="text: character.tierCSP" title="Stat Points needed to reach Theoretical Tier"></span>/<span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>)
                             </div>
                             <div class="col-xs-24 text-center">
-                                <span data-bind="text: $root.activeText().gear_with_highest">Equip Armor With Most:</span>
-                                <div class="btn-group btn-group-justified">
-	                                <a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default">Light</a>
-	                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default">Int</a>
-	                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default">Disc</a>
-	                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default">Str</a>
-								</div>
-								<div class="btn-group">
+                                <span data-bind="text: $root.activeText().gear_with_highest">Equip Gear With Highest:</span>
+                                <div class="btn-group">
+	                                <a data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
+	                                <a data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
+	                                <a data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Str</a>
+									<a data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
 									<a data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
-									<a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">BC-Full</a>
-									<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">BC-Quick</a>
-									<a data-bind="click: character.equipHighest('MaxLight'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">MLMT</a>
+								</div>
+								<span>Armor Set Builder</span>
+								 <div class="btn-group btn-group-justified">
+									<a data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">BC-Full</a>
+									<a data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">BC-Quick</a>
+									<a data-bind="click: character.equipHighest('MaxLight'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">MLMT</a>
 								</div>
                             </div>
                         </div>
