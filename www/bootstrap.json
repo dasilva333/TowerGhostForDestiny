@@ -26,7 +26,7 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
-      "version": "86973742f0a5439c9eb71eca71d27ee6b599719c300011f5c0be50aff5d8997e"
+      "version": "28567b58d61fc41aab0728ce9bb70a11b8dd9ee9778e694d83d9a5d42f6262a5"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/en/objectiveDefs.json",
@@ -34,7 +34,7 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/en/perkDefs.json",
-      "version": "25b80ac44c2d293c3a38573c1a13ed4f491a1bdd6a3dd26f78d2c3e984ae1961"
+      "version": "0517dd97532904c0f8b359ffe7096ee6ed3fe59763954cc83774b4cd25babaf7"
     },
     "raceDefs.json": {
       "filename": "data/definitions/en/raceDefs.json",
@@ -46,7 +46,7 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/en/talentGridDefs.json",
-      "version": "878dafab36f3d13a6c19eb24e46f9b291f7488ad52e45cab6ae0427ca54621c5"
+      "version": "a2c1cc2b740282d338cd0bf2ca7d9f48586486ed9c099120cfd6e3bb123269c7"
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
@@ -118,7 +118,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "fb2cc07395fed09ee92a29020519f7199566a9afe7dcee4b5e5b9df9a3640531"
+      "version": "62a60189d4786a52c85adb8012f19c2746db042436363ce8aca78f3524d55070"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
