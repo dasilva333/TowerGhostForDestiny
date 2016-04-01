@@ -8,6 +8,7 @@
         RJP Apps
     </author>
 	<preference name="windows-identity-name" value="60411RJPApps.TowerGhostforDestiny" /> 
+	<preference name="windows-publisher-name" value="CN=BFD7D774-BB5F-4F8E-B74B-B40584EF8A03" />
     <content src="index.html" />
 	<preference name="phonegap-version" value="cli-6.0.0" />
     <preference name="permissions" value="none" />
