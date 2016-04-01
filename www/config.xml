@@ -5,9 +5,9 @@
 		This app allows you to transfer items between profiles, with various filters.
     </description>
     <author email="dasilva333@github.com" href="https://github.com/dasilva333/TowerGhostForDestiny/">
-        60411RJP Apps
+        RJP Apps
     </author>
-
+	<preference name="windows-identity-name" value="60411RJPApps.TowerGhostforDestiny" /> 
     <content src="index.html" />
 	<preference name="phonegap-version" value="cli-6.0.0" />
     <preference name="permissions" value="none" />
