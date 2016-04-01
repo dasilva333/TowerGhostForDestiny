@@ -101,9 +101,9 @@
 		<div data-bind="foreach: { data: armorGroups, as: 'armor' }">
 			<div class="panel panel-default">
 			  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> </div>
-			  <div class="panel-body" style="overflow-y:hidden; overflow-x:scroll; white-space:nowrap; width: 100%;">
+			  <div class="panel-body">
 					<div class="row" data-bind="foreach: { data: armor.items, as: 'item' }">
-						<div class="col-xs-3">
+						<div class="col-xs-8 col-md-6 col-sd-4 col-lg-3">
 							<div class="col-xs-24">
 								<a class="itemLink" data-bind="css: item.css2, attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: select">
 									<img class="itemImage" data-bind="itemImageHandler: item.icon, css: item.css" style="padding: 2px;">

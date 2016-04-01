@@ -39,13 +39,13 @@
 									</div>
                                 </div>
                             </div>
-                            <div class="col-xs-24 text-center">
+                            <div class="col-xs-24 text-center statsToolTitle">
                                 <span class="font-bold">Tier</span>:
                                 <span data-bind="text: character.equippedTier" title="Effective Tier / Theoretical Tier"></span>
                                 (<span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span>/<span data-bind="text: character.tierCSP" title="Stat Points needed to reach Theoretical Tier"></span>/<span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>)
                             </div>
                             <div class="col-xs-24 text-center">
-                                <span class="font-bold col-xs-24">Equip Gear With Highest</span>
+                                <span class="font-bold col-xs-24 statsToolTitle">Equip Gear With Highest</span>
                                 <div class="btn-group col-xs-24">
 	                                <a title="Automatically equip gear with the most Intellect" data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
 	                                <a title="Automatically equip gear with the most Discipline" data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
@@ -53,7 +53,7 @@
 									<a title="Automatically equip gear with the highest Light Level" data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
 									<a title="Automatically equip gear with the highest Combined Stat Points" data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
 								</div>
-								<span class="font-bold col-xs-24">Armor Set Builder</span>
+								<span class="font-bold col-xs-24 statsToolTitle">Armor Set Builder</span>
 								<div class="btn-group btn-group-justified col-xs-24">
 									<a title="Analyzes the armor in your inventory to find the highest tier set you can currently create" data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Quick</a>
 									<a title="Analyzes all your armor to find the highest tier set you can currently create" data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Full</a>

@@ -75,6 +75,10 @@
     height: 36px;
 	cursor:pointer;
 }
+.character-box .statsToolTitle {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
 .character-box .statsTool:hover {
 	border-left:1px solid rgb(245, 220, 86);
 	color: rgb(245, 220, 86);
