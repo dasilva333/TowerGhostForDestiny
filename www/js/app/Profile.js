@@ -476,7 +476,7 @@ Profile.prototype = {
                 if (cachedRolls) {
                     item.rolls = JSON.parse(cachedRolls);
                     if (tgd.sum(item.rolls[0]) != tgd.sum(item.stats)) {
-                        console.log("getting new rolls");
+                        //console.log("getting new rolls");
                         getRolls(item, done);
                     } else {
                         done();
@@ -921,7 +921,7 @@ Profile.prototype = {
         }));
 
         var armorSelection = new tgd.armorSelection(groups, character);
-        console.log("armorSelection", armorSelection);
+        //console.log("armorSelection", armorSelection);
 
         var armorTemplateDialog = (new tgd.dialog({
             buttons: [{
