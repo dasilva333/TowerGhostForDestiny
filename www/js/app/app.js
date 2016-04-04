@@ -107,9 +107,8 @@ var app = function() {
         var $template = $(tgd.manageLoadoutsTemplate({
             id: id
         }));
-        var loadoutManager = new tgd.loadoutManager(self.loadouts);
 
-        (new tgd.dialog({
+        var managerDialog = (new tgd.dialog({
             buttons: [{
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
@@ -125,8 +124,9 @@ var app = function() {
                 }
             }]
         })).title(self.activeText().menu_loadouts_manage + " Loadouts").content($template).show(true, function() {
-
+            /* onClose */
         }, function() {
+            var loadoutManager = new tgd.loadoutManager(self.loadouts, managerDialog.modal);
             ko.applyBindings(loadoutManager, document.getElementById('container_' + id));
         });
     }

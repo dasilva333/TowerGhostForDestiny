@@ -1,27 +1,61 @@
-	tgd.manageLoadout = function(loadout) {
+	tgd.manageLoadout = function(loadout, dialog) {
 	    var self = this;
 	    _.extend(self, loadout);
 
 	    self.editing = ko.observable(false);
 
-	    self.toggleEdit = function() {
+	    self.rename = function() {
 	        self.editing(!self.editing());
+	    }
+	    self.equip = function() {
+	        if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
+	            self.setActive();
+	            dialog.close();
+	        }
 	    }
 	}
 
-	tgd.loadoutManager = function(loadouts) {
+	tgd.loadoutManager = function(loadouts, dialog) {
 	    var self = this;
-	    self.loadouts = ko.computed(function() {
-	        return _.map(loadouts(), function(loadout) {
-	            return new tgd.manageLoadout(loadout);
-	        });
+
+	    self.loadouts = _.map(loadouts(), function(loadout) {
+	        return new tgd.manageLoadout(loadout, dialog);
 	    });
 
+	    this.sortableOptions = {
+	        over: function() {
+	            $(this).addClass("label label-success");
+	        },
+	        out: function() {
+	            $(this).removeClass("label-warning");
+	        },
+	        sort: function(event, ui) {
+	            var $target = $(event.target);
+	            if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+	                var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+	                ui.helper.css({
+	                    'top': top + 'px'
+	                });
+	            }
+	        },
+	        scroll: false,
+	        revert: false,
+	        handle: ".fa-bars",
+	        items: "> li",
+	        placeholder: "item-placeholder",
+	        cursorAt: {
+	            cursor: "move",
+	            top: 27,
+	            left: 27
+	        },
+	        cursor: "pointer",
+	        appendTo: "body"
+	    };
 	    this.afterMove = function() {
-	        console.log("afterMove", arguments);
-	        console.log(_.map(self.loadouts(), function(loadout) {
+	        /*console.log("afterMove", arguments);
+	        console.log(_.map(self.loadouts().reverse(), function(loadout) {
 	            return loadout.name()
-	        }));
+	        }));*/
 	    }
 	}
 
