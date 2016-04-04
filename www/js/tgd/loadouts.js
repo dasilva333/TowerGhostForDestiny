@@ -1,6 +1,13 @@
 	tgd.loadoutManager = function(loadouts) {
 	    var self = this;
 	    self.loadouts = loadouts;
+
+	    this.afterMove = function() {
+	        console.log("afterMove", arguments);
+	        console.log(_.map(self.loadouts(), function(loadout) {
+	            return loadout.name()
+	        }));
+	    }
 	}
 
 	tgd.loadoutId = 0;
@@ -174,12 +181,14 @@
 	        app.activeLoadout(_.clone(this));
 	    },
 	    remove: function() {
-	        var ref = _.findWhere(app.loadouts(), {
-	            loadoutId: this.loadoutId
-	        });
-	        app.loadouts.remove(ref);
-	        app.createLoadout();
-	        app.saveLoadouts();
+	        if (confirm("Are you sure you want to remove this loadout? This action cannot be undone")) {
+	            var ref = _.findWhere(app.loadouts(), {
+	                loadoutId: this.loadoutId
+	            });
+	            app.loadouts.remove(ref);
+	            app.createLoadout();
+	            app.saveLoadouts();
+	        }
 	    },
 	    save: function() {
 	        //this is a reference to the cloned Loadout object while in use

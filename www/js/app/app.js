@@ -113,7 +113,10 @@ var app = function() {
             buttons: [{
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
-
+                    if (confirm("Are you sure you want to save your changes?")) {
+                        self.saveLoadouts(true);
+                        dialog.close();
+                    }
                 }
             }, {
                 label: app.activeText().cancel,
@@ -1954,6 +1957,42 @@ var app = function() {
         }
     };
 
+    this.dndImageGridOptions = {
+        start: function() {
+            $ZamTooltips.isEnabled = false;
+            $ZamTooltips.hide();
+        },
+        stop: function() {
+            if (self.tooltipsEnabled() === true)
+                $ZamTooltips.isEnabled = true;
+        },
+        over: function() {
+            $(this).addClass("active");
+        },
+        out: function() {
+            $(this).removeClass("active");
+        },
+        sort: function(event, ui) {
+            var $target = $(event.target);
+            if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+                var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+                ui.helper.css({
+                    'top': top + 'px'
+                });
+            }
+        },
+        scroll: false,
+        revert: false,
+        placeholder: "item-placeholder",
+        cursorAt: {
+            cursor: "move",
+            top: 27,
+            left: 27
+        },
+        cursor: "pointer",
+        appendTo: "body"
+    };
+
     this.dndBeforeMove = function(arg) {
         if (arg && arg.targetParent && arg.targetParent.length > 0) {
             arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
@@ -2201,50 +2240,7 @@ var app = function() {
                 document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
             }
 
-            /*var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
-            ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
-            ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
-            if (dragAndDropEnabled) {
-                ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
-                ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
-                ko.bindingHandlers.sortable.options = {
-                    start: function() {
-                        $ZamTooltips.isEnabled = false;
-                        $ZamTooltips.hide();
-                    },
-                    stop: function() {
-                        if (self.tooltipsEnabled() === true)
-                            $ZamTooltips.isEnabled = true;
-                    },
-                    over: function() {
-                        $(this).addClass("active");
-                    },
-                    out: function() {
-                        $(this).removeClass("active");
-                    },
-                    sort: function(event, ui) {
-                        var $target = $(event.target);
-                        if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
-                            var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
-                            ui.helper.css({
-                                'top': top + 'px'
-                            });
-                        }
-                    },
-                    scroll: false,
-                    revert: false,
-                    placeholder: "item-placeholder",
-                    cursorAt: {
-                        cursor: "move",
-                        top: 27,
-                        left: 27
-                    },
-                    cursor: "pointer",
-                    appendTo: "body"
-                };
-            } else {
-                ko.bindingHandlers.sortable = ko.bindingHandlers.foreach;
-            }*/
+            var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({
