@@ -672,8 +672,8 @@ Profile.prototype = {
             highestArmorValue = 0,
             highestTierValue = 0,
             character = this;
-		
-		console.log("items", items.length);
+
+        //console.log("items", items.length);
         setTimeout(function() {
             _.each(buckets, function(bucket) {
                 groups[bucket] = _.filter(items, function(item) {
@@ -693,28 +693,28 @@ Profile.prototype = {
             highestArmorValue = tgd.sum(_.map(statGroups, function(stat) {
                 return stat.max;
             }));
-            console.log("highestArmorValue:"+highestArmorValue);
+            //console.log("highestArmorValue:" + highestArmorValue);
 
             highestArmorTier = Math.floor(highestArmorValue / tgd.DestinySkillTier);
-            console.log("highestArmorTier :"+highestArmorTier );
+            //console.log("highestArmorTier :" + highestArmorTier);
 
             highestTierValue = highestArmorTier * tgd.DestinySkillTier;
-            console.log("highestTierValue :"+highestTierValue );
+            //console.log("highestTierValue :" + highestTierValue);
 
             _.each(groups, function(items, bucketType) {
                 var minCSP = highestTierValue - (highestArmorValue - statGroups[bucketType].max);
-                console.log(bucketType+":"+minCSP +",before:" + items.length, _.pluck(items,'description'));
+                //console.log(bucketType + ":" + minCSP + ",before:" + items.length, _.pluck(items, 'description'));
                 candidates = _.filter(items, function(item) {
                     return item.getValue("All") >= minCSP;
                 });
-                console.log("after:" + candidates.length);
+                //console.log("after:" + candidates.length);
                 _.each(candidates, function(candidate) {
                     sets.push([candidate]);
                 });
             });
 
             backups = _.flatten(sets);
-			console.log("backups", backups.length);
+            //console.log("backups", backups.length);
             //character.queryRolls(backups, function() {
             _.each(sets, function(set) {
                 var mainPiece = set[0];
@@ -982,7 +982,7 @@ Profile.prototype = {
                 combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
                 combo.statTiers = $.trim(statTiers);
                 combo.statValues = statValues.substring(0, statValues.length - 1);
-                combo.perks = _.filter(
+                combo.perks = _.sortBy(_.filter(
                     _.flatten(
                         _.map(combo.set, function(item) {
                             return _.map(item.perks, function(perk) {
@@ -994,7 +994,7 @@ Profile.prototype = {
                     function(perk) {
                         return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
                     }
-                );
+                ), 'name');
                 combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
                     return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
                 }), function(perk) {
@@ -1143,7 +1143,7 @@ Profile.prototype = {
         var activeItems = _.filter(items, function(item) {
             return item.armorIndex > -1 && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
         });
-		console.log("activeItems", activeItems.length);
+        //console.log("activeItems", activeItems.length);
         if (type == "OptimizedBest") {
             /* Only consider the top 3 items sorted by CSP of the results provided */
             activeItems = _.reduce(_.groupBy(activeItems, 'bucketType'), function(memo, group) {

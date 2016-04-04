@@ -239,7 +239,10 @@ Item.prototype = {
                     return memo;
                 }, ""),
                 hasUnlockedStats: hasUnlockedStats || statPerks.length == 0,
-                bonusStatOn: bonusStatOn
+                bonusStatOn: bonusStatOn,
+                progression: _.filter(perks, function(perk) {
+                    return perk.active === false && perk.isExclusive === -1;
+                }).length === 0
             });
             self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
             self.primaryValues.MaxLightPercent = Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100);
