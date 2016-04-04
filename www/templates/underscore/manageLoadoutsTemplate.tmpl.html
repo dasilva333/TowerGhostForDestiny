@@ -1,11 +1,11 @@
 <div id="container_<%= id %>">
 	<ul data-bind="sortable: { data: loadouts, as: 'loadout', afterMove: afterMove }" class="list-group">
-		<li class="list-group-item">
+		<li class="list-group-item" style="height: 100px">
 			<div class="col-xs-24">
 				<span class="fa fa-bars" style="cursor:pointer"></span>
 				<span data-bind="text: name" class="list-group-item-heading"></span>
 				<div class="btn-group">
-					<a href="#" class="btn btn-default btn-sm">Rename</a>
+					<a href="#" class="btn btn-default btn-sm" data-bind="click: toggleEdit">Rename</a>
 					<a href="#" class="btn btn-default btn-sm" data-bind="click: loadout.remove">Delete</a>
 					<a href="#" class="btn btn-default btn-sm">Equip</a>
 				</div>

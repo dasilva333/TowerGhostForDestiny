@@ -1,6 +1,21 @@
+	tgd.manageLoadout = function(loadout) {
+	    var self = this;
+	    _.extend(self, loadout);
+
+	    self.editing = ko.observable(false);
+
+	    self.toggleEdit = function() {
+	        self.editing(!self.editing());
+	    }
+	}
+
 	tgd.loadoutManager = function(loadouts) {
 	    var self = this;
-	    self.loadouts = loadouts;
+	    self.loadouts = ko.computed(function() {
+	        return _.map(loadouts(), function(loadout) {
+	            return new tgd.manageLoadout(loadout);
+	        });
+	    });
 
 	    this.afterMove = function() {
 	        console.log("afterMove", arguments);
