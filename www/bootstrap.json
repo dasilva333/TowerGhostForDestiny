@@ -10,11 +10,11 @@
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
-      "version": "8e98dc663e60b7a861a0d84c67a67b766d7852ac20163ac04c93c6284bf59593"
+      "version": "11cb7a8b55d08950056799a4afb391573579d35559455ee7dbf130392df34748"
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
+      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
+      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -78,7 +78,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
+      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -110,15 +110,15 @@
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
+      "version": "0b3261b21108045d986231adb807da5797f757f68359e116ce6043b96001c321"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "b4fd3b2e7ad576d1f3e6ca43ca0c5459d24f6b186959a290f9873d145c4f8f7e"
+      "version": "724565f8cbc3b80d6eee9667289ba35db8c1f75c0d45564c9bc2bab7fd12571f"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "62a60189d4786a52c85adb8012f19c2746db042436363ce8aca78f3524d55070"
+      "version": "5d2bf7c66c60e18575b3b0680138b2828b9aed48d4ccf6c9457d2024cf846d53"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
@@ -154,11 +154,11 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "9b1032b3c3be23378470b88c4dd1c3e3cb7daf9ee1fd76ab442235396180579e"
+      "version": "f61a5489c64041e92deca643d4e5a9cdff94f7ae5bbb8db91358eab66c25489a"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
-      "version": "225374e2f81b362789eae5e9b5d6813a5da809670d51b4d13236f6d41f7186db"
+      "version": "04db3bd944c17c1dcc6c22821057923de731d0d4f9b302541edb3c0dcde7508d"
     },
     "storage.js": {
       "filename": "js/tgd/storage.js",
@@ -182,11 +182,11 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "d008f19c5a8aba1d5ce668e6412b9502474347b015a3ad1c5d8f6e7a5e2c1519"
+      "version": "80b5816e06b95948fca8b73fa61c30a15086862e5b596c165381913e5912b6c4"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "a445679eed0ac795a1a7a1b8c9c74e6c3624bd796e25780694cf5d6554b9b9f7"
+      "version": "25c339723a04fc95579eebff9596016883288b2a02bf976defdd5bffbe7260cf"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

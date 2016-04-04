@@ -101,6 +101,32 @@ var app = function() {
     this.activeText = ko.pureComputed(function() {
         return tgd.locale[self.currentLocale()];
     });
+    this.manageLoadouts = function() {
+        var id = new Date().getTime();
+
+        var $template = $(tgd.manageLoadoutsTemplate({
+            id: id
+        }));
+        var loadoutManager = new tgd.loadoutManager(self.loadouts);
+
+        (new tgd.dialog({
+            buttons: [{
+                label: app.activeText().loadouts_save,
+                action: function(dialog) {
+
+                }
+            }, {
+                label: app.activeText().cancel,
+                action: function(dialog) {
+                    dialog.close();
+                }
+            }]
+        })).title(self.activeText().menu_loadouts_manage + " Loadouts").content($template).show(true, function() {
+
+        }, function() {
+            ko.applyBindings(loadoutManager, document.getElementById('container_' + id));
+        });
+    }
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new tgd.Loadout());
@@ -444,9 +470,9 @@ var app = function() {
                         var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType] - maxBonusPoints;
                         //console.log("maxStatRoll", maxStatRoll);
                         var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
-						if ( activeItem.tierType >= 5 ){
-							 maxRollStats = maxRollStats + "-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
-						}
+                        if (activeItem.tierType >= 5) {
+                            maxRollStats = maxRollStats + "-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                        }
                         //console.log("maxRollStats", maxRollStats);
                         var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
                         //console.log("statDetails", statDetails);
@@ -2175,7 +2201,7 @@ var app = function() {
                 document.getElementsByTagName("head")[0].appendChild(msViewportStyle);
             }
 
-            var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
+            /*var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
             ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
             ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
             if (dragAndDropEnabled) {
@@ -2218,7 +2244,7 @@ var app = function() {
                 };
             } else {
                 ko.bindingHandlers.sortable = ko.bindingHandlers.foreach;
-            }
+            }*/
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({

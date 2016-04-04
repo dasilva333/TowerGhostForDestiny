@@ -1,3 +1,8 @@
+	tgd.loadoutManager = function(loadouts) {
+	    var self = this;
+	    self.loadouts = loadouts;
+	}
+
 	tgd.loadoutId = 0;
 
 	tgd.LoadoutItem = function(model) {

@@ -1,0 +1,24 @@
+<div id="container_<%= id %>">
+	<ul data-bind="sortable: { data: loadouts, as: 'loadout' }" class="list-group">
+		<li class="list-group-item" style="height: 100px">
+			<div class="col-xs-24">
+				<span class="fa fa-bars" style="cursor:pointer"></span>
+				<span data-bind="text: name" class="list-group-item-heading"></span>
+				<div class="btn-group">
+					<a href="#" class="btn btn-default btn-sm">Rename</a>
+					<a href="#" class="btn btn-default btn-sm">Delete</a>
+					<a href="#" class="btn btn-default btn-sm">Equip</a>
+				</div>
+			</div>
+			<div class="list-group-item-text col-xs-24">
+				<div data-bind="foreach: { data: loadout.items, as: 'item' }">
+					<div class="col-xs-3">
+						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: function(){ return false }">
+							<img class="itemImage" data-bind="itemImageHandler: item.icon" style="padding: 2px; width:48px;">
+						</a>
+					</div>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
