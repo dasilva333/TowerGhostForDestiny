@@ -101,6 +101,35 @@ var app = function() {
     this.activeText = ko.pureComputed(function() {
         return tgd.locale[self.currentLocale()];
     });
+    this.manageLoadouts = function() {
+        var id = new Date().getTime();
+
+        var $template = $(tgd.manageLoadoutsTemplate({
+            id: id
+        }));
+
+        var managerDialog = (new tgd.dialog({
+            buttons: [{
+                label: app.activeText().loadouts_save,
+                action: function(dialog) {
+                    if (confirm("Are you sure you want to save your changes?")) {
+                        self.saveLoadouts(true);
+                        dialog.close();
+                    }
+                }
+            }, {
+                label: app.activeText().cancel,
+                action: function(dialog) {
+                    dialog.close();
+                }
+            }]
+        })).title(self.activeText().menu_loadouts_manage + " Loadouts").content($template).show(true, function() {
+            /* onClose */
+        }, function() {
+            var loadoutManager = new tgd.loadoutManager(self.loadouts, managerDialog.modal);
+            ko.applyBindings(loadoutManager, document.getElementById('container_' + id));
+        });
+    }
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new tgd.Loadout());
@@ -436,14 +465,17 @@ var app = function() {
                         //console.log("currentBonusPoints", currentBonusPoints);
                         var currentBaseStat = itemCSP - (isItemLeveled ? currentBonusPoints : 0);
                         if (!isItemLeveled) {
-                            itemCSP = itemCSP + "(" + (itemCSP + currentBonusPoints) + ")";
+                            itemCSP = itemCSP + "<span class='font-smaller-2'>(" + (itemCSP + currentBonusPoints) + ")</span>";
                         }
                         //console.log("currentBaseStat", currentBaseStat);
                         var maxBaseStat = tgd.calculateStatRoll(activeItem, maxLightLevel, false);
                         //console.log("maxBaseStat", maxBaseStat);
                         var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType] - maxBonusPoints;
                         //console.log("maxStatRoll", maxStatRoll);
-                        var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                        var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                        if (activeItem.tierType >= 5) {
+                            maxRollStats = maxRollStats + "-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                        }
                         //console.log("maxRollStats", maxRollStats);
                         var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
                         //console.log("statDetails", statDetails);
@@ -1925,6 +1957,42 @@ var app = function() {
         }
     };
 
+    this.dndImageGridOptions = {
+        start: function() {
+            $ZamTooltips.isEnabled = false;
+            $ZamTooltips.hide();
+        },
+        stop: function() {
+            if (self.tooltipsEnabled() === true)
+                $ZamTooltips.isEnabled = true;
+        },
+        over: function() {
+            $(this).addClass("active");
+        },
+        out: function() {
+            $(this).removeClass("active");
+        },
+        sort: function(event, ui) {
+            var $target = $(event.target);
+            if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
+                var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
+                ui.helper.css({
+                    'top': top + 'px'
+                });
+            }
+        },
+        scroll: false,
+        revert: false,
+        placeholder: "item-placeholder",
+        cursorAt: {
+            cursor: "move",
+            top: 27,
+            left: 27
+        },
+        cursor: "pointer",
+        appendTo: "body"
+    };
+
     this.dndBeforeMove = function(arg) {
         if (arg && arg.targetParent && arg.targetParent.length > 0) {
             arg.cancelDrop = (arg.item.bucketType !== arg.targetParent[0].bucketType || arg.item.transferStatus >= 2);
@@ -2173,49 +2241,6 @@ var app = function() {
             }
 
             var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
-            ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
-            ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
-            if (dragAndDropEnabled) {
-                ko.bindingHandlers.sortable.beforeMove = self.dndBeforeMove;
-                ko.bindingHandlers.sortable.afterMove = self.dndAfterMove;
-                ko.bindingHandlers.sortable.options = {
-                    start: function() {
-                        $ZamTooltips.isEnabled = false;
-                        $ZamTooltips.hide();
-                    },
-                    stop: function() {
-                        if (self.tooltipsEnabled() === true)
-                            $ZamTooltips.isEnabled = true;
-                    },
-                    over: function() {
-                        $(this).addClass("active");
-                    },
-                    out: function() {
-                        $(this).removeClass("active");
-                    },
-                    sort: function(event, ui) {
-                        var $target = $(event.target);
-                        if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
-                            var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
-                            ui.helper.css({
-                                'top': top + 'px'
-                            });
-                        }
-                    },
-                    scroll: false,
-                    revert: false,
-                    placeholder: "item-placeholder",
-                    cursorAt: {
-                        cursor: "move",
-                        top: 27,
-                        left: 27
-                    },
-                    cursor: "pointer",
-                    appendTo: "body"
-                };
-            } else {
-                ko.bindingHandlers.sortable = ko.bindingHandlers.foreach;
-            }
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({

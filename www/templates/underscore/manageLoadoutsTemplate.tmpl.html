@@ -1,0 +1,27 @@
+<div id="container_<%= id %>">
+	<ul data-bind="sortable: { data: loadouts, as: 'loadout', afterMove: afterMove, optons: sortableOptions }" class="list-group">
+		<li class="list-group-item">
+			<div class="row">
+				<span class="fa fa-bars" style="cursor:pointer"></span>
+				<span data-bind="text: name" class="list-group-item-heading"></span>
+			</div>
+			<div class="row form-control-static" data-bind="visible: editing() == true" style="display:none;">
+				<input type="text" data-bind="value: name" class="form-control">
+			</div>
+			<div class="row">
+				<div class="btn-group btn-group-justified">
+					<a href="#" class="btn btn-default btn-sm" data-bind="click: loadout.rename">Rename</a>
+					<a href="#" class="btn btn-default btn-sm" data-bind="click: loadout.remove">Delete</a>
+					<a href="#" class="btn btn-default btn-sm" data-bind="click: loadout.equip">Equip</a>
+				</div>
+			</div>
+			<div data-bind="foreach: { data: loadout.items, as: 'item' }" class="row">
+				<div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
+					<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: function(){ return false }">
+						<img class="itemImage" data-bind="itemImageHandler: item.icon" style="padding: 2px; width:48px;">
+					</a>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>

@@ -88,8 +88,15 @@
                         </li>
                         <!--/ko  -->
                         <li class="divider"></li>
-                        <li data-bind="fastclick: createLoadout"><a href="#"><i class="fa fa-plus"></i>								<span data-bind="text: $root.activeText().menu_loadouts_create">Create</span>							</a></li>
-                        <li data-bind="fastclick: cancelLoadout"><a href="#"><i class="fa fa-times"></i>								<span data-bind="text: $root.activeText().cancel">Cancel</span>							</a></li>
+						<li data-bind="fastclick: manageLoadouts"><a href="#">
+							<i class="fa fa-plus"></i><span data-bind="text: $root.activeText().menu_loadouts_manage">Manage</span></a>
+						</li>
+                        <li data-bind="fastclick: createLoadout"><a href="#">
+							<i class="fa fa-plus"></i><span data-bind="text: $root.activeText().menu_loadouts_create">Create</span></a>
+						</li>
+                        <li data-bind="fastclick: cancelLoadout">
+							<a href="#"><i class="fa fa-times"></i><span data-bind="text: $root.activeText().cancel">Cancel</span></a>
+						</li>
                     </ul>
                 </li>
                 <li class="dropdown">

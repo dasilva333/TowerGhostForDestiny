@@ -30,7 +30,7 @@
 </div>
 <div class="row no-gutter" style="margin:auto;">
     <div class="itemBucket" data-bind="css: ((character.id == 'Vault' || tgd.DestinyBucketColumns[bucketType] == 4) ? 'col-xs-24' : 'col-xs-18') + ' ' + bucketType + ' ' + character.id">
-        <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item' }">
+        <div class="itemBucketBG" data-bind="sortable: { data: character.get(bucketType), as: 'item', options: $root.dndImageGridOptions, beforeMove: $root.dndBeforeMove, afterMove: $root.dndAfterMove, isEnabled: $root.padBucketHeight() === true && $root.dragAndDrop() === true }">
             <span class="bucket-item" data-bind="css: columnMode, visible: isVisible">
                 <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, style: { opacity: item.opacity }">
                     <img class="itemImage" data-bind="itemImageHandler: item.icon, attr: { instanceId:item._id }, fastclick: function(){ return false }">
@@ -43,7 +43,7 @@
         </div>
     </div>
     <!-- ko with: character.itemEquipped(bucketType) -->
-    <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible, sortable: [$data]">
+    <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible, sortable: { data: [$data], isEnabled: $root.padBucketHeight() === true && $root.dragAndDrop() === true }">
         <a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
             <img class="itemImage" data-bind="itemImageHandler: icon, attr: { instanceId:_id }, fastclick: function(){ return false }">
         </a>
