@@ -740,7 +740,7 @@ Profile.prototype = {
                     var combos = tgd.cartesianProductOf(subSets);
                     var scoredCombos = _.map(combos, function(items) {
                         var tmp = tgd.joinStats(items);
-						delete tmp["bonusOn"];
+                        delete tmp["bonusOn"];
                         return {
                             set: items,
                             score: tgd.sum(_.map(tmp, function(value, key) {
@@ -1116,9 +1116,9 @@ Profile.prototype = {
                         app.activeLoadout().name(loadoutName);
                         _.each(highestCombo.set, function(item) {
                             var bonusOn = item.bonusStatOn;
-							if ( item && item.activeRoll && item.activeRoll.bonusOn ){
-								bonusOn = item.activeRoll.bonusOn;
-							}
+                            if (item && item.activeRoll && item.activeRoll.bonusOn) {
+                                bonusOn = item.activeRoll.bonusOn;
+                            }
                             app.activeLoadout().addUniqueItem({
                                 id: item._id,
                                 bucketType: item.bucketType,

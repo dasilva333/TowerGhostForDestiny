@@ -295,7 +295,7 @@ Item.prototype = {
 
             arrRolls = _.map(statPerks, function(statPerk) {
                 var tmp = _.clone(stats);
-				tmp["bonusOn"] = statPerk.name;
+                tmp["bonusOn"] = statPerk.name;
                 if (hasUnlockedStats && statPerk.active == false) {
                     var otherStatName = _.reduce(stats, function(memo, stat, name) {
                         return (name != statPerk.name && stat > 0) ? name : memo;

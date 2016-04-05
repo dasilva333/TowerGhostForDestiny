@@ -2,6 +2,7 @@ tgd.dialog = (function(options) {
     var self = this;
 
     this.modal = new BootstrapDialog(options);
+    this.modal.setSize(BootstrapDialog.SIZE_WIDE);
     this.options = options;
 
     return self;

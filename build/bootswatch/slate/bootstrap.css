@@ -6261,7 +6261,7 @@ button.close {
 }
 @media (min-width: 470px) {
   .modal-dialog {
-    width: 600px;
+    width: 470px;
     margin: 30px auto;
   }
   .modal-content {
@@ -6274,7 +6274,7 @@ button.close {
 }
 @media (min-width: 720px) {
   .modal-lg {
-    width: 900px;
+    width: 720px;
   }
 }
 .clearfix:before,
