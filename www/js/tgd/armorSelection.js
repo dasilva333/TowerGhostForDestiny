@@ -152,7 +152,8 @@ tgd.armorSelection = function(groups, character) {
                 app.activeLoadout().addUniqueItem({
                     id: item._id,
                     bucketType: item.bucketType,
-                    doEquip: true
+                    doEquip: true,
+                    bonusOn: item.activeRoll.bonusOn
                 });
             });
             self.dialog.close();

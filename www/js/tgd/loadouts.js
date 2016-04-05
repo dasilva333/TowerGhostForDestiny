@@ -89,6 +89,9 @@
 	                if (itemFound) {
 	                    itemFound.doEquip = equip.doEquip;
 	                    itemFound.markAsEquip = self.markAsEquip;
+	                    if (equip && equip.bonusOn) {
+	                        itemFound.bonusOn = equip.bonusOn;
+	                    }
 	                    _items.push(itemFound);
 	                }
 	            }

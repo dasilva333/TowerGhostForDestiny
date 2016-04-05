@@ -36,9 +36,6 @@
 #loadout-options span:hover {
     background-color: #628e89
 }
-#loadout-create .doEquip {
-    border: 2px solid blue !important;
-}
 #loadout-contents .itemImage {
     max-width: 97%;
 }
@@ -52,6 +49,21 @@
 #loadout-contents input {
     position: absolute;
     left: 5px;
+}
+#loadout-contents .doEquip {
+    border: 2px solid blue;
+}
+#loadout-contents .active, .itemImage.active  {
+	border:2px solid green;
+}
+#loadout-contents .inactive, .itemImage.inactive {
+	border:2px solid red;
+}
+#loadout-contents .doEquip.active {
+    border: 2px solid yellow !important;
+}
+#loadout-contents .doEquip.inactive  {
+    border: 2px solid orange !important;
 }
 #loadout-options .move-button {
     position: relative;

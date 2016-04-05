@@ -70,7 +70,7 @@
 					<div data-bind="foreach: { data: combo.perks, as: 'perk' }">
 						<div class="font-smaller-1">
 							<span data-bind="visible: !isMobile">
-								<img width="24" data-bind="attr: { src: perk.iconPath }" class="perkImage"> 
+								<img width="24" data-bind="itemImageHandler: perk.iconPath" class="perkImage"> 
 								<span class="text-muted" data-bind="text: perk.bucketType"></span>:
 							</span>
 							<span class="text-primary" data-bind="text: perk.name"></span>
