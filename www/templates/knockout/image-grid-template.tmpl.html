@@ -43,7 +43,7 @@
         </div>
     </div>
     <!-- ko with: character.itemEquipped(bucketType) -->
-    <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="css: isGridComplete ? 'complete' : '', visible: isVisible, sortable: { data: [$data], isEnabled: $root.padBucketHeight() === true && $root.dragAndDrop() === true }">
+    <div style="padding-left: 4px;" class="bucket-item col-xs-6" data-bind="css: isGridComplete ? 'complete' : '',visible: isVisible, sortable: [ $data ]">
         <a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
             <img class="itemImage" data-bind="itemImageHandler: icon, attr: { instanceId:_id }, fastclick: function(){ return false }">
         </a>
