@@ -33,8 +33,9 @@ tgd.loadoutManager = function(loadouts, dialog) {
         appendTo: "body"
     };
     this.afterMove = function() {
-        /*console.log("afterMove", arguments);
-        console.log(_.map(self.loadouts().reverse(), function(loadout) {
+        /*loadouts(loadouts().reverse())
+        console.log("afterMove", arguments);
+        console.log(_.map(self.loadouts(), function(loadout) {
             return loadout.name()
         }));*/
     }
