@@ -2,43 +2,6 @@ tgd.loadoutManager = function(loadouts, dialog) {
     var self = this;
 
     self.loadouts = loadouts;
-
-    this.sortableOptions = {
-        over: function() {
-            $(this).addClass("label label-success");
-        },
-        out: function() {
-            $(this).removeClass("label-warning");
-        },
-        sort: function(event, ui) {
-            var $target = $(event.target);
-            if (!/html|body/i.test($target.offsetParent()[0].tagName)) {
-                var top = event.pageY - $target.offsetParent().offset().top - (ui.helper.outerHeight(true) / 2);
-                ui.helper.css({
-                    'top': top + 'px'
-                });
-            }
-        },
-        scroll: false,
-        revert: false,
-        handle: ".fa-bars",
-        items: "> li",
-        placeholder: "item-placeholder",
-        cursorAt: {
-            cursor: "move",
-            top: 27,
-            left: 27
-        },
-        cursor: "pointer",
-        appendTo: "body"
-    };
-    this.afterMove = function() {
-        /*loadouts(loadouts().reverse())
-        console.log("afterMove", arguments);
-        console.log(_.map(self.loadouts(), function(loadout) {
-            return loadout.name()
-        }));*/
-    }
 }
 
 tgd.loadoutId = 0;
@@ -99,7 +62,30 @@ tgd.Loadout = function(model, isItems) {
         });
     });
     this.editing = ko.observable(false);
-
+    this.sortUp = function() {
+        var currentIndex = app.loadouts.indexOf(self);
+        var nextIndex = currentIndex - 1;
+		console.log("currentIndex", currentIndex);
+		console.log("nextIndex", nextIndex);
+		console.log( _.map(app.loadouts(), function(loadout){ return loadout.name() }) );
+		//add the item to the right position in the array
+        app.loadouts.splice(nextIndex, 0, self);
+		//remove item from the array
+		currentIndex = app.loadouts.indexOf(self);
+        console.log(app.loadouts.splice(currentIndex, 1));
+    }
+    this.sortDown = function() {
+        var currentIndex = app.loadouts.indexOf(self);
+        var nextIndex = currentIndex + 1;
+		console.log("currentIndex", currentIndex);
+		console.log("nextIndex", nextIndex);		
+		console.log( _.map(app.loadouts(), function(loadout){ return loadout.name() }) );
+        //add the item to the right position in the array
+        app.loadouts.splice(nextIndex, 0, self);
+		//remove item from the array
+        //currentIndex = app.loadouts.indexOf(self)+1;
+		console.log(app.loadouts.splice(nextIndex+1, 1));
+    }
     this.rename = function() {
         self.editing(!self.editing());
     }

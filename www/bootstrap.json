@@ -114,7 +114,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "57573346667006df29c9951086b3b5480c9542afb49bc12e1883c5a41d30ee7a"
+      "version": "1e19463941623c103e1543c17757f60c0cf3c77ddfe9fb0a331de2d94f5485dc"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -154,7 +154,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "e04bd814f71f6ba3578df1fa4b797a5ac130da35f97f1b30585899cc022b4003"
+      "version": "7039b14f2b743540d94ef6ce835ab977d2757d2f34ff98743d739692c03f3eb2"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
