@@ -70,9 +70,6 @@ tgd.Loadout = function(model, isItems) {
                 if (itemFound) {
                     itemFound.doEquip = equip.doEquip;
                     itemFound.markAsEquip = self.markAsEquip;
-                    itemFound.editing = self.editing;
-                    itemFound.rename = self.rename;
-                    itemFound.rename = self.equip;
                     if (equip && equip.bonusOn) {
                         itemFound.bonusOn = equip.bonusOn;
                     }
@@ -234,6 +231,7 @@ tgd.Loadout.prototype = {
             app.loadouts.remove(ref);
             app.createLoadout();
             app.saveLoadouts();
+            app.loadoutMode(false);
         }
     },
     save: function() {

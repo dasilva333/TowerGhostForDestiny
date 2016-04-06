@@ -1434,11 +1434,11 @@ var app = function() {
                 membershipId: parseFloat(self.activeUser().user.membershipId),
                 loadouts: ko.toJSON(
                     _.map(self.loadouts(), function(loadout) {
-                        var tmp = {};
-                        _.each(loadoutKeys, function(key) {
-                            tmp[key] = ko.unwrap(loadout[key]);
-                        });
-                        return tmp;
+                        return _.reduce(loadout, function(memo, value, key) {
+                            if (loadoutKeys.indexOf(key) > -1)
+                                memo[key] = ko.unwrap(value);
+                            return memo;
+                        }, {});
                     })
                 )
             };
