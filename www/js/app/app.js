@@ -1428,10 +1428,19 @@ var app = function() {
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
         if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
+            var loadoutKeys = ["name", "ids", "generics"];
             var params = {
                 action: "save",
                 membershipId: parseFloat(self.activeUser().user.membershipId),
-                loadouts: ko.toJSON(self.loadouts())
+                loadouts: ko.toJSON(
+                    _.map(self.loadouts(), function(loadout) {
+                        var tmp = {};
+                        _.each(loadoutKeys, function(key) {
+                            tmp[key] = ko.unwrap(loadout[key]);
+                        });
+                        return tmp;
+                    })
+                )
             };
             self.apiRequest(params, function(results) {
                 if (_includeMessage === true) {
