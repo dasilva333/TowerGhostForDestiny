@@ -65,26 +65,30 @@ tgd.Loadout = function(model, isItems) {
     this.sortUp = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex - 1;
-		console.log("currentIndex", currentIndex);
-		console.log("nextIndex", nextIndex);
-		console.log( _.map(app.loadouts(), function(loadout){ return loadout.name() }) );
-		//add the item to the right position in the array
+        console.log("currentIndex", currentIndex);
+        console.log("nextIndex", nextIndex);
+        console.log(_.map(app.loadouts(), function(loadout) {
+            return loadout.name()
+        }));
+        //add the item to the right position in the array
         app.loadouts.splice(nextIndex, 0, self);
-		//remove item from the array
-		currentIndex = app.loadouts.indexOf(self);
+        //remove item from the array
+        currentIndex = app.loadouts.indexOf(self);
         console.log(app.loadouts.splice(currentIndex, 1));
     }
     this.sortDown = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex + 1;
-		console.log("currentIndex", currentIndex);
-		console.log("nextIndex", nextIndex);		
-		console.log( _.map(app.loadouts(), function(loadout){ return loadout.name() }) );
+        console.log("currentIndex", currentIndex);
+        console.log("nextIndex", nextIndex);
+        console.log(_.map(app.loadouts(), function(loadout) {
+            return loadout.name()
+        }));
         //add the item to the right position in the array
         app.loadouts.splice(nextIndex, 0, self);
-		//remove item from the array
+        //remove item from the array
         //currentIndex = app.loadouts.indexOf(self)+1;
-		console.log(app.loadouts.splice(nextIndex+1, 1));
+        console.log(app.loadouts.splice(nextIndex + 1, 1));
     }
     this.rename = function() {
         self.editing(!self.editing());
