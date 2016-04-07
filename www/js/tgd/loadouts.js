@@ -96,7 +96,7 @@ tgd.Loadout = function(model, isItems) {
     this.equip = function() {
         if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
             self.setActive();
-            dialog.close();
+            app.manageLoadoutDialog.close();
         }
     }
     this.markAsEquip = function(item, event) {

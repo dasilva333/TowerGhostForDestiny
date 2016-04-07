@@ -108,7 +108,7 @@ var app = function() {
             id: id
         }));
 
-        var managerDialog = (new tgd.dialog({
+        self.manageLoadoutDialog = (new tgd.dialog({
             buttons: [{
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
@@ -126,9 +126,9 @@ var app = function() {
         })).title(self.activeText().menu_loadouts_manage + " Loadouts").content($template).show(true, function() {
             /* onClose */
         }, function() {
-            var loadoutManager = new tgd.loadoutManager(self.loadouts, managerDialog.modal);
+            var loadoutManager = new tgd.loadoutManager(self.loadouts);
             ko.applyBindings(loadoutManager, document.getElementById('container_' + id));
-        });
+        }).modal;
     }
     this.createLoadout = function() {
         self.loadoutMode(true);
@@ -2254,7 +2254,7 @@ var app = function() {
             }
 
             var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
-			ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
+            ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
             ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
