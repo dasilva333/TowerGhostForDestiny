@@ -1034,13 +1034,17 @@ var app = function() {
                             return self.logout();
                         }
                         if (isMobile) {
+                            //login failed the first time, cookie might need to be refreshed
+                            //openHiddenBungieWindow will open Bungie, read the cookie and try it a second time 
                             if (self.hiddenWindowOpen() === false) {
                                 self.hiddenWindowOpen(true);
                                 self.openHiddenBungieWindow();
                             } else {
-                                setTimeout(function() {
-                                    self.loadData(ref);
-                                }, 1000);
+                                //after re-reading the cookie it still didn't work so resetting login state
+                                self.activeUser(user);
+                                self.loadingUser(false);
+                                self.hiddenWindowOpen(false);
+                                window.localStorage.setItem("bungie_cookies", "");
                             }
                         } else {
                             self.activeUser(user);

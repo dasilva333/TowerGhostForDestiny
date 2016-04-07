@@ -17,14 +17,14 @@ tgd.calculateBestSets = function(items) {
         var sortedKeys = _.pluck(tgd.DestinyArmorStats, 'statName');
         var statTiers = _.map(sortedKeys, function(name) {
             return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
-        }).join(" ");
+        }).join("<br>");
         var combo = {
             set: items,
             id: Math.floor(tgd.hashCode(statTiers)),
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
-            }).join("/ "),
+            }).join("<br>"),
             statTiers: statTiers,
             score: parseFloat((tgd.sum(_.map(tmp, function(value, key) {
                 var result = Math.floor(value / tgd.DestinySkillTier);

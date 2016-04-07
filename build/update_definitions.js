@@ -8,6 +8,7 @@ var http = require("http"),
 	_ = require("lodash");
 
 var jsonPath = "../www/data/";
+var manifestVersionFile = "manifestVersion";
 var definitionPath = jsonPath + "definitions/";
 var imgPath = "/common/destiny_content/icons/";
 var remoteBungieURL = "www.bungie.net";
@@ -92,12 +93,12 @@ var neededFiles = [
 ];
 
 var downloadDatabase = function(callback){
-	if ( fs.existsSync("mobileWorldContent_en.db") && !purgeCache ){
-		return callback();
-	}
 	var count = 0;
 	var options = { method: 'GET', hostname: 'www.bungie.net', path: manifestURL, headers: { 'X-API-Key':  apikey } };
 	console.log('making request ' + JSON.stringify(options));
+	if (!fs.existsSync(manifestVersionFile)){
+		fs.writeFileSync(manifestVersionFile, "");
+	}
 	var req = https.request(options, function(res) {
 		console.log("querying manifest");
 		var data = []; // List of Buffer objects
@@ -105,10 +106,18 @@ var downloadDatabase = function(callback){
 			data.push(chunk); // Append Buffer object
 		});
 		res.on("end", function() {
-			var payload = JSON.parse(Buffer.concat(data));
-			var languages = payload.Response.mobileWorldContentPaths;
+			var manifest = JSON.parse(Buffer.concat(data));
+			var currentVersion = fs.readFileSync(manifestVersionFile).toString();
+			if ( manifest.Response.version == currentVersion ){
+				console.log("Manifest version NOT changed", manifest.Response.version);
+				return callback();
+			}
+			else {
+				console.log("Manifest version changed from ", currentVersion, " to ",manifest.Response.version);
+			}
+			var languages = manifest.Response.mobileWorldContentPaths;
 			_.each(languages, function(link, locale){
-				var mobileWorldContentPath = secureBungieURL + payload.Response.mobileWorldContentPaths[locale];
+				var mobileWorldContentPath = secureBungieURL + manifest.Response.mobileWorldContentPaths[locale];
 				count++;
 				console.log("downloading mwcp in " + locale);
 				https.get(mobileWorldContentPath, function(res) {
@@ -126,6 +135,7 @@ var downloadDatabase = function(callback){
 							console.log("unzipping " + fileName);
 							fs.writeFileSync("mobileWorldContent_" +  locale + ".db", unzipped.files[fileName]._data, 'binary');
 							if (count == 0){
+								fs.writeFileSync(manifestVersionFile, manifest.Response.version);
 								callback();
 							}						
 						}
