@@ -72,7 +72,7 @@
 					  <td class="col-xs-11">
 						<div data-bind="foreach: { data: combo.perks, as: 'perk' }">
 							<div class="font-smaller-1">
-								<span data-bind="visible: !isMobile">
+								<span data-bind="visible: !isMobile" style="display:none;">
 									<img width="24" data-bind="itemImageHandler: perk.iconPath" class="perkImage"> 
 									<span class="text-muted" data-bind="text: perk.bucketType"></span>:
 								</span>
@@ -82,7 +82,7 @@
 					  </td>
 					</tr>
 					<tr style="display:none" data-bind="attr:{id:'armor_'+combo.id}">
-						<td class="col-xs-24">
+						<td colspan="5">
 							<div class="col-xs-5">
 								<input type="Button" class="btn btn-sm btn-default" value="Hide" data-bind="click: function(){ $('#armor_' + combo.id).hide(); $('#details_' + combo.id).show(); }">
 								<input type="Button" class="btn btn-sm btn-default" value="Help" data-bind="click: function(){ $('#help_' + combo.id).toggle(); }">
