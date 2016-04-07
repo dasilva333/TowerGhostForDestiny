@@ -2250,6 +2250,8 @@ var app = function() {
             }
 
             var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
+			ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
+            ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
             if (isMobile && isEmptyCookie) {
                 self.bungie = new tgd.bungie('', function() {
                     self.activeUser({
