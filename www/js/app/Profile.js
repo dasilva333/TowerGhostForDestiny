@@ -609,7 +609,7 @@ Profile.prototype = {
             character = this;
 
         tgd.maxTierPossible = Math.floor(tgd.sum(tgd.DestinyMaxCSP) / tgd.DestinySkillTier);
-        tgd.maxTierPointsPossible = Math.floor(tgd.sum(tgd.DestinyMaxCSP) / tgd.DestinySkillTier) * tgd.DestinySkillTier;
+        tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
             return type.name.split(" ")[0];
         }).concat(tgd.DestinyWeaponPieces);
@@ -720,48 +720,48 @@ Profile.prototype = {
                 var mainPiece = set[0];
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
                 var subSets = [
-					[mainPiece]
-				];
-				candidates = _.groupBy(_.filter(backups, function(item) {
-					return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
-				}), 'bucketType');
-				_.each(candidates, function(items) {
-					subSets.push(items);
-				});
-				subSets = _.map(subSets, function(selection) {
-					var choices = selection.rolls ? [selection] : selection;
-					var x = _.flatten(_.map(choices, function(item) {
-						return _.map(item.rolls, function(roll) {
-							var itemClone = _.clone(item);
-							itemClone.activeRoll = roll;
-							return itemClone;
-						});
-					}));
-					return x;
-				});
-				var combos = _.filter(tgd.cartesianProductOf(subSets), function(sets){
-					var exoticItems = _.filter(sets, function(item){
-						return item.tierType == 6 && item.hasLifeExotic == false;
-					});
-					return exoticItems.length < 2;
-				});
-				var scoredCombos = _.map(combos, function(items) {
-					var tmp = tgd.joinStats(items);
-					delete tmp["bonusOn"];
-					return {
-						set: items,
-						score: tgd.sum(_.map(tmp, function(value, key) {
-							var result = Math.floor(value / tgd.DestinySkillTier);
-							return result > 5 ? 5 : result;
-						})) + (tgd.sum(_.values(tmp)) / 1000)
-					};
-				});
-				var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-				_.each(scoredCombos, function(combo) {
-					if (combo.score >= highestScore) {
-						bestSets.push(combo);
-					}
-				});
+                    [mainPiece]
+                ];
+                candidates = _.groupBy(_.filter(backups, function(item) {
+                    return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                }), 'bucketType');
+                _.each(candidates, function(items) {
+                    subSets.push(items);
+                });
+                subSets = _.map(subSets, function(selection) {
+                    var choices = selection.rolls ? [selection] : selection;
+                    var x = _.flatten(_.map(choices, function(item) {
+                        return _.map(item.rolls, function(roll) {
+                            var itemClone = _.clone(item);
+                            itemClone.activeRoll = roll;
+                            return itemClone;
+                        });
+                    }));
+                    return x;
+                });
+                var combos = _.filter(tgd.cartesianProductOf(subSets), function(sets) {
+                    var exoticItems = _.filter(sets, function(item) {
+                        return item.tierType == 6 && item.hasLifeExotic == false;
+                    });
+                    return exoticItems.length < 2;
+                });
+                var scoredCombos = _.map(combos, function(items) {
+                    var tmp = tgd.joinStats(items);
+                    delete tmp["bonusOn"];
+                    return {
+                        set: items,
+                        score: tgd.sum(_.map(tmp, function(value, key) {
+                            var result = Math.floor(value / tgd.DestinySkillTier);
+                            return result > 5 ? 5 : result;
+                        })) + (tgd.sum(_.values(tmp)) / 1000)
+                    };
+                });
+                var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+                _.each(scoredCombos, function(combo) {
+                    if (combo.score >= highestScore) {
+                        bestSets.push(combo);
+                    }
+                });
             });
             var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
             var lastSets = [];
@@ -919,7 +919,7 @@ Profile.prototype = {
             }
         });
     },
-    renderBestGroups: function(groups) {
+    renderBestGroups: function(type, groups) {
         //console.log("renderBestGroups", groups);
         var character = this;
         var id = new Date().getTime();
@@ -928,8 +928,8 @@ Profile.prototype = {
             id: id
         }));
 
-        var armorSelection = new tgd.armorSelection(groups, character);
-        //console.log("armorSelection", armorSelection);
+        var armorSelection = new tgd.armorSelection(type, groups, character);
+        console.log("armorSelection", armorSelection);
 
         var armorTemplateDialog = (new tgd.dialog({
             buttons: [{
@@ -956,7 +956,7 @@ Profile.prototype = {
                     dialog.close();
                 }
             }]
-        })).title("Armor Builds for Tier " + tgd.maxTierPossible).content($template).show(true, function() {
+        })).title("Armor Builds for " + type).content($template).show(true, function() {
             groups = null;
         }, function() {
             armorSelection.setDialog(armorTemplateDialog);
@@ -1172,8 +1172,11 @@ Profile.prototype = {
             });
         } else if (type == "MaxLight") {
             character.findMaxLightSet(activeItems, function(groups) {
-                character.renderBestGroups(groups);
+                character.renderBestGroups(type, groups);
             });
+        } else if (type == "Custom") {
+            var groups = _.groupBy(activeItems, "bucketType");
+            character.renderBestGroups(type, groups);
         }
     },
     equipHighest: function(type) {
@@ -1192,7 +1195,7 @@ Profile.prototype = {
             var bestArmorSets;
             var bestWeaponSets;
 
-            if (type == "Best" || type == "OptimizedBest" || type == "MaxLight") {
+            if (type == "Best" || type == "OptimizedBest" || type == "MaxLight" || type == "Custom") {
                 character.equipBest(type, armor, items);
             } else if (type == "Light") {
                 bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];

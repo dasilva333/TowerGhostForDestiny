@@ -62,14 +62,14 @@ tgd.calculateBestSets = function(items) {
     return bestSets;
 };
 
-tgd.armorSelection = function(groups, character) {
+tgd.armorSelection = function(type, groups, character) {
     var self = this;
 
     self.character = character;
     self.groups = groups;
 
     //self.loading = ko.observable(true);
-    //self.loadingStatus = ko.observable("Calculating most points combo");
+    console.log("Calculating most points combo");
     self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
 
@@ -78,31 +78,30 @@ tgd.armorSelection = function(groups, character) {
             return _.first(items, 2);
         }),
         combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints), function(combo) {
-            return Math.floor(combo.score) >= tgd.maxTierPossible;
+            return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
         }), 'similarityScore');
-
     if (combos.length > 0) {
-        //self.loadingStatus("Most points combo used");
+        console.log("Most points combo used");
         self.foundFirstSet(combos[0].set);
     } else {
         var helmets = armorGroups.shift();
-        //self.loadingStatus("Analyzing " + (helmets.length - 1) + " helmets");
+        console.log("Analyzing " + (helmets.length - 1) + " helmets");
         _.each(helmets, function(helmet, index) {
             if (self.foundFirstSet().length == 0) {
                 var set = _.map(_.clone(armorGroups), function(items) {
                     return _.first(items, 4);
                 });
                 set.unshift([helmet]);
-                //console.log(helmet.description,"considering helmet");
+                console.log(helmet.description, "considering helmet");
                 console.time("calculateBestSets " + helmet.description);
                 var combos = _.filter(tgd.calculateBestSets(set), function(combo) {
                     return Math.floor(combo.score) >= tgd.maxTierPossible;
                 });
-                //self.loadingStatus("Analyzed helmet " + index + " out of " + (helmets.length - 1));
+                console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
                 console.timeEnd("calculateBestSets " + helmet.description);
-                //console.log(combos);
+                console.log(combos);
                 if (combos.length > 0) {
-                    //self.loadingStatus("Found a combo " + combos[0].statTiers);
+                    console.log("Found a combo " + combos[0].statTiers);
                     self.foundFirstSet(combos[0].set);
                 }
             }
@@ -127,16 +126,18 @@ tgd.armorSelection = function(groups, character) {
 
     self.maxSets = ko.pureComputed(function() {
         return _.filter(self.bestSets(), function(combo) {
-            return Math.floor(combo.score) >= tgd.maxTierPossible;
+            return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
         });
     });
 
-    self.armorGroups(_.map(groups, function(items, bucketType) {
+    self.armorGroups(_.sortBy(_.map(groups, function(items, bucketType) {
         var selectedIndex = self.foundFirstSet().length > 0 ? _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
         })._id) : 0;
         return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex);
-    }));
+    }),function(items, key){
+		return tgd.DestinyArmorPieces.indexOf(key);
+	}));
 
     self.unleveledBucketTypes = ko.pureComputed(function() {
         return _.pluck(_.filter(self.selectedItems(), function(item) {
@@ -186,21 +187,26 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, index) {
     self.selectedItem(self.items[selectedIndex]);
 }
 
-tgd.armorItem = function(item, selectedItem, groups, bestSets) {
+tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
     var self = this
     _.extend(self, item);
     var isSelected = ko.pureComputed(function() {
         return self == selectedItem();
     });
     var isDisabled = ko.pureComputed(function() {
-        /* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
-        var items = _.map(groups(), function(group) {
-            return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
-        });
-        var validSets = tgd.calculateBestSets(items);
-        return _.filter(validSets, function(combo) {
-            return Math.floor(combo.score) >= tgd.maxTierPossible;
-        }).length == 0;
+		if ( type == "MaxLight" ){
+			/* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
+			var items = _.map(groups(), function(group) {
+				return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
+			});
+			var validSets = tgd.calculateBestSets(items);
+			return _.filter(validSets, function(combo) {
+				return Math.floor(combo.score) >= tgd.maxTierPossible;
+			}).length == 0;		
+		}
+		else {
+			return false;
+		}
     });
     var isInBestSets = ko.pureComputed(function() {
         return _.filter(bestSets(), function(combo) {
