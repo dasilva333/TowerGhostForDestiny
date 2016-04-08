@@ -112,7 +112,12 @@
 		</div> 
 		<div data-bind="foreach: { data: armorGroups, as: 'armor' }">
 			<div class="panel panel-default">
-			  <div class="panel-heading"><span data-bind="text: armor.bucketType"></span> </div>
+			  <div class="panel-heading">
+			  	<span data-bind="text: armor.bucketType"></span> 
+				<span data-bind="with: armor.selectedItem">
+					(<span data-bind="text: description"></span>)
+				</span>
+			  </div>
 			  <div class="panel-body">
 					<div class="row" data-bind="foreach: { data: armor.items, as: 'item' }">
 						<div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">

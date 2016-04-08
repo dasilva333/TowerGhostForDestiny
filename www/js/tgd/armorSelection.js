@@ -76,16 +76,16 @@ tgd.armorSelection = function(type, groups, character) {
 
     var armorGroups = _.values(groups),
         rollType = (type == "Custom") ? "rolls" : "futureRolls",
-		valueType = type == "Custom" ? "All" : "MaxLightCSP",
+        valueType = type == "Custom" ? "All" : "MaxLightCSP",
         mostPoints = _.map(armorGroups, function(items) {
             return _.first(_.sortBy(items, function(item) {
                 return item.getValue(valueType) * -1;
             }), 2);
         });
-	//console.log("mostPoints", mostPoints);
+    //console.log("mostPoints", mostPoints);
     var combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints, rollType), function(combo) {
-            return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
-        }), 'score');
+        return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
+    }), 'score');
     if (combos.length > 0) {
         console.log("Most points combo used");
         self.foundFirstSet(combos[0].set);
@@ -96,8 +96,8 @@ tgd.armorSelection = function(type, groups, character) {
             if (self.foundFirstSet().length == 0) {
                 var set = _.map(_.clone(armorGroups), function(items) {
                     return _.first(_.sortBy(items, function(item) {
-						return item.getValue(valueType) * -1;
-					}), 4);
+                        return item.getValue(valueType) * -1;
+                    }), 4);
                 });
                 set.unshift([helmet]);
                 console.log(helmet.description, "considering helmet", set);
@@ -138,7 +138,7 @@ tgd.armorSelection = function(type, groups, character) {
         });
     });
 
-	console.log("selected items: ", _.pluck(self.foundFirstSet(),'description'));
+    console.log("selected items: ", _.pluck(self.foundFirstSet(), 'description'));
     self.armorGroups(_.sortBy(_.map(groups, function(items, bucketType) {
         var selectedId = self.foundFirstSet().length > 0 ? _.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
@@ -193,12 +193,13 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type)
         return item.getValue("All") * -1;
     });
 
-	if ( instanceId == "" ){
-		self.selectedItem(self.items[0]);
-	}
-    else {
-		self.selectedItem(_.findWhere(self.items,{ _id: instanceId }));
-	}
+    if (instanceId == "") {
+        self.selectedItem(self.items[0]);
+    } else {
+        self.selectedItem(_.findWhere(self.items, {
+            _id: instanceId
+        }));
+    }
 }
 
 tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
