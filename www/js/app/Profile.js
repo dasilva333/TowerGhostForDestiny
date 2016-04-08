@@ -1150,7 +1150,7 @@ Profile.prototype = {
 
         /* Only consider Armor within your own character, and all Ghosts anywhere */
         var activeItems = _.filter(items, function(item) {
-            return item.armorIndex > -1 && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
+            return item.armorIndex > -1 && item.isEquipment == true && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
         });
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
             return type.name.split(" ")[0];

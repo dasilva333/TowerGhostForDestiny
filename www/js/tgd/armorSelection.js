@@ -2,7 +2,7 @@ tgd.calculateBestSets = function(items, rollType) {
     var combos = _.map(items, function(selection) {
         var choices = selection[rollType] ? [selection] : selection;
         var x = _.flatten(_.map(choices, function(item) {
-            return _.map(selection[rollType], function(roll) {
+            return _.map(item[rollType], function(roll) {
                 var itemClone = _.clone(item);
                 itemClone.activeRoll = roll;
                 return itemClone;
@@ -76,12 +76,14 @@ tgd.armorSelection = function(type, groups, character) {
 
     var armorGroups = _.values(groups),
         rollType = (type == "Custom") ? "rolls" : "futureRolls",
+		valueType = type == "Custom" ? "All" : "MaxLightCSP",
         mostPoints = _.map(armorGroups, function(items) {
             return _.first(_.sortBy(items, function(item) {
-                return item.getValue("All") * -1;
-            }), 3);
-        }),
-        combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints, rollType), function(combo) {
+                return item.getValue(valueType) * -1;
+            }), 2);
+        });
+	//console.log("mostPoints", mostPoints);
+    var combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints, rollType), function(combo) {
             return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
         }), 'score');
     if (combos.length > 0) {
@@ -89,12 +91,12 @@ tgd.armorSelection = function(type, groups, character) {
         self.foundFirstSet(combos[0].set);
     } else {
         var helmets = armorGroups.shift();
-        console.log("Analyzing " + (helmets.length - 1) + " helmets");
+        //console.log("Analyzing " + (helmets.length - 1) + " helmets", _.pluck(helmets,'description'));
         _.each(helmets, function(helmet, index) {
             if (self.foundFirstSet().length == 0) {
                 var set = _.map(_.clone(armorGroups), function(items) {
                     return _.first(_.sortBy(items, function(item) {
-						return item.getValue("All") * -1;
+						return item.getValue(valueType) * -1;
 					}), 4);
                 });
                 set.unshift([helmet]);
@@ -136,11 +138,12 @@ tgd.armorSelection = function(type, groups, character) {
         });
     });
 
+	console.log("selected items: ", _.pluck(self.foundFirstSet(),'description'));
     self.armorGroups(_.sortBy(_.map(groups, function(items, bucketType) {
-        var selectedIndex = self.foundFirstSet().length > 0 ? _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
+        var selectedId = self.foundFirstSet().length > 0 ? _.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
-        })._id) : 0;
-        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex, type);
+        })._id : "";
+        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedId, type);
     }), function(armorGroup) {
         return tgd.DestinyArmorPieces.indexOf(armorGroup.bucketType);
     }));
@@ -177,12 +180,10 @@ tgd.armorSelection = function(type, groups, character) {
     }
 }
 
-tgd.armorGroup = function(bucketType, items, groups, bestSets, index, type) {
+tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type) {
     var self = this;
 
     self.bucketType = bucketType;
-
-    var selectedIndex = index == -1 ? 0 : index;
 
     self.selectedItem = ko.observable();
 
@@ -192,7 +193,12 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, index, type) {
         return item.getValue("All") * -1;
     });
 
-    self.selectedItem(self.items[selectedIndex]);
+	if ( instanceId == "" ){
+		self.selectedItem(self.items[0]);
+	}
+    else {
+		self.selectedItem(_.findWhere(self.items,{ _id: instanceId }));
+	}
 }
 
 tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
