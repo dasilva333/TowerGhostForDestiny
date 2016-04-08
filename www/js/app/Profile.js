@@ -731,11 +731,10 @@ Profile.prototype = {
                     return subSets;
                 });
                 _.each(arrRolls, function(subSets) {
-                    candidates = _.filter(backups, function(item) {
-                        return item.bucketType != mainPiece.bucketType && (item.tierType != 6 || (item.tierType == 6 && item.hasLifeExotic == true)) && mainPiece._id != item._id;
-                    });
-                    var groupedCandidates = _.groupBy(candidates, 'bucketType');
-                    _.each(groupedCandidates, function(items) {
+                    candidates = _.groupBy(_.filter(backups, function(item) {
+                        return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
+                    }), 'bucketType');
+                    _.each(candidates, function(items) {
                         subSets.push(items);
                     });
                     var combos = tgd.cartesianProductOf(subSets);
