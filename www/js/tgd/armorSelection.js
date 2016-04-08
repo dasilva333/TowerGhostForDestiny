@@ -67,6 +67,7 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.character = character;
     self.groups = groups;
+    self.type = type;
 
     //self.loading = ko.observable(true);
     //console.log("Calculating most points combo");

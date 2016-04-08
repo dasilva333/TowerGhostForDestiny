@@ -926,7 +926,7 @@ Profile.prototype = {
         }));
 
         var armorSelection = new tgd.armorSelection(type, groups, character);
-        console.log("armorSelection", armorSelection);
+        //console.log("armorSelection", armorSelection);
 
         var armorTemplateDialog = (new tgd.dialog({
             buttons: [{
