@@ -737,7 +737,12 @@ Profile.prototype = {
                     _.each(candidates, function(items) {
                         subSets.push(items);
                     });
-                    var combos = tgd.cartesianProductOf(subSets);
+                    var combos = _.filter(tgd.cartesianProductOf(subSets), function(sets){
+						var exoticItems = _.filter(sets, function(item){
+							return item.tierType == 6 && item.hasLifeExotic == false;
+						});
+						return exoticItems.length < 2;
+					});
                     var scoredCombos = _.map(combos, function(items) {
                         var tmp = tgd.joinStats(items);
                         delete tmp["bonusOn"];
