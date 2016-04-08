@@ -6,7 +6,7 @@
 		This tool is meant as an explorer to help you in finding what gear you can mix and match to achieve your desirable stat distributions.<br>
 	</p>
 	<hr>
-	<div data-bind="visible: foundFirstSet().length == 0" style="display:none;">
+	<div data-bind="visible: foundFirstSet().length == 0 && type == 'MaxLight'" style="display:none;">
 		Currently this character does not have any armor that can be infused to <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> and provide
 		enough stat points to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span>.<br>
 		
@@ -35,7 +35,7 @@
 			</div>
 		</div>
 	</div>
-	<div data-bind="visible: foundFirstSet().length > 0" style="display:none;">
+	<div data-bind="visible: foundFirstSet().length > 0 || type == 'Custom'" style="display:none;">
 		<div data-bind="visible: type == 'MaxLight'" style="display:none;">
 			The gear listed within has the <strong>highest potential to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span> 
 			at <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> Light Level</strong>.
@@ -119,10 +119,13 @@
 							<div class="col-xs-24">
 								<a class="itemLink" data-bind="css: item.css2, attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: select">
 									<img class="itemImage" data-bind="itemImageHandler: item.icon, css: item.css" style="padding: 2px;">
-								</a>						
+								</a>
 							</div>
-							<div class="col-xs-24">
+							<div class="col-xs-24" data-bind="visible: $root.type == 'MaxLight'" style="display:none;">
 								<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
+							</div>
+							<div class="col-xs-24" data-bind="visible: $root.type == 'Custom'" style="display:none;">
+								<span data-bind="text: item.getValue('All')"></span>/<span data-bind="text: ((item.getValue('All') / tgd.DestinyMaxCSP[item.bucketType]) * 100).toFixed(0)"></span>%
 							</div>
 						</div>
 					</div>

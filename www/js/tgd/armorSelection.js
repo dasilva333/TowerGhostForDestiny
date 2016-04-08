@@ -1,8 +1,8 @@
-tgd.calculateBestSets = function(items) {
+tgd.calculateBestSets = function(items, rollType) {
     var combos = _.map(items, function(selection) {
-        var choices = selection.futureRolls ? [selection] : selection;
+        var choices = selection[rollType] ? [selection] : selection;
         var x = _.flatten(_.map(choices, function(item) {
-            return _.map(item.futureRolls, function(roll) {
+            return _.map(selection[rollType], function(roll) {
                 var itemClone = _.clone(item);
                 itemClone.activeRoll = roll;
                 return itemClone;
@@ -75,14 +75,15 @@ tgd.armorSelection = function(type, groups, character) {
     self.armorGroups = ko.observableArray();
 
     var armorGroups = _.values(groups),
+        rollType = (type == "Custom") ? "rolls" : "futureRolls",
         mostPoints = _.map(armorGroups, function(items) {
             return _.first(_.sortBy(items, function(item) {
                 return item.getValue("All") * -1;
             }), 3);
         }),
-        combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints), function(combo) {
+        combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints, rollType), function(combo) {
             return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
-        }), 'similarityScore');
+        }), 'score');
     if (combos.length > 0) {
         //console.log("Most points combo used");
         self.foundFirstSet(combos[0].set);
@@ -97,7 +98,7 @@ tgd.armorSelection = function(type, groups, character) {
                 set.unshift([helmet]);
                 //console.log(helmet.description, "considering helmet");
                 //console.time("calculateBestSets " + helmet.description);
-                var combos = _.filter(tgd.calculateBestSets(set), function(combo) {
+                var combos = _.filter(tgd.calculateBestSets(set, rollType), function(combo) {
                     return Math.floor(combo.score) >= tgd.maxTierPossible;
                 });
                 //console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
@@ -119,7 +120,7 @@ tgd.armorSelection = function(type, groups, character) {
     });
 
     self.bestSets = ko.pureComputed(function() {
-        var bestSets = tgd.calculateBestSets(self.selectedItems());
+        var bestSets = tgd.calculateBestSets(self.selectedItems(), rollType);
         return bestSets;
     });
 
@@ -137,7 +138,7 @@ tgd.armorSelection = function(type, groups, character) {
         var selectedIndex = self.foundFirstSet().length > 0 ? _.pluck(items, '_id').indexOf(_.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
         })._id) : 0;
-        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex);
+        return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex, type);
     }), function(armorGroup) {
         return tgd.DestinyArmorPieces.indexOf(armorGroup.bucketType);
     }));
@@ -174,7 +175,7 @@ tgd.armorSelection = function(type, groups, character) {
     }
 }
 
-tgd.armorGroup = function(bucketType, items, groups, bestSets, index) {
+tgd.armorGroup = function(bucketType, items, groups, bestSets, index, type) {
     var self = this;
 
     self.bucketType = bucketType;
@@ -183,8 +184,10 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, index) {
 
     self.selectedItem = ko.observable();
 
-    self.items = _.map(items, function(item, index) {
-        return new tgd.armorItem(item, self.selectedItem, groups, bestSets);
+    self.items = _.sortBy(_.map(items, function(item, index) {
+        return new tgd.armorItem(item, self.selectedItem, groups, bestSets, type);
+    }), function(item) {
+        return item.getValue("All") * -1;
     });
 
     self.selectedItem(self.items[selectedIndex]);
@@ -202,7 +205,7 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
             var items = _.map(groups(), function(group) {
                 return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
             });
-            var validSets = tgd.calculateBestSets(items);
+            var validSets = tgd.calculateBestSets(items, 'futureRolls');
             return _.filter(validSets, function(combo) {
                 return Math.floor(combo.score) >= tgd.maxTierPossible;
             }).length == 0;
