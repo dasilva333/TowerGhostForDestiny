@@ -1154,7 +1154,7 @@ Profile.prototype = {
         });
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
             return type.name.split(" ")[0];
-        }).concat(tgd.DestinyWeaponPieces);		
+        }).concat(tgd.DestinyWeaponPieces);
         //console.log("activeItems", activeItems.length);
         if (type == "OptimizedBest") {
             /* Only consider the top 3 items sorted by CSP of the results provided */

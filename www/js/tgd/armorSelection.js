@@ -92,16 +92,16 @@ tgd.armorSelection = function(type, groups, character) {
                     return _.first(items, 4);
                 });
                 set.unshift([helmet]);
-                console.log(helmet.description, "considering helmet");
-                console.time("calculateBestSets " + helmet.description);
+                //console.log(helmet.description, "considering helmet");
+                //console.time("calculateBestSets " + helmet.description);
                 var combos = _.filter(tgd.calculateBestSets(set), function(combo) {
                     return Math.floor(combo.score) >= tgd.maxTierPossible;
                 });
-                console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
-                console.timeEnd("calculateBestSets " + helmet.description);
-                console.log(combos);
+                //console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
+                //console.timeEnd("calculateBestSets " + helmet.description);
+                //console.log(combos);
                 if (combos.length > 0) {
-                    console.log("Found a combo " + combos[0].statTiers);
+                    //console.log("Found a combo " + combos[0].statTiers);
                     self.foundFirstSet(combos[0].set);
                 }
             }
@@ -135,9 +135,9 @@ tgd.armorSelection = function(type, groups, character) {
             bucketType: bucketType
         })._id) : 0;
         return new tgd.armorGroup(bucketType, items, self.armorGroups, self.maxSets, selectedIndex);
-    }),function(armorGroup){
-		return tgd.DestinyArmorPieces.indexOf(armorGroup.bucketType);
-	}));
+    }), function(armorGroup) {
+        return tgd.DestinyArmorPieces.indexOf(armorGroup.bucketType);
+    }));
 
     self.unleveledBucketTypes = ko.pureComputed(function() {
         return _.pluck(_.filter(self.selectedItems(), function(item) {
@@ -194,19 +194,18 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
         return self == selectedItem();
     });
     var isDisabled = ko.pureComputed(function() {
-		if ( type == "MaxLight" ){
-			/* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
-			var items = _.map(groups(), function(group) {
-				return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
-			});
-			var validSets = tgd.calculateBestSets(items);
-			return _.filter(validSets, function(combo) {
-				return Math.floor(combo.score) >= tgd.maxTierPossible;
-			}).length == 0;		
-		}
-		else {
-			return false;
-		}
+        if (type == "MaxLight") {
+            /* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
+            var items = _.map(groups(), function(group) {
+                return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
+            });
+            var validSets = tgd.calculateBestSets(items);
+            return _.filter(validSets, function(combo) {
+                return Math.floor(combo.score) >= tgd.maxTierPossible;
+            }).length == 0;
+        } else {
+            return false;
+        }
     });
     var isInBestSets = ko.pureComputed(function() {
         return _.filter(bestSets(), function(combo) {
