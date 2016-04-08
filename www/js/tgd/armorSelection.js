@@ -74,9 +74,11 @@ tgd.armorSelection = function(type, groups, character) {
     self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
 
-    var armorGroups = _.map(groups),
+    var armorGroups = _.values(groups),
         mostPoints = _.map(armorGroups, function(items) {
-            return _.first(items, 2);
+            return _.first(_.sortBy(items, function(item) {
+                return item.getValue("All") * -1;
+            }), 3);
         }),
         combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints), function(combo) {
             return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
