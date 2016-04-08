@@ -610,9 +610,6 @@ Profile.prototype = {
 
         tgd.maxTierPossible = Math.floor(tgd.sum(tgd.DestinyMaxCSP) / tgd.DestinySkillTier);
         tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
-        tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
-            return type.name.split(" ")[0];
-        }).concat(tgd.DestinyWeaponPieces);
         _.each(buckets, function(bucket) {
             groups[bucket] = _.filter(items, function(item) {
                 return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && (
@@ -1155,6 +1152,9 @@ Profile.prototype = {
         var activeItems = _.filter(items, function(item) {
             return item.armorIndex > -1 && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
         });
+        tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
+            return type.name.split(" ")[0];
+        }).concat(tgd.DestinyWeaponPieces);		
         //console.log("activeItems", activeItems.length);
         if (type == "OptimizedBest") {
             /* Only consider the top 3 items sorted by CSP of the results provided */
