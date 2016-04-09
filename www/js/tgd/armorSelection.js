@@ -25,6 +25,9 @@ tgd.calculateBestSets = function(items, rollType) {
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
             }).join("<br>"),
+			statTierValues: _.map(sortedKeys, function(name) {
+    	        return Math.floor(tmp[name] / tgd.DestinySkillTier);
+	        }).join("/"),
             statTiers: statTiers,
             score: parseFloat((tgd.sum(_.map(tmp, function(value, key) {
                 var result = Math.floor(value / tgd.DestinySkillTier);
@@ -87,7 +90,7 @@ tgd.armorSelection = function(type, groups, character) {
         return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
     }), 'score');
     if (combos.length > 0) {
-        console.log("Most points combo used");
+        //console.log("Most points combo used");
         self.foundFirstSet(combos[0].set);
     } else {
         var helmets = armorGroups.shift();
@@ -138,7 +141,7 @@ tgd.armorSelection = function(type, groups, character) {
         });
     });
 
-    console.log("selected items: ", _.pluck(self.foundFirstSet(), 'description'));
+    //console.log("selected items: ", _.pluck(self.foundFirstSet(), 'description'));
     self.armorGroups(_.sortBy(_.map(groups, function(items, bucketType) {
         var selectedId = self.foundFirstSet().length > 0 ? _.findWhere(self.foundFirstSet(), {
             bucketType: bucketType
@@ -156,7 +159,8 @@ tgd.armorSelection = function(type, groups, character) {
     self.saveSelectedCombo = function(combo) {
         if (confirm("Are you sure you want to save this loadout? Doing so will close this pop up dialog")) {
             app.createLoadout();
-            var loadoutName = combo.score + " " + combo.statTiers;
+			var loaderType = _.intersection(tgd.weaponTypes,_.flatten(_.map(_.pluck(_.findWhere(combo.set,{ bucketType: "Gauntlet" }).perks,'name'), function(name){ return name.split(" "); })));
+            var loadoutName = "T" + Math.floor(combo.score) + " " + combo.statTierValues + " " + _.findWhere(combo.set,{ bucketType: "Helmet" }).character.classType() + " " + (loaderType.length > 0 ? loaderType[0] : "");
             app.activeLoadout().name(loadoutName);
             _.each(combo.set, function(item) {
                 app.activeLoadout().addUniqueItem({
