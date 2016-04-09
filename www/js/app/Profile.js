@@ -1083,6 +1083,7 @@ Profile.prototype = {
             });
         }
 
+        //console.log("arrArmorBuilds", arrArmorBuilds);
         var $template = renderTemplate(arrArmorBuilds);
 
         var armorTemplateDialog = (new tgd.dialog({
