@@ -1219,7 +1219,7 @@ var app = function() {
     };
 
     this.globalClickHandler = function(e) {
-        if ($("#move-popup").is(":visible") && e.target.className !== "itemLink" && e.target.parentNode.className !== "itemLink") {
+        if ($("#move-popup").is(":visible") && e.target.className.indexOf("itemLink") == -1 && e.target.parentNode.className.indexOf("itemLink") == -1) {
             $("#move-popup").hide();
             tgd.activeElement = null;
         }
