@@ -50,6 +50,7 @@ var app = function() {
     this.progressFilter = ko.observable(tgd.defaults.progressFilter);
     this.setFilter = ko.observableArray(tgd.defaults.setFilter);
     this.activeClasses = ko.observableArray(tgd.defaults.activeClasses);
+    this.activeStats = ko.observableArray(tgd.defaults.activeStats);
     this.shareView = ko.observable(tgd.defaults.shareView);
     this.shareUrl = ko.observable(tgd.defaults.shareUrl);
     this.showMissing = ko.observable(tgd.defaults.showMissing);
@@ -627,7 +628,7 @@ var app = function() {
         self.showDuplicate(!self.showDuplicate());
         self.customFilter(self.showDuplicate());
         if (self.showDuplicate()) {
-            var items = _.flatten(_.map(app.characters(), function(avatar) {
+            var items = _.flatten(_.map(self.characters(), function(avatar) {
                 return avatar.items();
             }));
             var ids = _.pluck(items, 'id');
@@ -645,7 +646,7 @@ var app = function() {
         self.customFilter(self.showArmorPerks());
         if (self.showArmorPerks()) {
             self.activeView(2);
-            _.each(app.characters(), function(character) {
+            _.each(self.characters(), function(character) {
                 var weaponsEquipped = _.filter(character.weapons(), function(item) {
                     return item.isEquipped();
                 });
@@ -670,7 +671,7 @@ var app = function() {
         self.customFilter(self.showArmorSC());
         if (self.showArmorSC()) {
             self.activeView(2);
-            _.each(app.characters(), function(character) {
+            _.each(self.characters(), function(character) {
                 var damagedBasedSubclass = _.filter(character.items(), function(item) {
                     return item.bucketType.indexOf("Subclasses") > -1 && item.isEquipped() === true;
                 });
@@ -689,6 +690,7 @@ var app = function() {
             });
         }
     };
+
     this.toggleArmorClass = function() {
         var classType = this.toString();
         self.toggleBootstrapMenu();
@@ -699,12 +701,35 @@ var app = function() {
             var classTypeNums = _.map(self.activeClasses(), function(className) {
                 return _.values(tgd.DestinyClass).indexOf(className);
             });
-            _.each(app.characters(), function(character) {
+            _.each(self.characters(), function(character) {
                 _.each(character.armor(), function(item) {
                     item.isFiltered(classTypeNums.indexOf(item.classType) > -1);
                 });
             });
         }
+    };
+    this.toggleArmorStat = function() {
+        var statType = this.toString();
+        self.toggleBootstrapMenu();
+        self.activeStats[self.activeStats().indexOf(statType) == -1 ? "push" : "remove"](statType);
+        self.customFilter(self.activeStats().length > 0);
+        if (self.customFilter()) {
+            self.activeView(2);
+            _.each(self.characters(), function(character) {
+                _.each(character.armor(), function(armor) {
+                    var hasStats = _.reduce(armor.stats, function(memo, stat, name) {
+                        if (memo == false && self.activeStats().indexOf(name) > -1 && stat > 0) {
+                            memo = true;
+                        }
+                        return memo;
+                    }, false);
+                    armor.isFiltered(hasStats);
+                });
+            });
+        }
+    };
+    this.showArmorStat = function(statType) {
+        return self.activeStats().indexOf(statType) > -1;
     };
     this.showArmorClass = function(classType) {
         return self.activeClasses().indexOf(classType) > -1;
@@ -767,7 +792,7 @@ var app = function() {
         self.toggleBootstrapMenu();
         if (collection in _collections || collection == "All") {
             if (collection == "Year 2 Items" || collection == "Year 1 Items") {
-                _collections[collection] = _.pluck(_.filter(_.flatten(_.map(app.characters(), function(character) {
+                _collections[collection] = _.pluck(_.filter(_.flatten(_.map(self.characters(), function(character) {
                     return character.items();
                 })), function(item) {
                     if (collection == "Year 2 Items") {
@@ -1285,7 +1310,7 @@ var app = function() {
                     callback(foundItem[0]);
                 }
             };
-            var allItems = _.flatten(_.map(app.characters(), function(character) {
+            var allItems = _.flatten(_.map(self.characters(), function(character) {
                 subscriptions.push(character.items.subscribe(newItemHandler));
                 return character.items();
             }));
@@ -2224,7 +2249,7 @@ var app = function() {
 
         /* These templates are loaded after the locale for the language template, they are used dynamically for pop ups and other content */
         _.each(_.templates, function(content, templateName) {
-            if (templateName == "languagesTemplate") {
+            if (templateName == "languagesTemplate" && self.activeText() && self.activeText().language_text) {
                 content = self.activeText().language_text + content;
             }
             tgd[templateName] = _.template(content);

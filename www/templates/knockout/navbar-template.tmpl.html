@@ -339,6 +339,14 @@
                                 <span data-bind="text: $root.activeText().menu_filter_by_subclass_eq">Subclass Equipped</span>
                             </a>
                         </li>
+						<!-- ko foreach: { data: tgd.DestinyArmorStats, as: 'armorStat' } -->
+							<li data-bind="css: $parent.showArmorStat(armorStat.statName) ? 'active' : '', fastclick: $parent.toggleArmorStat.bind(armorStat.statName)">
+								<a href="#">
+									<i class="fa" data-bind="css: $parent.showArmorStat(armorStat.statName) ? 'fa-check-square' : 'fa-square'"></i>
+									Skill: <span data-bind="text: armorStat.statName"></span>
+								</a>
+							</li>
+                        <!--/ko  -->
                         <li class="divider"></li>
                         <li>
                             <strong style="padding-left: 10px;">

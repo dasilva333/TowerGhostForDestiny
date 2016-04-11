@@ -243,6 +243,7 @@ tgd.defaults = {
     showDuplicate: false,
     setFilter: [],
     activeClasses: [],
+    activeStats: [],
     shareView: false,
     shareUrl: "",
     showMissing: false,
