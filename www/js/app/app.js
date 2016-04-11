@@ -1494,9 +1494,7 @@ var app = function() {
                             return item.getValue("All");
                         })));
                     }).join("");
-            } catch (e) {
-
-            }
+            } catch (e) {}
             self.apiRequest({
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
@@ -1526,10 +1524,19 @@ var app = function() {
                 if (_loadouts.length > 0) {
                     self.saveLoadouts(false);
                 }
-                /*if (results && results.itemDefs) {
-					tgd.localLog("downloading locale update");
-					self.downloadLocale(self.currentLocale(), results.itemDefs.version);
-				}*/
+                //insulate this code from any potential failures from bad data or otherwise
+                try {
+                    if (results && results.maxCSP) {
+                        if (results.maxCSP.indexOf(",") > -1 && results.maxCSP.split(",").length == 7) {
+                            tgd.DestinyMaxCSP = _.object(_.map(results.maxCSP.split(","), function(value, index) {
+                                return [_.sortBy(tgd.DestinyArmorPieces)[index], parseInt(value)];
+                            }));
+                        }
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
+
             });
         }
     };

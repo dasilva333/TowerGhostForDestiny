@@ -5,7 +5,7 @@ tgd.openTabAs = window.isMobile ? "_system" : "_blank";
 tgd.bootstrapGridColumns = 24;
 tgd.autoTransferStacks = false;
 tgd.DestinySkillCap = 300;
-tgd.DestinyLightCap = 320;
+tgd.DestinyLightCap = 335;
 tgd.DestinySkillTier = 60;
 tgd.DestinyY1Cap = 170;
 tgd.activeElement = null;
@@ -35,7 +35,7 @@ tgd.DestinyFiveRowBuckets = ["Materials", "Consumables", "Invisible", "Messages"
 tgd.DestinyLayout = [{
     name: "Weapons",
     array: 'weapons',
-    counts: [72, 30],
+    counts: [108, 30],
     bucketTypes: tgd.DestinyWeaponPieces,
     extras: [],
     view: 1,
@@ -43,7 +43,7 @@ tgd.DestinyLayout = [{
 }, {
     name: "Armor",
     array: 'armor',
-    counts: [72, 50],
+    counts: [108, 50],
     bucketTypes: tgd.DestinyArmorPieces,
     extras: tgd.DestinyGeneralExceptions,
     view: 2,
