@@ -386,10 +386,11 @@ Item.prototype = {
                                 return memo;
                             }, false);
                         }
+						var description = p && p.displayDescription ? p.displayDescription : "";
                         parsedPerks.push({
                             iconPath: tgd.dataDir + p.displayIcon,
                             name: p.displayName,
-                            description: '<strong>' + p.displayName + '</strong>: ' + p.displayDescription,
+                            description: '<strong>' + p.displayName + '</strong>: ' + description,
                             active: perk.isActive,
                             isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex),
                             isInherent: isInherent,

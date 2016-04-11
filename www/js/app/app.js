@@ -531,7 +531,7 @@ var app = function() {
                     var info = _objectiveDefs[objective.objectiveHash];
                     var label = "",
                         value = 0;
-                    if (info.displayDescription) {
+                    if (info && info.displayDescription) {
                         label = "<strong>" + info.displayDescription + "</strong>:";
                     }
                     if (info && info.completionValue) {
