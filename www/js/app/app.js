@@ -237,6 +237,8 @@ var app = function() {
         self.weaponFilter(tgd.defaults.weaponFilter);
         self.armorFilter(tgd.defaults.armorFilter);
         self.generalFilter(tgd.defaults.generalFilter);
+        self.activeStats(tgd.defaults.activeStats);
+        self.activeClasses(tgd.defaults.activeClasses);
         self.dmgFilter([]);
         self.progressFilter(tgd.defaults.progressFilter);
         self.setFilter([]);
@@ -716,14 +718,14 @@ var app = function() {
         self.customFilter(self.activeStats().length > 0);
         if (self.customFilter()) {
             self.activeView(2);
+            var activeStats = self.activeStats();
             _.each(self.characters(), function(character) {
                 _.each(character.armor(), function(armor) {
-                    var hasStats = _.reduce(armor.stats, function(memo, stat, name) {
-                        if (memo === false && self.activeStats().indexOf(name) > -1 && stat > 0) {
-                            memo = true;
-                        }
+                    var itemStats = _.reduce(armor.stats, function(memo, stat, name) {
+                        if (stat > 0) memo.push(name);
                         return memo;
-                    }, false);
+                    }, []);
+                    var hasStats = (activeStats.length == 2) ? _.intersection(itemStats, activeStats).length == 2 : _.intersection(itemStats, activeStats).length > 0;
                     armor.isFiltered(hasStats);
                 });
             });
