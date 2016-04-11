@@ -386,7 +386,7 @@ Item.prototype = {
                                 return memo;
                             }, false);
                         }
-						var description = p && p.displayDescription ? p.displayDescription : "";
+                        var description = p && p.displayDescription ? p.displayDescription : "";
                         parsedPerks.push({
                             iconPath: tgd.dataDir + p.displayIcon,
                             name: p.displayName,
@@ -408,7 +408,7 @@ Item.prototype = {
                         var nodes = _.findWhere(talentGridNodes, {
                             nodeHash: node.nodeHash
                         });
-                        if (nodes && nodes.steps) {
+                        if (nodes && nodes.steps && _.isArray(nodes.steps)) {
                             var perk = nodes.steps[node.stepIndex];
                             var isSkill = _.intersection(perk.nodeStepName.split(" "), statNames);
                             if (isSkill.length == 0 &&

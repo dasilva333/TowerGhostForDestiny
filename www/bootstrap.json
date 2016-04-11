@@ -14,11 +14,11 @@
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "41f05e07f4bbc3c0d40509b1a73e7a6fe9d5132b90693af6c751e957a4ee8400"
+      "version": "3f725528caa5083773f7177e979693c7f3ed134ac826a33d5daf61845baab0e4"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "aa46f748a430d928783f4db6a6e1ab61ae0eca657c98f40804940ea68346dcb6"
+      "version": "aee5088de306f0ed835c03d5da5db84a6f428777297f52256b1760bde7e7cc6c"
     }
   },
   "load": [

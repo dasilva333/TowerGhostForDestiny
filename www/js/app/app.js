@@ -342,6 +342,8 @@ var app = function() {
                             });
                             if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
                                 armoryLabelText = statObj.minimum + "/" + statObj.maximum;
+                            } else {
+                                armoryLabelText = "";
                             }
                             if ($stat.find(".stat-bar-static-value").css("display") == "block") {
                                 ddbLabelText = $.trim($stat.find(".stat-bar-static-value").text().replace(/ /g, ''));
