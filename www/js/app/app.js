@@ -125,7 +125,7 @@ var app = function() {
                 }
             }]
         })).title(self.activeText().menu_loadouts_manage + " Loadouts").content($template).show(true, function() {
-            /* onClose */
+            ko.cleanNode(document.getElementById('container_' + id));
         }, function() {
             var loadoutManager = new tgd.loadoutManager(self.loadouts);
             ko.applyBindings(loadoutManager, document.getElementById('container_' + id));

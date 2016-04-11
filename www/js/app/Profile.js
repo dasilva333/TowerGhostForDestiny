@@ -955,6 +955,7 @@ Profile.prototype = {
             }]
         })).title("Armor Builds for " + type).content($template).show(true, function() {
             groups = null;
+			ko.cleanNode(document.getElementById('container_' + id));
         }, function() {
             armorSelection.setDialog(armorTemplateDialog);
             ko.applyBindings(armorSelection, document.getElementById('container_' + id));
