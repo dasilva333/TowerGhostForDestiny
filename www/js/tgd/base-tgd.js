@@ -59,7 +59,7 @@ tgd.DestinyLayout = [{
 }, {
     name: "General",
     array: 'general',
-    counts: [36, 80],
+    counts: [72, 80],
     bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
     extras: tgd.DestinyGeneralExceptions,
     view: 3,
