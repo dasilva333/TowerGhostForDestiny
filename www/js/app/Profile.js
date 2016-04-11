@@ -738,7 +738,7 @@ Profile.prototype = {
                 });
                 var combos = _.filter(tgd.cartesianProductOf(subSets), function(sets) {
                     var exoticItems = _.filter(sets, function(item) {
-                        return item.tierType == 6 && item.hasLifeExotic == false;
+                        return item.tierType === 6 && item.hasLifeExotic === false;
                     });
                     return exoticItems.length < 2;
                 });
@@ -955,7 +955,7 @@ Profile.prototype = {
             }]
         })).title("Armor Builds for " + type).content($template).show(true, function() {
             groups = null;
-			ko.cleanNode(document.getElementById('container_' + id));
+            ko.cleanNode(document.getElementById('container_' + id));
         }, function() {
             armorSelection.setDialog(armorTemplateDialog);
             ko.applyBindings(armorSelection, document.getElementById('container_' + id));
@@ -1041,7 +1041,7 @@ Profile.prototype = {
                 tgd.imageErrorHandler(this.src.replace(location.origin, '').replace("www/", ""), this)();
             });
             return _template;
-        }
+        };
 
         var assignBindingHandlers = function() {
             $("a.itemLink").each(function() {
@@ -1082,7 +1082,7 @@ Profile.prototype = {
                 currentRow.hide();
                 $("#" + newId).show();
             });
-        }
+        };
 
         //console.log("arrArmorBuilds", arrArmorBuilds);
         var $template = renderTemplate(arrArmorBuilds);
@@ -1098,7 +1098,7 @@ Profile.prototype = {
                         var selectedStatTier = selectedBuild.split("_")[0];
                         var selectedIndex = selectedBuild.split("_")[1];
                         highestCombo = _.filter(arrArmorBuilds, function(sets) {
-                            return sets[0].statTiers == selectedStatTier
+                            return sets[0].statTiers == selectedStatTier;
                         })[0][selectedIndex];
                         character.equipAction(type, highestCombo.score.toFixed(3), highestCombo.set);
                         dialog.close();
@@ -1114,7 +1114,7 @@ Profile.prototype = {
                         var selectedStatTier = selectedBuild.split("_")[0];
                         var selectedIndex = selectedBuild.split("_")[1];
                         highestCombo = _.filter(arrArmorBuilds, function(sets) {
-                            return sets[0].statTiers == selectedStatTier
+                            return sets[0].statTiers == selectedStatTier;
                         })[0][selectedIndex];
                         app.createLoadout();
                         var loadoutName = highestCombo.score + " " + $("<div></div>").html(highestCombo.statTiers).text();
@@ -1152,7 +1152,7 @@ Profile.prototype = {
 
         /* Only consider Armor within your own character, and all Ghosts anywhere */
         var activeItems = _.filter(items, function(item) {
-            return item.armorIndex > -1 && item.isEquipment == true && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
+            return item.armorIndex > -1 && item.isEquipment === true && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
         });
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
             return type.name.split(" ")[0];

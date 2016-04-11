@@ -2,7 +2,7 @@ tgd.loadoutManager = function(loadouts, dialog) {
     var self = this;
 
     self.loadouts = loadouts;
-}
+};
 
 tgd.loadoutId = 0;
 
@@ -62,13 +62,13 @@ tgd.Loadout = function(model, isItems) {
         });
     });
     this.editing = ko.observable(false);
-    this.sortUp = function() {
+    /*this.sortUp = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex - 1;
         console.log("currentIndex", currentIndex);
         console.log("nextIndex", nextIndex);
         console.log(_.map(app.loadouts(), function(loadout) {
-            return loadout.name()
+            return loadout.name();
         }));
         //add the item to the right position in the array
         app.loadouts.splice(nextIndex, 0, self);
@@ -89,16 +89,16 @@ tgd.Loadout = function(model, isItems) {
         //remove item from the array
         //currentIndex = app.loadouts.indexOf(self)+1;
         console.log(app.loadouts.splice(nextIndex + 1, 1));
-    }
+    }*/
     this.rename = function() {
         self.editing(!self.editing());
-    }
+    };
     this.equip = function() {
         if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
             self.setActive();
             app.manageLoadoutDialog.close();
         }
-    }
+    };
     this.markAsEquip = function(item, event) {
         var existingItems = _.where(self.ids(), {
             bucketType: item.bucketType

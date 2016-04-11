@@ -96,23 +96,23 @@ tgd.armorSelection = function(type, groups, character) {
         var helmets = armorGroups.shift();
         //console.log("Analyzing " + (helmets.length - 1) + " helmets", _.pluck(helmets,'description'));
         _.each(helmets, function(helmet, index) {
-            if (self.foundFirstSet().length == 0) {
+            if (self.foundFirstSet().length === 0) {
                 var set = _.map(_.clone(armorGroups), function(items) {
                     return _.first(_.sortBy(items, function(item) {
                         return item.getValue(valueType) * -1;
                     }), 4);
                 });
                 set.unshift([helmet]);
-                console.log(helmet.description, "considering helmet", set);
-                console.time("calculateBestSets " + helmet.description);
+                //console.log(helmet.description, "considering helmet", set);
+                //console.time("calculateBestSets " + helmet.description);
                 var combos = _.filter(tgd.calculateBestSets(set, rollType), function(combo) {
                     return Math.floor(combo.score) >= tgd.maxTierPossible;
                 });
-                console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
-                console.timeEnd("calculateBestSets " + helmet.description);
-                console.log(combos);
+                //console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
+                //console.timeEnd("calculateBestSets " + helmet.description);
+                //console.log(combos);
                 if (combos.length > 0) {
-                    console.log("Found a combo " + combos[0].statTiers);
+                    //console.log("Found a combo " + combos[0].statTiers);
                     self.foundFirstSet(combos[0].set);
                 }
             }
@@ -178,17 +178,17 @@ tgd.armorSelection = function(type, groups, character) {
             });
             self.dialog.close();
         }
-    }
+    };
     self.equipSelectedCombo = function(combo) {
         if (confirm("Are you sure you want to equip this loadout? Doing so will close this pop up dialog")) {
             self.character.equipAction("Max Light Max Tier", combo.score, combo.set);
             self.dialog.close();
         }
-    }
+    };
     self.setDialog = function(dialog) {
         self.dialog = dialog.modal;
-    }
-}
+    };
+};
 
 tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type) {
     var self = this;
@@ -203,17 +203,17 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type)
         return item.getValue("All") * -1;
     });
 
-    if (instanceId == "") {
+    if (instanceId === "") {
         self.selectedItem(self.items[0]);
     } else {
         self.selectedItem(_.findWhere(self.items, {
             _id: instanceId
         }));
     }
-}
+};
 
 tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
-    var self = this
+    var self = this;
     _.extend(self, item);
     var isSelected = ko.pureComputed(function() {
         return self == selectedItem();
@@ -227,7 +227,7 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
             var validSets = tgd.calculateBestSets(items, 'futureRolls');
             return _.filter(validSets, function(combo) {
                 return Math.floor(combo.score) >= tgd.maxTierPossible;
-            }).length == 0;
+            }).length === 0;
         } else {
             return false;
         }
@@ -262,5 +262,5 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
                 selectedItem(self);
             }
         }
-    }
-}
+    };
+};

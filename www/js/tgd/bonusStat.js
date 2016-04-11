@@ -11,98 +11,98 @@ tgd.calculateStatRoll = function(item, targetLight, withBonus) {
     var finalStat = newStats + (withBonus ? targetBonus : 0);
     //console.log("Stat at " + targetLight + " is " + finalStat);
     return finalStat;
-}
+};
 
 tgd.bonusStatPoints = function(armorIndex, light) {
-    if (armorIndex == 0) { //Helmet
+    if (armorIndex === 0) { //Helmet
         if (light < 291) {
-            return 15
+            return 15;
         } else if (light < 307) {
-            return 16
+            return 16;
         } else if (light < 319) {
-            return 17
+            return 17;
         } else if (light < 334) {
-            return 18
+            return 18;
         } else {
             return 19;
         }
-    } else if (armorIndex == 1) { //Gauntlet
+    } else if (armorIndex === 1) { //Gauntlet
         if (light < 287) {
-            return 13
+            return 13;
         } else if (light < 305) {
-            return 14
+            return 14;
         } else if (light < 319) {
-            return 15
+            return 15;
         } else if (light < 334) {
-            return 16
+            return 16;
         } else {
             return 17;
         }
-    } else if (armorIndex == 2) { //Chest
+    } else if (armorIndex === 2) { //Chest
         if (light < 287) {
-            return 20
+            return 20;
         } else if (light < 299) {
-            return 21
+            return 21;
         } else if (light < 310) {
-            return 22
+            return 22;
         } else if (light < 319) {
-            return 23
+            return 23;
         } else if (light < 334) {
-            return 24
+            return 24;
         } else {
             return 25;
         }
-    } else if (armorIndex == 3) { //Boots
+    } else if (armorIndex === 3) { //Boots
         if (light < 284) {
-            return 18
+            return 18;
         } else if (light < 298) {
-            return 19
+            return 19;
         } else if (light < 309) {
-            return 20
+            return 20;
         } else if (light < 319) {
-            return 21
+            return 21;
         } else if (light < 334) {
-            return 22
+            return 22;
         } else {
             return 23;
         }
-    } else if (armorIndex == 4) { //Class Items
+    } else if (armorIndex === 4) { //Class Items
         if (light < 295) {
-            return 8
+            return 8;
         } else if (light < 319) {
-            return 9
+            return 9;
         } else if (light < 334) {
-            return 10
+            return 10;
         } else {
             return 11;
         }
-    } else if (armorIndex == 5) { //Artifact
+    } else if (armorIndex === 5) { //Artifact
         if (light < 287) {
-            return 34
+            return 34;
         } else if (light < 295) {
-            return 35
+            return 35;
         } else if (light < 302) {
-            return 36
+            return 36;
         } else if (light < 308) {
-            return 37
+            return 37;
         } else if (light < 314) {
-            return 38
+            return 38;
         } else if (light < 319) {
-            return 39
+            return 39;
         } else if (light < 334) {
-            return 40
+            return 40;
         } else {
             return 41;
         }
-    } else if (armorIndex == 6) { //Ghost
+    } else if (armorIndex === 6) { //Ghost
         if (light < 295) {
-            return 8
+            return 8;
         } else if (light < 319) {
-            return 9
+            return 9;
         } else if (light < 334) {
-            return 10
+            return 10;
         } else {
             return 11;
         }
     }
-}
+};

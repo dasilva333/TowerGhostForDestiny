@@ -130,7 +130,7 @@ var app = function() {
             var loadoutManager = new tgd.loadoutManager(self.loadouts);
             ko.applyBindings(loadoutManager, document.getElementById('container_' + id));
         }).modal;
-    }
+    };
     this.createLoadout = function() {
         self.loadoutMode(true);
         self.activeLoadout(new tgd.Loadout());
@@ -356,8 +356,7 @@ var app = function() {
                                 }
                                 $stat.find(".stat-bar-static-value").text(newLabelText);
                             } else {
-                                var ddbStatBar = $stat.find(".stat-bar-empty").html(),
-                                    ddbLabelText = $.trim($stat.find(".stat-bar-value").text().replace(/ /g, ''));
+                                ddbLabelText = $.trim($stat.find(".stat-bar-value").text().replace(/ /g, ''));
                                 if (ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) {
                                     newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
                                 } else {
@@ -435,9 +434,9 @@ var app = function() {
                                     if (inventorySize >= 30 && inventorySize <= 60) {
                                         rocketsAvailable = Math.max(magazineSize, 2);
                                     } else if (inventorySize >= 70 && inventorySize <= 120) {
-                                        rocketsAvailable = Math.max(magazineSize + 1, 3)
+                                        rocketsAvailable = Math.max(magazineSize + 1, 3);
                                     } else if (inventorySize >= 130) {
-                                        rocketsAvailable = Math.max(magazineSize + 2, 4)
+                                        rocketsAvailable = Math.max(magazineSize + 2, 4);
                                     }
                                     clonedRow.find(".stat-bar-label").html("Rockets: " + inventorySize);
                                     clonedRow.find(".stat-bar-static-value").html("PVP: " + rocketsAvailable /*+ " PVE: " + rocketsAvailable*/ );
@@ -493,9 +492,9 @@ var app = function() {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
                         var hasStat = _.has(perk, 'isStat');
-                        return perk.active === true && hasStat == false ||
-                            (perk.active === false && self.advancedTooltips() === true && hasStat == false) ||
-                            hasStat == true && perk.isStat == false;
+                        return perk.active === true && hasStat === false ||
+                            (perk.active === false && self.advancedTooltips() === true && hasStat === false) ||
+                            hasStat === true && perk.isStat === false;
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
@@ -720,7 +719,7 @@ var app = function() {
             _.each(self.characters(), function(character) {
                 _.each(character.armor(), function(armor) {
                     var hasStats = _.reduce(armor.stats, function(memo, stat, name) {
-                        if (memo == false && self.activeStats().indexOf(name) > -1 && stat > 0) {
+                        if (memo === false && self.activeStats().indexOf(name) > -1 && stat > 0) {
                             memo = true;
                         }
                         return memo;

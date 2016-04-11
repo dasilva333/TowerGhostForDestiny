@@ -103,7 +103,7 @@ tgd.DestinyDamageTypes = {
 tgd.DestinyBucketSizes = {
     "Materials": 20,
     "Consumables": 20
-}
+};
 tgd.DestinyBucketTypes = {
     "1498876634": "Primary",
     "2465295065": "Special",

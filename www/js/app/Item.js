@@ -181,7 +181,7 @@ Item.prototype = {
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
             armorIndex = tgd.DestinyArmorPieces.indexOf(bucketType);
             primaryStat = self.parsePrimaryStat(item, bucketType);
-            bonus = (statPerks.length == 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
+            bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
             rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
             futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
             hasUnlockedStats = _.where(statPerks, {
@@ -238,7 +238,7 @@ Item.prototype = {
                         memo = layout.array;
                     return memo;
                 }, ""),
-                hasUnlockedStats: hasUnlockedStats || statPerks.length == 0,
+                hasUnlockedStats: hasUnlockedStats || statPerks.length === 0,
                 bonusStatOn: bonusStatOn,
                 progression: _.filter(perks, function(perk) {
                     return perk.active === false && perk.isExclusive === -1;
@@ -250,13 +250,13 @@ Item.prototype = {
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
         var futureRolls = [];
-        if (statPerks.length == 0) {
+        if (statPerks.length === 0) {
             futureRolls = [stats];
         } else {
             var futureBonus = tgd.bonusStatPoints(armorIndex, tgd.DestinyLightCap);
             var allStatsLocked = _.where(statPerks, {
                 active: true
-            }).length == 0;
+            }).length === 0;
             futureRolls = _.map(statPerks, function(statPerk) {
                 var tmp = _.clone(stats);
                 var isStatActive = statPerk.active;
@@ -272,7 +272,7 @@ Item.prototype = {
                 //Calculate both stats at Max Light (LL320) with bonus
                 tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
                 tmp["bonusOn"] = statPerk.name;
-                if (otherStatName != "") {
+                if (otherStatName !== "") {
                     tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                 }
                 return tmp;
@@ -286,7 +286,7 @@ Item.prototype = {
     },
     normalizeRolls: function(stats, statPerks, primaryStat, bonus, description) {
         var arrRolls = [];
-        if (statPerks.length == 0) {
+        if (statPerks.length === 0) {
             arrRolls = [stats];
         } else {
             var hasUnlockedStats = _.where(statPerks, {
@@ -296,13 +296,13 @@ Item.prototype = {
             arrRolls = _.map(statPerks, function(statPerk) {
                 var tmp = _.clone(stats);
                 tmp["bonusOn"] = statPerk.name;
-                if (hasUnlockedStats && statPerk.active == false) {
+                if (hasUnlockedStats && statPerk.active === false) {
                     var otherStatName = _.reduce(stats, function(memo, stat, name) {
                         return (name != statPerk.name && stat > 0) ? name : memo;
                     }, '');
                     tmp[otherStatName] = tmp[otherStatName] - bonus;
                     tmp[statPerk.name] = tmp[statPerk.name] + bonus;
-                } else if (hasUnlockedStats == false) {
+                } else if (hasUnlockedStats === false) {
                     tmp[statPerk.name] = tmp[statPerk.name] + bonus;
                 }
                 return tmp;
@@ -411,7 +411,7 @@ Item.prototype = {
                         if (nodes && nodes.steps && _.isArray(nodes.steps)) {
                             var perk = nodes.steps[node.stepIndex];
                             var isSkill = _.intersection(perk.nodeStepName.split(" "), statNames);
-                            if (isSkill.length == 0 &&
+                            if (isSkill.length === 0 &&
                                 node.isActivated &&
                                 (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
                                 (perkNames.indexOf(perk.nodeStepName) == -1) &&
@@ -427,7 +427,7 @@ Item.prototype = {
                             } else if (isSkill.length > 0) {
                                 var statName = isSkill[0];
                                 talentPerks[statName] = {
-                                    active: node.isActivated == true && [7, 1].indexOf(node.state) == -1,
+                                    active: node.isActivated === true && [7, 1].indexOf(node.state) == -1,
                                     name: statName,
                                     description: "",
                                     iconPath: "",
