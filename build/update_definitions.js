@@ -249,7 +249,7 @@ var cacheIcons = function(){
 	var physicalPath = jsonPath + iconPath;
 	if ( !fs.existsSync(physicalPath) ){
 		var dlPath = secureBungieURL + iconPath;
-		console.log("downloading icon " + dlPath);
+		//console.log("downloading icon " + dlPath);
 		https.get(dlPath, function(res) {
 			if (res.statusCode != 200){
 				console.log(res.statusCode + " status code for icon " + icon);
@@ -264,6 +264,7 @@ var cacheIcons = function(){
 				});
 				res.on("end", function() {
 					fs.writeFileSync(physicalPath, Buffer.concat(data));
+					console.log("icon downloaded at ", physicalPath);
 					if (queue.length > 0)
 						cacheIcons();
 				});			

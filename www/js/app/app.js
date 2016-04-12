@@ -1000,7 +1000,7 @@ var app = function() {
                 $ZamTooltips.init();
                 setTimeout(function() {
                     self.loadLoadouts();
-                }, 5000);
+                }, 10000);
                 self.farmModeHandler(self.farmMode());
                 //console.timeEnd("new profile");
             }
