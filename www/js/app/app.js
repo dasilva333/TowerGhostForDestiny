@@ -97,7 +97,9 @@ var app = function() {
         if (self.appLocale() !== "") {
             locale = self.appLocale();
         }
-		locale = _.findWhere(tgd.languages, { bungie_code: locale }).code || locale;
+        locale = _.findWhere(tgd.languages, {
+            bungie_code: locale
+        }).code || locale;
         return locale;
     });
     this.activeText = ko.pureComputed(function() {
