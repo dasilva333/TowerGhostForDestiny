@@ -14,9 +14,6 @@ module.exports = function (grunt) {
 	grunt.registerTask('deployimages', [
         'ftpush:images', 'ftpush:shareImages', 'ftpush:firefoxImages'
 	]);
-	grunt.registerTask('deploylocale', [
-        'ftpush:locale'
-	]);
 	grunt.registerTask('deployshare', [
         'ftpush:shareAssets'
 	]);

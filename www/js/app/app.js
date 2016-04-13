@@ -462,33 +462,40 @@ var app = function() {
                         });
                     } else if (activeItem.armorIndex > -1) {
                         var clonedRow = magazineRow.clone();
-                        var maxLightLevel = tgd.DestinyLightCap;
-                        var isItemLeveled = activeItem.hasUnlockedStats;
-                        var itemCSP = activeItem.getValue("All");
-                        //console.log(activeItem);
-                        var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
-                        //console.log("maxBonusPoints", maxBonusPoints);
-                        var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryValues.Default);
-                        //console.log("currentBonusPoints", currentBonusPoints);
-                        var currentBaseStat = itemCSP - (isItemLeveled ? currentBonusPoints : 0);
-                        if (!isItemLeveled) {
-                            itemCSP = itemCSP + "<span class='font-smaller-2'>(" + (itemCSP + currentBonusPoints) + ")</span>";
+                        if (activeItem.primaryStat() == 3) {
+                            var statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
+                            clonedRow.find(".stat-bar-label").html("Stat Roll : ");
+                            clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                            clonedRow.find(".stat-bar-static-value").show().html(statDetails);
+                        } else {
+                            var maxLightLevel = tgd.DestinyLightCap;
+                            var isItemLeveled = activeItem.hasUnlockedStats;
+                            var itemCSP = activeItem.getValue("All");
+                            //console.log(activeItem);
+                            var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
+                            //console.log("maxBonusPoints", maxBonusPoints);
+                            var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryValues.Default);
+                            //console.log("currentBonusPoints", currentBonusPoints);
+                            var currentBaseStat = itemCSP - (isItemLeveled ? currentBonusPoints : 0);
+                            if (!isItemLeveled) {
+                                itemCSP = itemCSP + "<span class='font-smaller-2'>(" + (itemCSP + currentBonusPoints) + ")</span>";
+                            }
+                            //console.log("currentBaseStat", currentBaseStat);
+                            var maxBaseStat = tgd.calculateStatRoll(activeItem, maxLightLevel, false);
+                            //console.log("maxBaseStat", maxBaseStat);
+                            var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType] - maxBonusPoints;
+                            //console.log("maxStatRoll", maxStatRoll);
+                            var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                            if (activeItem.tierType >= 5) {
+                                maxRollStats = maxRollStats + "-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                            }
+                            //console.log("maxRollStats", maxRollStats);
+                            var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
+                            //console.log("statDetails", statDetails);
+                            clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
+                            clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                            clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         }
-                        //console.log("currentBaseStat", currentBaseStat);
-                        var maxBaseStat = tgd.calculateStatRoll(activeItem, maxLightLevel, false);
-                        //console.log("maxBaseStat", maxBaseStat);
-                        var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType] - maxBonusPoints;
-                        //console.log("maxStatRoll", maxStatRoll);
-                        var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
-                        if (activeItem.tierType >= 5) {
-                            maxRollStats = maxRollStats + "-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
-                        }
-                        //console.log("maxRollStats", maxRollStats);
-                        var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
-                        //console.log("statDetails", statDetails);
-                        clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
-                        clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
-                        clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         magazineRow.after(clonedRow);
                     }
                 }
