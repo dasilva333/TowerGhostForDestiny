@@ -361,7 +361,7 @@
                             </a>
                         </li>
                         <!--/ko  -->
-                         <!-- <li class="divider"></li>
+                        <li class="divider"></li>
                         <li>
                             <strong style="padding-left: 10px;">
                                 <span data-bind="text: $root.activeText().menu_view_by">View By</span>
@@ -373,12 +373,12 @@
                                 <span data-bind="text: $root.activeText().menu_view_by_lightlvl">Light Level</span>
                             </a>
                         </li>
-                       <li data-bind="css: armorViewBy() == 'All' ? 'active' : '', fastclick: setArmorView.bind('All')">
+                       <li data-bind="css: armorViewBy() == 'CSP' ? 'active' : '', fastclick: setArmorView.bind('CSP')">
                             <a href="#">
-                                <i class="fa" data-bind="css: armorViewBy() == 'All' ? 'fa-check-square' : 'fa-square'"></i>
+                                <i class="fa" data-bind="css: armorViewBy() == 'CSP' ? 'fa-check-square' : 'fa-square'"></i>
                                 <span data-bind="text: $root.activeText().menu_view_by_stat_points">Combined Stat Points</span>
                             </a>
-                        </li> -->
+                        </li>
                     </ul>
                 </li>
                 <li class="dropdown" data-bind="visible: (activeView() == 0 || activeView() == 3)">

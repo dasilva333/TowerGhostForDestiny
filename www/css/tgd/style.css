@@ -211,6 +211,12 @@ li a {
 .attkIcon .Void {
     background-color: #B184C5;
 }
+.attkIcon .GoodRoll {
+	background-color: LawnGreen;
+}
+.attkIcon .BadRoll {
+	background-color: LightCoral;
+}
 @media (max-width: 1020px)
 {
 	.attkIcon>div

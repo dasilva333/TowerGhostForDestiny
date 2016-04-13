@@ -134,6 +134,9 @@ var Item = function(model, profile) {
     this.columnMode = ko.computed(this._columnMode, this);
     this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
+	this.maxLightPercent = ko.observable(0);
+    this.cspStat = ko.pureComputed(this._cspStat, this);
+    this.cspClass = ko.pureComputed(this._cspClass, this);
 };
 
 Item.prototype = {
@@ -245,7 +248,6 @@ Item.prototype = {
                 }).length === 0
             });
             self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
-            self.primaryValues.MaxLightPercent = Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100);
         }
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
@@ -539,6 +541,12 @@ Item.prototype = {
         } else {
             return false;
         }
+    },
+    _cspStat: function() {
+        return this.getValue("All") + "-" + this.getValue("MaxLightCSP");
+    },
+    _cspClass: function() {
+        return this.maxLightPercent() >= tgd.minAvgPercentNeeded ? "GoodRoll" : "BadRoll";
     },
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {
@@ -1554,7 +1562,7 @@ Item.prototype = {
             value = this.primaryValues.MaxLightCSP;
 
         } else if (type == "MaxLightPercent") {
-            value = this.primaryValues.MaxLightPercent;
+            value = this.maxLightPercent();
 
         } else if (type == "All") {
             value = this.primaryValues.CSP;

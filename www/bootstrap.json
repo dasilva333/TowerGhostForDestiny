@@ -18,7 +18,7 @@
     },
     "style.css": {
       "filename": "css/tgd/style.css",
-      "version": "038bcf6d97a13bf52a590852ef2ca2a7dd22b3405ef10c80705d6b19cd1befb3"
+      "version": "a271690f4faf84b3cb2fd292ad1055eba79f6f918413fe0d1b9c99623301645d"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
@@ -118,7 +118,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "9acd5810ba248d2e939e6d191ed5c6e44b4fe9800e8310a91c38e1b1cd802c4f"
+      "version": "d7fcb5eff889420d9dbf7c06c9e66bbdd821ebcc83d0a3af3fb2fad3250f9d2f"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
@@ -178,7 +178,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "d5965342cfd91f8d25b751fd5429636ce5ec713f60e4d40734e42c9f4a5a8a07"
+      "version": "fdb0680f452f93b9d8343b1e24bcfbd33248acaace99011c3b8274f90670f7f2"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -186,7 +186,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "6da96e1760b4e75bada785cddd88051a08486b9d55be6cb88987e5c38b3b5569"
+      "version": "b3290b3937ab39ba3999d887fd8b5545e1ab568883b3ce073f5e5d8387d37803"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

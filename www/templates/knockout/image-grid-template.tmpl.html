@@ -37,7 +37,8 @@
                 </a>
                 <img src="assets/lock.png" class="lockIcon" data-bind="visible: item.locked" />
                 <div class="attkIcon" data-bind="visible: primaryStat() != ''">
-                    <div data-bind="text: primaryStat, css: damageTypeName"></div>
+					<div data-bind="text: primaryStat, css: damageTypeName, visible: $root.armorViewBy() == 'Light'"></div>
+					<div data-bind="text: cspStat, css: cspClass, visible: $root.armorViewBy() == 'CSP'"></div>
                 </div>
             </span>
         </div>
@@ -49,7 +50,8 @@
         </a>
         <img src="assets/lock.png" class="lockIcon" data-bind="visible: locked" />
         <div class="attkIcon" data-bind="visible: primaryStat() != ''">
-            <div data-bind="text: primaryStat, css: damageTypeName"></div>
+            <div data-bind="text: primaryStat, css: damageTypeName, visible: $root.armorViewBy() == 'Light'"></div>
+			<div data-bind="text: cspStat, css: cspClass, visible: $root.armorViewBy() == 'CSP'"></div>
         </div>
     </div>
     <!--/ko  -->
