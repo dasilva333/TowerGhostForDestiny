@@ -496,7 +496,7 @@ var app = function() {
                             clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             if (activeItem.tierType >= 5) {
-                                clonedRow.find(".stat-bar-static-value").css("color", maxRollPercent >= tgd.minAvgPercentNeeded ? "green" : "red");
+                                clonedRow.find(".stat-bar-static-value").css("color", maxRollPercent >= tgd.minAvgPercentNeeded ? "LawnGreen" : "LightCoral");
                             }
                             clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         }
