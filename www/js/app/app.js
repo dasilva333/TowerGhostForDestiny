@@ -204,7 +204,7 @@ var app = function() {
             $("div.googlePlay").toggle(isAndroid === true);
             $("div.appleIAP").toggle(isIOS === true);
             $("a.donate").bind("click", function() {
-                if (isChrome) {
+                if (isChrome && !isNWJS) {
                     google.payments.inapp.buy({
                         'parameters': {
                             'env': 'prod'
