@@ -29,7 +29,7 @@
 				<div class="col-xs-8 col-md-6 col-sd-4 col-lg-3">
 					<div class="col-xs-24">
 						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }">
-							<img class="itemImage" data-bind="itemImageHandler: item.icon, style: { border: '2px solid ' + (item.getValue('MaxLightCSP') >= tgd.minAvgPercentNeeded ? 'green' : 'red')}" style="padding: 2px; width:48px;">
+							<img class="itemImage" data-bind="itemImageHandler: item.icon, style: { border: '2px solid ' + (item.getValue('MaxLightPercent') >= tgd.minAvgPercentNeeded ? 'green' : 'red')}" style="padding: 2px; width:48px;">
 						</a>						
 					</div>
 					<div class="col-xs-24">
