@@ -10,26 +10,31 @@
 		Currently this character does not have any armor that can be infused to <span class="label label-default" data-bind="text: tgd.DestinyLightCap">{320}</span> and provide
 		enough stat points to reach tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span>.<br>
 		
-		Provided below is the best scoring armor set this character has, for each item the <strong>first number</strong> listed indicates how many points the item currently has, 
-		the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level. 
-		
+		Provided below is the best scoring armor set this character has, for each item the following details are provided:
+		<ul>
+			<li><strong>first number</strong> indicates how many points the item currently has</li>
+			<li><strong>second number</strong> indicates how many points an item with a perfect stat roll has</li>
+			<li><strong>third percentage</strong> indicates the item's total potential compared to a perfect stat roll once infused to max light level</li>
+		</ul>
 		<div data-bind="with: firstSet">
 			Currently this gear (once a certain piece is replaced) is <span class="label label-default" data-bind="text: (tgd.maxTierPointsPossible - score.toString().split('.')[1])"></span> points away from reaching max tier <span class="label label-default" data-bind="text: tgd.maxTierPossible">{11}</span>.
-			Please ensure that your armor pieces are all at least <span class="label label-default">90%</span> to be able to use this tool.<br>
+			Please ensure that your armor pieces are all at least <span class="label label-default" data-bind="text: tgd.minAvgPercentNeeded"></span> to be able to use this tool.<br>
 			
 			<strong>Score</strong>: <span data-bind="text: score"></span><br>
 			<strong>Tiers</strong>: <span data-bind="text: statTiers"></span><br>
 			<strong>Stats</strong>: <span data-bind="text: statValues"></span><br>
+			<strong>Average Armor Stat Roll</strong>: <span data-bind="html: avgRoll"></span>%<br>
 			<hr>
 			<div data-bind="foreach: { data: set, as: 'item' }" class="row">
 				<div class="col-xs-8 col-md-6 col-sd-4 col-lg-3">
 					<div class="col-xs-24">
 						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }">
-							<img class="itemImage" data-bind="itemImageHandler: item.icon" style="padding: 2px; width:48px;">
+							<img class="itemImage" data-bind="itemImageHandler: item.icon, style: { border: '2px solid ' + (item.getValue('MaxLightCSP') >= tgd.minAvgPercentNeeded ? 'green' : 'red')}" style="padding: 2px; width:48px;">
 						</a>						
 					</div>
 					<div class="col-xs-24">
-						<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
+						<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: tgd.DestinyMaxCSP[item.bucketType]"></span>
+						<span class="font-smaller-1">(<span data-bind="text: item.getValue('MaxLightPercent')"></span>%)</span>
 					</div>
 				</div>
 			</div>

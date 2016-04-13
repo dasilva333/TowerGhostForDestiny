@@ -132,7 +132,15 @@ tgd.armorSelection = function(type, groups, character) {
     });
 
     self.firstSet = ko.pureComputed(function() {
-        return _.first(self.bestSets());
+        var firstSet = _.first(self.bestSets());
+        if (firstSet && firstSet.set) {
+            firstSet.avgRoll = Math.floor(tgd.average(_.map(firstSet.set, function(item) {
+                return item.getValue('MaxLightPercent');
+            })));
+            firstSet.statTiers = firstSet.statTiers.replace(/<br>/g, " ");
+            firstSet.statValues = firstSet.statValues.replace(/<br>/g, " ");
+        }
+        return firstSet;
     });
 
     self.maxSets = ko.pureComputed(function() {

@@ -486,14 +486,18 @@ var app = function() {
                             var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType] - maxBonusPoints;
                             //console.log("maxStatRoll", maxStatRoll);
                             var maxRollStats = ((currentBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                            var maxRollPercent = ((maxBaseStat / maxStatRoll) * 100).toFixed(0);
                             if (activeItem.tierType >= 5) {
-                                maxRollStats = maxRollStats + "-" + ((maxBaseStat / maxStatRoll) * 100).toFixed(0) + "%";
+                                maxRollStats = maxRollStats + "-" + maxRollPercent + "%";
                             }
                             //console.log("maxRollStats", maxRollStats);
                             var statDetails = maxRollStats + " (" + Math.floor(maxBaseStat + maxBonusPoints) + "/" + Math.floor(maxStatRoll + maxBonusPoints) + ")";
                             //console.log("statDetails", statDetails);
                             clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                            if (activeItem.tierType >= 5) {
+                                clonedRow.find(".stat-bar-static-value").css("color", maxRollPercent >= tgd.minAvgPercentNeeded ? "green" : "red");
+                            }
                             clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         }
                         magazineRow.after(clonedRow);
@@ -1574,7 +1578,16 @@ var app = function() {
                 } catch (e) {
                     console.log(e);
                 }
-
+                var destinyMaxCSP = tgd.sum(tgd.DestinyMaxCSP);
+                tgd.maxTierPossible = Math.floor(destinyMaxCSP / tgd.DestinySkillTier);
+                tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
+                tgd.minAvgPercentNeeded = Math.floor((tgd.maxTierPointsPossible / destinyMaxCSP) * 100);
+                /* recalculate the max csp based on the new crowd sourced values */
+                _.each(app.characters(), function(character) {
+                    _.each(character.armor(), function(armor) {
+                        armor.primaryValues.MaxLightPercent = Math.round((armor.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[armor.bucketType]) * 100);
+                    })
+                });
             });
         }
     };
