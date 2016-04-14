@@ -134,7 +134,7 @@ var Item = function(model, profile) {
     this.columnMode = ko.computed(this._columnMode, this);
     this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-	this.maxLightPercent = ko.observable(0);
+    this.maxLightPercent = ko.observable(0);
     this.cspStat = ko.pureComputed(this._cspStat, this);
     this.cspClass = ko.pureComputed(this._cspClass, this);
 };

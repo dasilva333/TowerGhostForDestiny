@@ -1585,9 +1585,9 @@ var app = function() {
                 /* calculate the max csp based on the new crowd sourced values */
                 _.each(app.characters(), function(character) {
                     _.each(character.items(), function(armor) {
-						if (_.has(tgd.DestinyMaxCSP,armor.bucketType)){
-	                    	armor.maxLightPercent(Math.round((armor.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[armor.bucketType]) * 100));
-						}
+                        if (_.has(tgd.DestinyMaxCSP, armor.bucketType)) {
+                            armor.maxLightPercent(Math.round((armor.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[armor.bucketType]) * 100));
+                        }
                     });
                 });
             });
