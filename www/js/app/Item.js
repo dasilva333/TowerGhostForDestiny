@@ -543,7 +543,7 @@ Item.prototype = {
         }
     },
     _cspStat: function() {
-        return this.getValue("All") + "-" + this.getValue("MaxLightCSP");
+        return _.has(tgd.DestinyMaxCSP, this.bucketType) ? this.getValue("All") + "-" + this.getValue("MaxLightCSP") : "";
     },
     _cspClass: function() {
         return this.maxLightPercent() >= tgd.minAvgPercentNeeded ? "GoodRoll" : "BadRoll";
