@@ -250,7 +250,7 @@ Item.prototype = {
                     return perk.active === false && perk.isExclusive === -1;
                 }).length === 0
             });
-            self.primaryValues.MaxLightCSP = Math.ceil(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
+            self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
         }
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {

@@ -76,19 +76,24 @@ tgd.armorSelection = function(type, groups, character) {
     //console.log("Calculating most points combo");
     self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
+	self.mostPoints = ko.observableArray();
 
     var armorGroups = _.values(groups),
         rollType = (type == "Custom") ? "rolls" : "futureRolls",
         valueType = type == "Custom" ? "All" : "MaxLightCSP",
         mostPoints = _.map(armorGroups, function(items) {
-            return _.first(_.sortBy(items, function(item) {
+            var items = _.first(_.sortBy(items, function(item) {
                 return item.getValue(valueType) * -1;
             }), 2);
+			//console.log(items[0].bucketType, _.pluck(items,'description'), items);
+			return items;
         });
     //console.log("mostPoints", mostPoints);
-    var combos = _.sortBy(_.filter(tgd.calculateBestSets(mostPoints, rollType), function(combo) {
+	self.mostPoints(tgd.calculateBestSets(mostPoints, rollType));
+    var combos = _.sortBy(_.filter(self.mostPoints(), function(combo) {
         return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
     }), 'score');
+
     if (combos.length > 0) {
         //console.log("Most points combo used");
         self.foundFirstSet(combos[0].set);
@@ -132,13 +137,21 @@ tgd.armorSelection = function(type, groups, character) {
     });
 
     self.firstSet = ko.pureComputed(function() {
-        var firstSet = _.first(self.bestSets());
+        var firstSet = _.clone(_.first(self.mostPoints()));
         if (firstSet && firstSet.set) {
             firstSet.avgRoll = Math.floor(tgd.average(_.map(firstSet.set, function(item) {
                 return item.getValue('MaxLightPercent');
             })));
             firstSet.statTiers = firstSet.statTiers.replace(/<br>/g, " ");
             firstSet.statValues = firstSet.statValues.replace(/<br>/g, " ");
+            _.each(firstSet.set, function(item) {
+                item.activeStatText = _.sortBy(_.reduce(item.activeRoll, function(memo, stat, key) {
+                    if (stat > 0) {
+                        memo.push(key.substring(0, 3) + " " + stat);
+                    }
+                    return memo;
+                }, [])).join("/");
+            });
         }
         return firstSet;
     });
@@ -264,7 +277,7 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
         if (isDisabled()) {
             BootstrapDialog.alert("This item cannot be selected to maintain the max tier: " + tgd.maxTierPossible);
         } else {
-            if (selectedItem() == self) {
+            if (selectedItem() == self && confirm("Warning: Unselecting an item will analyze all the same armor pieces, this will increase processing time and might make the app unresponsive, are you sure you want to unselect an item?")) {
                 selectedItem(null);
             } else {
                 selectedItem(self);
