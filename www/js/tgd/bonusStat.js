@@ -21,10 +21,12 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 16;
         } else if (light < 319) {
             return 17;
-        } else if (light < 334) {
+        } else if (light < 330) {
             return 18;
-        } else {
+        } else if (light < 334) {
             return 19;
+        } else {
+            return 20;
         }
     } else if (armorIndex === 1) { //Gauntlet
         if (light < 287) {
@@ -33,7 +35,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 14;
         } else if (light < 319) {
             return 15;
-        } else if (light < 334) {
+        } else if (light < 333) {
             return 16;
         } else {
             return 17;
@@ -47,7 +49,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 22;
         } else if (light < 319) {
             return 23;
-        } else if (light < 334) {
+        } else if (light < 333) {
             return 24;
         } else {
             return 25;
@@ -61,7 +63,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 20;
         } else if (light < 319) {
             return 21;
-        } else if (light < 334) {
+        } else if (light < 327) {
             return 22;
         } else {
             return 23;
@@ -71,10 +73,8 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 8;
         } else if (light < 319) {
             return 9;
-        } else if (light < 334) {
-            return 10;
         } else {
-            return 11;
+            return 10;
         }
     } else if (armorIndex === 5) { //Artifact
         if (light < 287) {
@@ -89,10 +89,12 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 38;
         } else if (light < 319) {
             return 39;
-        } else if (light < 334) {
+        } else if (light < 324) {
             return 40;
-        } else {
+        } else if (light < 330) {
             return 41;
+        } else {
+            return 42;
         }
     } else if (armorIndex === 6) { //Ghost
         if (light < 295) {
