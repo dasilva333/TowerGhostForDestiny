@@ -118,11 +118,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "d7fcb5eff889420d9dbf7c06c9e66bbdd821ebcc83d0a3af3fb2fad3250f9d2f"
+      "version": "397ac77b0676e0368e9953bd246af444c1d549c6ae7c0f7c9853417c044359a4"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "1c66277668332453c370f772a79a296184931766b3cc01e860160133e974d391"
+      "version": "4a7aeb5ff94b39091002bbca215d9e1fe5972f9fdfb19a507b358f8825c3bdd2"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -138,7 +138,7 @@
     },
     "bonusStat.js": {
       "filename": "js/tgd/bonusStat.js",
-      "version": "532aa1ac25b2cd77d996691041e04a68a79436578713115c34499c8d2d4d4f52"
+      "version": "f50a08281975b24b3b26d14722ab020e63cb04ede26cc12727b51f55681812be"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -182,11 +182,11 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "c2a0582836bf3c267040b621b1091cec01105c5ea6189ed2574349e114f531fa"
+      "version": "ede70f12eea1033ef956c96b7af5c057e2b39404dce06c0973aa25bc391d44c4"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "94cdcfda2d932618b8f2d2c41f4f44bd156211ff48aba33ecfcb62eed0daa4b6"
+      "version": "41fb24b94adc8dcd5ea073f3dd11e94641cbabd6c9d72bd25bfceb5ed8697fef"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

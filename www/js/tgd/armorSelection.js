@@ -76,7 +76,7 @@ tgd.armorSelection = function(type, groups, character) {
     //console.log("Calculating most points combo");
     self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
-	self.mostPoints = ko.observableArray();
+    self.mostPoints = ko.observableArray();
 
     var armorGroups = _.values(groups),
         rollType = (type == "Custom") ? "rolls" : "futureRolls",
@@ -85,11 +85,11 @@ tgd.armorSelection = function(type, groups, character) {
             var items = _.first(_.sortBy(items, function(item) {
                 return item.getValue(valueType) * -1;
             }), 2);
-			//console.log(items[0].bucketType, _.pluck(items,'description'), items);
-			return items;
+            //console.log(items[0].bucketType, _.pluck(items,'description'), items);
+            return items;
         });
     //console.log("mostPoints", mostPoints);
-	self.mostPoints(tgd.calculateBestSets(mostPoints, rollType));
+    self.mostPoints(tgd.calculateBestSets(mostPoints, rollType));
     var combos = _.sortBy(_.filter(self.mostPoints(), function(combo) {
         return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
     }), 'score');

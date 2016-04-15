@@ -26,7 +26,7 @@
             <div class="item" data-bind="css: (isMobile && item._id > 0 && item.doEquip() ? 'doEquip' : '') + (item && _.has(item,'bonusOn') ? (item.bonusOn == item.bonusStatOn ? ' active' : ' inactive') : '')">
                 <input type="checkbox" value="true" data-bind="checked: item.doEquip, fastclick: markAsEquip, visible: !isMobile && item._id > 0" title="Enable to mark as the equip item">
                 <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
-                    <img class="itemImage" src="about:blank" data-bind="itemImageHandler: item.icon, attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
+                    <img class="itemImage" src="about:blank" data-bind="itemImageHandler: item.icon, attr: { src: item.icon, instanceId:item._id, title: (item && _.has(item,'bonusOn') ? item.bonusOn : "")}, fastclick: function(){ return false }">
                 </a>
                 <div class="attkIcon">
                     <div data-bind="text: primaryStat, css: damageTypeName"></div>
