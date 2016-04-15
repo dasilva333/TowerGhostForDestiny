@@ -217,6 +217,9 @@ li a {
 .attkIcon .BadRoll {
 	background-color: LightCoral;
 }
+.attkIcon .OkayRoll {
+	background-color: Khaki;
+}
 @media (max-width: 1020px)
 {
 	.attkIcon>div

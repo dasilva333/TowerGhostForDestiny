@@ -134,7 +134,10 @@ var Item = function(model, profile) {
     this.columnMode = ko.computed(this._columnMode, this);
     this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-    this.maxLightPercent = ko.observable(0);
+    this.maxLightPercent = ko.pureComputed(function() {
+        var toggle = app.cspToggle();
+        return Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100)
+    });
     this.cspStat = ko.pureComputed(this._cspStat, this);
     this.cspClass = ko.pureComputed(this._cspClass, this);
 };
@@ -546,7 +549,15 @@ Item.prototype = {
         return _.has(tgd.DestinyMaxCSP, this.bucketType) ? this.getValue("All") + "-" + this.getValue("MaxLightCSP") : "";
     },
     _cspClass: function() {
-        return this.maxLightPercent() >= tgd.minAvgPercentNeeded ? "GoodRoll" : "BadRoll";
+        var rollType = "BadRoll";
+        if (this.maxLightPercent() >= tgd.minAvgPercentNeeded) {
+            rollType = "GoodRoll";
+        }
+        //4 pts under the requirement is still good enough to maybe get you there
+        else if (this.maxLightPercent() >= (tgd.minAvgPercentNeeded - 4)) {
+            rollType = "OkayRoll";
+        }
+        return rollType;
     },
     _primaryStatValue: function() {
         if (this.primaryStat && typeof this.primaryStat == "function") {

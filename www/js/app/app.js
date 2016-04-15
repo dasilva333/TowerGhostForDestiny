@@ -59,6 +59,7 @@ var app = function() {
     this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
     this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
     this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
+    this.cspToggle = ko.observable(false);
 
     this.sortedLoadouts = ko.pureComputed(function() {
         return self.loadouts().sort(function(left, right) {
@@ -1582,14 +1583,7 @@ var app = function() {
                 tgd.maxTierPossible = Math.floor(destinyMaxCSP / tgd.DestinySkillTier);
                 tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
                 tgd.minAvgPercentNeeded = Math.floor((tgd.maxTierPointsPossible / destinyMaxCSP) * 100);
-                /* calculate the max csp based on the new crowd sourced values */
-                _.each(app.characters(), function(character) {
-                    _.each(character.items(), function(armor) {
-                        if (_.has(tgd.DestinyMaxCSP, armor.bucketType)) {
-                            armor.maxLightPercent(Math.round((armor.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[armor.bucketType]) * 100));
-                        }
-                    });
-                });
+                self.cspToggle(!self.cspToggle());
             });
         }
     };
