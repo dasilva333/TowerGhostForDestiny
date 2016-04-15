@@ -2376,10 +2376,12 @@ var app = function() {
                     }, ['small', 'medium', 'large']);
                 }
 
-                //Prevent the user from pressing the back button to reload the app
-                document.addEventListener("backbutton", function(e) {
-                    e.preventDefault();
-                }, false);
+                //Prevent the user from pressing the back button to reload the app (not accepted by Microsoft's review team)
+                if (!isWindowsPhone) {
+                    document.addEventListener("backbutton", function(e) {
+                        e.preventDefault();
+                    }, false);
+                }
             }
 
             self.whatsNew();
