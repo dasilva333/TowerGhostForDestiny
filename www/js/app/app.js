@@ -488,7 +488,7 @@ var app = function() {
                             //console.log("maxStatRoll", maxStatRoll);
                             var maxRollStats = (((currentBaseStat + maxBonusPoints) / maxStatRoll) * 100).toFixed(0) + "%";
                             var maxRollPercent = activeItem.maxLightPercent();
-							//console.log("maxRollPercent", maxRollPercent);
+                            //console.log("maxRollPercent", maxRollPercent);
                             if (activeItem.tierType >= 5) {
                                 maxRollStats = maxRollStats + "-" + maxRollPercent + "%";
                             }

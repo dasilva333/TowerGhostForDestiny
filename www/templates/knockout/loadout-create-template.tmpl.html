@@ -29,7 +29,7 @@
                     <img class="itemImage" src="about:blank" data-bind="itemImageHandler: item.icon, attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">
                 </a>
                 <div class="attkIcon">
-                    <div data-bind="text: primaryStat, css: damageTypeName"></div>
+                    <div data-bind="text: _.has(item,'bonusOn') ? item.bonusOn.substring(0,3) : item.primaryStat(), css: damageTypeName"></div>
                 </div>
             </div>
         </span>
