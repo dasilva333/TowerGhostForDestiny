@@ -2,11 +2,11 @@
   "files": {
     "tower_ghost.css": {
       "filename": "resources/tower_ghost.css",
-      "version": "51eb8a829f10f0902add990c0e70d968299471060e7f2f6e076630fb287ca6c0"
+      "version": "7072cf3356f5d19f1132763d629303f0def830f554e15ce6904ccc63b33759af"
     },
     "definitions.json": {
       "filename": "resources/en/definitions.json",
-      "version": "fe2e7b59c60afa677de1db85f6cd64df70856d788d91042cfc2ae8408a4e2c47"
+      "version": "19274ac73f0b2a39e857a3d3406aee5e01996670a15559a2bcb2698cf5d0dc51"
     },
     "1.libraries.js": {
       "filename": "resources/1.libraries.js",
@@ -14,11 +14,11 @@
     },
     "2.templates.js": {
       "filename": "resources/2.templates.js",
-      "version": "3f725528caa5083773f7177e979693c7f3ed134ac826a33d5daf61845baab0e4"
+      "version": "000e9f50f5244b0d2ff0f54dffac8cf9ced6c74619c7fc2fd5aeac1ec9b4bdfb"
     },
     "3.tower_ghost.js": {
       "filename": "resources/3.tower_ghost.js",
-      "version": "cf8069f4e97032d5a0224b6ea6327e9dfe0d1e33b6e4875d21da1ec09bfbb881"
+      "version": "135b52967d533ab8ce5c269a44455fb124ae644e1beeda4631c4b837dfb95f8a"
     }
   },
   "load": [
