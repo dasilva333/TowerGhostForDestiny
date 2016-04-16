@@ -101,10 +101,8 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 8;
         } else if (light < 319) {
             return 9;
-        } else if (light < 334) {
-            return 10;
         } else {
-            return 11;
+            return 10;
         }
     }
 };
