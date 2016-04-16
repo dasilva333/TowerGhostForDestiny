@@ -9,7 +9,7 @@
     </author>
 
     <content src="index.html" />
-	<preference name="phonegap-version" value="3.7.0" /> 
+	<preference name="phonegap-version" value="cli-6.0.0" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
@@ -33,7 +33,7 @@
     <gap:plugin name="org.apache.cordova.device" />
 	<gap:plugin name="org.apache.cordova.file-transfer" />
 	<gap:plugin name="org.apache.cordova.file" />
-	<gap:plugin name="com.mohamnag.inappbilling" />
+	<gap:plugin name="com.mcm.plugins.androidinappbilling" spec="3.0.6" source="pgb" />
     <preference name="android-iabplugin-license-key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6kyZb15cxcGhaUVThjCY+c/rGCpKXW2Ek0v/dFOlx6MTAyTA9lUe3dMijtW1RjrTzqsZ+QgcCLRAGiAzL1+tgnalZJFeAIbbWA9DXjFrkw7hMqlrAeRLWWpLXCE96lqspvrxvtcnFb2doZTmuJmH68Y7MtItM7Gdg5K2G/bDACkWcA4qD2lNTkcWG/qTvUeOM0amV+2ENdJO0uQrneva/qM7BgIRqBQqTfiFL+xMAOwDRZBHdY35e+FMWgirIrKxA0XymIRbQVyHnTIFkQOMJBZ9dUaEn0LwRgBJjblYH7puwrYSUDshMXefcQDDfb9wfisDQD90iwbgy5SzDxmwwIDAQAB" />
 
     <icon src="icon.png" />
