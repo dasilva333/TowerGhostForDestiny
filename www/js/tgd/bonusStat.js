@@ -21,12 +21,10 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 16;
         } else if (light < 319) {
             return 17;
-        } else if (light < 330) {
+        } else if (light < 331) {
             return 18;
-        } else if (light < 334) {
-            return 19;
         } else {
-            return 20;
+            return 19;
         }
     } else if (armorIndex === 1) { //Gauntlet
         if (light < 287) {
@@ -49,7 +47,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 22;
         } else if (light < 319) {
             return 23;
-        } else if (light < 333) {
+        } else if (light < 329) {
             return 24;
         } else {
             return 25;
@@ -63,7 +61,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 20;
         } else if (light < 319) {
             return 21;
-        } else if (light < 327) {
+        } else if (light < 329) {
             return 22;
         } else {
             return 23;
@@ -89,7 +87,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 38;
         } else if (light < 319) {
             return 39;
-        } else if (light < 324) {
+        } else if (light < 325) {
             return 40;
         } else if (light < 330) {
             return 41;
@@ -101,10 +99,8 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 8;
         } else if (light < 319) {
             return 9;
-        } else if (light < 334) {
-            return 10;
         } else {
-            return 11;
+            return 10;
         }
     }
 };
