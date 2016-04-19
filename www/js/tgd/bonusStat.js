@@ -21,7 +21,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 16;
         } else if (light < 319) {
             return 17;
-        } else if (light < 331) {
+        } else if (light < 333) {
             return 18;
         } else {
             return 19;
@@ -47,7 +47,7 @@ tgd.bonusStatPoints = function(armorIndex, light) {
             return 22;
         } else if (light < 319) {
             return 23;
-        } else if (light < 329) {
+        } else if (light < 328) {
             return 24;
         } else {
             return 25;

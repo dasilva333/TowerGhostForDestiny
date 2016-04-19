@@ -594,16 +594,19 @@ Item.prototype = {
         }
     },
     _cspStat: function() {
-        return _.has(tgd.DestinyMaxCSP, this.bucketType) ? this.getValue("All") + "-" + this.getValue("MaxLightCSP") : "";
+        return _.has(tgd.DestinyMaxCSP, this.bucketType) ? this.getValue("All") + "-" + this.getValue("MaxLightCSP") : this.primaryStat();
     },
     _cspClass: function() {
-        var rollType = "BadRoll";
-        if (this.maxLightPercent() >= tgd.minAvgPercentNeeded) {
-            rollType = "GoodRoll";
-        }
-        //4 pts under the requirement is still good enough to maybe get you there
-        else if (this.maxLightPercent() >= (tgd.minAvgPercentNeeded - 4)) {
-            rollType = "OkayRoll";
+        var rollType = "None";
+        if (_.has(tgd.DestinyMaxCSP, this.bucketType)) {
+            rollType = "BadRoll";
+            if (this.maxLightPercent() >= tgd.minAvgPercentNeeded) {
+                rollType = "GoodRoll";
+            }
+            //4 pts under the requirement is still good enough to maybe get you there
+            else if (this.maxLightPercent() >= (tgd.minAvgPercentNeeded - 4)) {
+                rollType = "OkayRoll";
+            }
         }
         return rollType;
     },
