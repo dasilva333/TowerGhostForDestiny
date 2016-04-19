@@ -154,10 +154,26 @@ Profile.prototype = {
         var self = this;
         return function(results, response) {
             if (results && results.data && results.data.buckets) {
-                var items = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
-                _.each(items, function(item) {
-                    var processedItem = new Item(item, self);
-                    if ("id" in processedItem) self.items.push(processedItem);
+                var newItems = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
+                _.each(self.items(), function(item) {
+                    if (item) {
+                        var existingItem = _.findWhere(newItems, {
+                            itemInstanceId: item._id
+                        });
+                        if (existingItem) {
+                            item.updateItem(existingItem);
+                        } else {
+                            self.items.remove(item);
+                        }
+                    }
+                });
+                _.each(newItems, function(newItem) {
+                    if (!_.findWhere(self.items(), {
+                            _id: newItem.itemInstanceId
+                        })) {
+                        var processedItem = new Item(newItem, self);
+                        if ("id" in processedItem) self.items.push(processedItem);
+                    }
                 });
                 done();
             } else {
@@ -323,10 +339,6 @@ Profile.prototype = {
                 callback();
         }
 
-        var itemsToRemove = _.filter(self.items(), function(item) {
-            return buckets.indexOf(item.bucketType) > -1;
-        });
-        self.items.removeAll(itemsToRemove);
 
         if (self.id == "Vault") {
             app.bungie.vault(self.reloadBucketHandler(buckets, done));

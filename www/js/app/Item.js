@@ -253,6 +253,54 @@ Item.prototype = {
             self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
         }
     },
+    updateItem: function(item) {
+        var self = this;
+        var info = {};
+        if (item.itemHash in _itemDefs) {
+            info = _itemDefs[item.itemHash];
+        } else {
+            /* Classified Items */
+            info = {
+                bucketTypeHash: "1498876634",
+                itemName: "Classified",
+                tierTypeName: "Exotic",
+                icon: "/img/misc/missing_icon.png",
+                itemTypeName: "Classified"
+            };
+            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
+            tgd.localLog(item.itemHash);
+        }
+        var bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
+        var armorIndex = tgd.DestinyArmorPieces.indexOf(bucketType);
+        var primaryStat = self.parsePrimaryStat(item, bucketType);
+        self.primaryStat(primaryStat);
+        self.isEquipped(item.isEquipped);
+        self.locked(item.locked);
+        self.perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
+        var statPerks = _.where(self.perks, {
+            isStat: true
+        });
+        var bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
+        self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
+        self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, bonus, "");
+        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, armorIndex, bonus, "");
+        var hasUnlockedStats = _.where(statPerks, {
+            active: true
+        }).length > 0;
+        self.bonusStatOn = hasUnlockedStats ? _.findWhere(statPerks, {
+            active: true
+        }).name : "";
+        self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
+        self.progression = _.filter(self.perks, function(perk) {
+            return perk.active === false && perk.isExclusive === -1;
+        }).length === 0;
+        self.primaryValues = {
+            CSP: tgd.sum(_.values(self.stats)),
+            bonus: bonus,
+            Default: primaryStat,
+            MaxLightCSP: Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true))
+        };
+    },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
         var futureRolls = [];
         if (statPerks.length === 0) {
