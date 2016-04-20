@@ -1216,10 +1216,9 @@ Item.prototype = {
     store: function(targetCharacterId, callback) {
         //tgd.localLog(arguments);
         var self = this;
-        var sourceCharacterId = self.characterId(),
-            transferAmount = 1;
-        //tgd.localLog("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
-        var done = function() {
+        var sourceCharacterId = self.characterId(), defaultTransferAmount = 1;
+        var done = function(transferAmount) {
+			console.log("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
             if (targetCharacterId == "Vault") {
                 //tgd.localLog("*******from character to vault " + self.description);
                 self.unequip(function(result) {
@@ -1284,123 +1283,35 @@ Item.prototype = {
             }
         };
         if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
-            if (self.primaryStat() == 1) {
-                done();
+            if (self.primaryStat() == defaultTransferAmount) {
+                done(defaultTransferAmount);
             } else if (app.autoXferStacks() === true || tgd.autoTransferStacks === true) {
-                transferAmount = self.primaryStat();
-                done();
+                done(self.primaryStat());
             } else {
-                var characterTotal = 0;
-                var dialogItself = (new tgd.dialog({
-                        message: function() {
-                            var itemTotal = 0;
-                            for (i = 0; i < app.orderedCharacters().length; i++) {
-                                var c = app.orderedCharacters()[i];
-                                var charTotal = _.reduce(
-                                    _.filter(c.items(), {
-                                        description: self.description
-                                    }),
-                                    function(memo, j) {
-                                        return memo + j.primaryStat();
-                                    },
-                                    0);
-                                if (self.character == c) {
-                                    characterTotal = charTotal;
-                                }
-                                itemTotal = itemTotal + charTotal;
-                            }
-                            var $content = $(
-                                '<div><div class="controls controls-row">' + app.activeText().transfer_amount + ': ' +
-                                '<button type="button" class="btn btn-default" id="dec">  -  </button>' +
-                                ' <input type="text" id="materialsAmount" value="' + self.primaryStat() + '" size="4"> ' +
-                                '<button type="button" class="btn btn-default" id="inc">  +  </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="all"> ' + app.activeText().transfer_all + ' (' + characterTotal + ') </button>' +
-                                '<button type="button" class="btn btn-default pull-right" id="one"> ' + app.activeText().transfer_one + ' </button>' +
-                                '</div>' +
-                                '<div><hr></div>' +
-                                '<div class="controls controls-row">' +
-                                '<label><input type="checkbox" id="consolidate" /> ' + app.activeText().transfer_consolidate + ' (' + itemTotal + '))</label>' +
-                                '<br><label><input type="checkbox" id="neverAsk" /> ' + app.activeText().transfer_ask + ' </label>' +
-                                '</div></div>');
-                            var btnDec = $content.find('#dec');
-                            btnDec.click(function() {
-                                var num = parseInt($("input#materialsAmount").val());
-                                if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(Math.max(num - 1, 1));
-                                }
-                            });
-                            var btnInc = $content.find('#inc');
-                            btnInc.click(function() {
-                                var num = parseInt($("input#materialsAmount").val());
-                                if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(Math.min(num + 1, characterTotal));
-                                }
-                            });
-                            var btnOne = $content.find('#one');
-                            btnOne.click(function() {
-                                var num = parseInt($("input#materialsAmount").val());
-                                if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(1);
-                                }
-                            });
-                            var btnAll = $content.find('#all');
-                            btnAll.click(function() {
-                                var num = parseInt($("input#materialsAmount").val());
-                                if (!isNaN(num)) {
-                                    $("input#materialsAmount").val(characterTotal);
-                                }
-                            });
-                            var inputAmt = $content.find('#materialsAmount');
-                            var handleCheckChanged = function(checked) {
-                                btnDec.attr("disabled", checked);
-                                btnInc.attr("disabled", checked);
-                                btnOne.attr("disabled", checked);
-                                btnAll.attr("disabled", checked);
-                                inputAmt.attr("disabled", checked);
-                                inputAmt.attr("readOnly", checked);
-                            };
-                            $content.find('#consolidate').click(function() {
-                                handleCheckChanged(this.checked);
-                            });
-                            $content.find('#neverAsk').click(function() {
-                                app.autoXferStacks(true);
-                            });
-                            return $content;
-                        },
-                        buttons: [{
-                            label: app.activeText().transfer,
-                            cssClass: 'btn-primary',
-                            action: function() {
-                                finishTransfer($("input#consolidate")[0].checked);
-                            }
-                        }, {
-                            label: app.activeText().close_msg,
-                            action: function(dialogItself) {
-                                dialogItself.close();
-                            }
-                        }]
-                    })).title(app.activeText().transfer + " " + self.description).show(true),
-                    finishTransfer = function(consolidate) {
-                        if (consolidate) {
-                            self.consolidate(targetCharacterId, self.description);
-                            dialogItself.modal.close();
-                        } else {
-                            transferAmount = parseInt($("input#materialsAmount").val());
-                            if (!isNaN(transferAmount) && (transferAmount > 0) && (transferAmount <= characterTotal)) {
-                                done();
-                                dialogItself.modal.close();
-                            } else {
-                                BootstrapDialog.alert(app.activeText().invalid_transfer_amount + transferAmount);
-                            }
+                var id = new Date().getTime();
+                var $content = $(tgd.confirmTransferTemplate({
+                    id: id
+                }));
+                var confirmTransfer = new tgd.transferConfirm(self, targetCharacterId, done);
+                var dialog = (new tgd.dialog({
+                    buttons: [{
+                        label: app.activeText().transfer,
+                        cssClass: 'btn-primary',
+                        action: function() {
+                            confirmTransfer.finishTransfer(confirmTransfer.consolidate());
                         }
-                    };
-                setTimeout(function() {
-                    $("#materialsAmount").select().bind("keyup", function(e) {
-                        if (e.keyCode == 13) {
-                            finishTransfer(false);
+                    }, {
+                        label: app.activeText().close_msg,
+                        action: function(dialogItself) {
+                            dialogItself.close();
                         }
-                    });
-                }, 500);
+                    }]
+                })).title(app.activeText().transfer + " " + self.description).content($content).show(true, function() {
+                    ko.cleanNode(document.getElementById('container_' + id));
+                }, function() {
+                    confirmTransfer.setDialog(dialog);
+                    ko.applyBindings(confirmTransfer, document.getElementById('container_' + id));
+                }).modal;
             }
         } else {
             var adhoc = new tgd.Loadout();
@@ -1413,7 +1324,7 @@ Item.prototype = {
             if (result && result.swapItem) {
                 adhoc.promptUserConfirm([result], targetCharacterId, callback);
             } else {
-                done();
+                done(defaultTransferAmount);
             }
         }
     },

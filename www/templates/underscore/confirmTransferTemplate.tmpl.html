@@ -1,0 +1,27 @@
+<div id="container_<%= id %>">
+	<div class="controls controls-row">
+		<span data-bind="text: app.activeText().transfer_amount"></span>:
+		<button class="btn btn-default" type="button" data-bind="click: decrement">-</button> 
+		<input size="4" type="text" data-bind="value: materialsAmount, events: { keyup: materialsKeyHandler }"> 
+		<button class="btn btn-default" type="button" data-bind="click: increment">+</button> 
+		<button class="btn btn-default pull-right" id="all" type="button" data-bind="click: all">
+			<span data-bind="text: app.activeText().transfer_all"></span>
+			(<span data-bind="text: characterTotal"></span>)
+		</button> 
+		<button class="btn btn-default pull-right" id="one" type="button" data-bind="click: one, text: app.activeText().transfer_one"></button>
+	</div>
+
+	<div>
+		<hr>
+	</div>
+
+	<div class="controls controls-row">
+		<label>
+			<input id="consolidate" type="checkbox" data-bind="checked: consolidate"> 
+			<span data-bind="text: app.activeText().transfer_consolidate"></span>
+			( <span data-bind="text: itemTotal"></span> )
+		</label>
+		<br>
+		<label><input id="neverAsk" type="checkbox" data-bind="checked: app.autoXferStacks"><span data-bind="text: app.activeText().transfer_ask"></span></label>
+	</div>
+</div>

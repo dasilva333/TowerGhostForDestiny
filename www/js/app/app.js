@@ -2225,7 +2225,7 @@ var app = function() {
                 } else if (character.id != "Vault" && self.farmTarget() == "Vault" || character.id == "Vault" && self.farmTarget() !== "Vault") {
                     //console.log("sub for ", character.id, " towards ", self.farmTarget());
                     subscriptions.push(character.items.subscribe(self.farmItemHandler));
-					self.farmItemHandler(character.items());
+                    self.farmItemHandler(character.items());
                 }
             });
         } else {
