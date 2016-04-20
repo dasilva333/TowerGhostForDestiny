@@ -149,6 +149,7 @@ Item.prototype = {
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
         } else if (item.id in _itemDefs) {
+            item.itemHash = item.id;
             info = _itemDefs[item.id];
         } else {
             /* Classified Items */
