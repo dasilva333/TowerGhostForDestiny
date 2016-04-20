@@ -168,9 +168,13 @@ Profile.prototype = {
                     }
                 });
                 _.each(newItems, function(newItem) {
-                    if (!_.findWhere(self.items(), {
-                            _id: newItem.itemInstanceId
-                        })) {
+                    var uniqueItem = _.findWhere(self.items(), {
+                        _id: newItem.itemInstanceId
+                    });
+                    var genericItem = _.filter(self.items(), function(item) {
+                        return item.id == newItem.itemHash;
+                    })[0];
+                    if (!uniqueItem || !genericItem) {
                         var processedItem = new Item(newItem, self);
                         if ("id" in processedItem) self.items.push(processedItem);
                     }
