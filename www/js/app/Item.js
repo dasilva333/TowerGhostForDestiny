@@ -165,8 +165,7 @@ Item.prototype = {
             if (info.bucketTypeHash == "2422292810" && info.deleteOnAction === false) {
                 return;
             }
-            var description, tierTypeName, itemDescription, itemTypeName, perks, stats, bucketType, primaryStat,
-                statPerks, rolls, bonus, armorIndex, hasUnlockedStats, bonusStatOn;
+            var description, tierTypeName, itemDescription, itemTypeName, bucketType;
             try {
                 description = decodeURIComponent(info.itemName);
                 tierTypeName = decodeURIComponent(info.tierTypeName);
@@ -179,23 +178,7 @@ Item.prototype = {
                 itemTypeName = info.itemTypeName;
             }
             info.icon = (info.icon === "") ? "/img/misc/missing_icon.png" : info.icon;
-            perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
-            stats = self.parseStats(perks, item.stats, item.itemHash);
-            statPerks = _.where(perks, {
-                isStat: true
-            });
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
-            armorIndex = tgd.DestinyArmorPieces.indexOf(bucketType);
-            primaryStat = self.parsePrimaryStat(item, bucketType);
-            bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
-            rolls = self.normalizeRolls(stats, statPerks, primaryStat, bonus, description);
-            futureRolls = self.calculateFutureRolls(stats, statPerks, primaryStat, armorIndex, bonus, description);
-            hasUnlockedStats = _.where(statPerks, {
-                active: true
-            }).length > 0;
-            bonusStatOn = hasUnlockedStats ? _.findWhere(statPerks, {
-                active: true
-            }).name : "";
             $.extend(self, {
                 id: item.itemHash,
                 href: "https://destinydb.com/items/" + item.itemHash,
@@ -204,9 +187,9 @@ Item.prototype = {
                 damageType: item.damageType,
                 damageTypeName: tgd.DestinyDamageTypes[item.damageType],
                 isEquipment: item.isEquipment,
-                isEquipped: ko.observable(item.isEquipped),
+                isEquipped: ko.observable(),
                 isGridComplete: item.isGridComplete,
-                locked: ko.observable(item.locked),
+                locked: ko.observable(),
                 description: description,
                 itemDescription: itemDescription,
                 classType: info.classType,
@@ -220,37 +203,17 @@ Item.prototype = {
                 equipRequiredLevel: item.equipRequiredLevel,
                 canEquip: item.canEquip,
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
-                armorIndex: armorIndex,
+                armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
                 transferStatus: item.transferStatus,
-                perks: perks,
-                stats: stats,
-                hasLifeExotic: _.where(perks, {
-                    name: "The Life Exotic"
-                }).length > 0,
-                perksInProgress: _.filter(perks, function(perk) {
-                    return perk.active === false && perk.isExclusive === -1;
-                }).length === 0,
-                primaryStat: ko.observable(primaryStat),
-                rolls: rolls,
-                futureRolls: futureRolls,
-                primaryValues: {
-                    CSP: tgd.sum(_.values(stats)),
-                    bonus: bonus,
-                    Default: primaryStat
-                },
+                primaryStat: ko.observable(),
                 backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
                 actualBucketType: _.reduce(tgd.DestinyLayout, function(memo, layout) {
                     if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
                         memo = layout.array;
                     return memo;
-                }, ""),
-                hasUnlockedStats: hasUnlockedStats || statPerks.length === 0,
-                bonusStatOn: bonusStatOn,
-                progression: _.filter(perks, function(perk) {
-                    return perk.active === false && perk.isExclusive === -1;
-                }).length === 0
+                }, "")
             });
-            self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
+			self.updateItem(item);
         }
     },
     updateItem: function(item) {
@@ -271,7 +234,6 @@ Item.prototype = {
             tgd.localLog(item.itemHash);
         }
         var bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
-        var armorIndex = tgd.DestinyArmorPieces.indexOf(bucketType);
         var primaryStat = self.parsePrimaryStat(item, bucketType);
         self.primaryStat(primaryStat);
         self.isEquipped(item.isEquipped);
@@ -280,10 +242,13 @@ Item.prototype = {
         var statPerks = _.where(self.perks, {
             isStat: true
         });
-        var bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(armorIndex, primaryStat);
+		self.hasLifeExotic = _.where(self.perks, {
+			name: "The Life Exotic"
+		}).length > 0;
+        var bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
         self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
         self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, bonus, "");
-        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, armorIndex, bonus, "");
+        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, bonus, "");
         var hasUnlockedStats = _.where(statPerks, {
             active: true
         }).length > 0;
@@ -294,12 +259,15 @@ Item.prototype = {
         self.progression = _.filter(self.perks, function(perk) {
             return perk.active === false && perk.isExclusive === -1;
         }).length === 0;
+		self.perksInProgress = _.filter(self.perks, function(perk) {
+			return perk.active === false && perk.isExclusive === -1;
+		}).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
             bonus: bonus,
-            Default: primaryStat,
-            MaxLightCSP: Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true))
+            Default: primaryStat
         };
+		self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true))
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
         var futureRolls = [];
