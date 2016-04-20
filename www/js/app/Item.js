@@ -1216,9 +1216,10 @@ Item.prototype = {
     store: function(targetCharacterId, callback) {
         //tgd.localLog(arguments);
         var self = this;
-        var sourceCharacterId = self.characterId(), defaultTransferAmount = 1;
+        var sourceCharacterId = self.characterId(),
+            defaultTransferAmount = 1;
         var done = function(transferAmount) {
-			console.log("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
+            //console.log("item.store " + self.description + " to " + targetCharacterId + " from " + sourceCharacterId);
             if (targetCharacterId == "Vault") {
                 //tgd.localLog("*******from character to vault " + self.description);
                 self.unequip(function(result) {
@@ -1388,65 +1389,20 @@ Item.prototype = {
         // kick off transfers
         nextTransfer(undefined);
     },
-    extrasGlue: function() {
+    showExtras: function() {
         var self = this;
 
-        var selectedStatus = [];
-        for (i = 0; i < app.orderedCharacters().length; i++) {
-            var id = app.orderedCharacters()[i].id;
-            selectedStatus[id] = (id !== "Vault");
-        }
-
-        var dialogItself = (new tgd.dialog({
-            message: function(dialogItself) {
-                var getTotalSelectedItemCount = function() {
-                    var c = 0;
-                    var totalSelectedItemCount = 0;
-                    for (i = 0; i < app.orderedCharacters().length; i++) {
-                        if (selectedStatus[(app.orderedCharacters()[i]).id] === true) {
-                            var ct = _.reduce(
-                                _.filter(app.orderedCharacters()[i].items(), {
-                                    description: self.description
-                                }),
-                                function(memo, i) {
-                                    return memo + i.primaryStat();
-                                },
-                                0);
-                            c = c + parseInt(ct);
-                        }
-                    }
-                    return c;
-                };
-
-                var $content = $(tgd.normalizeTemplate({
-                    item: self,
-                    characters: app.orderedCharacters(),
-                    selected: selectedStatus,
-                    total: getTotalSelectedItemCount()
-                }));
-
-                var charButtonClicked = function(self, id) {
-                    selectedStatus[id] = !selectedStatus[id];
-                    $content.find('#total').text(getTotalSelectedItemCount());
-                    self.find('img').css('border', (selectedStatus[id] === true) ? "solid 3px yellow" : "none");
-                };
-
-                $.each(app.orderedCharacters(), function(i, val) {
-                    var id = val.id;
-                    var sel = "#char" + i.toString();
-                    $content.find(sel).click(function() {
-                        charButtonClicked($(this), id);
-                    });
-                });
-                return $content;
-            },
+        var id = new Date().getTime();
+        var $content = $(tgd.normalizeTemplate({
+            id: id
+        }));
+        var extrasPopup = new tgd.extrasPopup(self);
+        var dialog = (new tgd.dialog({
             buttons: [{
                 label: 'Normalize',
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
-                    var characters = _.filter(app.orderedCharacters(), function(c) {
-                        return selectedStatus[c.id] === true;
-                    });
+                    var characters = extrasPopup.selectedCharacters();
                     if (characters.length <= 1) {
                         BootstrapDialog.alert("Need to select two or more characters.");
                         return;
@@ -1458,9 +1414,7 @@ Item.prototype = {
                 label: 'Consolidate',
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
-                    var characters = _.pluck(_.filter(app.orderedCharacters(), function(c) {
-                        return selectedStatus[c.id] === true;
-                    }), 'id');
+                    var characters = _.pluck(extrasPopup.selectedCharacters(), 'id');
                     self.consolidate(self.character.id, self.description, characters);
                     dialogItself.close();
                 }
@@ -1470,7 +1424,12 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }]
-        })).title("Extras for " + self.description).show(true);
+        })).title("Extras for " + self.description).content($content).show(true, function() {
+            ko.cleanNode(document.getElementById('container_' + id));
+        }, function() {
+            extrasPopup.setDialog(dialog);
+            ko.applyBindings(extrasPopup, document.getElementById('container_' + id));
+        }).modal;
     },
     toggleLock: function() {
         var self = this;

@@ -14,7 +14,6 @@ tgd.transferConfirm = function(item, targetCharacterId, onFinish) {
         } else {
             var transferAmount = parseInt(self.materialsAmount());
             if (!isNaN(transferAmount) && (transferAmount > 0) && (transferAmount <= self.characterTotal)) {
-				console.log("onFinish", transferAmount);
                 onFinish(transferAmount);
                 self.dialog.close();
             } else {

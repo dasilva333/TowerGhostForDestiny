@@ -42,7 +42,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="move-button col-xs-4" data-bind="attr: { title: 'extras' }, click: function(){ extrasGlue() }, visible: (bucketType == 'Materials' || bucketType == 'Consumables')">
+                <div class="move-button col-xs-4" data-bind="attr: { title: 'extras' }, click: showExtras, visible: (bucketType == 'Materials' || bucketType == 'Consumables')">
                     <div class="attkIcon">
                         <div class="icon-banner" data-bind="text: $root.activeText().movepopup_extras">extras</div>
                         <img src="assets/icon128.png">
