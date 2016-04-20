@@ -253,7 +253,7 @@ tgd.defaults = {
     tooltipsEnabled: isMobile ? false : "true",
     advancedTooltips: isMobile ? false : "true",
     autoXferStacks: false,
-    padBucketHeight: isMobile ? false : "true",
+    padBucketHeight: isMobile && !isStaticBrowser ? false : "true",
     dragAndDrop: false,
     xsColumn: tgd.bootstrapGridColumns,
     smColumn: tgd.bootstrapGridColumns / 2,

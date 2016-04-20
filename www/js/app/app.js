@@ -2126,6 +2126,7 @@ var app = function() {
                     };
                     var profile = new Profile(avatar);
                     self.characters.push(profile);
+                    self.redraw();
                 });
             }
         );
