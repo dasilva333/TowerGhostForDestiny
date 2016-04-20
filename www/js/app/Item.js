@@ -148,6 +148,8 @@ Item.prototype = {
         var info = {};
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
+        } else if (item.id in _itemDefs) {
+            info = _itemDefs[item.id];
         } else {
             /* Classified Items */
             info = {
@@ -213,7 +215,7 @@ Item.prototype = {
                     return memo;
                 }, "")
             });
-			self.updateItem(item);
+            self.updateItem(item);
         }
     },
     updateItem: function(item) {
@@ -242,9 +244,9 @@ Item.prototype = {
         var statPerks = _.where(self.perks, {
             isStat: true
         });
-		self.hasLifeExotic = _.where(self.perks, {
-			name: "The Life Exotic"
-		}).length > 0;
+        self.hasLifeExotic = _.where(self.perks, {
+            name: "The Life Exotic"
+        }).length > 0;
         var bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
         self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
         self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, bonus, "");
@@ -259,15 +261,15 @@ Item.prototype = {
         self.progression = _.filter(self.perks, function(perk) {
             return perk.active === false && perk.isExclusive === -1;
         }).length === 0;
-		self.perksInProgress = _.filter(self.perks, function(perk) {
-			return perk.active === false && perk.isExclusive === -1;
-		}).length === 0;
+        self.perksInProgress = _.filter(self.perks, function(perk) {
+            return perk.active === false && perk.isExclusive === -1;
+        }).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
             bonus: bonus,
             Default: primaryStat
         };
-		self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true))
+        self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true))
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
         var futureRolls = [];

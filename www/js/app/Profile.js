@@ -11,12 +11,13 @@ function Profile(character) {
     this.race = ko.observable("");
     this.percentToNextLevel = ko.observable("");
     this.background = ko.observable("");
-    this.items = ko.observableArray()/*.extend({
-        rateLimit: {
-            timeout: 500,
-            method: "notifyWhenChangesStop"
-        }
-    });*/
+    this.items = ko.observableArray()
+        /*.extend({
+                rateLimit: {
+                    timeout: 500,
+                    method: "notifyWhenChangesStop"
+                }
+            });*/
     this.items.subscribe(app.redraw);
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
