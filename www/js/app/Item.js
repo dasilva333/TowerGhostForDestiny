@@ -187,12 +187,14 @@ Item.prototype = {
                 href: "https://destinydb.com/items/" + item.itemHash,
                 _id: item.itemInstanceId,
                 characterId: ko.observable(self.character.id),
+                isEquipped: ko.observable(),
+                locked: ko.observable(),
+                bonusStatOn: ko.observable(),
+                primaryStat: ko.observable(),
                 damageType: item.damageType,
                 damageTypeName: tgd.DestinyDamageTypes[item.damageType],
                 isEquipment: item.isEquipment,
-                isEquipped: ko.observable(),
                 isGridComplete: item.isGridComplete,
-                locked: ko.observable(),
                 description: description,
                 itemDescription: itemDescription,
                 classType: info.classType,
@@ -208,7 +210,6 @@ Item.prototype = {
                 weaponIndex: tgd.DestinyWeaponPieces.indexOf(bucketType),
                 armorIndex: tgd.DestinyArmorPieces.indexOf(bucketType),
                 transferStatus: item.transferStatus,
-                primaryStat: ko.observable(),
                 backgroundPath: (itemTypeName == "Emblem") ? app.makeBackgroundUrl(info.secondaryIcon) : "",
                 actualBucketType: _.reduce(tgd.DestinyLayout, function(memo, layout) {
                     if ((layout.bucketTypes.indexOf(bucketType) > -1 && layout.extras.indexOf(bucketType) == -1) || (layout.bucketTypes.indexOf(bucketType) == -1 && layout.extras.indexOf(bucketType) > -1))
@@ -255,9 +256,9 @@ Item.prototype = {
         var hasUnlockedStats = _.where(statPerks, {
             active: true
         }).length > 0;
-        self.bonusStatOn = hasUnlockedStats ? _.findWhere(statPerks, {
+        self.bonusStatOn(hasUnlockedStats ? _.findWhere(statPerks, {
             active: true
-        }).name : "";
+        }).name : "");
         self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
         self.progression = _.filter(self.perks, function(perk) {
             return perk.active === false && perk.isExclusive === -1;

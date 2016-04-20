@@ -23,7 +23,7 @@
             <div id="loadout-error" class="col-xs-24 label label-danger" data-bind="visible: items().length == 0, text: $root.activeText().loadouts_instructions + (isMobile ? $root.activeText().loadouts_mobile:$root.activeText().loadouts_desktop) + $root.activeText().loadouts_instructions_contd"></div>
         </div>
         <span id="loadout-contents" data-bind="foreach: { data: items, as: 'item' }, moveItem: true">
-            <div class="item" data-bind="css: (isMobile && item._id > 0 && item.doEquip() ? 'doEquip' : '') + (item && _.has(item,'bonusOn') ? (item.bonusOn == item.bonusStatOn ? ' active' : ' inactive') : '')">
+            <div class="item" data-bind="css: (isMobile && item._id > 0 && item.doEquip() ? 'doEquip' : '') + (item && _.has(item,'bonusOn') ? (item.bonusOn == item.bonusStatOn() ? ' active' : ' inactive') : '')">
                 <input type="checkbox" value="true" data-bind="checked: item.doEquip, fastclick: markAsEquip, visible: !isMobile && item._id > 0" title="Enable to mark as the equip item">
                 <a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}">
                     <img class="itemImage" src="about:blank" data-bind="itemImageHandler: item.icon, attr: { src: item.icon, instanceId:item._id }, fastclick: function(){ return false }">

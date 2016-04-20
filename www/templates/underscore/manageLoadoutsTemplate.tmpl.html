@@ -20,7 +20,7 @@
 			<div data-bind="foreach: { data: loadout.items, as: 'item' }" class="row">
 				<div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
 					<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: function(){ return false }">
-						<img class="itemImage" data-bind="itemImageHandler: item.icon, css: (item && item.bonusOn ? (item.bonusOn == item.bonusStatOn ? 'active' : 'inactive') : '')" style="padding: 2px; width:48px;">
+						<img class="itemImage" data-bind="itemImageHandler: item.icon, css: (item && item.bonusOn ? (item.bonusOn == item.bonusStatOn() ? 'active' : 'inactive') : '')" style="padding: 2px; width:48px;">
 					</a>
 				</div>
 			</div>

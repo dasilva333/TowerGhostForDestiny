@@ -1135,7 +1135,7 @@ Profile.prototype = {
                         var loadoutName = highestCombo.score + " " + $("<div></div>").html(highestCombo.statTiers).text();
                         app.activeLoadout().name(loadoutName);
                         _.each(highestCombo.set, function(item) {
-                            var bonusOn = item.bonusStatOn;
+                            var bonusOn = item.bonusStatOn();
                             if (item && item.activeRoll && item.activeRoll.bonusOn) {
                                 bonusOn = item.activeRoll.bonusOn;
                             }
