@@ -60,6 +60,10 @@
 			<strong>Tip</strong> You may also unselect an item with a green border to indicate you want the tool to calculate all items for that armor type.
 			<hr>
 		</p>
+		<div class="col-xs-24" data-bind="visible: type == 'Custom'">
+			<input type="button" class="btn btn-sm" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
+			<input type="button" class="btn btn-sm" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
+		</div>
 		<div class="row">
 			<table class="table table-striped table-hover ">
 				<thead>
