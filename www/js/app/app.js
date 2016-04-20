@@ -326,6 +326,11 @@ var app = function() {
                     }));
                     stats = $content.find(".destt-stat");
                 }
+				else {
+					stats.html(tgd.statsTemplate({
+                        stats: activeItem.stats
+                    }));
+				}
                 var itemStats, itemDef = _itemDefs[activeItem.id];
                 if (itemDef && itemDef.stats) {
                     itemStats = _.map(itemDef.stats, function(obj, key) {
@@ -333,8 +338,11 @@ var app = function() {
                         return obj;
                     });
                 }
+				var statBarElements = _.sortBy(stats.find(".stat-bar"), function(element){
+					return _.pluck(tgd.DestinyArmorStats,'statName').indexOf($.trim($(element).find(".stat-bar-label").text()))
+				});
                 stats.html(
-                    stats.find(".stat-bar").map(function(index, stat) {
+                    $(statBarElements).map(function(index, stat) {
                         var $stat = $("<div>" + stat.outerHTML + "</div>"),
                             label = $stat.find(".stat-bar-label"),
                             labelText = $.trim(label.text());
