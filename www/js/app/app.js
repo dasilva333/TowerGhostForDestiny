@@ -388,80 +388,16 @@ var app = function() {
                             });
                             if (statObj) {
                                 var clonedRow = magazineRow.clone();
-                                /* thanks to Mercules904 for coming up with these numbers */
-                                if (statName == "Inventory Size" && activeItem.typeName == "Rocket Launcher") {
-                                    var chest = activeItem.character.itemEquipped("Chest");
-                                    var boots = activeItem.character.itemEquipped("Boots");
-                                    var rocketsAvailable = 2;
-                                    var inventorySize = statObj.value;
-                                    //Magazine size returned is native even if Tripod is active and selected
-                                    var magazineSize = activeItem.stats.Magazine;
-                                    if (_.findWhere(activeItem.perks, {
-                                            name: 'Tripod',
-                                            active: true
-                                        })) {
-                                        magazineSize = 3;
-                                    }
-                                    /* Look for Field Scout Perk on activeItem */
-                                    if (_.findWhere(activeItem.perks, {
-                                            name: 'Field Scout',
-                                            active: true
-                                        })) {
-                                        inventorySize = inventorySize + 50;
-                                    }
-                                    /* Look for Heavy/RL perks on Boots/Chest if hovering over a character */
-                                    if (chest && chest.perks) {
-                                        /* Official Perk Names & Hashes
-                                        	Rocket Launcher Ammo - 3129120313
-                                        	Heavy Weapon Mags - 2426858846
-                                        	Rocket Launcher Mags - 652662008
-                                        	Field Scout - 35980ac9df6187d7dee9082b69fb394f //not a solid key
-                                        */
-                                        /* RL Ammo Perk Exclusive to Boots Adds 10 */
-                                        if (_.findWhere(boots.perks, {
-                                                hash: 3129120313,
-                                                active: true
-                                            })) {
-                                            inventorySize = inventorySize + 10;
-                                        }
-                                        /* Heavy Ammo Mags Chest or Boots Adds 100, does not stack */
-                                        if (_.findWhere(chest.perks, {
-                                                hash: 2426858846,
-                                                active: true
-                                            }) || _.findWhere(boots.perks, {
-                                                hash: 2426858846,
-                                                active: true
-                                            })) {
-                                            inventorySize = inventorySize + 100;
-                                        }
-
-                                        /* Rocket Launcher Mags(?) use is unknown */
-                                        /*if ( _.pluck(chest.perks,'hash').indexOf(652662008) > -1 ){
-                                        	inventorySize = inventorySize + 100;
-                                        }*/
-                                    }
-                                    if (inventorySize >= 30 && inventorySize <= 60) {
-                                        rocketsAvailable = Math.max(magazineSize, 2);
-                                    } else if (inventorySize >= 70 && inventorySize <= 120) {
-                                        rocketsAvailable = Math.max(magazineSize + 1, 3);
-                                    } else if (inventorySize >= 130) {
-                                        rocketsAvailable = Math.max(magazineSize + 2, 4);
-                                    }
-                                    clonedRow.find(".stat-bar-label").html("Rockets: " + inventorySize);
-                                    clonedRow.find(".stat-bar-static-value").html("PVP: " + rocketsAvailable /*+ " PVE: " + rocketsAvailable*/ );
-                                    magazineRow.before(clonedRow);
-                                } else if (statName !== "Inventory Size") {
-                                    var label = statObj.name;
-                                    if (statName == "Recoil direction")
-                                        label = "Recoil";
-                                    else if (statName == "Aim assistance")
-                                        label = "Aim Assist";
-                                    clonedRow.find(".stat-bar-label").html(label + ":" + statObj.value);
-                                    if (statObj.minimum > 0 && statObj.maximum > 0) {
-                                        clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-                                    }
-                                    magazineRow.before(clonedRow);
-                                }
+								var label = statObj.name;
+								if (statName == "Recoil direction")
+									label = "Recoil";
+								else if (statName == "Aim assistance")
+									label = "Aim Assist";
+								clonedRow.find(".stat-bar-label").html(label + ":" + statObj.value);
+								if (statObj.minimum > 0 && statObj.maximum > 0) {
+									clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+								}
+								magazineRow.before(clonedRow);
                             }
                         });
                     } else if (activeItem.armorIndex > -1) {
