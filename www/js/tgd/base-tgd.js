@@ -303,7 +303,7 @@ $.toaster({
     settings: {
         toaster: {
             css: {
-                top: "45px"
+                top: "55px"
             }
         },
         timeout: tgd.defaults.toastTimeout

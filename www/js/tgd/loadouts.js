@@ -1,19 +1,23 @@
 tgd.loadoutPair = function(pair, targetCharacter) {
     var self = this;
     _.extend(self, pair);
-	var compiledTemplate = _.template(pair.description);
-	
+    var compiledTemplate = _.template(pair.description);
+
     this.swapItem = ko.observable(self.swapItem);
-	
-	this.description = ko.computed(function(){
-		var templateData = { item: self.targetItem, swapItem: self.swapItem() || {}, targetCharacter: targetCharacter };
-		return compiledTemplate(templateData);
-	});
-	
+
+    this.description = ko.computed(function() {
+        var templateData = {
+            item: self.targetItem,
+            swapItem: self.swapItem() || {},
+            targetCharacter: targetCharacter
+        };
+        return compiledTemplate(templateData);
+    });
+
     this.activeTargetIcon = ko.computed(function() {
         return (self.targetItem && self.targetItem.icon) || self.targetIcon;
     });
-	
+
     this.activeSwapIcon = ko.computed(function() {
         return (self.swapItem() && self.swapItem().icon) || self.swapIcon;
     });
@@ -22,11 +26,11 @@ tgd.loadoutPair = function(pair, targetCharacter) {
 tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
     var self = this;
 
-    
+
     self.swapArray = _.map(masterSwapArray, function(pair) {
         return new tgd.loadoutPair(pair, targetCharacter);
     });
-	console.log("masterSwapArray", self.swapArray);
+    console.log("masterSwapArray", self.swapArray);
     // When a swap item is clicked a few steps must be performed:
     //	-determine bucket type
     //	-determine items in that bucket
@@ -36,28 +40,28 @@ tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
     //	-provide error message regarding no candidates if array is empty
     //	
     self.changeSwapItem = function(pair) {
-		if ( pair && pair.swapItem ){
-			var items = targetCharacter.all(pair.swapItem().bucketType);
-			var swapIds = _.pluck(_.map(self.swapArray, function(pair) {
-				return pair.swapItem();
-			}), '_id');
-			var candidates = _.filter(items, function(candidate) {
-				return (swapIds.indexOf(candidate._id) == -1 || candidate._id == pair.swapItem()._id) && candidate.transferStatus < 2;
-			});
-			var index = candidates.indexOf(pair.swapItem()) + 1;
-			if (index > candidates.length-1) {
-				index = 0;
-			}
-			pair.swapItem(candidates[index]);
-		}
+        if (pair && pair.swapItem) {
+            var items = targetCharacter.all(pair.swapItem().bucketType);
+            var swapIds = _.pluck(_.map(self.swapArray, function(pair) {
+                return pair.swapItem();
+            }), '_id');
+            var candidates = _.filter(items, function(candidate) {
+                return (swapIds.indexOf(candidate._id) == -1 || candidate._id == pair.swapItem()._id) && candidate.transferStatus < 2;
+            });
+            var index = candidates.indexOf(pair.swapItem()) + 1;
+            if (index > candidates.length - 1) {
+                index = 0;
+            }
+            pair.swapItem(candidates[index]);
+        }
     }
-	
-	self.getSwapArray = function(){
-		return _.map(self.swapArray, function(pair){
-			pair.swapItem = ko.unwrap(pair.swapItem);
-			return pair;
-		});
-	}
+
+    self.getSwapArray = function() {
+        return _.map(self.swapArray, function(pair) {
+            pair.swapItem = ko.unwrap(pair.swapItem);
+            return pair;
+        });
+    }
 }
 
 tgd.loadoutManager = function(loadouts, dialog) {
@@ -861,7 +865,7 @@ tgd.Loadout.prototype = {
                 id: targetCharacterId
             });
             var ltc = new tgd.loadoutsTransferConfirm(masterSwapArray, targetCharacter);
-			console.log("ltc", ltc);
+            console.log("ltc", ltc);
             var id = new Date().getTime();
             var $template = $(tgd.swapTemplate({
                 id: id

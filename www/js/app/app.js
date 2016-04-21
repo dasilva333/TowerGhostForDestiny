@@ -388,16 +388,16 @@ var app = function() {
                             });
                             if (statObj) {
                                 var clonedRow = magazineRow.clone();
-								var label = statObj.name;
-								if (statName == "Recoil direction")
-									label = "Recoil";
-								else if (statName == "Aim assistance")
-									label = "Aim Assist";
-								clonedRow.find(".stat-bar-label").html(label + ":" + statObj.value);
-								if (statObj.minimum > 0 && statObj.maximum > 0) {
-									clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
-								}
-								magazineRow.before(clonedRow);
+                                var label = statObj.name;
+                                if (statName == "Recoil direction")
+                                    label = "Recoil";
+                                else if (statName == "Aim assistance")
+                                    label = "Aim Assist";
+                                clonedRow.find(".stat-bar-label").html(label + ":" + statObj.value);
+                                if (statObj.minimum > 0 && statObj.maximum > 0) {
+                                    clonedRow.find(".stat-bar-static-value").html("Min/Max : " + statObj.minimum + "/" + statObj.maximum);
+                                }
+                                magazineRow.before(clonedRow);
                             }
                         });
                     } else if (activeItem.armorIndex > -1) {
