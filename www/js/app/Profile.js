@@ -158,10 +158,10 @@ Profile.prototype = {
                 var newItems = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
                 _.each(self.items(), function(item) {
                     if (item) {
-                        var existingItem = _.filter(newItems, function(newItem) {
+                        var existingItem = _.first(_.filter(newItems, function(newItem) {
                             return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
-                        });
-                        if (existingItem.length > 0) {
+                        }));
+                        if (existingItem) {
                             item.updateItem(existingItem);
                         } else {
                             self.items.remove(item);

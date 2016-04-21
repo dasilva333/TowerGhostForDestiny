@@ -162,7 +162,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "5caf9b2ee3321465752dce7f47dde379000eb46539cc4583d940f88e8ae0549d"
+      "version": "883b533d64b42bf45cc9c75bdfb468043d38e98314c8cff9058d17d0ada9dd89"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
@@ -198,7 +198,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "2a4915b09cd889cb0b19493e189a11683c3b5fda877e457aed95e7b4beb756f5"
+      "version": "e96a16bff3798579cd484080abab33233b8985c93c50459f0e6e80bcba5466a9"
     },
     "app.js": {
       "filename": "js/app/app.js",

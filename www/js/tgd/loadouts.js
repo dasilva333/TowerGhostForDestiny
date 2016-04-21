@@ -59,7 +59,7 @@ tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
             pair.swapItem(candidates[index]);
         }
     }
-	
+
     self.getSwapArray = function() {
         return _.map(self.swapArray, function(pair) {
             pair.swapItem = ko.unwrap(pair.swapItem);
