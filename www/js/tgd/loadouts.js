@@ -8,7 +8,7 @@ tgd.loadoutPair = function(pair, targetCharacter) {
     this.description = ko.computed(function() {
         var templateData = {
             item: self.targetItem,
-            swapItem: self.swapItem() || {},
+            swapItem: self.swapItem(),
             targetCharacter: targetCharacter
         };
         return compiledTemplate(templateData);
@@ -23,9 +23,15 @@ tgd.loadoutPair = function(pair, targetCharacter) {
     });
 };
 
+/*this.options = {
+	keepOpenSlots: false,
+	transferLockedItems: true,
+	transferTaggedItems: true,
+	transferClassItems: false
+}*/
+
 tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
     var self = this;
-
 
     self.swapArray = _.map(masterSwapArray, function(pair) {
         return new tgd.loadoutPair(pair, targetCharacter);
@@ -34,10 +40,8 @@ tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
     // When a swap item is clicked a few steps must be performed:
     //	-determine bucket type
     //	-determine items in that bucket
-    //	-exclude items already in masterSwapArray
-    //	-if the array is not empty then switch to the first item
-    //	-maintain the index so we can cycle through the whole list
-    //	-provide error message regarding no candidates if array is empty
+    //	-exclude items already in masterSwapArray or items not transferable
+    //	-determine the index of those candidates, increment the index, make sure index doesnt exceed bounds
     //	
     self.changeSwapItem = function(pair) {
         if (pair && pair.swapItem) {
@@ -55,7 +59,7 @@ tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
             pair.swapItem(candidates[index]);
         }
     }
-
+	
     self.getSwapArray = function() {
         return _.map(self.swapArray, function(pair) {
             pair.swapItem = ko.unwrap(pair.swapItem);
