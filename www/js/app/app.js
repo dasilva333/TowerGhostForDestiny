@@ -161,21 +161,17 @@ var app = function() {
 
     this.showLanguageSettings = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog({
-            message: tgd.languagesTemplate({
-                locale: self.currentLocale(),
-                languages: tgd.languages
-            })
-        })).title(self.activeText().menu_language).show(true, _.noop, function() {
-            tgd.localLog("showed modal");
-            $(".btn-setLanguage").on("click", function() {
-                self.appLocale(this.value);
-                self.autoUpdates(true);
-                tgd.checkUpdates();
-                BootstrapDialog.alert("Downloading updated language files");
-                $(".btn-setLanguage").removeClass("btn-primary");
-                $(this).addClass("btn-primary");
-            });
+        var id = new Date().getTime();
+
+        var $template = tgd.languagesTemplate({
+            id: id
+        });
+
+        var languageManager = new tgd.languageManager(self.currentLocale, tgd.languages);
+        (new tgd.dialog()).title(self.activeText().menu_language).content($template).show(true, function() {
+            ko.cleanNode(document.getElementById('container_' + id));
+        }, function() {
+            ko.applyBindings(languageManager, document.getElementById('container_' + id));
         });
     };
 

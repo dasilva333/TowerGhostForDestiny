@@ -10,11 +10,11 @@
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
-      "version": "988e6479ac8323f3df48d2c5b10a2ec5c171fd60dfcdf9cab338b4dff980083f"
+      "version": "942c04d9925a797847f6112df897c1681ff98a6c32d82ea9de17d45c09a7f1c4"
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
+      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
@@ -22,11 +22,11 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
+      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
-      "version": "dc0b4feaffab53e70c276fb551d8e27d51ac0a9ff0bc900a70aae4df0cdddf25"
+      "version": "61da8a1de316284e902b2127541b394b4cabcbb44f9a1d67a878be7d7b7e0919"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/en/objectiveDefs.json",
@@ -34,7 +34,7 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/en/perkDefs.json",
-      "version": "539cd4af0c6d878bf39cb085469404952c62322633d9a02c1349d29cd22bb6f7"
+      "version": "91e6bdcde57aa967a03df9494c7d6f9d176254ce0ecfd0f53b82635712fd5b2b"
     },
     "raceDefs.json": {
       "filename": "data/definitions/en/raceDefs.json",
@@ -46,7 +46,7 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/en/talentGridDefs.json",
-      "version": "6bbb13255f6d7de2fe85b393b141325ad96d7766f49ce8f07b58779076ab1fa3"
+      "version": "42cb119ab95d905eeedf2f1d23cd6733e1c1ee2a221ad0cf348d7dc59f9bdab7"
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
@@ -78,7 +78,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
+      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -110,11 +110,11 @@
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
+      "version": "0b3261b21108045d986231adb807da5797f757f68359e116ce6043b96001c321"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "0fd10fc854c30c6f95e0f36270a0a6c32d761310bbfdcccadf9f104b08bbf18e"
+      "version": "d17cdb104af60a36d0388979919da54e5af07f35bf0adebe3265da98bef3fe46"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -151,6 +151,10 @@
     "extrasPopup.js": {
       "filename": "js/tgd/extrasPopup.js",
       "version": "04d78ee26cc1bcab08ba6bf31302d3076442dab204fe1f08f9c38ce50afddddf"
+    },
+    "languageManager.js": {
+      "filename": "js/tgd/languageManager.js",
+      "version": "abc819d39bb85f9685e6d447cde7aea07bc02270edbd85dd8e0c7485c2cb385b"
     },
     "layout.js": {
       "filename": "js/tgd/layout.js",
@@ -194,7 +198,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "5c18b8713812f20faf2cdeb859aee676311af74fbaa8bccfb1b41544458f3b1e"
+      "version": "59006358f281b38bb36421bed2c9c02f44a991e9c4f56989fffca1e872af6916"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -206,7 +210,7 @@
     },
     "tooltips.min.js": {
       "filename": "js/extras/tooltips.min.js",
-      "version": "a05f318524e77cea1af8531c1af5a359d951eebcadc796676bdf6607de422ec3"
+      "version": "0895c06775d496cd8dab678593c3f2f131c685e407f7bd9d27885502301f1b1f"
     }
   },
   "load": [
@@ -248,6 +252,7 @@
     "js/tgd/bungie.js",
     "js/tgd/dialog.js",
     "js/tgd/extrasPopup.js",
+    "js/tgd/languageManager.js",
     "js/tgd/layout.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",

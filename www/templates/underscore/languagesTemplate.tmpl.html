@@ -1,9 +1,9 @@
-<div class="row button-group">
-    <% languages.forEach(function(language){ %>
-        <div class="col-xs-12 col-sm-8 col-md-8 col-lg-6 text-center">
-            <button class="btn-setLanguage btn btn-lg btn-default <%= language.code == locale ? 'btn-primary' : '' %>" value="<%= language.code %>">
-                <%= language.description %>
-            </button>
-        </div>
-        <% }) %>
+<div id="container_<%= id %>">
+	<div class="row button-group">
+		<div data-bind="foreach: { data: languages, as: 'language' }">
+			<div class="col-xs-12 col-sm-8 col-md-8 col-lg-6 text-center">
+				<button data-bind="text: language.description, click: $root.setLanguage.bind(language), css: $root.currentLocale() == language.code ? 'btn-primary' : 'btn-default'" class="btn-setLanguage btn btn-lg"></button>
+			</div>
+		</div>
+	</div>
 </div>
