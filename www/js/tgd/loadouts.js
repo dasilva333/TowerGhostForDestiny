@@ -1,15 +1,19 @@
 tgd.loadoutPair = function(pair, targetCharacter) {
     var self = this;
     _.extend(self, pair);
-
-    self.swapItem = ko.observable(self.swapItem);
-	self.description = ko.computed(function(){
+	var compiledTemplate = _.template(pair.description);
+	
+    this.swapItem = ko.observable(self.swapItem);
+	
+	this.description = ko.computed(function(){
 		var templateData = { item: self.targetItem, swapItem: self.swapItem() || {}, targetCharacter: targetCharacter };
-		return _.template(pair.description)(templateData);
+		return compiledTemplate(templateData);
 	});
+	
     this.activeTargetIcon = ko.computed(function() {
         return (self.targetItem && self.targetItem.icon) || self.targetIcon;
     });
+	
     this.activeSwapIcon = ko.computed(function() {
         return (self.swapItem() && self.swapItem().icon) || self.swapIcon;
     });
@@ -47,6 +51,13 @@ tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
 			pair.swapItem(candidates[index]);
 		}
     }
+	
+	self.getSwapArray = function(){
+		return _.map(self.swapArray, function(pair){
+			pair.swapItem = ko.unwrap(pair.swapItem);
+			return pair;
+		});
+	}
 }
 
 tgd.loadoutManager = function(loadouts, dialog) {
@@ -856,7 +867,7 @@ tgd.Loadout.prototype = {
                 id: id
             }));
             var transfer = function(dialog) {
-                self.swapItems(masterSwapArray, targetCharacterId, function() {
+                self.swapItems(ltc.getSwapArray(), targetCharacterId, function() {
                     $.toaster({
                         settings: {
                             timeout: 15 * 1000
