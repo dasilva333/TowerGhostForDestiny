@@ -1,3 +1,39 @@
+tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
+    var self = this;
+
+    console.log("masterSwapArray", masterSwapArray);
+    self.swapArray = masterSwapArray;
+
+    // When a swap item is clicked a few steps must be performed:
+    //	-determine bucket type
+    //	-determine items in that bucket
+    //	-exclude items already in masterSwapArray
+    //	-if the array is not empty then switch to the first item
+    //	-maintain the index so we can cycle through the whole list
+    //	-provide error message regarding no candidates if array is empty
+    //	
+    self.swapItem = function(swapItem) {
+        var items = targetCharacter.get(swapItem.bucketType);
+        var swapIds = _.pluck(_.pluck(masterSwapArray, 'swapItem'), '_id');
+        var candidates = _.filter(items, function(candidate) {
+            return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2;
+        });
+        /*if (candidates.length > 0) {
+        	_.each(masterSwapArray, function(pair) {
+        		if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
+        			var targetId = pair.targetItem._id;
+        			if (targetId in indexes && (indexes[targetId] + 1 < candidates.length)) {
+        				indexes[targetId]++;
+        			} else {
+        				indexes[targetId] = 0;
+        			}
+        			pair.swapItem = candidates[indexes[targetId]];
+        		}
+        	});
+        }*/
+    }
+}
+
 tgd.loadoutManager = function(loadouts, dialog) {
     var self = this;
 
@@ -792,57 +828,14 @@ tgd.Loadout.prototype = {
             self.promptUserConfirm(masterSwapArray, targetCharacterId);
         }
     },
-    generateTemplate: function(masterSwapArray, targetCharacterId, indexes) {
-        var self = this;
-        var html = $(tgd.swapTemplate({
-            swapArray: masterSwapArray
-        }) + $(".progress").find(".progress-bar").width(0).end().clone().wrap('<div>').parent().show().html());
-        var targetCharacter = _.findWhere(app.characters(), {
-            id: targetCharacterId
-        });
-        var swapIds = _.pluck(_.pluck(masterSwapArray, 'swapItem'), '_id');
-        html.find(".item").click(false);
-        html.find(".swapItem").click(function() {
-            var instanceId = $(this).attr("instanceid");
-            var item = self.findItemById(instanceId);
-            /* When a swap item is clicked a few steps must be performed:
-            	-determine bucket type
-            	-determine items in that bucket
-            	-exclude items already in masterSwapArray
-            	-if the array is not empty then switch to the first item
-            	-maintain the index so we can cycle through the whole list
-            	-provide error message regarding no candidates if array is empty
-            */
-            if (item) {
-                var items = targetCharacter.get(item.bucketType);
-                var candidates = _.filter(items, function(candidate) {
-                    return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2;
-                });
-                if (candidates.length > 0) {
-                    _.each(masterSwapArray, function(pair) {
-                        if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
-                            var targetId = pair.targetItem._id;
-                            if (targetId in indexes && (indexes[targetId] + 1 < candidates.length)) {
-                                indexes[targetId]++;
-                            } else {
-                                indexes[targetId] = 0;
-                            }
-                            //console.log(_.pluck(candidates,'description'));
-                            //console.log(indexes[targetId] + " replacing " + pair.swapItem.description + " with " + candidates[indexes[targetId]].description);
-                            pair.swapItem = candidates[indexes[targetId]];
-                        }
-                    });
-                    self.loadoutsDialog.content(self.generateTemplate(masterSwapArray, targetCharacterId, indexes));
-                }
-            }
-        });
-        return html;
-    },
     promptUserConfirm: function(masterSwapArray, targetCharacterId, callback) {
         if (masterSwapArray.length > 0) {
             var self = this;
-            self.indexes = {};
-            var $template = self.generateTemplate(masterSwapArray, targetCharacterId, self.indexes);
+            var ltc = new tgd.loadoutsTransferConfirm(masterSwapArray, targetCharacter);
+            var id = new Date().getTime();
+            var $template = $(tgd.swapTemplate({
+                id: id
+            }));
             var transfer = function(dialog) {
                 self.swapItems(masterSwapArray, targetCharacterId, function() {
                     $.toaster({
@@ -881,6 +874,7 @@ tgd.Loadout.prototype = {
             })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
                 function() { //onHide
                     $(document).unbind("keyup.dialog");
+                    ko.cleanNode(document.getElementById('container_' + id));
                 },
                 function() { //onShown
                     //to prevent multiple binding
@@ -891,6 +885,7 @@ tgd.Loadout.prototype = {
                             $(document).unbind("keyup.dialog");
                         }
                     });
+                    ko.applyBindings(ltc, document.getElementById('container_' + id));
                 });
         }
     }

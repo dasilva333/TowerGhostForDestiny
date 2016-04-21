@@ -158,10 +158,10 @@ Profile.prototype = {
                 var newItems = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
                 _.each(self.items(), function(item) {
                     if (item) {
-                        var existingItem = _.findWhere(newItems, {
-                            itemInstanceId: item._id
+                        var existingItem = _.filter(newItems, function(newItem) {
+                            return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
                         });
-                        if (existingItem) {
+                        if (existingItem.length > 0) {
                             item.updateItem(existingItem);
                         } else {
                             self.items.remove(item);
@@ -169,13 +169,10 @@ Profile.prototype = {
                     }
                 });
                 _.each(newItems, function(newItem) {
-                    var uniqueItem = _.findWhere(self.items(), {
-                        _id: newItem.itemInstanceId
+                    var foundItem = _.filter(self.items(), function(item) {
+                        return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
                     });
-                    var genericItem = _.filter(self.items(), function(item) {
-                        return item.id == newItem.itemHash;
-                    })[0];
-                    if (!uniqueItem || !genericItem) {
+                    if (foundItem.length == 0) {
                         var processedItem = new Item(newItem, self);
                         if ("id" in processedItem) self.items.push(processedItem);
                     }
