@@ -194,7 +194,9 @@ Profile.prototype = {
         if (items.length === 0) {
             return 0;
         }
-        var index = items.filter(this.filterItemByType("Artifact", true)).length;
+        var index = _.filter(items, function(item){
+			return item.bucketType == "Artifact" && item.isEquipped() == true;
+		}).length;
         var weights = tgd.DestinyBucketWeights[index];
         if (weights) {
             var eligibleGear = _.filter(items, function(item) {
@@ -378,11 +380,6 @@ Profile.prototype = {
                 return item;
         });
     },
-    filterItemByType: function(type, isEquipped) {
-        return function(item) {
-            return (item.bucketType == type && item.isEquipped() == isEquipped);
-        };
-    },
     all: function(type) {
         var items = _.where(this.items(), {
             bucketType: type
@@ -433,7 +430,9 @@ Profile.prototype = {
         return items;
     },
     get: function(type) {
-        return this.all(type).filter(this.filterItemByType(type, false));
+        return _.filter(this.all(type), function(item){
+			return item.isEquipped() == false;
+		});
     },
     getVisible: function(type) {
         return _.filter(this.get(type), function(item) {
@@ -441,7 +440,9 @@ Profile.prototype = {
         });
     },
     itemEquipped: function(type) {
-        return ko.utils.arrayFirst(this.items(), this.filterItemByType(type, true));
+        return _.first(_.filter(this.items(), function(item){
+			return item.isEquipped() == true && item.bucketType == type;;
+		}));
     },
     itemEquippedVisible: function(type) {
         var ie = this.itemEquipped(type);
