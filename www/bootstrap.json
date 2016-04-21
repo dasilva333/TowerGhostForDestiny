@@ -114,7 +114,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "d17cdb104af60a36d0388979919da54e5af07f35bf0adebe3265da98bef3fe46"
+      "version": "e3b577342cb800b9b0eae683405e13a8f3817185cc1b82ef60144916f35ed3b9"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -150,11 +150,11 @@
     },
     "extrasPopup.js": {
       "filename": "js/tgd/extrasPopup.js",
-      "version": "04d78ee26cc1bcab08ba6bf31302d3076442dab204fe1f08f9c38ce50afddddf"
+      "version": "3dcb107cce304358cd8a69c2e3b7fc48840593eba1f54dfb37f4ce11151133dd"
     },
     "languageManager.js": {
       "filename": "js/tgd/languageManager.js",
-      "version": "abc819d39bb85f9685e6d447cde7aea07bc02270edbd85dd8e0c7485c2cb385b"
+      "version": "7f130a05442b8203d7387d93a04b6891027ef71a74db2a9c9401f9624f22b452"
     },
     "layout.js": {
       "filename": "js/tgd/layout.js",
@@ -167,6 +167,10 @@
     "locale.js": {
       "filename": "js/tgd/locale.js",
       "version": "04db3bd944c17c1dcc6c22821057923de731d0d4f9b302541edb3c0dcde7508d"
+    },
+    "selectMultiCharacters.js": {
+      "filename": "js/tgd/selectMultiCharacters.js",
+      "version": "0c4e7f3d9683ead7b344160eafaf9576db506ab6d109cc5c3460bce9bc862f9c"
     },
     "storage.js": {
       "filename": "js/tgd/storage.js",
@@ -198,7 +202,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "59006358f281b38bb36421bed2c9c02f44a991e9c4f56989fffca1e872af6916"
+      "version": "306ad80ad43a6787e67f911e7fdd36840279f37e145e46d85073f1402114eb4d"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
@@ -256,6 +260,7 @@
     "js/tgd/layout.js",
     "js/tgd/loadouts.js",
     "js/tgd/locale.js",
+    "js/tgd/selectMultiCharacters.js",
     "js/tgd/storage.js",
     "js/tgd/transferConfirm.js",
     "js/tgd/updater.js",

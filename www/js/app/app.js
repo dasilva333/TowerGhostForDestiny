@@ -1846,38 +1846,19 @@ var app = function() {
     };
 
     this.selectMultiCharacters = function(title, description, callback) {
-        var selectedStatus = [];
-        for (i = 0; i < app.orderedCharacters().length; i++) {
-            var id = app.orderedCharacters()[i].id;
-            selectedStatus[id] = (id !== "Vault");
-        }
-        var dialogItself = (new tgd.dialog({
-            message: function(dialogItself) {
-                var $content = $(tgd.selectMultiCharactersTemplate({
-                    description: description,
-                    characters: app.orderedCharacters(),
-                    selected: selectedStatus
-                }));
-                var charButtonClicked = function(self, id) {
-                    selectedStatus[id] = !selectedStatus[id];
-                    self.find('img').css('border', (selectedStatus[id] === true) ? "solid 3px yellow" : "none");
-                };
-                $.each(app.orderedCharacters(), function(i, val) {
-                    var id = val.id;
-                    var sel = "#char" + i.toString();
-                    $content.find(sel).click(function() {
-                        charButtonClicked($(this), id);
-                    });
-                });
-                return $content;
-            },
+        var id = new Date().getTime();
+
+        var $template = $(tgd.selectMultiCharactersTemplate({
+            id: id
+        }));
+        var smc = new tgd.selectMultiCharacters(description, self.orderedCharacters);
+        console.log("smc", smc);
+        (new tgd.dialog({
             buttons: [{
                 label: 'OK',
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
-                    var characters = _.filter(app.orderedCharacters(), function(c) {
-                        return selectedStatus[c.id] === true;
-                    });
+                    var characters = smc.selectedCharacters();
                     if (characters.length <= 1) {
                         BootstrapDialog.alert("Need to select two or more characters.");
                     } else {
@@ -1891,7 +1872,11 @@ var app = function() {
                     dialogItself.close();
                 }
             }]
-        })).title(title).show(true);
+        })).title(title).content($template).show(true, function() {
+            ko.cleanNode(document.getElementById('container_' + id));
+        }, function() {
+            ko.applyBindings(smc, document.getElementById('container_' + id));
+        });
     };
 
     this.setVaultTo = function() {

@@ -9,7 +9,7 @@
 					<p>Consolidate: Transfer all quantities of <span data-bind="text: item.description"></span> across the selected characters to this character.</p>
 				</div>
 			</div>
-			<div id="opt1" class="collapse in">
+			<div class="collapse in">
 				<div class="list-group-item row">
 					<div class="locations col-xs-24 col-sm-24 col-md-24 col-lg-24">
 						<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">
@@ -26,7 +26,7 @@
 							<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">
 								<div class="attkIcon" data-bind="click: $root.setSelectedCharacter.bind(character)">
 									<div class="icon-banner" data-bind="text: character.classType()"></div>
-									<img data-bind="itemImageHandler: character.icon, style: { border: '1px solid ' + ($root.selectedCharacters().indexOf(character) > -1 ? 'yellow' : 'white') }" style="width:100%;">
+									<img data-bind="itemImageHandler: character.icon, style: { border: '2px solid ' + ($root.selectedCharacters().indexOf(character) > -1 ? 'yellow' : 'white') }" style="width:100%;">
 									<div class="lower-left" data-bind="text: character.classLetter()"></div>
 								</div>
 							</div>

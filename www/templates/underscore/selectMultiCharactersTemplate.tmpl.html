@@ -1,9 +1,8 @@
-<div id="menu">
+<div id="container_<%= id %>">
     <div class="panel list-group">
         <div class="list-group-item row">
             <div class="item-name col-xs-24 col-sm-24 col-md-24 col-lg-24">
-                <p>
-                    <%= description %>
+                <p data-bind="text: description">
                 </p>
             </div>
         </div>
@@ -13,23 +12,15 @@
                     <div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">
                         <!-- padding -->
                     </div>
-                    <% for (i = 0; i < characters.length; i++){ %>
-                        <div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4" id="char<%= i %>">
-                            <div class="attkIcon">
-                                <div class="icon-banner">
-                                    <%= characters[i].classType() %>
-                                </div>
-                                <% if (selected[characters[i].id] == true){ %>
-                                    <img src="<%= characters[i].icon() %>" style="border:3px solid yellow" id="char<%= i %>img">
-                                    <% } else { %>
-                                        <img src="<%= characters[i].icon() %>" style="border:none" id="char<%= i %>img">
-                                        <% } %>
-                                            <div class="lower-left">
-                                                <%= characters[i].classLetter() %>
-                                            </div>
+					<div data-bind="foreach: { data: characters, as: 'character' }">
+						<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">
+                            <div class="attkIcon" data-bind="click: $root.setSelectedCharacter.bind(character)">
+                                <div class="icon-banner" data-bind="text: character.classType()"></div>
+								<img data-bind="itemImageHandler: character.icon, style: { border: '2px solid ' + ($root.selectedCharacters().indexOf(character) > -1 ? 'yellow':'white')}">
+								<div class="lower-left" data-bind="text: character.classLetter()"></div>
                             </div>
                         </div>
-                        <% } %>
+					</div>
                 </div>
             </div>
         </div>

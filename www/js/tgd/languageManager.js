@@ -6,7 +6,6 @@ tgd.languageManager = function(currentLocale, languages) {
     self.languages = languages;
 
     self.setLanguage = function(model, event) {
-        console.log(this.code);
         app.appLocale(this.code);
         app.autoUpdates(true);
         tgd.checkUpdates();
