@@ -7,15 +7,15 @@
 					<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12" data-bind="text: pair.description"></div>
 					<div class="text-right col-xs-10 col-sm-10 col-md-10 col-lg-4">
 						<a class="item" data-bind="click: function(){ return false }, attr: { href: pair.targetItem && pair.targetItem.href }">
-							<img class="itemImage" data-bind="itemImageHandler: (pair.targetItem && pair.targetItem.icon) || pair.targetIcon">
+							<img class="itemImage" data-bind="itemImageHandler: pair.activeTargetIcon">
 						</a>
 					</div>
 					<div class="text-center col-xs-4 col-sm-4 col-md-4 col-lg-4">
 						<img data-bind="attr: { src: pair.actionIcon }">
 					</div>
 					<div class="text-left col-xs-10 col-sm-10 col-md-10 col-lg-4">
-						<a class="swapItem item" data-bind="click: $root.swapItem.bind(pair.swapItem), attr: { href: pair.swapItem && pair.swapItem.href }">
-							<img class="itemImage" data-bind="itemImageHandler: (pair.swapItem && pair.swapItem.icon) || pair.swapIcon">
+						<a class="swapItem item" data-bind="click: $root.changeSwapItem.bind(pair), attr: { href: pair.swapItem && pair.swapItem.href }">
+							<img class="itemImage" data-bind="itemImageHandler: pair.activeSwapIcon">
 						</a>
 					</div>
 				</div>

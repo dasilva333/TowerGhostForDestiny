@@ -1,8 +1,24 @@
+tgd.loadoutPair = function(pair){
+	var self = this;
+	_.extend(self, pair);
+	
+	self.swapItem = ko.observable(pair.swapItem);
+	
+	this.activeTargetIcon = ko.computed(function(){
+		return (pair.targetItem && pair.targetItem.icon) || pair.targetIcon;
+	});
+	this.activeSwapIcon = ko.computed(function(){
+		return (pair.swapItem() && pair.swapItem().icon) || pair.swapIcon;
+	});
+};
+
 tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
     var self = this;
 
     console.log("masterSwapArray", masterSwapArray);
-    self.swapArray = masterSwapArray;
+    self.swapArray = _.map(masterSwapArray, function(pair){
+		return new tgd.loadoutPair(pair);
+	});
 
     // When a swap item is clicked a few steps must be performed:
     //	-determine bucket type
@@ -12,25 +28,16 @@ tgd.loadoutsTransferConfirm = function(masterSwapArray, targetCharacter) {
     //	-maintain the index so we can cycle through the whole list
     //	-provide error message regarding no candidates if array is empty
     //	
-    self.swapItem = function(swapItem) {
-        var items = targetCharacter.get(swapItem.bucketType);
-        var swapIds = _.pluck(_.pluck(masterSwapArray, 'swapItem'), '_id');
+    self.changeSwapItem = function(pair) {
+        var items = targetCharacter.get(pair.swapItem().bucketType);
+        var swapIds = _.pluck(_.map(self.swapArray, function(pair){ return pair.swapItem(); }), '_id');
+		console.log("swapItem", pair, pair.swapItem(), items, swapIds);
         var candidates = _.filter(items, function(candidate) {
             return swapIds.indexOf(candidate._id) == -1 && candidate.transferStatus < 2;
         });
-        /*if (candidates.length > 0) {
-        	_.each(masterSwapArray, function(pair) {
-        		if (pair && pair.swapItem && pair.swapItem._id == instanceId) {
-        			var targetId = pair.targetItem._id;
-        			if (targetId in indexes && (indexes[targetId] + 1 < candidates.length)) {
-        				indexes[targetId]++;
-        			} else {
-        				indexes[targetId] = 0;
-        			}
-        			pair.swapItem = candidates[indexes[targetId]];
-        		}
-        	});
-        }*/
+        if (candidates.length > 0) {
+			pair.swapItem(candidates[0]);
+        }
     }
 }
 
@@ -831,6 +838,9 @@ tgd.Loadout.prototype = {
     promptUserConfirm: function(masterSwapArray, targetCharacterId, callback) {
         if (masterSwapArray.length > 0) {
             var self = this;
+			var targetCharacter = _.findWhere(app.characters(), {
+				id: targetCharacterId
+			});
             var ltc = new tgd.loadoutsTransferConfirm(masterSwapArray, targetCharacter);
             var id = new Date().getTime();
             var $template = $(tgd.swapTemplate({
@@ -852,9 +862,6 @@ tgd.Loadout.prototype = {
                     app.dynamicMode(false);
                     dialog.close();
                     if (callback) {
-                        var targetCharacter = _.findWhere(app.characters(), {
-                            id: targetCharacterId
-                        });
                         callback(targetCharacter);
                     }
                 });
