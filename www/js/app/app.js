@@ -1703,15 +1703,19 @@ var app = function() {
         messageStr = messageStr.concat("</ul></div>");
 
         if (usingbatchMode === false) {
-            (new tgd.dialog({
+            var defaultAction = function(dialogItself) {
+                nextTransfer(callback);
+                dialogItself.close();
+            };
+            (new tgd.koDialog({
+                templateName: '',
+                viewModel: {},
+                onFinish: defaultAction,
                 message: messageStr,
                 buttons: [{
                     label: 'Normalize',
                     cssClass: 'btn-primary',
-                    action: function(dialogItself) {
-                        nextTransfer(callback);
-                        dialogItself.close();
-                    }
+                    action: defaultAction
                 }, {
                     label: 'Close',
                     action: function(dialogItself) {
