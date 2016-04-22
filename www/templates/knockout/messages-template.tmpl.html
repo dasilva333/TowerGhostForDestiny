@@ -1,48 +1,42 @@
 <div class="container well well-sm" data-bind="if: farmViewEnabled, visible: farmViewEnabled">
-    <div class="container-fluid">
-		<form class="form-horizontal">
-			<fieldset>
-				<div class="col-xs-24 text-center">
-					<div class="col-xs-7">
-						<div class="col-xs-24 col-sm-24 col-md-8 col-lg-10">
-							<span data-bind="text: farmMode() ? 'Enabled' : 'Disabled', css: farmMode() ? 'text-success' : 'text-danger'"></span>
-							<span data-bind="visible: farmMode">
-								(<span id="timeRemainingForRefresh" title="Time until next refresh" class="text-muted"></span>)
-							</span>
-						</div>
-						<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
-							<button title="Enable/Disable" data-bind="click: function(){ farmMode(!farmMode()) }">
-								<span data-bind="css: farmMode() ? 'fa-stop text-danger' : 'fa-play text-success'" class="fa"></span>
-							</button>
-							<button title="Refresh Inventory" data-bind="click: refresh"><i class="fa fa-refresh text-success"></i></button>
-						</div>
-						<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
-							<button title="Show Help" data-bind="click: showFarmHelp"><i class="fa fa-question text-info"></i></button>
-							<button title="Close Farm Mode Controls" data-bind="click: toggleFarmMode"><i class="fa fa-times text-danger"></i></button>
-						</div>
-					</div>
-					<div class="col-xs-12">
-						<!-- ko foreach: { data: _.keys(tgd.farmItemFilters), as: 'itemType' } -->
-							<div class="col-xs-24 col-sm-12 col-md-6 col-lg-6 text-left">
-								<label>
-									<input type="checkbox" data-bind="checked: $root.farmItems, value: itemType"> 
-									<span data-bind="text: itemType" class="text-primary"></span>
-									<span data-bind="text: $root.farmItemCounts()[itemType]" class="text-info"></span>
-								</label>
-							</div>
-						<!--/ko  -->
-					</div>
-					<div class="col-xs-5">
-						<div data-bind="foreach: { data: orderedCharacters, as: 'avatar' }">
-			                <div class="mobile-characters" data-bind="visible: avatar.id == $root.farmTarget() && $root.farmMode() == true || $root.farmMode() == false, style: { border: $root.farmTarget() == avatar.id ? '2px solid green' : '' }, click: setFarmTarget.bind(avatar)">
-			                    <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id" src="about:blank">
-								<div class="mobile-characters-letter" data-bind="text: classLetter"></div>
-			                </div>
-			            </div>
-					</div>
+	<div class="row">
+		<div class="col-xs-7">
+			<div class="col-xs-24 col-sm-24 col-md-8 col-lg-10">
+				<span data-bind="text: farmMode() ? 'Enabled' : 'Disabled', css: farmMode() ? 'text-success' : 'text-danger'"></span>
+				<span data-bind="visible: farmMode">
+					(<span id="timeRemainingForRefresh" title="Time until next refresh" class="text-muted"></span>)
+				</span>
+			</div>
+			<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
+				<button title="Enable/Disable" data-bind="click: function(){ farmMode(!farmMode()) }">
+					<span data-bind="css: farmMode() ? 'fa-stop text-danger' : 'fa-play text-success'" class="fa"></span>
+				</button>
+				<button title="Refresh Inventory" data-bind="click: refresh"><i class="fa fa-refresh text-success"></i></button>
+			</div>
+			<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
+				<button title="Show Help" data-bind="click: showFarmHelp"><i class="fa fa-question text-info"></i></button>
+				<button title="Close Farm Mode Controls" data-bind="click: toggleFarmMode"><i class="fa fa-times text-danger"></i></button>
+			</div>
+		</div>
+		<div class="col-xs-12">
+			<!-- ko foreach: { data: _.keys(tgd.farmItemFilters), as: 'itemType' } -->
+				<div class="col-xs-24 col-sm-12 col-md-6 col-lg-6 text-left">
+					<label>
+						<input type="checkbox" data-bind="checked: $root.farmItems, value: itemType"> 
+						<span data-bind="text: itemType" class="text-primary"></span>
+						<span data-bind="text: $root.farmItemCounts()[itemType]" class="text-info"></span>
+					</label>
 				</div>
-			</fieldset>
-		</form>
+			<!--/ko  -->
+		</div>
+		<div class="col-xs-5">
+			<div data-bind="foreach: { data: orderedCharacters, as: 'avatar' }">
+				<div class="mobile-characters" data-bind="visible: avatar.id == $root.farmTarget() && $root.farmMode() == true || $root.farmMode() == false, style: { border: $root.farmTarget() == avatar.id ? '2px solid green' : '' }, click: setFarmTarget.bind(avatar)">
+					<img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, css: id" src="about:blank">
+					<div class="mobile-characters-letter" data-bind="text: classLetter"></div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 

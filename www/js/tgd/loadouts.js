@@ -705,7 +705,7 @@ tgd.Loadout.prototype = {
                                     if (item.doEquip() === true) {
                                         return {
                                             targetItem: item,
-											actionState: 2,
+                                            actionState: 2,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_equip %>",
                                             actionIcon: "assets/to-equip.png",
                                             swapIcon: targetCharacterIcon
@@ -714,8 +714,8 @@ tgd.Loadout.prototype = {
                                     /* then return an object indicating to do nothing */
                                     else {
                                         return {
-											targetItem: item,
-											actionState: 0,
+                                            targetItem: item,
+                                            actionState: 0,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_alreadythere_pt1 %> <%= targetCharacter.classType() %> <%= app.activeText().loadouts_alreadythere_pt2 %> <%= item.bucketType %>",
                                             targetIcon: item.icon,
                                             actionIcon: "assets/no-transfer.png",
@@ -764,8 +764,8 @@ tgd.Loadout.prototype = {
                                         //tgd.localLog("eliminating " + swapItem.description + " from the targetBuckets list " + _.pluck(targetBucket,'description'));
                                         if (swapItem.armorIndex != -1 && item.character.id != "Vault" && item.character.classType() != targetCharacter.classType()) {
                                             return {
-												targetItem: item,
-												actionState: 0,
+                                                targetItem: item,
+                                                actionState: 0,
                                                 description: "<%= item.description %> <%= app.activeText().loadouts_no_transfer %>",
                                                 targetIcon: item.icon,
                                                 actionIcon: "assets/no-transfer.png",
@@ -775,7 +775,7 @@ tgd.Loadout.prototype = {
                                         return {
                                             targetItem: item,
                                             swapItem: swapItem,
-											actionState: 3,
+                                            actionState: 3,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_swap %> <%= swapItem.description %>",
                                             actionIcon: "assets/swap.png"
                                         };
@@ -783,7 +783,7 @@ tgd.Loadout.prototype = {
                                         tgd.localLog("to transfer: " + item.description);
                                         return {
                                             targetItem: item,
-											actionState: 1,
+                                            actionState: 1,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_transfer %>",
                                             swapIcon: targetCharacterIcon,
                                             actionIcon: "assets/to-transfer.png"
@@ -804,7 +804,7 @@ tgd.Loadout.prototype = {
                                     if (item.doEquip() === true) {
                                         return {
                                             targetItem: item,
-											actionState: 2,
+                                            actionState: 2,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_equip %>",
                                             actionIcon: "assets/to-equip.png",
                                             swapIcon: targetCharacterIcon
@@ -813,8 +813,8 @@ tgd.Loadout.prototype = {
                                     /* then return an object indicating to do nothing */
                                     else {
                                         return {
-											targetItem: item,
-											actionState: 0,
+                                            targetItem: item,
+                                            actionState: 0,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_alreadythere_pt1 %> <%= targetCharacter.classType() %>  <%= app.activeText().loadouts_alreadythere_pt2 %> <%= item.bucketType %>",
                                             targetIcon: item.icon,
                                             actionIcon: "assets/no-transfer.png",
@@ -826,8 +826,8 @@ tgd.Loadout.prototype = {
                                 else if (item.bucketType == "Subclasses") {
                                     tgd.localLog(item.description + " wont transfer sub classes ");
                                     return {
-										targetItem: item,
-										actionState: 0,
+                                        targetItem: item,
+                                        actionState: 0,
                                         description: "<%= item.description %> <%= app.activeText().loadouts_no_transfer %>",
                                         targetIcon: item.icon,
                                         actionIcon: "assets/no-transfer.png",
@@ -837,7 +837,7 @@ tgd.Loadout.prototype = {
                                     if (item.doEquip() === true) {
                                         return {
                                             targetItem: item,
-											actionState: 2,
+                                            actionState: 2,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_moveequip %>",
                                             actionIcon: "assets/to-equip.png",
                                             swapIcon: targetCharacterIcon
@@ -846,7 +846,7 @@ tgd.Loadout.prototype = {
                                         tgd.localLog("loadouts_to_transfer: " + item.description);
                                         return {
                                             targetItem: item,
-											actionState: 1,
+                                            actionState: 1,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_transfer %>",
                                             actionIcon: "assets/to-transfer.png",
                                             swapIcon: targetCharacterIcon
@@ -859,7 +859,7 @@ tgd.Loadout.prototype = {
                         swapArray = _.map(sourceBucket, function(item) {
                             return {
                                 targetItem: item,
-								actionState: 1,
+                                actionState: 1,
                                 description: "<%= item.description %> <%= app.activeText().loadouts_to_transfer %>",
                                 actionIcon: "assets/to-transfer.png",
                                 swapIcon: targetCharacterIcon
