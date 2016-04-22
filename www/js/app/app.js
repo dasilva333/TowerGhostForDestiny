@@ -107,13 +107,10 @@ var app = function() {
         return tgd.locale[self.currentLocale()];
     });
     this.manageLoadouts = function() {
-        var id = new Date().getTime();
-
-        var $template = $(tgd.manageLoadoutsTemplate({
-            id: id
-        }));
-
-        self.manageLoadoutDialog = (new tgd.dialog({
+        var loadoutManager = new tgd.loadoutManager(self.loadouts);
+        (new tgd.koDialog({
+            templateName: 'manageLoadoutsTemplate',
+            viewModel: loadoutManager,
             buttons: [{
                 label: app.activeText().loadouts_save,
                 action: function(dialog) {
@@ -128,12 +125,7 @@ var app = function() {
                     dialog.close();
                 }
             }]
-        })).title(self.activeText().menu_loadouts_manage + " Loadouts").content($template).show(true, function() {
-            ko.cleanNode(document.getElementById('container_' + id));
-        }, function() {
-            var loadoutManager = new tgd.loadoutManager(self.loadouts);
-            ko.applyBindings(loadoutManager, document.getElementById('container_' + id));
-        }).modal;
+        })).title(self.activeText().menu_loadouts_manage + " Loadouts").show(true);
     };
     this.createLoadout = function() {
         self.loadoutMode(true);
@@ -161,18 +153,11 @@ var app = function() {
 
     this.showLanguageSettings = function() {
         self.toggleBootstrapMenu();
-        var id = new Date().getTime();
-
-        var $template = tgd.languagesTemplate({
-            id: id
-        });
-
         var languageManager = new tgd.languageManager(self.currentLocale, tgd.languages);
-        (new tgd.dialog()).title(self.activeText().menu_language).content($template).show(true, function() {
-            ko.cleanNode(document.getElementById('container_' + id));
-        }, function() {
-            ko.applyBindings(languageManager, document.getElementById('container_' + id));
-        });
+        (new tgd.koDialog({
+            viewModel: languageManager,
+            templateName: 'languagesTemplate'
+        })).title(self.activeText().menu_language).show(true);
     };
 
     this.handleGoogleResponse = function(data) {
@@ -1718,7 +1703,7 @@ var app = function() {
         messageStr = messageStr.concat("</ul></div>");
 
         if (usingbatchMode === false) {
-            var dialogItself = (new tgd.dialog({
+            (new tgd.dialog({
                 message: messageStr,
                 buttons: [{
                     label: 'Normalize',
@@ -1783,37 +1768,30 @@ var app = function() {
     };
 
     this.selectMultiCharacters = function(title, description, callback) {
-        var id = new Date().getTime();
-
-        var $template = $(tgd.selectMultiCharactersTemplate({
-            id: id
-        }));
         var smc = new tgd.selectMultiCharacters(description, self.orderedCharacters);
-        console.log("smc", smc);
-        (new tgd.dialog({
-            buttons: [{
-                label: 'OK',
-                cssClass: 'btn-primary',
-                action: function(dialogItself) {
-                    var characters = smc.selectedCharacters();
-                    if (characters.length <= 1) {
-                        BootstrapDialog.alert("Need to select two or more characters.");
-                    } else {
-                        callback(characters);
+        var defaultAction = function(dialogItself) {
+                var characters = smc.selectedCharacters();
+                if (characters.length <= 1) {
+                    BootstrapDialog.alert("Need to select two or more characters.");
+                } else {
+                    callback(characters);
+                }
+                dialogItself.close();
+            }
+            (new tgd.koDialog({
+                templateName: "selectMultiCharactersTemplate",
+                viewModel: smc,
+                buttons: [{
+                    label: 'OK',
+                    cssClass: 'btn-primary',
+                    action: defaultAction
+                }, {
+                    label: 'Close',
+                    action: function(dialogItself) {
+                        dialogItself.close();
                     }
-                    dialogItself.close();
-                }
-            }, {
-                label: 'Close',
-                action: function(dialogItself) {
-                    dialogItself.close();
-                }
-            }]
-        })).title(title).content($template).show(true, function() {
-            ko.cleanNode(document.getElementById('container_' + id));
-        }, function() {
-            ko.applyBindings(smc, document.getElementById('container_' + id));
-        });
+                }]
+            })).title(title).content($template).show(true, _.noop, _.noop);
     };
 
     this.setVaultTo = function() {

@@ -1,3 +1,35 @@
+tgd.koDialog = function(options) {
+    var dialog = new tgd.dialog(options);
+    var id = new Date().getTime();
+    var template = tgd[options.templateName]({
+        id: id
+    });
+    var mdl = dialog.modal;
+    if (options.viewModel && options.viewModel.setDialog) {
+        options.viewModel.setDialog(mdl);
+    }
+    mdl.setMessage(template);
+    mdl.onHide(function() {
+        $(document).unbind("keyup.dialog");
+        ko.cleanNode(document.getElementById('container_' + id));
+    });
+    mdl.onShow(function(instance) {
+        var activeModal = instance.getModal();
+        activeModal.on("shown.bs.modal", function() {
+            $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
+                var code = e.which;
+                if (code == 13) {
+                    if (options.onFinish)
+                        options.onFinish(mdl);
+                    $(document).unbind("keyup.dialog");
+                }
+            });
+            ko.applyBindings(options.viewModel, document.getElementById('container_' + id));
+        });
+    });
+    return dialog;
+}
+
 tgd.dialog = (function(options) {
     var self = this;
 

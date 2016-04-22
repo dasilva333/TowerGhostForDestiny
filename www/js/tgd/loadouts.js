@@ -1,9 +1,25 @@
+tgd.loadoutActionStates = {
+    0: {
+        actionIcon: "assets/no-transfer.png"
+    },
+    1: {
+        actionIcon: "assets/to-transfer.png"
+    },
+    2: {
+        actionIcon: "assets/to-equip.png"
+    },
+    3: {
+        actionIcon: "assets/swap.png"
+    }
+}
 tgd.loadoutPair = function(pair, targetCharacter) {
     var self = this;
     _.extend(self, pair);
     var compiledTemplate = _.template(pair.description);
 
     this.swapItem = ko.observable(self.swapItem);
+
+    this.actionIcon = tgd.loadoutActionStates[pair.actionState].actionIcon;
 
     this.description = ko.computed(function() {
         var templateData = {
@@ -707,7 +723,6 @@ tgd.Loadout.prototype = {
                                             targetItem: item,
                                             actionState: 2,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_equip %>",
-                                            actionIcon: "assets/to-equip.png",
                                             swapIcon: targetCharacterIcon
                                         };
                                     }
@@ -718,7 +733,6 @@ tgd.Loadout.prototype = {
                                             actionState: 0,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_alreadythere_pt1 %> <%= targetCharacter.classType() %> <%= app.activeText().loadouts_alreadythere_pt2 %> <%= item.bucketType %>",
                                             targetIcon: item.icon,
-                                            actionIcon: "assets/no-transfer.png",
                                             swapIcon: ownerIcon
                                         };
                                     }
@@ -768,7 +782,6 @@ tgd.Loadout.prototype = {
                                                 actionState: 0,
                                                 description: "<%= item.description %> <%= app.activeText().loadouts_no_transfer %>",
                                                 targetIcon: item.icon,
-                                                actionIcon: "assets/no-transfer.png",
                                                 swapIcon: ownerIcon
                                             };
                                         }
@@ -776,8 +789,7 @@ tgd.Loadout.prototype = {
                                             targetItem: item,
                                             swapItem: swapItem,
                                             actionState: 3,
-                                            description: "<%= item.description %> <%= app.activeText().loadouts_swap %> <%= swapItem.description %>",
-                                            actionIcon: "assets/swap.png"
+                                            description: "<%= item.description %> <%= app.activeText().loadouts_swap %> <%= swapItem.description %>"
                                         };
                                     } else {
                                         tgd.localLog("to transfer: " + item.description);
@@ -830,7 +842,6 @@ tgd.Loadout.prototype = {
                                         actionState: 0,
                                         description: "<%= item.description %> <%= app.activeText().loadouts_no_transfer %>",
                                         targetIcon: item.icon,
-                                        actionIcon: "assets/no-transfer.png",
                                         swapIcon: ownerIcon
                                     };
                                 } else {
@@ -839,7 +850,6 @@ tgd.Loadout.prototype = {
                                             targetItem: item,
                                             actionState: 2,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_moveequip %>",
-                                            actionIcon: "assets/to-equip.png",
                                             swapIcon: targetCharacterIcon
                                         };
                                     } else {
@@ -848,7 +858,6 @@ tgd.Loadout.prototype = {
                                             targetItem: item,
                                             actionState: 1,
                                             description: "<%= item.description %> <%= app.activeText().loadouts_to_transfer %>",
-                                            actionIcon: "assets/to-transfer.png",
                                             swapIcon: targetCharacterIcon
                                         };
                                     }
@@ -861,7 +870,6 @@ tgd.Loadout.prototype = {
                                 targetItem: item,
                                 actionState: 1,
                                 description: "<%= item.description %> <%= app.activeText().loadouts_to_transfer %>",
-                                actionIcon: "assets/to-transfer.png",
                                 swapIcon: targetCharacterIcon
                             };
                         });
@@ -885,10 +893,6 @@ tgd.Loadout.prototype = {
             });
             var ltc = new tgd.loadoutsTransferConfirm(masterSwapArray, targetCharacter);
             console.log("ltc", ltc);
-            var id = new Date().getTime();
-            var $template = $(tgd.swapTemplate({
-                id: id
-            }));
             var transfer = function(dialog) {
                 self.swapItems(ltc.getSwapArray(), targetCharacterId, function() {
                     $.toaster({
@@ -909,7 +913,10 @@ tgd.Loadout.prototype = {
                     }
                 });
             };
-            self.loadoutsDialog = (new tgd.dialog({
+            self.loadoutsDialog = (new tgd.koDialog({
+                templateName: "swapTemplate",
+                viewModel: ltc,
+                onFinish: transfer,
                 buttons: [{
                     label: app.activeText().loadouts_transfer,
                     action: function(dialog) {
@@ -921,22 +928,7 @@ tgd.Loadout.prototype = {
                         dialog.close();
                     }
                 }]
-            })).title(app.activeText().loadouts_transfer_confirm).content($template).show(true,
-                function() { //onHide
-                    $(document).unbind("keyup.dialog");
-                    ko.cleanNode(document.getElementById('container_' + id));
-                },
-                function() { //onShown
-                    //to prevent multiple binding
-                    $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
-                        var code = e.which;
-                        if (code == 13) {
-                            transfer(self.loadoutsDialog.modal);
-                            $(document).unbind("keyup.dialog");
-                        }
-                    });
-                    ko.applyBindings(ltc, document.getElementById('container_' + id));
-                });
+            })).title(app.activeText().loadouts_transfer_confirm).show(true);
         }
     }
 };

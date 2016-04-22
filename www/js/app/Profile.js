@@ -931,16 +931,19 @@ Profile.prototype = {
     renderBestGroups: function(type, groups) {
         //console.log("renderBestGroups", groups);
         var character = this;
-        var id = new Date().getTime();
-
-        var $template = $(tgd.maxLightTemplates({
-            id: id
-        }));
-
         var armorSelection = new tgd.armorSelection(type, groups, character);
         //console.log("armorSelection", armorSelection);
-
-        var armorTemplateDialog = (new tgd.dialog({
+        var defaultAction = function(dialog) {
+            var firstSet = armorSelection.firstSet();
+            if (firstSet) {
+                armorSelection.saveSelectedCombo(firstSet);
+                dialog.close();
+            }
+        };
+        var armorTemplateDialog = (new tgd.koDialog({
+            templateName: 'maxLightTemplates',
+            viewModel: armorSelection,
+            onFinish: defaultAction,
             buttons: [{
                 label: app.activeText().movepopup_equip,
                 action: function(dialog) {
@@ -952,25 +955,17 @@ Profile.prototype = {
                 }
             }, {
                 label: app.activeText().loadouts_save,
-                action: function(dialog) {
-                    var firstSet = armorSelection.firstSet();
-                    if (firstSet) {
-                        armorSelection.saveSelectedCombo(firstSet);
-                        dialog.close();
-                    }
-                }
+                action: defaultAction
             }, {
                 label: app.activeText().cancel,
                 action: function(dialog) {
                     dialog.close();
                 }
             }]
-        })).title("Armor Builds for " + type).content($template).show(true, function() {
+        })).title("Armor Builds for " + type).show(true, function() {
             groups = null;
-            ko.cleanNode(document.getElementById('container_' + id));
         }, function() {
-            armorSelection.setDialog(armorTemplateDialog);
-            ko.applyBindings(armorSelection, document.getElementById('container_' + id));
+
         });
     },
     renderBestSets: function(type, bestSets) {

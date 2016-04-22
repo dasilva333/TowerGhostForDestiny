@@ -1289,30 +1289,25 @@ Item.prototype = {
             } else if (app.autoXferStacks() === true || tgd.autoTransferStacks === true) {
                 done(self.primaryStat());
             } else {
-                var id = new Date().getTime();
-                var $content = $(tgd.confirmTransferTemplate({
-                    id: id
-                }));
-                var confirmTransfer = new tgd.transferConfirm(self, targetCharacterId, done);
-                var dialog = (new tgd.dialog({
+                var confirmTransfer = new tgd.transferConfirm(self, targetCharacterId, app.orderedCharacters, done);
+                var defaultAction = function() {
+                    confirmTransfer.finishTransfer(confirmTransfer.consolidate());
+                };
+                (new tgd.koDialog({
+                    templateName: 'confirmTransferTemplate',
+                    viewModel: confirmTransfer,
+                    onFinish: defaultAction,
                     buttons: [{
                         label: app.activeText().transfer,
                         cssClass: 'btn-primary',
-                        action: function() {
-                            confirmTransfer.finishTransfer(confirmTransfer.consolidate());
-                        }
+                        action: defaultAction
                     }, {
                         label: app.activeText().close_msg,
                         action: function(dialogItself) {
                             dialogItself.close();
                         }
                     }]
-                })).title(app.activeText().transfer + " " + self.description).content($content).show(true, function() {
-                    ko.cleanNode(document.getElementById('container_' + id));
-                }, function() {
-                    confirmTransfer.setDialog(dialog);
-                    ko.applyBindings(confirmTransfer, document.getElementById('container_' + id));
-                }).modal;
+                })).title(app.activeText().transfer + " " + self.description).show(true);
             }
         } else {
             var adhoc = new tgd.Loadout();
@@ -1392,12 +1387,10 @@ Item.prototype = {
     showExtras: function() {
         var self = this;
 
-        var id = new Date().getTime();
-        var $content = $(tgd.normalizeTemplate({
-            id: id
-        }));
         var extrasPopup = new tgd.extrasPopup(self);
-        var dialog = (new tgd.dialog({
+        (new tgd.koDialog({
+            templateName: 'normalizeTemplate',
+            viewModel: extrasPopup,
             buttons: [{
                 label: 'Normalize',
                 cssClass: 'btn-primary',
@@ -1424,12 +1417,7 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }]
-        })).title("Extras for " + self.description).content($content).show(true, function() {
-            ko.cleanNode(document.getElementById('container_' + id));
-        }, function() {
-            extrasPopup.setDialog(dialog);
-            ko.applyBindings(extrasPopup, document.getElementById('container_' + id));
-        }).modal;
+        })).title("Extras for " + self.description).show(true, _.noop, _.noop);
     },
     toggleLock: function() {
         var self = this;
