@@ -640,17 +640,6 @@ tgd.Loadout.prototype = {
         app.loadoutMode(false);
         transferNextItem();
     },
-    /* Going to undo these changes until I can cleanup the loading code so it doesn't blip during a reload
-	transfer: function(targetCharacterId){
-		var self = this;		
-		var subscription = app.loadingUser.subscribe(function(newValue){
-			if (newValue === false){
-				self.move( targetCharacterId );
-				subscription.dispose();
-			}
-		});
-		app.refresh();
-	},*/
     /* before starting the transfer we need to decide what strategy we are going to use */
     /* strategy one involves simply moving the items across assuming enough space to fit in both without having to move other things */
     /* strategy two involves looking into the target bucket and creating pairs for an item that will be removed for it */
