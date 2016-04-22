@@ -1,21 +1,30 @@
-<div class="fhtt des des-item">
-    <div class="destt-cont">
-        <div class="destt-title destt-bg-<%= item.tierType %>" style="background-image:url(<%= tgd.dataDir + item.icon %>)">
-            <h2 class="destt-has-icon"></h2>
-            <h3 class="destt-title-quality"></h3>
-            <h3 class="destt-has-icon"></h3>
-            <div class="clearfix"></div>
-        </div>
-        <div class="destt-desc"></div>
-        <div class="destt-info">
-            Type:
-            <span>
-                <%= unescape(item.itemTypeName) %>
-            </span>,
-        </div>
-        <div class="clearfix"></div>
-    </div>
-    <div class="destt-right"></div>
-    <div class="destt-bottomright"></div>
-    <div class="destt-bottom"></div>
-</div>
+<% if ( item.itemTypeName == 'Emblem' ) { %>
+	<div class="fhtt fhtt-emblem" style="background:url(data/<%= unescape(item.secondaryIcon) %>)">
+		<div class="fhtt-emblem-icon"><img src="<%= unescape(item.icon) %>"></div>
+	    <h1 class="q5">
+	        <%= unescape(item.itemName) %>
+	    </h1>    
+	</div>
+<% } else { %>
+	<div class="fhtt des des-item">
+	    <div class="destt-cont">
+	        <div class="destt-title destt-bg-<%= item.tierType %>" style="background-image:url(<%= tgd.dataDir + item.icon %>)">
+	            <h2 class="destt-has-icon"></h2>
+	            <h3 class="destt-title-quality"></h3>
+	            <h3 class="destt-has-icon"></h3>
+	            <div class="clearfix"></div>
+	        </div>
+	        <div class="destt-desc"></div>
+	        <div class="destt-info">
+	            Type:
+	            <span>
+	                <%= unescape(item.itemTypeName) %>
+	            </span>,
+	        </div>
+	        <div class="clearfix"></div>
+	    </div>
+	    <div class="destt-right"></div>
+	    <div class="destt-bottomright"></div>
+	    <div class="destt-bottom"></div>
+	</div>
+<% } %>

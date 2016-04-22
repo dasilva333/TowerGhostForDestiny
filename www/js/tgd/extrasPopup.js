@@ -10,21 +10,15 @@ tgd.extrasPopup = function(item) {
     }, {}));
 
     self.total = ko.computed(function() {
-        var c = 0;
-        for (i = 0; i < self.characters().length; i++) {
-            if (selectedStatus[(self.characters()[i]).id] === true) {
-                var ct = _.reduce(
-                    _.filter(self.characters()[i].items(), {
-                        description: self.description
-                    }),
-                    function(memo, i) {
-                        return memo + i.primaryStat();
-                    },
-                    0);
-                c = c + parseInt(ct);
-            }
-        }
-        return c;
+        return _.reduce(self.characters(), function(memo, character) {
+            var items = _.where(character.items(), {
+                description: self.item.description
+            });
+            memo = memo + _.reduce(items, function(memo, i) {
+                return memo + i.primaryStat();
+            }, 0);
+            return memo;
+        }, 0);
     });
 
     self.selectedCharacters = ko.computed(function() {

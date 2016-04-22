@@ -9,7 +9,7 @@ tgd.transferConfirm = function(item, targetCharacterId, onFinish) {
 
     self.finishTransfer = function(consolidate) {
         if (consolidate) {
-            item.consolidate(targetCharacterId, self.description);
+            item.consolidate(targetCharacterId, item.description);
             self.dialog.close();
         } else {
             var transferAmount = parseInt(self.materialsAmount());
