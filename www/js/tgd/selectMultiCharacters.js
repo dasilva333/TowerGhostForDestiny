@@ -19,5 +19,5 @@ tgd.selectMultiCharacters = function(description, characters) {
         var ss = selectedStatus();
         ss[this.id] = !ss[this.id];
         selectedStatus(ss);
-    }
-}
+    };
+};

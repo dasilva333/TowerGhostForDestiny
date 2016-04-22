@@ -329,7 +329,7 @@ tgd.bungie = (function(cookieString, complete) {
                     method: 'GET',
                     complete: function(membership) {
                         if (membership > 0) {
-                            //tgd.localLog('error finding bungie account!', membership)
+                            //tgd.localLog('error finding bungie account!', membership);
                             active.membership = membership;
                             self.account(callback);
                         } else {

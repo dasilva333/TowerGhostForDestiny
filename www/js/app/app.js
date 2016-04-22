@@ -334,7 +334,7 @@ var app = function() {
                     });
                 }
                 var statBarElements = _.sortBy(stats.find(".stat-bar"), function(element) {
-                    return _.pluck(tgd.DestinyArmorStats, 'statName').indexOf($.trim($(element).find(".stat-bar-label").text()))
+                    return _.pluck(tgd.DestinyArmorStats, 'statName').indexOf($.trim($(element).find(".stat-bar-label").text()));
                 });
                 stats.html(
                     $(statBarElements).map(function(index, stat) {
@@ -401,9 +401,10 @@ var app = function() {
                             }
                         });
                     } else if (activeItem.armorIndex > -1) {
-                        var clonedRow = magazineRow.clone();
+                        var clonedRow = magazineRow.clone(),
+                            statDetails;
                         if (activeItem.primaryStat() == 3) {
-                            var statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
+                            statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
                             clonedRow.find(".stat-bar-label").html("Stat Roll : ");
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             clonedRow.find(".stat-bar-static-value").show().html(statDetails);
@@ -432,7 +433,7 @@ var app = function() {
                                 maxRollStats = maxRollStats + "-" + maxRollPercent + "%";
                             }
                             //console.log("maxRollStats", maxRollStats);
-                            var statDetails = maxRollStats + " (" + maxBaseStat + "/" + maxStatRoll + ")";
+                            statDetails = maxRollStats + " (" + maxBaseStat + "/" + maxStatRoll + ")";
                             //console.log("statDetails", statDetails);
                             clonedRow.find(".stat-bar-label").html("Stat Roll : " + itemCSP);
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
@@ -954,7 +955,7 @@ var app = function() {
                     self.loadLoadouts();
                 }, 10000);
                 self.farmModeHandler(self.farmMode());
-                //console.timeEnd("new profile");
+                console.timeEnd("new profile");
             }
         }
         self.bungie.search(self.preferredSystem(), function(e) {
@@ -996,7 +997,7 @@ var app = function() {
             });
             total = avatars.length;
             _.map(avatars, function(avatar) {
-                //console.time("new profile");
+                console.time("new profile");
                 var profile = new Profile(avatar);
                 done(profile);
             });

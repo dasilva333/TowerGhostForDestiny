@@ -74,7 +74,7 @@ tgd.armorSelectionFields = {
         rollType: "futureRolls",
         valueType: "MaxLightCSP"
     }
-}
+};
 
 tgd.armorSelection = function(type, groups, character) {
     var self = this;
@@ -175,18 +175,18 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.setView = function(model, event) {
         self.activeView(event.target.value);
-    }
+    };
 
     self.setupView = function(activeView) {
         var armorGroups = _.values(groups),
             rollType = tgd.armorSelectionFields[activeView].rollType,
             valueType = tgd.armorSelectionFields[activeView].valueType,
             mostPoints = _.map(armorGroups, function(items) {
-                var items = _.first(_.sortBy(items, function(item) {
+                var top2Items = _.first(_.sortBy(items, function(item) {
                     return item.getValue(valueType) * -1;
                 }), 2);
                 //console.log(items[0].bucketType, _.pluck(items,'description'), items);
-                return items;
+                return top2Items;
             });
         //console.log("mostPoints", mostPoints);
         self.mostPoints(tgd.calculateBestSets(mostPoints, rollType));
@@ -223,7 +223,7 @@ tgd.armorSelection = function(type, groups, character) {
                 }
             });
         }
-    }
+    };
     self.activeView.subscribe(function(newValue) {
         self.setupView(newValue);
     });

@@ -10,5 +10,5 @@ tgd.languageManager = function(currentLocale, languages) {
         app.autoUpdates(true);
         tgd.checkUpdates();
         BootstrapDialog.alert("Downloading updated language files");
-    }
-}
+    };
+};

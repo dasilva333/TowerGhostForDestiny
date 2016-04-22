@@ -31,9 +31,9 @@ tgd.extrasPopup = function(item) {
         var ss = selectedStatus();
         ss[this.id] = !ss[this.id];
         selectedStatus(ss);
-    }
+    };
 
     self.setDialog = function(dialog) {
         self.dialog = dialog;
-    }
-}
+    };
+};

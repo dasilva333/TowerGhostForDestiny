@@ -16,12 +16,14 @@ module.exports = function(grunt) {
 			'../www/resources/2.templates.js': [
 				'../www/js/templates/**/*.js'
 			],
+			/* this is now defined under remove-logging
 			'../www/resources/3.tower_ghost.js': [
 				'../www/js/tgd/*.js',
 				//'!../www/js/tgd/base-definitions.js',
 				'../www/js/app/*.js',
 				'../www/js/extras/*.js'
-			],
+			],*/
+			'../www/resources/3.tower_ghost.js' : '../www/resources/3.tower_ghost.js',
 			'../www/resources/bootstrap.js': [
 				'../www/js/tgd/base-definitions.js',
 				'../www/js/core/firefox-xhr.js',

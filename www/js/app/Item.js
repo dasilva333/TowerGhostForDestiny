@@ -136,7 +136,7 @@ var Item = function(model, profile) {
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.maxLightPercent = ko.pureComputed(function() {
         var toggle = app.cspToggle();
-        return Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100)
+        return Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100);
     });
     this.cspStat = ko.pureComputed(this._cspStat, this);
     this.cspClass = ko.pureComputed(this._cspClass, this);
@@ -271,7 +271,7 @@ Item.prototype = {
             bonus: bonus,
             Default: primaryStat
         };
-        self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true))
+        self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
         var futureRolls = [];

@@ -3,7 +3,7 @@ tgd.transferConfirm = function(item, targetCharacterId, onFinish) {
 
     self.characterTotal = 0;
     self.itemTotal = 0;
-    self.dialog;
+    self.dialog = null;
     self.consolidate = ko.observable(false);
     self.materialsAmount = ko.observable(item.primaryStat());
 
@@ -26,53 +26,47 @@ tgd.transferConfirm = function(item, targetCharacterId, onFinish) {
         if (e.keyCode == 13) {
             self.finishTransfer(false);
         }
-    }
+    };
 
     self.setDialog = function(dialog) {
         self.dialog = dialog;
-    }
+    };
 
     self.decrement = function() {
         var num = parseInt(self.materialsAmount());
         if (!isNaN(num)) {
             self.materialsAmount(Math.max(num - 1, 1));
         }
-    }
+    };
 
     self.increment = function() {
         var num = parseInt(self.materialsAmount());
         if (!isNaN(num)) {
             self.materialsAmount(Math.min(num + 1, self.characterTotal));
         }
-    }
+    };
 
     self.all = function() {
         var num = parseInt(self.materialsAmount());
         if (!isNaN(num)) {
             self.materialsAmount(self.characterTotal);
         }
-    }
+    };
 
     self.one = function() {
         var num = parseInt(self.materialsAmount());
         if (!isNaN(num)) {
             self.materialsAmount(1);
         }
-    }
+    };
 
-    for (i = 0; i < app.orderedCharacters().length; i++) {
-        var c = app.orderedCharacters()[i];
-        var charTotal = _.reduce(
-            _.filter(c.items(), {
-                description: item.description
-            }),
-            function(memo, j) {
-                return memo + j.primaryStat();
-            },
-            0);
-        if (item.character == c) {
-            self.characterTotal = charTotal;
-        }
-        self.itemTotal = self.itemTotal + charTotal;
-    }
-}
+    self.itemTotal = _.reduce(self.characters(), function(memo, character) {
+        var items = _.where(character.items(), {
+            description: item.description
+        });
+        memo = memo + _.reduce(items, function(memo, i) {
+            return memo + i.primaryStat();
+        }, 0);
+        return memo;
+    }, 0);
+};

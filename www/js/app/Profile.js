@@ -11,13 +11,12 @@ function Profile(character) {
     this.race = ko.observable("");
     this.percentToNextLevel = ko.observable("");
     this.background = ko.observable("");
-    this.items = ko.observableArray()
-        /*.extend({
-                rateLimit: {
-                    timeout: 500,
-                    method: "notifyWhenChangesStop"
-                }
-            });*/
+    this.items = ko.observableArray().extend({
+        rateLimit: {
+            timeout: 500,
+            method: "notifyWhenChangesStop"
+        }
+    });
     this.items.subscribe(app.redraw);
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
@@ -172,7 +171,7 @@ Profile.prototype = {
                     var foundItem = _.filter(self.items(), function(item) {
                         return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
                     });
-                    if (foundItem.length == 0) {
+                    if (foundItem.length === 0) {
                         var processedItem = new Item(newItem, self);
                         if ("id" in processedItem) self.items.push(processedItem);
                     }
@@ -195,7 +194,7 @@ Profile.prototype = {
             return 0;
         }
         var index = _.filter(items, function(item) {
-            return item.bucketType == "Artifact" && item.isEquipped() == true;
+            return item.bucketType == "Artifact" && item.isEquipped() === true;
         }).length;
         var weights = tgd.DestinyBucketWeights[index];
         if (weights) {
@@ -431,7 +430,7 @@ Profile.prototype = {
     },
     get: function(type) {
         return _.filter(this.all(type), function(item) {
-            return item.isEquipped() == false;
+            return item.isEquipped() === false;
         });
     },
     getVisible: function(type) {
@@ -441,7 +440,7 @@ Profile.prototype = {
     },
     itemEquipped: function(type) {
         return _.first(_.filter(this.items(), function(item) {
-            return item.isEquipped() == true && item.bucketType == type;;
+            return item.isEquipped() === true && item.bucketType == type;
         }));
     },
     itemEquippedVisible: function(type) {
