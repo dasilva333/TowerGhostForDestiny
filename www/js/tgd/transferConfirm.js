@@ -1,26 +1,21 @@
 tgd.transferConfirm = function(item, targetCharacterId, characters, onFinish) {
     var self = this;
 
-    self.itemTotal = _.reduce(characters(), function(memo, character) {
-        var items = _.where(character.items(), {
-            description: item.description
-        });
-        memo = memo + _.reduce(items, function(memo, i) {
-            return memo + i.primaryStat();
+    var getItemCount = function(characters) {
+        return _.reduce(characters, function(memo, character) {
+            var items = _.where(character.items(), {
+                description: item.description
+            });
+            memo = memo + _.reduce(items, function(memo, i) {
+                return memo + i.primaryStat();
+            }, 0);
+            return memo;
         }, 0);
-        return memo;
-    }, 0);
-    self.characterTotal = _.reduce(_.filter(characters(), function(character) {
+    };
+    self.itemTotal = getItemCount(characters());
+    self.characterTotal = getItemCount(_.filter(characters(), function(character) {
         return item.character.id == character.id;
-    }), function(memo, character) {
-        var items = _.where(character.items(), {
-            description: item.description
-        });
-        memo = memo + _.reduce(items, function(memo, i) {
-            return memo + i.primaryStat();
-        }, 0);
-        return memo;
-    }, 0);
+    }));
     self.dialog = null;
     self.consolidate = ko.observable(false);
     self.materialsAmount = ko.observable(item.primaryStat());
@@ -37,12 +32,6 @@ tgd.transferConfirm = function(item, targetCharacterId, characters, onFinish) {
             } else {
                 BootstrapDialog.alert(app.activeText().invalid_transfer_amount + transferAmount);
             }
-        }
-    };
-
-    self.materialsKeyHandler = function(e) {
-        if (e.keyCode == 13) {
-            self.finishTransfer(false);
         }
     };
 

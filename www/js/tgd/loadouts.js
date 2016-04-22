@@ -11,7 +11,7 @@ tgd.loadoutActionStates = {
     3: {
         actionIcon: "assets/swap.png"
     }
-}
+};
 tgd.loadoutPair = function(pair, targetCharacter) {
     var self = this;
     _.extend(self, pair);

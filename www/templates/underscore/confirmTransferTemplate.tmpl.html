@@ -2,7 +2,7 @@
 	<div class="controls controls-row">
 		<span data-bind="text: app.activeText().transfer_amount"></span>:
 		<button class="btn btn-default" type="button" data-bind="click: decrement">-</button> 
-		<input size="4" type="text" data-bind="value: materialsAmount, events: { keyup: materialsKeyHandler }"> 
+		<input size="4" type="text" data-bind="value: materialsAmount"> 
 		<button class="btn btn-default" type="button" data-bind="click: increment">+</button> 
 		<button class="btn btn-default pull-right" id="all" type="button" data-bind="click: all">
 			<span data-bind="text: app.activeText().transfer_all"></span>

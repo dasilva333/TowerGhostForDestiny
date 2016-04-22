@@ -28,7 +28,7 @@ tgd.koDialog = function(options) {
         });
     });
     return dialog;
-}
+};
 
 tgd.dialog = (function(options) {
     var self = this;
