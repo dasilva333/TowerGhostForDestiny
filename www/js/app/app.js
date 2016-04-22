@@ -905,6 +905,7 @@ var app = function() {
 
     var loadingData = false;
     this.search = function() {
+        console.time("new profile");
         if (!("user" in self.activeUser())) {
             return;
         }
@@ -982,7 +983,6 @@ var app = function() {
             });
             total = avatars.length;
             _.map(avatars, function(avatar) {
-                console.time("new profile");
                 var profile = new Profile(avatar);
                 done(profile);
             });
@@ -1770,28 +1770,29 @@ var app = function() {
     this.selectMultiCharacters = function(title, description, callback) {
         var smc = new tgd.selectMultiCharacters(description, self.orderedCharacters);
         var defaultAction = function(dialogItself) {
-                var characters = smc.selectedCharacters();
-                if (characters.length <= 1) {
-                    BootstrapDialog.alert("Need to select two or more characters.");
-                } else {
-                    callback(characters);
-                }
-                dialogItself.close();
+            console.log("defaultAction", arguments);
+            var characters = smc.selectedCharacters();
+            if (characters.length <= 1) {
+                BootstrapDialog.alert("Need to select two or more characters.");
+            } else {
+                callback(characters);
             }
-            (new tgd.koDialog({
-                templateName: "selectMultiCharactersTemplate",
-                viewModel: smc,
-                buttons: [{
-                    label: 'OK',
-                    cssClass: 'btn-primary',
-                    action: defaultAction
-                }, {
-                    label: 'Close',
-                    action: function(dialogItself) {
-                        dialogItself.close();
-                    }
-                }]
-            })).title(title).content($template).show(true, _.noop, _.noop);
+            dialogItself.close();
+        };
+        (new tgd.koDialog({
+            templateName: "selectMultiCharactersTemplate",
+            viewModel: smc,
+            buttons: [{
+                label: 'OK',
+                cssClass: 'btn-primary',
+                action: defaultAction
+            }, {
+                label: 'Close',
+                action: function(dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        })).title(title).show(true);
     };
 
     this.setVaultTo = function() {

@@ -1,6 +1,5 @@
 function Profile(character) {
     var self = this;
-
     this.id = character.characterBase.characterId;
     this.order = ko.observable(character.index);
     this.icon = ko.observable("");
@@ -17,7 +16,7 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
-    this.items.subscribe(app.redraw);
+    this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
     this.weapons = ko.pureComputed(this._weapons, this);
@@ -940,7 +939,7 @@ Profile.prototype = {
                 dialog.close();
             }
         };
-        var armorTemplateDialog = (new tgd.koDialog({
+        (new tgd.koDialog({
             templateName: 'maxLightTemplates',
             viewModel: armorSelection,
             onFinish: defaultAction,
@@ -964,9 +963,7 @@ Profile.prototype = {
             }]
         })).title("Armor Builds for " + type).show(true, function() {
             groups = null;
-        }, function() {
-
-        });
+        }, _.noop);
     },
     renderBestSets: function(type, bestSets) {
         var character = this,

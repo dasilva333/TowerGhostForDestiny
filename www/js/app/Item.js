@@ -1417,7 +1417,7 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }]
-        })).title("Extras for " + self.description).show(true, _.noop, _.noop);
+        })).title("Extras for " + self.description).show(true);
     },
     toggleLock: function() {
         var self = this;

@@ -1,7 +1,7 @@
 tgd.transferConfirm = function(item, targetCharacterId, characters, onFinish) {
     var self = this;
 
-	self.itemTotal = _.reduce(characters(), function(memo, character) {
+    self.itemTotal = _.reduce(characters(), function(memo, character) {
         var items = _.where(character.items(), {
             description: item.description
         });
@@ -10,7 +10,9 @@ tgd.transferConfirm = function(item, targetCharacterId, characters, onFinish) {
         }, 0);
         return memo;
     }, 0);
-	self.characterTotal = _.reduce(_.filter(characters(), function(character){ return item.character.id == character.id;  }), function(memo, character) {
+    self.characterTotal = _.reduce(_.filter(characters(), function(character) {
+        return item.character.id == character.id;
+    }), function(memo, character) {
         var items = _.where(character.items(), {
             description: item.description
         });

@@ -913,15 +913,13 @@ tgd.Loadout.prototype = {
                     }
                 });
             };
-            self.loadoutsDialog = (new tgd.koDialog({
+            (new tgd.koDialog({
                 templateName: "swapTemplate",
                 viewModel: ltc,
                 onFinish: transfer,
                 buttons: [{
                     label: app.activeText().loadouts_transfer,
-                    action: function(dialog) {
-                        transfer(dialog);
-                    }
+                    action: transfer
                 }, {
                     label: app.activeText().cancel,
                     action: function(dialog) {
