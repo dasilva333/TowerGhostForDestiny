@@ -949,10 +949,14 @@ Item.prototype = {
 
                     // grab self index in x.items
                     //var idxSelf = x.items.indexOf(self);
-					var idxSelf = _.indexOf(x.items(), _.findWhere( x.items(), { id: self.id }));
-					console.log("x", x, x.uniqueName(), x.items(), self, self.description, self.primaryStat());
+                    var idxSelf = _.indexOf(x.items(), _.findWhere(x.items(), {
+                        id: self.id
+                    }));
+                    console.log("x", x, x.uniqueName(), x.items(), self, self.description, self.primaryStat());
                     // remove self from x.items
-                    x.items.remove(function(item){ return item.id == self.id; });
+                    x.items.remove(function(item) {
+                        return item.id == self.id;
+                    });
                     tgd.localLog("removed self from x.items @ index " + idxSelf);
                     // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
                     if (remainder > 0) {

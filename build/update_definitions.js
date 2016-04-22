@@ -29,6 +29,13 @@ var neededFiles = [
 		//TODO use the information in obj.stats to supplement missing data in DestinyDB tooltips for min/max
 		//STATS is currently being used to provide AA/Equip Speed stats with advanced tooltips enabled
 		//delete obj.stats;
+		delete obj.uniquenessHash;
+		delete obj.tooltipStyle;
+		delete obj.showActiveNodesInTooltip;
+		delete obj.questTrackingUnlockValueHash;
+		delete obj.bountyResetUnlockHash;
+		delete obj.hash;
+		delete obj.index;
 		delete obj.hasAction;
 		delete obj.instanced;
 		delete obj.setItemHashes;
