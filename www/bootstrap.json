@@ -114,7 +114,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "4d1292aac0631afd411034c1df8c56e6607fab60a344d106e4b75c5d21db0e5b"
+      "version": "15a088493d6be758c0c1b56bc7859405706daaeb25741d6f9a6f09a3e7695274"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -122,7 +122,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "14d2bd97bcedf3a7366de3b5658b8127919c6ddbad90e6cb055f25f72987d54e"
+      "version": "aa01947d12b2c6315e9afb957d0b8ae4ce6d33c59aeaf8b8ecc4fdfbfb6f6b06"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -146,7 +146,7 @@
     },
     "dialog.js": {
       "filename": "js/tgd/dialog.js",
-      "version": "0d66861f4fa5e2578611c9c2d99919474a9ceb7bfc17108993bd4656279854c7"
+      "version": "f855ce3c5be515f75474dfef9d770c34e004a50625abaf948515683f883392a0"
     },
     "extrasPopup.js": {
       "filename": "js/tgd/extrasPopup.js",
@@ -162,7 +162,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "6b17ae84c784e78a14df9aacc80129a3fd75836697e9f57d0e91996afa21f874"
+      "version": "99c8ab54d635196e598d3ab2b15c9ce7b85d075f00b5e744082118ede183cc4c"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",

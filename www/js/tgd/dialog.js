@@ -20,9 +20,9 @@ tgd.koDialog = function(options) {
     mdl.onShow(function(instance) {
         var activeModal = instance.getModal();
         activeModal.on("shown.bs.modal", function() {
-		    if (options.viewModel && options.viewModel.setDialog) {
-		        options.viewModel.setDialog(mdl);
-		    }		
+            if (options.viewModel && options.viewModel.setDialog) {
+                options.viewModel.setDialog(mdl);
+            }
             if (options.onFinish) {
                 $(document).unbind("keyup.dialog").bind("keyup.dialog", function(e) {
                     var code = e.which;

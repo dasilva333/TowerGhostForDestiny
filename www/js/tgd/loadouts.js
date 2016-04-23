@@ -88,6 +88,17 @@ tgd.loadoutManager = function(loadouts, dialog) {
     var self = this;
 
     self.loadouts = loadouts;
+
+    self.setDialog = function(dialog) {
+        self.dialog = dialog;
+    }
+
+    self.equip = function() {
+        if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
+            this.setActive();
+            self.dialog.close();
+        }
+    }
 };
 
 tgd.loadoutId = 0;
@@ -178,12 +189,6 @@ tgd.Loadout = function(model, isItems) {
     }*/
     this.rename = function() {
         self.editing(!self.editing());
-    };
-    this.equip = function() {
-        if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
-            self.setActive();
-            app.manageLoadoutDialog.close();
-        }
     };
     this.markAsEquip = function(item, event) {
         var existingItems = _.where(self.ids(), {
