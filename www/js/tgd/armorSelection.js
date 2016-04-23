@@ -170,7 +170,7 @@ tgd.armorSelection = function(type, groups, character) {
         }
     };
     self.setDialog = function(dialog) {
-        self.dialog = dialog.modal;
+        self.dialog = dialog;
     };
 
     self.setView = function(model, event) {
