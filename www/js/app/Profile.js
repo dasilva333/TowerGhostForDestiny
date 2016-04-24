@@ -154,19 +154,19 @@ Profile.prototype = {
         return function(results, response) {
             if (results && results.data && results.data.buckets) {
                 var newItems = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
-				var currentItems = _.filter(self.items(), function(item){
-					return buckets.indexOf(item.bucketType) > -1;
-				});
+                var currentItems = _.filter(self.items(), function(item) {
+                    return buckets.indexOf(item.bucketType) > -1;
+                });
                 _.each(currentItems, function(item) {
                     if (item) {
                         var existingItem = _.first(_.filter(newItems, function(newItem) {
                             return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
                         }));
                         if (existingItem) {
-							console.log("updating item");
+                            console.log("updating item");
                             item.updateItem(existingItem);
                         } else {
-							console.log("removing item", item, newItems);
+                            console.log("removing item", item, newItems);
                             self.items.remove(item);
                         }
                     }
@@ -177,7 +177,7 @@ Profile.prototype = {
                     });
                     if (foundItem.length === 0) {
                         var processedItem = new Item(newItem, self);
-						console.log("creating item");
+                        console.log("creating item");
                         if ("id" in processedItem) self.items.push(processedItem);
                     }
                 });
