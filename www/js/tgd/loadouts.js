@@ -542,8 +542,9 @@ tgd.Loadout.prototype = {
                 var actualBucketTypes = self.normalize(layout.bucketTypes, layout.extras);
                 var spaceNeededInVault = layout.counts[0] - spaceNeeded;
                 //TODO: TypeError: undefined is not an object (evaluating 'vault.items')
+				console.log("vault.items()", vault.items().length, item.actualBucketType);				
                 var spaceUsedInVault = _.filter(vault.items(), function(otherItem) {
-                    return actualBucketTypes.indexOf(otherItem.bucketType) > -1;
+                    return otherItem.actualBucketType == item.actualBucketType;
                 }).length;
 
                 tgd.localLog(bucketType + " spaceNeededInVault: " + spaceNeededInVault);
