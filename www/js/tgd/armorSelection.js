@@ -173,6 +173,19 @@ tgd.armorSelection = function(type, groups, character) {
         self.dialog = dialog;
     };
 
+    self.setSelection = function(model, event) {
+        var selectionType = event.target.value;
+        _.each(self.armorGroups(), function(group) {
+            var selectedItem = _.reduce(group.items, function(memo, item) {
+                var isEquipped = selectionType == "Equipped" && item.isEquipped();
+                var isMaxCSP = selectionType == "Most Points" && (memo && item.getValue("All") > memo.getValue("All") || !memo);
+                if (isEquipped || isMaxCSP) memo = item;
+                return memo;
+            });
+            group.selectedItem(selectedItem);
+        });
+    }
+
     self.setView = function(model, event) {
         self.activeView(event.target.value);
     };

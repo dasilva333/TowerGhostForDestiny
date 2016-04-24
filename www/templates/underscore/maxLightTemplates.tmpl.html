@@ -64,9 +64,16 @@
 			<div class="col-xs-5">
 				View Armor Stats: 
 			</div>
-			<div class="col-xs-19">
+			<div class="col-xs-6">
 				<input type="button" class="btn btn-md" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
 				<input type="button" class="btn btn-md" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
+			</div>
+			<div class="col-xs-4">
+				Auto Select
+			</div>
+			<div class="col-xs-7">
+				<input type="button" class="btn btn-md" value="Equipped" data-bind="click: setSelection">
+				<input type="button" class="btn btn-md" value="Most Points" data-bind="click: setSelection">
 			</div>
 		</div>
 		<div class="row">
