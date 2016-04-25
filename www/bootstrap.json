@@ -130,7 +130,7 @@
     },
     "base-tgd.js": {
       "filename": "js/tgd/base-tgd.js",
-      "version": "f9213b48ab05e886558f88ca0f7d33edd3292284164e95cfed151df1f07b53b8"
+      "version": "69464482b41419789a5492ea806f1a9810346605180eeecd8e0994f06bc85743"
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
@@ -138,7 +138,7 @@
     },
     "bonusStat.js": {
       "filename": "js/tgd/bonusStat.js",
-      "version": "4eb95819b48e06a3d8c70393530e8d9ca43366e5333a77763ec7f5c937f8efff"
+      "version": "c684627c585571a7d66a32382930adf7326b0e62204b7d1c9593c8231296f213"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
