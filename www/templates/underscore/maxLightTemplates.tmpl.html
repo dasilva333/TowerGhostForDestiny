@@ -57,24 +57,36 @@
 			<strong>Green Border</strong> - Indicates the item is currently selected.<br>
 			<span data-bind="visible: type == 'MaxLight'" style="display:none;"><strong>Red Border</strong> - Indicates the item cannot be used to maintain the current max tier.<br></span>
 			<strong>Yellow Border</strong> - Indicates the item is a potential candidate that may be used to alter your set.<br>
+			<div data-bind="visible: type == 'Custom'">
+				Auto Select - Automatically selects the gear with the [Most Points] or the gear currently [Equipped] to view the best possible stat distributions.<br>
+				Other Armor - Defined as Class Items, Artifacts and Ghosts, setting it to [Any] provides more stat distribution options, setting it to [Most Points] picks the items with the most CSP.
+			</div>
 			<strong>Tip</strong> You may also unselect an item with a green border to indicate you want the tool to calculate all items for that armor type.
 			<hr>
 		</p>
-		<div class="col-xs-24" data-bind="visible: type == 'Custom'">
+		<div class="col-xs-24 font-smaller-1" data-bind="visible: type == 'Custom'">
+			<div class="col-xs-3 font-bold">
+				View Stats
+			</div>
 			<div class="col-xs-5">
-				View Armor Stats: 
+				<input type="button" class="btn btn-sm" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
+				<input type="button" class="btn btn-sm" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
 			</div>
-			<div class="col-xs-6">
-				<input type="button" class="btn btn-md" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
-				<input type="button" class="btn btn-md" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
-			</div>
-			<div class="col-xs-4">
+			<div class="col-xs-3 font-bold">
 				Auto Select
 			</div>
-			<div class="col-xs-7">
-				<input type="button" class="btn btn-md" value="Equipped" data-bind="click: setSelection">
-				<input type="button" class="btn btn-md" value="Most Points" data-bind="click: setSelection">
+			<div class="col-xs-5">
+				<input type="button" class="btn btn-sm" value="Equipped" data-bind="click: setSelection">
+				<input type="button" class="btn btn-sm" value="Points" data-bind="click: setSelection">
 			</div>
+			<div class="col-xs-3 font-bold">
+				Other Armor
+			</div>
+			<div class="col-xs-5">
+				<input type="button" class="btn btn-sm" value="Any" data-bind="click: setOtherArmor">
+				<input type="button" class="btn btn-sm" value="Points" data-bind="click: setOtherArmor">
+			</div>
+			<hr>
 		</div>
 		<div class="row">
 			<table class="table table-striped table-hover ">
