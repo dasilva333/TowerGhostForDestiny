@@ -566,7 +566,11 @@ Item.prototype = {
         }
     },
     _cspStat: function() {
-        return _.has(tgd.DestinyMaxCSP, this.bucketType) ? this.getValue("All") + "-" + this.getValue("MaxLightCSP") : this.primaryStat();
+        var stat = this.primaryStat();
+        if (app.armorViewBy() == 'CSP' && _.has(tgd.DestinyMaxCSP, this.bucketType)) {
+            stat = this.getValue("All") + "-" + this.getValue("MaxLightCSP");
+        }
+        return stat;
     },
     _cspClass: function() {
         var rollType = "None";

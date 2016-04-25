@@ -118,11 +118,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "6dbc24c697d699ab8d3f443c45958279d4b057a7bbf0b362aab02036f06fca47"
+      "version": "99325138f3027fa6b334f362e1ff8fc9e4ed143673e03642d3a22d12adf35825"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "398162c8e64fa842088a9181c130afc8b2d93dba0d1fb00a343d7edbfb9f58ef"
+      "version": "e8ae938594618ab99e5cf0c5a7c5592403cbbbb52a566ac82be7e6138151c31c"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -194,7 +194,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "89519e6a20435533e1b8ddc06e71c113a2a913b97f8ccf5c60b1c36c5962d656"
+      "version": "077c45121fe0074748d16b63b93377d20eb2530ab8159f4feedc4df7183b2b76"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",

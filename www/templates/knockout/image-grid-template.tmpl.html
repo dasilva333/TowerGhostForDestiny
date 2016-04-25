@@ -36,9 +36,8 @@
                     <img class="itemImage" data-bind="itemImageHandler: item.icon, attr: { instanceId:item._id }, fastclick: function(){ return false }">
                 </a>
                 <img src="assets/lock.png" class="lockIcon" data-bind="visible: item.locked" />
-                <div class="attkIcon" data-bind="visible: primaryStat() != ''">
-					<div data-bind="text: primaryStat, css: damageTypeName, visible: $root.armorViewBy() == 'Light'"></div>
-					<div data-bind="text: cspStat, css: cspClass, visible: $root.armorViewBy() == 'CSP'"></div>
+                <div class="attkIcon" data-bind="visible: cspStat() != ''">
+					<div data-bind="text: cspStat, css: cspClass"></div>
                 </div>
             </span>
         </div>

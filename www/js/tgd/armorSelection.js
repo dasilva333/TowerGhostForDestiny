@@ -175,19 +175,19 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.setOtherArmor = function(model, event) {
         var selectionType = event.target.value;
-		var otherArmor = [ "Ghost", "Class Items", "Artifact" ];
+        var otherArmor = ["Ghost", "Class Items", "Artifact"];
         _.each(self.armorGroups(), function(group) {
-			if ( otherArmor.indexOf(group.bucketType) > -1 ){
-				var selectedItem = null;
-				if ( selectionType == "Points" ){
-					selectedItem = _.reduce(group.items, function(memo, item) {
-						var isMaxCSP = (memo && item.getValue("All") > memo.getValue("All") || !memo);
-						if (isMaxCSP) memo = item;
-						return memo;
-					});
-				}
-				group.selectedItem(selectedItem);
-			}
+            if (otherArmor.indexOf(group.bucketType) > -1) {
+                var selectedItem = null;
+                if (selectionType == "Points") {
+                    selectedItem = _.reduce(group.items, function(memo, item) {
+                        var isMaxCSP = (memo && item.getValue("All") > memo.getValue("All") || !memo);
+                        if (isMaxCSP) memo = item;
+                        return memo;
+                    });
+                }
+                group.selectedItem(selectedItem);
+            }
         });
     }
 
