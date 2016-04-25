@@ -580,6 +580,9 @@ Item.prototype = {
                 rollType = "OkayRoll";
             }
         }
+		if ( this.weaponIndex > -1 ){
+			rollType = this.damageTypeName;
+		}
         return rollType;
     },
     _primaryStatValue: function() {
