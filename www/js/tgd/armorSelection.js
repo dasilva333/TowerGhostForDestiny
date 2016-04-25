@@ -258,7 +258,8 @@ tgd.armorSelection = function(type, groups, character) {
 		if ( self.foundFirstSet().length > 0 ){
 			console.log("setting the first found set as selected", self.foundFirstSet());
 			_.each(self.armorGroups(), function(group) {
-				var selectedItem = _.findWhere(self.foundFirstSet(), { bucketType: group.bucketType });
+				var uniqueItem = _.findWhere(self.foundFirstSet(), { bucketType: group.bucketType });
+				var selectedItem = _.findWhere(group.items, { _id: uniqueItem._id });
 				group.selectedItem(selectedItem);
 			});
 		}
