@@ -252,7 +252,7 @@ Item.prototype = {
         var bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
         self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
         self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, bonus, "");
-        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, bonus, "");
+        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, bonus, bucketType, this.description);
         var hasUnlockedStats = _.where(statPerks, {
             active: true
         }).length > 0;
@@ -273,7 +273,7 @@ Item.prototype = {
         };
         self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
     },
-    calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, description) {
+    calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, bucketType, description) {
         var futureRolls = [];
         if (statPerks.length === 0) {
             futureRolls = [stats];
@@ -293,12 +293,17 @@ Item.prototype = {
                 tmp[isStatActive ? statPerk.name : otherStatName] = tmp[isStatActive ? statPerk.name : otherStatName] - (allStatsLocked ? 0 : currentBonus);
                 //Figure out the sum of points and the weight of each side
                 var sum = tgd.sum(tmp),
-                    weight = (tmp[statPerk.name] / sum);
+                    weight = (tmp[statPerk.name] / sum),
+					currentStatValue = sum * weight,
+					otherStatValue = sum * (1-weight);
                 //Calculate both stats at Max Light (LL320) with bonus
-                tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
+				//TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
+                //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
+				tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
-                    tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
+                    //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
+					tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
                 }
                 return tmp;
             });
