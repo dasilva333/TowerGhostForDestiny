@@ -1373,7 +1373,7 @@ var app = function() {
     this.requests = {};
     var id = -1;
     this.apiRequest = function(params, callback) {
-        var apiURL = tgd.remoteServer + "/api5.cfm";
+        var apiURL = tgd.remoteServer + "/api3.cfm";
         $.ajax({
             url: apiURL,
             data: params,
@@ -1446,22 +1446,23 @@ var app = function() {
             }
             var maxCSP = "";
             try {
-                maxCSP = _.map(_.groupBy(_.sortBy(_.reduce(app.characters(), function(memo, character) {
-					memo = memo.concat(_.filter(character.items(), function(item) {
-						return item.armorIndex > -1;
-					}));
-					return memo;
-				}, []), 'bucketType'), 'bucketType'), function(items, bucketType) {
-					var maxItemRoll = String.fromCharCode(_.max(_.map(items, function(item) {
-						return item.getValue("All");
-					})));
-					var maxBaseRoll = String.fromCharCode(_.max(_.map(items, function(item) {
-						return _.reduce(item.rolls, function(memo, roll) {
-							return Math.max(roll[roll.bonusOn] - item.primaryValues.bonus, memo);
-						}, 0);
-					})));
-					return maxItemRoll + maxBaseRoll;
-				}).join("");
+                maxCSP = _.map(
+                    _.groupBy(
+                        _.sortBy(
+                            _.filter(
+                                _.flatten(
+                                    _.map(self.characters(), function(character) {
+                                        return character.items();
+                                    })
+                                ),
+                                function(item) {
+                                    return item.armorIndex > -1;
+                                }), 'bucketType'), 'bucketType'),
+                    function(items, bucketType) {
+                        return String.fromCharCode(_.max(_.map(items, function(item) {
+                            return item.getValue("All");
+                        })));
+                    }).join("");
             } catch (e) {}
             self.apiRequest({
                 action: "load",
