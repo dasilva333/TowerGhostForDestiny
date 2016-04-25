@@ -164,13 +164,13 @@ tgd.DestinyBucketColumns = {
     "Horn": 3
 };
 tgd.DestinyMaxCSP = {
-    "Helmet": 104,
-    "Gauntlet": 93,
-    "Chest": 138,
-    "Boots": 128,
-    "Class Items": 58,
-    "Artifact": 124,
-    "Ghost": 58
+    "Artifact": 131,
+    "Boots": 135,
+    "Chest": 147,
+    "Class Items": 60,
+    "Gauntlet": 99,
+    "Ghost": 60,
+    "Helmet": 111
 };
 tgd.DestinyInfusionRates = {
     "Helmet": (1 / 6),
