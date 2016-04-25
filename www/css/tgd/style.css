@@ -220,6 +220,15 @@ li a {
 .attkIcon .OkayRoll {
 	background-color: Khaki;
 }
+.GoodRollText {
+	color: LawnGreen !important;
+}
+.BadRollText {
+	color: LightCoral !important;
+}
+.OkayRollText {
+	color: Khaki !important;
+}
 @media (max-width: 1020px)
 {
 	.attkIcon>div

@@ -18,7 +18,7 @@
     },
     "style.css": {
       "filename": "css/tgd/style.css",
-      "version": "573e606070488f84e2f680ddbc61c09effb7572c0d0551c2191afdc16d7bb049"
+      "version": "dcfe4bf56201eb74bdcea56cea00d846a3c596896b5c45b1cfb127e49158c3a2"
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
@@ -194,7 +194,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "39ab0b62a48e431ef54d2ae4ed48e8059a7d18cbc48d61bcdd20cf666f82eaf2"
+      "version": "89519e6a20435533e1b8ddc06e71c113a2a913b97f8ccf5c60b1c36c5962d656"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -202,7 +202,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "a8c7f07def85a6dcb7d959472b0df238edb205f2ba3b695c38267aaa1d92e1ca"
+      "version": "12404cdd7ddb6fef77e7f6f5513bc0334a96d5d8e9a12eecd0d088c8e25ccbf1"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
