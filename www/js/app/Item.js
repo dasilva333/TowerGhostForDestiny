@@ -1470,10 +1470,8 @@ Item.prototype = {
             value = this.primaryValues.Default;
         } else if (type == "MaxLightCSP") {
             value = this.primaryValues.MaxLightCSP;
-
         } else if (type == "MaxLightPercent") {
             value = this.maxLightPercent();
-
         } else if (type == "All") {
             value = this.primaryValues.CSP;
         } else if (_.isObject(this.stats) && type in this.stats) {

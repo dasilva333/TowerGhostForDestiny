@@ -937,7 +937,7 @@ Profile.prototype = {
         //console.log("renderBestGroups", groups);
         var character = this;
         var armorSelection = new tgd.armorSelection(type, groups, character);
-        //console.log("armorSelection", armorSelection);
+        console.log("armorSelection", armorSelection);
         var defaultAction = function(dialog) {
             var firstSet = armorSelection.firstSet();
             if (firstSet) {

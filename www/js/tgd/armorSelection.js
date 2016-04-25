@@ -216,21 +216,21 @@ tgd.armorSelection = function(type, groups, character) {
                 var top2Items = _.first(_.sortBy(items, function(item) {
                     return item.getValue(valueType) * -1;
                 }), 2);
-                //console.log(items[0].bucketType, _.pluck(items,'description'), items);
+                console.log(items[0].bucketType, _.pluck(items,'description'), items);
                 return top2Items;
             });
-        //console.log("mostPoints", mostPoints);
+        console.log("mostPoints", mostPoints);
         self.mostPoints(tgd.calculateBestSets(mostPoints, rollType));
         var combos = _.sortBy(_.filter(self.mostPoints(), function(combo) {
             return (type == "MaxLight" && Math.floor(combo.score) >= tgd.maxTierPossible) || type == "Custom";
         }), 'score');
 
         if (combos.length > 0) {
-            //console.log("Most points combo used");
+            console.log("Most points combo used");
             self.foundFirstSet(combos[0].set);
         } else {
             var helmets = armorGroups.shift();
-            //console.log("Analyzing " + (helmets.length - 1) + " helmets", _.pluck(helmets,'description'));
+            console.log("Analyzing " + (helmets.length - 1) + " helmets", _.pluck(helmets,'description'));
             _.each(helmets, function(helmet, index) {
                 if (self.foundFirstSet().length === 0) {
                     var set = _.map(_.clone(armorGroups), function(items) {
@@ -239,21 +239,29 @@ tgd.armorSelection = function(type, groups, character) {
                         }), 4);
                     });
                     set.unshift([helmet]);
-                    //console.log(helmet.description, "considering helmet", set);
-                    //console.time("calculateBestSets " + helmet.description);
+                    console.log(helmet.description, "considering helmet", set);
+                    console.time("calculateBestSets " + helmet.description);
                     var combos = _.filter(tgd.calculateBestSets(set, rollType), function(combo) {
                         return Math.floor(combo.score) >= tgd.maxTierPossible;
                     });
-                    //console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
-                    //console.timeEnd("calculateBestSets " + helmet.description);
-                    //console.log(combos);
+                    console.log("Analyzed helmet " + index + " out of " + (helmets.length - 1));
+                    console.timeEnd("calculateBestSets " + helmet.description);
+                    console.log(combos);
                     if (combos.length > 0) {
-                        //console.log("Found a combo " + combos[0].statTiers);
+                        console.log("Found a combo " + combos[0].statTiers);
                         self.foundFirstSet(combos[0].set);
                     }
                 }
             });
         }
+		
+		if ( self.foundFirstSet().length > 0 ){
+			console.log("setting the first found set as selected", self.foundFirstSet());
+			_.each(self.armorGroups(), function(group) {
+				var selectedItem = _.findWhere(self.foundFirstSet(), { bucketType: group.bucketType });
+				group.selectedItem(selectedItem);
+			});
+		}
     };
     self.activeView.subscribe(function(newValue) {
         self.setupView(newValue);
