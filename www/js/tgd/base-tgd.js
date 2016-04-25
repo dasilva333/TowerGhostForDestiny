@@ -179,7 +179,7 @@ tgd.DestinyInfusionRates = {
     "Boots": (1 / 5),
     "Ghost": (1 / 10),
     "Artifact": (1 / 10),
-    "Class Item": (1 / 10)
+    "Class Items": (1 / 10)
 };
 //tgd.DestinyMaxCSP = {"Helmet":108,"Gauntlet":97,"Chest":143,"Boots":133,"Class Items":60,"Artifact":128,"Ghost":60};
 tgd.DestinyBucketWeights = [{
