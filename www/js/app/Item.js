@@ -294,16 +294,16 @@ Item.prototype = {
                 //Figure out the sum of points and the weight of each side
                 var sum = tgd.sum(tmp),
                     weight = (tmp[statPerk.name] / sum),
-					currentStatValue = sum * weight,
-					otherStatValue = sum * (1-weight);
+                    currentStatValue = sum * weight,
+                    otherStatValue = sum * (1 - weight);
                 //Calculate both stats at Max Light (LL320) with bonus
-				//TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
+                //TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
                 //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
-				tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
+                tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
                     //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
-					tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
+                    tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
                 }
                 return tmp;
             });

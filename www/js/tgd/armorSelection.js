@@ -216,7 +216,7 @@ tgd.armorSelection = function(type, groups, character) {
                 var top2Items = _.first(_.sortBy(items, function(item) {
                     return item.getValue(valueType) * -1;
                 }), 2);
-                console.log(items[0].bucketType, _.pluck(items,'description'), items);
+                console.log(items[0].bucketType, _.pluck(items, 'description'), items);
                 return top2Items;
             });
         console.log("mostPoints", mostPoints);
@@ -230,7 +230,7 @@ tgd.armorSelection = function(type, groups, character) {
             self.foundFirstSet(combos[0].set);
         } else {
             var helmets = armorGroups.shift();
-            console.log("Analyzing " + (helmets.length - 1) + " helmets", _.pluck(helmets,'description'));
+            console.log("Analyzing " + (helmets.length - 1) + " helmets", _.pluck(helmets, 'description'));
             _.each(helmets, function(helmet, index) {
                 if (self.foundFirstSet().length === 0) {
                     var set = _.map(_.clone(armorGroups), function(items) {
@@ -254,15 +254,19 @@ tgd.armorSelection = function(type, groups, character) {
                 }
             });
         }
-		
-		if ( self.foundFirstSet().length > 0 ){
-			console.log("setting the first found set as selected", self.foundFirstSet());
-			_.each(self.armorGroups(), function(group) {
-				var uniqueItem = _.findWhere(self.foundFirstSet(), { bucketType: group.bucketType });
-				var selectedItem = _.findWhere(group.items, { _id: uniqueItem._id });
-				group.selectedItem(selectedItem);
-			});
-		}
+
+        if (self.foundFirstSet().length > 0) {
+            console.log("setting the first found set as selected", self.foundFirstSet());
+            _.each(self.armorGroups(), function(group) {
+                var uniqueItem = _.findWhere(self.foundFirstSet(), {
+                    bucketType: group.bucketType
+                });
+                var selectedItem = _.findWhere(group.items, {
+                    _id: uniqueItem._id
+                });
+                group.selectedItem(selectedItem);
+            });
+        }
     };
     self.activeView.subscribe(function(newValue) {
         self.setupView(newValue);
