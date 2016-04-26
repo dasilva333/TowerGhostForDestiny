@@ -114,7 +114,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "342a3aa647805bb06013df10258212074def57830b865cead5231e48e85f7e6a"
+      "version": "d4922f2c213f2eead660ac0457cfb18cddba488ebb1096bcf07d83929a7dfe95"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -138,11 +138,11 @@
     },
     "bonusStat.js": {
       "filename": "js/tgd/bonusStat.js",
-      "version": "c684627c585571a7d66a32382930adf7326b0e62204b7d1c9593c8231296f213"
+      "version": "2d59cd25200b03b73c66abcd84c3905caf07a98574b84fb55841ce58e434efd6"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
-      "version": "0c137618c388ba1b5771ae081b13c97c84fe03e9facc229251409aa6f2af5b22"
+      "version": "0d178ef23c7f200894c58a0ec4768f4dcf04c75124f2f904c8949e97f0bc5150"
     },
     "dialog.js": {
       "filename": "js/tgd/dialog.js",

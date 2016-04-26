@@ -50,7 +50,7 @@
 		</div>
 		Click on View Help for usage information on how this tool works.<br>
 		<input type="button" class="btn btn-info" value="View Help" data-bind="click: function(){ $('.maxLightHelp').toggle(); }">
-		<p class="maxLightHelp" style="display:none;">
+		<div class="maxLightHelp" style="display:none;">
 			The <strong>first number</strong> listed indicates how many points the item currently has, 
 			the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
 			<strong>Blue Border</strong> - Indicates it is one of the items listed in the possible combinations table.<br>
@@ -63,26 +63,26 @@
 			</div>
 			<strong>Tip</strong> You may also unselect an item with a green border to indicate you want the tool to calculate all items for that armor type.
 			<hr>
-		</p>
+		</div>
 		<div class="col-xs-24 font-smaller-1" data-bind="visible: type == 'Custom'">
-			<div class="col-xs-3 font-bold">
+			<div class="col-xs-9 col-md-3 font-bold">
 				View Stats
 			</div>
-			<div class="col-xs-5">
+			<div class="col-xs-15 col-md-5">
 				<input type="button" class="btn btn-sm" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
 				<input type="button" class="btn btn-sm" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
 			</div>
-			<div class="col-xs-3 font-bold">
+			<div class="col-xs-9 col-md-3 font-bold">
 				Auto Select
 			</div>
-			<div class="col-xs-5">
+			<div class="col-xs-15 col-md-5">
 				<input type="button" class="btn btn-sm" value="Equipped" data-bind="click: setSelection">
 				<input type="button" class="btn btn-sm" value="Points" data-bind="click: setSelection">
 			</div>
-			<div class="col-xs-3 font-bold">
+			<div class="col-xs-9 col-md-3 font-bold">
 				Other Armor
 			</div>
-			<div class="col-xs-5">
+			<div class="col-xs-15 col-md-5">
 				<input type="button" class="btn btn-sm" value="Any" data-bind="click: setOtherArmor">
 				<input type="button" class="btn btn-sm" value="Points" data-bind="click: setOtherArmor">
 			</div>

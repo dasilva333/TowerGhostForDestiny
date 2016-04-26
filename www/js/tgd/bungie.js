@@ -141,18 +141,18 @@ tgd.bungie = (function(cookieString, complete) {
         });
     };
 
-	this.getVendors = function(characterId, callback){
-		//[membershipType]/MyAccount/Character/[characterId]/Vendors/
-		self.request({
+    this.getVendors = function(characterId, callback) {
+        //[membershipType]/MyAccount/Character/[characterId]/Vendors/
+        self.request({
             route: '/Destiny/' + active.type +
                 '/MyAccount/' + //active.membership +
                 '/Character/' + characterId +
-                '/Vendor/3746647075/Metadata/' ,
+                '/Vendor/3746647075/Metadata/',
             method: 'GET',
             complete: callback
         });
-	}
-	
+    };
+
     this.vault = function(callback) {
         self.request({
             route: '/Destiny/' + active.type + '/MyAccount/Vault/',
