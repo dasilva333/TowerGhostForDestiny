@@ -118,11 +118,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "e74ce48be864e6a2609aebb86edbc4ded88d846ceed8a9d811f9481e807dc50a"
+      "version": "0015d9654ec3b1552541a54abe9302b3e3c346743a3cd50de0f07bd89d819fa0"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "67b76cf691c734a62983bb1b6ac9eb1b7ed4cb4660fcf20144ce0b52537f866c"
+      "version": "35b0b3293fd1b0cdc1f8faa28dc3533c3c7837626ced4830f68e18024d9b8432"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -142,7 +142,7 @@
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
-      "version": "0d178ef23c7f200894c58a0ec4768f4dcf04c75124f2f904c8949e97f0bc5150"
+      "version": "26d1fe321d58ad654a754ab3f17bc4d34bcafe423f4a9fccfb137be1cf04f41b"
     },
     "dialog.js": {
       "filename": "js/tgd/dialog.js",
@@ -198,11 +198,11 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "92a11e3db50af14bd128da32793805b796f595dfb521852c3a5281adf48031c4"
+      "version": "8f3aa174826f0e400c6580b93c1860d4a048abe60c421efcef47ca60c6f2346f"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "1d9954111f6fecfb7f73d8fa6df69a7801d50a90aed5cb067596b6d29c4aac6b"
+      "version": "3e9e3501167a91de64b115a5581e552a3f66e8024d33f5537286ea222647f874"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

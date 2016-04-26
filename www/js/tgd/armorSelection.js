@@ -18,21 +18,35 @@ tgd.calculateBestSets = function(items, rollType) {
         var statTiers = _.map(sortedKeys, function(name) {
             return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
         }).join("<br>");
+        var score = parseFloat((tgd.sum(_.map(tmp, function(value, key) {
+            var result = Math.floor(value / tgd.DestinySkillTier);
+            return result > 5 ? 5 : result;
+        })) + (tgd.sum(_.values(tmp)) / 1000)).toFixed(3));
+        var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(items, {
+            bucketType: "Gauntlet"
+        }).perks, 'name'), function(name) {
+            return name.split(" ");
+        })));
+        loaderType = loaderType.length > 0 ? loaderType[0] : "";
+        var statTierValues = _.map(sortedKeys, function(name) {
+            return Math.floor(tmp[name] / tgd.DestinySkillTier);
+        }).join("/");
+        var classType = _.findWhere(items, {
+            bucketType: "Helmet"
+        }).character.classType();
         var combo = {
+            longName: "T" + Math.floor(score) + " " + statTierValues + " " + classType + " " + loaderType,
+            shortName: "T" + Math.floor(score) + " " + statTierValues,
+            classType: classType,
+            loaderType: loaderType,
             set: items,
-            id: Math.floor(tgd.hashCode(statTiers)),
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
             }).join("<br>"),
-            statTierValues: _.map(sortedKeys, function(name) {
-                return Math.floor(tmp[name] / tgd.DestinySkillTier);
-            }).join("/"),
+            statTierValues: statTierValues,
             statTiers: statTiers,
-            score: parseFloat((tgd.sum(_.map(tmp, function(value, key) {
-                var result = Math.floor(value / tgd.DestinySkillTier);
-                return result > 5 ? 5 : result;
-            })) + (tgd.sum(_.values(tmp)) / 1000)).toFixed(3)),
+            score: score,
             perks: _.filter(
                 _.flatten(
                     _.map(items, function(item) {
@@ -143,14 +157,7 @@ tgd.armorSelection = function(type, groups, character) {
     self.saveSelectedCombo = function(combo) {
         if (confirm("Are you sure you want to save this loadout? Doing so will close this pop up dialog")) {
             app.createLoadout();
-            var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(combo.set, {
-                bucketType: "Gauntlet"
-            }).perks, 'name'), function(name) {
-                return name.split(" ");
-            })));
-            var loadoutName = "T" + Math.floor(combo.score) + " " + combo.statTierValues + " " + _.findWhere(combo.set, {
-                bucketType: "Helmet"
-            }).character.classType() + " " + (loaderType.length > 0 ? loaderType[0] : "");
+            var loadoutName = combo.longName;
             app.activeLoadout().name(loadoutName);
             _.each(combo.set, function(item) {
                 app.activeLoadout().addUniqueItem({
@@ -175,9 +182,8 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.setOtherArmor = function(model, event) {
         var selectionType = event.target.value;
-        var otherArmor = ["Ghost", "Class Items", "Artifact"];
         _.each(self.armorGroups(), function(group) {
-            if (otherArmor.indexOf(group.bucketType) > -1) {
+            if (tgd.DestinyOtherArmor.indexOf(group.bucketType) > -1) {
                 var selectedItem = null;
                 if (selectionType == "Points") {
                     selectedItem = _.reduce(group.items, function(memo, item) {

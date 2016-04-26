@@ -30,6 +30,7 @@ tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items",
 tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
+tgd.DestinyOtherArmor = ["Ghost", "Class Items", "Artifact"];
 tgd.DestinyNonUniqueBuckets = ["Consumables", "Materials"];
 tgd.DestinyFiveRowBuckets = ["Materials", "Consumables", "Invisible", "Messages", "Lost"];
 tgd.DestinyLayout = [{

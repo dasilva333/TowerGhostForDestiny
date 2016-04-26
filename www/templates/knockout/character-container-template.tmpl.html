@@ -60,6 +60,19 @@
 									<a title="Allows you to explore armor sets to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Custom'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Custom</a>
 									<a title="Allows you to explore armor sets available that reach the max tier possible in game" data-bind="click: character.equipHighest('MaxLight'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Max Tier</a>
 								</div>
+								<span class="font-bold col-xs-24 statsToolTitle">Optimize Equipped Gear</span>
+								<div class="btn-group col-xs-24">
+									<a title="Analyzes the equipped gear for the best stat distributions" data-bind="click: character.optimizeGear('Equipped'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Equipped</a>
+									<a title="Analyzes the equipped gear minus other armor for the best stat distributions" data-bind="click: character.optimizeGear('Minus Other'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Minus Other</a>									
+								</div>
+								<div class="btn-group col-xs-24" data-bind="with: character.activeBestSets">
+									<ul data-bind="foreach: { data: $data, as: 'combo' }" class="list-group text-left">
+										<li class="list-group-item" style="padding: 2px">
+											<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo)">
+											<span data-bind="text: combo.shortName"></span>
+										</li>
+									</ul>
+								</div>
                             </div>
                         </div>
                     </div>

@@ -16,6 +16,7 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
+    this.activeBestSets = ko.observable();
     this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
@@ -1189,6 +1190,38 @@ Profile.prototype = {
         } else if (type == "Custom") {
             var groups = _.groupBy(activeItems, "bucketType");
             character.renderBestGroups(type, groups);
+        }
+    },
+    viewCombo: function(combo) {
+        var character = this;
+        return function() {
+            character.statsShowing(false);
+            app.createLoadout();
+            var loadoutName = combo.longName;
+            app.activeLoadout().name(loadoutName);
+            _.each(combo.set, function(item) {
+                app.activeLoadout().addUniqueItem({
+                    id: item._id,
+                    bucketType: item.bucketType,
+                    doEquip: true,
+                    bonusOn: item.activeRoll.bonusOn
+                });
+            });
+        }
+    },
+    optimizeGear: function(type) {
+        var character = this;
+        return function() {
+            //console.log("optimizeGear for ", type);
+            var armor = _.filter(character.equippedGear(), function(item) {
+                return item.armorIndex > -1 && ( (type == "Equipped") || (type == "Minus Other" && tgd.DestinyOtherArmor.indexOf(item.bucketType) == -1) );
+            });
+			if ( type == "Minus Other" ){
+				/* query the other armor types and concat the armor array with the found items */
+			}
+            var bestSets = tgd.calculateBestSets(armor, 'rolls');
+            //console.log("optimizeGear", armor, bestSets);
+            character.activeBestSets(bestSets);
         }
     },
     equipHighest: function(type) {
