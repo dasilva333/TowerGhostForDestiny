@@ -247,7 +247,7 @@ Profile.prototype = {
         return tgd.sum(_.map(_.filter(this.equippedGear(), function(item) {
             return item.armorIndex > -1;
         }), function(item) {
-            return Math.floor(tgd.calculateStatRoll(item, tgd.DestinyLightCap, true));
+            return item.getValue("MaxLightCSP");
         }));
     },
     _classLetter: function() {
