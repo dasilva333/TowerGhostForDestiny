@@ -2240,6 +2240,8 @@ var app = function() {
         $(window).resize(_.throttle(self.quickIconHighlighter, 500));
         $(window).scroll(_.throttle(self.quickIconHighlighter, 500));
         self.collectionSets = _.sortBy(Object.keys(_collections));
+        tgd.maxTierPossible = Math.floor(tgd.sum(tgd.DestinyMaxCSP) / tgd.DestinySkillTier);
+        tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
         tgd.DestinyArmorStats = _.filter(_statDefs, function(stat) {
             return tgd.DestinyArmorStats.indexOf(stat.statHash) > -1;
         });
