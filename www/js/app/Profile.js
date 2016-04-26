@@ -1218,6 +1218,9 @@ Profile.prototype = {
             });
 			if ( type == "Minus Other" ){
 				/* query the other armor types and concat the armor array with the found items */
+				_.each(tgd.DestinyOtherArmor, function(bucketType){
+					armor.push(_.where(character.items(), { bucketType: bucketType }));
+				});
 			}
             var bestSets = tgd.calculateBestSets(armor, 'rolls');
             //console.log("optimizeGear", armor, bestSets);
