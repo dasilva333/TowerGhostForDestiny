@@ -9,6 +9,7 @@ var app = function() {
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
     this.viewOptionsEnabled = ko.observable(false);
+    this.minAvgPercentNeeded = ko.observable(96);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -1508,7 +1509,7 @@ var app = function() {
                 var destinyMaxCSP = tgd.sum(tgd.DestinyMaxCSP);
                 tgd.maxTierPossible = Math.floor(destinyMaxCSP / tgd.DestinySkillTier);
                 tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
-                tgd.minAvgPercentNeeded = Math.floor((tgd.maxTierPointsPossible / destinyMaxCSP) * 100);
+                app.minAvgPercentNeeded(Math.floor((tgd.maxTierPointsPossible / destinyMaxCSP) * 100));
                 self.cspToggle(!self.cspToggle());
             });
         }

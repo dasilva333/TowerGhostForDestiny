@@ -580,12 +580,14 @@ Item.prototype = {
     _cspClass: function() {
         var rollType = "None";
         if (_.has(tgd.DestinyMaxCSP, this.bucketType)) {
+            var maxLightPercent = ko.unwrap(this.maxLightPercent),
+                minAvgPercentNeeded = ko.unwrap(app.minAvgPercentNeeded);;
             rollType = "BadRoll";
-            if (this.maxLightPercent() >= tgd.minAvgPercentNeeded) {
+            if (maxLightPercent >= minAvgPercentNeeded) {
                 rollType = "GoodRoll";
             }
             //4 pts under the requirement is still good enough to maybe get you there
-            else if (this.maxLightPercent() >= (tgd.minAvgPercentNeeded - 4)) {
+            else if (maxLightPercent >= (minAvgPercentNeeded - 4)) {
                 rollType = "OkayRoll";
             }
         }
