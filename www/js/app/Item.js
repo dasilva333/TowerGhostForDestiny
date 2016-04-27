@@ -1327,7 +1327,9 @@ Item.prototype = {
                             dialogItself.close();
                         }
                     }]
-                })).title(app.activeText().transfer + " " + self.description).show(true);
+                })).title(app.activeText().transfer + " " + self.description).show(true, function() {}, function() {
+                    $("input.materialsAmount").select();
+                });
             }
         } else {
             var adhoc = new tgd.Loadout();
