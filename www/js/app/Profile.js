@@ -1214,14 +1214,16 @@ Profile.prototype = {
         return function() {
             //console.log("optimizeGear for ", type);
             var armor = _.filter(character.equippedGear(), function(item) {
-                return item.armorIndex > -1 && ( (type == "Equipped") || (type == "Minus Other" && tgd.DestinyOtherArmor.indexOf(item.bucketType) == -1) );
+                return item.armorIndex > -1 && ((type == "Equipped") || (type == "Minus Other" && tgd.DestinyOtherArmor.indexOf(item.bucketType) == -1));
             });
-			if ( type == "Minus Other" ){
-				/* query the other armor types and concat the armor array with the found items */
-				_.each(tgd.DestinyOtherArmor, function(bucketType){
-					armor.push(_.where(character.items(), { bucketType: bucketType }));
-				});
-			}
+            if (type == "Minus Other") {
+                /* query the other armor types and concat the armor array with the found items */
+                _.each(tgd.DestinyOtherArmor, function(bucketType) {
+                    armor.push(_.where(character.items(), {
+                        bucketType: bucketType
+                    }));
+                });
+            }
             var bestSets = tgd.calculateBestSets(armor, 'rolls');
             //console.log("optimizeGear", armor, bestSets);
             character.activeBestSets(bestSets);

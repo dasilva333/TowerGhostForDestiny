@@ -66,7 +66,7 @@
 									<a title="Analyzes the equipped gear minus other armor for the best stat distributions" data-bind="click: character.optimizeGear('Minus Other'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Minus Other</a>									
 								</div>
 								<div class="btn-group col-xs-24" data-bind="with: character.activeBestSets">
-									<ul data-bind="foreach: { data: $data, as: 'combo' }" class="list-group text-left">
+									<ul data-bind="foreach: { data: $data, as: 'combo' }" class="list-group text-left" style="margin-bottom:0;">
 										<li class="list-group-item" style="padding: 2px">
 											<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo)">
 											<span data-bind="text: combo.shortName"></span>
