@@ -1509,7 +1509,7 @@ var app = function() {
                 var destinyMaxCSP = tgd.sum(tgd.DestinyMaxCSP);
                 tgd.maxTierPossible = Math.floor(destinyMaxCSP / tgd.DestinySkillTier);
                 tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
-                app.minAvgPercentNeeded(Math.floor((tgd.maxTierPointsPossible / destinyMaxCSP) * 100));
+                app.minAvgPercentNeeded(Math.round((tgd.maxTierPointsPossible / destinyMaxCSP) * 100));
                 self.cspToggle(!self.cspToggle());
             });
         }
