@@ -1,3 +1,39 @@
+tgd.calculateLoadoutName = function(combo){
+	var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(combo.set, {
+		bucketType: "Gauntlet"
+	}).perks, 'name'), function(name) {
+		return name.split(" ");
+	})));
+	loaderType = loaderType.length > 0 ? loaderType[0] : "";
+	var classType = _.findWhere(combo.set, {
+		bucketType: "Helmet"
+	}).character.classType();
+	return "T" + Math.floor(combo.score) + " " + combo.statTierValues + " " + classType + " " + loaderType;
+};
+
+tgd.calculatePerkStats = function(combo){
+	combo.perks = _.filter(
+		_.flatten(
+			_.map(combo.set, function(item) {
+				return _.map(item.perks, function(perk) {
+					perk.bucketType = item.bucketType;
+					return perk;
+				});
+			})
+		),
+		function(perk) {
+			return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(tgd.weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
+		}
+	);
+	combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
+		return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
+	}), function(perk) {
+		return _.intersection(tgd.weaponTypes, perk.name.split(" "))[0];
+	})));
+	combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
+	return combo;
+}
+
 tgd.calculateBestSets = function(items, rollType) {
     var combos = _.map(items, function(selection) {
         var choices = selection[rollType] ? [selection] : selection;
@@ -22,23 +58,11 @@ tgd.calculateBestSets = function(items, rollType) {
             var result = Math.floor(value / tgd.DestinySkillTier);
             return result > 5 ? 5 : result;
         })) + (tgd.sum(_.values(tmp)) / 1000)).toFixed(3));
-        var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(items, {
-            bucketType: "Gauntlet"
-        }).perks, 'name'), function(name) {
-            return name.split(" ");
-        })));
-        loaderType = loaderType.length > 0 ? loaderType[0] : "";
         var statTierValues = _.map(sortedKeys, function(name) {
             return Math.floor(tmp[name] / tgd.DestinySkillTier);
         }).join("/");
-        var classType = _.findWhere(items, {
-            bucketType: "Helmet"
-        }).character.classType();
         var combo = {
-            longName: "T" + Math.floor(score) + " " + statTierValues + " " + classType + " " + loaderType,
             shortName: "T" + Math.floor(score) + " " + statTierValues,
-            classType: classType,
-            loaderType: loaderType,
             set: items,
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
@@ -46,27 +70,8 @@ tgd.calculateBestSets = function(items, rollType) {
             }).join("<br>"),
             statTierValues: statTierValues,
             statTiers: statTiers,
-            score: score,
-            perks: _.filter(
-                _.flatten(
-                    _.map(items, function(item) {
-                        return _.map(item.perks, function(perk) {
-                            perk.bucketType = item.bucketType;
-                            return perk;
-                        });
-                    })
-                ),
-                function(perk) {
-                    return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(tgd.weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
-                }
-            )
+            score: score
         };
-        combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
-            return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
-        }), function(perk) {
-            return _.intersection(tgd.weaponTypes, perk.name.split(" "))[0];
-        })));
-        combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
         return combo;
     });
     var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
@@ -109,7 +114,9 @@ tgd.armorSelection = function(type, groups, character) {
     });
 
     self.bestSets = ko.pureComputed(function() {
-        var bestSets = tgd.calculateBestSets(self.selectedItems(), tgd.armorSelectionFields[self.activeView()].rollType);
+        var bestSets = _.map(tgd.calculateBestSets(self.selectedItems(), tgd.armorSelectionFields[self.activeView()].rollType), function(combo){
+			return tgd.calculatePerkStats(combo);
+		});
         return bestSets;
     });
 
@@ -157,7 +164,7 @@ tgd.armorSelection = function(type, groups, character) {
     self.saveSelectedCombo = function(combo) {
         if (confirm("Are you sure you want to save this loadout? Doing so will close this pop up dialog")) {
             app.createLoadout();
-            var loadoutName = combo.longName;
+            var loadoutName = tgd.calculateLoadoutName(combo);
             app.activeLoadout().name(loadoutName);
             _.each(combo.set, function(item) {
                 app.activeLoadout().addUniqueItem({

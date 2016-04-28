@@ -182,6 +182,8 @@ Profile.prototype = {
                         if ("id" in processedItem) self.items.push(processedItem);
                     }
                 });
+				//ensures maxLightPercent is recalculated if the item has been infused up
+				app.cspToggle(!app.cspToggle());
                 done();
             } else {
                 if (results && results.ErrorCode && results.ErrorCode == 99) {
@@ -1128,7 +1130,7 @@ Profile.prototype = {
                             return sets[0].statTiers == selectedStatTier;
                         })[0][selectedIndex];
                         app.createLoadout();
-                        var loadoutName = highestCombo.score + " " + $("<div></div>").html(highestCombo.statTiers).text();
+                        var loadoutName = tgd.calculateLoadoutName(highestCombo);
                         app.activeLoadout().name(loadoutName);
                         _.each(highestCombo.set, function(item) {
                             var bonusOn = item.bonusStatOn();
@@ -1197,7 +1199,7 @@ Profile.prototype = {
         return function() {
             character.statsShowing(false);
             app.createLoadout();
-            var loadoutName = combo.longName;
+            var loadoutName = tgd.calculateLoadoutName(combo);
             app.activeLoadout().name(loadoutName);
             _.each(combo.set, function(item) {
                 app.activeLoadout().addUniqueItem({
