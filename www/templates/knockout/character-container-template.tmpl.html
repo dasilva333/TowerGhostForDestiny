@@ -69,7 +69,7 @@
 									<ul data-bind="foreach: { data: $data, as: 'combo' }" class="list-group text-left" style="margin-bottom:0;">
 										<li class="list-group-item" style="padding: 2px">
 											<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo)">
-											<span data-bind="text: combo.shortName"></span>
+											<span data-bind="text: combo.statTiers.replace(/<br>/g,'/')"></span>
 										</li>
 									</ul>
 								</div>

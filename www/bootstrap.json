@@ -10,11 +10,11 @@
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
-      "version": "942c04d9925a797847f6112df897c1681ff98a6c32d82ea9de17d45c09a7f1c4"
+      "version": "988e6479ac8323f3df48d2c5b10a2ec5c171fd60dfcdf9cab338b4dff980083f"
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
+      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
@@ -22,11 +22,11 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
-      "version": "c2d2069b8673f67e8be074b696d58442eb820a9145e0e3e6f55110be7bc236a2"
+      "version": "1367320f2c7a0ab3fc8d14633e0599404f75ec7bedf9d8362c93922bf2a8e60b"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/en/objectiveDefs.json",
@@ -34,7 +34,7 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/en/perkDefs.json",
-      "version": "91e6bdcde57aa967a03df9494c7d6f9d176254ce0ecfd0f53b82635712fd5b2b"
+      "version": "539cd4af0c6d878bf39cb085469404952c62322633d9a02c1349d29cd22bb6f7"
     },
     "raceDefs.json": {
       "filename": "data/definitions/en/raceDefs.json",
@@ -46,7 +46,7 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/en/talentGridDefs.json",
-      "version": "42cb119ab95d905eeedf2f1d23cd6733e1c1ee2a221ad0cf348d7dc59f9bdab7"
+      "version": "6bbb13255f6d7de2fe85b393b141325ad96d7766f49ce8f07b58779076ab1fa3"
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
@@ -78,7 +78,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "084b97a880c5efbd95bfed8b25ef17352b8c5697923e7ff0d87988159b8e6d2f"
+      "version": "ff45b64cd9fb825e4c48f4361e2c96ef345f9d1082ba3ef9cad02ae14d9690f5"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -110,7 +110,7 @@
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "0b3261b21108045d986231adb807da5797f757f68359e116ce6043b96001c321"
+      "version": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
@@ -118,7 +118,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "9d3a925c6d28e13a7ae27d471745b5d39d5c6ee726fc20aef6327bf51f0c87ae"
+      "version": "9f7928d6906f7c7b463765b17edc7bc82f0a5362b612869791923d8564f619a9"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
@@ -202,7 +202,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "1d9954111f6fecfb7f73d8fa6df69a7801d50a90aed5cb067596b6d29c4aac6b"
+      "version": "adf25d06c8027bef35b567796698c5b5f6cbfb5b106ca02d6a84da8958de9caa"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
