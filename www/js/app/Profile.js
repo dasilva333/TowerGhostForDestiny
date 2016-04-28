@@ -182,8 +182,8 @@ Profile.prototype = {
                         if ("id" in processedItem) self.items.push(processedItem);
                     }
                 });
-				//ensures maxLightPercent is recalculated if the item has been infused up
-				app.cspToggle(!app.cspToggle());
+                //ensures maxLightPercent is recalculated if the item has been infused up
+                app.cspToggle(!app.cspToggle());
                 done();
             } else {
                 if (results && results.ErrorCode && results.ErrorCode == 99) {
@@ -1000,6 +1000,9 @@ Profile.prototype = {
                 combo.light = character.calculatePowerLevelWithItems(combo.set.concat(weaponsEquipped));
                 combo.statTiers = $.trim(statTiers);
                 combo.statValues = statValues.substring(0, statValues.length - 1);
+                combo.statTierValues = _.map(sortedKeys, function(name) {
+                    return Math.floor(stats[name] / tgd.DestinySkillTier);
+                }).join("/");
                 combo.perks = _.sortBy(_.filter(
                     _.flatten(
                         _.map(combo.set, function(item) {

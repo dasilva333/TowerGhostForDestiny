@@ -1,37 +1,37 @@
-tgd.calculateLoadoutName = function(combo){
-	var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(combo.set, {
-		bucketType: "Gauntlet"
-	}).perks, 'name'), function(name) {
-		return name.split(" ");
-	})));
-	loaderType = loaderType.length > 0 ? loaderType[0] : "";
-	var classType = _.findWhere(combo.set, {
-		bucketType: "Helmet"
-	}).character.classType();
-	return "T" + Math.floor(combo.score) + " " + combo.statTierValues + " " + classType + " " + loaderType;
+tgd.calculateLoadoutName = function(combo) {
+    var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(combo.set, {
+        bucketType: "Gauntlet"
+    }).perks, 'name'), function(name) {
+        return name.split(" ");
+    })));
+    loaderType = loaderType.length > 0 ? loaderType[0] : "";
+    var classType = _.findWhere(combo.set, {
+        bucketType: "Helmet"
+    }).character.classType();
+    return "T" + Math.floor(combo.score) + " " + combo.statTierValues + " " + classType + " " + loaderType;
 };
 
-tgd.calculatePerkStats = function(combo){
-	combo.perks = _.filter(
-		_.flatten(
-			_.map(combo.set, function(item) {
-				return _.map(item.perks, function(perk) {
-					perk.bucketType = item.bucketType;
-					return perk;
-				});
-			})
-		),
-		function(perk) {
-			return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(tgd.weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
-		}
-	);
-	combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
-		return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
-	}), function(perk) {
-		return _.intersection(tgd.weaponTypes, perk.name.split(" "))[0];
-	})));
-	combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
-	return combo;
+tgd.calculatePerkStats = function(combo) {
+    combo.perks = _.filter(
+        _.flatten(
+            _.map(combo.set, function(item) {
+                return _.map(item.perks, function(perk) {
+                    perk.bucketType = item.bucketType;
+                    return perk;
+                });
+            })
+        ),
+        function(perk) {
+            return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(tgd.weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
+        }
+    );
+    combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
+        return perk.bucketType != "Class Items" && perk.bucketType != "Helmet";
+    }), function(perk) {
+        return _.intersection(tgd.weaponTypes, perk.name.split(" "))[0];
+    })));
+    combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
+    return combo;
 }
 
 tgd.calculateBestSets = function(items, rollType) {
@@ -114,9 +114,9 @@ tgd.armorSelection = function(type, groups, character) {
     });
 
     self.bestSets = ko.pureComputed(function() {
-        var bestSets = _.map(tgd.calculateBestSets(self.selectedItems(), tgd.armorSelectionFields[self.activeView()].rollType), function(combo){
-			return tgd.calculatePerkStats(combo);
-		});
+        var bestSets = _.map(tgd.calculateBestSets(self.selectedItems(), tgd.armorSelectionFields[self.activeView()].rollType), function(combo) {
+            return tgd.calculatePerkStats(combo);
+        });
         return bestSets;
     });
 

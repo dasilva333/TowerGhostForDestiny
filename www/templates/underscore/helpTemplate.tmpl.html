@@ -165,6 +165,10 @@
 		<li>
             <strong>Max Tier</strong> Allows you to explore armor sets available that reach the max tier possible in game.</li>
 		<li>
+            <strong>Equipped</strong> Displays a list of armor distributions available for your currently equipped armor.</li>
+		<li>
+            <strong>Minus Other</strong> Displays a list of armor distributions available for your armor minus the other items (Artifact, Class Item, Ghost). This option is useful if you're set on having the right Helmet, Gauntlet, Chest or Boots but are open to switching to a different Ghost for example to better improve your stat distribution.</li>
+		<li>
             <h3>Tooltip Stats</h3>			
         </li>	
 		<li>
@@ -173,16 +177,21 @@
 				<li>The stat values (Int/Dis/Str) increase in relation to the item's light level and preset bonus points at certain light level break points.</li>
 				<li>
 					The first number displayed is the combined stat points, let's suppose your Helmet has 50 Intellect and 50 Discipline the first number will be 100.<br>
-					If the item has not been leveled, stat nodes unlocked then the csp displayed will be normalized to include the bonus after it's been leveled.
+					If the item has not been leveled, stat nodes unlocked then the CSP displayed will be normalized to include the bonus after it's been leveled.
 				</li>
 				<li>The two percentages indicate the stat roll in relation to a 'perfect' max roll.</li>
 				<li>The first percentage indicates what the current stat value is in relation to the max roll (base stats/perfect roll).</li>
 				<li>The second percentage indicates what the stat value will be once infused to max light in relation to the max roll (future max stats/perfect roll)</li>
 				<li>The next set of numbers in parentheses indicate the max stat values available for that armor.</li>
-				<li>The first number indicates the csp once the item is infused to max light, this number does not ever change.</li>
+				<li>The first number indicates the CSP once the item is infused to max light, this number should not ever change. (1-2% change over a large difference in light level)</li>
 				<li>The second number is the most points anyone can have for that type of armor aka the perfect roll.</li>
 				<li>Note: The second percentage and first number are prediction calculations based on what the item will look like at max light level, 
-					these calculated values have room for error due to the internal formula Bungie uses so it might be off by 1 point up to 2.</li>
+					these calculated values have room for error due to the internal formula Bungie uses so it might be off by 1 point or up to 2 points at most.</li>
+				<li>The color of the text indicates the range value of the stat roll</li>
+				<li>If the stat roll color is green then it meets or exceeds the minimum required to reach a T12 build (96%+)</li>
+				<li>If the stat roll color is yellow then it is upto 4 points below the minimum, enough to reach a T11 build (92-95%+)</li>
+				<li>If the stat roll color is red then the stat roll is way below the required minimum to reach T11 or T12 armor distribution. (0-91%)</li>
+				
 			</ul>
 		</li>
 		<li><strong>D</strong> Indicates the value was sourced from DestinyDB</li>
