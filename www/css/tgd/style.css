@@ -51,8 +51,8 @@ li a {
     margin-right: 15px;
 }
 .font-bold {font-weight: bold;}
-.font-smaller-1 { font-size: 0.9em; }
-.font-smaller-2 { font-size: 0.8em; }
+.font-smaller-1 { font-size: 0.9em !important; }
+.font-smaller-2 { font-size: 0.8em !important; }
 .font-larger-4 { font-size: 3em; }
 
 .itemImage {

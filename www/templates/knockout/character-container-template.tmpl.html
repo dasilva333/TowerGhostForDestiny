@@ -68,8 +68,11 @@
 								<div class="btn-group col-xs-24" data-bind="with: character.activeBestSets">
 									<ul data-bind="foreach: { data: $data, as: 'combo' }" class="list-group text-left" style="margin-bottom:0;">
 										<li class="list-group-item" style="padding: 2px">
-											<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo)">
-											<span data-bind="text: combo.statTiers.replace(/<br>/g,'/')"></span>
+											<span class="font-smaller-2">
+												<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo)">
+												T<span data-bind="text: Math.floor(combo.score)"></span>
+												<span data-bind="text: combo.statTiers.replace(/<br>/g,'/')"></span>
+											</span>
 										</li>
 									</ul>
 								</div>
