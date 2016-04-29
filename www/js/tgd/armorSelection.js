@@ -32,7 +32,7 @@ tgd.calculatePerkStats = function(combo) {
     })));
     combo.similarityScore = (3 / combo.similarityScore.length) + tgd.sum(combo.similarityScore);
     return combo;
-}
+};
 
 tgd.calculateBestSets = function(items, rollType) {
     var combos = _.map(items, function(selection) {
@@ -202,7 +202,7 @@ tgd.armorSelection = function(type, groups, character) {
                 group.selectedItem(selectedItem);
             }
         });
-    }
+    };
 
     self.setSelection = function(model, event) {
         var selectionType = event.target.value;
@@ -215,7 +215,7 @@ tgd.armorSelection = function(type, groups, character) {
             });
             group.selectedItem(selectedItem);
         });
-    }
+    };
 
     self.setView = function(model, event) {
         self.activeView(event.target.value);

@@ -19,6 +19,7 @@ module.exports = function(grunt) {
 	        src: [
 				'../www/js/app/*.js',
 				'../www/js/extras/*.js',
+				'../www/js/libraries/secondary/cordova-app-loader-complete.js',
 				'../www/js/tgd/*.js',
 				'../www/js/*.js'
 		    ]

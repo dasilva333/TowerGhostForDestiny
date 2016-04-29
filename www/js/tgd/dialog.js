@@ -2,7 +2,7 @@ tgd.koDialog = function(options) {
     var dialog = new tgd.dialog(options);
     var id = new Date().getTime();
     var mdl = dialog.modal;
-    var hasTemplate = options.templateName && options.templateName != "";
+    var hasTemplate = options.templateName && options.templateName !== "";
     if (hasTemplate) {
         var template = tgd[options.templateName]({
             id: id

@@ -91,14 +91,14 @@ tgd.loadoutManager = function(loadouts, dialog) {
 
     self.setDialog = function(dialog) {
         self.dialog = dialog;
-    }
+    };
 
     self.equip = function() {
         if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
             this.setActive();
             self.dialog.close();
         }
-    }
+    };
 };
 
 tgd.loadoutId = 0;

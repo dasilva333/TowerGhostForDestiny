@@ -1212,7 +1212,7 @@ Profile.prototype = {
                     bonusOn: item.activeRoll.bonusOn
                 });
             });
-        }
+        };
     },
     optimizeGear: function(type) {
         var character = this;
@@ -1232,7 +1232,7 @@ Profile.prototype = {
             var bestSets = tgd.calculateBestSets(armor, 'rolls');
             //console.log("optimizeGear", armor, bestSets);
             character.activeBestSets(bestSets);
-        }
+        };
     },
     equipHighest: function(type) {
         var character = this;
