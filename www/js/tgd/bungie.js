@@ -141,13 +141,13 @@ tgd.bungie = (function(cookieString, complete) {
         });
     };
 
-    this.getVendors = function(characterId, callback) {
+    this.getVendorData = function(characterId, vendorId, callback) {
         //[membershipType]/MyAccount/Character/[characterId]/Vendors/
         self.request({
             route: '/Destiny/' + active.type +
                 '/MyAccount/' + //active.membership +
                 '/Character/' + characterId +
-                '/Vendor/3746647075/Metadata/',
+                '/Vendor/' + vendorId + '/Metadata/',
             method: 'GET',
             complete: callback
         });

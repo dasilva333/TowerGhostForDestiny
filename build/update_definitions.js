@@ -89,10 +89,14 @@ var neededFiles = [
 		delete item.statIdentifier;
 		delete item.interpolate;
 		return item;
-	}}/*,
-	{ table: "DestinyProgressionDefinition", name: "progressDefs", key: "progressionHash", reduce: function(item){
+	}},
+	{ table: "DestinyVendorDefinition", name: "vendorDefs", key: "hash", reduce: function(item){
+		delete item.categories;
+		delete item.acceptedItems;
+		delete item.unlockValueHash;
+		delete item.failureStrings;
 		return item;
-	}}*/,
+	}},
 	{ table: "DestinyObjectiveDefinition", name: "objectiveDefs", key: "objectiveHash", reduce: function(item){
 		var obj = { objectiveHash: item.objectiveHash, completionValue: item.completionValue, displayDescription: item.displayDescription };
 		return obj;
