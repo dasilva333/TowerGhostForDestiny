@@ -480,13 +480,13 @@ Profile.prototype = {
 					var armor = _.filter(_.map(categories.saleItems, function(sItem) {
 						return new Item(sItem.item, self);
 					}), function(item) {
-						return item.armorIndex > -1;
+						return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass,item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
 					});
 					memo = memo.concat(armor);
 					return memo;
 				}, []);
 				finish(vendorItems);
-			});		
+			});
 		});
     },
     queryRolls: function(items, callback) {
