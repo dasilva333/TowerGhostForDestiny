@@ -48,4 +48,7 @@
     <gap:splash gap:platform="android" gap:qualifier="port-xhdpi" src="res/screen/android/screen-xhdpi-portrait.png" />
 	
     <access origin="*" />
+	<access origin="cdvfile:*"/> 
+	<allow-navigation href="cdvfile:*"/> 
+	<allow-intent href="cdvfile:*"/>
 </widget>

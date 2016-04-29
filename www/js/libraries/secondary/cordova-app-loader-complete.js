@@ -67,8 +67,8 @@
 
         window.CordovaAppLoader = __webpack_require__(1);
         window.CordovaFileCache = __webpack_require__(2);
-        window.CordovaPromiseFS = __webpack_require__(3);
-        window.Promise = __webpack_require__(4);
+        window.CordovaPromiseFS = __webpack_require__(4);
+        window.Promise = __webpack_require__(5);
         window.setImmediate = window.setTimeout; // for promiscuous to work!
 
         /***/
@@ -78,7 +78,7 @@
     function(module, exports, __webpack_require__) {
 
         var CordovaFileCache = __webpack_require__(2);
-        var CordovaPromiseFS = __webpack_require__(3);
+        var CordovaPromiseFS = __webpack_require__(4);
         var Promise = null;
 
         var BUNDLE_ROOT = location.href.replace(location.hash, '');
@@ -301,36 +301,29 @@
                     resolve(null);
                 });
             }
-            //console.log("downloading new app");
             // we will delete files, which will invalidate the current manifest...
             localStorage.removeItem('manifest');
-            //console.log("removing manifest");
             // only attempt this once - set 'last_update_files'
             localStorage.setItem('last_update_files', hash(this.newManifest.files));
             this.manifest.files = Manifest.files = {};
             return self.cache.remove(self._toBeDeleted, true)
                 .then(function() {
-                    //console.log("cache cleared");
                     return Promise.all(self._toBeCopied.map(function(file) {
                         return self.cache._fs.download(BUNDLE_ROOT + file, self.cache.localRoot + file);
                     }));
                 })
                 .then(function() {
-                    //console.log("files downloading");
                     if (self.allowServerRootFromManifest && self.newManifest.serverRoot) {
                         self.cache.serverRoot = self.newManifest.serverRoot;
                     }
                     self.cache.add(self._toBeDownloaded);
                     return self.cache.download(onprogress);
                 }).then(function() {
-                    //console.log("files downloaded");
                     self._toBeDeleted = [];
                     self._toBeDownloaded = [];
                     self._updateReady = true;
                     return self.newManifest;
                 }, function(files) {
-                    //console.log("download error");
-                    //console.log(files);
                     // on download error, remove files...
                     if (!!files && files.length) {
                         self.cache.remove(files);
@@ -371,7 +364,7 @@
     /***/
     function(module, exports, __webpack_require__) {
 
-        var hash = __webpack_require__(5);
+        var hash = __webpack_require__(3);
         var Promise = null;
         var isCordova = typeof cordova !== 'undefined';
 
@@ -500,29 +493,23 @@
 
                     // keep track of number of downloads!
                     var queue = self.getDownloadQueue();
-                    var started = [];
-                    var index = self._downloading.length;
                     var done = self._downloading.length;
                     var total = self._downloading.length + queue.length;
 
                     // download every file in the queue (which is the diff from _added with _cached)
                     queue.forEach(function(url) {
                         var path = self.toPath(url);
-                        // augment progress event with index/total stats
+                        // augment progress event with done/total stats
                         var onSingleDownloadProgress;
                         if (typeof onprogress === 'function') {
                             onSingleDownloadProgress = function(ev) {
-                                ev.queueIndex = index;
+                                ev.queueIndex = done;
                                 ev.queueSize = total;
                                 ev.url = url;
                                 ev.path = path;
-                                ev.percentage = index / total;
+                                ev.percentage = done / total;
                                 if (ev.loaded > 0 && ev.total > 0 && index !== total) {
                                     ev.percentage += (ev.loaded / ev.total) / total;
-                                }
-                                if (started.indexOf(url) < 0) {
-                                    started.push(url);
-                                    index++;
                                 }
                                 onprogress(ev);
                             };
@@ -531,6 +518,7 @@
                         // callback
                         var onDone = function() {
                             done++;
+
                             // when we're done
                             if (done === total) {
                                 // reset downloads
@@ -637,7 +625,83 @@
     },
     /* 3 */
     /***/
-    function(module, exports, __webpack_require__) {
+    function(module, exports) {
+
+        /**
+         * JS Implementation of MurmurHash3 (r136) (as of May 20, 2011)
+         * 
+         * @author <a href="mailto:gary.court@gmail.com">Gary Court</a>
+         * @see http://github.com/garycourt/murmurhash-js
+         * @author <a href="mailto:aappleby@gmail.com">Austin Appleby</a>
+         * @see http://sites.google.com/site/murmurhash/
+         * 
+         * @param {string} key ASCII only
+         * @param {number} seed Positive integer only
+         * @return {number} 32-bit positive integer hash 
+         */
+
+        function murmurhash3_32_gc(key, seed) {
+            var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
+
+            remainder = key.length & 3; // key.length % 4
+            bytes = key.length - remainder;
+            h1 = seed;
+            c1 = 0xcc9e2d51;
+            c2 = 0x1b873593;
+            i = 0;
+
+            while (i < bytes) {
+                k1 =
+                    ((key.charCodeAt(i) & 0xff)) |
+                    ((key.charCodeAt(++i) & 0xff) << 8) |
+                    ((key.charCodeAt(++i) & 0xff) << 16) |
+                    ((key.charCodeAt(++i) & 0xff) << 24);
+                ++i;
+
+                k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
+                k1 = (k1 << 15) | (k1 >>> 17);
+                k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
+
+                h1 ^= k1;
+                h1 = (h1 << 13) | (h1 >>> 19);
+                h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
+                h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
+            }
+
+            k1 = 0;
+
+            switch (remainder) {
+                case 3:
+                    k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
+                case 2:
+                    k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
+                case 1:
+                    k1 ^= (key.charCodeAt(i) & 0xff);
+
+                    k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
+                    k1 = (k1 << 15) | (k1 >>> 17);
+                    k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
+                    h1 ^= k1;
+            }
+
+            h1 ^= key.length;
+
+            h1 ^= h1 >>> 16;
+            h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
+            h1 ^= h1 >>> 13;
+            h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
+            h1 ^= h1 >>> 16;
+
+            return h1 >>> 0;
+        }
+
+        module.exports = murmurhash3_32_gc;
+
+        /***/
+    },
+    /* 4 */
+    /***/
+    function(module, exports) {
 
         /**
          * Static Private functions
@@ -684,7 +748,7 @@
         module.exports = function(options) {
             /* Promise implementation */
             var Promise = options.Promise || window.Promise;
-            if (typeof Promise === 'undefined') {
+            if (!Promise) {
                 throw new Error("No Promise library given in options.Promise");
             }
 
@@ -697,15 +761,14 @@
             var setupShims = function() {
                     window.FileTransfer = function FileTransfer() {};
                     FileTransfer.prototype.download = function download(url, file, win, fail) {
-                        //console.log("FileTransfer.prototype.download: " + url);
                         var xhr = new XMLHttpRequest();
                         xhr.open('GET', url);
+						//blob types not supported by Firefox
                         //xhr.responseType = "blob";
                         xhr.onreadystatechange = function(onSuccess, onError, cb) {
                             if (xhr.readyState == 4) {
                                 if (xhr.status === 200) {
-                                    //console.log("writing file to " + file);
-                                    write(file, xhr.responseText).then(win, fail);
+                                    write(file, xhr.response).then(win, fail);
                                 } else {
                                     fail(xhr.status);
                                 }
@@ -760,7 +823,14 @@
                         console.warn('Chrome does not support fileSystem "' + type + '". Falling back on "0" (temporary).');
                         type = 0;
                     }
-                    window.requestFileSystem(type, options.storageSize, resolve, reject);
+                    // On chrome, request quota to store persistent files
+                    if (!isCordova && type === 1 && navigator.webkitPersistentStorage) {
+                        navigator.webkitPersistentStorage.requestQuota(options.storageSize, function(grantedBytes) {
+                            window.requestFileSystem(type, grantedBytes, resolve, reject);
+                        });
+                    } else {
+                        window.requestFileSystem(type, options.storageSize, resolve, reject);
+                    }
                     setTimeout(function() {
                         reject(new Error('Could not retrieve FileSystem after 5 seconds.'));
                     }, 5100);
@@ -882,6 +952,24 @@
                 });
             }
 
+            /* does dir exist? If so, resolve with fileEntry, if not, resolve with false. */
+            function existsDir(path) {
+                return new Promise(function(resolve, reject) {
+                    dir(path).then(
+                        function(dirEntry) {
+                            resolve(dirEntry);
+                        },
+                        function(err) {
+                            if (err.code === 1) {
+                                resolve(false);
+                            } else {
+                                reject(err);
+                            }
+                        }
+                    );
+                });
+            }
+
             function create(path) {
                 return ensure(dirname(path)).then(function() {
                     return file(path, {
@@ -929,20 +1017,12 @@
             function read(path, method) {
                 method = method || 'readAsText';
                 return file(path).then(function(fileEntry) {
-                    //console.log("reading " + path);
-                    //console.log(fileEntry);
                     return new Promise(function(resolve, reject) {
                         fileEntry.file(function(file) {
-                            /*console.log("fileEntry " + file);
-                            console.log(file);
-                            window.f = file;*/
-
                             var reader = new FileReader();
                             reader.onloadend = function() {
-                                //console.log("file read " + this.result);
                                 resolve(this.result);
                             };
-                            //console.log(reader[method].toString());
                             reader[method](file);
                         }, reject);
                     });
@@ -994,6 +1074,20 @@
                         return file(src).then(function(fileEntry) {
                             return new Promise(function(resolve, reject) {
                                 fileEntry.moveTo(dir, filename(dest), resolve, reject);
+                            });
+                        });
+                    });
+            }
+
+            /* move a dir */
+            function moveDir(src, dest) {
+                src = src.replace(/\/$/, '');
+                dest = dest.replace(/\/$/, '');
+                return ensure(dirname(dest))
+                    .then(function(destDir) {
+                        return dir(src).then(function(dirEntry) {
+                            return new Promise(function(resolve, reject) {
+                                dirEntry.moveTo(destDir, filename(dest), resolve, reject);
                             });
                         });
                     });
@@ -1144,12 +1238,14 @@
                 readJSON: readJSON,
                 write: write,
                 move: move,
+                moveDir: moveDir,
                 copy: copy,
                 remove: remove,
                 removeDir: removeDir,
                 list: list,
                 ensure: ensure,
                 exists: exists,
+                existsDir: existsDir,
                 download: download,
                 upload: upload,
                 toURL: toURL,
@@ -1166,7 +1262,7 @@
 
         /***/
     },
-    /* 4 */
+    /* 5 */
     /***/
     function(module, exports, __webpack_require__) {
 
@@ -1343,82 +1439,6 @@
 
         /***/
     },
-    /* 5 */
-    /***/
-    function(module, exports, __webpack_require__) {
-
-        /**
-         * JS Implementation of MurmurHash3 (r136) (as of May 20, 2011)
-         * 
-         * @author <a href="mailto:gary.court@gmail.com">Gary Court</a>
-         * @see http://github.com/garycourt/murmurhash-js
-         * @author <a href="mailto:aappleby@gmail.com">Austin Appleby</a>
-         * @see http://sites.google.com/site/murmurhash/
-         * 
-         * @param {string} key ASCII only
-         * @param {number} seed Positive integer only
-         * @return {number} 32-bit positive integer hash 
-         */
-
-        function murmurhash3_32_gc(key, seed) {
-            var remainder, bytes, h1, h1b, c1, c1b, c2, c2b, k1, i;
-
-            remainder = key.length & 3; // key.length % 4
-            bytes = key.length - remainder;
-            h1 = seed;
-            c1 = 0xcc9e2d51;
-            c2 = 0x1b873593;
-            i = 0;
-
-            while (i < bytes) {
-                k1 =
-                    ((key.charCodeAt(i) & 0xff)) |
-                    ((key.charCodeAt(++i) & 0xff) << 8) |
-                    ((key.charCodeAt(++i) & 0xff) << 16) |
-                    ((key.charCodeAt(++i) & 0xff) << 24);
-                ++i;
-
-                k1 = ((((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16))) & 0xffffffff;
-                k1 = (k1 << 15) | (k1 >>> 17);
-                k1 = ((((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16))) & 0xffffffff;
-
-                h1 ^= k1;
-                h1 = (h1 << 13) | (h1 >>> 19);
-                h1b = ((((h1 & 0xffff) * 5) + ((((h1 >>> 16) * 5) & 0xffff) << 16))) & 0xffffffff;
-                h1 = (((h1b & 0xffff) + 0x6b64) + ((((h1b >>> 16) + 0xe654) & 0xffff) << 16));
-            }
-
-            k1 = 0;
-
-            switch (remainder) {
-                case 3:
-                    k1 ^= (key.charCodeAt(i + 2) & 0xff) << 16;
-                case 2:
-                    k1 ^= (key.charCodeAt(i + 1) & 0xff) << 8;
-                case 1:
-                    k1 ^= (key.charCodeAt(i) & 0xff);
-
-                    k1 = (((k1 & 0xffff) * c1) + ((((k1 >>> 16) * c1) & 0xffff) << 16)) & 0xffffffff;
-                    k1 = (k1 << 15) | (k1 >>> 17);
-                    k1 = (((k1 & 0xffff) * c2) + ((((k1 >>> 16) * c2) & 0xffff) << 16)) & 0xffffffff;
-                    h1 ^= k1;
-            }
-
-            h1 ^= key.length;
-
-            h1 ^= h1 >>> 16;
-            h1 = (((h1 & 0xffff) * 0x85ebca6b) + ((((h1 >>> 16) * 0x85ebca6b) & 0xffff) << 16)) & 0xffffffff;
-            h1 ^= h1 >>> 13;
-            h1 = ((((h1 & 0xffff) * 0xc2b2ae35) + ((((h1 >>> 16) * 0xc2b2ae35) & 0xffff) << 16))) & 0xffffffff;
-            h1 ^= h1 >>> 16;
-
-            return h1 >>> 0;
-        }
-
-        module.exports = murmurhash3_32_gc;
-
-        /***/
-    },
     /* 6 */
     /***/
     function(module, exports, __webpack_require__) {
@@ -1510,39 +1530,73 @@
     },
     /* 7 */
     /***/
-    function(module, exports, __webpack_require__) {
+    function(module, exports) {
 
         // shim for using process in browser
 
         var process = module.exports = {};
         var queue = [];
         var draining = false;
+        var currentQueue;
+        var queueIndex = -1;
+
+        function cleanUpNextTick() {
+            draining = false;
+            if (currentQueue.length) {
+                queue = currentQueue.concat(queue);
+            } else {
+                queueIndex = -1;
+            }
+            if (queue.length) {
+                drainQueue();
+            }
+        }
 
         function drainQueue() {
             if (draining) {
                 return;
             }
+            var timeout = setTimeout(cleanUpNextTick);
             draining = true;
-            var currentQueue;
+
             var len = queue.length;
             while (len) {
                 currentQueue = queue;
                 queue = [];
-                var i = -1;
-                while (++i < len) {
-                    currentQueue[i]();
+                while (++queueIndex < len) {
+                    if (currentQueue) {
+                        currentQueue[queueIndex].run();
+                    }
                 }
+                queueIndex = -1;
                 len = queue.length;
             }
+            currentQueue = null;
             draining = false;
+            clearTimeout(timeout);
         }
+
         process.nextTick = function(fun) {
-            queue.push(fun);
-            if (!draining) {
+            var args = new Array(arguments.length - 1);
+            if (arguments.length > 1) {
+                for (var i = 1; i < arguments.length; i++) {
+                    args[i - 1] = arguments[i];
+                }
+            }
+            queue.push(new Item(fun, args));
+            if (queue.length === 1 && !draining) {
                 setTimeout(drainQueue, 0);
             }
         };
 
+        // v8 likes predictible objects
+        function Item(fun, array) {
+            this.fun = fun;
+            this.array = array;
+        }
+        Item.prototype.run = function() {
+            this.fun.apply(null, this.array);
+        };
         process.title = 'browser';
         process.browser = true;
         process.env = {};
@@ -1564,7 +1618,6 @@
             throw new Error('process.binding is not supported');
         };
 
-        // TODO(shtylman)
         process.cwd = function() {
             return '/'
         };
