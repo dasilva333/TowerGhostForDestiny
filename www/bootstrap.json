@@ -26,7 +26,7 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
-      "version": "c2d2069b8673f67e8be074b696d58442eb820a9145e0e3e6f55110be7bc236a2"
+      "version": "90695759805b3133dae00931c1a9436708355ce467008f1f07ee04dafc1354b3"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/en/objectiveDefs.json",
@@ -182,7 +182,7 @@
     },
     "updater.js": {
       "filename": "js/tgd/updater.js",
-      "version": "384a44c7211b38e8bf19c8753bda25a4567897523917506a9dbed6445d097d15"
+      "version": "07b3db8b4ef7daa4f6eed53796c5a334de05531f84099d168a72d89a7cf8b8d0"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
@@ -190,7 +190,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "6d9d1dfb43b1caa03810e89e82695dcfc3621b7d97fdcd44be80bc98300bc5b9"
+      "version": "c992d8eaace821b7ad1b233bef754b2a73e84e4f77b5f81608dccd84ff865645"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
