@@ -759,27 +759,27 @@
             options.concurrency = options.concurrency || 3;
             options.retry = options.retry || [];
             var setupShims = function() {
-                    window.FileTransfer = function FileTransfer() {};
-                    FileTransfer.prototype.download = function download(url, file, win, fail) {
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('GET', url);
-						//blob types not supported by Firefox
-                        //xhr.responseType = "blob";
-                        xhr.onreadystatechange = function(onSuccess, onError, cb) {
-                            if (xhr.readyState == 4) {
-                                if (xhr.status === 200) {
-                                    write(file, xhr.response).then(win, fail);
-                                } else {
-                                    fail(xhr.status);
-                                }
-                            }
-                        };
-                        xhr.send();
-                        return xhr;
-                    };
-                    window.ProgressEvent = function ProgressEvent() {};
-                }
-                /* Cordova deviceready promise */
+				window.FileTransfer = function FileTransfer() {};
+				FileTransfer.prototype.download = function download(url, file, win, fail) {
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', url);
+					//blob types not supported by Firefox
+					//xhr.responseType = "blob";
+					xhr.onreadystatechange = function(onSuccess, onError, cb) {
+						if (xhr.readyState == 4) {
+							if (xhr.status === 200) {
+								write(file, xhr.response).then(win, fail);
+							} else {
+								fail(xhr.status);
+							}
+						}
+					};
+					xhr.send();
+					return xhr;
+				};
+				window.ProgressEvent = function ProgressEvent() {};
+			};
+			/* Cordova deviceready promise */
             var deviceready, isCordova = typeof cordova !== 'undefined';
             if (isCordova) {
                 deviceready = new Promise(function(resolve, reject) {
@@ -1435,7 +1435,7 @@
             })('f', 'o');
 
             /* WEBPACK VAR INJECTION */
-        }.call(exports, __webpack_require__(6).setImmediate))
+        }.call(exports, __webpack_require__(6).setImmediate));
 
         /***/
     },
@@ -1524,7 +1524,7 @@
                 delete immediateIds[id];
             };
             /* WEBPACK VAR INJECTION */
-        }.call(exports, __webpack_require__(6).setImmediate, __webpack_require__(6).clearImmediate))
+        }.call(exports, __webpack_require__(6).setImmediate, __webpack_require__(6).clearImmediate));
 
         /***/
     },
@@ -1619,7 +1619,7 @@
         };
 
         process.cwd = function() {
-            return '/'
+            return '/';
         };
         process.chdir = function(dir) {
             throw new Error('process.chdir is not supported');
