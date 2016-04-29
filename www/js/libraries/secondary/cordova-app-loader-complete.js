@@ -208,12 +208,12 @@
                             if (self._lastUpdateFiles !== currentFiles) {
                                 // No! So we've updated, yet they don't appear in our manifest. This means:
                                 console.warn('New manifest available, but an earlier update attempt failed. Will not download.');
-                                self.corruptNewManifest = true;
-                                resolve(null);
+                                //self.corruptNewManifest = true;
+                                //return resolve(true);
                             }
                             // Yes, we've updated and we've succeeded.
-                            resolve(false);
-                            return;
+                            //resolve(false);
+                            //return;
                         }
 
                         // Check if new manifest is valid
