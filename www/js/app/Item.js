@@ -384,6 +384,10 @@ Item.prototype = {
                 parsedStats.Magazine = 3;
             }
         }
+        //this is for the static share site
+        else if (_.isObject(stats)) {
+            parsedStats = stats;
+        }
         return parsedStats;
     },
     parsePerks: function(id, talentGridHash, perks, nodes, itemInstanceId) {
@@ -1018,12 +1022,12 @@ Item.prototype = {
                             // self becomes the swallowing stack @ y.items indexOf existingItem with (amount + existingItem.primaryStat())
                             newAmount = amount + existingItem.primaryStat();
                         } else {
-                            // self gets added to y.items as a new stack with (amount - tmpAmount)
                             newAmount = amount - tmpAmount;
+                            tgd.localLog("self gets added to y.items as a new stack with (amount - tmpAmount) " + newAmount);
                         }
                     } else {
-                        // self gets added to y.items as a new stack with (amount)
                         newAmount = amount;
+                        tgd.localLog("self gets added to y.items as a new stack with (amount) " + newAmount);
                     }
                     self.characterId(targetCharacterId);
                     self.character = y;
@@ -1040,7 +1044,7 @@ Item.prototype = {
                         y.items.push(self);
                         tgd.localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
                     }
-
+                    console.log("1042: newAmount: " + newAmount, newAmount > self.maxStackSize, self.maxStackSize);
                     // visually split stuff if stacks transferred eceeded maxStackSize for that item
                     if (newAmount > self.maxStackSize) {
                         tgd.localLog("exceeded maxStackSize, need to do some visual splitting");

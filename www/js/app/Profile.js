@@ -460,34 +460,40 @@ Profile.prototype = {
     },
     queryVendorArmor: function() {
         var self = this;
-        var armorVendors = _.map(_.filter(_vendorDefs, function(vendor){ return [300,400,500].indexOf(vendor.summary.vendorSubcategoryHash) > -1 }), function(vendor){
-				return vendor.hash;
-			}),
+        var armorVendors = _.map(_.filter(_vendorDefs, function(vendor) {
+                return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1
+            }), function(vendor) {
+                return vendor.hash;
+            }),
             armor = [],
             count = 0;
         var finish = function(vendorItems) {
             armor = armor.concat(vendorItems);
-			count++;
+            count++;
             if (count == armorVendors.length) {
                 console.log("armor done", armor);
-				var armorItems = _.map(_.sortBy(armor,function(item){ return item.getValue("MaxLightPercent") * -1; }), function(item){ return item.description + "-" + item.bucketType + "-" + item.getValue("MaxLightPercent") }).join(", ");
-				console.log("armorItems", armorItems);
+                var armorItems = _.map(_.sortBy(armor, function(item) {
+                    return item.getValue("MaxLightPercent") * -1;
+                }), function(item) {
+                    return item.description + "-" + item.bucketType + "-" + item.getValue("MaxLightPercent")
+                }).join(", ");
+                console.log("armorItems", armorItems);
             }
         }
-		_.each(armorVendors, function(vendorId){
-			app.bungie.getVendorData(self.id, vendorId, function(response) {
-				var vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
-					var armor = _.filter(_.map(categories.saleItems, function(sItem) {
-						return new Item(sItem.item, self);
-					}), function(item) {
-						return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass,item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
-					});
-					memo = memo.concat(armor);
-					return memo;
-				}, []);
-				finish(vendorItems);
-			});
-		});
+        _.each(armorVendors, function(vendorId) {
+            app.bungie.getVendorData(self.id, vendorId, function(response) {
+                var vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
+                    var armor = _.filter(_.map(categories.saleItems, function(sItem) {
+                        return new Item(sItem.item, self);
+                    }), function(item) {
+                        return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
+                    });
+                    memo = memo.concat(armor);
+                    return memo;
+                }, []);
+                finish(vendorItems);
+            });
+        });
     },
     queryRolls: function(items, callback) {
         var count = 0;
