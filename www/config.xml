@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.richardpinedo.towerghostfordestiny" versionCode="3893" version="3.8.9.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.richardpinedo.towerghostfordestiny" versionCode="38911" version="3.8.9.11" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Tower Ghost for Destiny</name>
     <description>
 		This app allows you to transfer items between profiles, with various filters.
@@ -48,4 +48,7 @@
     <gap:splash gap:platform="android" gap:qualifier="port-xhdpi" src="res/screen/android/screen-xhdpi-portrait.png" />
 	
     <access origin="*" />
+	<access origin="cdvfile:*"/> 
+	<allow-navigation href="cdvfile:*"/> 
+	<allow-intent href="cdvfile:*"/>
 </widget>
