@@ -62,8 +62,8 @@ tgd.calculateBestSets = function(items, rollType) {
             return Math.floor(tmp[name] / tgd.DestinySkillTier);
         }).join("/");
         var combo = {
-            shortName: "T" + Math.floor(score) + " " + statTierValues,
             set: items,
+            id: Math.floor(tgd.hashCode(statTiers)),
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
@@ -190,7 +190,7 @@ tgd.armorSelection = function(type, groups, character) {
     self.addVendorArmor = function() {
         self.character.queryVendorArmor(function(items) {
             _.each(self.armorGroups(), function(group) {
-                var bucketItems = _.filter(items, function(item){
+                var bucketItems = _.filter(items, function(item) {
                     return item.bucketType == group.bucketType && item.tierType >= 5;
                 });
                 _.each(bucketItems, function(item) {
