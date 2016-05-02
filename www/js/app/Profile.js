@@ -480,10 +480,13 @@ Profile.prototype = {
             }
         }
         _.each(armorVendors, function(vendorId) {
+            var vendorSummary = _vendorDefs[vendorId].summary;
             app.bungie.getVendorData(self.id, vendorId, function(response) {
                 var vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
                     var armor = _.filter(_.map(categories.saleItems, function(sItem) {
-                        return new Item(sItem.item, self);
+                        var tgdItem = new Item(sItem.item, self);
+                        tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
+                        return tgdItem;
                     }), function(item) {
                         return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
                     });

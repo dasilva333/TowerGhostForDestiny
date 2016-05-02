@@ -60,6 +60,7 @@
 			<div data-bind="visible: type == 'Custom'">
 				Auto Select - Automatically selects the gear with the [Most Points] or the gear currently [Equipped] to view the best possible stat distributions.<br>
 				Other Armor - Defined as Class Items, Artifacts and Ghosts, setting it to [Any] provides more stat distribution options, setting it to [Most Points] picks the items with the most CSP.
+				Vendor Armor (Add) - This button will automatically query the current armor available at the Tower and include it alongside your armor, a yellow line indicates the item is from a Vendor.
 			</div>
 			<strong>Tip</strong> You may also unselect an item with a green border to indicate you want the tool to calculate all items for that armor type.
 			<hr>
@@ -169,7 +170,7 @@
 							<div class="col-xs-24" data-bind="visible: $root.type == 'MaxLight', css: item.cspClass() + 'Text'" style="display:none;">
 								<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
 							</div>
-							<div class="col-xs-24" data-bind="visible: $root.type == 'Custom', css: item.cspClass() + 'Text'" style="display:none;">
+							<div class="col-xs-24" data-bind="visible: $root.type == 'Custom', css: item.cspClass() + 'Text', style: { 'border-bottom': '1px solid ' + (_.has(item,'isVendor') ? 'yellow' : 'transparent') }" style="display:none;">
 								<span data-bind="text: item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType)"></span>/<span data-bind="text: ((item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType) / tgd.DestinyMaxCSP[item.bucketType]) * 100).toFixed(0)"></span>%
 							</div>
 						</div>

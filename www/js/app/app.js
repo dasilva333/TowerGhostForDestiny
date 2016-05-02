@@ -292,7 +292,7 @@ var app = function() {
                 primaryStatMin.html(activeItem.primaryStat());
                 /* Description using locale */
             }
-            $content.find(".destt-desc").text(activeItem.itemDescription);
+            $content.find(".destt-desc").html(activeItem.itemDescription);
             /* Remove Emblem Text */
             if ($content.find(".fhtt-emblem").length > 0) {
                 $content.find("span").remove();

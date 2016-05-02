@@ -188,6 +188,7 @@ tgd.armorSelection = function(type, groups, character) {
     };
 
     self.addVendorArmor = function() {
+        var valueType = tgd.armorSelectionFields[self.activeView()].valueType;
         self.character.queryVendorArmor(function(items) {
             _.each(self.armorGroups(), function(group) {
                 var bucketItems = _.filter(items, function(item) {
@@ -195,8 +196,12 @@ tgd.armorSelection = function(type, groups, character) {
                 });
                 _.each(bucketItems, function(item) {
                     item.instanceId = item.itemHash;
+                    item.isVendor = true;
                     group.items.push(new tgd.armorItem(item, group.selectedItem, group.groups, group.bestSets, group.type));
                 });
+                group.items(_.sortBy(group.items(), function(item) {
+                    return item.getValue(valueType) * -1;
+                }));
             });
         });
     }
