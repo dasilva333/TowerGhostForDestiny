@@ -260,6 +260,13 @@ var app = function() {
             var item = _.findWhere(character.items(), query);
             if (item) activeItem = item;
         });
+        if (!activeItem && tgd && tgd.activeArmorSelection) {
+            activeItem = _.reduce(tgd.activeArmorSelection.armorGroups(), function(memo, group) {
+                var item = _.findWhere(group.items(), query);
+                if (item) memo = item;
+                return memo;
+            }, undefined);
+        }
         if (activeItem) {
             /* Title using locale */
             $content.find("h2.destt-has-icon").text(activeItem.description);

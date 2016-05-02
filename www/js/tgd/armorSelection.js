@@ -109,7 +109,7 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.selectedItems = ko.pureComputed(function() {
         return _.map(self.armorGroups(), function(group) {
-            return group.selectedItem() || group.items;
+            return group.selectedItem() || group.items();
         });
     });
 
@@ -187,13 +187,27 @@ tgd.armorSelection = function(type, groups, character) {
         self.dialog = dialog;
     };
 
+    self.addVendorArmor = function() {
+        self.character.queryVendorArmor(function(items) {
+            _.each(self.armorGroups(), function(group) {
+                var bucketItems = _.where(items, {
+                    bucketType: group.bucketType
+                });
+                _.each(bucketItems, function(item) {
+                    item.instanceId = item.itemHash;
+                    group.items.push(new tgd.armorItem(item, group.selectedItem, group.groups, group.bestSets, group.type));
+                });
+            });
+        });
+    }
+
     self.setOtherArmor = function(model, event) {
         var selectionType = event.target.value;
         _.each(self.armorGroups(), function(group) {
             if (tgd.DestinyOtherArmor.indexOf(group.bucketType) > -1) {
                 var selectedItem = null;
                 if (selectionType == "Points") {
-                    selectedItem = _.reduce(group.items, function(memo, item) {
+                    selectedItem = _.reduce(group.items(), function(memo, item) {
                         var isMaxCSP = (memo && item.getValue("All") > memo.getValue("All") || !memo);
                         if (isMaxCSP) memo = item;
                         return memo;
@@ -207,7 +221,7 @@ tgd.armorSelection = function(type, groups, character) {
     self.setSelection = function(model, event) {
         var selectionType = event.target.value;
         _.each(self.armorGroups(), function(group) {
-            var selectedItem = _.reduce(group.items, function(memo, item) {
+            var selectedItem = _.reduce(group.items(), function(memo, item) {
                 var isEquipped = selectionType == "Equipped" && item.isEquipped();
                 var isMaxCSP = selectionType == "Points" && (memo && item.getValue("All") > memo.getValue("All") || !memo);
                 if (isEquipped || isMaxCSP) memo = item;
@@ -274,7 +288,7 @@ tgd.armorSelection = function(type, groups, character) {
                 var uniqueItem = _.findWhere(self.foundFirstSet(), {
                     bucketType: group.bucketType
                 });
-                var selectedItem = _.findWhere(group.items, {
+                var selectedItem = _.findWhere(group.items(), {
                     _id: uniqueItem._id
                 });
                 group.selectedItem(selectedItem);
@@ -292,19 +306,21 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type)
     var self = this;
 
     self.bucketType = bucketType;
-
+    self.groups = groups;
+    self.bestSets = bestSets;
+    self.type = type;
     self.selectedItem = ko.observable();
 
-    self.items = _.sortBy(_.map(items, function(item, index) {
+    self.items = ko.observableArray(_.sortBy(_.map(items, function(item, index) {
         return new tgd.armorItem(item, self.selectedItem, groups, bestSets, type);
     }), function(item) {
         return item.getValue("All") * -1;
-    });
+    }));
 
     if (instanceId === "") {
-        self.selectedItem(self.items[0]);
+        self.selectedItem(_.first(self.items()));
     } else {
-        self.selectedItem(_.findWhere(self.items, {
+        self.selectedItem(_.findWhere(self.items(), {
             _id: instanceId
         }));
     }

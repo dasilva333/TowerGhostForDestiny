@@ -458,7 +458,7 @@ Profile.prototype = {
     toggleStats: function() {
         this.statsShowing(!this.statsShowing());
     },
-    queryVendorArmor: function() {
+    queryVendorArmor: function(callback) {
         var self = this;
         var armorVendors = _.map(_.filter(_vendorDefs, function(vendor) {
                 return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1
@@ -472,12 +472,11 @@ Profile.prototype = {
             count++;
             if (count == armorVendors.length) {
                 console.log("armor done", armor);
-                var armorItems = _.map(_.sortBy(armor, function(item) {
+                var armorItems = _.sortBy(armor, function(item) {
                     return item.getValue("MaxLightPercent") * -1;
-                }), function(item) {
-                    return item.description + "-" + item.bucketType + "-" + item.getValue("MaxLightPercent")
-                }).join(", ");
+                });
                 console.log("armorItems", armorItems);
+                callback(armorItems);
             }
         }
         _.each(armorVendors, function(vendorId) {
@@ -977,6 +976,7 @@ Profile.prototype = {
         //console.log("renderBestGroups", groups);
         var character = this;
         var armorSelection = new tgd.armorSelection(type, groups, character);
+        tgd.activeArmorSelection = armorSelection;
         console.log("armorSelection", armorSelection);
         var defaultAction = function(dialog) {
             var firstSet = armorSelection.firstSet();
