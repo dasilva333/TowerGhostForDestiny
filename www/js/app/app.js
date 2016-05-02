@@ -794,15 +794,14 @@ var app = function() {
         self.toggleBootstrapMenu();
         self.tierFilter(tier);
     };
-    this._setWeaponFilter = function(weaponType) {
-        self.toggleBootstrapMenu();
-        self.activeView(1);
-        var type = weaponType.name;
-        tgd.localLog("weapon type: " + type);
-        self.weaponFilter(type);
-    };
     this.setWeaponFilter = function(weaponType) {
-        return this._setWeaponFilter;
+        return function(){
+			self.toggleBootstrapMenu();
+			self.activeView(1);
+			var type = weaponType.name;
+			tgd.localLog(weaponType, "weapon type: " + type);
+			self.weaponFilter(type);
+		}
     };
     this._setArmorFilter = function() {
         self.toggleBootstrapMenu();
