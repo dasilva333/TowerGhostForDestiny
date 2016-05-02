@@ -195,8 +195,6 @@ tgd.armorSelection = function(type, groups, character) {
                     return item.bucketType == group.bucketType && item.tierType >= 5;
                 });
                 _.each(bucketItems, function(item) {
-                    item.instanceId = item.itemHash;
-                    item.isVendor = true;
                     group.items.push(new tgd.armorItem(item, group.selectedItem, group.groups, group.bestSets, group.type));
                 });
                 group.items(_.sortBy(group.items(), function(item) {

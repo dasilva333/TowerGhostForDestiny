@@ -485,6 +485,8 @@ Profile.prototype = {
                 var vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
                     var armor = _.filter(_.map(categories.saleItems, function(sItem) {
                         var tgdItem = new Item(sItem.item, self);
+                        tgdItem.instanceId = item.itemHash + vendorSummary.vendorHash;
+                        tgdItem.isVendor = true;
                         tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
                         return tgdItem;
                     }), function(item) {
