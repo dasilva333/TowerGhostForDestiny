@@ -190,8 +190,8 @@ tgd.armorSelection = function(type, groups, character) {
     self.addVendorArmor = function() {
         self.character.queryVendorArmor(function(items) {
             _.each(self.armorGroups(), function(group) {
-                var bucketItems = _.where(items, {
-                    bucketType: group.bucketType
+                var bucketItems = _.filter(items, function(item){
+                    return item.bucketType == group.bucketType && item.tierType >= 5;
                 });
                 _.each(bucketItems, function(item) {
                     item.instanceId = item.itemHash;
