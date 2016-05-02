@@ -768,7 +768,8 @@
 					xhr.onreadystatechange = function(onSuccess, onError, cb) {
 						if (xhr.readyState == 4) {
 							if (xhr.status === 200) {
-								write(file, xhr.response).then(win, fail);
+								var scriptText = xhr.responseText ? xhr.responseText : xhr.response;
+								write(file, scriptText).then(win, fail);
 							} else {
 								fail(xhr.status);
 							}
