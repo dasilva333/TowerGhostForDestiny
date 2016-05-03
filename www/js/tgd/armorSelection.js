@@ -40,7 +40,11 @@ tgd.calculateBestSets = function(items, rollType) {
         var x = _.flatten(_.map(choices, function(item) {
             return _.map(item[rollType], function(roll) {
                 var itemClone = _.clone(item);
-                itemClone.activeRoll = roll;
+                if (itemClone && _.isFunction(itemClone.activeRoll)) {
+                    itemClone.activeRoll(roll);
+                } else {
+                    itemClone.activeRoll = roll;
+                }
                 return itemClone;
             });
         }));
@@ -129,14 +133,6 @@ tgd.armorSelection = function(type, groups, character) {
             })));
             firstSet.statTiers = firstSet.statTiers.replace(/<br>/g, " ");
             firstSet.statValues = firstSet.statValues.replace(/<br>/g, " ");
-            _.each(firstSet.set, function(item) {
-                item.activeStatText = _.sortBy(_.reduce(item.activeRoll, function(memo, stat, key) {
-                    if (stat > 0) {
-                        memo.push(key.substring(0, 3) + " " + stat);
-                    }
-                    return memo;
-                }, [])).join("/");
-            });
         }
         return firstSet;
     });
@@ -172,7 +168,7 @@ tgd.armorSelection = function(type, groups, character) {
                     id: item._id,
                     bucketType: item.bucketType,
                     doEquip: true,
-                    bonusOn: item.activeRoll.bonusOn
+                    bonusOn: ko.unwrap(item.activeRoll).bonusOn
                 });
             });
             self.dialog.close();
@@ -334,6 +330,7 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type)
 tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
     var self = this;
     _.extend(self, item);
+    self.activeRoll = ko.observable(self.stats);
     var isSelected = ko.pureComputed(function() {
         return self == selectedItem();
     });
@@ -355,6 +352,14 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
         return _.filter(bestSets(), function(combo) {
             return _.pluck(combo.set, '_id').indexOf(self._id) > -1;
         }).length > 0;
+    });
+    self.activeStatText = ko.pureComputed(function() {
+        return _.sortBy(_.reduce(self.activeRoll(), function(memo, stat, key) {
+            if (stat > 0) {
+                memo.push(key.substring(0, 3) + " " + stat);
+            }
+            return memo;
+        }, [])).join("/");
     });
     /* if the item is in bestSets then color it blue to denote its the found item */
     self.css = ko.pureComputed(function() {

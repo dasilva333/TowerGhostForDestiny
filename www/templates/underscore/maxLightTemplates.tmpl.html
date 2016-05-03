@@ -130,15 +130,16 @@
 					</tr>
 					<tr style="display:none" data-bind="attr:{id:'armor_'+combo.id}">
 						<td colspan="5">
-							<div class="col-xs-5">
+							<div class="col-xs-4">
 								<input type="Button" class="btn btn-sm btn-default" value="Hide" data-bind="click: function(){ $('#armor_' + combo.id).hide(); $('#details_' + combo.id).show(); }">
 								<input type="Button" class="btn btn-sm btn-default" value="Help" data-bind="click: function(){ $('#help_' + combo.id).toggle(); }">
 							</div>
-							<div class="col-xs-19" data-bind="foreach: { data: combo.set, as: 'item' }">
+							<div class="col-xs-20" data-bind="foreach: { data: combo.set, as: 'item' }">
 								<div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
 									<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: function(){ return false }">
 										<img class="itemImage" data-bind="itemImageHandler: item.icon, style: { border: '2px solid ' + (item.bonusStatOn() == item.activeRoll.bonusOn ? 'green' : 'orange') }" style="padding: 2px; width:48px;">
-									</a>						
+									</a><br>
+									<span class="font-smaller-2 label label-default" style="white-space: nowrap; padding: 0;" data-bind="text: item.activeStatText"></span>
 								</div>
 							</div>
 							<div class="col-xs-24" style="display:none;" data-bind="attr:{id:'help_'+combo.id}">

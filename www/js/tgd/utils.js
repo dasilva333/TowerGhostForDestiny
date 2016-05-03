@@ -25,7 +25,7 @@ tgd.average = function(arr) {
 tgd.joinStats = function(arrItems) {
     var tmp = {};
     _.each(arrItems, function(item) {
-        _.each(item.activeRoll || item.stats, function(value, key) {
+        _.each(ko.unwrap(item.activeRoll) || item.stats, function(value, key) {
             if (!(key in tmp)) tmp[key] = 0;
             tmp[key] += value;
         });

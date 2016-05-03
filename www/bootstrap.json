@@ -26,7 +26,7 @@
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
-      "version": "c2d2069b8673f67e8be074b696d58442eb820a9145e0e3e6f55110be7bc236a2"
+      "version": "a420d9e9349529868e1f3d6fe8f70b8a43f27d1012b125d7c1c3238a7f47cb58"
     },
     "objectiveDefs.json": {
       "filename": "data/definitions/en/objectiveDefs.json",
@@ -34,7 +34,7 @@
     },
     "perkDefs.json": {
       "filename": "data/definitions/en/perkDefs.json",
-      "version": "91e6bdcde57aa967a03df9494c7d6f9d176254ce0ecfd0f53b82635712fd5b2b"
+      "version": "393b4e3355d199312cf282392bfca0fe627a5478f3e5940d87222197bd13a800"
     },
     "raceDefs.json": {
       "filename": "data/definitions/en/raceDefs.json",
@@ -46,15 +46,15 @@
     },
     "talentGridDefs.json": {
       "filename": "data/definitions/en/talentGridDefs.json",
-      "version": "42cb119ab95d905eeedf2f1d23cd6733e1c1ee2a221ad0cf348d7dc59f9bdab7"
+      "version": "bff79080fb640df68bd468d8f8e0a004eba7690a9d4f254b6c1851f16c39291d"
     },
     "vendorDefs.json": {
       "filename": "data/definitions/en/vendorDefs.json",
-      "version": "f467001a502ee123340246f069e5b9c80345d2767088fd1f0afede2a37d71bbf"
+      "version": "75044c47a11bce2f547fc5dd4910aedca6a55c1f4243327e68b07794f6196855"
     },
     "setDefs.json": {
       "filename": "data/definitions/setDefs.json",
-      "version": "9f1b9c880487c99661f946e536a3e1df997929471bb32f9e7b57ea93277f398c"
+      "version": "71fc91d31f1fe1ed0de416a6e98e78e5cbff1033a5d61c5c613e363aa2fa4573"
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
@@ -118,7 +118,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "8e6fd05fb47a2dcdfa0ddf80afebb329c75a4e1dd2f7d51303100d2b15b45578"
+      "version": "337dfc4556f146a133cee35ee56173c0b5a93985cb843e4b295d3b0d25a5cde6"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -126,7 +126,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "421f248fa1217446aba0861fcfa723bd4e79fa94c966c18c5baeaf0aa691ecc3"
+      "version": "13e5fab78e41f1e1a730b999b30d734d7800c007b8ae80e141ede606f541807e"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -190,7 +190,7 @@
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
-      "version": "4be1df246d739d89bd1252acdc1bb4562f77269554488307d56cc0e95eb51f1c"
+      "version": "2c781f8979e896de54ecb3d08f280481788363f956397d9ef9ca884b7bba413e"
     },
     "version.js": {
       "filename": "js/tgd/version.js",
@@ -202,11 +202,11 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "45a07c33bfb078d19b09021e20d8adeb6ddfd1a04d474e9ed4dc6e2cb7c24784"
+      "version": "6946133da18830b0d74938d8d8a1661b66749455b866ee269d37bbc6922ffbdc"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "8f2cecfec81878735a635570798cf7748c8aafb64769c4410123c764715021ee"
+      "version": "529439ff3a940ade4e491c6037578f4427ca89d8dd23c0abcadafec217fd5c67"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
