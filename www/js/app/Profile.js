@@ -483,19 +483,22 @@ Profile.prototype = {
             var vendorSummary = _vendorDefs[vendorId].summary;
             //console.log("vendorSummary", vendorSummary.vendorName, vendorSummary);
             app.bungie.getVendorData(self.id, vendorId, function(response) {
-                var vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
-                    var armor = _.filter(_.map(categories.saleItems, function(sItem) {
-                        var tgdItem = new Item(sItem.item, self);
-                        tgdItem._id = tgdItem.instanceId = tgdItem.itemHash.toString();
-                        tgdItem.isVendor = true;
-                        tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
-                        return tgdItem;
-                    }), function(item) {
-                        return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
-                    });
-                    memo = memo.concat(armor);
-                    return memo;
-                }, []);
+                var vendorItems = [];
+                if (_.has(response.data, 'vendor')) {
+                    vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
+                        var armor = _.filter(_.map(categories.saleItems, function(sItem) {
+                            var tgdItem = new Item(sItem.item, self);
+                            tgdItem._id = tgdItem.instanceId = tgdItem.itemHash.toString();
+                            tgdItem.isVendor = true;
+                            tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
+                            return tgdItem;
+                        }), function(item) {
+                            return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
+                        });
+                        memo = memo.concat(armor);
+                        return memo;
+                    }, []);
+                }
                 finish(vendorItems);
             });
         });
