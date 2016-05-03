@@ -1,0 +1,33 @@
+<div id="container_<%= id %>" class="form-group">
+	<div class="row" style="margin-top: 5px; margin-bottom:5px">
+		<div class="col-xs-6">
+			Armor Type
+		</div>
+		<div class="col-xs-18">
+			<select class="form-control" data-bind="options: tgd.DestinyArmorPieces, optionsCaption: '--Select--', value: $root.bucketType">
+				
+			</select>
+		</div>
+	</div>
+	<div class="row" data-bind="visible: !_.isEmpty($root.bucketType())" style="margin-top: 5px; margin-bottom:5px; display:none">
+		<div class="col-xs-6">
+			Armor Name
+		</div>
+		<div class="col-xs-18">
+			<select class="form-control" data-bind="options: availableItems, optionsText: 'itemName', optionsCaption: '--Select--', value: $root.selectedItem">
+				
+			</select>
+		</div>
+	</div>	
+	<div class="row" data-bind="visible: !_.isEmpty($root.selectedItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
+		<div class="col-xs-6">
+			Armor Stats
+		</div>
+		<div class="col-xs-18">
+			<div data-bind="foreach: { data: selectedStats, as: 'stat' }">
+				<span data-bind="text: name"></span>
+				<input type="text" class="form-control" data-bind="value: value">
+			</div>
+		</div>
+	</div>
+</div>

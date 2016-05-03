@@ -1,3 +1,47 @@
+tgd.armorItemCreate = function(character) {
+    var self = this;
+
+    self.character = character;
+    self.bucketType = ko.observable();
+    self.selectedItem = ko.observable();
+    self.selectedStats = _.map(tgd.DestinyArmorStats, function(stat) {
+        var tmp = {
+            name: stat.statName,
+            value: ko.observable(0)
+        };
+        return tmp;
+    });
+    self.availableItems = ko.computed(function() {
+        var characterClass = self.character.classType();
+        var bucketType = self.bucketType();
+        var items = _.sortBy(_.map(_.filter(_itemDefs, function(item) {
+            return tgd.DestinyBucketTypes[item.bucketTypeHash] == bucketType && tgd.DestinyClass[item.classType] == characterClass && item.itemName != "";
+        }), function(item) {
+            item.itemName = decodeURIComponent(item.itemName);
+            return item;
+        }), 'itemName');
+        return items;
+    });
+    self.activeItem = ko.computed(function() {
+        if (!self.selectedItem()) return;
+        var itm = _.clone(self.selectedItem());
+        itm.id = true;
+		itm.itemInstanceId = itm.itemHash.toString();
+		itm.perks = _.reduce(self.selectedStats, function(memo, stat) {
+			if ( stat.value() > 0 ){
+				memo.push({ isStat: true, active: memo.length == 0, name: stat.name });
+			}
+			return memo;
+        }, []);
+        itm.primaryStat = {
+            value: tgd.DestinyLightCap
+        };
+        itm.stats = _.object(_.map(self.selectedStats, function(stat) {
+            return [stat.name, parseInt(stat.value())];
+        }));
+        return new Item(itm, self.character);
+    });
+}
 tgd.calculateLoadoutName = function(combo) {
     var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(combo.set, {
         bucketType: "Gauntlet"
@@ -183,6 +227,35 @@ tgd.armorSelection = function(type, groups, character) {
     self.setDialog = function(dialog) {
         self.dialog = dialog;
     };
+
+    self.addCustomItem = function() {
+        var viewModel = new tgd.armorItemCreate(self.character);
+        console.log("armorItemCreate", viewModel);
+        var defaultAction = function(dialogItself) {
+            /* add the item to the right armorGroups */
+            var group = _.findWhere(self.armorGroups(), {
+                bucketType: viewModel.activeItem().bucketType
+            });
+            var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);;
+            group.items.push(armorItem);
+            dialogItself.close();
+        };
+        (new tgd.koDialog({
+            templateName: 'armorItemCreateTemplate',
+            viewModel: viewModel,
+            onFinish: defaultAction,
+            buttons: [{
+                label: 'Add',
+                cssClass: 'btn-primary',
+                action: defaultAction
+            }, {
+                label: 'Close',
+                action: function(dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        })).title("Add Custom Item").show(true);
+    }
 
     self.addVendorArmor = function() {
         self.vendorArmorQueried(true);
