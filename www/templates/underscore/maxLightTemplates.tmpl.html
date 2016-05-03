@@ -175,7 +175,8 @@
 								<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
 							</div>
 							<div class="col-xs-24" data-bind="visible: $root.type == 'Custom', css: item.cspClass() + 'Text', style: { 'border-bottom': '1px solid ' + (_.has(item,'isVendor') ? 'yellow' : 'transparent') }" style="display:none;">
-								<span data-bind="text: item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType)"></span>/<span data-bind="text: ((item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType) / tgd.DestinyMaxCSP[item.bucketType]) * 100).toFixed(0)"></span>%
+								<span data-bind="text: item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType)"></span>/<span data-bind="text: ((item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType) / tgd.DestinyMaxCSP[item.bucketType]) * 100).toFixed(0)"></span>%<br>
+								<span class="font-smaller-2 label label-default" style="white-space: nowrap; padding: 0;" data-bind="text: item.activeStatText"></span>
 							</div>
 						</div>
 					</div>
