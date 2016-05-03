@@ -18,7 +18,15 @@
 				
 			</select>
 		</div>
-	</div>	
+	</div>
+	<div class="row" data-bind="visible: !_.isEmpty($root.selectedItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
+		<div class="col-xs-6">
+			Light Level
+		</div>
+		<div class="col-xs-18">
+			<input type="text" class="form-control" data-bind="value: lightLevel">
+		</div>
+	</div>		
 	<div class="row" data-bind="visible: !_.isEmpty($root.selectedItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
 		<div class="col-xs-6">
 			Armor Stats

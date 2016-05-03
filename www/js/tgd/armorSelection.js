@@ -4,6 +4,7 @@ tgd.armorItemCreate = function(character) {
     self.character = character;
     self.bucketType = ko.observable();
     self.selectedItem = ko.observable();
+    self.lightLevel = ko.observable(tgd.DestinyLightCap);
     self.selectedStats = _.map(tgd.DestinyArmorStats, function(stat) {
         var tmp = {
             name: stat.statName,
@@ -26,15 +27,19 @@ tgd.armorItemCreate = function(character) {
         if (!self.selectedItem()) return;
         var itm = _.clone(self.selectedItem());
         itm.id = true;
-		itm.itemInstanceId = itm.itemHash.toString();
-		itm.perks = _.reduce(self.selectedStats, function(memo, stat) {
-			if ( stat.value() > 0 ){
-				memo.push({ isStat: true, active: memo.length == 0, name: stat.name });
-			}
-			return memo;
+        itm.itemInstanceId = itm.itemHash.toString();
+        itm.perks = _.reduce(self.selectedStats, function(memo, stat) {
+            if (stat.value() > 0) {
+                memo.push({
+                    isStat: true,
+                    active: memo.length == 0,
+                    name: stat.name
+                });
+            }
+            return memo;
         }, []);
         itm.primaryStat = {
-            value: tgd.DestinyLightCap
+            value: self.lightLevel()
         };
         itm.stats = _.object(_.map(self.selectedStats, function(stat) {
             return [stat.name, parseInt(stat.value())];
