@@ -10,11 +10,11 @@
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
-      "version": "942c04d9925a797847f6112df897c1681ff98a6c32d82ea9de17d45c09a7f1c4"
+      "version": "988e6479ac8323f3df48d2c5b10a2ec5c171fd60dfcdf9cab338b4dff980083f"
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
+      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -114,7 +114,7 @@
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "0b3261b21108045d986231adb807da5797f757f68359e116ce6043b96001c321"
+      "version": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
@@ -126,7 +126,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "82401067b3476126dabf6d68c248a4a638deef64e889c77b002ce60f4b79125d"
+      "version": "2108c25e907e4925f37da2af44bd1e4958c89278603a180915bff4216f9e1551"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -190,7 +190,7 @@
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
-      "version": "2c781f8979e896de54ecb3d08f280481788363f956397d9ef9ca884b7bba413e"
+      "version": "4be1df246d739d89bd1252acdc1bb4562f77269554488307d56cc0e95eb51f1c"
     },
     "version.js": {
       "filename": "js/tgd/version.js",

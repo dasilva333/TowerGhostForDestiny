@@ -89,11 +89,7 @@ tgd.calculateBestSets = function(items, rollType) {
         var x = _.flatten(_.map(choices, function(item) {
             return _.map(item[rollType], function(roll) {
                 var itemClone = _.clone(item);
-                if (itemClone && _.isFunction(itemClone.activeRoll)) {
-                    itemClone.activeRoll(roll);
-                } else {
-                    itemClone.activeRoll = roll;
-                }
+                itemClone.activeRoll = roll;
                 return itemClone;
             });
         }));
@@ -217,7 +213,7 @@ tgd.armorSelection = function(type, groups, character) {
                     id: item._id,
                     bucketType: item.bucketType,
                     doEquip: true,
-                    bonusOn: ko.unwrap(item.activeRoll).bonusOn
+                    bonusOn: item.activeRoll.bonusOn
                 });
             });
             self.dialog.close();
@@ -408,7 +404,6 @@ tgd.armorGroup = function(bucketType, items, groups, bestSets, instanceId, type)
 tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
     var self = this;
     _.extend(self, item);
-    self.activeRoll = ko.observable(self.stats);
     var isSelected = ko.pureComputed(function() {
         return self == selectedItem();
     });
@@ -432,7 +427,7 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
         }).length > 0;
     });
     self.activeStatText = ko.pureComputed(function() {
-        return _.sortBy(_.reduce(self.activeRoll(), function(memo, stat, key) {
+        return _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
             if (stat > 0) {
                 memo.push(key.substring(0, 3) + " " + stat);
             }
