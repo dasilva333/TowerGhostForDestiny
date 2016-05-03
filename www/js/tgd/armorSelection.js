@@ -16,7 +16,7 @@ tgd.armorItemCreate = function(character) {
         var characterClass = self.character.classType();
         var bucketType = self.bucketType();
         var items = _.sortBy(_.map(_.filter(_itemDefs, function(item) {
-            return tgd.DestinyBucketTypes[item.bucketTypeHash] == bucketType && tgd.DestinyClass[item.classType] == characterClass && item.itemName != "";
+            return tgd.DestinyBucketTypes[item.bucketTypeHash] == bucketType && item.itemName != "" && (tgd.DestinyClass[item.classType] == characterClass || bucketType == "Ghost");
         }), function(item) {
             item.itemName = decodeURIComponent(item.itemName);
             return item;
