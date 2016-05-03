@@ -53,16 +53,22 @@
 			<hr>
 		</div>
 		<div class="maxLightHelp" style="display:none;">
-			The <strong>first number</strong> listed indicates how many points the item currently has, 
-			the <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
+			<h5>Values &amp; Numbers</h5>
+			The <strong>first number</strong> listed indicates how many points the item currently has <br>
+			The <strong>second percentage</strong> indicates it's total potential compared to a perfect stat roll once infused to max light level.<br>
+			The <strong>second line</strong> indicates the stats available on the item<br>
+			<h5>Legend for Borders</h5>
 			<strong>Blue Border</strong> - Indicates it is one of the items listed in the possible combinations table.<br>
 			<strong>Green Border</strong> - Indicates the item is currently selected.<br>
 			<span data-bind="visible: type == 'MaxLight'" style="display:none;"><strong>Red Border</strong> - Indicates the item cannot be used to maintain the current max tier.<br></span>
 			<strong>Yellow Border</strong> - Indicates the item is a potential candidate that may be used to alter your set.<br>
 			<div data-bind="visible: type == 'Custom'">
-				<strong>Auto Select</strong> - Automatically selects the gear with the [Most Points] or the gear currently [Equipped] to view the best possible stat distributions.<br>
-				<strong>Other Armor</strong> - Defined as Class Items, Artifacts and Ghosts, setting it to [Any] provides more stat distribution options, setting it to [Most Points] picks the items with the most CSP.<br>
-				<strong>Vendor Armor (Add)</strong> - This button will automatically query the current armor available at the Tower and include it alongside your armor, a yellow line indicates the item is from a Vendor, the tooltip indicates which vendor the item can be bought from.
+				<h5>Toolbar Buttons</h5>
+				<strong>Auto Select</strong> - Automatically selects the gear with the [Most Points] or the gear currently <strong>[Equipped]</strong> to view the best possible stat distributions.<br>
+				<strong>Other Armor</strong> - Defined as Class Items, Artifacts and Ghosts, setting it to <strong>[Any]</strong> provides more stat distribution options, setting it to <strong>[Most Points]</strong> picks the items with the most CSP.<br>
+				<strong>Add Armor</strong> - These buttons will allow you to add items outside of your inventory to this comparison tool.<br>
+				<strong>Vendor Items</strong> - This button will automatically query the current armor available at the Tower and include it alongside your armor, a yellow line indicates the item is from a Vendor, the tooltip indicates which vendor the item can be bought from.<br>
+				<strong>Custom Item</strong> - This button allows you to add a custom item to the tool, simply select the type, name, light level and stats and you'll be able to add it to the tool for use.
 			</div>
 			<strong>Tip</strong> You may also unselect an item with a green border to indicate you want the tool to calculate all items for that armor type.
 			<hr>
