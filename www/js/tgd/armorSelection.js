@@ -416,7 +416,7 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
         if (type == "MaxLight") {
             /* this filter will get an array of selectedItems, concat self, calculate the best statTiers given all the futureRolls available, determine if that fits the maxTierPointsPossible */
             var items = _.map(groups(), function(group) {
-                return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items);
+                return group.bucketType == self.bucketType ? self : (group.selectedItem() ? group.selectedItem() : group.items());
             });
             var validSets = tgd.calculateBestSets(items, 'futureRolls');
             return _.filter(validSets, function(combo) {

@@ -126,7 +126,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "afd48fcd90c97a2878875f7879829043fcd587cff6eefac095da9ec8e6825ab7"
+      "version": "82401067b3476126dabf6d68c248a4a638deef64e889c77b002ce60f4b79125d"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -202,7 +202,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "0b8639e71c12619c1de2f435a3935d6252ea091e0cc33077e93248ba6182e011"
+      "version": "51ea73648c5342d13da93b1ba6eefc989f11f6ecb279edaa10681c50ccdc5c86"
     },
     "app.js": {
       "filename": "js/app/app.js",
