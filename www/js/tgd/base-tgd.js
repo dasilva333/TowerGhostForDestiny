@@ -261,7 +261,7 @@ tgd.defaults = {
     showArmorSC: false,
     customFilter: false,
     tooltipsEnabled: isMobile ? false : "true",
-    advancedTooltips: isMobile ? false : "true",
+    advancedTooltips: "true",
     autoXferStacks: false,
     padBucketHeight: isMobile && !isStaticBrowser ? false : "true",
     dragAndDrop: false,

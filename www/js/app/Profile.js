@@ -481,11 +481,12 @@ Profile.prototype = {
         }
         _.each(armorVendors, function(vendorId) {
             var vendorSummary = _vendorDefs[vendorId].summary;
+            //console.log("vendorSummary", vendorSummary.vendorName, vendorSummary);
             app.bungie.getVendorData(self.id, vendorId, function(response) {
                 var vendorItems = _.reduce(response.data.vendor.saleItemCategories, function(memo, categories) {
                     var armor = _.filter(_.map(categories.saleItems, function(sItem) {
                         var tgdItem = new Item(sItem.item, self);
-                        tgdItem.instanceId = tgdItem.itemHash + vendorSummary.vendorHash;
+                        tgdItem._id = tgdItem.instanceId = tgdItem.itemHash.toString();
                         tgdItem.isVendor = true;
                         tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
                         return tgdItem;

@@ -102,6 +102,7 @@ tgd.armorSelection = function(type, groups, character) {
     self.groups = groups;
     self.type = type;
 
+    self.vendorArmorQueried = ko.observable(false);
     self.foundFirstSet = ko.observableArray();
     self.armorGroups = ko.observableArray();
     self.mostPoints = ko.observableArray();
@@ -188,6 +189,7 @@ tgd.armorSelection = function(type, groups, character) {
     };
 
     self.addVendorArmor = function() {
+        self.vendorArmorQueried(true);
         var valueType = tgd.armorSelectionFields[self.activeView()].valueType;
         self.character.queryVendorArmor(function(items) {
             _.each(self.armorGroups(), function(group) {
