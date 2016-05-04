@@ -426,3 +426,5 @@ li a {
 {
 	border: 2px solid white;
 }
+/* used by the settings pop up */
+.settingsContainer hr { padding: 1px; margin: 1px }

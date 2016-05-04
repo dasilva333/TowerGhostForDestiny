@@ -1,113 +1,124 @@
-<div id="container_<%= id %>" class="form-horizontal">
+<div id="container_<%= id %>" class="form-horizontal settingsContainer">
 	<div class="form-group">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-18 col-md-4">
 			Auto Refresh
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-6 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: doRefresh">
 		</div>
-		<div class="font-italic col-xs-17">
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
 			Enable this option to automatically refresh your inventory on a timed interval.
 		</div>
 	</div>
 	<div class="form-group" data-bind="visible: doRefresh">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-16 col-md-4">
 			Refresh Interval
 		</label>
-		<div class="col-xs-3">
+		<div class="col-xs-8 col-md-3">
 			<input type="text" class="form-control" data-bind="value: refreshSeconds">
 		</div>
-		<div class="font-italic col-xs-17">
-			This option allows you to control how often in seconds the inventory should be refreshed.
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			This option allows you to control how often in seconds the inventory should be refreshed, decreasing the interval will allow farm mode to automatically transfer newly acquired loot to your vault without manual intervention.
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-12 col-md-4">
 			Language
 		</label>
-		<div class="col-xs-3">
+		<div class="col-xs-12 col-md-3">
 			<select class="form-control" data-bind="options: tgd.languages, optionsText: 'description', optionsValue: 'code', optionsCaption: '--Select--', value: activeLocale">
 			</select>
 		</div>
-		<div class="font-italic col-xs-17">
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
 			Setting the language will automatically change the menu labels as well as the descriptions for the items. Warning changing the language to anything non-English might result in issues using certain advanced features.
 		</div>
 	</div>	
 	<div class="form-group">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-18 col-md-4">
 			Tooltips on hover
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-6 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: tooltipsEnabled">
 		</div>
-		<div class="font-italic col-xs-17">
-			Enable this option to display a tooltip about the item on hover (mobile devices require a hold tap even if disabled)
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			Enable this option to display a tooltip about the item on hover (if disabled or on a mobile device you may hold tap/click to display the tooltip, release the tap for it to hide)
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4" data-bind="text: $root.activeText().menu_advancedtooltips">
+		<label class="control-label col-xs-18 col-md-4" data-bind="text: $root.activeText().menu_advancedtooltips">
 			Advanced Tooltips
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-6 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: advancedTooltips">
 		</div>
-		<div class="font-italic col-xs-17">
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
 			Enable this option to show more information in the tooltips such as perks, stats and stat rolls.
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4" data-bind="text: $root.activeText().menu_autotransfer">
+		<label class="control-label col-xs-18 col-md-4" data-bind="text: $root.activeText().menu_autotransfer">
 			Auto Transfer Stacks
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-6 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: autoXferStacks">
 		</div>
-		<div class="font-italic col-xs-17">
-			Enable this option to automatically transfer items that stack (such as Synths) without a confirmation prompt.
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			Enable this option to automatically transfer items that stack (such as Heavy Synth) without a confirmation prompt.
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4" data-bind="text: $root.activeText().menu_padheight">
+		<label class="control-label col-xs-16 col-md-4" data-bind="text: $root.activeText().menu_padheight">
 			Auto Pad Height
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-8 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: padBucketHeight">
 		</div>
-		<div class="font-italic col-xs-17">
-			This option will ensure that all the sections line up evenly with extra white space padding.
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			This option will ensure that all the sections such as Helmet and Chest line up evenly with extra white space padding at the bottom.
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-16 col-md-4">
 			Drag and Drop
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-8 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: dragAndDrop">
 		</div>
-		<div class="font-italic col-xs-17">
-			Recommended for desktops and tablets, allows you to use your pointer to transfer items from one character to another by dragging it across.
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			Recommended for desktops and tablets not for mobile devices, allows you to use your pointer to transfer and equip items by dragging it across characters.
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-16 col-md-4">
 			Farm Mode Controls
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-8 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: farmViewEnabled">
 		</div>
-		<div class="font-italic col-xs-17">
-			Allows you to quickly and easily transfer engrams and other items to the vault during farming runs like Strikes or Crucible.
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			Enables a control panel on the top of the app that allows you to quickly and easily transfer engrams and other items to the vault during farming runs like Strikes or Crucible.
 		</div>
 	</div>
 	<div class="form-group">
-		<label class="control-label col-xs-4">
+		<label class="control-label col-xs-16 col-md-4">
 			Auto Updates
 		</label>
-		<div class="checkbox col-xs-3">
+		<div class="col-xs-8 col-md-3">
 			<input type="checkbox" class="form-control" data-bind="checked: autoUpdates">
 		</div>
-		<div class="font-italic col-xs-17">
-			Once enabled the app will automatically check with TowerGhostForDestiny.com for version updates, toggle this setting off and on to if the app is not updating anymore.
+		<hr class="visible-xs-block col-xs-24">
+		<div class="font-italic col-xs-24 col-md-17">
+			Once enabled the app will automatically check with <i>TowerGhostForDestiny.com</i> for version updates every time it's opened, toggle this setting off and on to if the app is not updating anymore.
 		</div>
 	</div>
+	<p><strong>Tip</strong> You may also visit the <i>View</i> menu option to adjust the visual look of the app including icon sizes, columns, container size and more.</i>
 </div>
