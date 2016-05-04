@@ -9,7 +9,6 @@
     </author>
 
     <content src="index.html" />
-	<preference name="phonegap-version" value="cli-6.1.0" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
@@ -29,6 +28,7 @@
 	<gap:plugin name="com.bez4pieci.cookies" version="0.0.1" />
 	<gap:plugin name="org.apache.cordova.file-transfer" />
 	<gap:plugin name="org.apache.cordova.file" />
+	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
 
     <icon src="icon.png" />
     
