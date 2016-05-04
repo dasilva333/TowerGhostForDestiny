@@ -463,7 +463,7 @@ Profile.prototype = {
     queryVendorArmor: function(callback) {
         var self = this;
         var armorVendors = _.map(_.filter(_vendorDefs, function(vendor) {
-                return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1
+                return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1 || vendor.summary.vendorHash == "2680694281"
             }), function(vendor) {
                 return vendor.hash;
             }),
