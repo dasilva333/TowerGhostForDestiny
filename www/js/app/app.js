@@ -152,13 +152,33 @@ var app = function() {
         (new tgd.dialog()).title(self.activeText().menu_hel).content(tgd.helpTemplate()).show();
     };
 
-    this.showLanguageSettings = function() {
+    this.showSettings = function() {
         self.toggleBootstrapMenu();
-        var languageManager = new tgd.languageManager(self.currentLocale, tgd.languages);
+        var settingsManager = new tgd.settingsManager({
+            doRefresh: self.doRefresh,
+            currentLocale: self.currentLocale,
+            appLocale: self.appLocale,
+            refreshSeconds: self.refreshSeconds,
+            tooltipsEnabled: self.tooltipsEnabled,
+            advancedTooltips: self.advancedTooltips,
+            autoXferStacks: self.autoXferStacks,
+            padBucketHeight: self.padBucketHeight,
+            dragAndDrop: self.dragAndDrop,
+            farmViewEnabled: self.farmViewEnabled,
+            autoUpdates: self.autoUpdates,
+            activeText: self.activeText
+        });
+
         (new tgd.koDialog({
-            viewModel: languageManager,
-            templateName: 'languagesTemplate'
-        })).title(self.activeText().menu_language).show(true);
+            viewModel: settingsManager,
+            templateName: 'settingsTemplate',
+            buttons: [{
+                label: 'Close',
+                action: function(dialogItself) {
+                    dialogItself.close();
+                }
+            }]
+        })).title(self.activeText().menu_settings).show(true);
     };
 
     this.handleGoogleResponse = function(data) {

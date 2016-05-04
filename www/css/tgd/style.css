@@ -62,10 +62,6 @@ li a {
 .list-group-item .itemImage, .panel-body .itemImage {
     width: 48px;
 }
-.form-control
-{
-	padding: 8px;
-}
 /* Used by the navbar */
 @media (min-width: 1024px) and (max-width: 1181px)
 {

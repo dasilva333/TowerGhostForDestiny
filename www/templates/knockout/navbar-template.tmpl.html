@@ -24,9 +24,10 @@
                     <a data-bind="fastclick: clearFilters" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-filter"></i> <span class="clear-filters-text" data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a>
                 </li>
                 <li class="dropdown" data-bind="visible: !isStaticBrowser">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text" data-bind="text: $root.activeText().menu_settings">Settings</span> <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-cog"></i> <span class="settings-text" data-bind="text: $root.activeText().menu_options">More Options</span> <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
-
+						<li><a href="#" data-bind="fastclick: showSettings"><i class="fa fa-cog"></i><span data-bind="text: $root.activeText().menu_settings">Settings</span></a></li>
+						<li class="divider"></li>
                         <li><a href="#" data-bind="fastclick: logout">Logout</a></li>
                         <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'PSN')"><a href="#" data-bind="fastclick: openBungieWindow('Psnid')">PSN Login</a></li>
                         <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'XBL')"><a href="#" data-bind="fastclick: openBungieWindow('Xuid')">Live Login</a></li>
@@ -37,38 +38,12 @@
                         <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: $root.activeText().menu_about">About</span></a></li>
                         <li><a href="#" data-bind="fastclick: showHelp"><i class="fa fa-question"></i><span data-bind="text: $root.activeText().menu_help">Help</span></a></li>
                         <li><a href="#" data-bind="fastclick: showDonate"><i class="fa fa-credit-card"></i><span data-bind="text: $root.activeText().menu_donate">Donate</span></a></li>
-                        <li><a href="#" data-bind="fastclick: showLanguageSettings"><i class="fa fa-language"></i><span data-bind="text: $root.activeText().menu_language">Language</span></a></li>
                         <li class="divider"></li>
                         <li><a href="#" data-bind="fastclick: openStatusReport(1)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinystatus">DestinyStatus Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: openStatusReport(2)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinytrials">DestinyTrials Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: openStatusReport(3)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinytracker">DestinyTracker Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: openStatusReport(4)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinyguardiangg">Guardian.GG Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
-                        <li class="divider"></li>
-                        <li data-bind="fastclick: toggleRefresh, css: doRefresh() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: doRefresh() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autorefresh">Auto Refresh</span></a>
-                        </li>
-                        <li data-bind="fastclick: toggleDestinyDbTooltips, css: tooltipsEnabled() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: tooltipsEnabled() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_destinydbtooltips">DestinyDB Tooltips</span></a>
-                        </li>
-                        <li data-bind="fastclick: toggleAdvancedTooltips, css: advancedTooltips() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: advancedTooltips() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_advancedtooltips">Advanced Tooltips</span></a>
-                        </li>
-                        <li data-bind="fastclick: toggleTransferStacks, css: autoXferStacks() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: autoXferStacks() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_autotransfer">Auto Transfer Stacks</span></a>
-                        </li>
-                        <li data-bind="fastclick: togglePadBucketHeight, css: padBucketHeight() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: padBucketHeight() == true ? 'fa-check-square' : 'fa-square'"></i><span data-bind="text: $root.activeText().menu_padheight">Auto Pad Height</span></a>
-                        </li>
-                        <li data-bind="fastclick: toggleDragAndDrop, css: dragAndDrop() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: dragAndDrop() == true ? 'fa-check-square' : 'fa-square'"></i><span>Drag and Drop</span></a>
-                        </li>
-						<li data-bind="fastclick: toggleFarmMode, css: farmViewEnabled() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: farmViewEnabled() == true ? 'fa-check-square' : 'fa-square'"></i><span>Farm Mode Controls</span></a>
-                        </li>
-                        <li data-bind="fastclick: toggleAutoUpdates, css: autoUpdates() == true ? 'active' : ''">
-                            <a href="#"><i class="fa" data-bind="css: autoUpdates() == true ? 'fa-check-square' : 'fa-square'"></i><span>Auto Updates</span></a>
-                        </li>
                     </ul>
                 </li>
             </ul>
