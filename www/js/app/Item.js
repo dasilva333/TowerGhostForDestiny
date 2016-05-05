@@ -428,6 +428,7 @@ Item.prototype = {
                             active: perk.isActive,
                             isExclusive: talentGrid.exclusiveSets.indexOf(nodeIndex),
                             isInherent: isInherent,
+                            isVisible: true,
                             hash: p.perkHash
                         });
                     }
@@ -446,17 +447,17 @@ Item.prototype = {
                             var perk = nodes.steps[node.stepIndex];
                             var isSkill = _.intersection(perk.nodeStepName.split(" "), statNames);
                             if (isSkill.length === 0 &&
-                                node.isActivated &&
                                 (tgd.DestinyUnwantedNodes.indexOf(perk.nodeStepName) == -1) &&
                                 (perkNames.indexOf(perk.nodeStepName) == -1) &&
                                 (perk.perkHashes.length === 0 || perkHashes.indexOf(perk.perkHashes[0]) === -1)) {
                                 talentPerks[perk.nodeStepName] = {
-                                    active: true,
+                                    active: node.isActivated,
                                     name: perk.nodeStepName,
                                     description: '<strong>' + perk.nodeStepName + '</strong>: ' + perk.nodeStepDescription,
                                     iconPath: tgd.dataDir + perk.icon,
                                     isExclusive: -1,
-                                    hash: perk.icon.match(/icons\/(.*)\.png/)[1]
+                                    hash: perk.icon.match(/icons\/(.*)\.png/)[1],
+                                    isVisible: node.isActivated
                                 };
                             } else if (isSkill.length > 0) {
                                 var statName = isSkill[0];
@@ -466,6 +467,7 @@ Item.prototype = {
                                     description: "",
                                     iconPath: "",
                                     isExclusive: -1,
+                                    isVisible: false,
                                     isStat: true,
                                     hash: _.findWhere(tgd.DestinyArmorStats, {
                                         statName: statName

@@ -463,9 +463,9 @@ var app = function() {
                 var activePerksTemplate = tgd.perksTemplate({
                     perks: _.filter(activeItem.perks, function(perk) {
                         var hasStat = _.has(perk, 'isStat');
-                        return perk.active === true && hasStat === false ||
+                        return (perk.active === true && hasStat === false ||
                             (perk.active === false && self.advancedTooltips() === true && hasStat === false) ||
-                            hasStat === true && perk.isStat === false;
+                            hasStat === true && perk.isStat === false) && perk.isVisible == true;
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
