@@ -74,37 +74,41 @@
 			<hr>
 		</div>
 		<div class="col-xs-24 font-smaller-1" data-bind="visible: type == 'Custom'">
-			<div class="col-xs-4 font-bold">
-				View Stats
+			<div class="row">
+				<div class="col-xs-4 font-bold">
+					View Stats
+				</div>
+				<div class="col-xs-8">
+					<input type="button" class="btn btn-sm" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
+					<input type="button" class="btn btn-sm" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
+				</div>
+				<div class="col-xs-4 font-bold">
+					Auto Select
+				</div>
+				<div class="col-xs-8">
+					<input type="button" class="btn btn-sm btn-default" value="Equipped" data-bind="click: setSelection">
+					<input type="button" class="btn btn-sm btn-default" value="Points" data-bind="click: setSelection">
+				</div>			
 			</div>
-			<div class="col-xs-8">
-				<input type="button" class="btn btn-sm" value="Current" data-bind="click: setView, css: activeView() == 'Current' ? 'btn-active' : 'btn-default'">
-				<input type="button" class="btn btn-sm" value="Future" data-bind="click: setView, css: activeView() == 'Future' ? 'btn-active' : 'btn-default'">
-			</div>
-			<div class="col-xs-4 font-bold">
-				Auto Select
-			</div>
-			<div class="col-xs-8">
-				<input type="button" class="btn btn-sm" value="Equipped" data-bind="click: setSelection">
-				<input type="button" class="btn btn-sm" value="Points" data-bind="click: setSelection">
-			</div>
-			<div class="col-xs-4 font-bold">
-				Other Armor
-			</div>
-			<div class="col-xs-8">
-				<input type="button" class="btn btn-sm" value="Any" data-bind="click: setOtherArmor">
-				<input type="button" class="btn btn-sm" value="Points" data-bind="click: setOtherArmor">
-			</div>
-			<div class="col-xs-4 font-bold">
-				Add Armor
-			</div>
-			<div class="col-xs-8">
-				<input type="button" class="btn btn-sm" value="Vendor Items" data-bind="click: addVendorArmor, disable: $root.vendorArmorQueried">
-				<input type="button" class="btn btn-sm" value="Custom Item" data-bind="click: addCustomItem">
+			<div class="row" style="margin-top:5px">
+				<div class="col-xs-4 font-bold">
+					Other Armor
+				</div>
+				<div class="col-xs-8">
+					<input type="button" class="btn btn-sm btn-default" value="Any" data-bind="click: setOtherArmor">
+					<input type="button" class="btn btn-sm btn-default" value="Points" data-bind="click: setOtherArmor">
+				</div>
+				<div class="col-xs-4 font-bold">
+					Add Armor
+				</div>
+				<div class="col-xs-8">
+					<input type="button" class="btn btn-sm btn-default" value="Vendor Items" data-bind="click: addVendorArmor, disable: $root.vendorArmorQueried">
+					<input type="button" class="btn btn-sm btn-default" value="Custom Item" data-bind="click: addCustomItem">
+				</div>
 			</div>
 			<hr>
 		</div>
-		<div class="row">
+		<div>
 			<table class="table table-striped table-hover ">
 				<thead>
 					<tr class="font-bold">

@@ -229,6 +229,14 @@ tgd.armorSelection = function(type, groups, character) {
         self.dialog = dialog;
     };
 
+    self.showProgress = function(callback) {
+        $("body").css("cursor", "progress");
+        setTimeout(function() {
+            callback();
+            $("body").css("cursor", "default");
+        }, 600);
+    };
+
     self.addCustomItem = function() {
         var viewModel = new tgd.armorItemCreate(self.character);
         console.log("armorItemCreate", viewModel);
@@ -260,36 +268,40 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.addVendorArmor = function() {
         self.vendorArmorQueried(true);
-        var valueType = tgd.armorSelectionFields[self.activeView()].valueType;
-        self.character.queryVendorArmor(function(items) {
-            _.each(self.armorGroups(), function(group) {
-                var bucketItems = _.filter(items, function(item) {
-                    return item.bucketType == group.bucketType && item.tierType >= 5;
+        self.showProgress(function() {
+            var valueType = tgd.armorSelectionFields[self.activeView()].valueType;
+            self.character.queryVendorArmor(function(items) {
+                _.each(self.armorGroups(), function(group) {
+                    var bucketItems = _.filter(items, function(item) {
+                        return item.bucketType == group.bucketType && item.tierType >= 5;
+                    });
+                    _.each(bucketItems, function(item) {
+                        group.items.push(new tgd.armorItem(item, group.selectedItem, group.groups, group.bestSets, group.type));
+                    });
+                    group.items(_.sortBy(group.items(), function(item) {
+                        return item.getValue(valueType) * -1;
+                    }));
                 });
-                _.each(bucketItems, function(item) {
-                    group.items.push(new tgd.armorItem(item, group.selectedItem, group.groups, group.bestSets, group.type));
-                });
-                group.items(_.sortBy(group.items(), function(item) {
-                    return item.getValue(valueType) * -1;
-                }));
             });
         });
     }
 
     self.setOtherArmor = function(model, event) {
-        var selectionType = event.target.value;
-        _.each(self.armorGroups(), function(group) {
-            if (tgd.DestinyOtherArmor.indexOf(group.bucketType) > -1) {
-                var selectedItem = null;
-                if (selectionType == "Points") {
-                    selectedItem = _.reduce(group.items(), function(memo, item) {
-                        var isMaxCSP = (memo && item.getValue("All") > memo.getValue("All") || !memo);
-                        if (isMaxCSP) memo = item;
-                        return memo;
-                    });
+        self.showProgress(function() {
+            var selectionType = event.target.value;
+            _.each(self.armorGroups(), function(group) {
+                if (tgd.DestinyOtherArmor.indexOf(group.bucketType) > -1) {
+                    var selectedItem = null;
+                    if (selectionType == "Points") {
+                        selectedItem = _.reduce(group.items(), function(memo, item) {
+                            var isMaxCSP = (memo && item.getValue("All") > memo.getValue("All") || !memo);
+                            if (isMaxCSP) memo = item;
+                            return memo;
+                        });
+                    }
+                    group.selectedItem(selectedItem);
                 }
-                group.selectedItem(selectedItem);
-            }
+            });
         });
     };
 
@@ -307,7 +319,9 @@ tgd.armorSelection = function(type, groups, character) {
     };
 
     self.setView = function(model, event) {
-        self.activeView(event.target.value);
+        self.showProgress(function() {
+            self.activeView(event.target.value);
+        });
     };
 
     self.setupView = function(activeView) {
