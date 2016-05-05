@@ -495,7 +495,7 @@ Profile.prototype = {
                             tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
                             return tgdItem;
                         }), function(item) {
-                            return item.armorIndex > -1 && item.getValue("Light") > 0 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
+                            return item.armorIndex > -1 && item.getValue("Light") >= 280 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
                         });
                         memo = memo.concat(armor);
                         return memo;
