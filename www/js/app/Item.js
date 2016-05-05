@@ -686,9 +686,9 @@ Item.prototype = {
                 itemIndex = -1,
                 otherItems = _.sortBy(_.filter(self.character.items(), function(item) {
                     return (item._id != self._id && item.bucketType == self.bucketType);
-                }), function(item){
-					return item.getValue("Light") * -1;
-				});
+                }), function(item) {
+                    return [item.getValue("Light") * -1, item.getValue("CSP") * -1];
+                });
             //console.log("other items: " + _.pluck(otherItems, 'description'));
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
