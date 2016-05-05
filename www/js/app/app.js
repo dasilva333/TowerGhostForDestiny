@@ -149,7 +149,7 @@ var app = function() {
 
     this.showHelp = function() {
         self.toggleBootstrapMenu();
-        (new tgd.dialog()).title(self.activeText().menu_hel).content(tgd.helpTemplate()).show();
+        (new tgd.dialog()).title(self.activeText().menu_help).content(tgd.helpTemplate()).show(true);
     };
 
     this.showSettings = function() {

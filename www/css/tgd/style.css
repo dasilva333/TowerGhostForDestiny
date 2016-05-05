@@ -15,9 +15,9 @@ input
 	-ms-user-select: auto !important;
 	user-select: auto !important;
 }
-li a {
+/*li a {
     color: #3080CF
-}
+}*/
 
 /* Used throughout the app for various purposes */
 .no-gutter [class*='col-'] {
