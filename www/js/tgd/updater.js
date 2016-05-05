@@ -33,6 +33,7 @@
             serverRoot: serverRoot,
             mode: 'mirror',
             cacheBuster: true,
+            preventAutoUpdateLoop: false,
             checkTimeout: 30 * 1000
         });
 
@@ -62,7 +63,7 @@
                     }
                     return tgd.loader.download(function(progress) {
                         $("#tgdLoaderProgress").width((progress.percentage * 100).toFixed(0) + "%");
-                    });
+                    }, true);
                 })
                 .catch(function(e) {
                     $("#tgdLoader").hide();

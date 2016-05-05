@@ -82,7 +82,7 @@
     },
     "cordova-app-loader-complete.js": {
       "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
-      "version": "ad1998c42b04ac34cef3c9dfa1e51bdd03a9c7773c63bf12b96174a14b63e4fe"
+      "version": "495f2b37e2b3b208ee2965f629f40c12914c2c08d1f28e63fdebb970c1e3f94a"
     },
     "fastclick.js": {
       "filename": "js/libraries/secondary/fastclick.js",
@@ -126,7 +126,7 @@
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "ebe5d80e0f902e580c258c4e565edc2140360085dfcbefe4a71d4a7af280072e"
+      "version": "32fb5f65ce76bf1c93fcaa314184dc4907cc1373162a69ae49cef321081d87b8"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -186,7 +186,7 @@
     },
     "updater.js": {
       "filename": "js/tgd/updater.js",
-      "version": "384a44c7211b38e8bf19c8753bda25a4567897523917506a9dbed6445d097d15"
+      "version": "fc9cf5ea6420b03ce1e0c48febe5bc42b60e6599402072b5ada64de02c0ed816"
     },
     "utils.js": {
       "filename": "js/tgd/utils.js",
@@ -202,7 +202,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "b72b2c856b78f81217b825d38526fd87060d74d06384cf361a30c9644a487b7c"
+      "version": "4e8f399afa7b7c101b58b83ea5184842d494e374144b4f913b609d06c580de44"
     },
     "app.js": {
       "filename": "js/app/app.js",

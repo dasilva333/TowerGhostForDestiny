@@ -180,8 +180,6 @@ Profile.prototype = {
                         var processedItem = new Item(newItem, self);
                         console.log("creating item");
                         if ("id" in processedItem) self.items.push(processedItem);
-                    } else {
-                        console.log("skipping found item", foundItem);
                     }
                 });
                 //ensures maxLightPercent is recalculated if the item has been infused up

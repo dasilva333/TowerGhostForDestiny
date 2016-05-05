@@ -241,13 +241,24 @@ tgd.armorSelection = function(type, groups, character) {
         var viewModel = new tgd.armorItemCreate(self.character);
         console.log("armorItemCreate", viewModel);
         var defaultAction = function(dialogItself) {
-            /* add the item to the right armorGroups */
-            var group = _.findWhere(self.armorGroups(), {
-                bucketType: viewModel.activeItem().bucketType
-            });
-            var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);;
-            group.items.push(armorItem);
-            dialogItself.close();
+            var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
+                if (!$.isNumeric(stat.value()) && memo == true) memo = false;
+                return memo;
+            }, true);
+            var hasValidLight = $.isNumeric(viewModel.lightLevel());
+            if (!hasValidStats) {
+                BootstrapDialog.alert("Invalid stats entered, please ensure only numbers are used");
+            } else if (!hasValidLight) {
+                BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
+            } else {
+                /* add the item to the right armorGroups */
+                var group = _.findWhere(self.armorGroups(), {
+                    bucketType: viewModel.activeItem().bucketType
+                });
+                var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);;
+                group.items.push(armorItem);
+                dialogItself.close();
+            }
         };
         (new tgd.koDialog({
             templateName: 'armorItemCreateTemplate',
