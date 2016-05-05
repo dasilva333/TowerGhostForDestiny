@@ -52,8 +52,9 @@
 
 		notify : function (title, message, priority)
 		{
-			var $toaster = this.gettoaster();
-			var $toast  = $(settings.toast.template.replace('%priority%', priority)).hide().css(settings.toast.css).addClass(settings.toast['class']);
+			var $toaster  = this.gettoaster();
+			var delimiter = (title && message) ? settings.toast.defaults.delimiter : '';
+			var $toast    = $(settings.toast.template.replace('%priority%', priority).replace('%delimiter%', delimiter)).hide().css(settings.toast.css).addClass(settings.toast['class']);
 
 			$('.title', $toast).css(settings.toast.csst).html(title);
 			$('.message', $toast).css(settings.toast.cssm).html(message);
@@ -105,13 +106,14 @@
 					'<span aria-hidden="true">&times;</span>' +
 					'<span class="sr-only">Close</span>' +
 				'</button>' +
-				'<span class="title"></span>: <span class="message"></span>' +
+				'<span class="title"></span>%delimiter% <span class="message"></span>' +
 			'</div>',
 
 			'defaults' :
 			{
-				'title'    : 'Notice',
-				'priority' : 'success'
+				'title'     : 'Notice',
+				'priority'  : 'success',
+				'delimiter' : ':'
 			},
 
 			'css'      : {},

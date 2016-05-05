@@ -154,6 +154,16 @@
             startActual = sortable.options.start;
             updateActual = sortable.options.update;
 
+            //ensure draggable table row cells maintain their width while dragging
+            sortable.options.helper = function(e, ui) {
+                if (ui.is("tr")) {
+                    ui.children().each(function() {
+                        $(this).width($(this).width());
+                    });
+                }
+                return ui;
+            };
+
             //initialize sortable binding after template binding has rendered in update function
             var createTimeout = setTimeout(function() {
                 var dragItem;
@@ -237,22 +247,70 @@
                                 return;
                             }
 
-                            //do the actual move
-                            if (targetIndex >= 0) {
-                                if (sourceParent) {
-                                    sourceParent.splice(sourceIndex, 1);
+                            //if the strategy option is unset or false, employ the order strategy involving removal and insertion of items
+                            if (!sortable.hasOwnProperty("strategyMove") || sortable.strategyMove === false) {
+                                //do the actual move
+                                if (targetIndex >= 0) {
+                                    if (sourceParent) {
+                                        sourceParent.splice(sourceIndex, 1);
 
-                                    //if using deferred updates plugin, force updates
-                                    if (ko.processAllDeferredBindingUpdates) {
-                                        ko.processAllDeferredBindingUpdates();
+                                        //if using deferred updates plugin, force updates
+                                        if (ko.processAllDeferredBindingUpdates) {
+                                            ko.processAllDeferredBindingUpdates();
+                                        }
                                     }
+
+                                    targetParent.splice(targetIndex, 0, item);
                                 }
 
-                                targetParent.splice(targetIndex, 0, item);
+                                //rendering is handled by manipulating the observableArray; ignore dropped element
+                                dataSet(el, ITEMKEY, null);
                             }
+                            else { //employ the strategy of moving items
+                                if (targetIndex >= 0) {
+                                    if (sourceParent) {
+                                        if (sourceParent !== targetParent) {
+                                            // moving from one list to another
 
-                            //rendering is handled by manipulating the observableArray; ignore dropped element
-                            dataSet(el, ITEMKEY, null);
+                                            sourceParent.splice(sourceIndex, 1);
+
+                                            //if using deferred updates plugin, force updates
+                                            if (ko.processAllDeferredBindingUpdates) {
+                                                ko.processAllDeferredBindingUpdates();
+                                            }
+
+                                            targetParent.splice(targetIndex, 0, item);
+
+                                            //rendering is handled by manipulating the observableArray; ignore dropped element
+                                            dataSet(el, ITEMKEY, null);
+                                            ui.item.remove();
+                                        }
+                                        else {
+                                            // moving within same list
+                                            var underlyingList = unwrap(sourceParent);
+
+                                            // notify 'beforeChange' subscribers
+                                            sourceParent.valueWillMutate();
+
+                                            // move from source index ...
+                                            underlyingList.splice(sourceIndex, 1);
+                                            // ... to target index
+                                            underlyingList.splice(targetIndex, 0, item);
+
+                                            // notify subscribers
+                                            sourceParent.valueHasMutated();
+                                        }
+                                    }
+                                    else {
+                                        // drop new element from outside
+                                        targetParent.splice(targetIndex, 0, item);
+
+                                        //rendering is handled by manipulating the observableArray; ignore dropped element
+                                        dataSet(el, ITEMKEY, null);
+                                        ui.item.remove();
+                                    }
+                                }
+                            }
 
                             //if using deferred updates plugin, force updates
                             if (ko.processAllDeferredBindingUpdates) {
