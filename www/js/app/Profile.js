@@ -492,7 +492,7 @@ Profile.prototype = {
                             var tgdItem = new Item(sItem.item, self);
                             tgdItem._id = tgdItem.instanceId = tgdItem.itemHash.toString();
                             tgdItem.isVendor = true;
-                            tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
+                            tgdItem.itemDescription = "<strong style='color: LawnGreen;'> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
                             return tgdItem;
                         }), function(item) {
                             return item.armorIndex > -1 && item.getValue("Light") >= 280 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
