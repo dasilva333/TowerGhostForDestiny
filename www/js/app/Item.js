@@ -684,9 +684,11 @@ Item.prototype = {
             tgd.localLog("and its actually equipped");
             var otherEquipped = false,
                 itemIndex = -1,
-                otherItems = _.filter(self.character.items(), function(item) {
+                otherItems = _.sortBy(_.filter(self.character.items(), function(item) {
                     return (item._id != self._id && item.bucketType == self.bucketType);
-                });
+                }), function(item){
+					return item.getValue("Light") * -1;
+				});
             //console.log("other items: " + _.pluck(otherItems, 'description'));
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
