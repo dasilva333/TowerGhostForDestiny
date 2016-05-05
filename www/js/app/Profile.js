@@ -460,8 +460,8 @@ Profile.prototype = {
     },
     queryVendorArmor: function(callback) {
         var self = this;
-		/* Exotic Armor Blueprints (800), The Speaker (600) manually included */
-		var additionalVendors = [3902439767, 2680694281];
+        /* Exotic Armor Blueprints (800), The Speaker (600) manually included */
+        var additionalVendors = [3902439767, 2680694281];
         var armorVendors = _.map(_.filter(_vendorDefs, function(vendor) {
                 return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1 || additionalVendors.indexOf(vendor.summary.vendorHash) > -1;
             }), function(vendor) {
