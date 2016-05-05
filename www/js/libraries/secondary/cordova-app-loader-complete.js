@@ -112,6 +112,7 @@
             this.manifest = window.Manifest;
             this.newManifest = null;
             this.bundledManifest = null;
+            this.preventAutoUpdateLoop = options.preventAutoUpdateLoop === true;
             this._lastUpdateFiles = localStorage.getItem('last_update_files');
 
             // normalize serverRoot and set remote manifest url
@@ -200,7 +201,7 @@
                         // has been downloaded before (but failes)
 
                         // Check if the newFiles match the previous files (last_update_files)
-                        if (newFiles === self._lastUpdateFiles) {
+                        if (self.preventAutoUpdateLoop === true && newFiles === self._lastUpdateFiles) {
                             // YES! So we're doing the same update again!
 
                             // Check if our current Manifest has indeed the "last_update_files"
@@ -208,17 +209,17 @@
                             if (self._lastUpdateFiles !== currentFiles) {
                                 // No! So we've updated, yet they don't appear in our manifest. This means:
                                 console.warn('New manifest available, but an earlier update attempt failed. Will not download.');
-                                //self.corruptNewManifest = true;
-                                //return resolve(true);
+                                self.corruptNewManifest = true;
+                                resolve(null);
                             }
                             // Yes, we've updated and we've succeeded.
-                            //resolve(false);
-                            //return;
+                            resolve(false);
+                            return;
                         }
 
                         // Check if new manifest is valid
                         if (!newManifest.files) {
-                            reject('Downloaded Manifest has no "files" attribute.');
+                            reject(new Error('Downloaded Manifest has no "files" attribute.'));
                             return;
                         }
 
@@ -233,13 +234,14 @@
                         self._toBeCopied = [];
                         self._toBeDeleted = [];
                         var isCordova = self.cache._fs.isCordova;
+                        var changes = 0;
                         Object.keys(newFiles)
                             // Find files that have changed version or are missing
                             .filter(function(file) {
                                 // if new file, or...
                                 return !oldFiles[file] ||
                                     // version has changed, or...
-                                    oldFiles[file].version !== newFiles[file].version ||
+                                    oldFiles[file].version !== newFiles[file].version //||
                                     // not in cache for some reason
                                     !self.cache.isCached(file);
                             })
@@ -251,6 +253,9 @@
                                     // othwerwise, we must download
                                 } else {
                                     self._toBeDownloaded.push(file);
+                                }
+                                if (!bundledFiles[file] || bundledFiles[file].version !== newFiles[file].version) {
+                                    changes++;
                                 }
                             });
 
@@ -269,13 +274,13 @@
                             });
 
 
-                        var changes = self._toBeDeleted.length + self._toBeDownloaded.length;
+                        changes += self._toBeDeleted.length;
                         // Note: if we only need to copy files, we can keep serving from bundle!
                         // So no update is needed!
                         if (changes > 0) {
                             // Save the new Manifest
                             self.newManifest = newManifest;
-                            self.newManifest.root = self.cache.localInternalURL;
+                            self.newManifest.root = self.cache.localUrl;
                             resolve(true);
                         } else {
                             resolve(false);
@@ -294,7 +299,7 @@
             return this._updateReady;
         };
 
-        AppLoader.prototype.download = function(onprogress) {
+        AppLoader.prototype.download = function(onprogress, includeFileProgressEvents) {
             var self = this;
             if (!self.canDownload()) {
                 return new Promise(function(resolve) {
@@ -317,7 +322,7 @@
                         self.cache.serverRoot = self.newManifest.serverRoot;
                     }
                     self.cache.add(self._toBeDownloaded);
-                    return self.cache.download(onprogress);
+                    return self.cache.download(onprogress, includeFileProgressEvents);
                 }).then(function() {
                     self._toBeDeleted = [];
                     self._toBeDownloaded = [];
@@ -325,10 +330,12 @@
                     return self.newManifest;
                 }, function(files) {
                     // on download error, remove files...
+                    var err = files;
                     if (!!files && files.length) {
                         self.cache.remove(files);
+                        err = new Error(files.length + ' files failed to download');
                     }
-                    return files;
+                    throw err;
                 });
         };
 
@@ -473,9 +480,10 @@
             return this.getDownloadQueue().length > 0;
         };
 
-        FileCache.prototype.download = function download(onprogress) {
+        FileCache.prototype.download = function download(onprogress, includeFileProgressEvents) {
             var fs = this._fs;
             var self = this;
+            includeFileProgressEvents = includeFileProgressEvents || false;
             self.abort();
 
             return new Promise(function(resolve, reject) {
@@ -495,6 +503,7 @@
                     var queue = self.getDownloadQueue();
                     var done = self._downloading.length;
                     var total = self._downloading.length + queue.length;
+                    var percentage = 0;
 
                     // download every file in the queue (which is the diff from _added with _cached)
                     queue.forEach(function(url) {
@@ -508,9 +517,11 @@
                                 ev.url = url;
                                 ev.path = path;
                                 ev.percentage = done / total;
-                                if (ev.loaded > 0 && ev.total > 0 && index !== total) {
+                                if (ev.loaded > 0 && ev.total > 0 && done !== total) {
                                     ev.percentage += (ev.loaded / ev.total) / total;
                                 }
+                                ev.percentage = Math.max(percentage, ev.percentage);
+                                percentage = ev.percentage;
                                 onprogress(ev);
                             };
                         }
@@ -518,6 +529,7 @@
                         // callback
                         var onDone = function() {
                             done++;
+                            onSingleDownloadProgress(new ProgressEvent());
 
                             // when we're done
                             if (done === total) {
@@ -541,7 +553,7 @@
                         if (self._cacheBuster) downloadUrl += "?" + Date.now();
                         var download = fs.download(downloadUrl, path, {
                             retry: self._retry
-                        }, onSingleDownloadProgress);
+                        }, includeFileProgressEvents ? onSingleDownloadProgress : undefined);
                         download.then(onDone, onDone);
                         self._downloading.push(download);
                     });
@@ -580,7 +592,7 @@
 
         FileCache.prototype.get = function get(url) {
             path = this.toPath(url);
-            if (this._cached[path]) return this._cached[path].toInternalURL;
+            if (this._cached[path]) return this._cached[path].toURL;
             return this.toServerURL(url);
         };
 
@@ -607,15 +619,19 @@
                 if (query > -1) {
                     url = url.substr(0, query);
                 }
-                url = url = this._fs.normalize(url || '');
-                len = this.serverRoot.length;
+                url = this._fs.normalize(url || '');
+                var len = this.serverRoot.length;
                 if (url.substr(0, len) !== this.serverRoot) {
                     return this.localRoot + url;
                 } else {
                     return this.localRoot + url.substr(len);
                 }
             } else {
-                return this.localRoot + hash(url) + url.substr(url.lastIndexOf('.'));
+                var ext = url.substr(url.lastIndexOf('.'));
+                if ((ext.indexOf("?") > 0) || (ext.indexOf("/") > 0)) {
+                    ext = ".txt";
+                }
+                return this.localRoot + hash(url) + ext;
             }
         };
 
@@ -734,8 +750,32 @@
         function normalize(str) {
             str = str || '';
             if (str[0] === '/') str = str.substr(1);
-            if (!!str && str.indexOf('.') < 0 && str[str.length - 1] !== '/') str += '/';
-            if (str === './') str = '';
+
+            var tokens = str.split('/'),
+                last = tokens[0];
+
+            // check tokens for instances of .. and .
+            for (var i = 1; i < tokens.length; i++) {
+                last = tokens[i];
+                if (tokens[i] === '..') {
+                    // remove the .. and the previous token
+                    tokens.splice(i - 1, 2);
+                    // rewind 'cursor' 2 tokens
+                    i = i - 2;
+                } else if (tokens[i] === '.') {
+                    // remove the .. and the previous token
+                    tokens.splice(i, 1);
+                    // rewind 'cursor' 1 token
+                    i--;
+                }
+            }
+
+            str = tokens.join('/');
+            if (str === './') {
+                str = '';
+            } else if (last && last.indexOf('.') < 0 && str[str.length - 1] != '/') {
+                str += '/';
+            }
             return str;
         }
 
@@ -753,11 +793,14 @@
             }
 
             /* default options */
-            this.options = options = options || {};
+            options = options || {};
             options.persistent = options.persistent !== undefined ? options.persistent : true;
             options.storageSize = options.storageSize || 20 * 1024 * 1024;
             options.concurrency = options.concurrency || 3;
             options.retry = options.retry || [];
+            options.debug = !!options.debug;
+
+            /* Cordova deviceready promise */
             var setupShims = function() {
 				window.FileTransfer = function FileTransfer() {};
 				FileTransfer.prototype.download = function download(url, file, win, fail) {
@@ -828,10 +871,19 @@
                     if (!isCordova && type === 1 && navigator.webkitPersistentStorage) {
                         navigator.webkitPersistentStorage.requestQuota(options.storageSize, function(grantedBytes) {
                             window.requestFileSystem(type, grantedBytes, resolve, reject);
-                        });
+                        }, reject);
                     } else {
-                        window.requestFileSystem(type, options.storageSize, resolve, reject);
+                        // Exotic Cordova Directories (options.fileSystem = string)
+                        if (isNaN(type)) {
+                            window.resolveLocalFileSystemURL(type, function(directory) {
+                                resolve(directory.filesystem);
+                            }, reject);
+                            // Normal browser usage
+                        } else {
+                            window.requestFileSystem(type, options.storageSize, resolve, reject);
+                        }
                     }
+
                     setTimeout(function() {
                         reject(new Error('Could not retrieve FileSystem after 5 seconds.'));
                     }, 5100);
@@ -840,6 +892,8 @@
 
             /* debug */
             fs.then(function(fs) {
+                CDV_URL_ROOT = fs.root.toURL();
+                CDV_INTERNAL_URL_ROOT = isCordova ? fs.root.toInternalURL() : CDV_URL_ROOT;
                 window.__fs = fs;
             }, function(err) {
                 console.error('Could not get Cordova FileSystem:', err);
@@ -987,12 +1041,19 @@
             }
 
             /* convert path to URL to be used in JS/CSS/HTML */
-            var toInternalURL, toInternalURLSync;
+            var toInternalURL, toInternalURLSync, toURLSync;
+            CDV_INTERNAL_URL_ROOT = 'cdvfile://localhost/' + (options.persistent ? 'persistent/' : 'temporary/');
+            CDV_URL_ROOT = '';
             if (isCordova) {
                 /* synchronous helper to get internal URL. */
                 toInternalURLSync = function(path) {
                     path = normalize(path);
-                    return path.indexOf('://') < 0 ? 'cdvfile://localhost/' + (options.persistent ? 'persistent/' : 'temporary/') + path : path;
+                    return path.indexOf('://') < 0 ? CDV_INTERNAL_URL_ROOT + path : path;
+                };
+                /* synchronous helper to get native URL. */
+                toURLSync = function(path) {
+                    path = normalize(path);
+                    return path.indexOf('://') < 0 ? CDV_URL_ROOT + path : path;
                 };
 
                 toInternalURL = function(path) {
@@ -1012,6 +1073,7 @@
                         return fileEntry.toURL();
                     });
                 };
+                toURLSync = toInternalURLSync;
             }
 
             /* return contents of a file */
@@ -1054,18 +1116,36 @@
                                 writer.onwriteend = resolve;
                                 writer.onerror = reject;
                                 if (typeof blob === 'string') {
-                                    blob = new Blob([blob], {
-                                        type: mimeType || 'text/plain'
-                                    });
+                                    blob = createBlob([blob], mimeType || 'text/plain');
                                 } else if (blob instanceof Blob !== true) {
-                                    blob = new Blob([JSON.stringify(blob, null, 4)], {
-                                        type: mimeType || 'application/json'
-                                    });
+                                    blob = createBlob([JSON.stringify(blob, null, 4)], mimeType || 'application/json');
                                 }
                                 writer.write(blob);
                             }, reject);
                         });
                     });
+            }
+
+            function createBlob(parts, type) {
+                var BlobBuilder,
+                    bb;
+                try {
+                    return new Blob(parts, {
+                        type: type
+                    });
+                } catch (e) {
+                    BlobBuilder = window.BlobBuilder ||
+                        window.WebKitBlobBuilder ||
+                        window.MozBlobBuilder ||
+                        window.MSBlobBuilder;
+                    if (BlobBuilder) {
+                        bb = new BlobBuilder();
+                        bb.append(parts);
+                        return bb.getBlob(type);
+                    } else {
+                        throw new Error("Unable to create blob");
+                    }
+                }
             }
 
             /* move a file */
@@ -1140,14 +1220,14 @@
 
                     // fetch filetranfer, method-type (isDownload) and arguments
                     var args = transferQueue.pop();
-                    var ft = args.shift();
-                    var isDownload = args.shift();
-                    var serverUrl = args.shift();
-                    var localPath = args.shift();
-                    var win = args.shift();
-                    var fail = args.shift();
-                    var trustAllHosts = args.shift();
-                    var transferOptions = args.shift();
+                    var ft = args.fileTransfer,
+                        isDownload = args.isDownload,
+                        serverUrl = args.serverUrl,
+                        localPath = args.localPath,
+                        trustAllHosts = args.trustAllHosts,
+                        transferOptions = args.transferOptions,
+                        win = args.win,
+                        fail = args.fail;
 
                     if (ft._aborted) {
                         inprogress--;
@@ -1174,7 +1254,7 @@
                     onprogress = transferOptions;
                     transferOptions = {};
                 }
-                if (isCordova && localPath.indexOf('://') < 0) localPath = toInternalURLSync(localPath);
+                if (isCordova && localPath.indexOf('://') < 0) localPath = toURLSync(localPath);
 
                 transferOptions = transferOptions || {};
                 if (!transferOptions.retry || !transferOptions.retry.length) {
@@ -1191,9 +1271,21 @@
                 var promise = new Promise(function(resolve, reject) {
                     var attempt = function(err) {
                         if (transferOptions.retry.length === 0) {
+                            if (options.debug) console.log('FileTransfer Error: ' + serverUrl, err);
                             reject(err);
                         } else {
-                            transferQueue.unshift([ft, isDownload, serverUrl, localPath, resolve, attempt, transferOptions.trustAllHosts || false, transferOptions]);
+
+                            var transferJob = {
+                                fileTransfer: ft,
+                                isDownload: isDownload,
+                                serverUrl: serverUrl,
+                                localPath: localPath,
+                                trustAllHosts: transferOptions.trustAllHosts || false,
+                                transferOptions: transferOptions,
+                                win: resolve,
+                                fail: attempt
+                            };
+                            transferQueue.unshift(transferJob);
                             var timeout = transferOptions.retry.shift();
                             if (timeout > 0) {
                                 setTimeout(nextTransfer, timeout);
