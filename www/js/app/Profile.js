@@ -460,8 +460,10 @@ Profile.prototype = {
     },
     queryVendorArmor: function(callback) {
         var self = this;
+		/* Exotic Armor Blueprints (800), The Speaker (600) manually included */
+		var additionalVendors = [3902439767, 2680694281];
         var armorVendors = _.map(_.filter(_vendorDefs, function(vendor) {
-                return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1 || vendor.summary.vendorHash == "2680694281"
+                return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1 || additionalVendors.indexOf(vendor.summary.vendorHash) > -1;
             }), function(vendor) {
                 return vendor.hash;
             }),
@@ -493,7 +495,7 @@ Profile.prototype = {
                             tgdItem.itemDescription = "<strong> Available at " + vendorSummary.vendorName + "</strong> <br> " + tgdItem.itemDescription;
                             return tgdItem;
                         }), function(item) {
-                            return item.armorIndex > -1 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
+                            return item.armorIndex > -1 && item.getValue("Light") > 0 && (item.classType == 3 || _.has(tgd.DestinyClass, item.classType) && tgd.DestinyClass[item.classType] == item.character.classType());
                         });
                         memo = memo.concat(armor);
                         return memo;
