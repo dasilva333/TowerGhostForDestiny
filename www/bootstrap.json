@@ -74,7 +74,7 @@
     },
     "analytics.js": {
       "filename": "js/libraries/secondary/analytics.js",
-      "version": "895e138272db26a84037277a64a76032bdf23eddfe375583fe3756bc19d1c31b"
+      "version": "f60215f414d0fe15f67add69ee8500a49f4234b24f13c8ff0ccbff69a5b22c33"
     },
     "bootstrap.js": {
       "filename": "js/libraries/secondary/bootstrap.js",
@@ -90,15 +90,15 @@
     },
     "hammer.js": {
       "filename": "js/libraries/secondary/hammer.js",
-      "version": "55ffe374e0804596013419ce6ffc150b104072d7d82e153bb31c1d3c17ce97d5"
+      "version": "8a1b58d624eeb47e9e3073531a5d364e41a2e7853c052873a79917f97dd0bb44"
     },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
-      "version": "a05a9ddc18b2f6af90d378fce3a4e4ac8d1da599405ca586d0d34a4e186c51f8"
+      "version": "fa3c5532da8dede62b44e74a450754fe3ec5ad15e4debc5ea3125140716d814f"
     },
     "jquery-idletimer.js": {
       "filename": "js/plugins/jquery-idletimer.js",
-      "version": "92c35f839d90ea55730d05ce3ea859cb598cd85eb20be3ed55621bb8baa3aa36"
+      "version": "5b49526c59eb4e6b2cce3d09caad09962757a32035c6182d1063f01900fb3414"
     },
     "jquery-ui.js": {
       "filename": "js/plugins/jquery-ui.js",
@@ -110,11 +110,11 @@
     },
     "jquery.toaster.js": {
       "filename": "js/plugins/jquery.toaster.js",
-      "version": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf"
+      "version": "2a5128417916b0777873fbb90e2520f4d8fc8e8ffd503ac02484927393bbeb8f"
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4"
+      "version": "37e52d580846e95f76f0a86248a23e908a8ff115a9f2488c67b0fb7957c696eb"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",

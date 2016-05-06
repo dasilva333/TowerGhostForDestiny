@@ -161,7 +161,7 @@ Profile.prototype = {
                 _.each(currentItems, function(item) {
                     if (item) {
                         var existingItem = _.first(_.filter(newItems, function(newItem) {
-                            return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
+                            return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0) && newItem.stackSize == item.stackSize);
                         }));
                         if (existingItem) {
                             console.log("updating item");
@@ -174,7 +174,7 @@ Profile.prototype = {
                 });
                 _.each(newItems, function(newItem) {
                     var foundItem = _.filter(self.items(), function(item) {
-                        return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0));
+                        return (newItem.itemInstanceId == item._id && item._id > 0) || (newItem.itemHash == item.id && !(item._id > 0) && newItem.stackSize == item.stackSize);
                     });
                     if (foundItem.length === 0) {
                         var processedItem = new Item(newItem, self);
