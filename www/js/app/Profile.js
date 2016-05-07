@@ -151,27 +151,30 @@ Profile.prototype = {
         var newUniqueItems = _.filter(newItems, function(newItem) {
             return newItem.itemInstanceId > 0;
         });
-       	var newGenericItems = _.filter(newItems, function(item){
-       		return item.itemInstanceId === "0";
-       	});
-       	var newGenericItemCounts = _.object(_.map(_.groupBy(newGenericItems, 'itemHash'), function(items, hash){
-			var info = _itemDefs[hash];
-       		return [ parseInt(hash), { newQuantity: tgd.sum(_.pluck(items,'stackSize')), maxStackSize: info.maxStackSize } ];
-       	}));		
+        var newGenericItems = _.filter(newItems, function(item) {
+            return item.itemInstanceId === "0";
+        });
+        var newGenericItemCounts = _.object(_.map(_.groupBy(newGenericItems, 'itemHash'), function(items, hash) {
+            var info = _itemDefs[hash];
+            return [parseInt(hash), {
+                newQuantity: tgd.sum(_.pluck(items, 'stackSize')),
+                maxStackSize: info.maxStackSize
+            }];
+        }));
         var currentItems = _.filter(self.items(), function(item) {
             return buckets.indexOf(item.bucketType) > -1 || buckets.length == 0;
         });
-		var currentGenericItems = _.filter(currentItems, function(item){
-			return item._id == "0";
-		});
-		var currentGenericItemCounts = _.object(_.map(_.groupBy(currentGenericItems, 'id'), function(items, hash){
-       		return [ parseInt(hash), tgd.sum(_.pluck(items,'stackSize')) ];
-       	}));
-		console.log("currentGenericItemCounts", currentGenericItemCounts);
+        var currentGenericItems = _.filter(currentItems, function(item) {
+            return item._id == "0";
+        });
+        var currentGenericItemCounts = _.object(_.map(_.groupBy(currentGenericItems, 'id'), function(items, hash) {
+            return [parseInt(hash), tgd.sum(_.pluck(items, 'stackSize'))];
+        }));
+        console.log("currentGenericItemCounts", currentGenericItemCounts);
         var currentUniqueItems = _.filter(currentItems, function(item) {
             return item._id > 0;
         });
-		/* Process Add/Remove/Update for Unique Items */
+        /* Process Add/Remove/Update for Unique Items */
         _.each(currentUniqueItems, function(item) {
             var existingItem = _.first(_.filter(newUniqueItems, function(newItem) {
                 return newItem.itemInstanceId == item._id;
@@ -191,59 +194,62 @@ Profile.prototype = {
                 if ("id" in processedItem) self.items.push(processedItem);
             }
         });
-		/* Process Add/Remove/Update for Generic Items */
-		_.each(newGenericItemCounts, function(info, hash){
-			var existingItems =_.filter(currentGenericItems, function(item) {
+        /* Process Add/Remove/Update for Generic Items */
+        _.each(newGenericItemCounts, function(info, hash) {
+            var existingItems = _.filter(currentGenericItems, function(item) {
                 return item.itemHash == hash;
             });
-			if ( existingItems.length > 0 ){
-				var currentQuantity = currentGenericItemCounts[hash];
-				/* need to update (qty changed) add (more qty), remove (less qty) */	
-				if ( hash == 211861343 ){
-					console.log("currentQuantity", currentQuantity, info.newQuantity);
-				}
-				if ( currentQuantity != info.newQuantity ){
-					console.log("neq existing new quantity");
-					var newItem = _.findWhere(newGenericItems, { itemHash: parseInt(hash) });
-					if ( info.newQuantity <= info.maxStackSize ){
-						console.log("quantity less than maxStackSize");
-						if ( existingItems.length > 1 ){
-							console.log("multiple items found currently");
-							_.each(existingItems, function(item, index){
-								if (index > 0) self.items.remove(item);
-							});
-						}
-						existingItems[0].updateItem(newItem);
-					}
-					else {						
-						var missingItemsAmount = Math.ceil(info.newQuantity/info.maxStackSize) - existingItems.length, remainder = info.newQuantity % info.maxStackSize;
-						console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
-						_.times(missingItemsAmount, function(index){
-							var newItm = _.clone(newItem);
-							newItm.stackSize = remainder % info.maxStackSize >= info.maxStackSize ? info.maxStackSize : remainder % info.maxStackSize;
-							console.log("remainder", remainder);
-							remainder = remainder - info.maxStackSize;
-							console.log("new itemQuantity", newItm.stackSize);
-							var processedItem = new Item(newItm, self);
-			                if ("id" in processedItem) self.items.push(processedItem);
-						});
-						_.each(existingItems, function(item, index){
-							var newItm = _.clone(newItem);
-							newItm.stackSize = missingItemsAmount == 0 && index == 0 ? remainder : info.maxStackSize;
-							console.log("updating existing item with quantity ", newItm.stackSize);
-							item.updateItem(newItm);
-						});
-					}
-				}
-			}
-			else {
-				var genericItemsToAdd = _.where(newGenericItems, { itemHash: parseInt(hash) });
-				_.each(genericItemsToAdd, function(newItem){
-					var processedItem = new Item(newItem, self);
-               		if ("id" in processedItem) self.items.push(processedItem);
-				});
-			}
-		});
+            if (existingItems.length > 0) {
+                var currentQuantity = currentGenericItemCounts[hash];
+                /* need to update (qty changed) add (more qty), remove (less qty) */
+                if (hash == 211861343) {
+                    console.log("currentQuantity", currentQuantity, info.newQuantity);
+                }
+                if (currentQuantity != info.newQuantity) {
+                    console.log("neq existing new quantity");
+                    var newItem = _.findWhere(newGenericItems, {
+                        itemHash: parseInt(hash)
+                    });
+                    if (info.newQuantity <= info.maxStackSize) {
+                        console.log("quantity less than maxStackSize");
+                        if (existingItems.length > 1) {
+                            console.log("multiple items found currently");
+                            _.each(existingItems, function(item, index) {
+                                if (index > 0) self.items.remove(item);
+                            });
+                        }
+                        existingItems[0].updateItem(newItem);
+                    } else {
+                        var missingItemsAmount = Math.ceil(info.newQuantity / info.maxStackSize) - existingItems.length,
+                            remainder = info.newQuantity % info.maxStackSize;
+                        console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
+                        _.times(missingItemsAmount, function(index) {
+                            var newItm = _.clone(newItem);
+                            newItm.stackSize = remainder % info.maxStackSize >= info.maxStackSize ? info.maxStackSize : remainder % info.maxStackSize;
+                            console.log("remainder", remainder);
+                            remainder = remainder - info.maxStackSize;
+                            console.log("new itemQuantity", newItm.stackSize);
+                            var processedItem = new Item(newItm, self);
+                            if ("id" in processedItem) self.items.push(processedItem);
+                        });
+                        _.each(existingItems, function(item, index) {
+                            var newItm = _.clone(newItem);
+                            newItm.stackSize = missingItemsAmount == 0 && index == 0 ? remainder : info.maxStackSize;
+                            console.log("updating existing item with quantity ", newItm.stackSize);
+                            item.updateItem(newItm);
+                        });
+                    }
+                }
+            } else {
+                var genericItemsToAdd = _.where(newGenericItems, {
+                    itemHash: parseInt(hash)
+                });
+                _.each(genericItemsToAdd, function(newItem) {
+                    var processedItem = new Item(newItem, self);
+                    if ("id" in processedItem) self.items.push(processedItem);
+                });
+            }
+        });
         //ensures maxLightPercent is recalculated if the item has been infused up
         app.cspToggle(!app.cspToggle());
     },
@@ -529,8 +535,8 @@ Profile.prototype = {
     },
     queryVendorArmor: function(callback) {
         var self = this;
-        /* Exotic Armor Blueprints (800), The Speaker (600), Iron Banner (100) manually included */
-        var additionalVendors = [3902439767, 2680694281, 242140165];
+        /* Exotic Armor Blueprints (800), The Speaker (600), Iron Banner (100), Agent of the Nine (100) manually included */
+        var additionalVendors = [3902439767, 2680694281, 242140165, 2796397637];
         var armorVendors = _.map(_.filter(_vendorDefs, function(vendor) {
                 return [300, 400, 500].indexOf(vendor.summary.vendorSubcategoryHash) > -1 || additionalVendors.indexOf(vendor.summary.vendorHash) > -1;
             }), function(vendor) {
