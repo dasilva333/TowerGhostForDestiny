@@ -202,11 +202,8 @@ Profile.prototype = {
             if (existingItems.length > 0) {
                 var currentQuantity = currentGenericItemCounts[hash];
                 /* need to update (qty changed) add (more qty), remove (less qty) */
-                if (hash == 211861343) {
-                    console.log("currentQuantity", currentQuantity, info.newQuantity);
-                }
                 if (currentQuantity != info.newQuantity) {
-                    console.log("neq existing new quantity");
+                    console.log("neq existing new quantity ", currentQuantity, info.newQuantity);
                     var newItem = _.findWhere(newGenericItems, {
                         itemHash: parseInt(hash)
                     });
@@ -250,6 +247,12 @@ Profile.prototype = {
                 });
             }
         });
+		/* loop over current items, check if it's not in newItems, delete it if so */
+		_.each(currentGenericItems, function(item){
+			if ( !_.has(newGenericItemCounts,item.itemHash) ){
+				self.items.remove(item);
+			}
+		});
         //ensures maxLightPercent is recalculated if the item has been infused up
         app.cspToggle(!app.cspToggle());
     },
