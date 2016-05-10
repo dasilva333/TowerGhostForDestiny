@@ -126,7 +126,7 @@ tgd.calculateBestSets = function(items, rollType) {
     var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
     //console.log("highestScore", highestScore);
     var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
-        return combo.score >= highestScore;
+        return combo.score >= highestScore && combo.statTierValues.indexOf("6") == -1;
     }), false, function(combo) {
         return combo.statTiers;
     });
