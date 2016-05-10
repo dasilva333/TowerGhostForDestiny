@@ -142,10 +142,9 @@ tgd.bungie = (function(cookieString, complete) {
     };
 
     this.getVendorData = function(characterId, vendorId, callback) {
-        //[membershipType]/MyAccount/Character/[characterId]/Vendors/
         self.request({
             route: '/Destiny/' + active.type +
-                '/MyAccount/' + //active.membership +
+                '/MyAccount/' +
                 '/Character/' + characterId +
                 '/Vendor/' + vendorId + '/Metadata/',
             method: 'GET',

@@ -229,14 +229,6 @@ tgd.armorSelection = function(type, groups, character) {
         self.dialog = dialog;
     };
 
-    self.showProgress = function(callback) {
-        $("body").css("cursor", "progress");
-        setTimeout(function() {
-            callback();
-            $("body").css("cursor", "default");
-        }, 600);
-    };
-
     self.addCustomItem = function() {
         var viewModel = new tgd.armorItemCreate(self.character);
         console.log("armorItemCreate", viewModel);
@@ -279,7 +271,7 @@ tgd.armorSelection = function(type, groups, character) {
 
     self.addVendorArmor = function() {
         self.vendorArmorQueried(true);
-        self.showProgress(function() {
+        tgd.showLoading(function() {
             var valueType = tgd.armorSelectionFields[self.activeView()].valueType;
             self.character.queryVendorArmor(function(items) {
                 _.each(self.armorGroups(), function(group) {
@@ -298,7 +290,7 @@ tgd.armorSelection = function(type, groups, character) {
     }
 
     self.setOtherArmor = function(model, event) {
-        self.showProgress(function() {
+        tgd.showLoading(function() {
             var selectionType = event.target.value;
             _.each(self.armorGroups(), function(group) {
                 if (tgd.DestinyOtherArmor.indexOf(group.bucketType) > -1) {
@@ -330,7 +322,7 @@ tgd.armorSelection = function(type, groups, character) {
     };
 
     self.setView = function(model, event) {
-        self.showProgress(function() {
+        tgd.showLoading(function() {
             self.activeView(event.target.value);
         });
     };

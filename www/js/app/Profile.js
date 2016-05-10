@@ -247,12 +247,12 @@ Profile.prototype = {
                 });
             }
         });
-		/* loop over current items, check if it's not in newItems, delete it if so */
-		_.each(currentGenericItems, function(item){
-			if ( !_.has(newGenericItemCounts,item.itemHash) ){
-				self.items.remove(item);
-			}
-		});
+        /* loop over current items, check if it's not in newItems, delete it if so */
+        _.each(currentGenericItems, function(item) {
+            if (!_.has(newGenericItemCounts, item.itemHash)) {
+                self.items.remove(item);
+            }
+        });
         //ensures maxLightPercent is recalculated if the item has been infused up
         app.cspToggle(!app.cspToggle());
     },
@@ -297,6 +297,7 @@ Profile.prototype = {
         }
     },
     _equippedGear: function() {
+        this.activeBestSets(null);
         return _.filter(this.items(), function(item) {
             return item.isEquipped();
         });
@@ -802,7 +803,7 @@ Profile.prototype = {
         callback(groups);
     },
     findBestArmorSetV2: function(items, callback) {
-        $("body").css("cursor", "progress");
+
         var buckets = [].concat(tgd.DestinyArmorPieces),
             sets = [],
             bestSets = [],
@@ -816,7 +817,7 @@ Profile.prototype = {
             character = this;
 
         //console.log("items", items.length);
-        setTimeout(function() {
+        tgd.showLoading(function() {
             _.each(buckets, function(bucket) {
                 groups[bucket] = _.filter(items, function(item) {
                     return item.bucketType == bucket && item.equipRequiredLevel <= character.level() /*&& item.canEquip === true*/ && (
@@ -913,8 +914,7 @@ Profile.prototype = {
                 }
             });
             callback(_.sortBy(lastSets, 'score'));
-            $("body").css("cursor", "default");
-        }, 600);
+        });
 
         // });
 
@@ -1344,20 +1344,22 @@ Profile.prototype = {
         var character = this;
         return function() {
             //console.log("optimizeGear for ", type);
-            var armor = _.filter(character.equippedGear(), function(item) {
-                return item.armorIndex > -1 && ((type == "Equipped") || (type == "Minus Other" && tgd.DestinyOtherArmor.indexOf(item.bucketType) == -1));
-            });
-            if (type == "Minus Other") {
-                /* query the other armor types and concat the armor array with the found items */
-                _.each(tgd.DestinyOtherArmor, function(bucketType) {
-                    armor.push(_.where(character.items(), {
-                        bucketType: bucketType
-                    }));
+            tgd.showLoading(function() {
+                var armor = _.filter(character.equippedGear(), function(item) {
+                    return item.armorIndex > -1 && ((type == "Equipped") || (type == "Minus Other" && tgd.DestinyOtherArmor.indexOf(item.bucketType) == -1));
                 });
-            }
-            var bestSets = tgd.calculateBestSets(armor, 'rolls');
-            //console.log("optimizeGear", armor, bestSets);
-            character.activeBestSets(bestSets);
+                if (type == "Minus Other") {
+                    /* query the other armor types and concat the armor array with the found items */
+                    _.each(tgd.DestinyOtherArmor, function(bucketType) {
+                        armor.push(_.where(character.items(), {
+                            bucketType: bucketType
+                        }));
+                    });
+                }
+                var bestSets = tgd.calculateBestSets(armor, 'rolls');
+                //console.log("optimizeGear", armor, bestSets);
+                character.activeBestSets(bestSets);
+            });
         };
     },
     equipHighest: function(type) {

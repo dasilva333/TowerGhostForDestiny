@@ -1,3 +1,13 @@
+tgd.showLoading = function(callback) {
+    $("body").css("cursor", "progress");
+    setTimeout(function() {
+        callback();
+        setTimeout(function() {
+            $("body").css("cursor", "default");
+        }, 10);
+    }, 600);
+}
+
 tgd.cartesianProductOf = function(x) {
     return _.reduce(x, function(a, b) {
         return _.flatten(_.map(a, function(x) {
