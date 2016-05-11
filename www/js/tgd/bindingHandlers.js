@@ -21,9 +21,11 @@ tgd.getEventDelegate = function(target, selector) {
     return undefined;
 };
 
-window.ko.bindingHandlers.refreshableSection = {
+window.ko.bindingHandlers.tooltip = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        $(element).tooltip();
+        $(element).tooltip({
+            container: "body"
+        });
     }
 };
 

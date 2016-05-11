@@ -2,7 +2,7 @@
   "files": {
     "bootstrap.min.css": {
       "filename": "css/bootstrap.min.css",
-      "version": "c63d7feabbd863a3615864c072dc3c1e8ca1b21265eb8b798793942beb720ec5"
+      "version": "67361e7941219cfd068b699fbd624d902d9b94787733ada92103c28e3a9952a6"
     },
     "character-box.css": {
       "filename": "css/tgd/character-box.css",
@@ -102,7 +102,7 @@
     },
     "jquery-ui.js": {
       "filename": "js/plugins/jquery-ui.js",
-      "version": "c48feaca5f6fa70585397cfbfb1ffd5a41b98ff4959d2c36d6f8b2f1f5b06de1"
+      "version": "098da2172e02433f98269c262576a365fd27c8ba0e29d8588c11d9ae5c4904ed"
     },
     "jquery-ui.touchpunch.js": {
       "filename": "js/plugins/jquery-ui.touchpunch.js",
@@ -122,7 +122,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "2db583a40f567e6fe30308b81d4258bc0e048626b44892d72bba11bdb90889e0"
+      "version": "4970be2aa4d55fe4487e2043e184ad8f843fd335687d0abcd5f994160f04fa52"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
@@ -138,7 +138,7 @@
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
-      "version": "75d6729e26c54c4f88dad009a7ec9b5c6ad632ea631b48757c5055dd55cea6b8"
+      "version": "7e0a0a16433b79a4492d6b476efd6fcd97edb1350a759a3012bb8be35a650355"
     },
     "bonusStat.js": {
       "filename": "js/tgd/bonusStat.js",
