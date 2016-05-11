@@ -10,7 +10,7 @@
     },
     "loadouts.css": {
       "filename": "css/tgd/loadouts.css",
-      "version": "988e6479ac8323f3df48d2c5b10a2ec5c171fd60dfcdf9cab338b4dff980083f"
+      "version": "de9a1a26c9740e2c31d7bb2e6200dda563239a9408644797b653d5aba979f820"
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
@@ -118,7 +118,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "38ae0f5f9754a7c1ab821067480adbb927a07c3971ec833593cf0b3683a0146c"
+      "version": "c60c8f28c1002f749ca67fd1c6de037a02cba306c964f1188cc88b69691539e7"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",

@@ -1,26 +1,24 @@
 <div id="container_<%= id %>">
 	<p>Tip: You may click on a swap item to cycle through alternative replacements. </p>
-	<ul class="list-group">
-		<!-- ko foreach: { data: swapArray, as: 'pair' } -->
-			<li class="list-group-item">
-				<div class="row">
-					<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12" data-bind="text: pair.description"></div>
-					<div class="text-right col-xs-10 col-sm-10 col-md-10 col-lg-4">
-						<a class="item" data-bind="click: function(){ return false }, attr: { href: pair.targetItem && pair.targetItem.href }, css: (pair.targetItem && _.has(pair.targetItem,'bonusOn') ? (pair.targetItem.bonusOn == pair.targetItem.bonusStatOn() ? ' active' : ' inactive') : '')">
-							<img class="itemImage" data-bind="itemImageHandler: pair.activeTargetIcon">
-						</a>
-					</div>
-					<div class="text-center col-xs-4 col-sm-4 col-md-4 col-lg-4">
-						<img data-bind="attr: { src: pair.actionIcon }">
-					</div>
-					<div class="text-left col-xs-10 col-sm-10 col-md-10 col-lg-4">
-						<a class="swapItem item" data-bind="click: $root.changeSwapItem.bind(pair), attr: { href: pair.swapItem && pair.swapItem.href }">
-							<img class="itemImage" data-bind="itemImageHandler: pair.activeSwapIcon">
-						</a>
-					</div>
+	<ul class="list-group" data-bind="foreach: { data: swapArray, as: 'pair' }, moveItem: true">
+		<li class="list-group-item">
+			<div class="row">
+				<div class="text-center col-xs-24 col-sm-24 col-md-24 col-lg-12" data-bind="text: pair.description"></div>
+				<div class="text-right col-xs-10 col-sm-10 col-md-10 col-lg-4">
+					<a class="item" data-bind="click: function(){ return false }, attr: { href: pair.targetItem && pair.targetItem.href }, css: (pair.targetItem && _.has(pair.targetItem,'bonusOn') ? (pair.targetItem.bonusOn == pair.targetItem.bonusStatOn() ? ' active' : ' inactive') : '')">
+						<img class="itemImage" data-bind="itemImageHandler: pair.activeTargetIcon">
+					</a>
 				</div>
-			</li>
-		<!--/ko  -->
+				<div class="text-center col-xs-4 col-sm-4 col-md-4 col-lg-4">
+					<img data-bind="attr: { src: pair.actionIcon }">
+				</div>
+				<div class="text-left col-xs-10 col-sm-10 col-md-10 col-lg-4">
+					<a class="swapItem item" data-bind="click: $root.changeSwapItem.bind(pair), attr: { href: pair.swapItem && pair.swapItem.href }">
+						<img class="itemImage" data-bind="itemImageHandler: pair.activeSwapIcon">
+					</a>
+				</div>
+			</div>
+		</li>
 	</ul>
 	<div class="progress progress-striped active" style="display:none;">            
 		<div class="progress-bar progress-bar-success" id="tgdLoaderProgress" style="width: 0px;"></div>
