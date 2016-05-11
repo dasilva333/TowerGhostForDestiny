@@ -53,11 +53,13 @@
 #loadout-contents .doEquip {
     border: 2px solid blue;
 }
-#loadout-contents .active, .itemImage.active  {
+#loadout-contents .active, .itemImage.active, .list-group .active  {
 	border:2px solid green;
+	display: inline-block;
 }
-#loadout-contents .inactive, .itemImage.inactive {
+#loadout-contents .inactive, .itemImage.inactive, .list-group .inactive {
 	border:2px solid red;
+	display: inline-block;
 }
 #loadout-contents .doEquip.active {
     border: 2px solid yellow !important;
