@@ -24,7 +24,8 @@ tgd.getEventDelegate = function(target, selector) {
 window.ko.bindingHandlers.tooltip = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         $(element).tooltip({
-            container: "body"
+            container: "body",
+            html: true
         });
     }
 };
