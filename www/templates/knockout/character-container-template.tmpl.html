@@ -74,9 +74,12 @@
 								</div>
 							</div>
 							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">
-								<span class="font-bold col-xs-24 statsToolTitle">Optimize Equipped Gear</span>
+								<span class="font-bold col-xs-24 statsToolTitle">
+									Optimize Equipped Gear 
+									<button data-bind="tooltip: true, clickBubble: false" type="button" class="btn btn-sm btn-info" data-toggle="tooltip" data-trigger="click hover space" data-placement="top" title="Displays the stat distributions available for the currently equipped gear."><i class="fa fa-question-circle"></i></button>
+								</span>
 								<div class="btn-group col-xs-24">
-									<a title="Analyzes the equipped gear for the best stat distributions" data-bind="click: character.optimizeGear('Equipped'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Equipped</a>
+									<a title="Analyzes the equipped gear for the best stat distributions" data-bind="click: character.optimizeGear('Equipped'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Refresh</a>
 									<a title="Analyzes the equipped gear minus other armor for the best stat distributions" data-bind="click: character.optimizeGear('Minus Other'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Minus Other</a>									
 								</div>
 								<div class="btn-group col-xs-24" data-bind="with: character.activeBestSets">

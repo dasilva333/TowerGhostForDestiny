@@ -122,7 +122,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "e9234054b100e8627a59633308e88506ed7a2701f292b5cac2fc7601a38ebbdb"
+      "version": "2db583a40f567e6fe30308b81d4258bc0e048626b44892d72bba11bdb90889e0"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
@@ -138,7 +138,7 @@
     },
     "bindingHandlers.js": {
       "filename": "js/tgd/bindingHandlers.js",
-      "version": "9656919460f83966f15a54e93df620cde87ea71637e4812a0d9a5d79fd030345"
+      "version": "75d6729e26c54c4f88dad009a7ec9b5c6ad632ea631b48757c5055dd55cea6b8"
     },
     "bonusStat.js": {
       "filename": "js/tgd/bonusStat.js",
@@ -202,7 +202,7 @@
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "4faaba61aebe81528dadab8781bed746f60fea1ccacd14739f4b09a1dd0afdca"
+      "version": "9c66d0b226af434ba8c8cd9b228fb344106d4efd48a599d502b55f9092d67551"
     },
     "app.js": {
       "filename": "js/app/app.js",

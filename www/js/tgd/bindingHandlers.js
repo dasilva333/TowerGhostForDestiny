@@ -21,6 +21,12 @@ tgd.getEventDelegate = function(target, selector) {
     return undefined;
 };
 
+window.ko.bindingHandlers.refreshableSection = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        $(element).tooltip();
+    }
+};
+
 window.ko.bindingHandlers.itemImageHandler = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var icon = ko.unwrap(valueAccessor());

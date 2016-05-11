@@ -43,6 +43,11 @@ function Profile(character) {
 
     this.weapons.subscribe(app.addWeaponTypes);
     this.items.subscribe(app.addTierTypes);
+    this.statsPane.subscribe(function(currentPane) {
+        if (currentPane == "more" && _.isEmpty(self.activeBestSets())) {
+            self.optimizeGear('Equipped')();
+        }
+    });
 }
 
 Profile.prototype = {
