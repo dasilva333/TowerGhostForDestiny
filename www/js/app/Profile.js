@@ -1315,9 +1315,11 @@ Profile.prototype = {
                 character.renderBestSets(type, sets);
             });
         } else if (type == "MaxLight") {
-            character.findMaxLightSet(activeItems, function(groups) {
-                character.renderBestGroups(type, groups);
-            });
+			if ( isMobile && confirm("Warning: This button analyzes all of your armor requiring a lot of processing power and might make the app unresponsive, are you sure you want to continue?") || !isMobile ){
+				character.findMaxLightSet(activeItems, function(groups) {
+					character.renderBestGroups(type, groups);
+				});
+			}
         } else if (type == "Custom") {
             var groups = _.groupBy(activeItems, "bucketType");
             character.renderBestGroups(type, groups);
@@ -1348,17 +1350,22 @@ Profile.prototype = {
                 var armor = _.filter(character.equippedGear(), function(item) {
                     return item.armorIndex > -1 && ((type == "Equipped") || (type == "Minus Other" && tgd.DestinyOtherArmor.indexOf(item.bucketType) == -1));
                 });
+				var otherArmor = [];
                 if (type == "Minus Other") {
                     /* query the other armor types and concat the armor array with the found items */
-                    _.each(tgd.DestinyOtherArmor, function(bucketType) {
-                        armor.push(_.where(character.items(), {
+                    otherArmor = _.map(tgd.DestinyOtherArmor, function(bucketType) {
+                        return _.where(character.items(), {
                             bucketType: bucketType
-                        }));
+                        });
                     });
+					armor = armor.concat(otherArmor);
                 }
-                var bestSets = tgd.calculateBestSets(armor, 'rolls');
-                //console.log("optimizeGear", armor, bestSets);
-                character.activeBestSets(bestSets);
+				var otherArmorPieces = _.flatten(otherArmor).length;
+				if (  otherArmorPieces <= 12 && isMobile || otherArmorPieces >= 13 && isMobile && confirm("Warning: There are " + otherArmorPieces + " pieces of Artifacts, Class Items and Ghosts available, this operation is processing intensive and may make the app unresponsive, would you like to conitnue?") || !isMobile ){
+					var bestSets = tgd.calculateBestSets(armor, 'rolls');
+					//console.log("optimizeGear", armor, bestSets);
+					character.activeBestSets(bestSets);
+				}	
             });
         };
     },
