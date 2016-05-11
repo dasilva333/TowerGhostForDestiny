@@ -56,7 +56,9 @@
 							</div>
 							<div data-bind="if: character.statsPane() == 'tools' && character.statsShowing()">
 								<div class="col-xs-24 text-center">
-									<span class="font-bold col-xs-24 statsToolTitle">Equip Gear With Highest <button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-sm btn-info" data-toggle="tooltip" data-trigger="click hover space" data-placement="auto" title="Pulls gear from anywhere in your account to equip with the highest stat desirable."><i class="fa fa-question-circle"></i></button></span>
+									<span class="font-bold col-xs-24 statsToolTitle">Equip Gear With Highest 
+										<button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-trigger="click hover space" data-placement="auto" title="Pulls gear from anywhere in your account to equip with the highest stat desirable."><i class="fa fa-question-circle"></i></button>
+									</span>
 									<div class="btn-group col-xs-24">
 										<a title="Automatically equip gear with the most Intellect" data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
 										<a title="Automatically equip gear with the most Discipline" data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
@@ -64,7 +66,10 @@
 										<a title="Automatically equip gear with the highest Light Level" data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
 										<a title="Automatically equip gear with the highest Combined Stat Points" data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
 									</div>
-									<span class="font-bold col-xs-24 statsToolTitle">Armor Set Builder <button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-sm btn-info" data-toggle="tooltip" data-trigger="click hover space" data-placement="auto" title="<strong>Top 3</strong>-Report of stat combinations available for the top 3 items by points.<br><strong>Character</strong>-Report of stat combinations available based on all the items in that character.<br><strong>Custom</strong>-Explore all armor combinations possible<br><strong>T12 Build</strong>-Explore Tier-12 combinations possible"><i class="fa fa-question-circle"></i></button></span>
+									<span class="font-bold col-xs-24 statsToolTitle">
+										Armor Set Builder 
+										<button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-trigger="click hover space" data-placement="auto" title="<strong>Top 3</strong>-Report of stat combinations available for the top 3 items by points.<br><strong>Character</strong>-Report of stat combinations available based on all the items in that character.<br><strong>Custom</strong>-Explore all armor combinations possible<br><strong>T12 Build</strong>-Explore Tier-12 combinations possible"><i class="fa fa-question-circle"></i></button>
+									</span>
 									<div class="btn-group col-xs-24">
 										<a title="Analyzes the top 3 armor pieces sorted by points in your inventory to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Top 3</a>
 										<a title="Analyzes all your armor in your inventory to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Character</a>
@@ -76,7 +81,7 @@
 							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">
 								<span class="font-bold col-xs-24 statsToolTitle text-center">
 									Optimize Equipped Gear 
-									<button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-sm btn-info" data-toggle="tooltip" data-trigger="click hover space" data-placement="bottom" title="<strong>Equipped</strong> Lists the stat combinations available for the currently equipped gear.<br><strong>Minus Other</strong> Lists the stat combinations available for your currently equipped gear and all your artifacts, ghosts and class items."><i class="fa fa-question-circle"></i></button>
+									<button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-trigger="click hover space" data-placement="bottom" title="<strong>Equipped</strong> Lists the stat combinations available for the currently equipped gear.<br><strong>Minus Other</strong> Lists the stat combinations available for your currently equipped gear and all your artifacts, ghosts and class items."><i class="fa fa-question-circle"></i></button>
 								</span>
 								<div class="btn-group col-xs-24">
 									<a title="Analyzes the equipped gear for the best stat distributions" data-bind="click: character.optimizeGear('Equipped'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Refresh</a>
