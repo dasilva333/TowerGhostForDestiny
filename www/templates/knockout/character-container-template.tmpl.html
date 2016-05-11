@@ -24,13 +24,11 @@
 								<div class="col-xs-24 text-center" style="border-bottom:1px dashed white; padding:5px 0px; ">
 									<div data-bind="foreach: { data: tgd.DestinyArmorStats, as: 'stat' }" class="skillStatRow">
 										<div class="row">
-											<span class="col-xs-10 text-right font-bold" data-bind="text: stat.statName"></span>
-											<div class="col-xs-14">
-												<span data-bind="text: character.equippedStats()[stat.statName]"></span>
-												<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
-												<span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
-												( <span data-bind="text: character.getCooldown(Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier), stat.statHash)"></span> )
-											</div>
+											<span class="col-xs-9 text-right font-bold" data-bind="text: stat.statName"></span>
+											<span class="col-xs-4" data-bind="text: character.equippedStats()[stat.statName]"></span>
+											<span data-bind="css: 'stat_' + stat.statHash" class="col-xs-2 fa skill"></span>
+											<span class="col-xs-3" data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+											<span class="col-xs-6 text-left" style="white-space:nowrap;">(<span data-bind="text: character.getCooldown(Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier), stat.statHash)"></span>)</span>
 										</div>
 									</div>
 								</div>
