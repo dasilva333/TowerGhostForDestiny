@@ -21,38 +21,42 @@
 								<a data-bind="click: character.setPane('more'), clickBubble: false, css: character.statsPane() == 'more' ? 'btn-primary' : 'btn-default'" class="btn btn-default btn-sm col-xs-8 text-center"><i class="fa fa-bars"></i> More</a>
 							</div>
 							<div data-bind="if: character.statsPane() == 'info' && character.statsShowing()">
-								<div class="col-xs-10 text-left skillStatRow">
-									<div>
-										<span class="font-bold" data-bind="text: $root.activeText().armor">Armor</span>
-										<span data-bind="text: STAT_ARMOR.value"></span>
-									</div>
-									<div>
-										<span class="font-bold" data-bind="text: $root.activeText().agility">Agility</span>
-										<span data-bind="text: STAT_AGILITY.value"></span>
-									</div>
-									<div>
-										<span class="font-bold" data-bind="text: $root.activeText().recovery">Recovery</span>
-										<span data-bind="text: STAT_RECOVERY.value"></span>
-									</div>
-								</div>
-								<div class="col-xs-14 text-left">
-									<span class="font-bold">Equipped Tier</span> <span data-bind="text: character.equippedTier" title="Current tier possible for Armor Equipped"></span><br>
-									<span class="font-bold">Equipped CSP</span> <span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span><br>
-									<span class="font-bold">Potential Tier</span> <span data-bind="text: character.potentialTier" title="Stat Points needed to reach Theoretical Tier"></span><br>
-									<span class="font-bold">Points Needed</span> <span data-bind="text: (character.potentialTier() * tgd.DestinySkillTier)" title="Stat Points needed to reach Theoretical Tier"></span><br>
-									<span class="font-bold">CSP at <span data-bind="text: tgd.DestinyLightCap"></span></span> <span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>
-								</div>
-								<div class="col-xs-24 text-center">
+								<div class="col-xs-24 text-center" style="border-bottom:1px dashed white; padding:7px 0px; ">
 									<div data-bind="foreach: { data: tgd.DestinyArmorStats, as: 'stat' }" class="skillStatRow">
-										<div>
-											<span class="font-bold" data-bind="text: stat.statName"></span>
-											<span data-bind="text: character.equippedStats()[stat.statName]"></span>
-											<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
-											<span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
-											( <span data-bind="text: character.getCooldown(Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier), stat.statHash)"></span> )
+										<div class="row">
+											<span class="col-xs-10 text-right font-bold" data-bind="text: stat.statName"></span>
+											<div class="col-xs-14">
+												<span data-bind="text: character.equippedStats()[stat.statName]"></span>
+												<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
+												<span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+												( <span data-bind="text: character.getCooldown(Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier), stat.statHash)"></span> )
+											</div>
 										</div>
 									</div>
-								</div>								
+								</div>
+								<div class="col-xs-24" style="padding:7px 0px">
+									<div class="col-xs-10 text-left font-smaller-1 skillStatRow">
+										<div class="row">
+											<div class="font-bold col-xs-12" data-bind="text: $root.activeText().armor">Armor</div>
+											<div class="col-xs-12 text-right" data-bind="text: STAT_ARMOR.value"></div>
+										</div>
+										<div class="row">
+											<div class="font-bold col-xs-13" data-bind="text: $root.activeText().agility">Agility</div>
+											<div class="col-xs-11 text-right" data-bind="text: STAT_AGILITY.value"></div>
+										</div>
+										<div class="row">
+											<div class="font-bold col-xs-18" data-bind="text: $root.activeText().recovery">Recovery</div>
+											<div class="col-xs-6 text-right" data-bind="text: STAT_RECOVERY.value"></div>
+										</div>
+									</div>
+									<div class="col-xs-14 text-left font-smaller-1">
+										<span class="font-bold">Equipped Tier</span> <span data-bind="text: character.equippedTier" title="Current tier possible for Armor Equipped"></span><br>
+										<span class="font-bold">Equipped CSP</span> <span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span><br>
+										<span class="font-bold">Potential Tier</span> <span data-bind="text: character.potentialTier" title="Stat Points needed to reach Theoretical Tier"></span><br>
+										<span class="font-bold">Points Needed</span> <span data-bind="text: (character.potentialTier() * tgd.DestinySkillTier)" title="Stat Points needed to reach Theoretical Tier"></span><br>
+										<span class="font-bold">CSP at <span data-bind="text: tgd.DestinyLightCap"></span></span> <span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>
+									</div>
+								</div>
 							</div>
 							<div data-bind="if: character.statsPane() == 'tools' && character.statsShowing()">
 								<div class="col-xs-24 text-center">

@@ -113,7 +113,7 @@
 	width: 99% !important;
 	font-size: 15px;
 }
-.character-box .stats .skillStatRow div {
+.character-box .stats .skillStatRow div.row {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
