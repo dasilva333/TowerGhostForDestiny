@@ -3,14 +3,14 @@
         "currentFile": "../www/js//libraries/secondary/analytics.js",
         "fileName": "analytics.js",
         "link": "http://www.google-analytics.com/analytics.js",
-        "localHash": "895e138272db26a84037277a64a76032bdf23eddfe375583fe3756bc19d1c31b",
+        "localHash": "f0558acedf5a295d6f363d6cfe76c74b27b1a3b1c3fb9df23814f7b04b29704e",
         "remoteHash": "f60215f414d0fe15f67add69ee8500a49f4234b24f13c8ff0ccbff69a5b22c33"
     },
     {
         "currentFile": "../www/js//plugins/bootstrap-dialog.js",
         "fileName": "bootstrap-dialog.js",
         "link": "https://raw.githubusercontent.com/nakupanda/bootstrap3-dialog/master/dist/js/bootstrap-dialog.js",
-        "localHash": "a05a9ddc18b2f6af90d378fce3a4e4ac8d1da599405ca586d0d34a4e186c51f8",
+        "localHash": "be37237af48ff7cc173f86461e522ccbc117608c53c9a2e9250cbacf239529f1",
         "remoteHash": "fa3c5532da8dede62b44e74a450754fe3ec5ad15e4debc5ea3125140716d814f"
     },
     {
@@ -31,7 +31,7 @@
         "currentFile": "../www/js//libraries/secondary/hammer.js",
         "fileName": "hammer.js",
         "link": "http://hammerjs.github.io/dist/hammer.min.js",
-        "localHash": "55ffe374e0804596013419ce6ffc150b104072d7d82e153bb31c1d3c17ce97d5",
+        "localHash": "86190e5e8be7fbfc1aabf3edbb7cf7c0366361c35e6f326330ca74a1914d12f7",
         "remoteHash": "8a1b58d624eeb47e9e3073531a5d364e41a2e7853c052873a79917f97dd0bb44"
     },
     {
@@ -45,7 +45,7 @@
         "currentFile": "../www/js//plugins/jquery-idletimer.js",
         "fileName": "jquery-idletimer.js",
         "link": "https://raw.githubusercontent.com/thorst/jquery-idletimer/master/dist/idle-timer.min.js",
-        "localHash": "92c35f839d90ea55730d05ce3ea859cb598cd85eb20be3ed55621bb8baa3aa36",
+        "localHash": "0d03be1d3387cc9b62076d99af804fae42504fb6b0fae92cc8bc43521e13c7b3",
         "remoteHash": "5b49526c59eb4e6b2cce3d09caad09962757a32035c6182d1063f01900fb3414"
     },
     {
@@ -73,14 +73,14 @@
         "currentFile": "../www/js//plugins/jquery.toaster.js",
         "fileName": "jquery.toaster.js",
         "link": "https://raw.githubusercontent.com/scottoffen/jquery.toaster/master/jquery.toaster.js",
-        "localHash": "8292e3d4b6454dcd83c549f2a05a305adbce028758aa194cdb1e331810e13fcf",
+        "localHash": "11e56c3850fa639ae31b68fae3e99a2e63091ecf35bc215957299bdc04290fdd",
         "remoteHash": "2a5128417916b0777873fbb90e2520f4d8fc8e8ffd503ac02484927393bbeb8f"
     },
     {
         "currentFile": "../www/js//plugins/knockout-sortable.js",
         "fileName": "knockout-sortable.js",
         "link": "https://raw.githubusercontent.com/rniemeyer/knockout-sortable/master/src/knockout-sortable.js",
-        "localHash": "9cb4b9ee9d068fcc50c851fd22898668cdc716139c82d13621ea3c955737ecc4",
+        "localHash": "ac4ad65392d1d1e4825fb3226a9a314c30bc83d4f787fbf7d71dcbfabe76a126",
         "remoteHash": "37e52d580846e95f76f0a86248a23e908a8ff115a9f2488c67b0fb7957c696eb"
     },
     {

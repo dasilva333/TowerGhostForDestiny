@@ -6,7 +6,7 @@ tgd.showLoading = function(callback) {
             $("body").css("cursor", "default");
         }, 10);
     }, 600);
-}
+};
 
 tgd.cartesianProductOf = function(x) {
     return _.reduce(x, function(a, b) {

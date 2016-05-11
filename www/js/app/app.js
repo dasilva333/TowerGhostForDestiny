@@ -173,7 +173,7 @@ var app = function() {
             viewModel: settingsManager,
             templateName: 'settingsTemplate',
             buttons: [{
-                label: 'Close',
+                label: self.activeText().close_msg,
                 action: function(dialogItself) {
                     dialogItself.close();
                 }
@@ -465,7 +465,7 @@ var app = function() {
                         var hasStat = _.has(perk, 'isStat');
                         return (perk.active === true && hasStat === false ||
                             (perk.active === false && self.advancedTooltips() === true && hasStat === false) ||
-                            hasStat === true && perk.isStat === false) && perk.isVisible == true;
+                            hasStat === true && perk.isStat === false) && perk.isVisible === true;
                     })
                 });
                 //TODO: Can't check bucketType bc a weapon might exist in Lost Items, need to use 'itemCategoryHashes' to be able to categorize items properly
@@ -828,7 +828,7 @@ var app = function() {
             var type = weaponType.name;
             tgd.localLog(weaponType, "weapon type: " + type);
             self.weaponFilter(type);
-        }
+        };
     };
     this._setArmorFilter = function() {
         self.toggleBootstrapMenu();
@@ -1740,11 +1740,11 @@ var app = function() {
                 onFinish: defaultAction,
                 message: messageStr,
                 buttons: [{
-                    label: 'Normalize',
+                    label: self.activeText().normalize,
                     cssClass: 'btn-primary',
                     action: defaultAction
                 }, {
-                    label: 'Close',
+                    label: self.activeText().close_msg,
                     action: function(dialogItself) {
                         dialogItself.close();
                     }
@@ -1814,11 +1814,11 @@ var app = function() {
             templateName: "selectMultiCharactersTemplate",
             viewModel: smc,
             buttons: [{
-                label: 'OK',
+                label: self.activeText().ok_msg,
                 cssClass: 'btn-primary',
                 action: defaultAction
             }, {
-                label: 'Close',
+                label: self.activeText().close_msg,
                 action: function(dialogItself) {
                     dialogItself.close();
                 }

@@ -587,7 +587,7 @@ Item.prototype = {
         var rollType = "None";
         if (_.has(tgd.DestinyMaxCSP, this.bucketType)) {
             var maxLightPercent = ko.unwrap(this.maxLightPercent),
-                minAvgPercentNeeded = ko.unwrap(app.minAvgPercentNeeded);;
+                minAvgPercentNeeded = ko.unwrap(app.minAvgPercentNeeded);
             rollType = "BadRoll";
             if (maxLightPercent >= minAvgPercentNeeded) {
                 rollType = "GoodRoll";
@@ -1422,7 +1422,7 @@ Item.prototype = {
             templateName: 'normalizeTemplate',
             viewModel: extrasPopup,
             buttons: [{
-                label: 'Normalize',
+                label: app.activeText().normalize,
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
                     var characters = extrasPopup.selectedCharacters();
@@ -1434,7 +1434,7 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }, {
-                label: 'Consolidate',
+                label: app.activeText().consolidate,
                 cssClass: 'btn-primary',
                 action: function(dialogItself) {
                     var characters = _.pluck(extrasPopup.selectedCharacters(), 'id');
@@ -1442,7 +1442,7 @@ Item.prototype = {
                     dialogItself.close();
                 }
             }, {
-                label: 'Close',
+                label: app.activeText().close_msg,
                 action: function(dialogItself) {
                     dialogItself.close();
                 }

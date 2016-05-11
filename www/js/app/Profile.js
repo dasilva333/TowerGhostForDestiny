@@ -162,7 +162,7 @@ Profile.prototype = {
             }];
         }));
         var currentItems = _.filter(self.items(), function(item) {
-            return buckets.indexOf(item.bucketType) > -1 || buckets.length == 0;
+            return buckets.indexOf(item.bucketType) > -1 || buckets.length === 0;
         });
         var currentGenericItems = _.filter(currentItems, function(item) {
             return item._id == "0";
@@ -231,7 +231,7 @@ Profile.prototype = {
                         });
                         _.each(existingItems, function(item, index) {
                             var newItm = _.clone(newItem);
-                            newItm.stackSize = missingItemsAmount == 0 && index == 0 ? remainder : info.maxStackSize;
+                            newItm.stackSize = (missingItemsAmount === 0 && index === 0) ? remainder : info.maxStackSize;
                             console.log("updating existing item with quantity ", newItm.stackSize);
                             item.updateItem(newItm);
                         });
@@ -559,7 +559,7 @@ Profile.prototype = {
                 console.log("armorItems", armorItems);
                 callback(armorItems);
             }
-        }
+        };
         _.each(armorVendors, function(vendorId) {
             var vendorSummary = _vendorDefs[vendorId].summary;
             //console.log("vendorSummary", vendorSummary.vendorName, vendorSummary);

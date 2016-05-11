@@ -16,7 +16,7 @@ tgd.armorItemCreate = function(character) {
         var characterClass = self.character.classType();
         var bucketType = self.bucketType();
         var items = _.sortBy(_.map(_.filter(_itemDefs, function(item) {
-            return tgd.DestinyBucketTypes[item.bucketTypeHash] == bucketType && item.itemName != "" && (tgd.DestinyClass[item.classType] == characterClass || bucketType == "Ghost");
+            return tgd.DestinyBucketTypes[item.bucketTypeHash] == bucketType && item.itemName !== "" && (tgd.DestinyClass[item.classType] == characterClass || bucketType == "Ghost");
         }), function(item) {
             item.itemName = decodeURIComponent(item.itemName);
             return item;
@@ -32,7 +32,7 @@ tgd.armorItemCreate = function(character) {
             if (stat.value() > 0) {
                 memo.push({
                     isStat: true,
-                    active: memo.length == 0,
+                    active: memo.length === 0,
                     name: stat.name
                 });
             }
@@ -46,7 +46,7 @@ tgd.armorItemCreate = function(character) {
         }));
         return new Item(itm, self.character);
     });
-}
+};
 tgd.calculateLoadoutName = function(combo) {
     var loaderType = _.intersection(tgd.weaponTypes, _.flatten(_.map(_.pluck(_.findWhere(combo.set, {
         bucketType: "Gauntlet"
@@ -234,7 +234,7 @@ tgd.armorSelection = function(type, groups, character) {
         console.log("armorItemCreate", viewModel);
         var defaultAction = function(dialogItself) {
             var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
-                if (!$.isNumeric(stat.value()) && memo == true) memo = false;
+                if (!$.isNumeric(stat.value()) && memo === true) memo = false;
                 return memo;
             }, true);
             var hasValidLight = $.isNumeric(viewModel.lightLevel());
@@ -247,7 +247,7 @@ tgd.armorSelection = function(type, groups, character) {
                 var group = _.findWhere(self.armorGroups(), {
                     bucketType: viewModel.activeItem().bucketType
                 });
-                var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);;
+                var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
                 group.items.push(armorItem);
                 dialogItself.close();
             }
@@ -261,7 +261,7 @@ tgd.armorSelection = function(type, groups, character) {
                 cssClass: 'btn-primary',
                 action: defaultAction
             }, {
-                label: 'Close',
+                label: app.activeText().close_msg,
                 action: function(dialogItself) {
                     dialogItself.close();
                 }
