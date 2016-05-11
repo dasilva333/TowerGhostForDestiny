@@ -14,7 +14,7 @@
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
+      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -74,7 +74,7 @@
     },
     "analytics.js": {
       "filename": "js/libraries/secondary/analytics.js",
-      "version": "f0558acedf5a295d6f363d6cfe76c74b27b1a3b1c3fb9df23814f7b04b29704e"
+      "version": "f60215f414d0fe15f67add69ee8500a49f4234b24f13c8ff0ccbff69a5b22c33"
     },
     "bootstrap.js": {
       "filename": "js/libraries/secondary/bootstrap.js",
@@ -90,15 +90,15 @@
     },
     "hammer.js": {
       "filename": "js/libraries/secondary/hammer.js",
-      "version": "86190e5e8be7fbfc1aabf3edbb7cf7c0366361c35e6f326330ca74a1914d12f7"
+      "version": "8a1b58d624eeb47e9e3073531a5d364e41a2e7853c052873a79917f97dd0bb44"
     },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
-      "version": "be37237af48ff7cc173f86461e522ccbc117608c53c9a2e9250cbacf239529f1"
+      "version": "fa3c5532da8dede62b44e74a450754fe3ec5ad15e4debc5ea3125140716d814f"
     },
     "jquery-idletimer.js": {
       "filename": "js/plugins/jquery-idletimer.js",
-      "version": "0d03be1d3387cc9b62076d99af804fae42504fb6b0fae92cc8bc43521e13c7b3"
+      "version": "5b49526c59eb4e6b2cce3d09caad09962757a32035c6182d1063f01900fb3414"
     },
     "jquery-ui.js": {
       "filename": "js/plugins/jquery-ui.js",
@@ -110,11 +110,11 @@
     },
     "jquery.toaster.js": {
       "filename": "js/plugins/jquery.toaster.js",
-      "version": "11e56c3850fa639ae31b68fae3e99a2e63091ecf35bc215957299bdc04290fdd"
+      "version": "2a5128417916b0777873fbb90e2520f4d8fc8e8ffd503ac02484927393bbeb8f"
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "ac4ad65392d1d1e4825fb3226a9a314c30bc83d4f787fbf7d71dcbfabe76a126"
+      "version": "37e52d580846e95f76f0a86248a23e908a8ff115a9f2488c67b0fb7957c696eb"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
@@ -122,7 +122,7 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "3b162a0829688255225010ff6f8b338518e67640e4cca7378ced3dcf03f447c6"
+      "version": "70e75e7af7239672c2e90d590cfa3b57cfb132d1907ce3bdaa19a02b3035867f"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
