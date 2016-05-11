@@ -20,6 +20,7 @@ function Profile(character) {
     this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
+    this.statsPane = ko.observable("info");
     this.weapons = ko.pureComputed(this._weapons, this);
     this.armor = ko.pureComputed(this._armor, this);
     this.general = ko.pureComputed(this._general, this);
@@ -30,7 +31,7 @@ function Profile(character) {
     this.sumCSP = ko.pureComputed(this._sumCSP, this);
     this.equippedSP = ko.pureComputed(this._equippedSP, this);
     this.equippedTier = ko.pureComputed(this._equippedTier, this);
-    this.tierCSP = ko.pureComputed(this._tierCSP, this);
+    this.potentialTier = ko.pureComputed(this._potentialTier, this);
     this.potentialCSP = ko.pureComputed(this._potentialCSP, this);
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
@@ -275,6 +276,13 @@ Profile.prototype = {
             }
         };
     },
+    setPane: function(pane) {
+        var self = this;
+        return function() {
+            self.statsPane(pane);
+            return false;
+        }
+    },
     calculatePowerLevelWithItems: function(items) {
         if (items.length === 0) {
             return 0;
@@ -294,6 +302,24 @@ Profile.prototype = {
             return powerLevel;
         } else {
             return 0;
+        }
+    },
+    getCooldown: function(tier, statHash) {
+        var activeSubclass = this.itemEquipped("Subclasses").id;
+        if (statHash === 144602215) { /* Intellect */
+            if (tgd.subclassesSuperA.indexOf(activeSubclass) > -1) {
+                return tgd.cooldownsSuperA[tier];
+            } else {
+                return tgd.cooldownsSuperB[tier];
+            }
+        } else if (statHash === 4244567218) { /* Strength */
+            if (tgd.subclassesStrengthA.indexOf(activeSubclass) > -1) {
+                return tgd.cooldownsMelee[tier];
+            } else {
+                return tgd.cooldownsGrenade[tier];
+            }
+        } else if (statHash === 1735777505) { /* Discipline */
+            return tgd.cooldownsGrenade[tier];
         }
     },
     _equippedGear: function() {
@@ -316,14 +342,13 @@ Profile.prototype = {
         return tgd.sum(this.equippedSP());
     },
     _equippedTier: function() {
-        var theoreticalTier = Math.floor(this.sumCSP() / tgd.DestinySkillTier);
         var effectiveTier = tgd.sum(_.map(this.equippedSP(), function(value) {
             return Math.floor(value / tgd.DestinySkillTier);
         }));
-        return effectiveTier + "/" + theoreticalTier;
+        return effectiveTier;
     },
-    _tierCSP: function() {
-        return this.equippedTier().split("/")[1] * tgd.DestinySkillTier;
+    _potentialTier: function() {
+        return Math.floor(this.sumCSP() / tgd.DestinySkillTier);
     },
     _potentialCSP: function() {
         return tgd.sum(_.map(_.filter(this.equippedGear(), function(item) {

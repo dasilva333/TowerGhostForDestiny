@@ -28,6 +28,15 @@ tgd.itemsNotIndexed = [];
 tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Buffs", "Glimmer Credit", "Telemetries", "Engrams"];
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
+// Cooldowns
+tgd.cooldownsSuperA = ['5:00', '4:46', '4:31', '4:15', '3:58', '3:40'];
+tgd.cooldownsSuperB = ['5:30', '5:14', '4:57', '4:39', '4:20', '4:00'];
+tgd.cooldownsGrenade = ['1:00', '0:55', '0:49', '0:42', '0:34', '0:25'];
+tgd.cooldownsMelee = ['1:10', '1:04', '0:57', '0:49', '0:40', '0:29'];
+/* Defender, Nightstalker, Striker, Sunsinger */
+tgd.subclassesSuperA = [2007186000, 4143670656, 2455559914, 3658182170];
+/* Nightstalker, Gunslinger */
+tgd.subclassesStrengthA = [4143670656, 1716862031];
 tgd.DestinyWeaponPieces = ["Primary", "Special", "Heavy"];
 tgd.DestinyGeneralExceptions = ["Ghost", "Artifact"];
 tgd.DestinyOtherArmor = ["Ghost", "Class Items", "Artifact"];

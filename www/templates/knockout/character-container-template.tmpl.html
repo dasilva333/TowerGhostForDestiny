@@ -15,51 +15,65 @@
 						</div>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
-                            <div class="col-xs-11 text-left skillStatRow">
-                                <div>
-                                    <span class="font-bold" data-bind="text: $root.activeText().armor">Armor</span>
-                                    <span data-bind="text: STAT_ARMOR.value"></span>
-                                </div>
-                                <div>
-                                    <span class="font-bold" data-bind="text: $root.activeText().agility">Agility</span>
-                                    <span data-bind="text: STAT_AGILITY.value"></span>
-                                </div>
-                                <div>
-                                    <span class="font-bold" data-bind="text: $root.activeText().recovery">Recovery</span>
-                                    <span data-bind="text: STAT_RECOVERY.value"></span>
-                                </div>
-                            </div>
-                            <div class="col-xs-13 text-right">
-                                <div data-bind="foreach: { data: tgd.DestinyArmorStats, as: 'stat' }" class="skillStatRow">
+                            <div class="btn-group col-xs-24">
+								<a data-bind="click: character.setPane('info'), clickBubble: false, css: character.statsPane() == 'info' ? 'btn-primary' : 'btn-default'" class="btn btn-default btn-sm col-xs-8 text-center"><i class="fa fa-info"></i> Info</a>
+								<a data-bind="click: character.setPane('tools'), clickBubble: false, css: character.statsPane() == 'tools' ? 'btn-primary' : 'btn-default'"class="btn btn-default btn-sm col-xs-8 text-center"><i class="fa fa-wrench"></i> Tools</a>
+								<a data-bind="click: character.setPane('more'), clickBubble: false, css: character.statsPane() == 'more' ? 'btn-primary' : 'btn-default'" class="btn btn-default btn-sm col-xs-8 text-center"><i class="fa fa-bars"></i> More</a>
+							</div>
+							<div data-bind="if: character.statsPane() == 'info' && character.statsShowing()">
+								<div class="col-xs-10 text-left skillStatRow">
 									<div>
-										<span class="font-bold" data-bind="text: stat.statName.toLowerCase().substring(0,3)"></span>
-										<span data-bind="text: character.equippedStats()[stat.statName]"></span>
-										<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
-										<span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+										<span class="font-bold" data-bind="text: $root.activeText().armor">Armor</span>
+										<span data-bind="text: STAT_ARMOR.value"></span>
 									</div>
-                                </div>
-                            </div>
-                            <div class="col-xs-24 text-center statsToolTitle">
-                                <span class="font-bold">Tier</span>:
-                                <span data-bind="text: character.equippedTier" title="Effective Tier / Theoretical Tier"></span>
-                                (<span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span>/<span data-bind="text: character.tierCSP" title="Stat Points needed to reach Theoretical Tier"></span>/<span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>)
-                            </div>
-                            <div class="col-xs-24 text-center">
-                                <span class="font-bold col-xs-24 statsToolTitle">Equip Gear With Highest</span>
-                                <div class="btn-group col-xs-24">
-	                                <a title="Automatically equip gear with the most Intellect" data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
-	                                <a title="Automatically equip gear with the most Discipline" data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
-	                                <a title="Automatically equip gear with the most Strength" data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Str</a>
-									<a title="Automatically equip gear with the highest Light Level" data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
-									<a title="Automatically equip gear with the highest Combined Stat Points" data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
+									<div>
+										<span class="font-bold" data-bind="text: $root.activeText().agility">Agility</span>
+										<span data-bind="text: STAT_AGILITY.value"></span>
+									</div>
+									<div>
+										<span class="font-bold" data-bind="text: $root.activeText().recovery">Recovery</span>
+										<span data-bind="text: STAT_RECOVERY.value"></span>
+									</div>
 								</div>
-								<span class="font-bold col-xs-24 statsToolTitle">Armor Set Builder</span>
-								<div class="btn-group col-xs-24">
-									<a title="Analyzes the top 3 armor pieces sorted by points in your inventory to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Top 3</a>
-									<a title="Analyzes all your armor in your inventory to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Character</a>
-									<a title="Allows you to explore armor sets to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Custom'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Custom</a>
-									<a title="Allows you to explore armor sets available that reach the max tier possible in game" data-bind="click: character.equipHighest('MaxLight'), clickBubble: false, text: 'T' + tgd.maxTierPossible + ' Build'" class="btn btn-default btn-sm col-xs-12 text-center"></a>
+								<div class="col-xs-14 text-left">
+									<span class="font-bold">Equipped Tier</span> <span data-bind="text: character.equippedTier" title="Current tier possible for Armor Equipped"></span><br>
+									<span class="font-bold">Equipped CSP</span> <span data-bind="text: character.sumCSP" title="Combined Stat Points for Armor Equipped"></span><br>
+									<span class="font-bold">Potential Tier</span> <span data-bind="text: character.potentialTier" title="Stat Points needed to reach Theoretical Tier"></span><br>
+									<span class="font-bold">Points Needed</span> <span data-bind="text: (character.potentialTier() * tgd.DestinySkillTier)" title="Stat Points needed to reach Theoretical Tier"></span><br>
+									<span class="font-bold">CSP at <span data-bind="text: tgd.DestinyLightCap"></span></span> <span data-bind="text: character.potentialCSP" title="Stat Points the Equipped gear can reach if infused to max light"></span>
 								</div>
+								<div class="col-xs-24 text-center">
+									<div data-bind="foreach: { data: tgd.DestinyArmorStats, as: 'stat' }" class="skillStatRow">
+										<div>
+											<span class="font-bold" data-bind="text: stat.statName"></span>
+											<span data-bind="text: character.equippedStats()[stat.statName]"></span>
+											<span data-bind="css: 'stat_' + stat.statHash" class="fa skill"></span>
+											<span data-bind="text: 'T' + Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier)"></span>
+											( <span data-bind="text: character.getCooldown(Math.floor(character.equippedStats()[stat.statName] / tgd.DestinySkillTier), stat.statHash)"></span> )
+										</div>
+									</div>
+								</div>								
+							</div>
+							<div data-bind="if: character.statsPane() == 'tools' && character.statsShowing()">
+								<div class="col-xs-24 text-center">
+									<span class="font-bold col-xs-24 statsToolTitle">Equip Gear With Highest</span>
+									<div class="btn-group col-xs-24">
+										<a title="Automatically equip gear with the most Intellect" data-bind="text: $root.activeText().inte, click: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
+										<a title="Automatically equip gear with the most Discipline" data-bind="text: $root.activeText().disc, click: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
+										<a title="Automatically equip gear with the most Strength" data-bind="text: $root.activeText().str, click: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Str</a>
+										<a title="Automatically equip gear with the highest Light Level" data-bind="text: $root.activeText().light, click: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
+										<a title="Automatically equip gear with the highest Combined Stat Points" data-bind="text: $root.activeText().most_points, click: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
+									</div>
+									<span class="font-bold col-xs-24 statsToolTitle">Armor Set Builder</span>
+									<div class="btn-group col-xs-24">
+										<a title="Analyzes the top 3 armor pieces sorted by points in your inventory to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('OptimizedBest'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Top 3</a>
+										<a title="Analyzes all your armor in your inventory to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Best'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Character</a>
+										<a title="Allows you to explore armor sets to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Custom'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Custom</a>
+										<a title="Allows you to explore armor sets available that reach the max tier possible in game" data-bind="click: character.equipHighest('MaxLight'), clickBubble: false, text: 'T' + tgd.maxTierPossible + ' Build'" class="btn btn-default btn-sm col-xs-12 text-center"></a>
+									</div>
+								</div>
+							</div>
+							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">
 								<span class="font-bold col-xs-24 statsToolTitle">Optimize Equipped Gear</span>
 								<div class="btn-group col-xs-24">
 									<a title="Analyzes the equipped gear for the best stat distributions" data-bind="click: character.optimizeGear('Equipped'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Equipped</a>
@@ -76,7 +90,7 @@
 										</li>
 									</ul>
 								</div>
-                            </div>
+							</div>
                         </div>
                     </div>
                 </div>
