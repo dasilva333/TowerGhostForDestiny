@@ -877,6 +877,181 @@ Item.prototype = {
             });
         }
     },
+    getStackAmount: function() {
+        return _.reduce(_.where( this.character.items(), { description: this.description }), function(memo, item) {
+            memo = memo + item.primaryStat();
+            return memo;
+        }, 0);
+    },
+    adjustGenericItem: function(sourceCharacter, targetCharacter, amount) {
+		var self = this;
+        /* calculate the remainder in the source character */
+        var sourceRemainder = self.getStackAmount();
+        console.log("remainder in source: " + sourceRemainder);
+        /* calculate the remainder in the target character */
+        var targetRemainder = _.findWhere(targetCharacter.items(), { description: this.description }).getStackAmount();
+        console.log("remainder in target: " + targetRemainder);
+
+        /*tgd.localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
+        var existingItem = _.find(
+        	_.where(y.items(), {
+        		description: self.description
+        	}),
+        	function(i) {
+        		return i.primaryStat() < i.maxStackSize;
+        	});
+
+        var theClone;
+        var remainder = self.primaryStat() - amount;
+        var isOverflow = (typeof existingItem == "undefined") ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
+        tgd.localLog("[remainder: " + remainder + "] [overflow: " + isOverflow + "] [underflow: " + (remainder < 0) + "]");
+
+        var tmpAmount = 0;
+        if (existingItem !== undefined) {
+        	tgd.localLog("existing stack in destination");
+        	tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat(), amount);
+        	tgd.localLog("tmpAmount: " + tmpAmount);
+        	if (isOverflow) {
+        		tgd.localLog("overflow: " + (amount - tmpAmount));
+        		// existing stack gets maxed
+        		existingItem.primaryStat(existingItem.maxStackSize);
+        		tgd.localLog("existingItem.primaryStat updated to " + existingItem.maxStackSize);
+        	} else {
+        		tgd.localLog("no overflow");
+        	}
+        } else {
+        	tgd.localLog("no existing stack in destination or existing stacks are full");
+        }
+
+        // grab self index in x.items
+        //var idxSelf = x.items.indexOf(self);
+        var idxSelf = _.indexOf(x.items(), _.findWhere(x.items(), {
+        	id: self.id
+        }));
+        console.log("x", x, x.uniqueName(), x.items(), self, self.description, self.primaryStat());
+        // remove self from x.items
+        //THIS IS WHERE IT"S FUNAMENTALLY FLAWED
+        x.items.remove(self);
+        tgd.localLog("removed self from x.items @ index " + idxSelf);
+        // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
+        if (remainder > 0) {
+        	tgd.localLog("[remainder: " + remainder + "] [clone on source: " + remainder + "]");
+        	theClone = self.clone();
+        	theClone.characterId(sourceCharacterId);
+        	theClone.character = x;
+        	theClone.primaryStat(remainder);
+        	x.items.splice(idxSelf, 0, theClone);
+        	tgd.localLog("inserted clone to x.items @ " + idxSelf + " with primaryStat " + remainder);
+        } else if (remainder < 0) {
+        	tgd.localLog("[remainder: " + remainder + "] [no clone] [underflow]");
+        	var sourceRemaining = (amount - self.primaryStat());
+        	tgd.localLog("need to remove " + sourceRemaining + " more from " + sourceCharacterId);
+        	var sourceExistingItems = _.where(x.items(), {
+        		description: self.description
+        	});
+        	// handle weird cases when user has transferred more than a stacks worth. Bungie API allows this.
+        	var sourceIdx = sourceExistingItems.length - 1;
+        	while ((sourceRemaining > 0) && (sourceIdx >= 0)) {
+        		var sourceRightMost = sourceExistingItems[sourceIdx];
+        		var sourceTmpAmount = Math.min(sourceRemaining, sourceRightMost.primaryStat());
+        		tgd.localLog("removing " + sourceTmpAmount + " from right most");
+        		sourceRightMost.primaryStat(sourceRightMost.primaryStat() - sourceTmpAmount);
+        		if (sourceRightMost.primaryStat() <= 0) {
+        			x.items.remove(sourceRightMost);
+        			tgd.localLog("right most dropped to 0 or less, removing");
+        		}
+        		sourceRemaining = sourceRemaining - sourceTmpAmount;
+        		tgd.localLog("still need to remove " + sourceRemaining + " from " + sourceCharacterId);
+        		sourceIdx = sourceIdx - 1;
+        	}
+        } else {
+        	tgd.localLog("no remainder, no clone");
+        }
+        var idxExistingItem;
+        var newAmount;
+        if (existingItem !== undefined) {
+        	if (!isOverflow) {
+        		// grab existingItem index in y.items
+        		idxExisting = y.items.indexOf(existingItem);
+        		// remove existingItem from y.items
+        		y.items.remove(existingItem);
+        		tgd.localLog("removed existingItem from y.items @ index " + idxExisting);
+        		// self becomes the swallowing stack @ y.items indexOf existingItem with (amount + existingItem.primaryStat())
+        		newAmount = amount + existingItem.primaryStat();
+        	} else {
+        		newAmount = amount - tmpAmount;
+        		tgd.localLog("self gets added to y.items as a new stack with (amount - tmpAmount) " + newAmount);
+        	}
+        } else {
+        	newAmount = amount;
+        	tgd.localLog("self gets added to y.items as a new stack with (amount) " + newAmount);
+        }
+        self.characterId(targetCharacterId);
+        self.character = y;
+        self.primaryStat(newAmount);
+        if (existingItem !== undefined) {
+        	if (!isOverflow) {
+        		y.items.splice(idxExisting, 0, self);
+        		tgd.localLog("adding self to y.items @ index " + idxExisting + " with amount: " + self.primaryStat());
+        	} else {
+        		y.items.push(self);
+        		tgd.localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
+        	}
+        } else {
+        	y.items.push(self);
+        	tgd.localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
+        }
+        console.log("1042: newAmount: " + newAmount, newAmount > self.maxStackSize, self.maxStackSize);
+        // visually split stuff if stacks transferred eceeded maxStackSize for that item
+        if (newAmount > self.maxStackSize) {
+        	tgd.localLog("exceeded maxStackSize, need to do some visual splitting");
+        	while (self.primaryStat() > self.maxStackSize) {
+        		var extraAmount = self.primaryStat() - self.maxStackSize;
+        		idxSelf = y.items.indexOf(self);
+        		// put clone at self index keeping self to the 'right'
+        		theClone = self.clone();
+        		theClone.characterId(targetCharacterId);
+        		theClone.character = y;
+        		theClone.primaryStat(self.maxStackSize);
+        		y.items.splice(idxSelf, 0, theClone);
+        		tgd.localLog("inserted clone to y.items @ " + idxSelf + " with primaryStat " + theClone.primaryStat());
+        		// adjust self value
+        		self.primaryStat(extraAmount);
+        	}
+        }
+
+        // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
+        if (remainder !== 0) {
+        	tgd.localLog("running cleanup code...");
+        	var selfExistingItems = _.where(x.items(), {
+        		description: self.description
+        	});
+        	var idx = 0;
+        	while (idx < selfExistingItems.length) {
+        		if ((idx + 1) >= selfExistingItems.length) {
+        			tgd.localLog("nothing to cleanup");
+        			break;
+        		}
+
+        		var cur = selfExistingItems[idx];
+        		if (cur.primaryStat() < cur.maxStackSize) {
+        			var next = selfExistingItems[idx + 1];
+        			var howMuch = Math.min(cur.maxStackSize - cur.primaryStat(), next.primaryStat());
+        			tgd.localLog("shifting left...");
+
+        			cur.primaryStat(cur.primaryStat() + howMuch);
+        			next.primaryStat(next.primaryStat() - howMuch);
+        			if (next.primaryStat() <= 0) {
+        				tgd.localLog("drained a stack in cleanup");
+        				x.items.remove(next);
+        			}
+        		}
+
+        		idx = idx + 1;
+        	}
+        }
+        tgd.localLog("---------------------");*/
+    },
     transfer: function(sourceCharacterId, targetCharacterId, amount, cb) {
         //tgd.localLog("Item.transfer");
         //tgd.localLog(arguments);
@@ -916,198 +1091,23 @@ Item.prototype = {
             //tgd.localLog(arguments);			
             if (result && result.Message && result.Message == "Ok") {
                 if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
-                    /*
-                     * Whatever happens, make sure 'self' is always preserved in case there were/are chained transfers before/after.
-                     * All we're looking to do is make the GUI appear correct. The transfer has already happened successfully.
-                     * Simple cases:
-                     * 1) Target has no existing items, so simply move self from one players' items list to the other.
-                     * 2) Target has existing items, but all existing stacks full, so simply do the same as previous case.
-                     * Edge cases:
-                     * 1) If self gets swallowed (ie. completely added to an existing stack) then the stack that's swallowing needs to
-                     * be removed and self adjusted to appear to be that swallowing stack.
-                     * 2) If self gets swallowed but there's overflow (ie. added to an existing stack but hit maxStackSize and a new
-                     * stack needs to be created visually) then self needs to be adjusted to appear as the newly created stack.
-                     * 3) If self.primaryStat is < amount then there was a previous transfer that overflowed and now we've got an
-                     * underflow. self needs to be the 'right' most stack that visually gets removed and added to the new character.
-                     * Cleanup cases:
-                     * 1) When multiple stacks exist on the source character, and the user has selected a partial transfer from a stack
-                     * that's not at the end of the list, we need to make the counts correct by shuffling things 'left' and potentially
-                     * removing anything on the right that went < 0.
-                     * Random notes:
-                     * 1) Bungie API lets you move more than a stacks worth of an item, so logic is needed to visually break up stacks
-                     * if they're > maxStackSize for that particular item.					 
-                     */
-
-                    tgd.localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
-                    var existingItem = _.find(
-                        _.where(y.items(), {
-                            description: self.description
-                        }),
-                        function(i) {
-                            return i.primaryStat() < i.maxStackSize;
-                        });
-
-                    var theClone;
-                    var remainder = self.primaryStat() - amount;
-                    var isOverflow = (typeof existingItem == "undefined") ? false : ((existingItem.primaryStat() + amount) > existingItem.maxStackSize);
-                    tgd.localLog("[remainder: " + remainder + "] [overflow: " + isOverflow + "] [underflow: " + (remainder < 0) + "]");
-
-                    var tmpAmount = 0;
-                    if (existingItem !== undefined) {
-                        tgd.localLog("existing stack in destination");
-                        tmpAmount = Math.min(existingItem.maxStackSize - existingItem.primaryStat(), amount);
-                        tgd.localLog("tmpAmount: " + tmpAmount);
-                        if (isOverflow) {
-                            tgd.localLog("overflow: " + (amount - tmpAmount));
-                            // existing stack gets maxed
-                            existingItem.primaryStat(existingItem.maxStackSize);
-                            tgd.localLog("existingItem.primaryStat updated to " + existingItem.maxStackSize);
-                        } else {
-                            tgd.localLog("no overflow");
-                        }
-                    } else {
-                        tgd.localLog("no existing stack in destination or existing stacks are full");
-                    }
-
-                    // grab self index in x.items
-                    //var idxSelf = x.items.indexOf(self);
-                    var idxSelf = _.indexOf(x.items(), _.findWhere(x.items(), {
-                        id: self.id
-                    }));
-                    console.log("x", x, x.uniqueName(), x.items(), self, self.description, self.primaryStat());
-                    // remove self from x.items
-                    x.items.remove(self);
-                    tgd.localLog("removed self from x.items @ index " + idxSelf);
-                    // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
-                    if (remainder > 0) {
-                        tgd.localLog("[remainder: " + remainder + "] [clone on source: " + remainder + "]");
-                        theClone = self.clone();
-                        theClone.characterId(sourceCharacterId);
-                        theClone.character = x;
-                        theClone.primaryStat(remainder);
-                        x.items.splice(idxSelf, 0, theClone);
-                        tgd.localLog("inserted clone to x.items @ " + idxSelf + " with primaryStat " + remainder);
-                    } else if (remainder < 0) {
-                        tgd.localLog("[remainder: " + remainder + "] [no clone] [underflow]");
-                        var sourceRemaining = (amount - self.primaryStat());
-                        tgd.localLog("need to remove " + sourceRemaining + " more from " + sourceCharacterId);
-                        var sourceExistingItems = _.where(x.items(), {
-                            description: self.description
-                        });
-                        // handle weird cases when user has transferred more than a stacks worth. Bungie API allows this.
-                        var sourceIdx = sourceExistingItems.length - 1;
-                        while ((sourceRemaining > 0) && (sourceIdx >= 0)) {
-                            var sourceRightMost = sourceExistingItems[sourceIdx];
-                            var sourceTmpAmount = Math.min(sourceRemaining, sourceRightMost.primaryStat());
-                            tgd.localLog("removing " + sourceTmpAmount + " from right most");
-                            sourceRightMost.primaryStat(sourceRightMost.primaryStat() - sourceTmpAmount);
-                            if (sourceRightMost.primaryStat() <= 0) {
-                                x.items.remove(sourceRightMost);
-                                tgd.localLog("right most dropped to 0 or less, removing");
-                            }
-                            sourceRemaining = sourceRemaining - sourceTmpAmount;
-                            tgd.localLog("still need to remove " + sourceRemaining + " from " + sourceCharacterId);
-                            sourceIdx = sourceIdx - 1;
-                        }
-                    } else {
-                        tgd.localLog("no remainder, no clone");
-                    }
-                    var idxExistingItem;
-                    var newAmount;
-                    if (existingItem !== undefined) {
-                        if (!isOverflow) {
-                            // grab existingItem index in y.items
-                            idxExisting = y.items.indexOf(existingItem);
-                            // remove existingItem from y.items
-                            y.items.remove(existingItem);
-                            tgd.localLog("removed existingItem from y.items @ index " + idxExisting);
-                            // self becomes the swallowing stack @ y.items indexOf existingItem with (amount + existingItem.primaryStat())
-                            newAmount = amount + existingItem.primaryStat();
-                        } else {
-                            newAmount = amount - tmpAmount;
-                            tgd.localLog("self gets added to y.items as a new stack with (amount - tmpAmount) " + newAmount);
-                        }
-                    } else {
-                        newAmount = amount;
-                        tgd.localLog("self gets added to y.items as a new stack with (amount) " + newAmount);
-                    }
-                    self.characterId(targetCharacterId);
-                    self.character = y;
-                    self.primaryStat(newAmount);
-                    if (existingItem !== undefined) {
-                        if (!isOverflow) {
-                            y.items.splice(idxExisting, 0, self);
-                            tgd.localLog("adding self to y.items @ index " + idxExisting + " with amount: " + self.primaryStat());
-                        } else {
-                            y.items.push(self);
-                            tgd.localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
-                        }
-                    } else {
-                        y.items.push(self);
-                        tgd.localLog("adding self to y.items @ tail with amount: " + self.primaryStat());
-                    }
-                    console.log("1042: newAmount: " + newAmount, newAmount > self.maxStackSize, self.maxStackSize);
-                    // visually split stuff if stacks transferred eceeded maxStackSize for that item
-                    if (newAmount > self.maxStackSize) {
-                        tgd.localLog("exceeded maxStackSize, need to do some visual splitting");
-                        while (self.primaryStat() > self.maxStackSize) {
-                            var extraAmount = self.primaryStat() - self.maxStackSize;
-                            idxSelf = y.items.indexOf(self);
-                            // put clone at self index keeping self to the 'right'
-                            theClone = self.clone();
-                            theClone.characterId(targetCharacterId);
-                            theClone.character = y;
-                            theClone.primaryStat(self.maxStackSize);
-                            y.items.splice(idxSelf, 0, theClone);
-                            tgd.localLog("inserted clone to y.items @ " + idxSelf + " with primaryStat " + theClone.primaryStat());
-                            // adjust self value
-                            self.primaryStat(extraAmount);
-                        }
-                    }
-
-                    // clean up. if we've split a stack and have other stacks 'to the right' we need to join them shuffling values 'left'.
-                    if (remainder !== 0) {
-                        tgd.localLog("running cleanup code...");
-                        var selfExistingItems = _.where(x.items(), {
-                            description: self.description
-                        });
-                        var idx = 0;
-                        while (idx < selfExistingItems.length) {
-                            if ((idx + 1) >= selfExistingItems.length) {
-                                tgd.localLog("nothing to cleanup");
-                                break;
-                            }
-
-                            var cur = selfExistingItems[idx];
-                            if (cur.primaryStat() < cur.maxStackSize) {
-                                var next = selfExistingItems[idx + 1];
-                                var howMuch = Math.min(cur.maxStackSize - cur.primaryStat(), next.primaryStat());
-                                tgd.localLog("shifting left...");
-
-                                cur.primaryStat(cur.primaryStat() + howMuch);
-                                next.primaryStat(next.primaryStat() - howMuch);
-                                if (next.primaryStat() <= 0) {
-                                    tgd.localLog("drained a stack in cleanup");
-                                    x.items.remove(next);
-                                }
-                            }
-
-                            idx = idx + 1;
-                        }
-                    }
-                    tgd.localLog("---------------------");
+                    self.adjustGenericItem(x, y, amount);
                 } else {
                     tgd.localLog("removing " + self.description + " from " + x.uniqueName() + " currently at " + x.items().length);
+                    /* remove the item where it came from after transferred by finding it's unique instance id */
                     x.items.remove(function(item) {
                         return item._id == self._id;
                     });
                     tgd.localLog("after removal " + x.items().length);
+                    /* update the references as to who this item belongs to */
                     self.character = y;
+                    /* move this item to the target destination */
+                    tgd.localLog("adding " + self.description + " to " + y.uniqueName());
                     y.items.push(self);
+                    /* TODO: Fix the delayed characterId update */
                     setTimeout(function() {
                         self.characterId(targetCharacterId);
                     }, 500);
-                    tgd.localLog("adding " + self.description + " to " + y.uniqueName());
                 }
                 //not sure why this is nessecary but w/o it the xfers have a delay that cause free slot errors to show up
                 setTimeout(function() {
