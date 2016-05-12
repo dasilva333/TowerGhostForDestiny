@@ -34,38 +34,38 @@
 								</div>
 								<div class="col-xs-24" style="padding:7px">
 									<div class="col-xs-10 text-left font-smaller-1 skillStatRow">
-										<div class="row">
-											<div class="font-bold col-xs-12" data-bind="text: $root.activeText().armor">Armor</div>
-											<div class="col-xs-12 text-right" data-bind="text: STAT_ARMOR.value"></div>
+										<div class="row" style="padding-top: 0px;">
+											<div class="font-bold col-xs-18 text-right"><span data-bind="text: $root.activeText().armor"></span>: </div>
+											<div class="col-xs-6" data-bind="text: STAT_ARMOR.value"></div>
 										</div>
 										<div class="row">
-											<div class="font-bold col-xs-13" data-bind="text: $root.activeText().agility">Agility</div>
-											<div class="col-xs-11 text-right" data-bind="text: STAT_AGILITY.value"></div>
+											<div class="font-bold col-xs-18 text-right"><span data-bind="text: $root.activeText().agility"></span>: </div>
+											<div class="col-xs-6" data-bind="text: STAT_AGILITY.value"></div>
 										</div>
 										<div class="row">
-											<div class="font-bold col-xs-18" data-bind="text: $root.activeText().recovery">Recovery</div>
-											<div class="col-xs-6 text-right" data-bind="text: STAT_RECOVERY.value"></div>
+											<div class="font-bold col-xs-18 text-right"><span data-bind="text: $root.activeText().recovery"></span>: </div>
+											<div class="col-xs-6" data-bind="text: STAT_RECOVERY.value"></div>
 										</div>
 									</div>
 									<div class="col-xs-13 text-left font-smaller-1">
 										<div class="row" title="Current tier possible for Armor Equipped">
-											<div class="font-bold col-xs-20">Equipped Tier</div> 
+											<div class="font-bold col-xs-20 text-right">Equipped Tier: </div> 
 											<div class="col-xs-4" data-bind="text: character.equippedTier"></div>
 										</div>
 										<div class="row" title="Combined Stat Points for Armor Equipped">
-											<div class="font-bold col-xs-20">Equipped CSP</div> 
+											<div class="font-bold col-xs-20 text-right">Equipped CSP: </div> 
 											<div class="col-xs-4" data-bind="text: character.sumCSP"></div>
 										</div>
 										<div class="row" title="Potential Tier possible with the current Armor Equipped">
-											<div class="font-bold col-xs-20">Potential Tier</div> 
+											<div class="font-bold col-xs-20 text-right">Potential Tier: </div> 
 											<div class="col-xs-4" data-bind="text: character.potentialTier"></div>
 										</div>
 										<div class="row" title="Stat Points needed to reach Potential Tier">
-											<div class="font-bold col-xs-20">Points Needed</div> 
+											<div class="font-bold col-xs-20 text-right">Points Needed: </div> 
 											<div class="col-xs-4" data-bind="text: (character.potentialTier() * tgd.DestinySkillTier)"></div>
 										</div>
 										<div class="row" title="Stat Points the Equipped armor can reach if infused to max light">
-											<div class="font-bold col-xs-20">CSP at <span data-bind="text: tgd.DestinyLightCap"></span></div> 
+											<div class="font-bold col-xs-20 text-right">CSP at <span data-bind="text: tgd.DestinyLightCap"></span>: </div> 
 											<div class="col-xs-4" data-bind="text: character.potentialCSP"></div>
 										</div>
 									</div>

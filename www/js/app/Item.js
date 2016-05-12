@@ -976,9 +976,7 @@ Item.prototype = {
                     }));
                     console.log("x", x, x.uniqueName(), x.items(), self, self.description, self.primaryStat());
                     // remove self from x.items
-                    x.items.remove(function(item) {
-                        return item.id == self.id;
-                    });
+                    x.items.remove(self);
                     tgd.localLog("removed self from x.items @ index " + idxSelf);
                     // if remainder, clone self and add clone to x.items in same place that self was with remainder as primaryStat
                     if (remainder > 0) {
