@@ -898,9 +898,11 @@ Item.prototype = {
         var targetItem = _.findWhere(targetCharacter.items(), {
             description: this.description
         });
-        targetAmount = targetItem ? targetItem.getStackAmount() + amount : amount;
+		var amountInTarget = targetItem ? targetItem.getStackAmount() : 0
+        var targetAmount = amount + amountInTarget;
         console.log("remainder in target: " + targetAmount);
         var siblingStacks = self.getSiblingStacks();
+		var targetStacks = targetItem ? targetItem.getSiblingStacks() : [];
         if (sourceRemainder == 0) {
             _.each(siblingStacks, function(item) {
                 self.character.items.remove(item);
@@ -926,7 +928,22 @@ Item.prototype = {
                 theClone.primaryStat(targetAmount);
                 targetCharacter.items.push(theClone);
             }
-        }
+        } else {
+			var missingItemsAmount = Math.ceil(targetAmount / maxStackSize) - targetStacks.length,
+				remainder = (targetAmount - amountInTarget);
+			console.log("remainder", targetAmount, remainder);
+			_.times(missingItemsAmount, function(index){
+				var itemAmount = remainder - maxStackSize > 0 ? maxStackSize : remainder;
+				console.log("itemAmount", itemAmount);
+                remainder = remainder - itemAmount;
+				var theClone = self.clone();
+                theClone.characterId(targetCharacter.id);
+                theClone.character = targetCharacter;
+                theClone.primaryStat(itemAmount);
+                targetCharacter.items.push(theClone);
+			});
+            console.log("missingItemsAmount", missingItemsAmount, targetStacks.length);
+		}
         /*tgd.localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
         var existingItem = _.find(
         	_.where(y.items(), {

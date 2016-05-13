@@ -18,7 +18,7 @@ tgd.transferConfirm = function(item, targetCharacterId, characters, onFinish) {
     }));
     self.dialog = null;
     self.consolidate = ko.observable(false);
-    self.materialsAmount = ko.observable(item.primaryStat());
+    self.materialsAmount = ko.observable(self.characterTotal);
 
     self.finishTransfer = function(consolidate) {
         if (consolidate) {

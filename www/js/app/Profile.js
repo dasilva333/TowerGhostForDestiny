@@ -176,7 +176,7 @@ Profile.prototype = {
         var currentGenericItemCounts = _.object(_.map(_.groupBy(currentGenericItems, 'id'), function(items, hash) {
             return [parseInt(hash), tgd.sum(_.pluck(items, 'stackSize'))];
         }));
-        console.log("currentGenericItemCounts", currentGenericItemCounts);
+        //console.log("currentGenericItemCounts", currentGenericItemCounts);
         var currentUniqueItems = _.filter(currentItems, function(item) {
             return item._id > 0;
         });
@@ -209,14 +209,14 @@ Profile.prototype = {
                 var currentQuantity = currentGenericItemCounts[hash];
                 /* need to update (qty changed) add (more qty), remove (less qty) */
                 if (currentQuantity != info.newQuantity) {
-                    console.log("neq existing new quantity ", currentQuantity, info.newQuantity);
+                    //console.log("neq existing new quantity ", currentQuantity, info.newQuantity);
                     var newItem = _.findWhere(newGenericItems, {
                         itemHash: parseInt(hash)
                     });
                     if (info.newQuantity <= info.maxStackSize) {
-                        console.log("quantity less than maxStackSize");
+                        //console.log("quantity less than maxStackSize");
                         if (existingItems.length > 1) {
-                            console.log("multiple items found currently");
+                            //console.log("multiple items found currently");
                             _.each(existingItems, function(item, index) {
                                 if (index > 0) self.items.remove(item);
                             });
@@ -225,20 +225,20 @@ Profile.prototype = {
                     } else {
                         var missingItemsAmount = Math.ceil(info.newQuantity / info.maxStackSize) - existingItems.length,
                             remainder = info.newQuantity % info.maxStackSize;
-                        console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
+                        //console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
                         _.times(missingItemsAmount, function(index) {
                             var newItm = _.clone(newItem);
                             newItm.stackSize = remainder % info.maxStackSize >= info.maxStackSize ? info.maxStackSize : remainder % info.maxStackSize;
-                            console.log("remainder", remainder);
+                            //console.log("remainder", remainder);
                             remainder = remainder - info.maxStackSize;
-                            console.log("new itemQuantity", newItm.stackSize);
+                            //console.log("new itemQuantity", newItm.stackSize);
                             var processedItem = new Item(newItm, self);
                             if ("id" in processedItem) self.items.push(processedItem);
                         });
                         _.each(existingItems, function(item, index) {
                             var newItm = _.clone(newItem);
                             newItm.stackSize = (missingItemsAmount === 0 && index === 0) ? remainder : info.maxStackSize;
-                            console.log("updating existing item with quantity ", newItm.stackSize);
+                            //console.log("updating existing item with quantity ", newItm.stackSize);
                             item.updateItem(newItm);
                         });
                     }
