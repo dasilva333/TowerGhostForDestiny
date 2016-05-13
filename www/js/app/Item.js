@@ -878,18 +878,22 @@ Item.prototype = {
         }
     },
     getStackAmount: function() {
-        return _.reduce(_.where( this.character.items(), { description: this.description }), function(memo, item) {
+        return _.reduce(_.where(this.character.items(), {
+            description: this.description
+        }), function(memo, item) {
             memo = memo + item.primaryStat();
             return memo;
         }, 0);
     },
     adjustGenericItem: function(sourceCharacter, targetCharacter, amount) {
-		var self = this;
+        var self = this;
         /* calculate the remainder in the source character */
         var sourceRemainder = self.getStackAmount();
         console.log("remainder in source: " + sourceRemainder);
         /* calculate the remainder in the target character */
-        var targetRemainder = _.findWhere(targetCharacter.items(), { description: this.description }).getStackAmount();
+        var targetRemainder = _.findWhere(targetCharacter.items(), {
+            description: this.description
+        }).getStackAmount();
         console.log("remainder in target: " + targetRemainder);
 
         /*tgd.localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
