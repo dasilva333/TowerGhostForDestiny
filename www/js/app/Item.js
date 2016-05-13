@@ -877,25 +877,56 @@ Item.prototype = {
             });
         }
     },
-    getStackAmount: function() {
-        return _.reduce(_.where(this.character.items(), {
+    getSiblingStacks: function() {
+        return _.where(this.character.items(), {
             description: this.description
-        }), function(memo, item) {
+        });
+    },
+    getStackAmount: function() {
+        return _.reduce(this.getSiblingStacks(), function(memo, item) {
             memo = memo + item.primaryStat();
             return memo;
         }, 0);
     },
     adjustGenericItem: function(sourceCharacter, targetCharacter, amount) {
         var self = this;
+        var maxStackSize = this.maxStackSize;
         /* calculate the remainder in the source character */
-        var sourceRemainder = self.getStackAmount();
+        var sourceRemainder = self.getStackAmount() - amount;
         console.log("remainder in source: " + sourceRemainder);
         /* calculate the remainder in the target character */
-        var targetRemainder = _.findWhere(targetCharacter.items(), {
+        var targetItem = _.findWhere(targetCharacter.items(), {
             description: this.description
-        }).getStackAmount();
-        console.log("remainder in target: " + targetRemainder);
-
+        });
+        targetAmount = targetItem ? targetItem.getStackAmount() + amount : amount;
+        console.log("remainder in target: " + targetAmount);
+        var siblingStacks = self.getSiblingStacks();
+        if (sourceRemainder == 0) {
+            _.each(siblingStacks, function(item) {
+                self.character.items.remove(item);
+            });
+        } else if (sourceRemainder <= maxStackSize) {
+            self.primaryStat(sourceRemainder);
+            if (siblingStacks.length > 1) {
+                _.each(siblingStacks, function(item, index) {
+                    if (index > 0) self.character.items.remove(item);
+                });
+            }
+        } else {
+            var missingItemsAmount = Math.ceil(sourceRemainder / maxStackSize) - siblingStacks.length
+            console.log("missingItemsAmount", missingItemsAmount, siblingStacks.length);
+        }
+        if (targetAmount <= maxStackSize) {
+            if (targetItem) {
+                targetItem.primaryStat(targetAmount);
+            } else {
+                var theClone = self.clone();
+                theClone.characterId(targetCharacter.id);
+                theClone.character = targetCharacter;
+                theClone.primaryStat(targetAmount);
+                targetCharacter.items.push(theClone);
+            }
+        }
         /*tgd.localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
         var existingItem = _.find(
         	_.where(y.items(), {
