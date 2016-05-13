@@ -903,6 +903,7 @@ Item.prototype = {
         console.log("remainder in target: " + targetAmount);
         var siblingStacks = self.getSiblingStacks();
 		var targetStacks = targetItem ? targetItem.getSiblingStacks() : [];
+		console.log("siblingStacks", siblingStacks.length, targetStacks.length);
         if (sourceRemainder == 0) {
             _.each(siblingStacks, function(item) {
                 self.character.items.remove(item);
@@ -916,7 +917,7 @@ Item.prototype = {
             }
         } else {
             var missingItemsAmount = Math.ceil(sourceRemainder / maxStackSize) - siblingStacks.length
-            console.log("missingItemsAmount", missingItemsAmount, siblingStacks.length);
+            console.log("missingItemsAmountFromSource", sourceRemainder, missingItemsAmount, siblingStacks.length);
         }
         if (targetAmount <= maxStackSize) {
             if (targetItem) {
@@ -942,7 +943,7 @@ Item.prototype = {
                 theClone.primaryStat(itemAmount);
                 targetCharacter.items.push(theClone);
 			});
-            console.log("missingItemsAmount", missingItemsAmount, targetStacks.length);
+            console.log("missingItemsAmountFromTarget", missingItemsAmount, targetStacks.length);
 		}
         /*tgd.localLog("[from: " + sourceCharacterId + "] [to: " + targetCharacterId + "] [amount: " + amount + "]");
         var existingItem = _.find(
