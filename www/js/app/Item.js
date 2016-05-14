@@ -918,13 +918,6 @@ Item.prototype = {
             var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize),
                 remainder = sourceRemainder;
             console.log("sourceRemainder gt maxStackSize ", sourceRemainder);
-            if (totalItemsAmount !== sourceStacks.length) {
-                if (totalItemsAmount > sourceStacks.length) {
-                    /*need to add items */
-                } else {
-                    /* need to remove items */
-                }
-            }
             _.each(sourceStacks, function(item) {
                 var itemAmount = remainder - maxStackSize > 0 ? maxStackSize : remainder;
                 if (itemAmount > 0) {
