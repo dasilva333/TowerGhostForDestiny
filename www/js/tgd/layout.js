@@ -23,6 +23,7 @@ tgd.Layout.prototype = {
     },
     countText: function(character) {
         var self = this;
+        return "";
         return ko.pureComputed(function() {
             var text = "";
             if (self.array !== "" && character.id == 'Vault') {

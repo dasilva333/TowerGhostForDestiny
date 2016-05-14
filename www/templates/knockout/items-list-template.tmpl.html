@@ -34,7 +34,7 @@
 			</span>
 			<div data-bind="if: item.armorIndex > -1" style="width: 36px;">
 				<!-- ko foreach: item.perks  -->
-					<img data-bind="attr: { src: iconPath, title: name }" width="16">
+					<img data-bind="itemImageHandler: iconPath, attr: { title: name }, visible: iconPath != ''" width="16">
 				<!--/ko  -->
 			</div>
 		  </td>

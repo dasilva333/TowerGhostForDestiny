@@ -246,7 +246,7 @@ Profile.prototype = {
                                 console.log("remainder", remainder, (remainder - info.maxStackSize > 0));
                                 newItem.stackSize = remainder;
                                 item.updateItem(newItm);
-                            }					
+                            }
                         });
                     }
                 }

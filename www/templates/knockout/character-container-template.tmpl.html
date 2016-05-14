@@ -121,9 +121,8 @@
                 </div>
                 <div class="inventory">
                     <div class="items" data-type="item">
-                        <!-- ko foreach: { data: $root.activeLayouts, as: 'layout' } -->
-                        <!-- ko if: layout.isVisible(character)() -->
-                        <div>
+                        <!-- ko foreach: { data: $root.allLayouts, as: 'layout' } -->
+                        <div data-bind="visible: layout.isVisible(character) && ($root.activeView() == layout.id || $root.activeView() == '0')">
                             <div class="title2" data-bind="visible: $root.searchKeyword() == '', refreshableSection: true">
                                 <strong data-bind="text: layout.titleText(character)"></strong>
                                 <span data-bind="html: layout.countText(character)"></span>
@@ -136,7 +135,6 @@
                             </div>
                             <div class="sections" data-bind="template: { name: $root.sectionsTemplate, foreach: layout.activeBucketTypes, as: 'bucketType' }"></div>
                         </div>
-                        <!--/ko  -->
                         <!--/ko  -->
                     </div>
                 </div>
