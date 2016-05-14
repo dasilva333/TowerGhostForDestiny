@@ -224,22 +224,29 @@ Profile.prototype = {
                         existingItems[0].updateItem(newItem);
                     } else {
                         var missingItemsAmount = Math.ceil(info.newQuantity / info.maxStackSize) - existingItems.length,
-                            remainder = info.newQuantity % info.maxStackSize;
-                        //console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
+                            remainder = info.newQuantity;
+                        console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
                         _.times(missingItemsAmount, function(index) {
                             var newItm = _.clone(newItem);
                             newItm.stackSize = remainder % info.maxStackSize >= info.maxStackSize ? info.maxStackSize : remainder % info.maxStackSize;
-                            //console.log("remainder", remainder);
+                            console.log("remainder", remainder, newItm.stackSize);
                             remainder = remainder - info.maxStackSize;
-                            //console.log("new itemQuantity", newItm.stackSize);
+                            console.log("new itemQuantity", newItm.stackSize);
                             var processedItem = new Item(newItm, self);
                             if ("id" in processedItem) self.items.push(processedItem);
                         });
                         _.each(existingItems, function(item, index) {
-                            var newItm = _.clone(newItem);
-                            newItm.stackSize = (missingItemsAmount === 0 && index === 0) ? remainder : info.maxStackSize;
-                            //console.log("updating existing item with quantity ", newItm.stackSize);
-                            item.updateItem(newItm);
+                            if (missingItemsAmount < 0 && index + 1 <= Math.abs(missingItemsAmount)) {
+                                console.log("removing extra item");
+                                self.items.remove(item);
+                            } else {
+                                //newItm.stackSize = (missingItemsAmount === 0 && index === 0) ? remainder : info.maxStackSize;
+                                var newItm = _.clone(newItem);
+                                remainder = remainder - (remainder - info.maxStackSize > 0 ? info.maxStackSize : remainder);
+                                console.log("remainder", remainder, (remainder - info.maxStackSize > 0));
+                                newItem.stackSize = remainder;
+                                item.updateItem(newItm);
+                            }					
                         });
                     }
                 }
@@ -544,6 +551,11 @@ Profile.prototype = {
             }).reverse();
         }
         return items;
+    },
+    getSiblingStacks: function(description) {
+        return _.where(this.items(), {
+            description: description
+        });
     },
     get: function(type) {
         return _.filter(this.all(type), function(item) {

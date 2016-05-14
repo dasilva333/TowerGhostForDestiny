@@ -14,7 +14,7 @@
     },
     "move-popup.css": {
       "filename": "css/tgd/move-popup.css",
-      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
+      "version": "2838200e62b135d8b9b9bdb62b5fcc7e68809e74d6832e286841e52c7f178cd7"
     },
     "style.css": {
       "filename": "css/tgd/style.css",
@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+      "version": "c1b95c94db0a1612b61023ca34ac857fc9a1353ce1da9d39189669652f741c85"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -74,7 +74,7 @@
     },
     "analytics.js": {
       "filename": "js/libraries/secondary/analytics.js",
-      "version": "f0558acedf5a295d6f363d6cfe76c74b27b1a3b1c3fb9df23814f7b04b29704e"
+      "version": "f60215f414d0fe15f67add69ee8500a49f4234b24f13c8ff0ccbff69a5b22c33"
     },
     "bootstrap.js": {
       "filename": "js/libraries/secondary/bootstrap.js",
@@ -90,15 +90,15 @@
     },
     "hammer.js": {
       "filename": "js/libraries/secondary/hammer.js",
-      "version": "86190e5e8be7fbfc1aabf3edbb7cf7c0366361c35e6f326330ca74a1914d12f7"
+      "version": "8a1b58d624eeb47e9e3073531a5d364e41a2e7853c052873a79917f97dd0bb44"
     },
     "bootstrap-dialog.js": {
       "filename": "js/plugins/bootstrap-dialog.js",
-      "version": "be37237af48ff7cc173f86461e522ccbc117608c53c9a2e9250cbacf239529f1"
+      "version": "fa3c5532da8dede62b44e74a450754fe3ec5ad15e4debc5ea3125140716d814f"
     },
     "jquery-idletimer.js": {
       "filename": "js/plugins/jquery-idletimer.js",
-      "version": "0d03be1d3387cc9b62076d99af804fae42504fb6b0fae92cc8bc43521e13c7b3"
+      "version": "5b49526c59eb4e6b2cce3d09caad09962757a32035c6182d1063f01900fb3414"
     },
     "jquery-ui.js": {
       "filename": "js/plugins/jquery-ui.js",
@@ -110,11 +110,11 @@
     },
     "jquery.toaster.js": {
       "filename": "js/plugins/jquery.toaster.js",
-      "version": "11e56c3850fa639ae31b68fae3e99a2e63091ecf35bc215957299bdc04290fdd"
+      "version": "2a5128417916b0777873fbb90e2520f4d8fc8e8ffd503ac02484927393bbeb8f"
     },
     "knockout-sortable.js": {
       "filename": "js/plugins/knockout-sortable.js",
-      "version": "ac4ad65392d1d1e4825fb3226a9a314c30bc83d4f787fbf7d71dcbfabe76a126"
+      "version": "37e52d580846e95f76f0a86248a23e908a8ff115a9f2488c67b0fb7957c696eb"
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
@@ -182,7 +182,7 @@
     },
     "transferConfirm.js": {
       "filename": "js/tgd/transferConfirm.js",
-      "version": "1b6bb19c18f423c5226b15a8914c2ef70f016739fa12c796f61fbb2dbc3933a3"
+      "version": "f51b56a69105fc1bd20682d53c8204a4e5847170a6ebc8a4493bedb8bde14b9e"
     },
     "updater.js": {
       "filename": "js/tgd/updater.js",
@@ -198,11 +198,11 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "f39d3c5f5d940a33de919ed5801f9030ff94d093cf9f156796fa36c1858fb1dc"
+      "version": "fdaa2756965f52aca5799b14ba842d04efeae5ad816e0305daf219bc14fa1ca2"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "43dbd5009d6cb4684b4bb018204e377a659387bd8390596b42052c45ee175b43"
+      "version": "de8aa6269493366abbc1023d86f293032ad9b545d7119b956e5850100ecb106f"
     },
     "app.js": {
       "filename": "js/app/app.js",
