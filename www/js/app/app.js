@@ -689,13 +689,15 @@ var app = function() {
             self.activeView(2);
             var activeStats = self.activeStats();
             _.each(self.characters(), function(character) {
-                _.each(character.armor(), function(armor) {
-                    var itemStats = _.reduce(armor.stats, function(memo, stat, name) {
-                        if (stat > 0) memo.push(name);
-                        return memo;
-                    }, []);
-                    var hasStats = (activeStats.length == 2) ? _.intersection(itemStats, activeStats).length == 2 : _.intersection(itemStats, activeStats).length > 0;
-                    armor.isFiltered(hasStats);
+                _.each(character.items(), function(armor) {
+                    if (armor.armorIndex > -1) {
+                        var itemStats = _.reduce(armor.stats, function(memo, stat, name) {
+                            if (stat > 0) memo.push(name);
+                            return memo;
+                        }, []);
+                        var hasStats = (activeStats.length == 2) ? _.intersection(itemStats, activeStats).length == 2 : _.intersection(itemStats, activeStats).length > 0;
+                        armor.isFiltered(hasStats);
+                    }
                 });
             });
         }

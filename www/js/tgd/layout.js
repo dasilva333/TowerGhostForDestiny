@@ -23,10 +23,9 @@ tgd.Layout.prototype = {
     },
     countText: function(character) {
         var self = this;
-        return "";
         return ko.pureComputed(function() {
             var text = "";
-            if (self.array !== "" && character.id == 'Vault') {
+            if (self.array !== "" && character.id == 'Vault' && _.has(character, self.array)) {
                 var currentAmount = character[self.array]().length;
                 var totalAmount = character.id == 'Vault' ? self.counts[0] : self.counts[1];
                 text = "(" + currentAmount + "/" + totalAmount + ")";
