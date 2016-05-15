@@ -312,7 +312,7 @@ tgd.armorSelection = function(type, groups, character) {
         var selectionType = event.target.value;
         _.each(self.armorGroups(), function(group) {
             var selectedItem = _.reduce(group.items(), function(memo, item) {
-                var isEquipped = selectionType == "Equipped" && item.isEquipped();
+                var isEquipped = selectionType == "Equipped" && item.isEquipped() && item.character.id == self.character.id;
                 var isMaxCSP = selectionType == "Points" && (memo && item.getValue("All") > memo.getValue("All") || !memo);
                 if (isEquipped || isMaxCSP) memo = item;
                 return memo;
