@@ -31,8 +31,8 @@
                         <li><a href="#" data-bind="fastclick: logout"><i class="fa fa-sign-out"></i> Logout</a></li>
                         <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'PSN')"><a href="#" data-bind="fastclick: openBungieWindow('Psnid')"><i class="fa fa-sign-in"></i> PSN Login</a></li>
                         <li data-bind="visible: hasBothAccounts() || (!hasBothAccounts() && preferredSystem() == 'XBL')"><a href="#" data-bind="fastclick: openBungieWindow('Xuid')"><i class="fa fa-sign-in"></i> Live Login</a></li>
-                        <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount"><i class="fa fa-gamepad"></i> <span data-bind="text: $root.activeText().menu_usexbox">Use Xbox Account</span></a></li>
                         <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'PSN' ? 'active' : ''"><a href="#" data-bind="fastclick: usePlaystationAccount"><i class="fa fa-gamepad"></i> <span data-bind="text: $root.activeText().menu_useps">Use Playstation Account</span></a></li>
+                        <li data-bind="visible: hasBothAccounts(), css: preferredSystem() == 'XBL' ? 'active' : ''"><a href="#" data-bind="fastclick: useXboxAccount"><i class="fa fa-gamepad"></i> <span data-bind="text: $root.activeText().menu_usexbox">Use Xbox Account</span></a></li>
                         <li class="divider"></li>
                         <li><a href="#" data-bind="fastclick: clearFilters"><i class="fa fa-filter"></i><span data-bind="text: $root.activeText().menu_clear">Clear Filters</span></a></li>
                         <li><a href="#" data-bind="fastclick: showAbout"><i class="fa fa-info"></i><span data-bind="text: $root.activeText().menu_about">About</span></a></li>
