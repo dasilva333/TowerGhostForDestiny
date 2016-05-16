@@ -11,15 +11,45 @@
 	</div>
 	<div class="row" data-bind="visible: !_.isEmpty($root.bucketType())" style="margin-top: 5px; margin-bottom:5px; display:none">
 		<div class="col-xs-6">
-			Armor Name
+			Item Type
 		</div>
 		<div class="col-xs-18">
-			<select class="form-control" data-bind="options: availableItems, optionsText: 'itemName', optionsCaption: '--Select--', value: $root.selectedItem">
+			<select class="form-control" data-bind="options: armorTypes, optionsCaption: '--Select--', value: $root.armorType">
 				
 			</select>
 		</div>
 	</div>
-	<div class="row" data-bind="visible: !_.isEmpty($root.selectedItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
+	<div class="row" data-bind="visible: $root.armorType() == 'Existing Item'" style="margin-top: 5px; margin-bottom:5px; display:none">
+		<div class="col-xs-6">
+			Character Name
+		</div>
+		<div class="col-xs-18">
+			<select class="form-control" data-bind="options: app.characters, optionsText: 'uniqueName', optionsCaption: '--Select--', value: $root.selectedCharacter">
+				
+			</select>
+		</div>
+	</div>
+	<div class="row" data-bind="visible: !_.isEmpty($root.selectedCharacter())" style="margin-top: 5px; margin-bottom:5px; display:none">
+		<div class="col-xs-6">
+			Item Name
+		</div>
+		<div class="col-xs-18">
+			<select class="form-control" data-bind="options: availableCharacterItems, optionsText: 'uniqueDescription', optionsCaption: '--Select--', value: $root.selectedExistingItem">
+				
+			</select>
+		</div>
+	</div>	
+	<div class="row" data-bind="visible: $root.armorType() == 'New Item'" style="margin-top: 5px; margin-bottom:5px; display:none">
+		<div class="col-xs-6">
+			Armor Name
+		</div>
+		<div class="col-xs-18">
+			<select class="form-control" data-bind="options: availableItems, optionsText: 'itemName', optionsCaption: '--Select--', value: $root.selectedNewItem">
+				
+			</select>
+		</div>
+	</div>
+	<div class="row" data-bind="visible:  !_.isEmpty($root.selectedNewItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
 		<div class="col-xs-6">
 			Light Level
 		</div>
@@ -27,7 +57,7 @@
 			<input type="text" class="form-control" data-bind="value: lightLevel">
 		</div>
 	</div>		
-	<div class="row" data-bind="visible: !_.isEmpty($root.selectedItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
+	<div class="row" data-bind="visible: !_.isEmpty($root.selectedNewItem())" style="margin-top: 5px; margin-bottom:5px; display:none">
 		<div class="col-xs-6">
 			Armor Stats
 		</div>

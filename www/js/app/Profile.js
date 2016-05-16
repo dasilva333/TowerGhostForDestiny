@@ -1123,9 +1123,9 @@ Profile.prototype = {
             buttons: [{
                 label: app.activeText().movepopup_equip,
                 action: function(dialog) {
-                    var firstSet = armorSelection.firstSet();
-                    if (firstSet) {
-                        armorSelection.equipSelectedCombo(firstSet);
+                    var selectedItems = armorSelection.selectedItems();
+                    if (selectedItems) {
+                        armorSelection.equipSelectedCombo(selectedItems);
                         dialog.close();
                     }
                 }
