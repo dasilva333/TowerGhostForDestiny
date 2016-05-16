@@ -3,14 +3,39 @@ tgd.armorItemCreate = function(character) {
 
     self.character = character;
     self.bucketType = ko.observable();
-    self.selectedItem = ko.observable();
+    self.selectedNewItem = ko.observable();
+    self.selectedExistingItem = ko.observable();
+    self.selectedCharacter = ko.observable();
     self.lightLevel = ko.observable(tgd.DestinyLightCap);
+    self.armorTypes = ["Existing Item", "New Item"];
+    self.armorType = ko.observable();
     self.selectedStats = _.map(tgd.DestinyArmorStats, function(stat) {
         var tmp = {
             name: stat.statName,
             value: ko.observable(0)
         };
         return tmp;
+    });
+    self.availableCharacterItems = ko.computed(function() {
+        var items = [];
+        if (self.armorType() == "Existing Item" && !_.isEmpty(self.selectedCharacter())) {
+            items = _.map(_.filter(self.selectedCharacter().items(), function(item) {
+                return item.bucketType == self.bucketType();
+            }), function(item) {
+                item.uniqueDescription = item.description;
+                if (item.primaryStat() != "") {
+                    item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
+                }
+                item.uniqueDescription = item.uniqueDescription + " - " + _.reduce(item.stats, function(memo, stat, key) {
+                    if (stat > 0) {
+                        memo.push(key.substring(0, 3) + " " + stat);
+                    }
+                    return memo;
+                }, []);
+                return item;
+            });
+        }
+        return items;
     });
     self.availableItems = ko.computed(function() {
         var characterClass = self.character.classType();
@@ -24,8 +49,8 @@ tgd.armorItemCreate = function(character) {
         return items;
     });
     self.activeItem = ko.computed(function() {
-        if (!self.selectedItem()) return;
-        var itm = _.clone(self.selectedItem());
+        if (!self.selectedNewItem()) return;
+        var itm = _.clone(self.selectedNewItem());
         itm.id = true;
         itm.itemInstanceId = itm.itemHash.toString();
         itm.perks = _.reduce(self.selectedStats, function(memo, stat) {
@@ -103,6 +128,9 @@ tgd.calculateBestSets = function(items, rollType) {
         var statTiers = _.map(sortedKeys, function(name) {
             return name.substring(0, 3) + " T" + Math.floor(tmp[name] / tgd.DestinySkillTier);
         }).join("<br>");
+        var statTierSum = tgd.sum(_.map(sortedKeys, function(name) {
+            return Math.floor(tmp[name] / tgd.DestinySkillTier);
+        }));
         var score = parseFloat((tgd.sum(_.map(tmp, function(value, key) {
             var result = Math.floor(value / tgd.DestinySkillTier);
             return result > 5 ? 5 : result;
@@ -112,21 +140,22 @@ tgd.calculateBestSets = function(items, rollType) {
         }).join("/");
         var combo = {
             set: items,
-            id: Math.floor(tgd.hashCode(statTiers)),
+            id: ((new Date()).getTime()) + _.random(1, 10000),
             stats: tmp,
             statValues: _.map(sortedKeys, function(name) {
                 return tmp[name];
             }).join("<br>"),
             statTierValues: statTierValues,
             statTiers: statTiers,
-            score: score
+            score: score,
+            isValid: statTierSum == Math.floor(score)
         };
         return combo;
     });
     var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
     //console.log("highestScore", highestScore);
     var bestSets = _.uniq(_.filter(scoredCombos, function(combo) {
-        return combo.score >= highestScore && combo.statTierValues.indexOf("6") == -1;
+        return combo.isValid && combo.score >= highestScore && combo.statTierValues.indexOf("6") == -1;
     }), false, function(combo) {
         return combo.statTiers;
     });
@@ -233,21 +262,30 @@ tgd.armorSelection = function(type, groups, character) {
         var viewModel = new tgd.armorItemCreate(self.character);
         console.log("armorItemCreate", viewModel);
         var defaultAction = function(dialogItself) {
-            var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
-                if (!$.isNumeric(stat.value()) && memo === true) memo = false;
-                return memo;
-            }, true);
-            var hasValidLight = $.isNumeric(viewModel.lightLevel());
-            if (!hasValidStats) {
-                BootstrapDialog.alert("Invalid stats entered, please ensure only numbers are used");
-            } else if (!hasValidLight) {
-                BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
-            } else {
-                /* add the item to the right armorGroups */
+            if (viewModel.armorType() == "New Item") {
+                var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
+                    if (!$.isNumeric(stat.value()) && memo === true) memo = false;
+                    return memo;
+                }, true);
+                var hasValidLight = $.isNumeric(viewModel.lightLevel());
+                if (!hasValidStats) {
+                    BootstrapDialog.alert("Invalid stats entered, please ensure only numbers are used");
+                } else if (!hasValidLight) {
+                    BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
+                } else {
+                    /* add the item to the right armorGroups */
+                    var group = _.findWhere(self.armorGroups(), {
+                        bucketType: viewModel.activeItem().bucketType
+                    });
+                    var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                    group.items.push(armorItem);
+                    dialogItself.close();
+                }
+            } else if (viewModel.armorType() == "Existing Item" && !_.isEmpty(viewModel.selectedExistingItem())) {
                 var group = _.findWhere(self.armorGroups(), {
-                    bucketType: viewModel.activeItem().bucketType
+                    bucketType: viewModel.selectedExistingItem().bucketType
                 });
-                var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                var armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
                 group.items.push(armorItem);
                 dialogItself.close();
             }
