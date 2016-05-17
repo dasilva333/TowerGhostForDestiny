@@ -1110,9 +1110,9 @@ Profile.prototype = {
         tgd.activeArmorSelection = armorSelection;
         console.log("armorSelection", armorSelection);
         var defaultAction = function(dialog) {
-            var firstSet = armorSelection.firstSet();
-            if (firstSet) {
-                armorSelection.saveSelectedCombo(firstSet);
+            var selectedCombo = _.first(armorSelection.bestSets());
+            if (selectedCombo) {
+                armorSelection.saveSelectedCombo(selectedCombo);
                 dialog.close();
             }
         };
@@ -1123,9 +1123,9 @@ Profile.prototype = {
             buttons: [{
                 label: app.activeText().movepopup_equip,
                 action: function(dialog) {
-                    var selectedItems = armorSelection.selectedItems();
-                    if (selectedItems) {
-                        armorSelection.equipSelectedCombo(selectedItems);
+                    var selectedCombo = _.first(armorSelection.bestSets());
+                    if (selectedCombo) {
+                        armorSelection.equipSelectedCombo(selectedCombo);
                         dialog.close();
                     }
                 }

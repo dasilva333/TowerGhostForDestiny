@@ -23,15 +23,15 @@ tgd.armorItemCreate = function(character) {
                 return item.bucketType == self.bucketType();
             }), function(item) {
                 item.uniqueDescription = item.description;
-				if ( item.primaryStat() != "" ){
-					item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
-				}
-				item.uniqueDescription = item.uniqueDescription + " - " + _.reduce(item.stats, function(memo, stat, key) {
-					if (stat > 0) {
-						memo.push(key.substring(0, 3) + " " + stat);
-					}
-					return memo;
-				}, []);
+                if (item.primaryStat() != "") {
+                    item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
+                }
+                item.uniqueDescription = item.uniqueDescription + " - " + _.reduce(item.stats, function(memo, stat, key) {
+                    if (stat > 0) {
+                        memo.push(key.substring(0, 3) + " " + stat);
+                    }
+                    return memo;
+                }, []);
                 return item;
             });
         }
@@ -262,34 +262,33 @@ tgd.armorSelection = function(type, groups, character) {
         var viewModel = new tgd.armorItemCreate(self.character);
         console.log("armorItemCreate", viewModel);
         var defaultAction = function(dialogItself) {
-			if ( viewModel.armorType() == "New Item" ){
-				var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
-					if (!$.isNumeric(stat.value()) && memo === true) memo = false;
-					return memo;
-				}, true);
-				var hasValidLight = $.isNumeric(viewModel.lightLevel());
-				if (!hasValidStats) {
-					BootstrapDialog.alert("Invalid stats entered, please ensure only numbers are used");
-				} else if (!hasValidLight) {
-					BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
-				} else {
-					/* add the item to the right armorGroups */
-					var group = _.findWhere(self.armorGroups(), {
-						bucketType: viewModel.activeItem().bucketType
-					});
-					var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
-					group.items.push(armorItem);
-					dialogItself.close();
-				}			
-			}
-			else if ( viewModel.armorType() == "Existing Item" && !_.isEmpty(viewModel.selectedExistingItem()) ){
-				var group = _.findWhere(self.armorGroups(), {
-					bucketType: viewModel.selectedExistingItem().bucketType
-				});
-				var armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
-				group.items.push(armorItem);
-				dialogItself.close();
-			}
+            if (viewModel.armorType() == "New Item") {
+                var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
+                    if (!$.isNumeric(stat.value()) && memo === true) memo = false;
+                    return memo;
+                }, true);
+                var hasValidLight = $.isNumeric(viewModel.lightLevel());
+                if (!hasValidStats) {
+                    BootstrapDialog.alert("Invalid stats entered, please ensure only numbers are used");
+                } else if (!hasValidLight) {
+                    BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
+                } else {
+                    /* add the item to the right armorGroups */
+                    var group = _.findWhere(self.armorGroups(), {
+                        bucketType: viewModel.activeItem().bucketType
+                    });
+                    var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                    group.items.push(armorItem);
+                    dialogItself.close();
+                }
+            } else if (viewModel.armorType() == "Existing Item" && !_.isEmpty(viewModel.selectedExistingItem())) {
+                var group = _.findWhere(self.armorGroups(), {
+                    bucketType: viewModel.selectedExistingItem().bucketType
+                });
+                var armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                group.items.push(armorItem);
+                dialogItself.close();
+            }
         };
         (new tgd.koDialog({
             templateName: 'armorItemCreateTemplate',
