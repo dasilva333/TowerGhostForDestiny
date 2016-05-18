@@ -162,21 +162,11 @@ tgd.Loadout = function(model, isItems) {
     this.sortUp = function() {
         var currentIndex = app.loadouts.indexOf(this);
         var nextIndex = currentIndex - 1;
-        console.log("currentIndex", currentIndex);
-        console.log("nextIndex", nextIndex);
-        console.log(_.map(app.loadouts(), function(loadout) {
-            return loadout.name();
-        }));
         self.sortDirection(currentIndex, nextIndex);
     };
     this.sortDown = function() {
         var currentIndex = app.loadouts.indexOf(this);
         var nextIndex = currentIndex + 1;
-        console.log("currentIndex", currentIndex);
-        console.log("nextIndex", nextIndex);
-        console.log(_.map(app.loadouts(), function(loadout) {
-            return loadout.name();
-        }));
         self.sortDirection(currentIndex, nextIndex);
     };
     this.sortDirection = function(currentIndex, nextIndex) {
