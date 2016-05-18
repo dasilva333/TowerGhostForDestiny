@@ -209,7 +209,7 @@ Profile.prototype = {
                 var currentQuantity = currentGenericItemCounts[hash];
                 /* need to update (qty changed) add (more qty), remove (less qty) */
                 if (currentQuantity != info.newQuantity) {
-                    //console.log("neq existing new quantity ", currentQuantity, info.newQuantity);
+                    console.log("neq existing new quantity ", currentQuantity, info.newQuantity);
                     var newItem = _.findWhere(newGenericItems, {
                         itemHash: parseInt(hash)
                     });
@@ -225,13 +225,12 @@ Profile.prototype = {
                     } else {
                         var missingItemsAmount = Math.ceil(info.newQuantity / info.maxStackSize) - existingItems.length,
                             remainder = info.newQuantity;
-                        console.log("quantity greater than maxStackSize ", missingItemsAmount, remainder);
+                        console.log("quantity greater than maxStackSize, creating " + missingItemsAmount + " new items with qty of " + remainder);
                         _.times(missingItemsAmount, function(index) {
                             var newItm = _.clone(newItem);
                             newItm.stackSize = remainder % info.maxStackSize >= info.maxStackSize ? info.maxStackSize : remainder % info.maxStackSize;
-                            console.log("remainder", remainder, newItm.stackSize);
-                            remainder = remainder - info.maxStackSize;
-                            console.log("new itemQuantity", newItm.stackSize);
+                            remainder = remainder - newItm.stackSize;
+                            console.log("creating new item with stackSize of " + newItm.stackSize + " with qty remaining of " + remainder);
                             var processedItem = new Item(newItm, self);
                             if ("id" in processedItem) self.items.push(processedItem);
                         });
@@ -240,12 +239,11 @@ Profile.prototype = {
                                 console.log("removing extra item");
                                 self.items.remove(item);
                             } else {
-                                //newItm.stackSize = (missingItemsAmount === 0 && index === 0) ? remainder : info.maxStackSize;
-                                var newItm = _.clone(newItem);
-                                remainder = remainder - (remainder - info.maxStackSize > 0 ? info.maxStackSize : remainder);
-                                console.log("remainder", remainder, (remainder - info.maxStackSize > 0));
-                                newItem.stackSize = remainder;
-                                item.updateItem(newItm);
+                                var primaryStat = remainder - info.maxStackSize > 0 ? info.maxStackSize : remainder;
+                                item.primaryStat(primaryStat);
+                                console.log("updating existing item with qty " + primaryStat, (remainder - info.maxStackSize > 0));
+                                remainder = remainder - primaryStat;
+                                console.log(remainder, remainder - info.maxStackSize, remainder - info.maxStackSize > 0);
                             }
                         });
                     }

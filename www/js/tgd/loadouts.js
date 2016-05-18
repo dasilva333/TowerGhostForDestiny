@@ -160,12 +160,12 @@ tgd.Loadout = function(model, isItems) {
     });
     this.editing = ko.observable(false);
     this.sortUp = function() {
-        var currentIndex = app.loadouts.indexOf(this);
+        var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex - 1;
         self.sortDirection(currentIndex, nextIndex);
     };
     this.sortDown = function() {
-        var currentIndex = app.loadouts.indexOf(this);
+        var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex + 1;
         self.sortDirection(currentIndex, nextIndex);
     };
@@ -173,11 +173,11 @@ tgd.Loadout = function(model, isItems) {
         //remove item from the array
         var ref = app.loadouts.splice(currentIndex, 1);
         //fix the reverse issue
-        app.loadouts(app.loadouts.reverse());
+        //app.loadouts(app.loadouts.reverse());
         //add the item to the right position in the array
         app.loadouts.splice(nextIndex, 0, ref[0]);
         //fix the reverse issue
-        app.loadouts(app.loadouts.reverse());
+        //app.loadouts(app.loadouts.reverse());
     };
     this.rename = function() {
         self.editing(!self.editing());
