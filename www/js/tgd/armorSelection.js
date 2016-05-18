@@ -23,7 +23,7 @@ tgd.armorItemCreate = function(character) {
                 return item.bucketType == self.bucketType();
             }), function(item) {
                 item.uniqueDescription = item.description;
-                if (item.primaryStat() != "") {
+                if (item.primaryStat() !== "") {
                     item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
                 }
                 item.uniqueDescription = item.uniqueDescription + " - " + _.reduce(item.stats, function(memo, stat, key) {
@@ -262,6 +262,7 @@ tgd.armorSelection = function(type, groups, character) {
         var viewModel = new tgd.armorItemCreate(self.character);
         console.log("armorItemCreate", viewModel);
         var defaultAction = function(dialogItself) {
+            var group, armorItem;
             if (viewModel.armorType() == "New Item") {
                 var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
                     if (!$.isNumeric(stat.value()) && memo === true) memo = false;
@@ -274,18 +275,18 @@ tgd.armorSelection = function(type, groups, character) {
                     BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
                 } else {
                     /* add the item to the right armorGroups */
-                    var group = _.findWhere(self.armorGroups(), {
+                    group = _.findWhere(self.armorGroups(), {
                         bucketType: viewModel.activeItem().bucketType
                     });
-                    var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                    armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
                     group.items.push(armorItem);
                     dialogItself.close();
                 }
             } else if (viewModel.armorType() == "Existing Item" && !_.isEmpty(viewModel.selectedExistingItem())) {
-                var group = _.findWhere(self.armorGroups(), {
+                group = _.findWhere(self.armorGroups(), {
                     bucketType: viewModel.selectedExistingItem().bucketType
                 });
-                var armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
                 group.items.push(armorItem);
                 dialogItself.close();
             }
@@ -305,7 +306,7 @@ tgd.armorSelection = function(type, groups, character) {
                 }
             }]
         })).title("Add Custom Item").show(true);
-    }
+    };
 
     self.addVendorArmor = function() {
         self.vendorArmorQueried(true);
@@ -325,7 +326,7 @@ tgd.armorSelection = function(type, groups, character) {
                 });
             });
         });
-    }
+    };
 
     self.setOtherArmor = function(model, event) {
         tgd.showLoading(function() {

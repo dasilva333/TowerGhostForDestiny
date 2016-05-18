@@ -58,11 +58,11 @@
     },
     "jquery.js": {
       "filename": "js/libraries/primary/jquery.js",
-      "version": "2ecd295d295bec062cedebe177e54b9d6b19fc0a841dc5c178c654c9ccff09c0"
+      "version": "a271a3f9e3cae897ced669d6652699e947928ef095e56384c4f9dd04bbb942ec"
     },
     "knockout.js": {
       "filename": "js/libraries/primary/knockout.js",
-      "version": "43e21ee81d80adccf54b5d576da2ae4cacb595282014cf89b0f154f4c3b7aa95"
+      "version": "18547751c3c89c0c44a7970e8afe6905d86f82ffc95722e86008970ae81acce4"
     },
     "modernizr.js": {
       "filename": "js/libraries/primary/modernizr.js",
@@ -102,7 +102,7 @@
     },
     "jquery-ui.js": {
       "filename": "js/plugins/jquery-ui.js",
-      "version": "098da2172e02433f98269c262576a365fd27c8ba0e29d8588c11d9ae5c4904ed"
+      "version": "4f3e6471cd8b68164c564b52de329a0355b36ae724a4dbf83eab604300e27ec0"
     },
     "jquery-ui.touchpunch.js": {
       "filename": "js/plugins/jquery-ui.touchpunch.js",
@@ -122,11 +122,11 @@
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
-      "version": "e8955fbdf67167d89c92051ce84e635cc57180be77adf4589fcaca8cebe7c900"
+      "version": "5c1b98bf57a5bfeaba966e9103923b0a04e68d208cd074db0911ed1bc632c3d5"
     },
     "armorSelection.js": {
       "filename": "js/tgd/armorSelection.js",
-      "version": "568f42ae29e2b0cf800387f41e5a12216e393b15c8303fb9814424e12ccc97aa"
+      "version": "27a4037644dc6743f1e1ab666586dc2cd7ba2ffb8de774d90604da411053617d"
     },
     "base-definitions.js": {
       "filename": "js/tgd/base-definitions.js",
@@ -162,7 +162,7 @@
     },
     "loadouts.js": {
       "filename": "js/tgd/loadouts.js",
-      "version": "515c3b89ef4e5925bc2cfb86fdd6e5acb5bb193455e19e8733dc4141751a397a"
+      "version": "a99a228b0edd0c79a0838e0a75efc5554895cd3abeae11d6c5e746b2081145b0"
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
@@ -198,15 +198,15 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "c38a817b3c40dd9647d17e7715ad320c3f921a5d6379ad3efd9b6c2e30ccae1b"
+      "version": "7d27e9b5403d8a6511e52cd099bcef747aea1063d33db93a98575fda09750389"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
-      "version": "be6ade129f25508e520ba39cb2f2cee3c4c85aff1d601d3c8be343821e459be6"
+      "version": "f92a6aa3aab29d57fb37418b6b43159c2800535cf229bee08c128fa6a0aca0d9"
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "c0a57c8021b1a7b10a54d34c61b60b7a8acf0cad2bed5a5a2b34a0461dccdb7e"
+      "version": "af3ef3c16a377a092c25ab95b229628a0f3f34169a4188e1a4dca259972f28f4"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

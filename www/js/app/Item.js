@@ -261,7 +261,7 @@ Item.prototype = {
         }).name : "");
         self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
         self.progression = _.filter(self.perks, function(perk) {
-            return perk.active === false && perk.isExclusive === -1 && perk.isVisible == true;
+            return perk.active === false && perk.isExclusive === -1 && perk.isVisible === true;
         }).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
@@ -895,10 +895,11 @@ Item.prototype = {
         });
         var amountInTarget = self.getStackAmount(targetStacks);
         var targetAmount = amount + amountInTarget;
+        var remainder = 0;
         console.log("remainder in target: " + targetAmount);
         console.log("sourceStacks", sourceStacks.length, targetStacks.length);
         /* adjust the source character stack */
-        if (sourceRemainder == 0) {
+        if (sourceRemainder === 0) {
             console.log("sourceRemainder is zero removing all stacks", sourceStacks);
             _.each(sourceStacks, function(item) {
                 sourceCharacter.items.remove(item);
@@ -912,8 +913,8 @@ Item.prototype = {
                 });
             }
         } else {
-            var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize),
-                remainder = sourceRemainder;
+            var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize);
+            remainder = sourceRemainder;
             console.log("sourceRemainder gt maxStackSize ", sourceRemainder);
             _.each(sourceStacks, function(item) {
                 var itemAmount = remainder - maxStackSize > 0 ? maxStackSize : remainder;
@@ -941,8 +942,8 @@ Item.prototype = {
             }
         } else {
             var totalTargetStacks = Math.ceil(targetAmount / maxStackSize),
-                missingItemsAmount = totalTargetStacks - targetStacks.length,
-                remainder = amountInTarget == 0 ? targetAmount : targetAmount - ((totalTargetStacks - 1) * maxStackSize);
+                missingItemsAmount = totalTargetStacks - targetStacks.length;
+            remainder = amountInTarget === 0 ? targetAmount : targetAmount - ((totalTargetStacks - 1) * maxStackSize);
             console.log("missingItemsAmount", totalTargetStacks, missingItemsAmount, targetAmount, remainder);
             _.each(targetStacks, function(item) {
                 if (item.primaryStat() < maxStackSize) {

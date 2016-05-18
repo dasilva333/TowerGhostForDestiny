@@ -62,12 +62,6 @@ var app = function() {
     this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
     this.cspToggle = ko.observable(false);
 
-    this.sortedLoadouts = ko.pureComputed(function() {
-        return self.loadouts().sort(function(left, right) {
-            return left.name == right.name ? 0 : (left.name < right.name ? -1 : 1);
-        });
-    });
-
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
     this.allLayouts = ko.observableArray().extend({

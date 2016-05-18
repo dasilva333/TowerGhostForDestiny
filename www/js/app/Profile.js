@@ -293,7 +293,7 @@ Profile.prototype = {
         return function() {
             self.statsPane(pane);
             return false;
-        }
+        };
     },
     calculatePowerLevelWithItems: function(items) {
         if (items.length === 0) {

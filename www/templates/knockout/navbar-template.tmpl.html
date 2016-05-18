@@ -57,7 +57,7 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" role="menu">
-                        <!-- ko foreach: { data: sortedLoadouts, as: 'loadout' } -->
+                        <!-- ko foreach: { data: loadouts, as: 'loadout' } -->
                         <li data-bind="fastclick: setActive">
                             <a data-bind="text: loadout.name" href="#"></a>
                         </li>

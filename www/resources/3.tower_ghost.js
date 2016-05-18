@@ -23,7 +23,7 @@ tgd.armorItemCreate = function(character) {
                 return item.bucketType == self.bucketType();
             }), function(item) {
                 item.uniqueDescription = item.description;
-                if (item.primaryStat() != "") {
+                if (item.primaryStat() !== "") {
                     item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
                 }
                 item.uniqueDescription = item.uniqueDescription + " - " + _.reduce(item.stats, function(memo, stat, key) {
@@ -262,6 +262,7 @@ tgd.armorSelection = function(type, groups, character) {
         var viewModel = new tgd.armorItemCreate(self.character);
         
         var defaultAction = function(dialogItself) {
+            var group, armorItem;
             if (viewModel.armorType() == "New Item") {
                 var hasValidStats = _.reduce(viewModel.selectedStats, function(memo, stat) {
                     if (!$.isNumeric(stat.value()) && memo === true) memo = false;
@@ -274,18 +275,18 @@ tgd.armorSelection = function(type, groups, character) {
                     BootstrapDialog.alert("Invalid light leveled entered, please ensure only numbers are used");
                 } else {
                     /* add the item to the right armorGroups */
-                    var group = _.findWhere(self.armorGroups(), {
+                    group = _.findWhere(self.armorGroups(), {
                         bucketType: viewModel.activeItem().bucketType
                     });
-                    var armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                    armorItem = new tgd.armorItem(viewModel.activeItem(), group.selectedItem, group.groups, group.bestSets, group.type);
                     group.items.push(armorItem);
                     dialogItself.close();
                 }
             } else if (viewModel.armorType() == "Existing Item" && !_.isEmpty(viewModel.selectedExistingItem())) {
-                var group = _.findWhere(self.armorGroups(), {
+                group = _.findWhere(self.armorGroups(), {
                     bucketType: viewModel.selectedExistingItem().bucketType
                 });
-                var armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
                 group.items.push(armorItem);
                 dialogItself.close();
             }
@@ -305,7 +306,7 @@ tgd.armorSelection = function(type, groups, character) {
                 }
             }]
         })).title("Add Custom Item").show(true);
-    }
+    };
 
     self.addVendorArmor = function() {
         self.vendorArmorQueried(true);
@@ -325,7 +326,7 @@ tgd.armorSelection = function(type, groups, character) {
                 });
             });
         });
-    }
+    };
 
     self.setOtherArmor = function(model, event) {
         tgd.showLoading(function() {
@@ -1920,24 +1921,27 @@ tgd.Loadout = function(model, isItems) {
         
         
         }));
-        //add the item to the right position in the array
-        app.loadouts.splice(nextIndex, 0, self);
-        //remove item from the array
-        currentIndex = app.loadouts.indexOf(self);
-        
-    }
+        self.sortDirection(currentIndex, nextIndex);
+    };
     this.sortDown = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex + 1;
         
         
         
-        //add the item to the right position in the array
-        app.loadouts.splice(nextIndex, 0, self);
+        }));
+        self.sortDirection(currentIndex, nextIndex);
+    };
+    this.sortDirection = function(currentIndex, nextIndex) {
         //remove item from the array
-        //currentIndex = app.loadouts.indexOf(self)+1;
-        
-    }
+        var ref = app.loadouts.splice(currentIndex, 1);
+        //fix the reverse issue
+        app.loadouts(app.loadouts.reverse());
+        //add the item to the right position in the array
+        app.loadouts.splice(nextIndex, 0, ref[0]);
+        //fix the reverse issue
+        app.loadouts(app.loadouts.reverse());
+    };
     this.rename = function() {
         self.editing(!self.editing());
     };
@@ -4500,7 +4504,7 @@ Item.prototype = {
         }).name : "");
         self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
         self.progression = _.filter(self.perks, function(perk) {
-            return perk.active === false && perk.isExclusive === -1 && perk.isVisible == true;
+            return perk.active === false && perk.isExclusive === -1 && perk.isVisible === true;
         }).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
@@ -5134,10 +5138,11 @@ Item.prototype = {
         });
         var amountInTarget = self.getStackAmount(targetStacks);
         var targetAmount = amount + amountInTarget;
+        var remainder = 0;
         
         
         /* adjust the source character stack */
-        if (sourceRemainder == 0) {
+        if (sourceRemainder === 0) {
             
             _.each(sourceStacks, function(item) {
                 sourceCharacter.items.remove(item);
@@ -5151,8 +5156,8 @@ Item.prototype = {
                 });
             }
         } else {
-            var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize),
-                remainder = sourceRemainder;
+            var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize);
+            remainder = sourceRemainder;
             
             _.each(sourceStacks, function(item) {
                 var itemAmount = remainder - maxStackSize > 0 ? maxStackSize : remainder;
@@ -5180,8 +5185,8 @@ Item.prototype = {
             }
         } else {
             var totalTargetStacks = Math.ceil(targetAmount / maxStackSize),
-                missingItemsAmount = totalTargetStacks - targetStacks.length,
-                remainder = amountInTarget == 0 ? targetAmount : targetAmount - ((totalTargetStacks - 1) * maxStackSize);
+                missingItemsAmount = totalTargetStacks - targetStacks.length;
+            remainder = amountInTarget === 0 ? targetAmount : targetAmount - ((totalTargetStacks - 1) * maxStackSize);
             
             _.each(targetStacks, function(item) {
                 if (item.primaryStat() < maxStackSize) {
@@ -6096,7 +6101,7 @@ Profile.prototype = {
         return function() {
             self.statsPane(pane);
             return false;
-        }
+        };
     },
     calculatePowerLevelWithItems: function(items) {
         if (items.length === 0) {
