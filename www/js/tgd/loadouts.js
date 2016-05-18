@@ -159,7 +159,7 @@ tgd.Loadout = function(model, isItems) {
         });
     });
     this.editing = ko.observable(false);
-    /*this.sortUp = function() {
+    this.sortUp = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex - 1;
         console.log("currentIndex", currentIndex);
@@ -186,7 +186,7 @@ tgd.Loadout = function(model, isItems) {
         //remove item from the array
         //currentIndex = app.loadouts.indexOf(self)+1;
         console.log(app.loadouts.splice(nextIndex + 1, 1));
-    }*/
+    }
     this.rename = function() {
         self.editing(!self.editing());
     };

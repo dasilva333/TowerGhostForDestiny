@@ -261,10 +261,7 @@ Item.prototype = {
         }).name : "");
         self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
         self.progression = _.filter(self.perks, function(perk) {
-            return perk.active === false && perk.isExclusive === -1;
-        }).length === 0;
-        self.perksInProgress = _.filter(self.perks, function(perk) {
-            return perk.active === false && perk.isExclusive === -1;
+            return perk.active === false && perk.isExclusive === -1 && perk.isVisible == true;
         }).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
