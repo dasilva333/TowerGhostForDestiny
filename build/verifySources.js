@@ -1,3 +1,5 @@
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0;
+
 var jsDir = "../www/js/";
 var fs = require("fs");
 var _ = require("lodash");
@@ -35,6 +37,41 @@ var finish = function(){
 		fs.writeFileSync(jsDir +  "sources.txt", JSON.stringify(_.sortBy(verification,'fileName'),null,4));
 	}
 }
+
+var downloadFile = function(link, callback, fileName, currentFile, localHash){
+	(link.indexOf("https") > -1 ? https : http).get(link, function(res){
+		var data = [];
+		res.on("data", function(chunk){
+			data.push(chunk);
+		});
+		res.on("end", function(){
+			var buffer = Buffer.concat(data);
+			if (res.headers && res.headers.location ){
+				downloadFile(res.headers.location, callback, fileName, currentFile, localHash);
+			}
+			else {
+				var remoteHash = crypto.createHash('sha256').update(buffer).digest("hex");		
+				tmp = verification[fileName] = { currentFile: currentFile, fileName: fileName, link: link, localHash: localHash, remoteHash: remoteHash };
+				/*if ( fileName == "jquery-idletimer.js" ){
+					console.log(fs.readFileSync(currentFile).length);
+					console.log(buffer.length);
+					//console.log(data);
+					//console.log(res);
+					console.log(tmp);
+					abort;
+				}*/
+				if (tmp.localHash != tmp.remoteHash){
+					console.log("FAILED Verification for: " + tmp.fileName);
+					console.log(tmp);
+					if ( buffer.length > 0 )
+						fs.writeFileSync(currentFile, buffer);
+				}
+				callback();
+			}
+		});
+	});
+}
+
 var StringDecoder = require('string_decoder').StringDecoder;
 _.each(sources, function(file){
 	var fileName = Object.keys(file)[0];
@@ -44,31 +81,7 @@ _.each(sources, function(file){
 	})[0];
 	if (!currentFile) console.log("NOT FOUND: " + fileName);
 	var localHash = crypto.createHash('sha256').update(fs.readFileSync(currentFile)).digest("hex");
-	(link.indexOf("https") > -1 ? https : http).get(link, function(res){
-		var data = [];
-		res.on("data", function(chunk){
-			data.push(chunk);
-		});
-		res.on("end", function(){
-			var buffer = Buffer.concat(data);
-			var remoteHash = crypto.createHash('sha256').update(buffer).digest("hex");		
-			tmp = verification[fileName] = { currentFile: currentFile, fileName: fileName, link: link, localHash: localHash, remoteHash: remoteHash };
-			/*if ( fileName == "jquery-idletimer.js" ){
-				console.log(fs.readFileSync(currentFile).length);
-				console.log(buffer.length);
-				//console.log(data);
-				//console.log(res);
-				console.log(tmp);
-				abort;
-			}*/
-			if (tmp.localHash != tmp.remoteHash){
-				console.log("FAILED Verification for: " + tmp.fileName);
-				console.log(tmp);
-				if ( buffer.length > 0 )
-					fs.writeFileSync(currentFile, buffer);
-			}
-			finish();
-		});
-	});
+	
+	downloadFile(link, finish, fileName, currentFile, localHash);
 	
 });

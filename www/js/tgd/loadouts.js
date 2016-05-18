@@ -159,34 +159,26 @@ tgd.Loadout = function(model, isItems) {
         });
     });
     this.editing = ko.observable(false);
-    /*this.sortUp = function() {
+    this.sortUp = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex - 1;
-        console.log("currentIndex", currentIndex);
-        console.log("nextIndex", nextIndex);
-        console.log(_.map(app.loadouts(), function(loadout) {
-            return loadout.name();
-        }));
-        //add the item to the right position in the array
-        app.loadouts.splice(nextIndex, 0, self);
-        //remove item from the array
-        currentIndex = app.loadouts.indexOf(self);
-        console.log(app.loadouts.splice(currentIndex, 1));
-    }
+        self.sortDirection(currentIndex, nextIndex);
+    };
     this.sortDown = function() {
         var currentIndex = app.loadouts.indexOf(self);
         var nextIndex = currentIndex + 1;
-        console.log("currentIndex", currentIndex);
-        console.log("nextIndex", nextIndex);
-        console.log(_.map(app.loadouts(), function(loadout) {
-            return loadout.name()
-        }));
-        //add the item to the right position in the array
-        app.loadouts.splice(nextIndex, 0, self);
+        self.sortDirection(currentIndex, nextIndex);
+    };
+    this.sortDirection = function(currentIndex, nextIndex) {
         //remove item from the array
-        //currentIndex = app.loadouts.indexOf(self)+1;
-        console.log(app.loadouts.splice(nextIndex + 1, 1));
-    }*/
+        var ref = app.loadouts.splice(currentIndex, 1);
+        //fix the reverse issue
+        //app.loadouts(app.loadouts.reverse());
+        //add the item to the right position in the array
+        app.loadouts.splice(nextIndex, 0, ref[0]);
+        //fix the reverse issue
+        //app.loadouts(app.loadouts.reverse());
+    };
     this.rename = function() {
         self.editing(!self.editing());
     };

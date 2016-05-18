@@ -136,7 +136,9 @@ var Item = function(model, profile) {
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.maxLightPercent = ko.pureComputed(function() {
         var toggle = app.cspToggle();
-        return Math.round((self.primaryValues.MaxLightCSP / tgd.DestinyMaxCSP[self.bucketType]) * 100);
+		var futureBaseCSP = self.primaryValues.MaxLightCSP - tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), self.getValue('Light'));
+		var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType] - tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), tgd.DestinyLightCap);
+        return Math.round((futureBaseCSP / maxBaseCSP) * 100);
     });
     this.cspStat = ko.pureComputed(this._cspStat, this);
     this.cspClass = ko.pureComputed(this._cspClass, this);
@@ -261,10 +263,7 @@ Item.prototype = {
         }).name : "");
         self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
         self.progression = _.filter(self.perks, function(perk) {
-            return perk.active === false && perk.isExclusive === -1;
-        }).length === 0;
-        self.perksInProgress = _.filter(self.perks, function(perk) {
-            return perk.active === false && perk.isExclusive === -1;
+            return perk.active === false && perk.isExclusive === -1 && perk.isVisible === true;
         }).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
@@ -299,11 +298,13 @@ Item.prototype = {
                 //Calculate both stats at Max Light (LL320) with bonus
                 //TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
                 //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
-                tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
+                //tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
+                tmp[statPerk.name] = Math.round(currentStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio))) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
                     //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
-                    tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
+                    //tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
+                    tmp[otherStatName] = Math.round(otherStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio)));
                 }
                 return tmp;
             });
@@ -898,10 +899,11 @@ Item.prototype = {
         });
         var amountInTarget = self.getStackAmount(targetStacks);
         var targetAmount = amount + amountInTarget;
+        var remainder = 0;
         console.log("remainder in target: " + targetAmount);
         console.log("sourceStacks", sourceStacks.length, targetStacks.length);
         /* adjust the source character stack */
-        if (sourceRemainder == 0) {
+        if (sourceRemainder === 0) {
             console.log("sourceRemainder is zero removing all stacks", sourceStacks);
             _.each(sourceStacks, function(item) {
                 sourceCharacter.items.remove(item);
@@ -915,8 +917,8 @@ Item.prototype = {
                 });
             }
         } else {
-            var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize),
-                remainder = sourceRemainder;
+            var totalItemsAmount = Math.ceil(sourceRemainder / maxStackSize);
+            remainder = sourceRemainder;
             console.log("sourceRemainder gt maxStackSize ", sourceRemainder);
             _.each(sourceStacks, function(item) {
                 var itemAmount = remainder - maxStackSize > 0 ? maxStackSize : remainder;
@@ -944,8 +946,8 @@ Item.prototype = {
             }
         } else {
             var totalTargetStacks = Math.ceil(targetAmount / maxStackSize),
-                missingItemsAmount = totalTargetStacks - targetStacks.length,
-                remainder = amountInTarget == 0 ? targetAmount : targetAmount - ((totalTargetStacks - 1) * maxStackSize);
+                missingItemsAmount = totalTargetStacks - targetStacks.length;
+            remainder = amountInTarget === 0 ? targetAmount : targetAmount - ((totalTargetStacks - 1) * maxStackSize);
             console.log("missingItemsAmount", totalTargetStacks, missingItemsAmount, targetAmount, remainder);
             _.each(targetStacks, function(item) {
                 if (item.primaryStat() < maxStackSize) {
