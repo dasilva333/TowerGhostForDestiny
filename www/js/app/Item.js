@@ -296,11 +296,13 @@ Item.prototype = {
                 //Calculate both stats at Max Light (LL320) with bonus
                 //TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
                 //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
-                tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
+                //tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
+                tmp[statPerk.name] = Math.round(currentStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio))) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
                     //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
-                    tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
+                    //tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
+                    tmp[otherStatName] = Math.round(otherStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio)));
                 }
                 return tmp;
             });

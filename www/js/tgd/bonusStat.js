@@ -8,7 +8,9 @@ tgd.calculateStatRoll = function(item, targetLight, withBonus) {
     //console.log("formula", item.getValue("All"), (isItemLeveled ? currentBonus : 0), targetLight / currentLight);
     //this has been proven to be too inaccurate over a large different in light value with an error margin of up to 8 points
     //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) * targetLight / currentLight;
-    var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) + (((targetLight - currentLight) * tgd.DestinyInfusionRates[item.bucketType]) * 2);
+    //this formulas has also proven to not be as accurate as the corn ratio
+    //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) + (((targetLight - currentLight) * tgd.DestinyInfusionRates[item.bucketType]) * 2);
+    var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) * ((targetLight + tgd.DestinyCornRatio) / (currentLight + tgd.DestinyCornRatio));
     //console.log("newStats", newStats);
     var finalStat = newStats + (withBonus ? targetBonus : 0);
     //console.log("Stat at " + targetLight + " is " + finalStat);
