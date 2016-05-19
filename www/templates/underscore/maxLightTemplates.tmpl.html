@@ -32,10 +32,9 @@
 							<img class="itemImage" data-bind="click: function(){ return false }, itemImageHandler: item.icon, style: { border: '2px solid ' + (item.getValue('MaxLightPercent') >= app.minAvgPercentNeeded() ? 'green' : 'red')}" style="padding: 2px; width:48px;">
 						</a>						
 					</div>
-					<div class="col-xs-24">
-						<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: tgd.DestinyMaxCSP[item.bucketType]"></span><br>
-						<span class="font-smaller-1">(<span data-bind="text: item.getValue('MaxLightPercent')"></span>%)</span><br>
-						<span class="font-smaller-2" data-bind="text: item.activeStatText"></span>
+					<div class="col-xs-24 font-smaller-2" style="padding-top:3px;">
+						<span data-bind="text: item.getValue('MaxLightCSP')"></span> / <span data-bind="text: item.getValue('MaxLightPercent')"></span>% <br>
+						<span data-bind="text: item.statText"></span>
 					</div>
 				</div>
 			</div>
@@ -152,7 +151,7 @@
 									<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, click: function(){ return false }">
 										<img class="itemImage" data-bind="itemImageHandler: item.icon, style: { border: '2px solid ' + (item.bonusStatOn() == item.activeRoll.bonusOn ? 'green' : 'orange') }" style="padding: 2px; width:48px;">
 									</a><br>
-									<span class="font-smaller-2 label label-default" style="white-space: nowrap; padding: 0;" data-bind="text: item.activeStatText"></span>
+									<span class="font-smaller-2 label label-default" style="white-space: nowrap; padding: 0;" data-bind="text: item.statText"></span>
 								</div>
 							</div>
 							<div class="col-xs-24" style="display:none;" data-bind="attr:{id:'help_'+combo.id}">
@@ -181,12 +180,9 @@
 									<img class="itemImage" data-bind="itemImageHandler: item.icon, css: item.css" style="padding: 2px;">
 								</a>
 							</div>
-							<div class="col-xs-24" data-bind="visible: $root.type == 'MaxLight', css: item.cspClass() + 'Text'" style="display:none;">
-								<span data-bind="text: item.getValue('MaxLightCSP')"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%
-							</div>
-							<div class="col-xs-24" data-bind="visible: $root.type == 'Custom', css: item.cspClass() + 'Text', style: { 'border-bottom': '1px solid ' + (_.has(item,'isVendor') ? 'yellow' : 'transparent') }" style="display:none;">
-								<span data-bind="text: item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType)"></span>/<span data-bind="text: ((item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType) / tgd.DestinyMaxCSP[item.bucketType]) * 100).toFixed(0)"></span>%<br>
-								<span class="font-smaller-2 label label-default" style="white-space: nowrap; padding: 0;" data-bind="text: item.activeStatText"></span>
+							<div class="col-xs-24 font-smaller-1" data-bind="css: item.cspClass() + 'Text', style: { 'border-bottom': '1px solid ' + (_.has(item,'isVendor') ? 'yellow' : 'transparent') }" style="padding-top:3px;">
+								<div style="white-space:nowrap"><span data-bind="text: item.getValue(tgd.armorSelectionFields[$root.activeView()].valueType)"></span>/<span data-bind="text: item.getValue('MaxLightPercent')"></span>%</div>
+								<span class="font-smaller-2 label label-default" style="white-space: nowrap; padding: 0;" data-bind="text: item.statText"></span>
 							</div>
 						</div>
 					</div>

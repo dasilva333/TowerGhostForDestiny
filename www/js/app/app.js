@@ -9,7 +9,7 @@ var app = function() {
     this.destinyDbMode = ko.observable(false);
     this.dynamicMode = ko.observable(false);
     this.viewOptionsEnabled = ko.observable(false);
-    this.minAvgPercentNeeded = ko.observable(97);
+    this.minAvgPercentNeeded = ko.observable(96.15);
     this.activeLoadout = ko.observable(new tgd.Loadout());
     this.loadouts = ko.observableArray();
     this.searchKeyword = ko.observable(tgd.defaults.searchKeyword);
@@ -386,7 +386,8 @@ var app = function() {
                 );
                 //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
-                    var magazineRow = stats.find(".stat-bar:last");
+                    var magazineRow = stats.find(".stat-bar:last"),
+                        clonedRow;
                     if (activeItem.weaponIndex > -1) {
                         var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction", "Inventory Size"];
                         _.each(desireableStats, function(statName) {
@@ -394,7 +395,7 @@ var app = function() {
                                 name: statName
                             });
                             if (statObj) {
-                                var clonedRow = magazineRow.clone();
+                                clonedRow = magazineRow.clone();
                                 var label = statObj.name;
                                 if (statName == "Recoil direction")
                                     label = "Recoil";
@@ -410,52 +411,64 @@ var app = function() {
                     } else if (activeItem.armorIndex > -1) {
                         var statDetails;
                         if (activeItem.primaryStat() == 3) {
-                            var clonedRow = magazineRow.clone();
-							statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
+                            clonedRow = magazineRow.clone();
+                            statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
                             clonedRow.find(".stat-bar-label").html("Stat Roll : ");
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         } else {
-							var maxLightLevel = tgd.DestinyLightCap;
+                            var maxLightLevel = tgd.DestinyLightCap;
                             var isItemLeveled = activeItem.hasUnlockedStats;
                             var itemCSP = activeItem.getValue("All");
                             var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryValues.Default);
                             var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
-							
-							if (!isItemLeveled) {
+
+                            if (!isItemLeveled) {
                                 itemCSP = itemCSP + "<span class='font-smaller-2'>(" + (itemCSP + currentBonusPoints) + ")</span>";
                             }
-							
-							var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType];
-							var maxBaseCSP = maxStatRoll - maxBonusPoints;
-							
-							var futureMaxCSP = activeItem.getValue("MaxLightCSP");
-							var futureBaseCSP = futureMaxCSP - maxBonusPoints;
-							
-							var statsRow = magazineRow.clone();
-							var statsValues = { futureMaxCSP: futureMaxCSP, maxStatRoll: maxStatRoll };
-							var statsDetails = itemCSP;
-							if (activeItem.tierType >= 5) {
-								statsDetails = statsDetails + _.template(' | Infusable to: <%- futureMaxCSP %>/<%- maxStatRoll %>')(statsValues);
-							}
-							statsRow.find(".stat-bar-label").html("Stats Total: ");
+
+                            var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType];
+                            var maxBaseCSP = maxStatRoll - maxBonusPoints;
+
+                            var futureMaxCSP = activeItem.getValue("MaxLightCSP");
+                            var futureBaseCSP = futureMaxCSP - maxBonusPoints;
+
+                            var statsRow = magazineRow.clone();
+                            var statsValues = {
+                                futureMaxCSP: futureMaxCSP,
+                                maxStatRoll: maxStatRoll
+                            };
+                            var statsDetails = itemCSP;
+                            if (activeItem.tierType >= 5) {
+                                if (futureMaxCSP != itemCSP) {
+                                    statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')(statsValues);
+                                } else {
+                                    statsDetails = statsDetails + "/" + maxStatRoll;
+                                }
+                            }
+                            statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             statsRow.find(".stat-bar-static-value").show().html(statsDetails);
-							magazineRow.after(statsRow);
-							
-							var qualityRow = magazineRow.clone();
-							var qualityPercentage = Math.round((futureBaseCSP / maxBaseCSP) * 100);
-							var qualityValues = { percent: qualityPercentage, futureBaseCSP: futureBaseCSP, maxBaseCSP: maxBaseCSP };
+                            magazineRow.after(statsRow);
+
+                            var qualityRow = magazineRow.clone();
+                            var qualityPercentage = activeItem.maxLightPercent();
+                            var qualityValues = {
+                                percent: qualityPercentage,
+                                futureBaseCSP: futureBaseCSP,
+                                maxBaseCSP: maxBaseCSP
+                            };
                             var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
-							qualityRow.find(".stat-bar-label").html("Quality: ");
+                            qualityRow.find(".stat-bar-label").html("Quality: ");
                             qualityRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             if (activeItem.tierType >= 5) {
                                 qualityRow.find(".stat-bar-static-value").addClass(activeItem.cspClass() + "Text");
                             }
                             qualityRow.find(".stat-bar-static-value").show().html(qualityDetails);
-							magazineRow.after(qualityRow);
+                            magazineRow.after(qualityRow);
                         }
-                        magazineRow.after(clonedRow);
+                        if (clonedRow)
+                            magazineRow.after(clonedRow);
                     }
                 }
             }
@@ -1535,9 +1548,13 @@ var app = function() {
                     console.log(e);
                 }
                 var destinyMaxCSP = tgd.sum(tgd.DestinyMaxCSP);
+                var destinyMaxBonusPoints = tgd.sum(_.map(tgd.DestinyMaxCSP, function(value, bucket) {
+                    return tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(bucket), tgd.DestinyLightCap);
+                }));
                 tgd.maxTierPossible = Math.floor(destinyMaxCSP / tgd.DestinySkillTier);
                 tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
-                app.minAvgPercentNeeded(Math.round((tgd.maxTierPointsPossible / destinyMaxCSP) * 100));
+                var minAvgPercentNeeded = ((tgd.maxTierPointsPossible - destinyMaxBonusPoints) / (destinyMaxCSP - destinyMaxBonusPoints)) * 100;
+                app.minAvgPercentNeeded(Math.round(minAvgPercentNeeded * 100) / 100);
                 self.cspToggle(!self.cspToggle());
             });
         }
