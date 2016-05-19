@@ -436,7 +436,12 @@ var app = function() {
 							var statsValues = { futureMaxCSP: futureMaxCSP, maxStatRoll: maxStatRoll };
 							var statsDetails = itemCSP;
 							if (activeItem.tierType >= 5) {
-								statsDetails = statsDetails + _.template(' | Infusable to: <%- futureMaxCSP %>/<%- maxStatRoll %>')(statsValues);
+								if ( futureMaxCSP != itemCSP ){
+									statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')(statsValues);
+								}
+								else {
+									statsDetails = statsDetails + "/" + maxStatRoll;
+								}
 							}
 							statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
