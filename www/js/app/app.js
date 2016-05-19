@@ -451,7 +451,7 @@ var app = function() {
                             magazineRow.after(statsRow);
 
                             var qualityRow = magazineRow.clone();
-                            var qualityPercentage = Math.round((futureBaseCSP / maxBaseCSP) * 100);
+                            var qualityPercentage = activeItem.maxLightPercent();
                             var qualityValues = {
                                 percent: qualityPercentage,
                                 futureBaseCSP: futureBaseCSP,
