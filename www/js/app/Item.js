@@ -136,11 +136,11 @@ var Item = function(model, profile) {
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.maxLightPercent = ko.pureComputed(function() {
         var toggle = app.cspToggle();
-		var maxBonusPoints = tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), tgd.DestinyLightCap);
+        var maxBonusPoints = tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), tgd.DestinyLightCap);
         var futureBaseCSP = self.getValue('MaxLightCSP') - maxBonusPoints;
         var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType] - maxBonusPoints;
         //convert the fraction into a whole percentage
-        var maxLightPercent = (futureBaseCSP / maxBaseCSP) * 100;	
+        var maxLightPercent = (futureBaseCSP / maxBaseCSP) * 100;
         //round to 2 digits;
         return Math.round(maxLightPercent * 100) / 100;
     });
@@ -262,7 +262,7 @@ Item.prototype = {
                 memo.push(key.substring(0, 3) + " " + stat);
             }
             return memo;
-        }, [])).join("/")
+        }, [])).join("/");
         self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, bonus, "");
         self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, bonus, bucketType, this.description);
         var hasUnlockedStats = _.where(statPerks, {

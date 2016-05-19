@@ -386,7 +386,8 @@ var app = function() {
                 );
                 //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
-                    var magazineRow = stats.find(".stat-bar:last");
+                    var magazineRow = stats.find(".stat-bar:last"),
+                        clonedRow;
                     if (activeItem.weaponIndex > -1) {
                         var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction", "Inventory Size"];
                         _.each(desireableStats, function(statName) {
@@ -394,7 +395,7 @@ var app = function() {
                                 name: statName
                             });
                             if (statObj) {
-                                var clonedRow = magazineRow.clone();
+                                clonedRow = magazineRow.clone();
                                 var label = statObj.name;
                                 if (statName == "Recoil direction")
                                     label = "Recoil";
@@ -410,7 +411,7 @@ var app = function() {
                     } else if (activeItem.armorIndex > -1) {
                         var statDetails;
                         if (activeItem.primaryStat() == 3) {
-                            var clonedRow = magazineRow.clone();
+                            clonedRow = magazineRow.clone();
                             statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
                             clonedRow.find(".stat-bar-label").html("Stat Roll : ");
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
@@ -466,7 +467,8 @@ var app = function() {
                             qualityRow.find(".stat-bar-static-value").show().html(qualityDetails);
                             magazineRow.after(qualityRow);
                         }
-                        magazineRow.after(clonedRow);
+                        if (clonedRow)
+                            magazineRow.after(clonedRow);
                     }
                 }
             }
