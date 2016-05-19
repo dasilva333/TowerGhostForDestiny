@@ -26,12 +26,7 @@ tgd.armorItemCreate = function(character) {
                 if (item.primaryStat() !== "") {
                     item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
                 }
-                item.uniqueDescription = item.uniqueDescription + " - " + _.reduce(item.stats, function(memo, stat, key) {
-                    if (stat > 0) {
-                        memo.push(key.substring(0, 3) + " " + stat);
-                    }
-                    return memo;
-                }, []);
+                item.uniqueDescription = item.uniqueDescription + " - " + item.statText;
                 return item;
             });
         }
@@ -481,14 +476,6 @@ tgd.armorItem = function(item, selectedItem, groups, bestSets, type) {
         return _.filter(bestSets(), function(combo) {
             return _.pluck(combo.set, '_id').indexOf(self._id) > -1;
         }).length > 0;
-    });
-    self.activeStatText = ko.pureComputed(function() {
-        return _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
-            if (stat > 0) {
-                memo.push(key.substring(0, 3) + " " + stat);
-            }
-            return memo;
-        }, [])).join("/");
     });
     /* if the item is in bestSets then color it blue to denote its the found item */
     self.css = ko.pureComputed(function() {
