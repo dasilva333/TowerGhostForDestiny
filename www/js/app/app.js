@@ -250,6 +250,7 @@ var app = function() {
         self.showArmorPerks(tgd.defaults.showArmorPerks);
         self.armorViewBy(tgd.defaults.armorViewBy);
         $(element.target).removeClass("active");
+        self.redraw();
         return false;
     };
 
@@ -2080,7 +2081,7 @@ var app = function() {
     };
 
     this.transferFarmItems = function(targetCharacterId, items) {
-        //console.log("targetCharacterId", targetCharacterId);
+        //console.log("transferFarmItems", targetCharacterId, items);
         if (tgd.transferringFarmItems) return;
         var itemsToTransfer = [],
             farmItemCounts = self.farmItemCounts();

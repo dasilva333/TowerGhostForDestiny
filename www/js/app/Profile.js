@@ -430,7 +430,7 @@ Profile.prototype = {
                 if (element) {
                     element.removeClass("fa-spin");
                 }
-                if (!excludeMessage)
+                if (!excludeMessage) {
                     $.toaster({
                         priority: 'info',
                         title: 'Success',
@@ -439,6 +439,13 @@ Profile.prototype = {
                             timeout: tgd.defaults.toastTimeout
                         }
                     });
+                }
+                if (callback) {
+                    callback();
+                }
+                if (app.farmMode()) {
+                    app.farmItemHandler(self.items());
+                }
             }
 
             if (needsInvisibleRefresh) {
@@ -460,10 +467,7 @@ Profile.prototype = {
             } else {
                 reallyDone();
             }
-            if (callback)
-                callback();
         }
-
 
         if (self.id == "Vault") {
             app.bungie.vault(self.reloadBucketHandler(buckets, done));
