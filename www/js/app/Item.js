@@ -280,7 +280,10 @@ Item.prototype = {
             bonus: bonus,
             Default: primaryStat
         };
-        var infusedStats = tgd.calculateStatRoll(self, tgd.DestinyLightCap, true);
+        var infusedStats = [self.primaryValues.CSP];
+        if (primaryStat >= 200) {
+            infusedStats = tgd.calculateStatRoll(self, tgd.DestinyLightCap, true);
+        }
         self.primaryValues.predictedCSP = infusedStats;
         self.primaryValues.MaxLightCSP = infusedStats[0];
     },
