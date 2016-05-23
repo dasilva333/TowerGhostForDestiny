@@ -279,19 +279,19 @@ tgd.infusionStats = {
 };
 
 tgd.calculateStatRollV2 = function(initial_defense, initial_stat) {
-	var finalStats = [];
-	var target_defense = tgd.DestinyLightCap;
-	var errorValueFinal = tgd.infusionStats.errorFactor[target_defense];
-	var errorValueInitial = tgd.infusionStats.errorFactor[initial_defense];
-	var maxStatValueInitial = tgd.infusionStats.maxStatFactor[initial_defense];
-	var maxStatValueFinal = tgd.infusionStats.maxStatFactor[target_defense];
-	var max_stat = Math.floor((maxStatValueFinal+errorValueFinal)/(maxStatValueInitial-errorValueInitial)*(initial_stat+1.0));
-	var min_stat = Math.floor((maxStatValueFinal-errorValueFinal)/(maxStatValueInitial+errorValueInitial)*initial_stat);
-	finalStats.push(max_stat);
-	if ( min_stat !== max_stat ){
-		finalStats.push(min_stat);
-	}
-	return finalStats;
+    var finalStats = [];
+    var target_defense = tgd.DestinyLightCap;
+    var errorValueFinal = tgd.infusionStats.errorFactor[target_defense];
+    var errorValueInitial = tgd.infusionStats.errorFactor[initial_defense];
+    var maxStatValueInitial = tgd.infusionStats.maxStatFactor[initial_defense];
+    var maxStatValueFinal = tgd.infusionStats.maxStatFactor[target_defense];
+    var max_stat = Math.floor((maxStatValueFinal + errorValueFinal) / (maxStatValueInitial - errorValueInitial) * (initial_stat + 1.0));
+    var min_stat = Math.floor((maxStatValueFinal - errorValueFinal) / (maxStatValueInitial + errorValueInitial) * initial_stat);
+    finalStats.push(max_stat);
+    if (min_stat !== max_stat) {
+        finalStats.push(min_stat);
+    }
+    return finalStats;
 };
 
 tgd.calculateStatRoll = function(item, targetLight, withBonus) {
@@ -307,7 +307,7 @@ tgd.calculateStatRoll = function(item, targetLight, withBonus) {
     //this formulas has also proven to not be as accurate as the corn ratio
     //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) + (((targetLight - currentLight) * tgd.DestinyInfusionRates[item.bucketType]) * 2);
     //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) * ((targetLight + tgd.DestinyCornRatio) / (currentLight + tgd.DestinyCornRatio));
-	var newStats = tgd.calculateStatRollV2(currentLight, item.getValue("All") - (isItemLeveled ? currentBonus : 0))[0];
+    var newStats = tgd.calculateStatRollV2(currentLight, item.getValue("All") - (isItemLeveled ? currentBonus : 0))[0];
     //console.log("newStats", newStats);
     var finalStat = newStats + (withBonus ? targetBonus : 0);
     //console.log("Stat at " + targetLight + " is " + finalStat);
