@@ -281,7 +281,7 @@ tgd.infusionStats = {
 tgd.calculateStatRollV2 = function(initial_defense, initial_stat) {
     var finalStats = [];
     var target_defense = tgd.DestinyLightCap;
-    if (initial_defense == target_defense) return [initial_stat];
+    if (initial_defense == target_defense || initial_defense < 200) return [initial_stat];
     var errorValueFinal = tgd.infusionStats.errorFactor[target_defense];
     var errorValueInitial = tgd.infusionStats.errorFactor[initial_defense];
     var maxStatValueInitial = tgd.infusionStats.maxStatFactor[initial_defense];
