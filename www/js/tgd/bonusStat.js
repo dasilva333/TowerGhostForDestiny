@@ -1,15 +1,5 @@
 tgd.infusionStats = {
-	normFactor:  {
-		"Ghost": 25.7597,
-		"Helmet": 46.2899,
-		"Gauntlet": 41.148,
-		"Chest": 61.6789,
-		"Boots": 56.518,
-		"Class Item": 25.7597,
-		"Artifact": 38.516,
-		"artifactA": 38.516,
-		"artifactB": 72.891
-	}, 
+	normFactor:  61.6789, 
 	errorFactor: {
 		200:0.166667,
 		201:0.25,
@@ -287,9 +277,9 @@ tgd.infusionStats = {
 		335:61.75
 	}
 }
-tgd.calculateStatRollV2 = function(bucketType, initial_defense, target_defense, initial_stat_from_user){
+tgd.calculateStatRollV2 = function(initial_defense, target_defense, initial_stat_from_user){
 	var finalStats = [];
-	var normFactor = tgd.infusionStats.normFactor[bucketType];
+	var normFactor = tgd.infusionStats.normFactor;
 	var maxErrorValue = tgd.infusionStats.errorFactor[target_defense];
 	var minErrorValue = tgd.infusionStats.errorFactor[initial_defense];
 	var maxStatValue = tgd.infusionStats.maxStatFactor[initial_defense];
