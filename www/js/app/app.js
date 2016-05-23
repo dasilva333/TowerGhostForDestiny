@@ -436,7 +436,7 @@ var app = function() {
                             var statsRow = magazineRow.clone();
                             statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
-                            var statsDetails = itemCSP;
+                            var statsDetails = itemCSP + " / " + maxStatRoll;
 
                             var qualityRow = magazineRow.clone(),
                                 qualityValues, qualityDetails;
@@ -456,8 +456,6 @@ var app = function() {
                                             futureMaxCSP: futureMaxCSP,
                                             maxStatRoll: maxStatRoll
                                         });
-                                    } else {
-                                        statsDetails = statsDetails + "/" + maxStatRoll;
                                     }
                                 }
                                 var qualityPercentage = activeItem.maxLightPercent();
@@ -466,7 +464,6 @@ var app = function() {
                                     futureBaseCSP: futureBaseCSP,
                                     maxBaseCSP: maxBaseCSP
                                 };
-                                qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
                             } else {
                                 futureMaxCSP = futureMaxCSP.reverse();
                                 if (activeItem.tierType >= 5) {
@@ -491,11 +488,16 @@ var app = function() {
                                     futureBaseCSP: futureBaseCSPs.join("-"),
                                     maxBaseCSP: maxBaseCSP
                                 };
-                                qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
                             }
 
                             statsRow.find(".stat-bar-static-value").show().html(statsDetails);
                             magazineRow.after(statsRow);
+
+                            qualityDetails = _.template('<%- percent %>%')(qualityValues);
+
+                            if (activeItem.tierType >= 5) {
+                                qualityDetails = qualityDetails + _.template(" (<%- futureBaseCSP %>/<%- maxBaseCSP %>)")(qualityValues);
+                            }
 
                             qualityRow.find(".stat-bar-static-value").show().html(qualityDetails);
                             magazineRow.after(qualityRow);

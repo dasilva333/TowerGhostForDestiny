@@ -281,7 +281,7 @@ Item.prototype = {
             Default: primaryStat
         };
         var infusedStats = [self.primaryValues.CSP];
-        if (primaryStat >= 200) {
+        if (primaryStat >= 200 && self.tierType >= 5) {
             infusedStats = tgd.calculateStatRoll(self, tgd.DestinyLightCap, true);
         }
         self.primaryValues.predictedCSP = infusedStats;
