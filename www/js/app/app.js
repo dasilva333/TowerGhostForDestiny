@@ -431,7 +431,7 @@ var app = function() {
                             var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType];
                             var maxBaseCSP = maxStatRoll - maxBonusPoints;
 
-                            var futureMaxCSP = activeItem.primaryValues.predictedCSP;
+                            var futureMaxCSP = activeItem.primaryValues.predictedCSP.slice(0);
 
                             var statsRow = magazineRow.clone();
                             statsRow.find(".stat-bar-label").html("Stats Total: ");
