@@ -311,9 +311,9 @@ tgd.calculateStatRoll = function(item, targetLight, withBonus) {
     var newStats = tgd.calculateInfusedStats(currentLight, item.getValue("All") - (isItemLeveled ? currentBonus : 0));
     //console.log("newStats", newStats);
     //console.log("Stat at " + targetLight + " is " + finalStat);
-    return _.map(newStats, function(stat) {
-        return stat + (withBonus ? targetBonus : 0);
-    });
+    return _.uniq(_.map(newStats, function(stat) {
+        return Math.min(stat + (withBonus ? targetBonus : 0), tgd.DestinyMaxCSP[item.bucketType]);
+    }));
 };
 
 tgd.bonusStatPoints = function(armorIndex, light) {
