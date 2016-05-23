@@ -468,9 +468,10 @@ var app = function() {
                                 };
                                 qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
                             } else {
+                                futureMaxCSP = futureMaxCSP.reverse();
                                 if (activeItem.tierType >= 5) {
-                                    var extraRowDetails = _.template('<%- futureMaxCSP[1] %>-<%- futureMaxCSP[0] %> out of <%- maxStatRoll %>')({
-                                        futureMaxCSP: futureMaxCSP,
+                                    var extraRowDetails = _.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
+                                        futureMaxCSP: futureMaxCSP.join("-"),
                                         maxStatRoll: maxStatRoll
                                     });
                                     var extrasRow = magazineRow.clone();
@@ -481,7 +482,7 @@ var app = function() {
                                 }
                                 var futureBaseCSPs = _.map(futureMaxCSP, function(csp) {
                                     return csp - maxBonusPoints;
-                                }).reverse();
+                                });
                                 var maxLightPercents = _.map(futureBaseCSPs, function(fbc) {
                                     return Math.round((fbc / maxBaseCSP) * 100);
                                 });
