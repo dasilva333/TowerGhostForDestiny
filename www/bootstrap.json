@@ -142,7 +142,7 @@
     },
     "bonusStat.js": {
       "filename": "js/tgd/bonusStat.js",
-      "version": "8c7912e6940755a6debf7eee5804de3cf67857766af1659ba1ced06e16845e27"
+      "version": "5a8ced412511b777f723af7835278e6198c930f22e75b9f47e3937850b652882"
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
@@ -194,7 +194,7 @@
     },
     "version.js": {
       "filename": "js/tgd/version.js",
-      "version": "af61228c877e49b3a02b4ac001fdc5d47f5a8edb5e39de1e69f753fa3b940d1b"
+      "version": "d6e16965899da6e52afd4b56e5b2ccc47ea858e50d08fce83ed3182c614bc2e3"
     },
     "Item.js": {
       "filename": "js/app/Item.js",
