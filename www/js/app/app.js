@@ -431,40 +431,65 @@ var app = function() {
                             var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType];
                             var maxBaseCSP = maxStatRoll - maxBonusPoints;
 
-                            var futureMaxCSP = activeItem.getValue("MaxLightCSP");
-                            var futureBaseCSP = futureMaxCSP - maxBonusPoints;
+                            var futureMaxCSP = activeItem.primaryValues.predictedCSP;
 
                             var statsRow = magazineRow.clone();
-                            var statsValues = {
-                                futureMaxCSP: futureMaxCSP,
-                                maxStatRoll: maxStatRoll
-                            };
-                            var statsDetails = itemCSP;
-                            if (activeItem.tierType >= 5) {
-                                if (futureMaxCSP != itemCSP) {
-                                    statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')(statsValues);
-                                } else {
-                                    statsDetails = statsDetails + "/" + maxStatRoll;
-                                }
-                            }
                             statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
-                            statsRow.find(".stat-bar-static-value").show().html(statsDetails);
-                            magazineRow.after(statsRow);
+                            var statsDetails = itemCSP;
 
                             var qualityRow = magazineRow.clone();
-                            var qualityPercentage = activeItem.maxLightPercent();
-                            var qualityValues = {
-                                percent: qualityPercentage,
-                                futureBaseCSP: futureBaseCSP,
-                                maxBaseCSP: maxBaseCSP
-                            };
-                            var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
                             qualityRow.find(".stat-bar-label").html("Quality: ");
                             qualityRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             if (activeItem.tierType >= 5) {
                                 qualityRow.find(".stat-bar-static-value").addClass(activeItem.cspClass() + "Text");
                             }
+
+                            if (futureMaxCSP.length == 1) {
+                                futureMaxCSP = futureMaxCSP[0];
+                                var futureBaseCSP = futureMaxCSP - maxBonusPoints;
+
+                                if (activeItem.tierType >= 5) {
+                                    if (futureMaxCSP != itemCSP) {
+                                        statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')({
+                                            futureMaxCSP: futureMaxCSP,
+                                            maxStatRoll: maxStatRoll
+                                        });
+                                    } else {
+                                        statsDetails = statsDetails + "/" + maxStatRoll;
+                                    }
+                                }
+                                var qualityPercentage = activeItem.maxLightPercent();
+                                var qualityValues = {
+                                    percent: qualityPercentage,
+                                    futureBaseCSP: futureBaseCSP,
+                                    maxBaseCSP: maxBaseCSP
+                                };
+                                var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
+                            } else {
+                                if (activeItem.tierType >= 5) {
+                                    statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <span class="font-smaller-1"><%- futureMaxCSP[1] %>-<%- futureMaxCSP[0] %> out of <%- maxStatRoll %></span>')({
+                                        futureMaxCSP: futureMaxCSP,
+                                        maxStatRoll: maxStatRoll
+                                    });
+                                }
+                                var futureBaseCSPs = _.map(futureMaxCSP, function(csp) {
+                                    return csp - maxBonusPoints;
+                                }).reverse();
+                                var maxLightPercents = _.map(futureBaseCSPs, function(fbc) {
+                                    return Math.round(((fbc / maxBaseCSP) * 100) * 100) / 100;
+                                });
+                                var qualityValues = {
+                                    percent: maxLightPercents.join("-"),
+                                    futureBaseCSP: futureBaseCSPs.join("-"),
+                                    maxBaseCSP: maxBaseCSP
+                                };
+                                var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %> out of <%- maxBaseCSP %>)')(qualityValues);
+                            }
+
+                            statsRow.find(".stat-bar-static-value").show().html(statsDetails);
+                            magazineRow.after(statsRow);
+
                             qualityRow.find(".stat-bar-static-value").show().html(qualityDetails);
                             magazineRow.after(qualityRow);
                         }

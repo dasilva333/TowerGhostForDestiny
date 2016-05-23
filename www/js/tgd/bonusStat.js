@@ -278,7 +278,7 @@ tgd.infusionStats = {
     }
 };
 
-tgd.calculateStatRollV2 = function(initial_defense, initial_stat) {
+tgd.calculateInfusedStats = function(initial_defense, initial_stat) {
     var finalStats = [];
     var target_defense = tgd.DestinyLightCap;
     if (initial_defense == target_defense || initial_defense < 200) return [initial_stat];
@@ -308,11 +308,12 @@ tgd.calculateStatRoll = function(item, targetLight, withBonus) {
     //this formulas has also proven to not be as accurate as the corn ratio
     //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) + (((targetLight - currentLight) * tgd.DestinyInfusionRates[item.bucketType]) * 2);
     //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) * ((targetLight + tgd.DestinyCornRatio) / (currentLight + tgd.DestinyCornRatio));
-    var newStats = tgd.calculateStatRollV2(currentLight, item.getValue("All") - (isItemLeveled ? currentBonus : 0))[0];
+    var newStats = tgd.calculateInfusedStats(currentLight, item.getValue("All") - (isItemLeveled ? currentBonus : 0));
     //console.log("newStats", newStats);
-    var finalStat = newStats + (withBonus ? targetBonus : 0);
     //console.log("Stat at " + targetLight + " is " + finalStat);
-    return finalStat;
+    return _.map(newStats, function(stat) {
+        return stat + (withBonus ? targetBonus : 0);
+    });
 };
 
 tgd.bonusStatPoints = function(armorIndex, light) {
