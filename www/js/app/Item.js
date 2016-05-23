@@ -318,7 +318,7 @@ Item.prototype = {
                     //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                     //tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
                     //tmp[otherStatName] = Math.round(otherStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio)));
-                    tmp[otherStatName] = tgd.calculateInfusedStats(primaryStat, otherStatValue)[0]
+                    tmp[otherStatName] = tgd.calculateInfusedStats(primaryStat, otherStatValue)[0];
                 }
                 return tmp;
             });

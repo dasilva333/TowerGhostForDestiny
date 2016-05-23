@@ -438,7 +438,8 @@ var app = function() {
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             var statsDetails = itemCSP;
 
-                            var qualityRow = magazineRow.clone();
+                            var qualityRow = magazineRow.clone(),
+                                qualityValues, qualityDetails;
                             qualityRow.find(".stat-bar-label").html("Quality: ");
                             qualityRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             if (activeItem.tierType >= 5) {
@@ -460,31 +461,36 @@ var app = function() {
                                     }
                                 }
                                 var qualityPercentage = activeItem.maxLightPercent();
-                                var qualityValues = {
+                                qualityValues = {
                                     percent: qualityPercentage,
                                     futureBaseCSP: futureBaseCSP,
                                     maxBaseCSP: maxBaseCSP
                                 };
-                                var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
+                                qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
                             } else {
                                 if (activeItem.tierType >= 5) {
-                                    statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <span class="font-smaller-1"><%- futureMaxCSP[1] %>-<%- futureMaxCSP[0] %> out of <%- maxStatRoll %></span>')({
+                                    var extraRowDetails = _.template('<%- futureMaxCSP[1] %>-<%- futureMaxCSP[0] %> out of <%- maxStatRoll %>')({
                                         futureMaxCSP: futureMaxCSP,
                                         maxStatRoll: maxStatRoll
                                     });
+                                    var extrasRow = magazineRow.clone();
+                                    extrasRow.find(".stat-bar-label").html("Infusible to: ");
+                                    extrasRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                                    extrasRow.find(".stat-bar-static-value").show().html(extraRowDetails);
+                                    magazineRow.after(extrasRow);
                                 }
                                 var futureBaseCSPs = _.map(futureMaxCSP, function(csp) {
                                     return csp - maxBonusPoints;
                                 }).reverse();
                                 var maxLightPercents = _.map(futureBaseCSPs, function(fbc) {
-                                    return Math.round(((fbc / maxBaseCSP) * 100) * 100) / 100;
+                                    return Math.round((fbc / maxBaseCSP) * 100);
                                 });
-                                var qualityValues = {
+                                qualityValues = {
                                     percent: maxLightPercents.join("-"),
                                     futureBaseCSP: futureBaseCSPs.join("-"),
                                     maxBaseCSP: maxBaseCSP
                                 };
-                                var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %> out of <%- maxBaseCSP %>)')(qualityValues);
+                                qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
                             }
 
                             statsRow.find(".stat-bar-static-value").show().html(statsDetails);
