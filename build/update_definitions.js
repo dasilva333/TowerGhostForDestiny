@@ -197,7 +197,7 @@ var extractData = function(callback){
 					console.log(fs.existsSync(dataPath) + " creating new path: " + dataPath);
 					fs.mkdirSync(dataPath);
 				}
-				fs.writeFileSync(dataPath + filename, "_" + set.name + "="+JSON.stringify(obj));
+				fs.writeFileSync(dataPath + filename, "_" + set.name + "=" + JSON.stringify(obj) + ";");
 				//console.log("2.count " + count);
 				if (count == 0){
 					callback();
@@ -225,7 +225,7 @@ var removeOrphans = function(callback){
 
 var queueImages = function(callback){
 	console.log("first queue");
-	var contents = JSON.parse(fs.readFileSync(definitionPath + "en/itemDefs.json").toString("utf8").replace("_itemDefs=",""));
+	var contents = eval(fs.readFileSync(definitionPath + "en/itemDefs.json").toString("utf8"));
 	_.each(contents, function(item){
 		var icon = item.icon.replace(imgPath,'');
 		if (icon != "") queue.push(icon);
@@ -234,12 +234,12 @@ var queueImages = function(callback){
 		}
 	});
 	console.log("2nd queue");
-	contents = JSON.parse(fs.readFileSync(definitionPath + "en/perkDefs.json").toString("utf8").replace("_perkDefs=",""));
+	contents = eval(fs.readFileSync(definitionPath + "en/perkDefs.json").toString("utf8"));
 	_.each(contents, function(item){
 		queue.push(item.displayIcon.replace(imgPath,''));
 	});
 	console.log("3rd queue");
-	contents = JSON.parse(fs.readFileSync(definitionPath + "en/talentGridDefs.json").toString("utf8").replace("_talentGridDefs=",""));
+	contents = eval(fs.readFileSync(definitionPath + "en/talentGridDefs.json").toString("utf8"));
 	_.each(contents , function(tg){
 		_.each(tg.nodes, function(node){
 			_.each( node.steps, function(step){
