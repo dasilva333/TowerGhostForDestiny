@@ -280,7 +280,12 @@ Item.prototype = {
             bonus: bonus,
             Default: primaryStat
         };
-        self.primaryValues.MaxLightCSP = Math.round(tgd.calculateStatRoll(self, tgd.DestinyLightCap, true));
+        var infusedStats = [self.primaryValues.CSP];
+        if (primaryStat >= 200 && self.tierType >= 5) {
+            infusedStats = tgd.calculateStatRoll(self, tgd.DestinyLightCap, true);
+        }
+        self.primaryValues.predictedCSP = infusedStats;
+        self.primaryValues.MaxLightCSP = infusedStats[0];
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, bucketType, description) {
         var futureRolls = [];
@@ -309,12 +314,14 @@ Item.prototype = {
                 //TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
                 //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
                 //tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
-                tmp[statPerk.name] = Math.round(currentStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio))) + futureBonus;
+                //tmp[statPerk.name] = Math.round(currentStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio))) + futureBonus;
+                tmp[statPerk.name] = tgd.calculateInfusedStats(primaryStat, currentStatValue)[0];
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
                     //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
                     //tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
-                    tmp[otherStatName] = Math.round(otherStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio)));
+                    //tmp[otherStatName] = Math.round(otherStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio)));
+                    tmp[otherStatName] = tgd.calculateInfusedStats(primaryStat, otherStatValue)[0];
                 }
                 return tmp;
             });

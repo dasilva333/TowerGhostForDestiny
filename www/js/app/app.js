@@ -250,6 +250,7 @@ var app = function() {
         self.showArmorPerks(tgd.defaults.showArmorPerks);
         self.armorViewBy(tgd.defaults.armorViewBy);
         $(element.target).removeClass("active");
+        self.redraw();
         return false;
     };
 
@@ -430,40 +431,74 @@ var app = function() {
                             var maxStatRoll = tgd.DestinyMaxCSP[activeItem.bucketType];
                             var maxBaseCSP = maxStatRoll - maxBonusPoints;
 
-                            var futureMaxCSP = activeItem.getValue("MaxLightCSP");
-                            var futureBaseCSP = futureMaxCSP - maxBonusPoints;
+                            var futureMaxCSP = activeItem.primaryValues.predictedCSP.slice(0);
 
                             var statsRow = magazineRow.clone();
-                            var statsValues = {
-                                futureMaxCSP: futureMaxCSP,
-                                maxStatRoll: maxStatRoll
-                            };
-                            var statsDetails = itemCSP;
-                            if (activeItem.tierType >= 5) {
-                                if (futureMaxCSP != itemCSP) {
-                                    statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')(statsValues);
-                                } else {
-                                    statsDetails = statsDetails + "/" + maxStatRoll;
-                                }
-                            }
                             statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
-                            statsRow.find(".stat-bar-static-value").show().html(statsDetails);
-                            magazineRow.after(statsRow);
+                            var statsDetails = itemCSP + " / " + maxStatRoll;
 
-                            var qualityRow = magazineRow.clone();
-                            var qualityPercentage = activeItem.maxLightPercent();
-                            var qualityValues = {
-                                percent: qualityPercentage,
-                                futureBaseCSP: futureBaseCSP,
-                                maxBaseCSP: maxBaseCSP
-                            };
-                            var qualityDetails = _.template('<%- percent %>% (<%- futureBaseCSP %>/<%- maxBaseCSP %>)')(qualityValues);
+                            var qualityRow = magazineRow.clone(),
+                                qualityValues, qualityDetails;
                             qualityRow.find(".stat-bar-label").html("Quality: ");
                             qualityRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             if (activeItem.tierType >= 5) {
                                 qualityRow.find(".stat-bar-static-value").addClass(activeItem.cspClass() + "Text");
                             }
+
+                            if (futureMaxCSP.length == 1) {
+                                futureMaxCSP = futureMaxCSP[0];
+                                var futureBaseCSP = futureMaxCSP - maxBonusPoints;
+
+                                if (activeItem.tierType >= 5) {
+                                    if (futureMaxCSP != itemCSP) {
+                                        statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')({
+                                            futureMaxCSP: futureMaxCSP,
+                                            maxStatRoll: maxStatRoll
+                                        });
+                                    }
+                                }
+                                var qualityPercentage = activeItem.maxLightPercent();
+                                qualityValues = {
+                                    percent: qualityPercentage,
+                                    futureBaseCSP: futureBaseCSP,
+                                    maxBaseCSP: maxBaseCSP
+                                };
+                            } else {
+                                futureMaxCSP = futureMaxCSP.reverse();
+                                if (activeItem.tierType >= 5) {
+                                    var extraRowDetails = _.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
+                                        futureMaxCSP: futureMaxCSP.join("-"),
+                                        maxStatRoll: maxStatRoll
+                                    });
+                                    var extrasRow = magazineRow.clone();
+                                    extrasRow.find(".stat-bar-label").html("Infusible to: ");
+                                    extrasRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                                    extrasRow.find(".stat-bar-static-value").show().html(extraRowDetails);
+                                    magazineRow.after(extrasRow);
+                                }
+                                var futureBaseCSPs = _.map(futureMaxCSP, function(csp) {
+                                    return csp - maxBonusPoints;
+                                });
+                                var maxLightPercents = _.map(futureBaseCSPs, function(fbc) {
+                                    return Math.round((fbc / maxBaseCSP) * 100);
+                                });
+                                qualityValues = {
+                                    percent: maxLightPercents.join("-"),
+                                    futureBaseCSP: futureBaseCSPs.join("-"),
+                                    maxBaseCSP: maxBaseCSP
+                                };
+                            }
+
+                            statsRow.find(".stat-bar-static-value").show().html(statsDetails);
+                            magazineRow.after(statsRow);
+
+                            qualityDetails = _.template('<%- percent %>%')(qualityValues);
+
+                            if (activeItem.tierType >= 5) {
+                                qualityDetails = qualityDetails + _.template(" (<%- futureBaseCSP %>/<%- maxBaseCSP %>)")(qualityValues);
+                            }
+
                             qualityRow.find(".stat-bar-static-value").show().html(qualityDetails);
                             magazineRow.after(qualityRow);
                         }
@@ -2080,7 +2115,7 @@ var app = function() {
     };
 
     this.transferFarmItems = function(targetCharacterId, items) {
-        //console.log("targetCharacterId", targetCharacterId);
+        //console.log("transferFarmItems", targetCharacterId, items);
         if (tgd.transferringFarmItems) return;
         var itemsToTransfer = [],
             farmItemCounts = self.farmItemCounts();

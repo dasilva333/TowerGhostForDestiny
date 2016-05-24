@@ -2,6 +2,7 @@ tgd.armorItemCreate = function(character) {
     var self = this;
 
     self.character = character;
+    var characterClass = self.character.classType();
     self.bucketType = ko.observable();
     self.selectedNewItem = ko.observable();
     self.selectedExistingItem = ko.observable();
@@ -18,22 +19,18 @@ tgd.armorItemCreate = function(character) {
     });
     self.availableCharacterItems = ko.computed(function() {
         var items = [];
+        var bucketType = self.bucketType();
         if (self.armorType() == "Existing Item" && !_.isEmpty(self.selectedCharacter())) {
             items = _.map(_.filter(self.selectedCharacter().items(), function(item) {
-                return item.bucketType == self.bucketType();
+                return item.bucketType == bucketType && item.primaryStat() > 3 && (tgd.DestinyClass[item.classType] == characterClass || bucketType == "Ghost");
             }), function(item) {
-                item.uniqueDescription = item.description;
-                if (item.primaryStat() !== "") {
-                    item.uniqueDescription = item.uniqueDescription + " - LL" + item.primaryStat();
-                }
-                item.uniqueDescription = item.uniqueDescription + " - " + item.statText;
+                item.uniqueDescription = item.description + " - LL" + item.primaryStat() + " - " + item.statText;
                 return item;
             });
         }
         return items;
     });
     self.availableItems = ko.computed(function() {
-        var characterClass = self.character.classType();
         var bucketType = self.bucketType();
         var items = _.sortBy(_.map(_.filter(_itemDefs, function(item) {
             return tgd.DestinyBucketTypes[item.bucketTypeHash] == bucketType && item.itemName !== "" && (tgd.DestinyClass[item.classType] == characterClass || bucketType == "Ghost");
@@ -277,12 +274,19 @@ tgd.armorSelection = function(type, groups, character) {
                     group.items.push(armorItem);
                     dialogItself.close();
                 }
-            } else if (viewModel.armorType() == "Existing Item" && !_.isEmpty(viewModel.selectedExistingItem())) {
+            } else if (viewModel.armorType() == "Existing Item") {
                 group = _.findWhere(self.armorGroups(), {
-                    bucketType: viewModel.selectedExistingItem().bucketType
+                    bucketType: viewModel.bucketType()
                 });
-                armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
-                group.items.push(armorItem);
+                if (_.isEmpty(viewModel.selectedExistingItem())) {
+                    _.each(viewModel.availableCharacterItems(), function(item) {
+                        armorItem = new tgd.armorItem(item, group.selectedItem, group.groups, group.bestSets, group.type);
+                        group.items.push(armorItem);
+                    });
+                } else {
+                    armorItem = new tgd.armorItem(viewModel.selectedExistingItem(), group.selectedItem, group.groups, group.bestSets, group.type);
+                    group.items.push(armorItem);
+                }
                 dialogItself.close();
             }
         };
