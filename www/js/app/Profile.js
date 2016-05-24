@@ -515,10 +515,10 @@ Profile.prototype = {
             bucketType: type
         });
         var activeSort = parseInt(app.activeSort());
-        /* Tier, Type */
+        /* Tier, Type, Light */
         if (activeSort === 0) {
             items = _.sortBy(items, function(item) {
-                return [item.tierType * -1, item.type];
+                return [item.tierType * -1, item.type, item.primaryStatValue() * -1];
             }).reverse();
         }
         /* Type */
