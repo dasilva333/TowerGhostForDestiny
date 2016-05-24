@@ -282,12 +282,6 @@ tgd.Loadout.prototype = {
         }
         return arr;
     },
-    toJSON: function() {
-        var copy = ko.toJS(this); //easy way to get a clean copy
-        //copy.items = _.pluck(copy.items, '_id'); //strip out items metadata
-        delete copy.items;
-        return copy;
-    },
     compareLoadout: function() {
         var ids = _.pluck(this.items(), 'id').join(",");
         window.open("http://db.destinytracker.com/compare/" + ids, tgd.openTabAs);

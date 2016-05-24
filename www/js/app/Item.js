@@ -136,7 +136,7 @@ var Item = function(model, profile) {
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.maxLightPercent = ko.pureComputed(function() {
         //console.time("maxLightPercent " + self._id);
-        var toggle = app.cspToggle();
+        //var toggle = app.cspToggle();
         var maxBonusPoints = tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), tgd.DestinyLightCap);
         var futureBaseCSP = self.getValue('MaxLightCSP');
         var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType];
