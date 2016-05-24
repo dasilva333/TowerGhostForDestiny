@@ -27,7 +27,7 @@
 	<tbody data-bind="sortable: { data: character.all(bucketType), as: 'item' }">
 		<tr data-bind="css: isEquipped() ? 'active' : ''">
 		  <td><a class="itemLink" data-bind="attr:{href:item.href, instanceId:item._id}, text: description, fastclick: function(){ return false }"></a></td>
-		  <td data-bind="css: damageTypeName, text: item.primaryStat"></td>
+		  <td data-bind="css: cspClass()+'Text', text: item.primaryStat"></td>
 		  <td class="text-right">
 		  	<span data-bind="if: item.weaponIndex > -1">
 				<span data-bind="text:item.typeName.split(' ')[0]"></span>

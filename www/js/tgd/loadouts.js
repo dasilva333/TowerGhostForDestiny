@@ -315,12 +315,15 @@ tgd.Loadout.prototype = {
         var ref = _.findWhere(app.loadouts(), {
             loadoutId: this.loadoutId
         });
+        var nextIndex = app.loadouts().length - 1;
         //When saving there should always be the parent object that gets deleted in favor of this one
         if (ref) {
-            app.loadouts.splice(app.loadouts().indexOf(ref), 1);
+            nextIndex = app.loadouts().indexOf(ref);
+            app.loadouts.splice(nextIndex, 1);
         }
-        //Pushing the reference to the new object to the array
-        app.loadouts.push(this);
+        //Pushing the reference to the new object to the array, in the right position
+        //app.loadouts.push(this);
+        app.loadouts.splice(nextIndex, 0, this);
         app.saveLoadouts();
     },
     saveNew: function() {

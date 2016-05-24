@@ -70,11 +70,6 @@ var app = function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.activeLayouts = ko.pureComputed(function() {
-        return _.filter(self.allLayouts(), function(layout) {
-            return (self.activeView() == layout.id || self.activeView() == "0");
-        });
-    });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray().extend({

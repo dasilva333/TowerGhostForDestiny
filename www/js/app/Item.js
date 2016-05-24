@@ -113,7 +113,7 @@ tgd.moveItemPositionHandler = function(element, item) {
 
 var Item = function(model, profile) {
     var self = this;
-
+    console.time("item init " + model.itemInstanceId);
     if (model && model.id) {
         model.equipRequiredLevel = 0;
         model.isEquipment = true;
@@ -135,17 +135,24 @@ var Item = function(model, profile) {
     this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
     this.maxLightPercent = ko.pureComputed(function() {
+        //console.time("maxLightPercent " + self._id);
         var toggle = app.cspToggle();
         var maxBonusPoints = tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), tgd.DestinyLightCap);
-        var futureBaseCSP = self.getValue('MaxLightCSP') - maxBonusPoints;
-        var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType] - maxBonusPoints;
+        var futureBaseCSP = self.getValue('MaxLightCSP');
+        var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType];
+        if (futureBaseCSP > maxBonusPoints) {
+            futureBaseCSP = futureBaseCSP - maxBonusPoints;
+            maxBaseCSP = maxBaseCSP - maxBonusPoints;
+        }
         //convert the fraction into a whole percentage
         var maxLightPercent = (futureBaseCSP / maxBaseCSP) * 100;
         //round to 2 digits;
+        //console.timeEnd("maxLightPercent " + self._id);
         return Math.round(maxLightPercent * 100) / 100;
     });
     this.cspStat = ko.pureComputed(this._cspStat, this);
     this.cspClass = ko.pureComputed(this._cspClass, this);
+    console.timeEnd("item init " + model.itemInstanceId);
 };
 
 Item.prototype = {
