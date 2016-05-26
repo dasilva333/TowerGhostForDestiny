@@ -322,7 +322,7 @@ Item.prototype = {
                 //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
                 //tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
                 //tmp[statPerk.name] = Math.round(currentStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio))) + futureBonus;
-                tmp[statPerk.name] = tgd.calculateInfusedStats(primaryStat, currentStatValue)[0];
+                tmp[statPerk.name] = tgd.calculateInfusedStats(primaryStat, currentStatValue)[0] + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
                     //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
