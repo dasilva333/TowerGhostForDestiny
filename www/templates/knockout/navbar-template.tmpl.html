@@ -43,6 +43,7 @@
                         <li><a href="#" data-bind="fastclick: openStatusReport(2)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinytrials">DestinyTrials Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: openStatusReport(3)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinytracker">DestinyTracker Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: openStatusReport(4)"><i class="fa fa-external-link"></i><span data-bind="text: $root.activeText().menu_destinyguardiangg">Guardian.GG Report</span></a></li>
+						<li><a href="#" data-bind="fastclick: openStatusReport(5)"><i class="fa fa-external-link"></i><span>Vendor Armor Rolls Report</span></a></li>
                         <li><a href="#" data-bind="fastclick: toggleShareView"><i class="fa fa-share-alt"></i><span data-bind="text: $root.activeText().menu_shareurl">Share URL with friends</span></a></li>
                     </ul>
                 </li>
@@ -131,7 +132,7 @@
                         <li data-bind="fastclick: setSort" value="0">
                             <a href="#">
                                 <i class="fa" data-bind="css: activeSort() == 0 ? 'fa-check-square' : 'fa-square'"></i>
-                                <span data-bind="text: $root.activeText().menu_sortby_tier_type">Tier, Type</span>
+                                <span data-bind="text: $root.activeText().menu_sortby_tier_type">Tier, Type, Light</span>
                             </a>
                         </li>
 						<li data-bind="fastclick: setSort" value="5">

@@ -53,7 +53,7 @@ function Profile(character) {
 Profile.prototype = {
     init: function(profile) {
         var self = this;
-
+        console.time("init profile " + self.id);
         if (self.id == "Vault") {
             self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
             self.icon("assets/vault_icon.jpg");
@@ -62,11 +62,16 @@ Profile.prototype = {
         } else {
             self.updateCharacter(profile);
         }
-
+        console.time("addItems profile " + self.id);
         self.addItems(profile.items, []);
+        console.timeEnd("addItems profile " + self.id);
 
         if (self.id != "Vault" && typeof profile.processed == "undefined") {
-            self._reloadBucket(self, undefined, _.noop, true);
+            console.time("_reloadBucket profile " + self.id);
+            self._reloadBucket(self, undefined, function() {
+                console.timeEnd("_reloadBucket profile " + self.id);
+                console.timeEnd("init profile " + self.id);
+            }, true);
         }
     },
     setFarmTarget: function() {
@@ -510,10 +515,10 @@ Profile.prototype = {
             bucketType: type
         });
         var activeSort = parseInt(app.activeSort());
-        /* Tier, Type */
+        /* Tier, Type, Light */
         if (activeSort === 0) {
             items = _.sortBy(items, function(item) {
-                return [item.tierType * -1, item.type];
+                return [item.tierType * -1, item.type, item.primaryStatValue() * -1];
             }).reverse();
         }
         /* Type */

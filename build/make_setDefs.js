@@ -190,7 +190,7 @@ extractItems(function(_itemDefs){
 		setDefs['Year 2 Items'] = _.pluck(_.filter(_itemDefs, function(item) {
 			return (item.sourceHashes.indexOf(rewardSources.SOURCE_TTK.sourceHash) > -1);
 		}),'itemHash');
-		fs.writeFileSync("../www/data/definitions/setDefs.json", "_collections="+JSON.stringify(setDefs, null, 4));
+		fs.writeFileSync("../www/data/definitions/setDefs.json", "_collections="+JSON.stringify(setDefs, null, 4)+";");
 		console.log("new setDefs file written");
 	});
 });

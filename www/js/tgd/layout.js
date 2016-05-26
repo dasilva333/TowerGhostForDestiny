@@ -38,14 +38,10 @@ tgd.Layout.prototype = {
     },
     titleText: function(character) {
         var self = this;
-        return ko.pureComputed(function() {
-            return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText]);
-        });
+        return (character.id == 'Vault' && self.name == 'Sub Classes' ? 'Vault Sub Classes' : app.activeText()[self.headerText]);
     },
     isVisible: function(character) {
         var self = this;
-        return ko.pureComputed(function() {
-            return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
-        });
+        return (character.id == "Vault" && self.name !== "Post Master") || character.id !== "Vault";
     }
 };

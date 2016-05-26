@@ -70,11 +70,6 @@ var app = function() {
             method: "notifyWhenChangesStop"
         }
     });
-    this.activeLayouts = ko.pureComputed(function() {
-        return _.filter(self.allLayouts(), function(layout) {
-            return (self.activeView() == layout.id || self.activeView() == "0");
-        });
-    });
     this.tierTypes = ko.observableArray();
     this.weaponTypes = ko.observableArray();
     this.characters = ko.observableArray().extend({
@@ -436,7 +431,7 @@ var app = function() {
                             var statsRow = magazineRow.clone();
                             statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
-                            var statsDetails = itemCSP + " / " + maxStatRoll;
+                            var statsDetails = itemCSP + " out of " + maxStatRoll;
 
                             var qualityRow = magazineRow.clone(),
                                 qualityValues, qualityDetails;
@@ -496,7 +491,7 @@ var app = function() {
                             qualityDetails = _.template('<%- percent %>%')(qualityValues);
 
                             if (activeItem.tierType >= 5) {
-                                qualityDetails = qualityDetails + _.template(" (<%- futureBaseCSP %>/<%- maxBaseCSP %>)")(qualityValues);
+                                qualityDetails = qualityDetails + _.template(" <span class='font-smaller-2'>(<%- futureBaseCSP %> out of <%- maxBaseCSP %>)</span>")(qualityValues);
                             }
 
                             qualityRow.find(".stat-bar-static-value").show().html(qualityDetails);
@@ -785,6 +780,8 @@ var app = function() {
                 sReportURL = "http://destinytracker.com/destiny/player/" + (prefSystem == "xbl" ? "xbox" : "ps") + "/" + info.id;
             } else if (type === 4) {
                 sReportURL = "http://guardian.gg/en/profile/" + info.type + "/" + info.id;
+            } else if (type === 5) {
+                sReportURL = "http://towerghostfordestiny.com/index.php/tower-vendor-rolls/";
             }
             window.open(sReportURL, tgd.openTabAs);
             return false;

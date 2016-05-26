@@ -282,12 +282,6 @@ tgd.Loadout.prototype = {
         }
         return arr;
     },
-    toJSON: function() {
-        var copy = ko.toJS(this); //easy way to get a clean copy
-        //copy.items = _.pluck(copy.items, '_id'); //strip out items metadata
-        delete copy.items;
-        return copy;
-    },
     compareLoadout: function() {
         var ids = _.pluck(this.items(), 'id').join(",");
         window.open("http://db.destinytracker.com/compare/" + ids, tgd.openTabAs);
@@ -315,12 +309,15 @@ tgd.Loadout.prototype = {
         var ref = _.findWhere(app.loadouts(), {
             loadoutId: this.loadoutId
         });
+        var nextIndex = app.loadouts().length - 1;
         //When saving there should always be the parent object that gets deleted in favor of this one
         if (ref) {
-            app.loadouts.splice(app.loadouts().indexOf(ref), 1);
+            nextIndex = app.loadouts().indexOf(ref);
+            app.loadouts.splice(nextIndex, 1);
         }
-        //Pushing the reference to the new object to the array
-        app.loadouts.push(this);
+        //Pushing the reference to the new object to the array, in the right position
+        //app.loadouts.push(this);
+        app.loadouts.splice(nextIndex, 0, this);
         app.saveLoadouts();
     },
     saveNew: function() {
