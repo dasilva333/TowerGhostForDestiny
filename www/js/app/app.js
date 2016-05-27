@@ -447,10 +447,14 @@ var app = function() {
 
                                 if (activeItem.tierType >= 5) {
                                     if (futureMaxCSP != itemCSP) {
-                                        statsDetails = statsDetails + _.template('&nbsp;<span class="stat-bar-label">Infusible to:</span> <%- futureMaxCSP %>/<%- maxStatRoll %>')({
+                                        var extrasRow = magazineRow.clone();
+                                        extrasRow.find(".stat-bar-label").html("Infusible to: ");
+                                        extrasRow.find(".stat-bar-value, .stat-bar-empty").hide();
+                                        extrasRow.find(".stat-bar-static-value").show().html(_.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
                                             futureMaxCSP: futureMaxCSP,
                                             maxStatRoll: maxStatRoll
-                                        });
+                                        }));
+                                        magazineRow.after(extrasRow);
                                     }
                                 }
                                 var qualityPercentage = activeItem.maxLightPercent();
