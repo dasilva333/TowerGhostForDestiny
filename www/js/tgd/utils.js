@@ -36,19 +36,20 @@ tgd.joinStats = function(arrItems) {
     var tmp = {
         "Intellect": 0,
         "Discipline": 0,
-        "Strength": 0,
-        "bonusOn": ""
+        "Strength": 0
     };
     for (var i = 0, len = arrItems.length; i < len; i++) {
+        var item;
         if (arrItems[i].activeRoll) {
-            var item = arrItems[i].activeRoll;
+            item = arrItems[i].activeRoll;
         } else {
-            var item = arrItems[i].stats;
+            item = arrItems[i].stats;
         }
-        tmp["Intellect"] += item["Intellect"];
-        tmp["Discipline"] += item["Discipline"];
-        tmp["Strength"] += item["Strength"];
-        tmp["bonusOn"] += item["bonusOn"];
+        if (_.has(item, 'Intellect')) {
+            tmp["Intellect"] += item["Intellect"];
+            tmp["Discipline"] += item["Discipline"];
+            tmp["Strength"] += item["Strength"];
+        }
     };
     return tmp;
 };
