@@ -33,13 +33,23 @@ tgd.average = function(arr) {
 };
 
 tgd.joinStats = function(arrItems) {
-    var tmp = {};
-    _.each(arrItems, function(item) {
-        _.each(item.activeRoll || item.stats, function(value, key) {
-            if (!(key in tmp)) tmp[key] = 0;
-            tmp[key] += value;
-        });
-    });
+    var tmp = {
+        "Intellect": 0,
+        "Discipline": 0,
+        "Strength": 0,
+        "bonusOn": ""
+    };
+    for (var i = 0, len = arrItems.length; i < len; i++) {
+        if (arrItems[i].activeRoll) {
+            var item = arrItems[i].activeRoll;
+        } else {
+            var item = arrItems[i].stats;
+        }
+        tmp["Intellect"] += item["Intellect"];
+        tmp["Discipline"] += item["Discipline"];
+        tmp["Strength"] += item["Strength"];
+        tmp["bonusOn"] += item["bonusOn"];
+    };
     return tmp;
 };
 
