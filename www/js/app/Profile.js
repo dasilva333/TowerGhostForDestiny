@@ -908,6 +908,7 @@ Profile.prototype = {
             backups = _.flatten(sets);
             //console.log("backups", backups.length);
             //character.queryRolls(backups, function() {
+            console.time("set loop");
             _.each(sets, function(set) {
                 var mainPiece = set[0];
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
@@ -937,24 +938,71 @@ Profile.prototype = {
                     });
                     return exoticItems.length < 2;
                 });
-                var scoredCombos = _.map(combos, function(items) {
+                //mistral: Calculation time optimization
+                //start
+                //                var scoredCombos = _.map(combos, function(items) {
+                //                    var tmp = tgd.joinStats(items);
+                //                    delete tmp["bonusOn"];
+                //                    return {
+                //                        set: items,
+                //                        score: tgd.sum(_.map(tmp, function(value, key) {
+                //                            var result = Math.floor(value / tgd.DestinySkillTier);
+                //                            return result > 5 ? 5 : result;
+                //                        })) + (tgd.sum(_.values(tmp)) / 1000)
+                //                    };
+                //                });
+                //                var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
+                var scoredCombos = [];
+                var highestScore = 0;
+                for (var i = 0, len = combos.length; i < len; i++) {
+                    var items = combos[i];
                     var tmp = tgd.joinStats(items);
-                    delete tmp["bonusOn"];
-                    return {
-                        set: items,
-                        score: tgd.sum(_.map(tmp, function(value, key) {
-                            var result = Math.floor(value / tgd.DestinySkillTier);
-                            return result > 5 ? 5 : result;
-                        })) + (tgd.sum(_.values(tmp)) / 1000)
+                    //delete tmp["bonusOn"];    
+                    var result = [];
+                    result["Intellect"] = Math.floor(tmp["Intellect"] / tgd.DestinySkillTier);
+                    if (result["Intellect"] > 5) {
+                        result["Intellect"] = 5
                     };
-                });
-                var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-                _.each(scoredCombos, function(combo) {
+                    result["Discipline"] = Math.floor(tmp["Discipline"] / tgd.DestinySkillTier);
+                    if (result["Discipline"] > 5) {
+                        result["Discipline"] = 5
+                    };
+                    result["Strength"] = Math.floor(tmp["Strength"] / tgd.DestinySkillTier);
+                    if (result["Strength"] > 5) {
+                        result["Strength"] = 5
+                    };
+
+                    var sumresult = result["Intellect"] + result["Discipline"] + result["Strength"];
+                    var tmpscore = sumresult + (tmp["Intellect"] + tmp["Discipline"] + tmp["Strength"]) / 1000;
+
+                    scoredCombos[i] = {
+                        set: items,
+                        score: tmpscore
+                    };
+
+                    if (tmpscore > highestScore) {
+                        highestScore = tmpscore;
+                    }
+                }
+
+                highestScore = Math.floor(highestScore);
+
+                //                _.each(scoredCombos, function(combo) {
+                //                    if (combo.score >= highestScore) {
+                //                        bestSets.push(combo);
+                //                    }
+                //                });
+                for (var i = 0, len = scoredCombos.length; i < len; i++) {
+                    var combo = scoredCombos[i];
                     if (combo.score >= highestScore) {
                         bestSets.push(combo);
                     }
-                });
+                }
+
+                //end
+
             });
+            console.timeEnd("set loop");
             var highestFinalScore = Math.floor(_.max(_.pluck(bestSets, 'score')));
             var lastSets = [];
             _.each(bestSets, function(combo) {
