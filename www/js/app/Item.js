@@ -264,6 +264,7 @@ Item.prototype = {
         }).length > 0;
 		var currentBonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
 		var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
+		var currentCSP = tgd.sum(_.values(self.stats));
         self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
         self.statText = _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
             if (stat > 0) {
@@ -272,7 +273,7 @@ Item.prototype = {
             return memo;
         }, [])).join("/");
         self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, currentBonus, "");
-        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, currentBonus, maxLightBonus, bucketType, this.description);
+        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, currentBonus, maxLightBonus, bucketType, this.description);
         var hasUnlockedStats = _.where(statPerks, {
             active: true
         }).length > 0;
@@ -283,24 +284,25 @@ Item.prototype = {
         self.progression = _.filter(self.perks, function(perk) {
             return perk.active === false && perk.isExclusive === -1 && perk.isVisible === true;
         }).length === 0;
-        self.primaryValues = {
-            CSP: tgd.sum(_.values(self.stats)),
-            currentBonus: currentBonus,
-			maxLightBonus: maxLightBonus,
-            Default: primaryStat
-        };
-        var infusedStats = [self.primaryValues.CSP];
+        
+        var infusedStats = [currentCSP];
         if (primaryStat >= 200 && self.tierType >= 5) {
-			var newStats = tgd.calculateInfusedStats(primaryStat, self.primaryValues.CSP - (self.hasUnlockedStats ? currentBonus : 0));
+			var newStats = tgd.calculateInfusedStats(primaryStat, currentCSP - (self.hasUnlockedStats ? currentBonus : 0));
 			infusedStats = _.uniq(_.map(newStats, function(stat) {
 				return Math.min(stat + maxLightBonus, tgd.DestinyMaxCSP[self.bucketType]);
 			}));
 			self.futureBaseCSP(newStats[0]);
         }
-        self.primaryValues.predictedCSP = infusedStats;
-        self.primaryValues.MaxLightCSP = infusedStats[0];
+		self.primaryValues = {
+            CSP: currentCSP,
+			Default: primaryStat,
+			MaxLightCSP: infusedStats[0],
+            currentBonus: currentBonus,
+			maxLightBonus: maxLightBonus,
+			predictedCSP: infusedStats
+        };
     },
-    calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, futureBonus, bucketType, description) {
+    calculateFutureRolls: function(stats, statPerks, primaryStat, currentBonus, futureBonus, bucketType, description) {
         var futureRolls = [];
         if (statPerks.length === 0) {
             futureRolls = [stats];
