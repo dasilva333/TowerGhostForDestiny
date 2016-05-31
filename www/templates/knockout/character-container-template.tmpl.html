@@ -93,6 +93,18 @@
 										<a title="Allows you to explore armor sets to find the highest tier sets you can currently create" data-bind="click: character.equipHighest('Custom'), clickBubble: false" class="btn btn-default btn-sm col-xs-12 text-center">Custom</a>
 										<a title="Allows you to explore armor sets available that reach the max tier possible in game" data-bind="click: character.equipHighest('MaxLight'), clickBubble: false, text: 'T' + tgd.maxTierPossible + ' Build'" class="btn btn-default btn-sm col-xs-12 text-center"></a>
 									</div>
+									<span class="font-bold col-xs-24 statsToolTitle">
+										Include All Armor
+										<button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-trigger="click hover space" data-placement="auto" title="Include all valid items account wide from all characters and vault"><i class="fa fa-question-circle"></i></button>
+									</span>
+									<div class="text-left col-xs-24 font-smaller-1" data-bind="clickBubble: false">
+										<!-- ko foreach: { data: tgd.DestinyArmorPieces, as: 'armorType' } -->
+											<label>
+												<input type="checkbox" data-bind="checked: character.globalItems, value: armorType, clickBubble: false">
+												<span data-bind="text: armorType"></span>
+											</label>
+										<!--/ko  -->
+									</div>
 								</div>
 							</div>
 							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">

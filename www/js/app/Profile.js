@@ -16,6 +16,7 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
+    this.globalItems = ko.observableArray();
     this.activeBestSets = ko.observable();
     this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
@@ -78,6 +79,13 @@ Profile.prototype = {
                 console.timeEnd("init profile " + self.id);
             }, true);
         }
+
+        var storedObj = new tgd.StoreObj("globalItems");
+        var savedSelections = storedObj.read();
+        self.globalItems(_.isArray(savedSelections) ? savedSelections : savedSelections.split(","));
+        self.globalItems.subscribe(function(newValues) {
+            storedObj.write(newValues);
+        });
     },
     setFarmTarget: function() {
         app.farmTarget(this.id);
@@ -1413,9 +1421,12 @@ Profile.prototype = {
     equipBest: function(type, armor, items) {
         var character = this;
 
-        /* Only consider Armor within your own character, and all Ghosts anywhere */
+        /* Only consider armor, with more than LL3, that's legendary or exotic, considered Equipment (not engram), location depends on checkboxes */
         var activeItems = _.filter(items, function(item) {
-            return item.armorIndex > -1 && item.primaryStat() > 3 && item.tierType >= 5 && item.isEquipment === true && (item.bucketType == "Ghost" || (item.bucketType !== "Ghost" && item.characterId() == character.id));
+            var isFiltered = item.armorIndex > -1 && item.primaryStat() > 3 && item.tierType >= 5 && item.isEquipment === true;
+            var isForClass = tgd.DestinyClass[item.classType] == character.classType() || item.classType == 3;
+            var isForCharacter = (character.globalItems().indexOf(item.bucketType) == -1 && item.characterId() == character.id) || character.globalItems().indexOf(item.bucketType) > -1;
+            return isFiltered && isForCharacter && isForClass;
         });
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
             return type.name.split(" ")[0];

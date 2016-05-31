@@ -113,7 +113,7 @@ tgd.moveItemPositionHandler = function(element, item) {
 
 var Item = function(model, profile) {
     var self = this;
-    console.time("item init " + model.itemInstanceId);
+    //console.time("item init " + model.itemInstanceId);
     if (model && model.id) {
         model.equipRequiredLevel = 0;
         model.isEquipment = true;
@@ -152,7 +152,7 @@ var Item = function(model, profile) {
     });
     this.cspStat = ko.pureComputed(this._cspStat, this);
     this.cspClass = ko.pureComputed(this._cspClass, this);
-    console.timeEnd("item init " + model.itemInstanceId);
+    //console.timeEnd("item init " + model.itemInstanceId);
 };
 
 Item.prototype = {

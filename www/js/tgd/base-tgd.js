@@ -288,6 +288,7 @@ tgd.defaults = {
     farmMode: false,
     farmViewEnabled: false,
     farmItems: ["Engrams", "Glimmer", "Rare", "Uncommon"],
+    globalItems: ["Ghost"],
     farmTarget: "Vault"
 };
 tgd.farmItemFilters = {
