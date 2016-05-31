@@ -62,9 +62,14 @@ Profile.prototype = {
         } else {
             self.updateCharacter(profile);
         }
-        console.time("addItems profile " + self.id);
-        self.addItems(profile.items, []);
-        console.timeEnd("addItems profile " + self.id);
+
+        if (_.has(profile, 'processed') && profile.processed) {
+            self.items(_.map(profile.items, function(item) {
+                return new Item(item, self);
+            }));
+        } else {
+            self.addItems(profile.items, []);
+        }
 
         if (self.id != "Vault" && typeof profile.processed == "undefined") {
             console.time("_reloadBucket profile " + self.id);
