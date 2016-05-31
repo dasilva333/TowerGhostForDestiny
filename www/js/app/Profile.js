@@ -937,14 +937,33 @@ Profile.prototype = {
                     }));
                     return x;
                 });
+                //mistral: Calculation time optimization
+                //start
+                /*console.time("calculate combos v2 " + mainPiece.description);
                 var combos = _.filter(tgd.cartesianProductOf(subSets), function(sets) {
                     var exoticItems = _.filter(sets, function(item) {
                         return item.tierType === 6 && item.hasLifeExotic === false;
                     });
                     return exoticItems.length < 2;
                 });
-                //mistral: Calculation time optimization
-                //start
+				console.timeEnd("calculate combos v2 " + mainPiece.description);*/
+                console.time("calculate combos " + mainPiece.description);
+                var products = tgd.cartesianProductOf(subSets);
+                var combos = [];
+                for (var n = 0, len2 = products.length; n < len2; n++) {
+                    var sets = products[n];
+                    var exoticItems = 0;
+                    for (var i = 0, len = sets.length; i < len; i++) {
+                        var item = sets[i];
+                        if (item.tierType === 6 && item.hasLifeExotic === false) {
+                            exoticItems++;
+                        }
+                    }
+                    if (exoticItems < 2) {
+                        combos.push(sets);
+                    };
+                };
+                console.timeEnd("calculate combos " + mainPiece.description);
                 //                var scoredCombos = _.map(combos, function(items) {
                 //                    var tmp = tgd.joinStats(items);
                 //                    delete tmp["bonusOn"];
