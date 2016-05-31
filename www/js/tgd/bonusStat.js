@@ -1,5 +1,4 @@
 tgd.infusionStats = {
-    normFactor: 61.6789,
     errorFactor: {
         200: 0.166667,
         201: 0.25,
@@ -293,27 +292,6 @@ tgd.calculateInfusedStats = function(initial_defense, initial_stat) {
         finalStats.push(min_stat);
     }
     return finalStats;
-};
-
-tgd.calculateStatRoll = function(item, targetLight, withBonus) {
-    var currentLight = item.primaryValues.Default;
-    var isItemLeveled = item.hasUnlockedStats;
-    //console.log("isItemLeveled", isItemLeveled);
-    var currentBonus = tgd.bonusStatPoints(item.armorIndex, currentLight);
-    var targetBonus = tgd.bonusStatPoints(item.armorIndex, targetLight);
-    //console.log("currentLight is " + currentLight + " bonus is " + currentBonus);
-    //console.log("formula", item.getValue("All"), (isItemLeveled ? currentBonus : 0), targetLight / currentLight);
-    //this has been proven to be too inaccurate over a large different in light value with an error margin of up to 8 points
-    //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) * targetLight / currentLight;
-    //this formulas has also proven to not be as accurate as the corn ratio
-    //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) + (((targetLight - currentLight) * tgd.DestinyInfusionRates[item.bucketType]) * 2);
-    //var newStats = (item.getValue("All") - (isItemLeveled ? currentBonus : 0)) * ((targetLight + tgd.DestinyCornRatio) / (currentLight + tgd.DestinyCornRatio));
-    var newStats = tgd.calculateInfusedStats(currentLight, item.getValue("All") - (isItemLeveled ? currentBonus : 0));
-    //console.log("newStats", newStats);
-    //console.log("Stat at " + targetLight + " is " + finalStat);
-    return _.uniq(_.map(newStats, function(stat) {
-        return Math.min(stat + (withBonus ? targetBonus : 0), tgd.DestinyMaxCSP[item.bucketType]);
-    }));
 };
 
 tgd.bonusStatPoints = function(armorIndex, light) {

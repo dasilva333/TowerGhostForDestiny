@@ -125,7 +125,7 @@ var Item = function(model, profile) {
     });
 
     this.character = profile;
-
+	this.futureBaseCSP = ko.observable(0);
     this.init(model);
 
     this.characterId = ko.observable(self.character.id);
@@ -134,14 +134,14 @@ var Item = function(model, profile) {
     this.columnMode = ko.computed(this._columnMode, this);
     this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
+	
     this.maxLightPercent = ko.pureComputed(function() {
         //console.time("maxLightPercent " + self._id);
         //var toggle = app.cspToggle();
-        var maxBonusPoints = tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(self.bucketType), tgd.DestinyLightCap);
-        var futureBaseCSP = self.getValue('MaxLightCSP');
+        var maxBonusPoints = self.getValue("MaxBonusPoints");
+        var futureBaseCSP = self.futureBaseCSP();
         var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType];
         if (futureBaseCSP > maxBonusPoints) {
-            futureBaseCSP = futureBaseCSP - maxBonusPoints;
             maxBaseCSP = maxBaseCSP - maxBonusPoints;
         }
         //convert the fraction into a whole percentage
@@ -262,7 +262,8 @@ Item.prototype = {
         self.hasLifeExotic = _.where(self.perks, {
             name: "The Life Exotic"
         }).length > 0;
-        var bonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
+		var currentBonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
+		var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
         self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
         self.statText = _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
             if (stat > 0) {
@@ -270,8 +271,8 @@ Item.prototype = {
             }
             return memo;
         }, [])).join("/");
-        self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, bonus, "");
-        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, bonus, bucketType, this.description);
+        self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, currentBonus, "");
+        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, self.armorIndex, currentBonus, maxLightBonus, bucketType, this.description);
         var hasUnlockedStats = _.where(statPerks, {
             active: true
         }).length > 0;
@@ -284,22 +285,26 @@ Item.prototype = {
         }).length === 0;
         self.primaryValues = {
             CSP: tgd.sum(_.values(self.stats)),
-            bonus: bonus,
+            currentBonus: currentBonus,
+			maxLightBonus: maxLightBonus,
             Default: primaryStat
         };
         var infusedStats = [self.primaryValues.CSP];
         if (primaryStat >= 200 && self.tierType >= 5) {
-            infusedStats = tgd.calculateStatRoll(self, tgd.DestinyLightCap, true);
+			var newStats = tgd.calculateInfusedStats(primaryStat, self.primaryValues.CSP - (self.hasUnlockedStats ? currentBonus : 0));
+			infusedStats = _.uniq(_.map(newStats, function(stat) {
+				return Math.min(stat + maxLightBonus, tgd.DestinyMaxCSP[self.bucketType]);
+			}));
+			self.futureBaseCSP(newStats[0]);
         }
         self.primaryValues.predictedCSP = infusedStats;
         self.primaryValues.MaxLightCSP = infusedStats[0];
     },
-    calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, bucketType, description) {
+    calculateFutureRolls: function(stats, statPerks, primaryStat, armorIndex, currentBonus, futureBonus, bucketType, description) {
         var futureRolls = [];
         if (statPerks.length === 0) {
             futureRolls = [stats];
         } else {
-            var futureBonus = tgd.bonusStatPoints(armorIndex, tgd.DestinyLightCap);
             var allStatsLocked = _.where(statPerks, {
                 active: true
             }).length === 0;
@@ -1582,6 +1587,8 @@ Item.prototype = {
             value = this.primaryValues.MaxLightCSP;
         } else if (type == "MaxLightPercent") {
             value = this.maxLightPercent();
+        } else if (type == "MaxBonusPoints") {
+            value = this.primaryValues.maxLightBonus;
         } else if (type == "All") {
             value = this.primaryValues.CSP;
         } else if (_.isObject(this.stats) && type in this.stats) {
