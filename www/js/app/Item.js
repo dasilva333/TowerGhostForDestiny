@@ -262,10 +262,10 @@ Item.prototype = {
         self.hasLifeExotic = _.where(self.perks, {
             name: "The Life Exotic"
         }).length > 0;
+		self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
 		var currentBonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
 		var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
-		var currentCSP = tgd.sum(_.values(self.stats));
-        self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
+		var currentCSP = tgd.sum(_.filter(_.values(self.stats), function(value){ return value > 0 }));
         self.statText = _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
             if (stat > 0) {
                 memo.push(key.substring(0, 3) + " " + stat);
