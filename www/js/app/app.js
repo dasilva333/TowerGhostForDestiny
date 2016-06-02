@@ -413,11 +413,10 @@ var app = function() {
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             clonedRow.find(".stat-bar-static-value").show().html(statDetails);
                         } else {
-                            var maxLightLevel = tgd.DestinyLightCap;
                             var isItemLeveled = activeItem.hasUnlockedStats;
-                            var itemCSP = activeItem.getValue("All");
-                            var currentBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, activeItem.primaryValues.Default);
-                            var maxBonusPoints = tgd.bonusStatPoints(activeItem.armorIndex, maxLightLevel);
+                            var itemCSP = activeItem.primaryValues.CSP;
+                            var currentBonusPoints = activeItem.primaryValues.currentBonus;
+                            var maxBonusPoints = activeItem.primaryValues.maxLightBonus;
 
                             if (!isItemLeveled) {
                                 itemCSP = itemCSP + "<span class='font-smaller-2'>(" + (itemCSP + currentBonusPoints) + ")</span>";
@@ -479,9 +478,9 @@ var app = function() {
                                 var futureBaseCSPs = _.map(futureMaxCSP, function(csp) {
                                     return csp - maxBonusPoints;
                                 });
-                                var maxLightPercents = _.map(futureBaseCSPs, function(fbc) {
+                                var maxLightPercents = _.uniq(_.map(futureBaseCSPs, function(fbc) {
                                     return Math.round((fbc / maxBaseCSP) * 100);
-                                });
+                                }));
                                 qualityValues = {
                                     percent: maxLightPercents.join("-"),
                                     futureBaseCSP: futureBaseCSPs.join("-"),

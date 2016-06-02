@@ -1415,7 +1415,7 @@ Profile.prototype = {
         var activeItems = _.filter(items, function(item) {
             var isFiltered = item.armorIndex > -1 && item.primaryStat() > 3 && item.tierType >= 5 && item.isEquipment === true;
             var isForClass = tgd.DestinyClass[item.classType] == character.classType() || item.classType == 3;
-            var isForCharacter = (character.globalItems().indexOf(item.bucketType) == -1 && item.characterId() == character.id) || character.globalItems().indexOf(item.bucketType) > -1;
+            var isForCharacter = (app.globalItems().indexOf(item.bucketType) == -1 && item.characterId() == character.id) || app.globalItems().indexOf(item.bucketType) > -1;
             return isFiltered && isForCharacter && isForClass;
         });
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
