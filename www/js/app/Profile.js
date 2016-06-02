@@ -16,7 +16,6 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
-    this.globalItems = ko.observableArray();
     this.activeBestSets = ko.observable();
     this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
@@ -79,13 +78,6 @@ Profile.prototype = {
                 console.timeEnd("init profile " + self.id);
             }, true);
         }
-
-        var storedObj = new tgd.StoreObj("globalItems");
-        var savedSelections = storedObj.read();
-        self.globalItems(_.isArray(savedSelections) ? savedSelections : savedSelections.split(","));
-        self.globalItems.subscribe(function(newValues) {
-            storedObj.write(newValues);
-        });
     },
     setFarmTarget: function() {
         app.farmTarget(this.id);

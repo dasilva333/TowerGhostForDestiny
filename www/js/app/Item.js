@@ -125,7 +125,7 @@ var Item = function(model, profile) {
     });
 
     this.character = profile;
-	this.futureBaseCSP = ko.observable(0);
+    this.futureBaseCSP = ko.observable(0);
     this.init(model);
 
     this.characterId = ko.observable(self.character.id);
@@ -134,7 +134,7 @@ var Item = function(model, profile) {
     this.columnMode = ko.computed(this._columnMode, this);
     this.opacity = ko.computed(this._opacity, this);
     this.primaryStatValue = ko.pureComputed(this._primaryStatValue, this);
-	
+
     this.maxLightPercent = ko.pureComputed(function() {
         //console.time("maxLightPercent " + self._id);
         //var toggle = app.cspToggle();
@@ -144,9 +144,9 @@ var Item = function(model, profile) {
         if (futureBaseCSP > maxBonusPoints) {
             maxBaseCSP = maxBaseCSP - maxBonusPoints;
         }
-		if ( self._id == "6917529088281533947" ){
-			console.log("futureBaseCSP", futureBaseCSP, "maxBaseCSP", maxBaseCSP);
-		}
+        /*if (self._id == "6917529088281533947") {
+            console.log("futureBaseCSP", futureBaseCSP, "maxBaseCSP", maxBaseCSP);
+        }*/
         //convert the fraction into a whole percentage
         var maxLightPercent = (futureBaseCSP / maxBaseCSP) * 100;
         //round to 2 digits;
@@ -265,10 +265,12 @@ Item.prototype = {
         self.hasLifeExotic = _.where(self.perks, {
             name: "The Life Exotic"
         }).length > 0;
-		self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
-		var currentBonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
-		var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
-		var currentCSP = tgd.sum(_.filter(_.values(self.stats), function(value){ return value > 0 }));
+        self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
+        var currentBonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
+        var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
+        var currentCSP = tgd.sum(_.filter(_.values(self.stats), function(value) {
+            return value > 0
+        }));
         self.statText = _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
             if (stat > 0) {
                 memo.push(key.substring(0, 3) + " " + stat);
@@ -287,22 +289,22 @@ Item.prototype = {
         self.progression = _.filter(self.perks, function(perk) {
             return perk.active === false && perk.isExclusive === -1 && perk.isVisible === true;
         }).length === 0;
-        
+
         var infusedStats = [currentCSP];
         if (primaryStat >= 200 && self.tierType >= 5) {
-			var newStats = tgd.calculateInfusedStats(primaryStat, currentCSP - (self.hasUnlockedStats ? currentBonus : 0));
-			infusedStats = _.uniq(_.map(newStats, function(stat) {
-				return Math.min(stat + maxLightBonus, tgd.DestinyMaxCSP[self.bucketType]);
-			}));
-			self.futureBaseCSP(newStats[1]);
+            var newStats = tgd.calculateInfusedStats(primaryStat, currentCSP - (self.hasUnlockedStats ? currentBonus : 0));
+            infusedStats = _.uniq(_.map(newStats, function(stat) {
+                return Math.min(stat + maxLightBonus, tgd.DestinyMaxCSP[self.bucketType]);
+            }));
+            self.futureBaseCSP(newStats[1]);
         }
-		self.primaryValues = {
+        self.primaryValues = {
             CSP: currentCSP,
-			Default: primaryStat,
-			MaxLightCSP: infusedStats[0],
+            Default: primaryStat,
+            MaxLightCSP: infusedStats[0],
             currentBonus: currentBonus,
-			maxLightBonus: maxLightBonus,
-			predictedCSP: infusedStats
+            maxLightBonus: maxLightBonus,
+            predictedCSP: infusedStats
         };
     },
     calculateFutureRolls: function(stats, statPerks, primaryStat, currentBonus, futureBonus, bucketType, description) {

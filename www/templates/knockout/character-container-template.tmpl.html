@@ -97,12 +97,9 @@
 										Include All Armor
 										<button data-bind="tooltip: true, click: function(){ return false; }, clickBubble: false" type="button" class="btn btn-xs btn-primary" data-toggle="tooltip" data-trigger="click hover space" data-placement="auto" title="Include all valid items account wide from all characters and vault"><i class="fa fa-question-circle"></i></button>
 									</span>
-									<div class="text-left col-xs-24 font-smaller-1" data-bind="clickBubble: false">
+									<div class="text-left col-xs-24 font-smaller-1 btn-group" data-bind="clickBubble: false">
 										<!-- ko foreach: { data: tgd.DestinyArmorPieces, as: 'armorType' } -->
-											<label>
-												<input type="checkbox" data-bind="checked: character.globalItems, value: armorType, clickBubble: false">
-												<span data-bind="text: armorType"></span>
-											</label>
+											<input type="button" class="btn btn-sm" data-bind="click: $root.setGlobalItems.bind(armorType), css: $root.globalItems().indexOf(armorType) > -1 ? 'btn-primary':'btn-default', value: armorType, clickBubble: false">
 										<!--/ko  -->
 									</div>
 								</div>

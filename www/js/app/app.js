@@ -36,6 +36,7 @@ var app = function() {
     this.farmMode = ko.pureComputed(new tgd.StoreObj("farmMode", "true"));
     this.farmTarget = ko.pureComputed(new tgd.StoreObj("farmTarget"));
     this.farmItems = ko.observableArray(); //data-bind: checked requires an observeableArray
+    this.globalItems = ko.observableArray();
     this.farmItemCounts = ko.observable({});
     this.advancedTooltips = ko.pureComputed(new tgd.StoreObj("advancedTooltips", "true"));
     this.sectionsTemplate = ko.pureComputed(new tgd.StoreObj("sectionsTemplate"));
@@ -2115,6 +2116,16 @@ var app = function() {
         );
     };
 
+    this.setGlobalItems = function() {
+        var armorType = this.toString();
+        console.log("armorType", armorType);
+        if (self.globalItems.indexOf(armorType) > -1) {
+            self.globalItems.remove(armorType);
+        } else {
+            self.globalItems.push(armorType);
+        }
+    }
+
     this.transferFarmItems = function(targetCharacterId, items) {
         //console.log("transferFarmItems", targetCharacterId, items);
         if (tgd.transferringFarmItems) return;
@@ -2278,6 +2289,13 @@ var app = function() {
             self.farmItems(_.isArray(savedSelections) ? savedSelections : savedSelections.split(","));
             self.farmItems.subscribe(function(newValues) {
                 tgd.farmItems.write(newValues);
+            });
+            //globalItems also needs to be an array attached to localStorage
+            var storedObj = new tgd.StoreObj("globalItems");
+            var savedSelections = storedObj.read();
+            self.globalItems(_.isArray(savedSelections) ? savedSelections : savedSelections.split(","));
+            self.globalItems.subscribe(function(newValues) {
+                storedObj.write(newValues);
             });
         }
 
