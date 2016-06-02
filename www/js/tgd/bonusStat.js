@@ -3,7 +3,7 @@ tgd.infusionStats = [34.5588, 34.7389, 34.919, 35.0991, 35.2792, 35.4593, 35.639
 tgd.calculateInfusedStats = function(initial_defense, initial_stat) {
     var finalStats = [];
     var target_defense = tgd.DestinyLightCap;
-    if (initial_defense == target_defense || initial_defense < 200) return [initial_stat];
+    if (initial_defense == target_defense || initial_defense < 200) return [initial_stat, initial_stat];
 
     var maxStatValueInitial = tgd.infusionStats[initial_defense - 200];
     var maxStatValueFinal = tgd.infusionStats[target_defense - 200];

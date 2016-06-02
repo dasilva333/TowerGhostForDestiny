@@ -61,7 +61,6 @@ var app = function() {
     this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
     this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
     this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
-    this.cspToggle = ko.observable(false);
 
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
@@ -1592,7 +1591,6 @@ var app = function() {
                 tgd.maxTierPointsPossible = tgd.maxTierPossible * tgd.DestinySkillTier;
                 var minAvgPercentNeeded = ((tgd.maxTierPointsPossible - destinyMaxBonusPoints) / (destinyMaxCSP - destinyMaxBonusPoints)) * 100;
                 app.minAvgPercentNeeded(Math.round(minAvgPercentNeeded * 100) / 100);
-                self.cspToggle(!self.cspToggle());
             });
         }
     };

@@ -274,8 +274,6 @@ Profile.prototype = {
                 self.items.remove(item);
             }
         });
-        //ensures maxLightPercent is recalculated if the item has been infused up
-        app.cspToggle(!app.cspToggle());
     },
     reloadBucketHandler: function(buckets, done) {
         var self = this;
