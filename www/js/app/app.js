@@ -439,7 +439,7 @@ var app = function() {
                             if (activeItem.tierType >= 5) {
                                 qualityRow.find(".stat-bar-static-value").addClass(activeItem.cspClass() + "Text");
                             }
-
+							var qualityPercentage = activeItem.maxLightPercent();
                             if (futureMaxCSP.length == 1) {
                                 futureMaxCSP = futureMaxCSP[0];
                                 var futureBaseCSP = futureMaxCSP - maxBonusPoints;
@@ -456,7 +456,6 @@ var app = function() {
                                         magazineRow.after(extrasRow);
                                     }
                                 }
-                                var qualityPercentage = activeItem.maxLightPercent();
                                 qualityValues = {
                                     percent: qualityPercentage,
                                     futureBaseCSP: futureBaseCSP,
@@ -482,7 +481,7 @@ var app = function() {
                                     return Math.round((fbc / maxBaseCSP) * 100);
                                 }));
                                 qualityValues = {
-                                    percent: maxLightPercents.join("-"),
+                                    percent: maxLightPercents.length == 1 ? qualityPercentage : maxLightPercents.join("-"),
                                     futureBaseCSP: futureBaseCSPs.join("-"),
                                     maxBaseCSP: maxBaseCSP
                                 };
