@@ -144,6 +144,9 @@ var Item = function(model, profile) {
         if (futureBaseCSP > maxBonusPoints) {
             maxBaseCSP = maxBaseCSP - maxBonusPoints;
         }
+		if ( self._id == "6917529088281533947" ){
+			console.log("futureBaseCSP", futureBaseCSP, "maxBaseCSP", maxBaseCSP);
+		}
         //convert the fraction into a whole percentage
         var maxLightPercent = (futureBaseCSP / maxBaseCSP) * 100;
         //round to 2 digits;
@@ -291,7 +294,7 @@ Item.prototype = {
 			infusedStats = _.uniq(_.map(newStats, function(stat) {
 				return Math.min(stat + maxLightBonus, tgd.DestinyMaxCSP[self.bucketType]);
 			}));
-			self.futureBaseCSP(newStats[0]);
+			self.futureBaseCSP(newStats[1]);
         }
 		self.primaryValues = {
             CSP: currentCSP,
