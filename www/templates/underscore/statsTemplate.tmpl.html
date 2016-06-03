@@ -12,7 +12,7 @@
 				<div class="stat-bar-fill text-center" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"><%= stats[key] %></div>
 			</div>
 			<div class="stat-bar-value">
-				<%= _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").css({ color: roll.bonusOn !== bonusStatOn ? "Khaki" : "White" }).html(roll[key]).parent().html();  }).join('-') %>
+				<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ color: roll.bonusOn !== bonusStatOn ? "Khaki" : "White" }).html(roll[key]).parent().html();  }).join('-') %>
 			</div>
         </div>
     <% }) %>
