@@ -319,15 +319,19 @@ var app = function() {
             /* Armor Stats */
             if (!_.isEmpty(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
+                var statValues = {
+                    stats: activeItem.stats,
+                    primaryValues: activeItem.primaryValues,
+                    futureRolls: activeItem.futureRolls,
+                    bonusStatOn: activeItem.bonusStatOn(),
+                    keys: _.pluck(activeItem.futureRolls, 'bonusOn'),
+                    maxCSP: tgd.DestinyMaxCSP[activeItem.bucketType]
+                };
                 if (stats.length === 0) {
-                    $content.find(".destt-desc").after(tgd.statsTemplate({
-                        stats: activeItem.stats
-                    }));
+                    $content.find(".destt-desc").after(tgd.statsTemplate(statValues));
                     stats = $content.find(".destt-stat");
                 } else {
-                    stats.html(tgd.statsTemplate({
-                        stats: activeItem.stats
-                    }));
+                    stats.html(tgd.statsTemplate(statValues));
                 }
                 var itemStats, itemDef = _itemDefs[activeItem.id];
                 if (itemDef && itemDef.stats) {
@@ -339,47 +343,6 @@ var app = function() {
                 var statBarElements = _.sortBy(stats.find(".stat-bar"), function(element) {
                     return _.pluck(tgd.DestinyArmorStats, 'statName').indexOf($.trim($(element).find(".stat-bar-label").text()));
                 });
-                stats.html(
-                    $(statBarElements).map(function(index, stat) {
-                        var $stat = $("<div>" + stat.outerHTML + "</div>"),
-                            label = $stat.find(".stat-bar-label"),
-                            labelText = $.trim(label.text());
-                        if (labelText in activeItem.stats) {
-                            var newLabelText, armoryLabelText, ddbLabelText;
-                            //Rate Of Fire: 23 (23 is the Item's value)
-                            label.text(labelText + ": " + activeItem.stats[labelText]);
-                            //Look for Armory Stats
-                            var statObj = _.findWhere(itemStats, {
-                                name: labelText
-                            });
-                            if (statObj && statObj.minimum && statObj.maximum && statObj.minimum > 0 && statObj.maximum > 0) {
-                                armoryLabelText = statObj.minimum + "/" + statObj.maximum;
-                            } else {
-                                armoryLabelText = "";
-                            }
-                            if ($stat.find(".stat-bar-static-value").css("display") == "block") {
-                                ddbLabelText = $.trim($stat.find(".stat-bar-static-value").text().replace(/ /g, ''));
-                                if ((ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) || (ddbLabelText.indexOf("/") == -1 && ddbLabelText > 0 && armoryLabelText.split("/")[0] != ddbLabelText && armoryLabelText.split("/")[1] != ddbLabelText)) {
-                                    newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
-                                } else if (ddbLabelText.indexOf("/") == -1) {
-                                    newLabelText = "Min/Max: " + armoryLabelText;
-                                } else {
-                                    newLabelText = "Min/Max: " + ddbLabelText;
-                                }
-                                $stat.find(".stat-bar-static-value").text(newLabelText);
-                            } else {
-                                ddbLabelText = $.trim($stat.find(".stat-bar-value").text().replace(/ /g, ''));
-                                if (ddbLabelText.indexOf("/") > -1 && ddbLabelText != armoryLabelText) {
-                                    newLabelText = "D:" + ddbLabelText + " A:" + armoryLabelText;
-                                } else {
-                                    newLabelText = "Min/Max: " + armoryLabelText;
-                                }
-                                $stat.find(".stat-bar-empty").html($("<div><div></div></div>").find("div").addClass("stat-bar-minmax").text(newLabelText).parent().html() + $stat.find(".stat-bar-empty").html());
-                            }
-                        }
-                        return $stat.html();
-                    }).get().join("")
-                );
                 //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
                     var magazineRow = stats.find(".stat-bar:last"),
@@ -564,6 +527,7 @@ var app = function() {
             $content.find(".fhtt.des").css("width", (width - 15) + "px");
             $content.find(".stat-bar-empty").css("width", "125px");
         }
+        console.log($content.html());
         callback($content.html());
     };
 

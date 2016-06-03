@@ -1,18 +1,19 @@
 <div class="destt-stat">
-    <% Object.keys(stats).forEach(function(key){ %>
+    <% Object.keys(stats).forEach(function(key){ if ( keys.indexOf(key) == -1 ){ return } %>
         <div class="stat-bar">
             <div class="stat-bar-label">
                 <%= key %>
             </div>
-			<div class="stat-bar-static-value" style="display: <%= ['Magazine'].indexOf(key) > -1 ? 'block' : 'none'  %>">
+			<div class="stat-bar-static-value <%= bonusStatOn == key ? 'font-bold' : ''  %>">
 				<%= stats[key] %>
 			</div>
-			<div class="stat-bar-empty" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none'  %>">
-				<div class="stat-bar-fill" style="width:<%= stats[key] %>%"></div>
+			<div class="stat-bar-empty text-left" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none'  %>">
+				<div class="stat-bar-fill" style="width:<%=  Math.round((_.findWhere(futureRolls, { bonusOn: key })[key] / maxCSP) * 100) %>%; position: absolute; left: 0; background-color: LimeGreen; display:inline-block;"></div>
+				<div class="stat-bar-fill" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"></div>
 			</div>
-			<div class="stat-bar-value" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none' %>">
-				<%= stats[key] %>
+			<div class="stat-bar-value">
+				<%= _.map(_.pluck(futureRolls,key), function(val){ return Math.round(val) }).join('-') %>
 			</div>
         </div>
-        <% }) %>
+    <% }) %>
 </div>

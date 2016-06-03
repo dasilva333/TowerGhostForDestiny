@@ -1,32 +1,282 @@
 {
   "files": {
-    "tower_ghost.css": {
-      "filename": "resources/tower_ghost.css",
-      "version": "d0e84ccb676503dfc31607a2aab09c3cf0f8096f7713f3c16b229c57a49c3dbf"
+    "bootstrap.min.css": {
+      "filename": "css/bootstrap.min.css",
+      "version": "67361e7941219cfd068b699fbd624d902d9b94787733ada92103c28e3a9952a6"
     },
-    "definitions.json": {
-      "filename": "resources/en/definitions.json",
-      "version": "5bb641a877bfa3a75f5d6afa78d55b66e9ec700b208728994a4d8af21266f071"
+    "character-box.css": {
+      "filename": "css/tgd/character-box.css",
+      "version": "4bfb6886052f3d698d25aae96cc5870b26fcfeca91e53ce7ff646da1ca7216a9"
     },
-    "1.libraries.js": {
-      "filename": "resources/1.libraries.js",
-      "version": "4d97e9f26df087c030e3a4ad474c7260e397fb400c9afbe2fbc53c9405bf5b3d"
+    "loadouts.css": {
+      "filename": "css/tgd/loadouts.css",
+      "version": "de9a1a26c9740e2c31d7bb2e6200dda563239a9408644797b653d5aba979f820"
     },
-    "2.templates.js": {
-      "filename": "resources/2.templates.js",
-      "version": "0eaf16f1fb7e14385bd06237a1a546e03b841274f8b842a4ab9dca16119bd8da"
+    "move-popup.css": {
+      "filename": "css/tgd/move-popup.css",
+      "version": "7500a29ea80d9668e6412d14acf05e6a7919cc0f7e7d3ce0c5b0c8181c1c088d"
     },
-    "3.tower_ghost.js": {
-      "filename": "resources/3.tower_ghost.js",
-      "version": "60f99526eee545d8036b453b85e3158d97952861aa1735519acd5cc2b526c669"
+    "style.css": {
+      "filename": "css/tgd/style.css",
+      "version": "81b702141a0e56c1e41ad955b4fb0e4a625bfa8eef696861bf090e7f96ed43fc"
+    },
+    "tooltip.css": {
+      "filename": "css/tooltip.css",
+      "version": "e6e4a8c6aa8b2d9436ceea84a45f28e735d68746c0c34d5f77e13563aca6a3f1"
+    },
+    "itemDefs.json": {
+      "filename": "data/definitions/en/itemDefs.json",
+      "version": "aae805348a67620a5fc090f5579542838c0a31c1902bac901d2d453a41dbadec"
+    },
+    "objectiveDefs.json": {
+      "filename": "data/definitions/en/objectiveDefs.json",
+      "version": "3aaa24db158ff39d4b90daed609a230aa3e5fd5f994e2df80fc559aaddc9daa3"
+    },
+    "perkDefs.json": {
+      "filename": "data/definitions/en/perkDefs.json",
+      "version": "9ad5d28c6dba0c62d4d0f7243a5bde37ff1b579cdef1cd3623e0cdc739d5101f"
+    },
+    "raceDefs.json": {
+      "filename": "data/definitions/en/raceDefs.json",
+      "version": "46fcd16daf3b22e69db829c3c0e51ff242b8022ca7f37297fe0add25a5e9c4dc"
+    },
+    "statDefs.json": {
+      "filename": "data/definitions/en/statDefs.json",
+      "version": "973afb0384b2774a153b25e678c689bb94736ea17c836cc6e14e2744bbd71d9c"
+    },
+    "talentGridDefs.json": {
+      "filename": "data/definitions/en/talentGridDefs.json",
+      "version": "654860dcdd5543103f2752484a94927d4acc9e6d656565074caba73722ff2eb2"
+    },
+    "vendorDefs.json": {
+      "filename": "data/definitions/en/vendorDefs.json",
+      "version": "468f022be42131550824bbc0ce940386a3cd939f2d2cfd07f98bcea782227a91"
+    },
+    "setDefs.json": {
+      "filename": "data/definitions/setDefs.json",
+      "version": "db768fc3ad157125b9a2b35dbd11a7843af7878522b1e4ec95a44d5a4b78ad8b"
+    },
+    "jquery.js": {
+      "filename": "js/libraries/primary/jquery.js",
+      "version": "a271a3f9e3cae897ced669d6652699e947928ef095e56384c4f9dd04bbb942ec"
+    },
+    "knockout.js": {
+      "filename": "js/libraries/primary/knockout.js",
+      "version": "18547751c3c89c0c44a7970e8afe6905d86f82ffc95722e86008970ae81acce4"
+    },
+    "modernizr.js": {
+      "filename": "js/libraries/primary/modernizr.js",
+      "version": "d2b82e612d2a812e8be2a57300dab8923c4f2edbe7a799e7da70791b595646fe"
+    },
+    "underscore.js": {
+      "filename": "js/libraries/primary/underscore.js",
+      "version": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9"
+    },
+    "analytics.js": {
+      "filename": "js/libraries/secondary/analytics.js",
+      "version": "f0558acedf5a295d6f363d6cfe76c74b27b1a3b1c3fb9df23814f7b04b29704e"
+    },
+    "bootstrap.js": {
+      "filename": "js/libraries/secondary/bootstrap.js",
+      "version": "d5fd173d00d9733900834e0e1083de86b532e048b15c0420ba5c2db0623644b8"
+    },
+    "cordova-app-loader-complete.js": {
+      "filename": "js/libraries/secondary/cordova-app-loader-complete.js",
+      "version": "ad1998c42b04ac34cef3c9dfa1e51bdd03a9c7773c63bf12b96174a14b63e4fe"
+    },
+    "fastclick.js": {
+      "filename": "js/libraries/secondary/fastclick.js",
+      "version": "1aa08cb3c7aa70d268d24d59c374c14af7bd08e0af8c85f8e4f60a2651f4bab5"
+    },
+    "hammer.js": {
+      "filename": "js/libraries/secondary/hammer.js",
+      "version": "86190e5e8be7fbfc1aabf3edbb7cf7c0366361c35e6f326330ca74a1914d12f7"
+    },
+    "bootstrap-dialog.js": {
+      "filename": "js/plugins/bootstrap-dialog.js",
+      "version": "be37237af48ff7cc173f86461e522ccbc117608c53c9a2e9250cbacf239529f1"
+    },
+    "jquery-idletimer.js": {
+      "filename": "js/plugins/jquery-idletimer.js",
+      "version": "0d03be1d3387cc9b62076d99af804fae42504fb6b0fae92cc8bc43521e13c7b3"
+    },
+    "jquery-ui.js": {
+      "filename": "js/plugins/jquery-ui.js",
+      "version": "4f3e6471cd8b68164c564b52de329a0355b36ae724a4dbf83eab604300e27ec0"
+    },
+    "jquery-ui.touchpunch.js": {
+      "filename": "js/plugins/jquery-ui.touchpunch.js",
+      "version": "30f2fdc0be56cb943cfcf17942025dd0ef947657052f50f1f33acf1a67dbe7d6"
+    },
+    "jquery.toaster.js": {
+      "filename": "js/plugins/jquery.toaster.js",
+      "version": "11e56c3850fa639ae31b68fae3e99a2e63091ecf35bc215957299bdc04290fdd"
+    },
+    "knockout-sortable.js": {
+      "filename": "js/plugins/knockout-sortable.js",
+      "version": "ac4ad65392d1d1e4825fb3226a9a314c30bc83d4f787fbf7d71dcbfabe76a126"
+    },
+    "dynamic-templates.js": {
+      "filename": "js/templates/dynamic-templates.js",
+      "version": "62b00f587145c080da24068072e605e79106d7b51627d14a8e8a38115dccb8c0"
+    },
+    "templates.js": {
+      "filename": "js/templates/templates.js",
+      "version": "8707a75028d95088360789a8f18a8f7764e6c151f4f595804f9f054966383ea6"
+    },
+    "armorSelection.js": {
+      "filename": "js/tgd/armorSelection.js",
+      "version": "4a1f39b0fa1bdcf31adc0750887a1ca29902299cea73c2f955f7005104f31b52"
+    },
+    "base-definitions.js": {
+      "filename": "js/tgd/base-definitions.js",
+      "version": "1d5f013ce39f0d1b82657c3ca2222c313b5151a4d4ab2d0e7d2be074171ff1d6"
+    },
+    "base-tgd.js": {
+      "filename": "js/tgd/base-tgd.js",
+      "version": "28cb8029219bb3aa9001122b24e1931e87c268230dd11f2b41130d85db40f350"
+    },
+    "bindingHandlers.js": {
+      "filename": "js/tgd/bindingHandlers.js",
+      "version": "78af733f13e4c96789822764136240e3985ba3f99d6bd04494b7fc9195ac9345"
+    },
+    "bonusStat.js": {
+      "filename": "js/tgd/bonusStat.js",
+      "version": "356c1aecfcdc8d0c5700213df5719672e7caf98713ce09fe688c62b2d2c29e45"
+    },
+    "bungie.js": {
+      "filename": "js/tgd/bungie.js",
+      "version": "94a93bcb6b8c55aa13178d5f5ddf38e4c8c638044aac47d643152baae1964148"
+    },
+    "dialog.js": {
+      "filename": "js/tgd/dialog.js",
+      "version": "4c54e596dc698d03404e7aa8ba98d077b791bb2690dc7efd31832eb46248baf6"
+    },
+    "extrasPopup.js": {
+      "filename": "js/tgd/extrasPopup.js",
+      "version": "1ad7fb6c873e8a5ea2fc197d1c8428df05739c4fe4b325b19b3d8454310d9816"
+    },
+    "layout.js": {
+      "filename": "js/tgd/layout.js",
+      "version": "132c9a116a6babb4bffafcea0cc4a94d6b2f90dcc0171eda4fa32a4d0366a1d7"
+    },
+    "loadouts.js": {
+      "filename": "js/tgd/loadouts.js",
+      "version": "5b587d270de251b00d1a3e6ff5912e73b0552ea8920993b221c6c4898905126d"
+    },
+    "locale.js": {
+      "filename": "js/tgd/locale.js",
+      "version": "d2c55825ddd4c49d0569ea3c7622d1c0dea62f69998c9db177906e9490a77eeb"
+    },
+    "selectMultiCharacters.js": {
+      "filename": "js/tgd/selectMultiCharacters.js",
+      "version": "a66e53af2c6c7b03d055e35e77836f604855d01f97d9ea0850ff25a58f8af9a4"
+    },
+    "settingsManager.js": {
+      "filename": "js/tgd/settingsManager.js",
+      "version": "7840ba75cad42b1e4d5cc9eb608ea70d852d0f91b5ca6c5f56b2ac1f13cc8dff"
+    },
+    "storage.js": {
+      "filename": "js/tgd/storage.js",
+      "version": "9755e18af3b6339b7f1342e27ac427b41c83f693c92053fd1b1fced2da52cf1b"
+    },
+    "transferConfirm.js": {
+      "filename": "js/tgd/transferConfirm.js",
+      "version": "1b6bb19c18f423c5226b15a8914c2ef70f016739fa12c796f61fbb2dbc3933a3"
+    },
+    "updater.js": {
+      "filename": "js/tgd/updater.js",
+      "version": "fc9cf5ea6420b03ce1e0c48febe5bc42b60e6599402072b5ada64de02c0ed816"
+    },
+    "utils.js": {
+      "filename": "js/tgd/utils.js",
+      "version": "fecf4ec857ea22ec80702a9d1e16e8cd55cc947df2f5b7672d389bbf189f527e"
+    },
+    "version.js": {
+      "filename": "js/tgd/version.js",
+      "version": "57497c237bed0f23c6b84d429fd6ec9c4a9404cf209148c72637006a198a8f72"
+    },
+    "Item.js": {
+      "filename": "js/app/Item.js",
+      "version": "078fe4dde073460923d7e1daa87e0062fb7d0e8dc19ac6e7aa4ac9e0f3f21d00"
+    },
+    "Profile.js": {
+      "filename": "js/app/Profile.js",
+      "version": "485bf803b74803533d67c1b9514c6db28076bede4ceb62b4975dcf8ff944556d"
+    },
+    "app.js": {
+      "filename": "js/app/app.js",
+      "version": "54873d0665313b5b249276b8d3cae784457b0d8e54af9aa66e8b9d0201a4175b"
+    },
+    "buy.js": {
+      "filename": "js/extras/buy.js",
+      "version": "9f9f5078601c9fe55040c6c78790dd9164bf1e651e1347b021b600244cdeb39f"
+    },
+    "ga.js": {
+      "filename": "js/extras/ga.js",
+      "version": "8da718daf3b660fe9779bd3f129712343d6948696707cf8e96966626d9230f24"
+    },
+    "tooltips.min.js": {
+      "filename": "js/extras/tooltips.min.js",
+      "version": "432c3cbb35365c56fc73263faf3438d3ab050e1ec712cfc56f145fb488c4f133"
     }
   },
   "load": [
-    "resources/tower_ghost.css",
-    "resources/en/definitions.json",
-    "resources/1.libraries.js",
-    "resources/2.templates.js",
-    "resources/3.tower_ghost.js"
+    "css/bootstrap.min.css",
+    "css/tgd/character-box.css",
+    "css/tgd/loadouts.css",
+    "css/tgd/move-popup.css",
+    "css/tgd/style.css",
+    "css/tooltip.css",
+    "data/definitions/en/itemDefs.json",
+    "data/definitions/en/objectiveDefs.json",
+    "data/definitions/en/perkDefs.json",
+    "data/definitions/en/raceDefs.json",
+    "data/definitions/en/statDefs.json",
+    "data/definitions/en/talentGridDefs.json",
+    "data/definitions/en/vendorDefs.json",
+    "data/definitions/setDefs.json",
+    "js/libraries/primary/jquery.js",
+    "js/libraries/primary/knockout.js",
+    "js/libraries/primary/modernizr.js",
+    "js/libraries/primary/underscore.js",
+    "js/libraries/secondary/analytics.js",
+    "js/libraries/secondary/bootstrap.js",
+    "js/libraries/secondary/cordova-app-loader-complete.js",
+    "js/libraries/secondary/fastclick.js",
+    "js/libraries/secondary/hammer.js",
+    "js/plugins/bootstrap-dialog.js",
+    "js/plugins/jquery-idletimer.js",
+    "js/plugins/jquery-ui.js",
+    "js/plugins/jquery-ui.touchpunch.js",
+    "js/plugins/jquery.toaster.js",
+    "js/plugins/knockout-sortable.js",
+    "js/templates/dynamic-templates.js",
+    "js/templates/templates.js",
+    "js/tgd/armorSelection.js",
+    "js/tgd/base-definitions.js",
+    "js/tgd/base-tgd.js",
+    "js/tgd/bindingHandlers.js",
+    "js/tgd/bonusStat.js",
+    "js/tgd/bungie.js",
+    "js/tgd/dialog.js",
+    "js/tgd/extrasPopup.js",
+    "js/tgd/layout.js",
+    "js/tgd/loadouts.js",
+    "js/tgd/locale.js",
+    "js/tgd/selectMultiCharacters.js",
+    "js/tgd/settingsManager.js",
+    "js/tgd/storage.js",
+    "js/tgd/transferConfirm.js",
+    "js/tgd/updater.js",
+    "js/tgd/utils.js",
+    "js/tgd/version.js",
+    "js/app/Item.js",
+    "js/app/Profile.js",
+    "js/app/app.js",
+    "js/extras/buy.js",
+    "js/extras/ga.js",
+    "js/extras/tooltips.min.js"
   ],
   "root": "./"
 }
