@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "a5ab77ebe530d381ada5e89a4dcb876de9a30845b111593f78a78cfc9daf39f8"
+      "version": "efe27b391a6cf1e9113744a32d2855ec5f8958c0c9ed33eda18531963047b221"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -118,7 +118,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "7cf83a0cd14e3b1a6d8b2d2124eb45dc281a799ad879b3b085a10413fa21fdf3"
+      "version": "76f0b0abbb8e81631b24fadd398539e7b42fe7c7662d698832a333efcf051557"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
