@@ -1,7 +1,7 @@
 <div class="destt-stat">
     <% Object.keys(stats).forEach(function(key){ if ( keys.indexOf(key) == -1 ){ return } %>
         <div class="stat-bar">
-            <div class="stat-bar-label <%= bonusStatOn == key ? 'GoodRollText' : ''  %>">
+            <div class="stat-bar-label" style="color: <%= bonusStatOn == key ? 'white' : 'Khaki'  %>">
                 <%= key %>
             </div>
 			<div class="stat-bar-static-value">
