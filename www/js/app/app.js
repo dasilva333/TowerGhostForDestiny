@@ -323,6 +323,7 @@ var app = function() {
                     stats: activeItem.stats,
                     primaryValues: activeItem.primaryValues,
                     futureRolls: activeItem.futureRolls,
+                    rolls: activeItem.rolls,
                     bonusStatOn: activeItem.bonusStatOn(),
                     keys: _.pluck(activeItem.futureRolls, 'bonusOn'),
                     maxCSP: tgd.DestinyMaxCSP[activeItem.bucketType]
@@ -345,8 +346,9 @@ var app = function() {
                 });
                 //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
-                    var magazineRow = stats.find(".stat-bar:last"),
+                    var magazineRow = stats.find(".stat-bar:last").clone(),
                         clonedRow;
+                    magazineRow.find(".stat-bar-static-value").removeClass("GoodRollText");
                     if (activeItem.weaponIndex > -1) {
                         var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction", "Inventory Size"];
                         _.each(desireableStats, function(statName) {
@@ -527,7 +529,7 @@ var app = function() {
             $content.find(".fhtt.des").css("width", (width - 15) + "px");
             $content.find(".stat-bar-empty").css("width", "125px");
         }
-        console.log($content.html());
+        //console.log($content.html());
         callback($content.html());
     };
 

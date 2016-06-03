@@ -321,32 +321,26 @@ Item.prototype = {
                 var otherStatName = _.reduce(stats, function(memo, stat, name) {
                     return (name != statPerk.name && stat > 0) ? name : memo;
                 }, '');
-                //Normalize stats by removing the bonus stat 
-                tmp[isStatActive ? statPerk.name : otherStatName] = tmp[isStatActive ? statPerk.name : otherStatName] - (allStatsLocked ? 0 : currentBonus);
-                //Figure out the sum of points and the weight of each side
-                var sum = tgd.sum(tmp),
-                    weight = (tmp[statPerk.name] / sum),
-                    currentStatValue = sum * weight,
-                    otherStatValue = sum * (1 - weight);
-                //Calculate both stats at Max Light (LL320) with bonus
-                //TODO: figure out a way to consolidate this equation into tgd.calculateStatRoll
-                //tmp[statPerk.name] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * weight) + futureBonus; //(allStatsLocked || isStatActive ? futureBonus : 0);
-                //tmp[statPerk.name] = Math.round(currentStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType])) + futureBonus;
-                //tmp[statPerk.name] = Math.round(currentStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio))) + futureBonus;
-                tmp[statPerk.name] = tgd.calculateInfusedStats(primaryStat, currentStatValue)[0] + futureBonus;
+                //Normalize stats by removing the bonus stat from the active node
+                var activeStatName = isStatActive ? statPerk.name : otherStatName;
+                if (activeStatName != "") {
+                    tmp[activeStatName] = tmp[activeStatName] - (allStatsLocked ? 0 : currentBonus);
+                }
+                var currentStatValue = tmp[statPerk.name],
+                    otherStatValue = tmp[otherStatName];
+                //Calculate both stats at Max Light with bonus
+                tmp[statPerk.name] = (primaryStat == tgd.DestinyLightCap ? currentStatValue : tgd.calculateInfusedStats(primaryStat, currentStatValue)[0]) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
-                    //tmp[otherStatName] = Math.round((sum * tgd.DestinyLightCap / primaryStat) * (1 - weight));
-                    //tmp[otherStatName] = Math.round(otherStatValue + ((tgd.DestinyLightCap - primaryStat) * tgd.DestinyInfusionRates[bucketType]));
-                    //tmp[otherStatName] = Math.round(otherStatValue * ((tgd.DestinyLightCap + tgd.DestinyCornRatio) / (primaryStat + tgd.DestinyCornRatio)));
-                    tmp[otherStatName] = tgd.calculateInfusedStats(primaryStat, otherStatValue)[0];
+                    tmp[otherStatName] = (primaryStat == tgd.DestinyLightCap ? otherStatValue : tgd.calculateInfusedStats(primaryStat, otherStatValue)[0]);
+                }
+                if (description == "Graviton Forfeit") {
+                    console.log(description, stats, statPerks, statPerk.name, otherStatName, activeStatName, isStatActive, primaryStat, currentStatValue, tmp[statPerk.name], tmp);
+                    //abort;
                 }
                 return tmp;
             });
-            /*if ( description == "Graviton Forfeit" ){
-            	console.log(description, stats, statPerks, primaryStat, currentBonus, futureBonus, futureRolls);
-				//abort;
-            }*/
+            /**/
         }
         return futureRolls;
     },

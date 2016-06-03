@@ -1411,7 +1411,7 @@
 }
 
 .fhtt.des .destt-cont .destt-stat .stat-bar-label {
-    width: 120px;
+    width: 70px;
     height: 20px;
     line-height: 20px;
     text-align: right;
@@ -1422,7 +1422,7 @@
 .fhtt.des .destt-cont .destt-stat .stat-bar-empty {
     position: absolute;
     top: 0;
-    left: 130px;
+    left: 105px;
     width: 170px;
     height: 20px;
     background: #292929
@@ -1431,7 +1431,7 @@
 .fhtt.des .destt-cont .destt-stat .stat-bar-fill {
     position: relative;
     background: #B5B5B5;
-    text-align: right;
+    text-align: center;
     color: #fff;
     height: 20px;
     line-height: 20px;
@@ -1441,7 +1441,7 @@
 .fhtt.des .destt-cont .destt-stat .stat-bar-static-value {
     position: absolute;
     top: 0;
-    left: 130px;
+    left: 80px;
     line-height: 20px;
     height: 20px;
     color: #fff
@@ -1450,7 +1450,7 @@
 .fhtt.des .destt-cont .destt-stat .stat-bar-value {
     position: absolute;
     top: 4px;
-    left: 305px;
+    left: 280px;
     font-size: 12px;
     color: #545454
 }
