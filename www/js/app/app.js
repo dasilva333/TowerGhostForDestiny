@@ -439,7 +439,7 @@ var app = function() {
                             if (activeItem.tierType >= 5) {
                                 qualityRow.find(".stat-bar-static-value").addClass(activeItem.cspClass() + "Text");
                             }
-							var qualityPercentage = activeItem.maxLightPercent();
+                            var qualityPercentage = activeItem.maxLightPercent();
                             if (futureMaxCSP.length == 1) {
                                 futureMaxCSP = futureMaxCSP[0];
                                 var futureBaseCSP = futureMaxCSP - maxBonusPoints;
