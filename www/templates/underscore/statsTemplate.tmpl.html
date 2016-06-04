@@ -1,6 +1,11 @@
 <div class="destt-stat">
-	<div>
-		<span style="color:Khaki">Inactive</span> / <span style="color:white">Active</span>
+	<div class="font-smaller-2 clearfix">
+		<div class="pull-left">
+			<span style="color:Khaki">Inactive</span> / <span style="color:white">Active</span>
+		</div>
+		<div class="pull-right" style="display: <%= primaryValues.Default < tgd.DestinyLightCap ? 'block' : 'none'  %>">
+			Max Light
+		</div>
 	</div>
     <% Object.keys(stats).forEach(function(key){ if ( keys.indexOf(key) == -1 ){ return } %>
         <div class="stat-bar">
@@ -11,7 +16,7 @@
 				<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ color: roll.bonusOn !== bonusStatOn ? "Khaki" : "White" }).html(roll[key]).parent().html();  }).join('-') %>
 			</div>
 			<div class="stat-bar-empty text-left" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none'  %>">
-				<div class="stat-bar-fill" style="width:<%=  Math.round((_.findWhere(rolls, { bonusOn: key })[key] / maxCSP) * 100) - ((stats[key] / maxCSP) * 100) %>%; left: <%= Math.round((stats[key] / maxCSP) * 100) %>%; position: absolute; background-color: Khaki; display:inline-block;"><%= _.findWhere(rolls, { bonusOn: key })[key] %></div>
+				<!--- <div class="stat-bar-fill" style="width:<%=  Math.round((_.findWhere(rolls, { bonusOn: key })[key] / maxCSP) * 100) - ((stats[key] / maxCSP) * 100) %>%; left: <%= Math.round((stats[key] / maxCSP) * 100) %>%; position: absolute; background-color: Khaki; display:inline-block;"><%= _.findWhere(rolls, { bonusOn: key })[key] %></div> -->
 				<div class="stat-bar-fill text-center" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"><%= stats[key] %></div>
 			</div>
 			<div class="stat-bar-value">				
