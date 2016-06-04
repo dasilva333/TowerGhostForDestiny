@@ -13,7 +13,7 @@
                 <%= key %>
             </div>
 			<div class="stat-bar-static-value">
-				<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ color: roll.bonusOn !== bonusStatOn ? "Khaki" : "White" }).html(roll[key]).parent().html();  }).join('-') %>
+				<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ color: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "White" : "Khaki" }).html(roll[key]).parent().html();  }).join('-') %>
 			</div>
 			<div class="stat-bar-empty text-left" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none'  %>">
 				<!--- <div class="stat-bar-fill" style="width:<%=  Math.round((_.findWhere(rolls, { bonusOn: key })[key] / maxCSP) * 100) - ((stats[key] / maxCSP) * 100) %>%; left: <%= Math.round((stats[key] / maxCSP) * 100) %>%; position: absolute; background-color: Khaki; display:inline-block;"><%= _.findWhere(rolls, { bonusOn: key })[key] %></div> -->
