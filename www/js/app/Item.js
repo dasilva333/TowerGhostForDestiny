@@ -258,14 +258,14 @@ Item.prototype = {
         self.isEquipped(item.isEquipped);
         self.locked(item.locked);
         self.perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
-        var statPerks = _.where(self.perks, {
+        self.statPerks = _.where(self.perks, {
             isStat: true
         });
         self.hasLifeExotic = _.where(self.perks, {
             name: "The Life Exotic"
         }).length > 0;
         self.stats = self.parseStats(self.perks, item.stats, item.itemHash);
-        var currentBonus = (statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
+        var currentBonus = (self.statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
         var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
         var currentCSP = tgd.sum(_.filter(_.values(self.stats), function(value) {
             return value > 0
@@ -276,15 +276,15 @@ Item.prototype = {
             }
             return memo;
         }, [])).join("/");
-        self.rolls = self.normalizeRolls(self.stats, statPerks, primaryStat, currentBonus, "");
-        self.futureRolls = self.calculateFutureRolls(self.stats, statPerks, primaryStat, currentBonus, maxLightBonus, bucketType, this.description);
-        var hasUnlockedStats = _.where(statPerks, {
+        self.rolls = self.normalizeRolls(self.stats, self.statPerks, primaryStat, currentBonus, "");
+        self.futureRolls = self.calculateFutureRolls(self.stats, self.statPerks, primaryStat, currentBonus, maxLightBonus, bucketType, this.description);
+        var hasUnlockedStats = _.where(self.statPerks, {
             active: true
         }).length > 0;
-        self.bonusStatOn(hasUnlockedStats ? _.findWhere(statPerks, {
+        self.bonusStatOn(hasUnlockedStats ? _.findWhere(self.statPerks, {
             active: true
         }).name : "");
-        self.hasUnlockedStats = hasUnlockedStats || statPerks.length === 0;
+        self.hasUnlockedStats = hasUnlockedStats || self.statPerks.length === 0;
         self.progression = _.filter(self.perks, function(perk) {
             return perk.active === false && perk.isExclusive === -1 && perk.isVisible === true;
         }).length === 0;

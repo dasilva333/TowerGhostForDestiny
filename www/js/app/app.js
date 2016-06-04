@@ -321,18 +321,22 @@ var app = function() {
                 var stats = $content.find(".destt-stat");
                 var statValues = {
                     stats: activeItem.stats,
+                    armorIndex: activeItem.armorIndex,
+                    statPerks: activeItem.statPerks,
                     primaryValues: activeItem.primaryValues,
                     futureRolls: activeItem.futureRolls,
                     rolls: activeItem.rolls,
                     bonusStatOn: activeItem.bonusStatOn(),
-                    keys: _.pluck(activeItem.futureRolls, 'bonusOn'),
+                    keys: activeItem.statPerks.length == 0 ? _.keys(activeItem.stats) : _.pluck(activeItem.futureRolls, 'bonusOn'),
                     maxCSP: tgd.DestinyMaxCSP[activeItem.bucketType]
                 };
+                var statsTemplate = tgd.statsTemplate(statValues);
+                console.log("statsTemplate", statsTemplate);
                 if (stats.length === 0) {
-                    $content.find(".destt-desc").after(tgd.statsTemplate(statValues));
+                    $content.find(".destt-desc").after(statsTemplate);
                     stats = $content.find(".destt-stat");
                 } else {
-                    stats.html(tgd.statsTemplate(statValues));
+                    stats.html(statsTemplate);
                 }
                 var itemStats, itemDef = _itemDefs[activeItem.id];
                 if (itemDef && itemDef.stats) {
@@ -341,7 +345,7 @@ var app = function() {
                         return obj;
                     });
                 }
-                var statBarElements = _.sortBy(stats.find(".stat-bar"), function(element) {
+                /*var statBarElements = _.sortBy(stats.find(".stat-bar"), function(element) {
                     return _.pluck(tgd.DestinyArmorStats, 'statName').indexOf($.trim($(element).find(".stat-bar-label").text()));
                 });
                 //console.log( stats.html() );
@@ -466,7 +470,7 @@ var app = function() {
                         if (clonedRow)
                             magazineRow.after(clonedRow);
                     }
-                }
+                }*/
             }
             if (activeItem.perks.length > 0) {
                 var activePerksTemplate = tgd.perksTemplate({

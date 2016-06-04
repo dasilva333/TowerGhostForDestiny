@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "efe27b391a6cf1e9113744a32d2855ec5f8958c0c9ed33eda18531963047b221"
+      "version": "e95ef136019e4be2296df59980f39ce5e1fc444e89e56ed70396f65065f48296"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -118,7 +118,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "6246b4ba8a00f54513795d61b69914c864d16e9b8b4cd94b1a4a3dbf5d5cd4eb"
+      "version": "49a537218c0fb5dd63cd2ad53bd7ba68bfb9801e2b8505dd8217f2a2b9d638ea"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -198,7 +198,7 @@
     },
     "Item.js": {
       "filename": "js/app/Item.js",
-      "version": "a509dd529659549afe8414751b5c6cb5e076cb329d813bcf8f1ddd092d54f9ef"
+      "version": "f4966a9af8d226bdcb7f2eb6d0e5906808095dbb967c8f3e97c0236686448ba3"
     },
     "Profile.js": {
       "filename": "js/app/Profile.js",
@@ -206,7 +206,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "15c7f7a36c50996847bcd24fd451b6322b166299d932a6dd2f17ba06537ec64d"
+      "version": "a6f62e6cd0670d44763e15c0e42e1461487bbf3391fa35436ab6a1f87abc0c76"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

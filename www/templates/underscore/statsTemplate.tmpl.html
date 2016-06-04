@@ -1,34 +1,30 @@
 <div class="destt-stat">
-	<div class="font-smaller-2 clearfix">
-		<div class="pull-right" style="display: <%= primaryValues.Default < tgd.DestinyLightCap ? 'block' : 'none'  %>">
-			Max Light
-		</div>
-	</div>
-    <% Object.keys(stats).forEach(function(key){ if ( keys.indexOf(key) == -1 ){ return } %>
-        <div class="stat-bar">
-            <div class="stat-bar-label" style="text-decoration: <%= bonusStatOn == key ? 'underline' : 'none'  %>">
-                <%= key %>
-            </div>
-			<div class="stat-bar-static-value">
-				<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') %>
+	<% if ( armorIndex > -1 ){ %>
+		<% if ( statPerks.length > 0 && primaryValues.Default < tgd.DestinyLightCap ){ %>
+			<div class="font-smaller-2 clearfix">
+				<div class="pull-right">
+					Max Light
+				</div>
 			</div>
-			<div class="stat-bar-empty text-left" style="display: <%= ['Magazine'].indexOf(key) == -1 ? 'block' : 'none'  %>">
-				<!--- <div class="stat-bar-fill" style="width:<%=  Math.round((_.findWhere(rolls, { bonusOn: key })[key] / maxCSP) * 100) - ((stats[key] / maxCSP) * 100) %>%; left: <%= Math.round((stats[key] / maxCSP) * 100) %>%; position: absolute; background-color: Khaki; display:inline-block;"><%= _.findWhere(rolls, { bonusOn: key })[key] %></div> -->
-				<div class="stat-bar-fill text-center" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"><%= stats[key] %></div>
-			</div>
-			<div class="stat-bar-value">				
-				<%=  (primaryValues.Default < tgd.DestinyLightCap) ? _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn !== bonusStatOn ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') : ''  %>
-			</div>
-        </div>
-    <% }) %>
-	<div class="stat-bar" style="display:none;">
-		<div class="stat-bar-label">
-		</div>
-		<div class="stat-bar-static-value">
-		</div>
-		<div class="stat-bar-empty text-left">
-		</div>
-		<div class="stat-bar-value">
-		</div>
-	</div>	
+		<% } %>
+	    <% keys.forEach(function(key){ if(stats[key] == 0 && statPerks.length == 0){ return } %>
+	        <div class="stat-bar">
+	            <div class="stat-bar-label" style="text-decoration: <%= bonusStatOn == key ? 'underline' : 'none'  %>">
+	                <%= key %>
+	            </div>
+				<div class="stat-bar-static-value">
+					<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') %>
+				</div>
+				<div class="stat-bar-empty text-left">
+					<div style="position: absolute; left: 0; width: 100%;" class="text-center"><%= stats[key] %> / <%= maxCSP %></div>
+					<div class="stat-bar-fill" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"></div>
+				</div>
+				<div class="stat-bar-value">				
+					<%=  (primaryValues.Default < tgd.DestinyLightCap && statPerks.length > 0) ? _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') : ''  %>
+				</div>
+	        </div>
+	    <% }) %>
+	<% } else { %>
+		<div>-weapon stats-</div>
+	<% } %>
 </div>
