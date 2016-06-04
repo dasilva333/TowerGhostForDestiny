@@ -1,13 +1,13 @@
 <div class="destt-stat">
 	<% if ( armorIndex > -1 ){ %>
-		<% if ( statPerks.length > 0 && primaryValues.Default < tgd.DestinyLightCap ){ %>
+		<% if ( statPerks.length > 0 && primaryValues.Default < tgd.DestinyLightCap && primaryValues.Default > 3 ){ %>
 			<div class="font-smaller-2 clearfix">
 				<div class="pull-right">
 					Max Light
 				</div>
 			</div>
 		<% } %>
-	    <% keys.forEach(function(key){ if(stats[key] == 0 && statPerks.length == 0){ return } %>
+	    <% keys.forEach(function(key){ if((stats[key] == 0 && statPerks.length == 0)||primaryValues.Default==3){ return } %>
 	        <div class="stat-bar">
 	            <div class="stat-bar-label" style="text-decoration: <%= bonusStatOn == key ? 'underline' : 'none'  %>">
 	                <%= key %>
@@ -21,6 +21,16 @@
 				</div>
 				<div class="stat-bar-value">				
 					<%=  (primaryValues.Default < tgd.DestinyLightCap && statPerks.length > 0) ? _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') : ''  %>
+				</div>
+	        </div>
+	    <% }) %>
+		<% extraStats.forEach(function(object){ keyName = _.first(_.keys(object)); %>
+	        <div class="stat-bar">
+	            <div class="stat-bar-label">
+	                <%= keyName %>
+	            </div>
+				<div class="stat-bar-static-value <%= keyName == 'Quality' ? qualityRowClass : '' %> ">
+					<%= object[keyName] %>
 				</div>
 	        </div>
 	    <% }) %>

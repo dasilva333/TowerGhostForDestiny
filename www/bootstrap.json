@@ -118,7 +118,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "9eea749c13883633cb2ac07d097619d2e6fa6b1fc8990229ff035e9d35291655"
+      "version": "98ef4199b7ea413b3152d2b9fcd19a76acf37cb1b4a3f199d1d308214cd34f02"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -206,7 +206,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "b5fa509d6665724dfac19b9d769ca4477a479fd27c2febac03846be12d9f3c6c"
+      "version": "a507e71d166c3395b17d1c61cba94177320424f2a9e8c81437bd0e6f6cb75d7c"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
