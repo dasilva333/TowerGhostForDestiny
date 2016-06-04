@@ -346,9 +346,8 @@ var app = function() {
                 });
                 //console.log( stats.html() );
                 if (self.advancedTooltips() === true && itemStats) {
-                    var magazineRow = stats.find(".stat-bar:last").clone(),
+                    var magazineRow = stats.find(".stat-bar:last"),
                         clonedRow;
-                    magazineRow.find(".stat-bar-static-value").removeClass("GoodRollText");
                     if (activeItem.weaponIndex > -1) {
                         var desireableStats = ["Aim assistance", "Equip Speed", "Recoil direction", "Inventory Size"];
                         _.each(desireableStats, function(statName) {
@@ -356,7 +355,7 @@ var app = function() {
                                 name: statName
                             });
                             if (statObj) {
-                                clonedRow = magazineRow.clone();
+                                clonedRow = magazineRow.clone().show();
                                 var label = statObj.name;
                                 if (statName == "Recoil direction")
                                     label = "Recoil";
@@ -372,7 +371,7 @@ var app = function() {
                     } else if (activeItem.armorIndex > -1) {
                         var statDetails;
                         if (activeItem.primaryStat() == 3) {
-                            clonedRow = magazineRow.clone();
+                            clonedRow = magazineRow.clone().show();
                             statDetails = _.pluck(activeItem.rolls, 'bonusOn').join(", ");
                             clonedRow.find(".stat-bar-label").html("Stat Roll : ");
                             clonedRow.find(".stat-bar-value, .stat-bar-empty").hide();
@@ -392,12 +391,12 @@ var app = function() {
 
                             var futureMaxCSP = activeItem.primaryValues.predictedCSP.slice(0);
 
-                            var statsRow = magazineRow.clone();
+                            var statsRow = magazineRow.clone().show();
                             statsRow.find(".stat-bar-label").html("Stats Total: ");
                             statsRow.find(".stat-bar-value, .stat-bar-empty").hide();
                             var statsDetails = itemCSP + " out of " + maxStatRoll;
 
-                            var qualityRow = magazineRow.clone(),
+                            var qualityRow = magazineRow.clone().show(),
                                 qualityValues, qualityDetails;
                             qualityRow.find(".stat-bar-label").html("Quality: ");
                             qualityRow.find(".stat-bar-value, .stat-bar-empty").hide();
@@ -411,8 +410,8 @@ var app = function() {
 
                                 if (activeItem.tierType >= 5) {
                                     if (futureMaxCSP != itemCSP) {
-                                        var extrasRow = magazineRow.clone();
-                                        extrasRow.find(".stat-bar-label").html("Infusible to: ");
+                                        var extrasRow = magazineRow.clone().show();
+                                        extrasRow.find(".stat-bar-label").html("Infusible&nbsp;to:");
                                         extrasRow.find(".stat-bar-value, .stat-bar-empty").hide();
                                         extrasRow.find(".stat-bar-static-value").show().html(_.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
                                             futureMaxCSP: futureMaxCSP,
@@ -433,8 +432,8 @@ var app = function() {
                                         futureMaxCSP: futureMaxCSP.join("-"),
                                         maxStatRoll: maxStatRoll
                                     });
-                                    var extrasRow = magazineRow.clone();
-                                    extrasRow.find(".stat-bar-label").html("Infusible to: ");
+                                    var extrasRow = magazineRow.clone().show();
+                                    extrasRow.find(".stat-bar-label").html("Infusible&nbsp;to:");
                                     extrasRow.find(".stat-bar-value, .stat-bar-empty").hide();
                                     extrasRow.find(".stat-bar-static-value").show().html(extraRowDetails);
                                     magazineRow.after(extrasRow);

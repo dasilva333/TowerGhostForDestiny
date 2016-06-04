@@ -1,4 +1,7 @@
 <div class="destt-stat">
+	<div>
+		<span style="color:Khaki">Inactive</span> / <span style="color:white">Active</span>
+	</div>
     <% Object.keys(stats).forEach(function(key){ if ( keys.indexOf(key) == -1 ){ return } %>
         <div class="stat-bar">
             <div class="stat-bar-label" style="color: <%= bonusStatOn == key ? 'white' : 'Khaki'  %>">
@@ -16,7 +19,14 @@
 			</div>
         </div>
     <% }) %>
-	<div>
-		<span style="color:Khaki">Inactive</span> / <span style="color:white">Active</span>
-	</div>
+	<div class="stat-bar" style="display:none;">
+		<div class="stat-bar-label">
+		</div>
+		<div class="stat-bar-static-value">
+		</div>
+		<div class="stat-bar-empty text-left">
+		</div>
+		<div class="stat-bar-value">
+		</div>
+	</div>	
 </div>
