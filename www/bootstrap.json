@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "e95ef136019e4be2296df59980f39ce5e1fc444e89e56ed70396f65065f48296"
+      "version": "9e60d9c726a5d55166f3ecee0781a74a756081db19cfcd1195f1e09d714173b5"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -118,7 +118,7 @@
     },
     "dynamic-templates.js": {
       "filename": "js/templates/dynamic-templates.js",
-      "version": "49a537218c0fb5dd63cd2ad53bd7ba68bfb9801e2b8505dd8217f2a2b9d638ea"
+      "version": "9eea749c13883633cb2ac07d097619d2e6fa6b1fc8990229ff035e9d35291655"
     },
     "templates.js": {
       "filename": "js/templates/templates.js",
@@ -206,7 +206,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "a6f62e6cd0670d44763e15c0e42e1461487bbf3391fa35436ab6a1f87abc0c76"
+      "version": "b5fa509d6665724dfac19b9d769ca4477a479fd27c2febac03846be12d9f3c6c"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",

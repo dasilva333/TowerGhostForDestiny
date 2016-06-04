@@ -16,7 +16,7 @@
 					<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') %>
 				</div>
 				<div class="stat-bar-empty text-left">
-					<div style="position: absolute; left: 0; width: 100%;" class="text-center"><%= stats[key] %> / <%= maxCSP %></div>
+					<div style="position: absolute; left: 0; width: 100%; z-index: 500; color: white;" class="text-center"><%= stats[key] %> / <%= maxCSP %></div>
 					<div class="stat-bar-fill" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"></div>
 				</div>
 				<div class="stat-bar-value">				
@@ -25,6 +25,21 @@
 	        </div>
 	    <% }) %>
 	<% } else { %>
-		<div>-weapon stats-</div>
+		<% Object.keys(stats).forEach(function(key){ %>
+	        <div class="stat-bar">
+	            <div class="stat-bar-label" style="text-decoration: <%= bonusStatOn == key ? 'underline' : 'none'  %>">
+	                <%= key %>
+	            </div>
+				<div class="stat-bar-static-value">
+					<%= stats[key].value %>
+				</div>
+				<div class="stat-bar-empty text-left">
+					<div class="stat-bar-fill" style="width:<%= stats[key].value %>%; display:inline-block; z-index: 10;"></div>
+				</div>
+				<div class="stat-bar-value">				
+					<%= stats[key].minMax %>
+				</div>
+	        </div>
+	    <% }) %>
 	<% } %>
 </div>

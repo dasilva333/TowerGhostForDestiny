@@ -319,6 +319,7 @@ var app = function() {
             /* Armor Stats */
             if (!_.isEmpty(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
+                var statKeys = activeItem.statPerks.length == 0 ? _.keys(activeItem.stats) : _.pluck(activeItem.futureRolls, 'bonusOn');
                 var statValues = {
                     stats: activeItem.stats,
                     armorIndex: activeItem.armorIndex,
@@ -327,17 +328,9 @@ var app = function() {
                     futureRolls: activeItem.futureRolls,
                     rolls: activeItem.rolls,
                     bonusStatOn: activeItem.bonusStatOn(),
-                    keys: activeItem.statPerks.length == 0 ? _.keys(activeItem.stats) : _.pluck(activeItem.futureRolls, 'bonusOn'),
+                    keys: statKeys,
                     maxCSP: tgd.DestinyMaxCSP[activeItem.bucketType]
                 };
-                var statsTemplate = tgd.statsTemplate(statValues);
-                console.log("statsTemplate", statsTemplate);
-                if (stats.length === 0) {
-                    $content.find(".destt-desc").after(statsTemplate);
-                    stats = $content.find(".destt-stat");
-                } else {
-                    stats.html(statsTemplate);
-                }
                 var itemStats, itemDef = _itemDefs[activeItem.id];
                 if (itemDef && itemDef.stats) {
                     itemStats = _.map(itemDef.stats, function(obj, key) {
@@ -345,6 +338,36 @@ var app = function() {
                         return obj;
                     });
                 }
+                if (activeItem.weaponIndex > -1) {
+                    statValues.keys = statValues.keys.concat(["Aim assistance", "Equip Speed", "Recoil direction", "Inventory Size"]);
+                    _.each(statValues.keys, function(statName) {
+                        var statObj = _.findWhere(itemStats, {
+                            name: statName
+                        });
+                        if (statObj) {
+                            var label = statObj.name;
+                            if (statName == "Recoil direction")
+                                label = "Recoil";
+                            else if (statName == "Aim assistance")
+                                label = "Aim Assist";
+                            statValues.stats[label] = {
+                                value: statObj.value
+                            };
+                            if (statObj.minimum > 0 && statObj.maximum > 0) {
+                                statValues.stats[label].minMax = statObj.minimum + "/" + statObj.maximum;
+                            }
+                        }
+                    });
+                }
+                console.log(statValues);
+                var statsTemplate = tgd.statsTemplate(statValues);
+                if (stats.length === 0) {
+                    $content.find(".destt-desc").after(statsTemplate);
+                    stats = $content.find(".destt-stat");
+                } else {
+                    stats.html(statsTemplate);
+                }
+
                 /*var statBarElements = _.sortBy(stats.find(".stat-bar"), function(element) {
                     return _.pluck(tgd.DestinyArmorStats, 'statName').indexOf($.trim($(element).find(".stat-bar-label").text()));
                 });
