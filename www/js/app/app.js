@@ -330,8 +330,7 @@ var app = function() {
                     bonusStatOn: activeItem.bonusStatOn(),
                     keys: statKeys,
                     maxCSP: tgd.DestinyMaxCSP[activeItem.bucketType],
-                    extraStats: [],
-                    qualityRowClass: activeItem.tierType >= 5 ? activeItem.cspClass() + "Text" : ""
+                    extraStats: []
                 };
                 var itemStats, itemDef = _itemDefs[activeItem.id];
                 if (itemDef && itemDef.stats) {
@@ -364,7 +363,8 @@ var app = function() {
                     var statDetails;
                     if (activeItem.primaryStat() == 3) {
                         statValues.extraStats = [{
-                            "Stat Roll": _.pluck(activeItem.rolls, 'bonusOn').join(", ")
+                            label: "Stat Roll",
+                            value: _.pluck(activeItem.rolls, 'bonusOn').join(", ")
                         }]
                     } else {
                         var isItemLeveled = activeItem.hasUnlockedStats;
@@ -394,7 +394,8 @@ var app = function() {
                                 if (futureMaxCSP != itemCSP) {
                                     var extrasRow = magazineRow.clone().show();
                                     statValues.extraStats.push({
-                                        "Infusible&nbsp;to": _.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
+                                        label: "Infusible&nbsp;to",
+                                        value: _.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
                                             futureMaxCSP: futureMaxCSP,
                                             maxStatRoll: maxStatRoll
                                         })
@@ -414,7 +415,8 @@ var app = function() {
                                     maxStatRoll: maxStatRoll
                                 });
                                 statValues.extraStats.push({
-                                    "Infusible&nbsp;to": extraRowDetails
+                                    label: "Infusible&nbsp;to",
+                                    value: extraRowDetails
                                 });
                             }
                             var futureBaseCSPs = _.map(futureMaxCSP, function(csp) {
@@ -431,16 +433,17 @@ var app = function() {
                         }
 
                         statValues.extraStats.push({
-                            "Stats Total": statsDetails
+                            label: "Stats Total",
+                            value: statsDetails
                         });
 
-                        qualityDetails = _.template('<%- percent %>%')(qualityValues);
-
-                        if (activeItem.tierType >= 5) {
-                            qualityDetails = qualityDetails + _.template(" <span class='font-smaller-2'>(<%- futureBaseCSP %> out of <%- maxBaseCSP %>)</span>")(qualityValues);
-	                        statValues.extraStats.push({
-	                            "Quality": qualityDetails
-	                        });
+                        if (activeItem.tierType >= 5 && activeItem.statPerks.length > 0) {
+                            qualityDetails = _.template("<%- percent %>% <span class='font-smaller-2'>(<%- futureBaseCSP %> out of <%- maxBaseCSP %>)</span>")(qualityValues);
+                            statValues.extraStats.push({
+                                label: "Quality",
+                                value: qualityDetails,
+                                className: activeItem.tierType >= 5 ? activeItem.cspClass() + "Text" : ""
+                            });
                         }
                     }
                 }

@@ -1442,6 +1442,8 @@
     position: absolute;
     top: 0;
     left: 95px;
+	min-width: 48px;
+	text-align: center;
     line-height: 20px;
     height: 20px;
     color: #fff

@@ -24,13 +24,13 @@
 				</div>
 	        </div>
 	    <% }) %>
-		<% extraStats.forEach(function(object){ keyName = _.first(_.keys(object)); %>
+		<% extraStats.forEach(function(stat){ %>
 	        <div class="stat-bar">
 	            <div class="stat-bar-label">
-	                <%= keyName %>
+	                <%= stat.label %>
 	            </div>
-				<div class="stat-bar-static-value <%= keyName == 'Quality' ? qualityRowClass : '' %> ">
-					<%= object[keyName] %>
+				<div class="stat-bar-static-value <%= stat.className %> ">
+					<%= stat.value %>
 				</div>
 	        </div>
 	    <% }) %>
