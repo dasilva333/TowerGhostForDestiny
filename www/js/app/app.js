@@ -321,7 +321,7 @@ var app = function() {
                 var stats = $content.find(".destt-stat");
                 var statKeys = activeItem.statPerks.length == 0 ? _.keys(activeItem.stats) : _.pluck(activeItem.futureRolls, 'bonusOn');
                 var statValues = {
-                    stats: activeItem.stats,
+                    stats: _.clone(activeItem.stats),
                     armorIndex: activeItem.armorIndex,
                     statPerks: activeItem.statPerks,
                     primaryValues: activeItem.primaryValues,
@@ -352,8 +352,12 @@ var app = function() {
                             else if (statName == "Aim assistance")
                                 label = "Aim Assist";
                             statValues.stats[label] = {
+                                base: statObj.value,
                                 value: statObj.value
                             };
+                            if (_.has(activeItem.stats, statObj.name)) {
+                                statValues.stats[label].value = activeItem.stats[statObj.name];
+                            }
                             if (statObj.minimum > 0 && statObj.maximum > 0) {
                                 statValues.stats[label].minMax = statObj.minimum + "/" + statObj.maximum;
                             }
@@ -513,7 +517,7 @@ var app = function() {
         //this fixes issue #35 makes destinydb tooltips fit on a mobile screen
         if (width < 340) {
             $content.find(".fhtt.des").css("width", (width - 15) + "px");
-            $content.find(".stat-bar-empty").css("width", "125px");
+            $content.find(".stat-bar-empty").addClass("mobile");
         }
         //console.log($content.html());
         callback($content.html());

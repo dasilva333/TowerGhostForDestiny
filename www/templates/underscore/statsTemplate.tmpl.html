@@ -44,11 +44,10 @@
 					<%= stats[key].value %>
 				</div>
 				<div class="stat-bar-empty text-left">
+					<div style="position: absolute; left: 0; width: 100%; z-index: 500; color: white;" class="text-center"><%= stats[key].base %> / <%= stats[key].value %></div>
 					<div class="stat-bar-fill" style="width:<%= stats[key].value %>%; display:inline-block; z-index: 10;"></div>
 				</div>
-				<div class="stat-bar-value">				
-					<%= stats[key].minMax %>
-				</div>
+				<div class="stat-bar-value"><%= stats[key].minMax %></div>
 	        </div>
 	    <% }) %>
 	<% } %>

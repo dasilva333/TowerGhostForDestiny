@@ -1428,6 +1428,10 @@
     background: #292929
 }
 
+.fhtt.des .destt-cont .destt-stat .stat-bar-empty.mobile {
+    width: 115px;
+}
+
 .fhtt.des .destt-cont .destt-stat .stat-bar-fill {
     position: relative;
     background: #B5B5B5;
@@ -1450,11 +1454,12 @@
 }
 
 .fhtt.des .destt-cont .destt-stat .stat-bar-value {
-    position: absolute;
-    top: 4px;
-    left: 300px;
+    position: relative;
+    top: -15px;
+    left: 5px;
     font-size: 12px;
-    color: #545454
+    color: #545454;
+    float: right;
 }
 
 .fhtt.des .destt-cont .destt-info {
