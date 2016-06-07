@@ -392,7 +392,6 @@ var app = function() {
 
                             if (activeItem.tierType >= 5) {
                                 if (futureMaxCSP != itemCSP) {
-                                    var extrasRow = magazineRow.clone().show();
                                     statValues.extraStats.push({
                                         label: "Infusible&nbsp;to",
                                         value: _.template('<%- futureMaxCSP %> out of <%- maxStatRoll %>')({
