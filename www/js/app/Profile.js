@@ -855,6 +855,25 @@ Profile.prototype = {
         callback(groups);
     },
     findBestArmorSetV2: function(items, callback) {
+        innerCartesianProductOf = function(subSets) {
+            var out = [];
+            for (var i0 = 0; i0 < 2; i0++) {
+                for (var i1 = 0; i1 < 2; i1++) {
+                    for (var i2 = 0; i2 < 2; i2++) {
+                        for (var i3 = 0; i3 < 2; i3++) {
+                            for (var i4 = 0; i4 < 2; i4++) {
+                                for (var i5 = 0; i5 < 2; i5++) {
+                                    for (var i6 = 0; i6 < 2; i6++) {
+                                        out.push([subSets[0][i0], subSets[1][i1], subSets[2][i2], subSets[3][i3], subSets[4][i4], subSets[5][i5], subSets[6][i6]]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return out;
+        }
 
         var buckets = [].concat(tgd.DestinyArmorPieces),
             sets = [],
@@ -866,7 +885,12 @@ Profile.prototype = {
             highestArmorTier = 0,
             highestArmorValue = 0,
             highestTierValue = 0,
-            character = this;
+            character = this,
+            outerHighestScore = 0,
+            setsRoll0 = [],
+            setsRoll1 = [];
+        var joinStats = tgd.joinStats;
+        var cartesianProductOf = tgd.cartesianProductOf;
 
         //console.log("items", items.length);
         tgd.showLoading(function() {
@@ -912,116 +936,105 @@ Profile.prototype = {
             //console.log("backups", backups.length);
             //character.queryRolls(backups, function() {
             console.time("set loop");
+            for (var i = 0, len = sets.length; i < len; i++) {
+                var item = sets[i];
+                item[0].itemNr = i;
+
+                var itemClone = _.clone(item[0]);
+                itemClone.activeRoll = item[0].rolls[0];
+                setsRoll0.push(itemClone);
+                itemClone = _.clone(item[0]);
+                itemClone.activeRoll = item[0].rolls[1];
+                setsRoll1.push(itemClone);
+            }
             _.each(sets, function(set) {
                 var mainPiece = set[0];
                 //instead of looping over each mainPiece it'll be the mainPiece.rolls array which will contain every combination
-                var subSets = [
+                var outerSubSets = [
                     [mainPiece]
                 ];
-                candidates = _.groupBy(_.filter(backups, function(item) {
+                var outerCandidates = _.groupBy(_.filter(backups, function(item) {
                     return item.bucketType != mainPiece.bucketType && ((item.tierType != 6 && mainPiece.tierType == 6) || (mainPiece.tierType != 6)) && mainPiece._id != item._id;
                 }), 'bucketType');
-                _.each(candidates, function(items) {
-                    subSets.push(items);
+                _.each(outerCandidates, function(items) {
+                    outerSubSets.push(items);
                 });
-                subSets = _.map(subSets, function(selection) {
-                    var choices = selection.rolls ? [selection] : selection;
-                    var x = _.flatten(_.map(choices, function(item) {
-                        return _.map(item.rolls, function(roll) {
-                            var itemClone = _.clone(item);
-                            itemClone.activeRoll = roll;
-                            return itemClone;
-                        });
-                    }));
-                    return x;
-                });
-                //mistral: Calculation time optimization
-                //start
-                /*console.time("calculate combos v2 " + mainPiece.description);
-                var combos = _.filter(tgd.cartesianProductOf(subSets), function(sets) {
-                    var exoticItems = _.filter(sets, function(item) {
-                        return item.tierType === 6 && item.hasLifeExotic === false;
-                    });
-                    return exoticItems.length < 2;
-                });
-				console.timeEnd("calculate combos v2 " + mainPiece.description);*/
-                console.time("calculate combos " + mainPiece.description);
-                var products = tgd.cartesianProductOf(subSets);
-                var combos = [];
+                var products = cartesianProductOf(outerSubSets);
+                var outerCombos = [];
+                var tmpDestinySkillTier = tgd.DestinySkillTier;
                 for (var n = 0, len2 = products.length; n < len2; n++) {
                     var sets = products[n];
+                    //                    var minCSP= tgd.DestinySkillTier * 12;
+                    var minCSP = tmpDestinySkillTier * outerHighestScore;
                     var exoticItems = 0;
+                    var csp = 0;
                     for (var i = 0, len = sets.length; i < len; i++) {
                         var item = sets[i];
                         if (item.tierType === 6 && item.hasLifeExotic === false) {
                             exoticItems++;
                         }
+                        //csp += item.getValue("All");
+                        csp += item.primaryValues.CSP;
                     }
-                    if (exoticItems < 2) {
-                        combos.push(sets);
+                    if ((exoticItems < 2) && (csp >= minCSP)) {
+                        outerCombos.push(sets);
                     };
+
                 };
-                console.timeEnd("calculate combos " + mainPiece.description);
-                //                var scoredCombos = _.map(combos, function(items) {
-                //                    var tmp = tgd.joinStats(items);
-                //                    delete tmp["bonusOn"];
-                //                    return {
-                //                        set: items,
-                //                        score: tgd.sum(_.map(tmp, function(value, key) {
-                //                            var result = Math.floor(value / tgd.DestinySkillTier);
-                //                            return result > 5 ? 5 : result;
-                //                        })) + (tgd.sum(_.values(tmp)) / 1000)
-                //                    };
-                //                });
-                //                var highestScore = Math.floor(_.max(_.pluck(scoredCombos, 'score')));
-                var scoredCombos = [];
-                var highestScore = 0;
-                for (var i = 0, len = combos.length; i < len; i++) {
-                    var items = combos[i];
-                    var tmp = tgd.joinStats(items);
-                    //delete tmp["bonusOn"];    
-                    var result = [];
-                    result["Intellect"] = Math.floor(tmp["Intellect"] / tgd.DestinySkillTier);
-                    if (result["Intellect"] > 5) {
-                        result["Intellect"] = 5
-                    };
-                    result["Discipline"] = Math.floor(tmp["Discipline"] / tgd.DestinySkillTier);
-                    if (result["Discipline"] > 5) {
-                        result["Discipline"] = 5
-                    };
-                    result["Strength"] = Math.floor(tmp["Strength"] / tgd.DestinySkillTier);
-                    if (result["Strength"] > 5) {
-                        result["Strength"] = 5
-                    };
+                for (var n = 0, len2 = outerCombos.length; n < len2; n++) {
+                    var innerCombo = outerCombos[n];
+                    var subSets = [];
 
-                    var sumresult = result["Intellect"] + result["Discipline"] + result["Strength"];
-                    var tmpscore = sumresult + (tmp["Intellect"] + tmp["Discipline"] + tmp["Strength"]) / 1000;
+                    for (var i = 0, len = innerCombo.length; i < len; i++) {
+                        var nr = innerCombo[i].itemNr;
+                        subSets[i] = new Array();
+                        subSets[i][0] = setsRoll0[nr];
+                        subSets[i][1] = setsRoll1[nr];
+                    }
+                    var combos = innerCartesianProductOf(subSets);
+                    var scoredCombos = [];
+                    var highestScore = 0;
+                    for (var i = 0, len = combos.length; i < len; i++) {
+                        var items = combos[i];
+                        var tmp = joinStats(items);
+                        //delete tmp["bonusOn"];
+                        var result = [];
+                        result["Intellect"] = Math.floor(tmp["Intellect"] / tmpDestinySkillTier);
+                        if (result["Intellect"] > 5) {
+                            result["Intellect"] = 5
+                        };
+                        result["Discipline"] = Math.floor(tmp["Discipline"] / tmpDestinySkillTier);
+                        if (result["Discipline"] > 5) {
+                            result["Discipline"] = 5
+                        };
+                        result["Strength"] = Math.floor(tmp["Strength"] / tmpDestinySkillTier);
+                        if (result["Strength"] > 5) {
+                            result["Strength"] = 5
+                        };
 
-                    scoredCombos[i] = {
-                        set: items,
-                        score: tmpscore
-                    };
+                        var sumresult = result["Intellect"] + result["Discipline"] + result["Strength"];
+                        var tmpscore = sumresult + (tmp["Intellect"] + tmp["Discipline"] + tmp["Strength"]) / 1000;
 
-                    if (tmpscore > highestScore) {
-                        highestScore = tmpscore;
+                        scoredCombos[i] = {
+                            set: items,
+                            score: tmpscore
+                        };
+
+                        if (tmpscore > highestScore) {
+                            highestScore = tmpscore;
+                        }
+                    }
+
+                    if (outerHighestScore < Math.floor(highestScore)) {
+                        outerHighestScore = Math.floor(highestScore);
+                    }
+                    for (var i = 0, len = scoredCombos.length; i < len; i++) {
+                        var combo = scoredCombos[i];
+                        if (combo.score >= outerHighestScore) {
+                            bestSets.push(combo);
+                        }
                     }
                 }
-
-                highestScore = Math.floor(highestScore);
-
-                //                _.each(scoredCombos, function(combo) {
-                //                    if (combo.score >= highestScore) {
-                //                        bestSets.push(combo);
-                //                    }
-                //                });
-                for (var i = 0, len = scoredCombos.length; i < len; i++) {
-                    var combo = scoredCombos[i];
-                    if (combo.score >= highestScore) {
-                        bestSets.push(combo);
-                    }
-                }
-
-                //end
 
             });
             console.timeEnd("set loop");
@@ -1230,6 +1243,8 @@ Profile.prototype = {
             highestTier = Math.floor(_.max(_.pluck(bestSets, 'score'))),
             armorBuilds = {},
             arrArmorBuilds = [];
+        console.time("set BestSets");
+        var regex = new RegExp(weaponTypes.join('|'));
         _.each(bestSets, function(combo) {
             if (combo.score >= highestTier) {
                 var statTiers = "",
@@ -1258,7 +1273,7 @@ Profile.prototype = {
                         })
                     ),
                     function(perk) {
-                        return (perk.active === true && perk.bucketType != "Class Items" && _.intersection(weaponTypes, perk.name.split(" ")).length > 0) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
+                        return (perk.active === true && perk.bucketType != "Class Items" && regex.test(perk.name)) || (perk.active === true && perk.bucketType == "Helmet" && perk.isExclusive == -1 && perk.isInherent === false);
                     }
                 ), 'name');
                 combo.similarityScore = _.values(_.countBy(_.map(_.filter(combo.perks, function(perk) {
@@ -1289,7 +1304,7 @@ Profile.prototype = {
         });
         //reset armorBuilds so it doesn't take up memory after it's been transformed into an array
         armorBuilds = {};
-
+        console.timeEnd("set BestSets");
         arrArmorBuilds = _.sortBy(arrArmorBuilds, function(builds) {
             return _.max(_.pluck(builds, 'similarityScore')) * -1;
         });
