@@ -1432,7 +1432,7 @@
     width: 115px;
 }
 
-.stat-bar .active { font-weight: bold; }
+.stat-bar .active { font-weight: bold; font-size: 1.1em; }
 .stat-bar .inactive { font-weight: auto; }
 
 
