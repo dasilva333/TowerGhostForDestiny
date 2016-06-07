@@ -9,18 +9,18 @@
 		<% } %>
 	    <% keys.forEach(function(key){ if((stats[key] == 0 && statPerks.length == 0)||primaryValues.Default==3){ return } %>
 	        <div class="stat-bar">
-	            <div class="stat-bar-label" style="text-decoration: <%= bonusStatOn == key ? 'underline' : 'none'  %>">
+	            <div class="stat-bar-label <%= bonusStatOn == key ? 'active' : 'inactive'  %>">
 	                <%= key %>
 	            </div>
 				<div class="stat-bar-static-value">
-					<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') %>
+					<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").addClass(roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "active":"inactive").html(roll[key]).parent().html();  }).join('-') %>
 				</div>
 				<div class="stat-bar-empty text-left">
 					<div style="position: absolute; left: 0; width: 100%; z-index: 500; color: white;" class="text-center"><%= stats[key] %> / <%= maxCSP %></div>
 					<div class="stat-bar-fill" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"></div>
 				</div>
 				<div class="stat-bar-value">				
-					<%=  (primaryValues.Default < tgd.DestinyLightCap && statPerks.length > 0) ? _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").css({ textDecoration: roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "underline" : "none" }).html(roll[key]).parent().html();  }).join('-') : ''  %>
+					<%=  (primaryValues.Default < tgd.DestinyLightCap && statPerks.length > 0) ? _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").addClass(roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "active" : "inactive" ).html(roll[key]).parent().html();  }).join('-') : ''  %>
 				</div>
 	        </div>
 	    <% }) %>
@@ -37,7 +37,7 @@
 	<% } else { %>
 		<% Object.keys(stats).forEach(function(key){ %>
 	        <div class="stat-bar">
-	            <div class="stat-bar-label" style="text-decoration: <%= bonusStatOn == key ? 'underline' : 'none'  %>">
+	            <div class="stat-bar-label <%= bonusStatOn == key ? 'active' : 'inactive'  %>">
 	                <%= key %>
 	            </div>
 				<div class="stat-bar-static-value">

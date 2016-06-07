@@ -1432,6 +1432,10 @@
     width: 115px;
 }
 
+.stat-bar .active { font-weight: bold; }
+.stat-bar .inactive { font-weight: auto; }
+
+
 .fhtt.des .destt-cont .destt-stat .stat-bar-fill {
     position: relative;
     background: #B5B5B5;
