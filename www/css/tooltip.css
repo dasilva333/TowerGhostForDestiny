@@ -1422,7 +1422,7 @@
 .fhtt.des .destt-cont .destt-stat .stat-bar-empty {
     position: absolute;
     top: 0;
-    left: 145px;
+    left: 140px;
     width: 150px;
     height: 20px;
     background: #292929
@@ -1449,7 +1449,7 @@
 .fhtt.des .destt-cont .destt-stat .stat-bar-static-value {
     position: absolute;
     top: 0;
-    left: 95px;
+    left: 93px;
 	min-width: 48px;
 	text-align: center;
     line-height: 20px;

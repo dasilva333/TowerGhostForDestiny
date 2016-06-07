@@ -351,6 +351,8 @@ var app = function() {
                                 label = "Recoil";
                             else if (statName == "Aim assistance")
                                 label = "Aim Assist";
+                            else if (statName == "Inventory Size")
+                                label = "Inventory";
                             statValues.stats[label] = {
                                 base: statObj.value,
                                 value: statObj.value
