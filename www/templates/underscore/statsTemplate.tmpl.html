@@ -1,7 +1,7 @@
 <div class="destt-stat">
 	<% if ( armorIndex > -1 ){ %>
 		<% if ( statPerks.length > 0 && primaryValues.Default < tgd.DestinyLightCap && primaryValues.Default > 3 ){ %>
-			<div class="font-smaller-2 clearfix">
+			<div class="font-smaller-2 clearfix" style="display: <%= app.advancedTooltips() ? 'block' : 'none'  %>">
 				<div class="pull-right">
 					Max Light
 				</div>
@@ -13,13 +13,13 @@
 	                <%= key %>
 	            </div>
 				<div class="stat-bar-static-value">
-					<%= _.map(rolls, function(roll){ return $('<span><span></span></span>').find("span").addClass(roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "active":"inactive").html(roll[key]).parent().html();  }).join('-') %>
+					<%= _.filter(_.map(rolls, function(roll) { var isActive = roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key), rollClass = isActive ? "active" : "inactive", rollElement = $('<span><span></span></span>').find("span").addClass(rollClass).html(roll[key]).parent().html(); return (isActive || (!isActive && app.advancedTooltips())) ? rollElement : ''; }),function(e){ return !_.isEmpty(e); }).join('-') %>
 				</div>
 				<div class="stat-bar-empty text-left">
 					<div style="position: absolute; left: 0; width: 100%; z-index: 500; color: white;" class="text-center"><%= stats[key] %> / <%= maxCSP %></div>
 					<div class="stat-bar-fill" style="width:<%= Math.round((stats[key] / maxCSP) * 100) %>%; display:inline-block; z-index: 10;"></div>
 				</div>
-				<div class="stat-bar-value">				
+				<div class="stat-bar-value" style="display: <%= app.advancedTooltips() ? 'block' : 'none'  %>">
 					<%=  (primaryValues.Default < tgd.DestinyLightCap && statPerks.length > 0) ? _.map(futureRolls, function(roll){ return $('<span><span></span></span>').find("span").addClass(roll.bonusOn == bonusStatOn || (bonusStatOn == '' && roll.bonusOn !== key) ? "active" : "inactive" ).html(roll[key]).parent().html();  }).join('-') : ''  %>
 				</div>
 	        </div>
@@ -29,7 +29,7 @@
 	            <div class="stat-bar-label">
 	                <%= stat.label %>
 	            </div>
-				<div class="stat-bar-static-value <%= stat.className %> ">
+				<div class="stat-bar-static-value <%= stat.className %> extraStat">
 					<%= stat.value %>
 				</div>
 	        </div>

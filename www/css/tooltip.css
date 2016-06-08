@@ -1457,6 +1457,10 @@
     color: #fff
 }
 
+.stat-bar-static-value.extraStat {
+	padding-left: 5px;
+}
+
 .fhtt.des .destt-cont .destt-stat .stat-bar-value {
     position: relative;
     top: -18px;
