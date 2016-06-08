@@ -1433,7 +1433,7 @@
 }
 
 .stat-bar .active { font-weight: bold; font-size: 1.1em; color: #EEE !important; }
-.stat-bar .inactive { font-weight: auto; }
+.stat-bar .inactive { font-weight: auto; color: #999; }
 
 
 .fhtt.des .destt-cont .destt-stat .stat-bar-fill {
@@ -1459,7 +1459,7 @@
 
 .fhtt.des .destt-cont .destt-stat .stat-bar-value {
     position: relative;
-    top: -15px;
+    top: -18px;
     left: 5px;
     font-size: 12px;
     color: #545454;
