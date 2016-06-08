@@ -22,7 +22,7 @@
     },
     "tooltip.css": {
       "filename": "css/tooltip.css",
-      "version": "274fa763d0c7f690287e9a7c1ab10560fa4c7990f7fdbca7ec70f307845b77ab"
+      "version": "18a9a2dcf54fe4f5b436c00bc6b040b5a20703fe69c1aadadaa59ef18a979db7"
     },
     "itemDefs.json": {
       "filename": "data/definitions/en/itemDefs.json",
@@ -166,7 +166,7 @@
     },
     "locale.js": {
       "filename": "js/tgd/locale.js",
-      "version": "d2c55825ddd4c49d0569ea3c7622d1c0dea62f69998c9db177906e9490a77eeb"
+      "version": "1c391069c4226e6fc398d3946369ecd5ce5926c5c80c67cbfb7dda75f8d6fdd7"
     },
     "selectMultiCharacters.js": {
       "filename": "js/tgd/selectMultiCharacters.js",
