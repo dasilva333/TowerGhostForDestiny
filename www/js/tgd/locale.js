@@ -485,7 +485,7 @@ tgd.locale = {
         disc: "Disc",
         discipline: "Discipline",
         donation_instructions: "Ceci est un projet non commercial dédié au jeu Destiny. Si vous aimez ce logiciel, faîtes un don afin de garder ce projet en vie et de soutenir les coûts de maintenance.",
-        donation_title: "Dons pour Tower Ghost for Destiny!",
+        donation_title: "Dons pour Tower Ghost pour Destiny!",
         error_loading_inventory: "Erreur chargement d'inventaire",
         gear_with_highest: "Equiper cet équipement avec le plus haut:",
         inte: "Int",
@@ -529,7 +529,7 @@ tgd.locale = {
         login_instructions: "Pour commencer, vous aurez besoin pour vous connecter à votre compte Bungie.net via:",
         login_loading_inventory: "S'il vous plaît attendez, chargement de votre inventaire depuis Bungie",
         login_loading_updates: "S'il vous plaît attendez, téléchargement de la mise à jour automatique",
-        login_title: "Bienvenue à Tower Ghost for Destiny!",
+        login_title: "Bienvenue à Tower Ghost pour Destiny!",
         menu_viewformat: "VoirFormat",
         menu_viewimagegrid: "Image Grille",
         menu_viewitemlist: "Liste d'objets",
@@ -629,7 +629,7 @@ tgd.locale = {
         vo_vault_last: "dernièrer/Droite",
         vo_vault_position: "Position du coffre",
         vo_vault_width: "Largeur du Coffre",
-        whats_new_title: "Actualité Tower Ghost for Destiny"
+        whats_new_title: "Actualité Tower Ghost pour Destiny"
     },
     it: {
         agility: "Agility",
