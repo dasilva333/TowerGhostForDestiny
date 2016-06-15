@@ -717,7 +717,7 @@ Item.prototype = {
             var otherEquipped = false,
                 itemIndex = -1,
                 otherItems = _.sortBy(_.filter(self.character.items(), function(item) {
-                    return (item._id != self._id && item.bucketType == self.bucketType);
+                    return (item._id != self._id && item.bucketType == self.bucketType && item.isEquippable(self.character.id)());
                 }), function(item) {
                     return [item.getValue("Light") * -1, item.getValue("CSP") * -1];
                 });
