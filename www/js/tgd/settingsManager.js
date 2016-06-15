@@ -11,4 +11,14 @@ tgd.settingsManager = function(settings) {
         tgd.checkUpdates();
         BootstrapDialog.alert("Downloading updated language files");
     });
+
+    self.autoUpdates.subscribe(function(autoUpdates) {
+        if (autoUpdates) {
+            tgd.checkUpdates();
+        } else {
+            localStorage.setItem("manifest", null);
+            localStorage.setItem("last_update_files", null);
+            tgd.loader.reset();
+        }
+    });
 };

@@ -86,7 +86,6 @@ module.exports = function(grunt) {
 				sourceMapIncludeSources: false
 			},
 			files: {
-				/* this is now defined under remove-logging */
 				'../www/resources/3.tower_ghost.js': [
 					'../www/js/tgd/*.js',
 					'../www/js/app/*.js',
