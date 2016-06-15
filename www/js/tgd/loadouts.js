@@ -653,7 +653,7 @@ tgd.Loadout.prototype = {
             return function(otherItem) {
                 /* if the otherItem is not part of the sourceBucket then it can go */
                 if (sourceBucketIds.indexOf(otherItem._id) == -1 && itemFound === false) {
-					tgd.localLog(otherItem.description + " is not in " + sourceBucketIds);
+                    tgd.localLog(otherItem.description + " is not in " + sourceBucketIds);
                     itemFound = true;
                     sourceBucketIds.push(otherItem._id);
                     return otherItem;
@@ -736,10 +736,10 @@ tgd.Loadout.prototype = {
                                         }), 'id');
                                         tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
                                         tgd.localLog("the target where this is going has these many items " + targetBucket.length);
-										var transferables = _.filter(targetBucket, function(otherItem) {
-											return otherItem.transferStatus < 2;
-										});
-										tgd.localLog("the target where this is going has these many items that are xferable " + transferables.length);
+                                        var transferables = _.filter(targetBucket, function(otherItem) {
+                                            return otherItem.transferStatus < 2;
+                                        });
+                                        tgd.localLog("the target where this is going has these many items that are xferable " + transferables.length);
                                         var candidates = _.filter(transferables, function(otherItem) {
                                             var index = sourceBucketHashes.indexOf(otherItem.id);
                                             tgd.localLog(index + " candidate: " + otherItem.description);
@@ -757,7 +757,7 @@ tgd.Loadout.prototype = {
                                         swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
                                         /* if there is still no swapItem at this point I have to break the original rule the prevents duplicates*/
                                         if (!swapItem) {
-											console.log("finding a swapItem from targetBucket");
+                                            console.log("finding a swapItem from targetBucket");
                                             swapItem = _.filter(transferables, getFirstItem(sourceBucketIds, itemFound))[0];
                                         }
                                     }
