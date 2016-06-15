@@ -3,14 +3,14 @@
         "currentFile": "../www/js//libraries/secondary/analytics.js",
         "fileName": "analytics.js",
         "link": "http://www.google-analytics.com/analytics.js",
-        "localHash": "c52469a638b14cea92f720b20173987db2bbb3a84b175131ca9e48e55edbdb64",
-        "remoteHash": "c52469a638b14cea92f720b20173987db2bbb3a84b175131ca9e48e55edbdb64"
+        "localHash": "f0558acedf5a295d6f363d6cfe76c74b27b1a3b1c3fb9df23814f7b04b29704e",
+        "remoteHash": "e7459b80a74d6c5de3de81e8ab0a8276d9f61404dadb68122a24206bb9b41f65"
     },
     {
         "currentFile": "../www/js//plugins/bootstrap-dialog.js",
         "fileName": "bootstrap-dialog.js",
         "link": "https://raw.githubusercontent.com/nakupanda/bootstrap3-dialog/master/dist/js/bootstrap-dialog.js",
-        "localHash": "fa3c5532da8dede62b44e74a450754fe3ec5ad15e4debc5ea3125140716d814f",
+        "localHash": "be37237af48ff7cc173f86461e522ccbc117608c53c9a2e9250cbacf239529f1",
         "remoteHash": "fa3c5532da8dede62b44e74a450754fe3ec5ad15e4debc5ea3125140716d814f"
     },
     {
@@ -31,7 +31,7 @@
         "currentFile": "../www/js//libraries/secondary/hammer.js",
         "fileName": "hammer.js",
         "link": "http://hammerjs.github.io/dist/hammer.min.js",
-        "localHash": "8a1b58d624eeb47e9e3073531a5d364e41a2e7853c052873a79917f97dd0bb44",
+        "localHash": "86190e5e8be7fbfc1aabf3edbb7cf7c0366361c35e6f326330ca74a1914d12f7",
         "remoteHash": "8a1b58d624eeb47e9e3073531a5d364e41a2e7853c052873a79917f97dd0bb44"
     },
     {
@@ -45,49 +45,35 @@
         "currentFile": "../www/js//plugins/jquery-idletimer.js",
         "fileName": "jquery-idletimer.js",
         "link": "https://raw.githubusercontent.com/thorst/jquery-idletimer/master/dist/idle-timer.min.js",
-        "localHash": "5b49526c59eb4e6b2cce3d09caad09962757a32035c6182d1063f01900fb3414",
+        "localHash": "0d03be1d3387cc9b62076d99af804fae42504fb6b0fae92cc8bc43521e13c7b3",
         "remoteHash": "5b49526c59eb4e6b2cce3d09caad09962757a32035c6182d1063f01900fb3414"
-    },
-    {
-        "currentFile": "../www/js//plugins/jquery-ui.js",
-        "fileName": "jquery-ui.js",
-        "link": "https://code.jquery.com/ui/1.11.3/jquery-ui.min.js",
-        "localHash": "4f3e6471cd8b68164c564b52de329a0355b36ae724a4dbf83eab604300e27ec0",
-        "remoteHash": "c48feaca5f6fa70585397cfbfb1ffd5a41b98ff4959d2c36d6f8b2f1f5b06de1"
     },
     {
         "currentFile": "../www/js//plugins/jquery-ui.touchpunch.js",
         "fileName": "jquery-ui.touchpunch.js",
         "link": "https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js",
-        "localHash": "216cde3563d6a7cf3719138fb030f99e2e895e470e7d447d7413ba8fce95ebb4",
+        "localHash": "000854d782781aff1b16ea5451c1da3d07efadd35ab911ccb7e4b851571a25bd",
         "remoteHash": "000854d782781aff1b16ea5451c1da3d07efadd35ab911ccb7e4b851571a25bd"
-    },
-    {
-        "currentFile": "../www/js//libraries/primary/jquery.js",
-        "fileName": "jquery.js",
-        "link": "https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js",
-        "localHash": "d48e95b12fba5a8fcac1b467e38b07d7d8e0ec23abbcacf4a5acc33c737c43c6",
-        "remoteHash": "6b6de0d4db7876d1183a3edb47ebd3bbbf93f153f5de1ba6645049348628109a"
     },
     {
         "currentFile": "../www/js//plugins/jquery.toaster.js",
         "fileName": "jquery.toaster.js",
         "link": "https://raw.githubusercontent.com/scottoffen/jquery.toaster/master/jquery.toaster.js",
-        "localHash": "2a5128417916b0777873fbb90e2520f4d8fc8e8ffd503ac02484927393bbeb8f",
+        "localHash": "11e56c3850fa639ae31b68fae3e99a2e63091ecf35bc215957299bdc04290fdd",
         "remoteHash": "2a5128417916b0777873fbb90e2520f4d8fc8e8ffd503ac02484927393bbeb8f"
     },
     {
         "currentFile": "../www/js//plugins/knockout-sortable.js",
         "fileName": "knockout-sortable.js",
         "link": "https://raw.githubusercontent.com/rniemeyer/knockout-sortable/master/src/knockout-sortable.js",
-        "localHash": "37e52d580846e95f76f0a86248a23e908a8ff115a9f2488c67b0fb7957c696eb",
+        "localHash": "ac4ad65392d1d1e4825fb3226a9a314c30bc83d4f787fbf7d71dcbfabe76a126",
         "remoteHash": "37e52d580846e95f76f0a86248a23e908a8ff115a9f2488c67b0fb7957c696eb"
     },
     {
         "currentFile": "../www/js//libraries/primary/knockout.js",
         "fileName": "knockout.js",
         "link": "https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js",
-        "localHash": "a3a72d9bb4a05bb4e212c78abba79173371f1f5ea3b7449a6cfe20710591e6d1",
+        "localHash": "18547751c3c89c0c44a7970e8afe6905d86f82ffc95722e86008970ae81acce4",
         "remoteHash": "972f13893b7056c0567637a44ea4c994b1b3dd1b20e185ebf3478ae9086d74cb"
     },
     {
@@ -101,7 +87,7 @@
         "currentFile": "../www/js//libraries/primary/underscore.js",
         "fileName": "underscore.js",
         "link": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js",
-        "localHash": "6851f16b454d9e0be61ac7adaf86db4adef6192b448fc732f9131208ed507487",
+        "localHash": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9",
         "remoteHash": "a1b6400a21ddee090e93d8882ffa629963132785bfa41b0abbea199d278121e9"
     }
 ]
