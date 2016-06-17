@@ -22,11 +22,11 @@
     }
   },
   "load": [
-    "resources/tower_ghost.css",
-    "resources/en/definitions.json",
-    "resources/1.libraries.js",
-    "resources/2.templates.js",
-    "resources/3.tower_ghost.js"
+    "/auto_updates.cfm?resources/tower_ghost.css",
+    "/auto_updates.cfm?resources/en/definitions.json",
+    "/auto_updates.cfm?resources/1.libraries.js",
+    "/auto_updates.cfm?resources/2.templates.js",
+    "/auto_updates.cfm?resources/3.tower_ghost.js"
   ],
   "root": "./"
 }
