@@ -525,18 +525,6 @@ var app = function() {
         callback($content.html());
     };
 
-    this.toggleAutoUpdates = function() {
-        self.toggleBootstrapMenu();
-        self.autoUpdates(!self.autoUpdates());
-        if (self.autoUpdates()) {
-            tgd.checkUpdates();
-        } else {
-            localStorage.setItem("manifest", null);
-            localStorage.setItem("last_update_files", null);
-            tgd.loader.reset();
-        }
-    };
-
     this.toggleViewOptions = function() {
         self.toggleBootstrapMenu();
         self.viewOptionsEnabled(!self.viewOptionsEnabled());

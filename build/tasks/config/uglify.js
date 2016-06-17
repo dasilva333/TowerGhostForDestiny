@@ -78,6 +78,20 @@ module.exports = function(grunt) {
 			'../www/resources/ja/definitions.json': 	['../www/data/definitions/ja/*.json', '../www/data/definitions/setDefs.json'],
 			'../www/resources/pt-br/definitions.json': 	['../www/data/definitions/pt-br/*.json', '../www/data/definitions/setDefs.json']
 		  }
+		},
+		jsDev: {
+			options: {
+				mangle: false,
+				sourceMap: true,
+				sourceMapIncludeSources: false
+			},
+			files: {
+				'../www/resources/3.tower_ghost.js': [
+					'../www/js/tgd/*.js',
+					'../www/js/app/*.js',
+					'../www/js/extras/*.js'
+				]
+			}
 		}
 	});
 

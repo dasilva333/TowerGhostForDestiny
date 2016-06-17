@@ -117,11 +117,36 @@ window.ko.bindingHandlers.fastclick = {
 
 window.ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-        Hammer(element, {
-                time: 2000
-            })
-            .on("tap", function(ev) {
-                tgd.localLog("item.tap");
+        var hammer = new Hammer.Manager(element, {});
+
+        var singleTap = new Hammer.Tap({
+            event: 'singletap'
+        });
+        var doubleTap = new Hammer.Tap({
+            event: 'doubletap',
+            taps: 2
+        });
+        var tripleTap = new Hammer.Tap({
+            event: 'tripletap',
+            taps: 3
+        });
+        var holdPress = new Hammer.Press({
+            event: 'hold',
+            pointers: 1,
+            time: 2000,
+            threshold: 1
+        });
+
+        hammer.add([tripleTap, doubleTap, singleTap, holdPress]);
+
+        tripleTap.recognizeWith([doubleTap, singleTap]);
+        doubleTap.recognizeWith(singleTap);
+
+        doubleTap.requireFailure(tripleTap);
+        singleTap.requireFailure([tripleTap, doubleTap]);
+
+        hammer.on("singletap", function(ev) {
+                tgd.localLog("item.singletap " + (new Date()).getTime());
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var item = ko.contextFor(target).$data;
@@ -129,7 +154,7 @@ window.ko.bindingHandlers.moveItem = {
                 }
             })
             .on("doubletap", function(ev) {
-                tgd.localLog("item.doubletap");
+                tgd.localLog("item.doubletap " + (new Date()).getTime());
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var context = ko.contextFor(target);
@@ -169,8 +194,8 @@ window.ko.bindingHandlers.moveItem = {
                 }
             })
             // press is actually hold 
-            .on("press", function(ev) {
-                tgd.localLog("item.press");
+            .on("hold tripletap", function(ev) {
+                tgd.localLog("item.hold/tripletap");
                 var target = tgd.getEventDelegate(ev.target, ".itemLink");
                 if (target) {
                     var context = ko.contextFor(target);
