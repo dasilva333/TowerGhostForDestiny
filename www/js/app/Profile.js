@@ -1064,7 +1064,7 @@ Profile.prototype = {
         var characterId = character.id;
         var candidates = _.map(buckets, function(bucket) {
             return _.filter(items, function(item) {
-                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1) || (item.weaponIndex > -1));
+                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.transferStatus < 2 && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.bucketType == "Ghost") || item.weaponIndex > -1);
             });
         });
         console.log("candidates", candidates);
@@ -1109,6 +1109,7 @@ Profile.prototype = {
                 return combo.light * -1;
             }));
         }
+        console.log("highestComboSet", highestComboSet);
         var highestSet = highestComboSet.items;
         var highestSetValue = highestComboSet.light;
         return [highestSetValue, highestSet];
