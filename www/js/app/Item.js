@@ -719,9 +719,8 @@ Item.prototype = {
                 otherItems = _.sortBy(_.filter(self.character.items(), function(item) {
                     return (item._id != self._id && item.bucketType == self.bucketType && item.isEquippable(self.character.id)());
                 }), function(item) {
-                    return [item.getValue("Light") * -1, item.getValue("CSP") * -1];
+                    return (item.getValue("Light") + item.getValue("CSP")) * -1;
                 });
-            //console.log("other items: " + _.pluck(otherItems, 'description'));
             if (otherItems.length > 0) {
                 /* if the only remainings item are exotic ensure the other buckets dont have an exotic equipped */
                 var minTier = _.min(_.pluck(otherItems, 'tierType'));
@@ -742,13 +741,12 @@ Item.prototype = {
                         }
                         return;
                     }
-                    tgd.localLog(item.description);
                     /* still haven't found a match */
                     if (otherEquipped === false) {
                         if (item != self && item.equip) {
-                            tgd.localLog("trying to equip " + item.description);
+                            tgd.localLog(itemIndex, "trying to equip " + item.description);
                             item.equip(self.characterId(), function(isEquipped, result) {
-                                tgd.localLog(item.description + " result was " + isEquipped);
+                                console.log(item.description + " result was " + isEquipped);
                                 if (isEquipped === true) {
                                     otherEquipped = true;
                                     callback(true);
@@ -756,12 +754,12 @@ Item.prototype = {
                                     callback(false);
                                 } else {
                                     tryNextItem();
-                                    tgd.localLog("tryNextItem");
+                                    tgd.localLog("tryNextItem()");
                                 }
                             });
                         } else {
                             tryNextItem();
-                            tgd.localLog("tryNextItem");
+                            tgd.localLog("tryNextItem()");
                         }
                     }
                 };
@@ -1589,7 +1587,7 @@ Item.prototype = {
             value = this.maxLightPercent();
         } else if (type == "MaxBonusPoints") {
             value = this.primaryValues.maxLightBonus;
-        } else if (type == "All") {
+        } else if (type == "All" || type == "CSP") {
             value = this.primaryValues.CSP;
         } else if (_.isObject(this.stats) && type in this.stats) {
             value = parseInt(this.stats[type]);

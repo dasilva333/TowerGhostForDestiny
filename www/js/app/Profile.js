@@ -1051,6 +1051,68 @@ Profile.prototype = {
         // });
 
     },
+    findHighestItemsByLight: function(buckets, items) {
+        /*
+        	1. build a list of all the candidates from everywhere
+        	2. group by buckets
+        	3. mix and match all groups
+        	4. filter for double exotics
+        	5. sort by light desc, items on character desc
+        	6. pick first result
+        */
+        var character = this;
+        var characterId = character.id;
+        var candidates = _.map(buckets, function(bucket) {
+            return _.filter(items, function(item) {
+                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.armorIndex > -1) || (item.weaponIndex > -1));
+            });
+        });
+        console.log("candidates", candidates);
+        var combos = _.filter(tgd.cartesianProductOf(candidates), function(items) {
+            var totalExotics = 0;
+            _.each(items, function(item) {
+                if (item.tierType == 6) totalExotics++;
+            });
+            return totalExotics <= 1;
+        });
+        console.log("combos", combos.length, combos);
+        var sortedCombos = _.map(combos, function(items) {
+            return {
+                items: items,
+                light: tgd.sum(_.map(items, function(item) {
+                    return item.getValue("Light");
+                })),
+                localItems: _.countBy(items, function(item) {
+                    return item.character.id == characterId;
+                })['true']
+            }
+        });
+        console.log("sortedCombos", sortedCombos.length, sortedCombos);
+        var localItems = _.filter(sortedCombos, function(combo) {
+                return combo.localItems == buckets.length;
+            }),
+            remoteItems = _.filter(sortedCombos, function(combo) {
+                return combo.localItems !== buckets.length;
+            });
+        var absMaxLight = _.max(_.map(sortedCombos, function(combo) {
+            return combo.light;
+        }));
+        var localMaxLight = _.max(_.map(localItems, function(combo) {
+            return combo.light;
+        }));
+        if (absMaxLight > localMaxLight) {
+            var highestComboSet = _.first(_.sortBy(remoteItems, function(combo) {
+                return combo.light * -1;
+            }));
+        } else {
+            var highestComboSet = _.first(_.sortBy(localItems, function(combo) {
+                return combo.light * -1;
+            }));
+        }
+        var highestSet = highestComboSet.items;
+        var highestSetValue = highestComboSet.light;
+        return [highestSetValue, highestSet];
+    },
     findHighestItemBy: function(type, buckets, items) {
         var character = this;
         var sets = [];
@@ -1525,9 +1587,9 @@ Profile.prototype = {
             if (type == "Best" || type == "OptimizedBest" || type == "MaxLight" || type == "Custom") {
                 character.equipBest(type, armor, items);
             } else if (type == "Light") {
-                bestArmorSets = character.findHighestItemBy("Light", armor, items)[1];
-                //tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
-                bestWeaponSets = character.findHighestItemBy("Light", weapons, items)[1];
+                bestArmorSets = character.findHighestItemsByLight(armor, items)[1];
+                tgd.localLog("bestArmorSets: " + _.pluck(bestArmorSets, 'description'));
+                bestWeaponSets = character.findHighestItemsByLight(weapons, items)[1];
                 //tgd.localLog("bestWeaponSets: " + _.pluck(bestWeaponSets, 'description'));
                 highestSet = bestArmorSets.concat(bestWeaponSets);
                 //tgd.localLog("highestSet: " + _.pluck(highestSet, 'description'));
