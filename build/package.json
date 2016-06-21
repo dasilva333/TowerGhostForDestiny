@@ -21,6 +21,7 @@
     "grunt-contrib-sass": "~0.7.3",
     "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "~0.6.1",
+    "grunt-ftpush": "^0.3.3",
     "grunt-jsbeautifier": "^0.2.10",
     "grunt-remove-logging": "^0.2.0",
     "grunt-script-link-tags": "^1.0.2",
