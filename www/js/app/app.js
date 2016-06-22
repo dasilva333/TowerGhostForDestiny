@@ -117,9 +117,9 @@ var app = function() {
             }]
         })).title(self.activeText().menu_loadouts_manage + " Loadouts").show(true);
     };
-    this.createLoadout = function() {
+    this.createLoadout = function(character) {
         self.loadoutMode(true);
-        self.activeLoadout(new tgd.Loadout());
+        self.activeLoadout(new tgd.Loadout([], false, character));
     };
     this.cancelLoadout = function() {
         self.loadoutMode(false);
@@ -1423,7 +1423,7 @@ var app = function() {
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
         if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
-            var loadoutKeys = ["name", "ids", "generics"];
+            var loadoutKeys = ["name", "ids", "generics", "characterId"];
             var params = {
                 action: "save",
                 membershipId: parseFloat(self.activeUser().user.membershipId),

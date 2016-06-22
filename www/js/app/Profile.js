@@ -16,6 +16,11 @@ function Profile(character) {
             method: "notifyWhenChangesStop"
         }
     });
+    this.loadouts = ko.computed(function() {
+        return _.filter(app.loadouts(), function(loadout) {
+            return loadout.characterId == self.id;
+        });
+    });
     this.activeBestSets = ko.observable();
     this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
@@ -1529,7 +1534,7 @@ Profile.prototype = {
         var character = this;
         return function() {
             character.statsShowing(false);
-            app.createLoadout();
+            app.createLoadout(character);
             var loadoutName = tgd.calculateLoadoutName(combo);
             app.activeLoadout().name(loadoutName);
             _.each(combo.set, function(item) {

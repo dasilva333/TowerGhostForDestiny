@@ -113,13 +113,15 @@ tgd.LoadoutItem = function(model) {
     self.doEquip = ko.observable(_doEquip);
 };
 
-tgd.Loadout = function(model, isItems) {
+tgd.Loadout = function(model, isItems, character) {
     var self = this;
 
     _.each(model, function(value, key) {
         self[key] = value;
     });
     this.loadoutId = tgd.loadoutId++;
+    this.character = character;
+    this.characterId = character ? character.id : "";
     this.name = ko.observable(self.name || "");
     this.ids = ko.observableArray();
     this.generics = ko.observableArray();
@@ -322,6 +324,7 @@ tgd.Loadout.prototype = {
     },
     saveNew: function() {
         //There's no need to find a reference to the parent to delete it if this is Save as New
+        var app = this.character ? this.character : app;
         app.loadouts.push(this);
         app.saveLoadouts();
     },
