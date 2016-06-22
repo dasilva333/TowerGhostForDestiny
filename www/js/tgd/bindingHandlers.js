@@ -119,31 +119,7 @@ window.ko.bindingHandlers.moveItem = {
     init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
         var hammer = new Hammer.Manager(element, {});
 
-        var singleTap = new Hammer.Tap({
-            event: 'singletap'
-        });
-        var doubleTap = new Hammer.Tap({
-            event: 'doubletap',
-            taps: 2
-        });
-        var tripleTap = new Hammer.Tap({
-            event: 'tripletap',
-            taps: 3
-        });
-        var holdPress = new Hammer.Press({
-            event: 'hold',
-            pointers: 1,
-            time: 2000,
-            threshold: 1
-        });
-
-        hammer.add([tripleTap, doubleTap, singleTap, holdPress]);
-
-        tripleTap.recognizeWith([doubleTap, singleTap]);
-        doubleTap.recognizeWith(singleTap);
-
-        doubleTap.requireFailure(tripleTap);
-        singleTap.requireFailure([tripleTap, doubleTap]);
+        hammer.add([tgd.hammerEvents.tripleTap, tgd.hammerEvents.doubleTap, tgd.hammerEvents.singleTap, tgd.hammerEvents.holdPress]);
 
         hammer.on("singletap", function(ev) {
                 tgd.localLog("item.singletap " + (new Date()).getTime());

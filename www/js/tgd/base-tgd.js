@@ -321,3 +321,29 @@ $.toaster({
         timeout: tgd.defaults.toastTimeout
     }
 });
+
+tgd.hammerEvents = {
+    singleTap: new Hammer.Tap({
+        event: 'singletap'
+    }),
+    doubleTap: new Hammer.Tap({
+        event: 'doubletap',
+        taps: 2
+    }),
+    tripleTap: new Hammer.Tap({
+        event: 'tripletap',
+        taps: 3
+    }),
+    holdPress: new Hammer.Press({
+        event: 'hold',
+        pointers: 1,
+        time: 2000,
+        threshold: 1
+    })
+};
+
+tgd.hammerEvents.tripleTap.recognizeWith([tgd.hammerEvents.doubleTap, tgd.hammerEvents.singleTap]);
+tgd.hammerEvents.doubleTap.recognizeWith(tgd.hammerEvents.singleTap);
+
+tgd.hammerEvents.doubleTap.requireFailure(tgd.hammerEvents.tripleTap);
+tgd.hammerEvents.singleTap.requireFailure([tgd.hammerEvents.tripleTap, tgd.hammerEvents.doubleTap]);
