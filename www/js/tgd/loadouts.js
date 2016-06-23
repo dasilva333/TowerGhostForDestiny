@@ -121,18 +121,18 @@ tgd.Loadout = function(model, isItems, character) {
     });
     this.characters = ko.observableArray();
     this.loadoutId = tgd.loadoutId++;
-	var _characterId = "";
-	if (_.has(character, 'id')){
-		//console.log("character has id", character);
-		_characterId = character.id;
-	} else if (_.has(model, 'characterId')){
-		//console.log("model has id", model);
-		_characterId = model.characterId;
-	}
-	if ( _.isEmpty(_characterId) || _.isUndefined(_characterId) ) _characterId = "";
-	//console.log(_.isEmpty(_characterId) || _.isUndefined(_characterId), _characterId);
+    var _characterId = "";
+    if (_.has(character, 'id')) {
+        //console.log("character has id", character);
+        _characterId = character.id;
+    } else if (_.has(model, 'characterId')) {
+        //console.log("model has id", model);
+        _characterId = model.characterId;
+    }
+    if (_.isEmpty(_characterId) || _.isUndefined(_characterId)) _characterId = "";
+    //console.log(_.isEmpty(_characterId) || _.isUndefined(_characterId), _characterId);
     this.characterId = ko.observable(_characterId || "");
-	//console.log("new loadout characterId", _characterId, self.characterId());
+    //console.log("new loadout characterId", _characterId, self.characterId());
     this.doAssign = ko.observable(false);
     this.name = ko.observable(self.name || "");
     this.ids = ko.observableArray();
