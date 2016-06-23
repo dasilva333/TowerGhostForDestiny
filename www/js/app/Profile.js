@@ -1067,31 +1067,43 @@ Profile.prototype = {
         */
         var character = this;
         var characterId = character.id;
+        var characterClassType = character.classType();
+        var characterLevel = character.level();
         var candidates = _.map(buckets, function(bucket) {
             return _.filter(items, function(item) {
-                return item.bucketType == bucket && item.equipRequiredLevel <= character.level() && item.transferStatus < 2 && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == character.classType()) || (item.classType == 3 && item.bucketType == "Ghost") || item.weaponIndex > -1);
+                return item.bucketType == bucket && item.equipRequiredLevel <= characterLevel && item.transferStatus < 2 && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == characterClassType) || (item.classType == 3 && item.bucketType == "Ghost") || item.weaponIndex > -1);
             });
         });
         console.log("candidates", candidates);
-        var combos = _.filter(tgd.cartesianProductOf(candidates), function(items) {
-            var totalExotics = 0;
-            _.each(items, function(item) {
-                if (item.tierType == 6) totalExotics++;
-            });
-            return totalExotics <= 1;
-        });
-        console.log("combos", combos.length, combos);
-        var sortedCombos = _.map(combos, function(items) {
-            return {
-                items: items,
-                light: tgd.sum(_.map(items, function(item) {
-                    return item.getValue("Light");
-                })),
-                localItems: _.countBy(items, function(item) {
-                    return item.character.id == characterId;
-                })['true']
+
+        var combos = tgd.cartesianProductOf(candidates);
+        var sortedCombos = [];
+        var sum = tgd.sum;
+        for (var n = 0, len2 = combos.length; n < len2; n++) {
+            var sets = combos[n];
+            var exoticItems = 0;
+            var light = 0;
+            var localItems = 0;
+            for (var i = 0, len = sets.length; i < len; i++) {
+                var item = sets[i];
+                if (item.tierType === 6 && item.hasLifeExotic === false) {
+                    exoticItems++;
+                }
+                //light += item.getValue("Light");
+                light += item.primaryValues.Default;
+                if (item.character.id == characterId) {
+                    localItems = localItems + 1;
+                }
             }
-        });
+            if (exoticItems < 2) {
+                sortedCombos.push({
+                    items: sets,
+                    light: light,
+                    localItems: localItems
+                });
+            };
+        };
+
         console.log("sortedCombos", sortedCombos.length, sortedCombos);
         var localItems = _.filter(sortedCombos, function(combo) {
                 return combo.localItems == buckets.length;
