@@ -324,7 +324,7 @@ var app = function() {
             /* Armor Stats */
             if (!_.isEmpty(activeItem.stats)) {
                 var stats = $content.find(".destt-stat");
-                var statKeys = activeItem.statPerks.length == 0 ? _.keys(activeItem.stats) : _.pluck(activeItem.futureRolls, 'bonusOn');
+                var statKeys = activeItem.statPerks.length === 0 ? _.keys(activeItem.stats) : _.pluck(activeItem.futureRolls, 'bonusOn');
                 var statValues = {
                     stats: _.clone(activeItem.stats),
                     armorIndex: activeItem.armorIndex,
@@ -376,7 +376,7 @@ var app = function() {
                         statValues.extraStats = [{
                             label: "Stat Roll",
                             value: _.pluck(activeItem.rolls, 'bonusOn').join(", ")
-                        }]
+                        }];
                     } else {
                         var isItemLeveled = activeItem.hasUnlockedStats;
                         var itemCSP = activeItem.primaryValues.CSP;
@@ -1082,7 +1082,7 @@ var app = function() {
     };
 
     this.toggleBootstrapMenu = function() {
-        if ($(".navbar-toggle").hasClass("collapsed") == false) {
+        if ($(".navbar-toggle").hasClass("collapsed") === false) {
             $(".navbar-toggle").click();
         }
     };
@@ -2072,7 +2072,7 @@ var app = function() {
         } else {
             self.globalItems.push(armorType);
         }
-    }
+    };
 
     this.transferFarmItems = function(targetCharacterId, items) {
         //console.log("transferFarmItems", targetCharacterId, items);
@@ -2240,7 +2240,7 @@ var app = function() {
             });
             //globalItems also needs to be an array attached to localStorage
             var storedObj = new tgd.StoreObj("globalItems");
-            var savedSelections = storedObj.read();
+            savedSelections = storedObj.read();
             self.globalItems(_.isArray(savedSelections) ? savedSelections : savedSelections.split(","));
             self.globalItems.subscribe(function(newValues) {
                 storedObj.write(newValues);

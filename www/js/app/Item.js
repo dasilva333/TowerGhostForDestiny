@@ -268,7 +268,7 @@ Item.prototype = {
         var currentBonus = (self.statPerks.length === 0) ? 0 : tgd.bonusStatPoints(self.armorIndex, primaryStat);
         var maxLightBonus = tgd.bonusStatPoints(self.armorIndex, tgd.DestinyLightCap);
         var currentCSP = tgd.sum(_.filter(_.values(self.stats), function(value) {
-            return value > 0
+            return value > 0;
         }));
         self.statText = _.sortBy(_.reduce(self.stats, function(memo, stat, key) {
             if (stat > 0) {
@@ -323,7 +323,7 @@ Item.prototype = {
                 }, '');
                 //Normalize stats by removing the bonus stat from the active node
                 var activeStatName = isStatActive ? statPerk.name : otherStatName;
-                if (activeStatName != "") {
+                if (activeStatName !== "") {
                     tmp[activeStatName] = tmp[activeStatName] - (allStatsLocked ? 0 : currentBonus);
                 }
                 var currentStatValue = tmp[statPerk.name],

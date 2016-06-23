@@ -8,6 +8,26 @@ tgd.showLoading = function(callback) {
     }, 600);
 };
 
+tgd.innerCartesianProductOf = function(subSets) {
+    var out = [];
+    for (var i0 = 0; i0 < 2; i0++) {
+        for (var i1 = 0; i1 < 2; i1++) {
+            for (var i2 = 0; i2 < 2; i2++) {
+                for (var i3 = 0; i3 < 2; i3++) {
+                    for (var i4 = 0; i4 < 2; i4++) {
+                        for (var i5 = 0; i5 < 2; i5++) {
+                            for (var i6 = 0; i6 < 2; i6++) {
+                                out.push([subSets[0][i0], subSets[1][i1], subSets[2][i2], subSets[3][i3], subSets[4][i4], subSets[5][i5], subSets[6][i6]]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return out;
+};
+
 tgd.cartesianProductOf = function(x) {
     return _.reduce(x, function(a, b) {
         return _.flatten(_.map(a, function(x) {
@@ -50,7 +70,7 @@ tgd.joinStats = function(arrItems) {
             tmp["Discipline"] += item["Discipline"];
             tmp["Strength"] += item["Strength"];
         }
-    };
+    }
     return tmp;
 };
 
