@@ -96,6 +96,11 @@ var app = function() {
     this.activeText = ko.pureComputed(function() {
         return tgd.locale[self.currentLocale()];
     });
+    this.localLoadouts = ko.computed(function() {
+        return _.filter(self.loadouts(), function(loadout) {
+            return loadout.characterId == "";
+        });
+    });
     this.manageLoadouts = function() {
         var loadoutManager = new tgd.loadoutManager(self.loadouts);
         (new tgd.koDialog({

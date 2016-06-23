@@ -226,7 +226,7 @@ tgd.armorSelection = function(type, groups, character) {
     });
     self.saveSelectedCombo = function(combo) {
         if (confirm("Are you sure you want to save this loadout? Doing so will close this pop up dialog")) {
-            app.createLoadout();
+            app.createLoadout(self.character);
             var loadoutName = tgd.calculateLoadoutName(combo);
             app.activeLoadout().name(loadoutName);
             _.each(combo.set, function(item) {

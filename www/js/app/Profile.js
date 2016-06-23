@@ -1460,7 +1460,7 @@ Profile.prototype = {
                         highestCombo = _.filter(arrArmorBuilds, function(sets) {
                             return sets[0].statTiers == selectedStatTier;
                         })[0][selectedIndex];
-                        app.createLoadout();
+                        app.createLoadout(character);
                         var loadoutName = tgd.calculateLoadoutName(highestCombo);
                         app.activeLoadout().name(loadoutName);
                         _.each(highestCombo.set, function(item) {

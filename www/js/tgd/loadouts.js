@@ -121,7 +121,7 @@ tgd.Loadout = function(model, isItems, character) {
     });
     this.loadoutId = tgd.loadoutId++;
     this.character = character;
-    this.characterId = character ? character.id : (_.has(model, 'characterId') ? model.characterId : "");
+    this.characterId = _.has(character,'id') ? character.id : (_.has(model, 'characterId') ? model.characterId : "");
     this.name = ko.observable(self.name || "");
     this.ids = ko.observableArray();
     this.generics = ko.observableArray();
