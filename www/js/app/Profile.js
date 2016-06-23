@@ -18,7 +18,7 @@ function Profile(character) {
     });
     this.loadouts = ko.computed(function() {
         return _.filter(app.loadouts(), function(loadout) {
-            return loadout.characterId == self.id;
+            return loadout.characterId() == self.id;
         });
     });
     this.activeBestSets = ko.observable();

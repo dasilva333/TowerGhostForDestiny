@@ -119,9 +119,21 @@ tgd.Loadout = function(model, isItems, character) {
     _.each(model, function(value, key) {
         self[key] = value;
     });
+    this.characters = ko.observableArray();
     this.loadoutId = tgd.loadoutId++;
-    this.character = character;
-    this.characterId = _.has(character, 'id') ? character.id : (_.has(model, 'characterId') ? model.characterId : "");
+	var _characterId = "";
+	if (_.has(character, 'id')){
+		//console.log("character has id", character);
+		_characterId = character.id;
+	} else if (_.has(model, 'characterId')){
+		//console.log("model has id", model);
+		_characterId = model.characterId;
+	}
+	if ( _.isEmpty(_characterId) || _.isUndefined(_characterId) ) _characterId = "";
+	//console.log(_.isEmpty(_characterId) || _.isUndefined(_characterId), _characterId);
+    this.characterId = ko.observable(_characterId || "");
+	//console.log("new loadout characterId", _characterId, self.characterId());
+    this.doAssign = ko.observable(false);
     this.name = ko.observable(self.name || "");
     this.ids = ko.observableArray();
     this.generics = ko.observableArray();
@@ -289,6 +301,11 @@ tgd.Loadout.prototype = {
         window.open("http://db.destinytracker.com/compare/" + ids, tgd.openTabAs);
     },
     setActive: function() {
+        if (!_.isEmpty(this.characterId())) {
+            _.findWhere(app.characters(), {
+                id: this.characterId()
+            }).statsShowing(false);
+        }
         app.loadoutMode(true);
         app.dynamicMode(false);
         app.activeLoadout(_.clone(this));
@@ -303,6 +320,9 @@ tgd.Loadout.prototype = {
             app.saveLoadouts();
             app.loadoutMode(false);
         }
+    },
+    assign: function() {
+        this.doAssign(!this.doAssign());
     },
     save: function() {
         //this is a reference to the cloned Loadout object while in use

@@ -98,7 +98,7 @@ var app = function() {
     });
     this.localLoadouts = ko.computed(function() {
         return _.filter(self.loadouts(), function(loadout) {
-            return loadout.characterId == "";
+            return _.isEmpty(loadout.characterId()) || _.isUndefined(loadout.characterId());
         });
     });
     this.manageLoadouts = function() {
@@ -1082,8 +1082,9 @@ var app = function() {
     };
 
     this.toggleBootstrapMenu = function() {
-        if ($(".navbar-toggle").is(":visible"))
+        if ($(".navbar-toggle").hasClass("collapsed") == false) {
             $(".navbar-toggle").click();
+        }
     };
 
     this.refreshButton = function() {

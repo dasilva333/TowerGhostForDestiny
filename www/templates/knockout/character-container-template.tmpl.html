@@ -105,7 +105,7 @@
 								</div>
 							</div>
 							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">
-								<span class="font-bold col-xs-24 statsToolTitle text-center">
+								<span class="font-bold col-xs-24 statsToolTitle text-center" data-bind="visible: character.loadouts().length > 0" style="display:none;">
 									Loadouts
 								</span>
 								<div class="btn-group col-xs-24">

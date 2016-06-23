@@ -2,13 +2,20 @@
     <div class="content" data-bind="with: activeLoadout">
         <div id="loadout-options" class="row">
             <div class="col-xs-12" data-bind="visible: $parent.dynamicMode() == false">
-                <input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
+                <div class="col-xs-24">
+					<input id="loadout-name" type="search" data-bind="value: name" placeholder="Loadout Name...">
+				</div>
+				<div class="col-xs-24" style="display:none" data-bind="visible: doAssign">
+					<select style="width: 150px" data-bind="options: _.filter($root.orderedCharacters(),function(c){ return c.id != 'Vault'; }), optionsText: 'uniqueName', optionsValue: 'id', value: characterId, optionsCaption: 'Global Menu'">
+					</select>
+				</div>
             </div>
             <div class="col-xs-12">
                 <controls data-bind="visible: $parent.dynamicMode() == false">
-                    <span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>
+                    <span data-bind="fastclick: save, text: $root.activeText().loadouts_save">Save</span>					
                     <span data-bind="fastclick: saveNew, text: $root.activeText().loadouts_save_new" style="white-space:nowrap;">Save As</span>
                     <span data-bind="fastclick: remove, text: $root.activeText().loadouts_delete">Delete</span>
+					<span data-bind="fastclick: assign">Assign</span>
                 </controls>
 				<span data-bind="fastclick: compareLoadout">Compare</span>
                 <span data-bind="fastclick: $root.cancelLoadout, text: $root.activeText().close_msg">Close</span>

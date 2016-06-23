@@ -1,6 +1,6 @@
 <div id="container_<%= id %>">
 	<ul data-bind="foreach: { data: loadouts, as: 'loadout' }" class="list-group">
-		<li class="list-group-item">
+		<li class="list-group-item" data-bind="visible: loadout.characterId() == ''">
 			<div class="row">
 				<span class="fa fa-bars" style="cursor:pointer"></span>
 				<span data-bind="text: name" class="list-group-item-heading"></span>
