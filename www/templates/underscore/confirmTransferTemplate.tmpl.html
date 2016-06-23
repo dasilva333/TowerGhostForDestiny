@@ -1,14 +1,14 @@
 <div id="container_<%= id %>">
 	<div class="controls controls-row">
 		<span data-bind="text: app.activeText().transfer_amount"></span>:
-		<button class="btn btn-default" type="button" data-bind="click: decrement">-</button> 
+		<button class="btn btn-default" type="button" data-bind="fastclick: decrement">-</button> 
 		<input size="4" type="text" data-bind="value: materialsAmount" class="materialsAmount"> 
-		<button class="btn btn-default" type="button" data-bind="click: increment">+</button> 
-		<button class="btn btn-default pull-right" id="all" type="button" data-bind="click: all">
+		<button class="btn btn-default" type="button" data-bind="fastclick: increment">+</button> 
+		<button class="btn btn-default pull-right" id="all" type="button" data-bind="fastclick: all">
 			<span data-bind="text: app.activeText().transfer_all"></span>
 			(<span data-bind="text: characterTotal"></span>)
 		</button> 
-		<button class="btn btn-default pull-right" id="one" type="button" data-bind="click: one, text: app.activeText().transfer_one"></button>
+		<button class="btn btn-default pull-right" id="one" type="button" data-bind="fastclick: one, text: app.activeText().transfer_one"></button>
 	</div>
 
 	<div>

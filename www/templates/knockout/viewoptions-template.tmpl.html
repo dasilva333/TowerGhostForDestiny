@@ -6,12 +6,12 @@
                     <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_container_width">Container Width</label>
                     <div class="col-xs-24 col-sm-18">
                         <div class="btn-group">
-                            <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '' ? 'btn-active': 'btn-default'" href="#">Default</a>
-                            <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '60%' ? 'btn-active': 'btn-default'" href="#">60%</a>
-                            <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '70%' ? 'btn-active': 'btn-default'" href="#">70%</a>
-                            <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '80%' ? 'btn-active': 'btn-default'" href="#">80%</a>
-                            <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '90%' ? 'btn-active': 'btn-default'" href="#">90%</a>
-                            <a class="btn" data-bind="click: setCCWidth, css: ccWidth() == '100%' ? 'btn-active': 'btn-default'" href="#">100%</a>
+                            <a class="btn" data-bind="fastclick: setCCWidth, css: ccWidth() == '' ? 'btn-active': 'btn-default'" href="#">Default</a>
+                            <a class="btn" data-bind="fastclick: setCCWidth, css: ccWidth() == '60%' ? 'btn-active': 'btn-default'" href="#">60%</a>
+                            <a class="btn" data-bind="fastclick: setCCWidth, css: ccWidth() == '70%' ? 'btn-active': 'btn-default'" href="#">70%</a>
+                            <a class="btn" data-bind="fastclick: setCCWidth, css: ccWidth() == '80%' ? 'btn-active': 'btn-default'" href="#">80%</a>
+                            <a class="btn" data-bind="fastclick: setCCWidth, css: ccWidth() == '90%' ? 'btn-active': 'btn-default'" href="#">90%</a>
+                            <a class="btn" data-bind="fastclick: setCCWidth, css: ccWidth() == '100%' ? 'btn-active': 'btn-default'" href="#">100%</a>
                         </div>
                     </div>
                 </div>
@@ -40,37 +40,37 @@
                         <div class="row">
                             <div class="col-xs-2">XS</div>
                             <div class="btn-group col-xs-22">
-                                <input type="Button" class="btn" value="1" data-bind="click: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
-                                <input type="Button" class="btn" value="2" data-bind="click: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
-                                <input type="Button" class="btn" value="3" data-bind="click: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
-                                <input type="Button" class="btn" value="4" data-bind="click: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
+                                <input type="Button" class="btn" value="1" data-bind="fastclick: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
+                                <input type="Button" class="btn" value="2" data-bind="fastclick: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
+                                <input type="Button" class="btn" value="3" data-bind="fastclick: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
+                                <input type="Button" class="btn" value="4" data-bind="fastclick: setColumns.bind('xs', $element), css: btnActive('xs', $element)">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-2">SM</div>
                             <div class="btn-group col-xs-22">
-                                <input type="Button" class="btn" value="1" data-bind="click: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
-                                <input type="Button" class="btn" value="2" data-bind="click: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
-                                <input type="Button" class="btn" value="3" data-bind="click: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
-                                <input type="Button" class="btn" value="4" data-bind="click: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
+                                <input type="Button" class="btn" value="1" data-bind="fastclick: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
+                                <input type="Button" class="btn" value="2" data-bind="fastclick: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
+                                <input type="Button" class="btn" value="3" data-bind="fastclick: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
+                                <input type="Button" class="btn" value="4" data-bind="fastclick: setColumns.bind('sm', $element), css: btnActive('sm', $element)">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-2">MD</div>
                             <div class="btn-group col-xs-22">
-                                <input type="Button" class="btn" value="1" data-bind="click: setColumns.bind('md', $element), css: btnActive('md', $element)">
-                                <input type="Button" class="btn" value="2" data-bind="click: setColumns.bind('md', $element), css: btnActive('md', $element)">
-                                <input type="Button" class="btn" value="3" data-bind="click: setColumns.bind('md', $element), css: btnActive('md', $element)">
-                                <input type="Button" class="btn" value="4" data-bind="click: setColumns.bind('md', $element), css: btnActive('md', $element)">
+                                <input type="Button" class="btn" value="1" data-bind="fastclick: setColumns.bind('md', $element), css: btnActive('md', $element)">
+                                <input type="Button" class="btn" value="2" data-bind="fastclick: setColumns.bind('md', $element), css: btnActive('md', $element)">
+                                <input type="Button" class="btn" value="3" data-bind="fastclick: setColumns.bind('md', $element), css: btnActive('md', $element)">
+                                <input type="Button" class="btn" value="4" data-bind="fastclick: setColumns.bind('md', $element), css: btnActive('md', $element)">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-2">LG</div>
                             <div class="btn-group col-xs-22">
-                                <input type="Button" class="btn" value="1" data-bind="click: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
-                                <input type="Button" class="btn" value="2" data-bind="click: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
-                                <input type="Button" class="btn" value="3" data-bind="click: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
-                                <input type="Button" class="btn" value="4" data-bind="click: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
+                                <input type="Button" class="btn" value="1" data-bind="fastclick: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
+                                <input type="Button" class="btn" value="2" data-bind="fastclick: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
+                                <input type="Button" class="btn" value="3" data-bind="fastclick: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
+                                <input type="Button" class="btn" value="4" data-bind="fastclick: setColumns.bind('lg', $element), css: btnActive('lg', $element)">
                             </div>
                         </div>
                     </div>
@@ -79,12 +79,12 @@
                     <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_width">Vault Width</label>
                     <div class="col-xs-24 col-sm-18">
                         <div class="btn-group">
-                            <a class="btn" data-bind="click: setVaultWidth.bind(6), css: vaultWidth() == '6' ? 'btn-active': 'btn-default'" href="#">Default (25%)</a>
-                            <a class="btn" data-bind="click: setVaultWidth.bind(7), css: vaultWidth() == '7' ? 'btn-active': 'btn-default'" href="#">30%</a>
-                            <a class="btn" data-bind="click: setVaultWidth.bind(8), css: vaultWidth() == '8' ? 'btn-active': 'btn-default'" href="#">33%</a>
-                            <a class="btn" data-bind="click: setVaultWidth.bind(9), css: vaultWidth() == '9' ? 'btn-active': 'btn-default'" href="#">37%</a>
-                            <a class="btn" data-bind="click: setVaultWidth.bind(10), css: vaultWidth() == '10' ? 'btn-active': 'btn-default'" href="#">42%</a>
-                            <a class="btn" data-bind="click: setVaultWidth.bind(12), css: vaultWidth() == '12' ? 'btn-active': 'btn-default'" href="#">50%</a>
+                            <a class="btn" data-bind="fastclick: setVaultWidth.bind(6), css: vaultWidth() == '6' ? 'btn-active': 'btn-default'" href="#">Default (25%)</a>
+                            <a class="btn" data-bind="fastclick: setVaultWidth.bind(7), css: vaultWidth() == '7' ? 'btn-active': 'btn-default'" href="#">30%</a>
+                            <a class="btn" data-bind="fastclick: setVaultWidth.bind(8), css: vaultWidth() == '8' ? 'btn-active': 'btn-default'" href="#">33%</a>
+                            <a class="btn" data-bind="fastclick: setVaultWidth.bind(9), css: vaultWidth() == '9' ? 'btn-active': 'btn-default'" href="#">37%</a>
+                            <a class="btn" data-bind="fastclick: setVaultWidth.bind(10), css: vaultWidth() == '10' ? 'btn-active': 'btn-default'" href="#">42%</a>
+                            <a class="btn" data-bind="fastclick: setVaultWidth.bind(12), css: vaultWidth() == '12' ? 'btn-active': 'btn-default'" href="#">50%</a>
                         </div>
                     </div>
                 </div>
@@ -92,10 +92,10 @@
                     <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_columns">Vault Columns</label>
                     <div class="col-xs-24 col-sm-18">
                         <div class="btn-group">
-                            <a class="btn" data-bind="click: setVaultColumns.bind(2), css: vaultColumns() == '2' ? 'btn-active': 'btn-default'" href="#">12</a>
-                            <a class="btn" data-bind="click: setVaultColumns.bind(3), css: vaultColumns() == '3' ? 'btn-active': 'btn-default'" href="#">8</a>
-                            <a class="btn" data-bind="click: setVaultColumns.bind(4), css: vaultColumns() == '4' ? 'btn-active': 'btn-default'" href="#">6</a>
-                            <a class="btn" data-bind="click: setVaultColumns.bind(6), css: vaultColumns() == '6' ? 'btn-active': 'btn-default'" href="#">4</a>
+                            <a class="btn" data-bind="fastclick: setVaultColumns.bind(2), css: vaultColumns() == '2' ? 'btn-active': 'btn-default'" href="#">12</a>
+                            <a class="btn" data-bind="fastclick: setVaultColumns.bind(3), css: vaultColumns() == '3' ? 'btn-active': 'btn-default'" href="#">8</a>
+                            <a class="btn" data-bind="fastclick: setVaultColumns.bind(4), css: vaultColumns() == '4' ? 'btn-active': 'btn-default'" href="#">6</a>
+                            <a class="btn" data-bind="fastclick: setVaultColumns.bind(6), css: vaultColumns() == '6' ? 'btn-active': 'btn-default'" href="#">4</a>
                         </div>
                     </div>
                 </div>
@@ -103,17 +103,17 @@
                     <label class="col-xs-24 col-sm-6 control-label" data-bind="text: $root.activeText().vo_vault_position">Vault Position</label>
                     <div class="col-xs-24 col-sm-18">
                         <label>
-                            <input type="Checkbox" data-bind="checked: isVaultAt(0), click: setVaultTo.bind(0)">
+                            <input type="Checkbox" data-bind="checked: isVaultAt(0), fastclick: setVaultTo.bind(0)">
                             <span data-bind="text: $root.activeText().vo_vault_first">First/Left</span>
                         </label>
                         <label>
-                            <input type="Checkbox" data-bind="checked: isVaultAt($root.characters().length), click: setVaultTo.bind($root.characters().length)">
+                            <input type="Checkbox" data-bind="checked: isVaultAt($root.characters().length), fastclick: setVaultTo.bind($root.characters().length)">
                             <span data-bind="text: $root.activeText().vo_vault_last">Last/Right</span>
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="button" class="btn pull-right" value="x" data-bind="click: toggleViewOptions" style="position:relative;">
+                    <input type="button" class="btn pull-right" value="x" data-bind="fastclick: toggleViewOptions" style="position:relative;">
                 </div>
             </fieldset>
         </form>

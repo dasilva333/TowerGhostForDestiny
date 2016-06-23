@@ -14,7 +14,7 @@
                     </div>
 					<div data-bind="foreach: { data: characters, as: 'character' }">
 						<div class="move-button col-xs-4 col-sm-4 col-md-4 col-lg-4">
-                            <div class="attkIcon" data-bind="click: $root.setSelectedCharacter.bind(character)">
+                            <div class="attkIcon" data-bind="fastclick: $root.setSelectedCharacter.bind(character)">
                                 <div class="icon-banner" data-bind="text: character.classType()"></div>
 								<img data-bind="itemImageHandler: character.icon, style: { border: '2px solid ' + ($root.selectedCharacters().indexOf(character) > -1 ? 'yellow':'white')}">
 								<div class="lower-left" data-bind="text: character.classLetter()"></div>

@@ -8,14 +8,14 @@
 				</span>
 			</div>
 			<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
-				<button title="Enable/Disable" data-bind="click: function(){ farmMode(!farmMode()) }">
+				<button title="Enable/Disable" data-bind="fastclick: function(){ farmMode(!farmMode()) }">
 					<span data-bind="css: farmMode() ? 'fa-stop text-danger' : 'fa-play text-success'" class="fa"></span>
 				</button>
-				<button title="Refresh Inventory" data-bind="click: refresh"><i class="fa fa-refresh text-success"></i></button>
+				<button title="Refresh Inventory" data-bind="fastclick: refresh"><i class="fa fa-refresh text-success"></i></button>
 			</div>
 			<div class="col-xs-24 col-sm-12 col-md-8 col-lg-7" style="white-space: nowrap">
-				<button title="Show Help" data-bind="click: showFarmHelp"><i class="fa fa-question text-info"></i></button>
-				<button title="Close Farm Mode Controls" data-bind="click: toggleFarmMode"><i class="fa fa-times text-danger"></i></button>
+				<button title="Show Help" data-bind="fastclick: showFarmHelp"><i class="fa fa-question text-info"></i></button>
+				<button title="Close Farm Mode Controls" data-bind="fastclick: toggleFarmMode"><i class="fa fa-times text-danger"></i></button>
 			</div>
 		</div>
 		<div class="col-xs-12">
