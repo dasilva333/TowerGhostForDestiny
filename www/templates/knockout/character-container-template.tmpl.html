@@ -106,7 +106,7 @@
 							</div>
 							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">
 								<span class="font-bold col-xs-24 statsToolTitle text-center" data-bind="visible: character.loadouts().length > 0" style="display:none;">
-									Loadouts
+									Loadouts (<span data-bind="text: character.loadouts().length"></span>)
 								</span>
 								<div class="btn-group col-xs-24">
 									<ul data-bind="foreach: { data: character.loadouts, as: 'loadout' }" class="list-group text-left" style="margin-bottom:0; max-height: 145px; overflow-y: scroll;">
