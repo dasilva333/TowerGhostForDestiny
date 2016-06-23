@@ -110,8 +110,11 @@
 								</span>
 								<div class="btn-group col-xs-24">
 									<ul data-bind="foreach: { data: character.loadouts, as: 'loadout' }" class="list-group text-left" style="margin-bottom:0;">
-										<li data-bind="fastclick: setActive" class="list-group-item" style="padding:2px">
-											<a data-bind="text: loadout.name" href="#"></a>
+										<li class="list-group-item" style="padding:2px">
+											<span class="font-smaller-2">
+												<input type="button" class="btn btn-sm btn-default" value="View" data-bind="fastclick: setActive, clickBubble: false">
+												<span data-bind="text: loadout.name"></span>
+											</span>
 										</li>
 									</ul>
 								</div>
@@ -127,7 +130,7 @@
 									<ul data-bind="foreach: { data: $data, as: 'combo' }" class="list-group text-left" style="margin-bottom:0;">
 										<li class="list-group-item" style="padding: 2px">
 											<span class="font-smaller-2">
-												<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo)">
+												<input type="button" class="btn btn-sm btn-default" value="View" data-bind="click: character.viewCombo(combo), clickBubble: false">
 												T<span data-bind="text: Math.floor(combo.score)"></span>
 												<span data-bind="text: combo.statTiers.replace(/<br>/g,' / ')"></span>
 											</span>
