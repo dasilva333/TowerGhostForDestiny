@@ -1257,9 +1257,6 @@ Profile.prototype = {
                         }
                     });
                 }
-                /*else {
-                                   message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
-                               }*/
                 done();
             } else {
                 done();

@@ -6,7 +6,7 @@ module.exports = function (grunt) {
 	/* Production build for Windows-Phone devices */
 	grunt.registerTask('prod-wp', 	['generate-version:show','codeformat','combine-templates','removelogging:wp','uglify:wp','concat_sourcemap:css','cssmin','jsonmanifest:prod']);
 	/* Production build for static-share Share URL site */
-	grunt.registerTask('prod-share',['generate-version:show','codeformat','combine-templates','removelogging:wp','uglify:wp','concat_sourcemap:css','cssmin','jsonmanifest:share']);
+	grunt.registerTask('prod-share',['generate-version:show','codeformat','combine-templates','removelogging:js','uglify:js','concat_sourcemap:css','cssmin','jsonmanifest:share']);
 	/* Production build for Firefox bootloader site */
 	grunt.registerTask('prod-ff', 	['generate-version:show','codeformat','combine-templates','removelogging:js','uglify:js','concat_sourcemap:css','cssmin','jsonmanifest:firefox']);	
 	/* Standard Production build + rebuild definitions from source */
