@@ -88,7 +88,8 @@ tgd.loadoutManager = function(loadouts, dialog) {
     var self = this;
 
     self.loadouts = loadouts;
-
+    self.characterId = ko.observable("");
+    self.orderedCharacters = app.orderedCharacters;
     self.setDialog = function(dialog) {
         self.dialog = dialog;
     };

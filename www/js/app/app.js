@@ -103,6 +103,7 @@ var app = function() {
     });
     this.manageLoadouts = function() {
         var loadoutManager = new tgd.loadoutManager(self.loadouts);
+        console.log("loadoutManager", loadoutManager);
         (new tgd.koDialog({
             templateName: 'manageLoadoutsTemplate',
             viewModel: loadoutManager,

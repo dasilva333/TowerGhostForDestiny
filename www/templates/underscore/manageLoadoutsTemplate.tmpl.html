@@ -1,29 +1,37 @@
-<div id="container_<%= id %>">
-	<ul data-bind="foreach: { data: loadouts, as: 'loadout' }" class="list-group">
-		<li class="list-group-item" data-bind="visible: loadout.characterId() == ''">
-			<div class="row">
-				<span class="fa fa-bars" style="cursor:pointer"></span>
-				<span data-bind="text: name" class="list-group-item-heading"></span>
-			</div>
-			<div class="row form-control-static" data-bind="visible: editing() == true" style="display:none;">
-				<input type="text" data-bind="value: name" class="form-control">
-			</div>
-			<div class="row">
-				<div class="btn-group btn-group-justified">
-					<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.rename">Rename</a>
-					<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.remove">Delete</a>
-					<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: $root.equip.bind(loadout)">Equip</a>
-					<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortUp, css: $index() == 0 ? 'disabled' : ''"><i class="fa fa-chevron-up"></i></a>
-					<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortDown, css: $index() == $root.loadouts().length -1 ? 'disabled' : ''"><i class="fa fa-chevron-down"></i></a>
+<div id="container_<%= id %>" class="container-fluid">
+	<div class="col-xs-24 well well-sm">
+		Manage Loadouts For: 
+		<select style="width: 150px" class="form-control" data-bind="options: _.filter($root.orderedCharacters(),function(c){ return c.id != 'Vault'; }), optionsText: 'uniqueName', optionsValue: 'id', value: characterId, optionsCaption: 'Global Menu'">
+		</select>
+	</div>
+	<br><br>
+	<div class="col-xs-24">
+		<ul data-bind="foreach: { data: loadouts, as: 'loadout' }" class="list-group">
+			<li class="list-group-item" data-bind="visible: loadout.characterId() == $root.characterId() || (_.isUndefined($root.characterId()) && (_.isUndefined(loadout.characterId()) || _.isEmpty(loadout.characterId())))">
+				<div class="row">
+					<span class="fa fa-bars" style="cursor:pointer"></span>
+					<span data-bind="text: name" class="list-group-item-heading"></span>
 				</div>
-			</div>
-			<div data-bind="foreach: { data: loadout.items, as: 'item' }" class="row">
-				<div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
-					<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, fastclick: function(){ return false }">
-						<img class="itemImage" data-bind="itemImageHandler: item.icon, css: (item && item.bonusOn ? (item.bonusOn == item.bonusStatOn() ? 'active' : 'inactive') : '')" style="padding: 2px; width:48px;">
-					</a>
+				<div class="row form-control-static" data-bind="visible: editing() == true" style="display:none;">
+					<input type="text" data-bind="value: name" class="form-control">
 				</div>
-			</div>
-		</li>
-	</ul>
+				<div class="row">
+					<div class="btn-group btn-group-justified">
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.rename">Rename</a>
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.remove">Delete</a>
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: $root.equip.bind(loadout)">Equip</a>
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortUp, css: $index() == 0 ? 'disabled' : ''"><i class="fa fa-chevron-up"></i></a>
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortDown, css: $index() == $root.loadouts().length -1 ? 'disabled' : ''"><i class="fa fa-chevron-down"></i></a>
+					</div>
+				</div>
+				<div data-bind="foreach: { data: loadout.items, as: 'item' }" class="row">
+					<div class="col-xs-8 col-sm-6 col-md-4 col-lg-3">
+						<a class="itemLink" data-bind="attr: { itemId: item.id, instanceId: item._id, href: item.href }, fastclick: function(){ return false }">
+							<img class="itemImage" data-bind="itemImageHandler: item.icon, css: (item && item.bonusOn ? (item.bonusOn == item.bonusStatOn() ? 'active' : 'inactive') : '')" style="padding: 2px; width:48px;">
+						</a>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
 </div>
