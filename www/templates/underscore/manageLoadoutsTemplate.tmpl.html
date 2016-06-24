@@ -7,7 +7,7 @@
 	<br><br>
 	<div class="col-xs-24">
 		<ul data-bind="foreach: { data: loadouts, as: 'loadout' }" class="list-group">
-			<li class="list-group-item" data-bind="visible: loadout.characterId() == $root.characterId() || (_.isUndefined($root.characterId()) && (_.isUndefined(loadout.characterId()) || _.isEmpty(loadout.characterId())))">
+			<li class="list-group-item" data-bind="visible: loadout.characterId() == $root.characterId() || (_.isEmpty($root.characterId()) && _.isEmpty(loadout.characterId()))">
 				<div class="row">
 					<span class="fa fa-bars" style="cursor:pointer"></span>
 					<span data-bind="text: name" class="list-group-item-heading"></span>
@@ -20,8 +20,8 @@
 						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.rename">Rename</a>
 						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.remove">Delete</a>
 						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: $root.equip.bind(loadout)">Equip</a>
-						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortUp, css: $index() == 0 ? 'disabled' : ''"><i class="fa fa-chevron-up"></i></a>
-						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortDown, css: $index() == $root.loadouts().length -1 ? 'disabled' : ''"><i class="fa fa-chevron-down"></i></a>
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortUp, css: $root.isDisabled('up', $context, name())"><i class="fa fa-chevron-up"></i></a>
+						<a href="#" class="btn btn-default btn-sm" data-bind="fastclick: loadout.sortDown, css: $root.isDisabled('down', $context, name())"><i class="fa fa-chevron-down"></i></a>
 					</div>
 				</div>
 				<div data-bind="foreach: { data: loadout.items, as: 'item' }" class="row">

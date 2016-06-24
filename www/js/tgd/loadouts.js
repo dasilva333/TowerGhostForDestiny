@@ -94,6 +94,27 @@ tgd.loadoutManager = function(loadouts, dialog) {
         self.dialog = dialog;
     };
 
+    this.isDisabled = function(direction, context, name) {
+        return ko.computed(function() {
+            var activeClass = "";
+            if (_.has(context, '$index')) {
+                var activeLoadouts = self.loadouts();
+                var itemsInGroup = _.filter(activeLoadouts, function(l) {
+                    return l.characterId() == self.characterId() || (_.isEmpty(l.characterId()) && _.isEmpty(self.characterId()));
+                });
+                var startIndex = _.indexOf(activeLoadouts, _.first(itemsInGroup));
+                var currentIndex = context.$index() - startIndex;
+                console.log("name", name, "direction", direction, "currentIndex", currentIndex, "startIndex", startIndex);
+                if (direction == "up" && currentIndex == 0) {
+                    activeClass = "disabled";
+                } else if (direction == "down" && currentIndex == (itemsInGroup.length - 1)) {
+                    activeClass = "disabled";
+                }
+            }
+            return activeClass;
+        });
+    }
+
     self.equip = function() {
         if (confirm("Are you sure you want to close this dialog and open the Loadouts panel to equip this set?")) {
             this.setActive();
