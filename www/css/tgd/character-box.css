@@ -67,25 +67,10 @@
     right: 3px;
     height: 36px;
 }
-.character-box .statsTool {
-    position: absolute;
-    top: 4px;
-    right: 2px;
-	margin-left:2px;
-	padding-left:2px;
-	border-left:1px solid white;
-    height: 36px;
-	cursor:pointer;
-}
 .character-box .statsToolTitle {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
-.character-box .statsTool:hover {
-	border-left:1px solid rgb(245, 220, 86);
-	color: rgb(245, 220, 86);
-}
-
 .character-box .level .light {
 	color: white;	
     font-weight: 200;

@@ -1101,10 +1101,10 @@ Profile.prototype = {
 
         console.log("sortedCombos", sortedCombos.length, sortedCombos);
         var localItems = _.filter(sortedCombos, function(combo) {
-                return combo.localItems == buckets.length;
+                return combo.localCount == buckets.length;
             }),
             remoteItems = _.filter(sortedCombos, function(combo) {
-                return combo.localItems !== buckets.length;
+                return combo.localCount !== buckets.length;
             });
         var absMaxLight = _.max(_.map(sortedCombos, function(combo) {
             return combo.light;
