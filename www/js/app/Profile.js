@@ -1051,6 +1051,27 @@ Profile.prototype = {
                 return item.bucketType == bucket && item.equipRequiredLevel <= characterLevel && item.transferStatus < 2 && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == characterClassType) || (item.classType == 3 && item.bucketType == "Ghost") || item.weaponIndex > -1);
             });
         });
+        candidates = _.map(candidates, function(group) {
+            var maxLightValues = _.reduce(group, function(memo, candidate) {
+                var location = candidate.characterId() == characterId ? "local" : "global";
+                var type = candidate.tierType == 5 ? "Legendary" : "Exotic";
+                memo[location + type] = Math.max(memo[location + type], candidate.getValue("Light"));
+                //console.log(memo[location + type], "location", location, "type", type, "name", candidate.description, candidate.getValue("Light"));
+                return memo;
+            }, {
+                localLegendary: 0,
+                localExotic: 0,
+                globalLegendary: 0,
+                globalExotic: 0
+            });
+            //console.log("maxLightValues", maxLightValues);
+            return _.filter(group, function(candidate) {
+                var location = candidate.characterId() == characterId ? "local" : "global";
+                var type = candidate.tierType == 5 ? "Legendary" : "Exotic";
+                var maxLightPossible = maxLightValues[location + type];
+                return candidate.getValue("Light") >= maxLightPossible;
+            });
+        });
         console.log("candidates", candidates);
 
         var combos = tgd.cartesianProductOf(candidates);
@@ -1227,17 +1248,18 @@ Profile.prototype = {
                     });
                     message = candidate.bucketType + " can have a better item with " + candidate.description;
                     tgd.localLog(message);
-                } else {
-                    message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
+                    $.toaster({
+                        priority: 'info',
+                        title: 'Equip',
+                        message: message,
+                        settings: {
+                            timeout: tgd.defaults.toastTimeout
+                        }
+                    });
                 }
-                $.toaster({
-                    priority: 'info',
-                    title: 'Equip',
-                    message: message,
-                    settings: {
-                        timeout: tgd.defaults.toastTimeout
-                    }
-                });
+                /*else {
+                                   message = candidate.description + " skipped because the equipped item (" + itemEquipped.description + ") is equal or greater light";
+                               }*/
                 done();
             } else {
                 done();
