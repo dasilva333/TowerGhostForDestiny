@@ -944,37 +944,40 @@ Profile.prototype = {
                 var products = cartesianProductOf(outerSubSets);
                 var outerCombos = [];
                 var tmpDestinySkillTier = tgd.DestinySkillTier;
-                for (var n0 = 0, len0 = products.length; n0 < len0; n0++) {
-                    var sets = products[n0];
+                for (var n = 0, len2 = products.length; n < len2; n++) {
+                    var sets = products[n];
+                    //                    var minCSP= tgd.DestinySkillTier * 12;
                     var minCSP = tmpDestinySkillTier * outerHighestScore;
                     var exoticItems = 0;
                     var csp = 0;
-                    for (var n00 = 0, len00 = sets.length; i < len00; n00++) {
-                        var item = sets[n00];
+                    for (var i = 0, len = sets.length; i < len; i++) {
+                        var item = sets[i];
                         if (item.tierType === 6 && item.hasLifeExotic === false) {
                             exoticItems++;
                         }
+                        //csp += item.getValue("All");
                         csp += item.primaryValues.CSP;
                     }
                     if ((exoticItems < 2) && (csp >= minCSP)) {
                         outerCombos.push(sets);
                     }
-                }
-                for (var n1 = 0, len1 = outerCombos.length; n1 < len1; n1++) {
-                    var innerCombo = outerCombos[n1];
+
+                };
+                for (var n = 0, len2 = outerCombos.length; n < len2; n++) {
+                    var innerCombo = outerCombos[n];
                     var subSets = [];
 
-                    for (var n11 = 0, len11 = innerCombo.length; n11 < len11; n11++) {
-                        var nr = innerCombo[n11].itemNr;
-                        subSets[n11] = [];
-                        subSets[n11][0] = setsRoll0[nr];
-                        subSets[n11][1] = setsRoll1[nr];
+                    for (var i = 0, len = innerCombo.length; i < len; i++) {
+                        var nr = innerCombo[i].itemNr;
+                        subSets[i] = new Array();
+                        subSets[i][0] = setsRoll0[nr];
+                        subSets[i][1] = setsRoll1[nr];
                     }
                     var combos = tgd.innerCartesianProductOf(subSets);
                     var scoredCombos = [];
                     var highestScore = 0;
-                    for (var n111 = 0, len111 = combos.length; n111 < len111; n111++) {
-                        var items = combos[n111];
+                    for (var i = 0, len = combos.length; i < len; i++) {
+                        var items = combos[i];
                         var tmp = joinStats(items);
                         //delete tmp["bonusOn"];
                         var result = [];
@@ -994,7 +997,7 @@ Profile.prototype = {
                         var sumresult = result["Intellect"] + result["Discipline"] + result["Strength"];
                         var tmpscore = sumresult + (tmp["Intellect"] + tmp["Discipline"] + tmp["Strength"]) / 1000;
 
-                        scoredCombos[n111] = {
+                        scoredCombos[i] = {
                             set: items,
                             score: tmpscore
                         };
@@ -1007,8 +1010,8 @@ Profile.prototype = {
                     if (outerHighestScore < Math.floor(highestScore)) {
                         outerHighestScore = Math.floor(highestScore);
                     }
-                    for (var n1111 = 0, len1111 = scoredCombos.length; n1111 < len1111; n1111++) {
-                        var combo = scoredCombos[n1111];
+                    for (var i = 0, len = scoredCombos.length; i < len; i++) {
+                        var combo = scoredCombos[i];
                         if (combo.score >= outerHighestScore) {
                             bestSets.push(combo);
                         }
