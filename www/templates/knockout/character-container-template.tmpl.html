@@ -4,15 +4,12 @@
             <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                 <div class="character">
                     <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh, clickBubble: false">
-                        <img class="emblem" data-bind="itemImageHandler: icon">
+                        <img class="emblem btn btn-sm" data-bind="itemImageHandler: icon, fastclick: toggleStats, clickBubble: false">
                         <div class="class" data-bind="text: classType"></div>
                         <div class="level" data-bind="visible: level() != ''">
                             <div class="light" data-bind="text: level"></div>
                             <div class="power" data-bind="text: character.powerLevel"></div>
                         </div>
-						<div class="statsTool" data-bind="visible: id != 'Vault', fastclick: toggleStats, clickBubble: false">
-							<i class="fa fa-angle-double-down font-larger-4"></i>
-						</div>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
                             <div class="btn-group col-xs-24">

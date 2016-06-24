@@ -425,12 +425,9 @@ Profile.prototype = {
 
         self.reloadingBucket = true;
         if (typeof event !== "undefined") {
-            element = $(event.target).is(".fa") ? $(event.target) : $(event.target).find(".fa");
-            if (element.is(".fa") === false) {
-                element = $(event.target).is(".emblem") ? $(event.target) : $(event.target).find(".emblem");
-                if (element.is(".emblem") === false) {
-                    element = $(event.target).parent().find(".emblem");
-                }
+            element = $(event.target);
+            if (element.hasClass("emblem") === false) {
+                element = element.parent().find(".emblem");
             }
             element.addClass("fa-spin");
         }
