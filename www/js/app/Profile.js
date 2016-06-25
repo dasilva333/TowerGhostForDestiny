@@ -25,6 +25,18 @@ function Profile(character) {
     this.items.subscribe(_.throttle(app.redraw, 500));
     this.reloadingBucket = false;
     this.statsShowing = ko.observable(false);
+    this.statsToolClass = ko.computed(function() {
+        var classNames = [];
+        if (self.id != 'Vault') {
+            if (self.statsShowing()) {
+                classNames.push('active');
+            } else {
+                classNames.push('inactive');
+            }
+            classNames.push('btn btn-sm');
+        }
+        return classNames.join(" ");
+    });
     this.statsPane = ko.observable("info");
     this.weapons = ko.pureComputed(this._weapons, this);
     this.armor = ko.pureComputed(this._armor, this);
