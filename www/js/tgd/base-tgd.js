@@ -19,13 +19,14 @@ tgd.DestinyGeneralItems = {
     "Coins": [417308266, 1738186005, 605475555], //Passage Coins, Strange Coins, 3 of Coins
     "Runes": [1565194903, 2620224196, 1556533319, 1314217221, 2906158273], //Argonarch Rune, Stolen Rune, Wormsinger Rune, Wormfeeder Rune, Antiquated Rune can be xfered
     "Planetary Resources": [2254123540, 2882093969, 3164836592, 3242866270, 1797491610], //Spirit Bloom, Spin Metal, Wormspore, Relic Iron, Helium Filaments    
-    "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091]
+    "Telemetries": [4159731660, 729893597, 3371478409, 927802664, 4141501356, 323927027, 3036931873, 2610276738, 705234570, 1485751393, 2929837733, 846470091],
+    "Reputation Boosters": [2220921114, 1500229041, 1603376703]
 };
 tgd.lostItemsHelper = [420519466, 1322081400, 2551875383, 398517733, 583698483, 937555249];
 tgd.invisibleItemsHelper = [2910404660, 2537120989];
 //This is a list of items not indexed by DestinyDB
 tgd.itemsNotIndexed = [];
-tgd.DestinyGeneralSearches = ["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Buffs", "Glimmer Credit", "Telemetries", "Engrams"];
+tgd.DestinyGeneralSearches = _.sortBy(["Synths", "Parts", "Motes", "Coins", "Runes", "Planetary Resources", "Glimmer Buffs", "Glimmer Credit", "Telemetries", "Engrams", "Chroma Colors", "Reputation Boosters"]);
 tgd.DestinyArmorPieces = ["Helmet", "Gauntlet", "Chest", "Boots", "Class Items", "Artifact", "Ghost"];
 tgd.DestinyArmorStats = [144602215, 1735777505, 4244567218];
 // Cooldowns

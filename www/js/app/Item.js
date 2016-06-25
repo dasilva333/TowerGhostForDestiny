@@ -600,6 +600,9 @@ Item.prototype = {
     hasGeneral: function(type) {
         if (type == "Engrams" && this.description.indexOf("Engram") > -1 && this.isEquipment === false) {
             return true;
+            //TODO: Investigate if the Chroma Vow ships fall under isEquipment=false
+        } else if (type == "Chroma Colors" && this.description.indexOf("Chroma") > -1 && this.isEquipment === false) {
+            return true;
         } else if (type in tgd.DestinyGeneralItems && tgd.DestinyGeneralItems[type].indexOf(this.id) > -1) {
             return true;
         } else {
