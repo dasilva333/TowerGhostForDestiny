@@ -112,8 +112,23 @@ tgd.calculateBestSets = function(items, rollType) {
         }));
         return x;
     });
-    combos = tgd.cartesianProductOf(combos);
-    var scoredCombos = _.map(combos, function(items) {
+    var products = tgd.cartesianProductOf(combos);
+	var filteredCombos = [];
+	for (var n = 0, len2 = products.length; n < len2; n++) {
+		var sets = products[n];
+		var exoticItems = 0;
+		for (var i = 0, len = sets.length; i < len; i++) {
+			var item = sets[i];
+			if (item.tierType === 6 && item.hasLifeExotic === false) {
+				exoticItems++;
+			}
+		}
+		if (exoticItems < 2) {
+			filteredCombos.push(sets);
+		}
+	}
+	console.log("filteredCombos", filteredCombos, products);
+    var scoredCombos = _.map(filteredCombos, function(items) {
         var tmp = tgd.joinStats(items);
         delete tmp["bonusOn"];
         var sortedKeys = _.pluck(tgd.DestinyArmorStats, 'statName');
@@ -151,6 +166,7 @@ tgd.calculateBestSets = function(items, rollType) {
     }), false, function(combo) {
         return combo.statTiers;
     });
+	console.log("bestSets", bestSets);
     return bestSets;
 };
 
