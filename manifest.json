@@ -19,7 +19,9 @@
     "*://*.bungie.net/*",
     "*://*.live.com/*",
     "cookies",
-    "tabs"
+    "tabs",
+    "webRequest",
+    "webRequestBlocking"
   ],
   "browser_action": {
     "default_icon": "www/assets/icon128.png"

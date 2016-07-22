@@ -113,21 +113,21 @@ tgd.calculateBestSets = function(items, rollType) {
         return x;
     });
     var products = tgd.cartesianProductOf(combos);
-	var filteredCombos = [];
-	for (var n = 0, len2 = products.length; n < len2; n++) {
-		var sets = products[n];
-		var exoticItems = 0;
-		for (var i = 0, len = sets.length; i < len; i++) {
-			var item = sets[i];
-			if (item.tierType === 6 && item.hasLifeExotic === false) {
-				exoticItems++;
-			}
-		}
-		if (exoticItems < 2) {
-			filteredCombos.push(sets);
-		}
-	}
-	console.log("filteredCombos", filteredCombos, products);
+    var filteredCombos = [];
+    for (var n = 0, len2 = products.length; n < len2; n++) {
+        var sets = products[n];
+        var exoticItems = 0;
+        for (var i = 0, len = sets.length; i < len; i++) {
+            var item = sets[i];
+            if (item.tierType === 6 && item.hasLifeExotic === false) {
+                exoticItems++;
+            }
+        }
+        if (exoticItems < 2) {
+            filteredCombos.push(sets);
+        }
+    }
+    console.log("filteredCombos", filteredCombos, products);
     var scoredCombos = _.map(filteredCombos, function(items) {
         var tmp = tgd.joinStats(items);
         delete tmp["bonusOn"];
@@ -166,7 +166,7 @@ tgd.calculateBestSets = function(items, rollType) {
     }), false, function(combo) {
         return combo.statTiers;
     });
-	console.log("bestSets", bestSets);
+    console.log("bestSets", bestSets);
     return bestSets;
 };
 
