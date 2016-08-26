@@ -115,7 +115,6 @@ tgd.bungie = (function(cookieString, complete) {
                         } catch (e) {}
                     });
                 }
-                xhr.setRequestHeader('Origin', null);
             },
             data: data,
             complete: function(xhr, status) {

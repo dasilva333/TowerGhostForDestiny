@@ -1507,8 +1507,10 @@ var app = function() {
                     _results = _.isArray(results.loadouts) ? results.loadouts : [results.loadouts];
                     _results = _.sortBy(_.map(_results, function(loadout) {
                         loadout.ids = _.isArray(loadout.ids) ? loadout.ids : [loadout.ids];
+                        loadout.generics = _.isArray(loadout.generics) ? loadout.generics : [loadout.generics];
                         loadout.equipIds = _.isEmpty(loadout.equipIds) ? [] : loadout.equipIds;
                         loadout.equipIds = _.isArray(loadout.equipIds) ? loadout.equipIds : [loadout.equipIds];
+                        console.log("loadout", loadout.name, loadout);
                         return new tgd.Loadout(loadout);
                     }), function(l) {
                         return l.characterId();

@@ -278,6 +278,7 @@ tgd.Loadout = function(model, isItems, character) {
     }
     /* loader/migrate code */
     else if (model && model.ids && model.ids.length > 0) {
+        console.log("running loader");
         var firstItem = model.ids[0];
         if (firstItem && _.isString(firstItem)) {
             //tgd.localLog("this model needs a migration " + JSON.stringify(model));
@@ -298,7 +299,9 @@ tgd.Loadout = function(model, isItems, character) {
         } else {
             //tgd.localLog("this model doesn't need a migration " + JSON.stringify(model));
             self.ids(_.map(model.ids, function(obj) {
-                //tgd.localLog(obj);
+                return new tgd.LoadoutItem(obj);
+            }));
+            self.generics(_.map(model.generics, function(obj) {
                 return new tgd.LoadoutItem(obj);
             }));
         }
