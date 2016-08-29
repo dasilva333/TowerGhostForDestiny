@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 		  authKey: 'mraKey'
 		},
 		src: '../../branches/static-share/www/',
-		dest: '/towerghostfordestiny.com/www/share',
+		dest: '/myredditall/towerghostfordestiny.com/www/share',
 		simple: true,
 		exclusions: [ 'data' ]
 	  },
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 		},
 		src: '../../branches/static-share/www/data/common',
 		simple: true,
-		dest: '/towerghostfordestiny.com/www/share/data/common',
+		dest: '/myredditall/towerghostfordestiny.com/www/share/data/common',
 		exclusions: []
 	  },
 	  firefoxAssets: {
@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 		  authKey: 'mraKey'
 		},
 		src: '../../branches/firefox/www/',
-		dest: '/towerghostfordestiny.com/www/firefox',
+		dest: '/myredditall/towerghostfordestiny.com/www/firefox',
 		simple: true,
 		exclusions: [ 'data' ]
 	  },
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 		},
 		src: '../../branches/firefox/www/data/common',
 		simple: true,
-		dest: '/towerghostfordestiny.com/www/firefox/data/common',
+		dest: '/myredditall/towerghostfordestiny.com/www/firefox/data/common',
 		exclusions: []
 	  },	  
 	  resources: {
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
 		  authKey: 'mraKey'
 		},
 		src: '../www/resources/',
-		dest: '/towerghostfordestiny.com/www/www/resources',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/resources',
 		exclusions: []
 	  },
 	  devResources: {
@@ -71,7 +71,7 @@ module.exports = function(grunt) {
 		  authKey: 'mraKey'
 		},
 		src: '../www/data/common/',
-		dest: '/towerghostfordestiny.com/www/www/data/common',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/data/common',
 		simple: true,
 		exclusions: []
 	  },
@@ -82,9 +82,9 @@ module.exports = function(grunt) {
 		  authKey: 'mraKey'
 		},
 		src: '../www/',
-		dest: '/towerghostfordestiny.com/www/www/',
+		dest: '/myredditall/towerghostfordestiny.com/www/www/',
 		simple: true,
-		keep: [ '/towerghostfordestiny.com/www/js/', '/towerghostfordestiny.com/www/data/', '/towerghostfordestiny.com/www/css/' ],
+		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
 		exclusions: [ 'resources','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
 	  },
 	  devManifest: {
@@ -93,10 +93,10 @@ module.exports = function(grunt) {
 		  port: 21,
 		  authKey: 'mraKey'
 		},
+        simple: true,
 		src: '../www/',
-		dest: '/towerghostfordestiny.com/www/dev/',
-		simple: true,
-		keep: [ '/towerghostfordestiny.com/www/js/', '/towerghostfordestiny.com/www/data/', '/towerghostfordestiny.com/www/css/' ],
+		dest: '/myredditall/towerghostfordestiny.com/www/dev/',
+		keep: [ '/myredditall/towerghostfordestiny.com/www/js/', '/myredditall/towerghostfordestiny.com/www/data/', '/myredditall/towerghostfordestiny.com/www/css/' ],
 		exclusions: [ 'resources','assets','css','data','js','lib','res','spec','templates', '*.xml', '*.png', '*.html' ]
 	  }
 	});
