@@ -38,8 +38,9 @@ Latest help & FAQ support found here:
 	- Run `npm install -g grunt-cli`
 	- Run `npm install -g grunt-init`
 - Run `npm install`
+- If you don't already have bower installed, run `npm install -g bower`
 - Run `bower install`
-- Run `grunt dev` to watch the `/www/scss` folder to build the scss changes
+- Run `grunt default` to watch the `/www/scss` folder to build the scss changes
 
 **NOTE!** If you make changes to the SCSS, you need to run `grunt prod` before you put in your PR, so it has a production build of the SCSS (aka, no source maps)
 
