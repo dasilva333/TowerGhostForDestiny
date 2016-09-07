@@ -6,7 +6,7 @@ If you would like to contribute to the project simply submit a *Pull Request* fo
 
 You may also request access to a chat room used to collaborate and discuss some of the more involved interactions, visit the link below for further instructions on how to participate.
 
-<https://github.com/dasilva333/TowerGhostForDestiny/wiki/Slack-Group-Cha>t
+<https://github.com/dasilva333/TowerGhostForDestiny/wiki/Slack-Group-Chat>
 Thanks to @bluetidepro
 
 ## Pull requests
