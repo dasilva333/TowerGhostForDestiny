@@ -227,11 +227,13 @@ var queueImages = function(callback){
 	console.log("first queue");
 	var contents = eval(fs.readFileSync(definitionPath + "en/itemDefs.json").toString("utf8"));
 	_.each(contents, function(item){
-		var icon = item.icon.replace(imgPath,'');
-		if (icon != "") queue.push(icon);
-		if (item.itemTypeName == "Emblem"){
-			queue.push(item.secondaryIcon.replace(imgPath,''));
-		}
+        if ( item && item.icon ){
+            var icon = item.icon.replace(imgPath,'');
+            if (icon != "") queue.push(icon);
+            if (item.itemTypeName == "Emblem"){
+                queue.push(item.secondaryIcon.replace(imgPath,''));
+            }        
+        }
 	});
 	console.log("2nd queue");
 	contents = eval(fs.readFileSync(definitionPath + "en/perkDefs.json").toString("utf8"));
