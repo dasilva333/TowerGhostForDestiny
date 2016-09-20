@@ -141,11 +141,14 @@ var Item = function(model, profile) {
         var futureBaseCSP = self.futureBaseCSP();
         var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType];
         if (futureBaseCSP > maxBonusPoints) {
+            if (self._id == "6917529080710062428") {
+                console.log("reducing maxBaseCSP by ", maxBonusPoints)
+            }
             maxBaseCSP = maxBaseCSP - maxBonusPoints;
         }
-        /*if (self._id == "6917529088281533947") {
-            console.log("futureBaseCSP", futureBaseCSP, "maxBaseCSP", maxBaseCSP);
-        }*/
+        if (self._id == "6917529080710062428") {
+            console.log("futureBaseCSP", futureBaseCSP, "maxBaseCSP", maxBaseCSP, self.bucketType, tgd.DestinyMaxCSP);
+        }
         //convert the fraction into a whole percentage
         var maxLightPercent = (futureBaseCSP / maxBaseCSP) * 100;
         //round to 2 digits;

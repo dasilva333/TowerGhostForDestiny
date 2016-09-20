@@ -1,16 +1,19 @@
+tgd.DestinyCornRatio = -11.98 / 0.1617;
 tgd.calculateInfusedStats = function(initial_defense, initial_stat) {
     var finalStats = [];
     var target_defense = tgd.DestinyLightCap;
     if (initial_defense == target_defense || initial_defense < 200) return [initial_stat, initial_stat];
+    var newStats = parseInt(initial_stat * ((target_defense + tgd.DestinyCornRatio) / (initial_defense + tgd.DestinyCornRatio)));
 
-    var maxStatValueInitial = tgd.infusionStats[initial_defense - 200];
+    return [newStats, newStats];
+    /*    var maxStatValueInitial = tgd.infusionStats[initial_defense - 200];
     var maxStatValueFinal = tgd.infusionStats[target_defense - 200];
     var max_stat = Math.floor((maxStatValueFinal / maxStatValueInitial) * (initial_stat + 1.0));
     var min_stat = Math.floor((maxStatValueFinal / maxStatValueInitial) * (initial_stat));
 
     finalStats.push(max_stat);
     finalStats.push(min_stat);
-    return finalStats;
+    return finalStats;*/
 };
 
 tgd.bonusStatPoints = function(armorIndex, light) {

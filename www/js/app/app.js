@@ -1527,7 +1527,7 @@ var app = function() {
                     self.saveLoadouts(false);
                 }
                 //insulate this code from any potential failures from bad data or otherwise
-                try {
+                /*try {
                     if (results && results.maxCSP) {
                         if (results.maxCSP.indexOf(",") > -1 && results.maxCSP.split(",").length == 7) {
                             tgd.DestinyMaxCSP = _.object(_.map(results.maxCSP.split(","), function(value, index) {
@@ -1537,7 +1537,7 @@ var app = function() {
                     }
                 } catch (e) {
                     console.log(e);
-                }
+                }*/
                 var destinyMaxCSP = tgd.sum(tgd.DestinyMaxCSP);
                 var destinyMaxBonusPoints = tgd.sum(_.map(tgd.DestinyMaxCSP, function(value, bucket) {
                     return tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(bucket), tgd.DestinyLightCap);
