@@ -71,7 +71,7 @@ tgd.DestinyLayout = [{
     name: "General",
     array: 'general',
     counts: [72, 80],
-    bucketTypes: ['Consumables', 'Materials', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
+    bucketTypes: ['Consumables', 'Materials', 'Ornaments', 'Shader', 'Emblem', 'Ship', 'Sparrow', 'Horn', 'Emote'],
     extras: tgd.DestinyGeneralExceptions,
     view: 3,
     headerText: 'inventory_general'
@@ -113,7 +113,13 @@ tgd.DestinyDamageTypes = {
 };
 tgd.DestinyBucketSizes = {
     "Materials": 20,
-    "Consumables": 20
+    "Consumables": 20,
+    "Ornaments": 12,
+    "Bounties": 16,
+    "Quests": 32,
+    'Messages': 20,
+    'Invisible': 20,
+    'Lost Items': 20
 };
 tgd.DestinyBucketTypes = {
     "1498876634": "Primary",
@@ -140,7 +146,8 @@ tgd.DestinyBucketTypes = {
     "434908299": "Artifact",
     "3054419239": "Emote",
     "1801258597": "Quests",
-    "3796357825": "Horn"
+    "3796357825": "Horn",
+    "3313201758": "Ornaments"
 };
 tgd.DestinyBucketColumns = {
     "Chest": 3,
@@ -172,7 +179,8 @@ tgd.DestinyBucketColumns = {
     "Artifact": 3,
     "Quests": 4,
     "Emote": 3,
-    "Horn": 3
+    "Horn": 3,
+    "Ornaments": 4
 };
 /*_.object(_.map(tgd.DestinyMaxCSP, function(amt, type){
 var bonus = tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(type), 335);

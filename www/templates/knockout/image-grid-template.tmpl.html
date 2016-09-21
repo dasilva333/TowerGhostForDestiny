@@ -1,22 +1,12 @@
 <div class="title" data-bind="visible: bucketType !== 'Subclasses' && $root.searchKeyword() == '', refreshableSection: true">
     <span data-bind="text: $root.getBucketName(bucketType)"></span>
     <!-- ko if: ( character.id !== 'Vault' ) -->
-    <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Quests' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' || bucketType == 'Bounties') -->
-    (
-    <span data-bind="text: character.get(bucketType).length + (character.itemEquipped(bucketType) ? 1 : 0)"></span>/10)
-    <!--/ko  -->
-    <!-- ko if: (bucketType == 'Bounties') -->
-    (
-    <span data-bind="text: character.get(bucketType).length"></span>/16)
-    <!--/ko  -->
-    <!-- ko if: (bucketType == 'Quests') -->
-    (
-    <span data-bind="text: character.get(bucketType).length"></span>/32)
-    <!--/ko  -->
-    <!-- ko if: ( bucketType == 'Materials' || bucketType == 'Consumables' || bucketType == 'Messages' || bucketType == 'Invisible' || bucketType == 'Lost Items' ) -->
-    (
-    <span data-bind="text: character.get(bucketType).length"></span>/20)
-    <!--/ko  -->
+        <!-- ko if: (!_.has(tgd.DestinyBucketSizes,bucketType)) -->
+            (<span data-bind="text: character.get(bucketType).length + (character.itemEquipped(bucketType) ? 1 : 0)"></span>/10)
+        <!--/ko  -->
+        <!-- ko if: (_.has(tgd.DestinyBucketSizes,bucketType)) -->
+            (<span data-bind="text: character.get(bucketType).length"></span>/<span data-bind="text: tgd.DestinyBucketSizes[bucketType]"></span>)
+        <!--/ko  -->
     <!--/ko  -->
     <div class="titleRefresh" data-bind="visible: isMobile">
         <!-- ko if: !(bucketType == 'Materials' || bucketType == 'Consumables') -->

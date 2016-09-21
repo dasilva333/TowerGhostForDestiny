@@ -236,9 +236,9 @@ input
 /* Used by the Image-Grid-Template */
 .lockIcon {
     position: absolute;
-    left: 3px;
-    top: 5px;
-	opacity: 0.5;
+    left: 5px;
+    top: 7px;
+    opacity: 0.8;
 }
 .bucket-item {
     padding: 1px !important;

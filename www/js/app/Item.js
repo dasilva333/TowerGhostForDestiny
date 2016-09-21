@@ -395,7 +395,7 @@ Item.prototype = {
             })) * 100).toFixed(0) + "%";
             primaryStat = (primaryStat === "") ? progress : primaryStat + "/" + progress;
         }
-        if (bucketType == "Materials" || bucketType == "Consumables" || ((bucketType == "Lost Items" || bucketType == "Invisible") && item.stackSize > 1)) {
+        if (_.has(tgd.DestinyBucketSizes, bucketType)) {
             primaryStat = item.stackSize;
         }
         return primaryStat;
@@ -541,7 +541,7 @@ Item.prototype = {
             //rules for how subclasses can be equipped
             var equippableSubclass = (self.bucketType == "Subclasses" && !self.isEquipped() && self.character.id == avatarId) || self.bucketType !== "Subclasses";
             //if it's in this character and it's equippable
-            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
+            return (self.characterId() == avatarId && !self.isEquipped() && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.bucketType != 'Ornaments' && self.description.indexOf("Engram") == -1 && self.typeName.indexOf("Armsday") == -1 && equippableSubclass) || (self.characterId() != avatarId && avatarId !== 'Vault' && self.bucketType != 'Materials' && self.bucketType != 'Consumables' && self.description.indexOf("Engram") == -1 && equippableSubclass && self.transferStatus < 2);
         });
     },
     isStoreable: function(avatarId) {
@@ -1199,7 +1199,7 @@ Item.prototype = {
             //tgd.localLog("app.bungie.transfer after");
             //tgd.localLog(arguments);			
             if (result && result.Message && result.Message == "Ok") {
-                if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
+                if (self.bucketType == "Materials" || self.bucketType == "Consumables" || self.bucketType == "Ornaments") {
                     self.adjustGenericItem(x, y, amount, function() {
                         cb(y, x);
                     });
@@ -1418,7 +1418,7 @@ Item.prototype = {
                 self.transfer("Vault", targetCharacterId, transferAmount, self.handleTransfer(targetCharacterId, callback));
             }
         };
-        if (self.bucketType == "Materials" || self.bucketType == "Consumables") {
+        if (self.bucketType == "Materials" || self.bucketType == "Consumables" || self.bucketType == "Ornaments") {
             if (self.primaryStat() == defaultTransferAmount) {
                 done(defaultTransferAmount);
             } else if (app.autoXferStacks() === true || tgd.autoTransferStacks === true) {
