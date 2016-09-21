@@ -22,6 +22,14 @@ var neededFiles = [
 	}},
 	{ table: "DestinyInventoryItemDefinition", name: "itemDefs", key: "itemHash", reduce: function(item){
 		var obj = item;
+		if ( obj.itemHash == "194424267" ){
+			obj.bucketTypeHash = "2973005342";
+			obj.itemName = "Barrier Ethos";
+			obj.equippable = true;
+			obj.itemTypeName = "Armor%20Shader";
+			obj.icon = "/img/misc/missing_icon.png";
+			obj.itemDescription = "Equip%20this%20shader%20to%20change%20the%20color%20of%20your%20armor.";
+		}
 		obj.itemName = encodeURIComponent(obj.itemName);
 		obj.tierTypeName = encodeURIComponent(obj.tierTypeName);
 		obj.itemDescription = encodeURIComponent(obj.itemDescription);
