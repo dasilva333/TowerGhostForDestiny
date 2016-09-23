@@ -3,7 +3,7 @@
         <div class="row" data-bind="foreach: { data: orderedCharacters, as: 'character' }">
             <div class="profile" data-bind="css: $parent.columnMode(character), attr:{id: character.id}">
                 <div class="character">
-                    <div class="character-box" data-bind="style: { backgroundImage: background }, css: character.id, refreshableEmblem: true, fastclick: character.refresh, clickBubble: false">
+                    <div class="character-box" data-bind="itemBgImageHandler: background, css: character.id, refreshableEmblem: true, fastclick: character.refresh, clickBubble: false">
                         <img class="emblem" data-bind="itemImageHandler: icon, fastclick: toggleStats, clickBubble: false, css: character.statsToolClass">
                         <div class="class" data-bind="text: classType"></div>
                         <div class="level" data-bind="visible: level() != ''">

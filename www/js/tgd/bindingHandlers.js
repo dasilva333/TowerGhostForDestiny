@@ -1,9 +1,10 @@
-tgd.imageErrorHandler = function(src, element) {
+tgd.imageErrorHandler = function(src, element, cb) {
     return function() {
         if (element && element.src && element.src !== "") {
             var source = element.src;
             if (source.indexOf(tgd.remoteImagePath) == -1) {
                 element.src = tgd.remoteImagePath + src.replace(tgd.dataDir, 'data/');
+                if (cb) cb(element.src);
             }
         }
     };
@@ -40,6 +41,32 @@ window.ko.bindingHandlers.itemImageHandler = {
         var icon = ko.unwrap(valueAccessor());
         element.src = icon;
         element.onerror = tgd.imageErrorHandler(icon, element);
+    }
+};
+
+tgd.itemBgImageHandler = function(element, valueAccessor) {
+    var $element = $(element);
+    var icon = ko.unwrap(valueAccessor());
+    var image = new Image(),
+        image2 = new Image();
+    image.onerror = tgd.imageErrorHandler(icon, image2, function(newSource) {
+        var bgIcon = app.makeBackgroundUrl(newSource, true);
+        $element.css("background-image", bgIcon);
+    });
+    image.onload = function() {
+        var bgIcon = app.makeBackgroundUrl(icon, true);
+        $element.css("background-image", bgIcon);
+    }
+    image.src = icon;
+    image2.src = icon;
+};
+
+window.ko.bindingHandlers.itemBgImageHandler = {
+    init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        tgd.itemBgImageHandler(element, valueAccessor);
+    },
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        tgd.itemBgImageHandler(element, valueAccessor);
     }
 };
 

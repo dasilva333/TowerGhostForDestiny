@@ -72,7 +72,7 @@ Profile.prototype = {
         var self = this;
         console.time("init profile " + self.id);
         if (self.id == "Vault") {
-            self.background(app.makeBackgroundUrl("assets/vault_emblem.jpg", true));
+            self.background("assets/vault_emblem.jpg");
             self.icon("assets/vault_icon.jpg");
             self.gender("Tower");
             self.classType("Vault");
@@ -111,7 +111,7 @@ Profile.prototype = {
             self.race(profile.characterBase.race);
             self.percentToNextLevel(0);
         } else {
-            self.background(app.makeBackgroundUrl(tgd.dataDir + profile.backgroundPath, true));
+            self.background(tgd.dataDir + profile.backgroundPath);
             self.icon(tgd.dataDir + profile.emblemPath);
             self.gender(tgd.DestinyGender[profile.characterBase.genderType]);
             self.classType(tgd.DestinyClass[profile.characterBase.classType]);
