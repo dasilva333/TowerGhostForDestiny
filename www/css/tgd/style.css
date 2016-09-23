@@ -397,6 +397,7 @@ input
 {
 	display: inline-block;
 	position: relative;
+    margin: 0px 2px;
 }
 .mobile-characters-letter {
 	position: absolute;
@@ -417,6 +418,7 @@ input
 	height: 36px;
 	webkit-border-radius: 4px;
 	width: 36px;
+    padding: 1px;
 }
 .mobile-characters-image:hover
 {

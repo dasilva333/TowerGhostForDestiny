@@ -22,8 +22,9 @@
             </div>
             <div class="col-xs-24">
                 <!-- ko foreach: { data: $root.orderedCharacters, as: 'character' } -->
-                <div class="move-button move-loadout" data-bind="attr: { title: uniqueName }, fastclick: function(){ $parent.transfer(character.id) }, style: { backgroundImage: iconBG }">
-                    <div class="lower-left" data-bind="text: classLetter"></div>
+                <div class="mobile-characters">
+                    <img class="mobile-characters-image" data-bind="itemImageHandler: icon, attr: {title: uniqueName}, fastclick: function(){ $parent.transfer(character.id) }" src="about:blank">
+					<div class="mobile-characters-letter" data-bind="text: classLetter"></div>
                 </div>
                 <!--/ko  -->
             </div>

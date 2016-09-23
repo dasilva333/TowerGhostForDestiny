@@ -23,21 +23,21 @@
                     <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, fastclick: function(){ $parent.store(avatar.id) }, visible: avatar.id == 'Vault' && $parent.character.id !== 'Vault' && $parent.bucketType !== 'Subclasses' && $parent.transferStatus < 2">
                         <div class="attkIcon">
                             <div class="icon-banner" data-bind="text: $root.activeText().movepopup_vault"></div>
-                            <img src="about:blank" data-bind="attr: { src : icon }">
+                            <img src="about:blank" data-bind="itemImageHandler: icon">
                             <div class="lower-left" data-bind="text: classLetter"></div>
                         </div>
                     </div>
                     <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, fastclick: function(){ $parent.store(avatar.id) }, visible: $parent.isStoreable(avatar.id)">
                         <div class="attkIcon">
                             <div class="icon-banner" data-bind="text: $root.activeText().movepopup_store"></div>
-                            <img src="about:blank" data-bind="attr: { src : icon }">
+                            <img src="about:blank" data-bind="itemImageHandler: icon">
                             <div class="lower-left" data-bind="text: classLetter"></div>
                         </div>
                     </div>
                     <div class="move-button col-xs-4" data-bind="attr: { title: avatar.uniqueName }, fastclick: function(){ $parent.equip(avatar.id) }, visible: $parent.isEquippable(avatar.id)">
                         <div class="attkIcon">
                             <div class="icon-banner" data-bind="text: $root.activeText().movepopup_equip"></div>
-                            <img src="about:blank" data-bind="attr: { src : icon }">
+                            <img src="about:blank" data-bind="itemImageHandler: icon">
                             <div class="lower-left" data-bind="text: classLetter"></div>
                         </div>
                     </div>

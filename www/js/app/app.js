@@ -2079,36 +2079,48 @@ var app = function() {
         }
     };
 
+    var subscriptions = [],
+        remainingInterval;
+
     this.transferFarmItems = function(targetCharacterId, items) {
         //console.log("transferFarmItems", targetCharacterId, items);
         if (tgd.transferringFarmItems) return;
         var itemsToTransfer = [],
+            doTransfer = true,
             farmItemCounts = self.farmItemCounts();
         var selectedFarmItems = self.farmItems();
         _.each(selectedFarmItems, function(itemType) {
             var filteredItems = _.sortBy(_.filter(_.filter(items, tgd.farmItemFilters[itemType]), function(item) {
                 return item.characterId() != targetCharacterId;
             }), 'tierType');
+            var bucketKey = targetCharacterId == "Vault" ? "actualBucketType" : "bucketType";
             itemsToTransfer = itemsToTransfer.concat(filteredItems);
-            if (targetCharacterId == "Vault") {
-                farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
-            } else {
-                var spaceAvailable = _.countBy(_.findWhere(self.characters(), {
-                    id: targetCharacterId
-                }).items(), 'bucketType');
-                itemsToTransfer = _.filter(itemsToTransfer, function(item) {
-                    var slotsAvailable = spaceAvailable[item.bucketType];
-                    var maxSpaceAvailable = (tgd.DestinyNonUniqueBuckets.indexOf(item.bucketType) > -1) ? 20 : 10;
-                    if (slotsAvailable < maxSpaceAvailable) {
-                        //console.log(item.bucketType, slotsAvailable, maxSpaceAvailable);
-                        spaceAvailable[item.bucketType]++;
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
-            }
+            var spaceAvailable = _.countBy(_.findWhere(self.characters(), {
+                id: targetCharacterId
+            }).items(), bucketKey);
+            itemsToTransfer = _.filter(itemsToTransfer, function(item) {
+                var slotsAvailable = spaceAvailable[item[bucketKey]];
+                var maxSpaceAvailable = 0;
+                if (targetCharacterId == "Vault") {
+                    maxSpaceAvailable = _.findWhere(tgd.DestinyLayout, {
+                        array: item.actualBucketType
+                    }).counts[0];
+                } else {
+                    maxSpaceAvailable = tgd.DestinyBucketSizes.indexOf(item.bucketType) > -1 ? tgd.DestinyBucketSizes[item.bucketType] : 10;
+                }
+                if (slotsAvailable < maxSpaceAvailable) {
+                    console.log(targetCharacterId, item.bucketType, slotsAvailable, maxSpaceAvailable);
+                    spaceAvailable[item[bucketKey]]++;
+                    return true;
+                } else {
+                    return false;
+                }
+            });
         });
+        //return console.log("doTransfer", doTransfer, _.pluck(itemsToTransfer, 'description'));
+        if (targetCharacterId == "Vault" && doTransfer) {
+            //farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
+        }
         self.farmItemCounts(farmItemCounts);
         if (itemsToTransfer.length === 0) {
             return;
@@ -2130,13 +2142,13 @@ var app = function() {
     };
 
     this.vaultItemHandler = function(items) {
-        var sortedItems = _.groupBy(items, 'actualBucketType');
-        /* detect the quantity amounts, if full then disable farmMode */
+        var sortedItems = _.groupBy(items, 'actualBucketType'),
+            allSectionsFull = false;
+        /* detect the quantity amounts, keep track of which sections are full, if all sections full then disable farmMode */
         _.each(tgd.DestinyLayout, function(layout) {
             var group = sortedItems[layout.array];
             if (group && group.length == layout.counts[0] && self.farmMode() === true && self.farmTarget() == "Vault") {
-                self.farmMode(false);
-                var warning_msg = layout.name + " is full, disabling Farm Mode.";
+                var warning_msg = "Disabling Farm Mode for full section: " + layout.name;
                 tgd.localLog(warning_msg);
                 $.toaster({
                     priority: 'danger',
@@ -2148,10 +2160,12 @@ var app = function() {
                 });
             }
         });
+        if (allSectionsFull) {
+            self.farmMode(false);
+        }
     };
 
-    var subscriptions = [],
-        remainingInterval;
+
     this.farmModeHandler = function(isEnabled) {
         if (isEnabled === true) {
             if (self.doRefresh() === false) {

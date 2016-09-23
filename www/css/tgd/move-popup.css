@@ -24,9 +24,9 @@
 }
 
 .lower-left {
-    position: absolute;
+    position: relative;
     background-color: rgba(255, 255, 255, 0.8);
-    bottom: 0px;
+    bottom: 15px;
     right: initial;
     padding: 2px;
     padding-top: 3px;
@@ -105,18 +105,6 @@
 	max-height: 96px;
 	max-width: 100%;
 	width: auto;
-}
-.move-popup div.lower-left,.lower-left
-{
-	background-color: rgba(255,255,255,0.9);
-	bottom: 0px;
-	left: 0px;
-	opacity: 0.9;
-	padding: 2px;
-	padding-top: 3px;
-	position: absolute;
-	right: initial;
-	text-shadow: none;
 }
 #move-popup.desktop
 {
