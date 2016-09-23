@@ -663,6 +663,7 @@ Item.prototype = {
         var setFilter = true;
         var searchFilter = ($parent.searchKeyword() === '' || $parent.searchKeyword() !== "" && self.description.toLowerCase().indexOf($parent.searchKeyword().toLowerCase()) > -1);
         var tierFilter = $parent.tierFilter() == "0" || $parent.tierFilter() == self.tierType;
+        var lockFilter = $parent.lockedState() == "" || (($parent.lockedState() == "locked" && self.locked()) || ($parent.lockedState() == "unlocked" && !self.locked()))
 
         var itemStatValue = "";
         if (this.primaryStatValue && this.primaryStatValue()) {
@@ -699,7 +700,7 @@ Item.prototype = {
         generalFilter = $parent.generalFilter() == "0" || self.hasGeneral($parent.generalFilter());
         showDuplicate = $parent.customFilter() === false || ($parent.customFilter() === true && self.isFiltered() === true);
 
-        var isVisible = (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
+        var isVisible = (lockFilter) && (searchFilter) && (dmgFilter) && (setFilter) && (tierFilter) && (progressFilter) && (weaponFilter) && (armorFilter) && (generalFilter) && (showDuplicate);
         //console.timeEnd("isVisible");
         /*if ( self.description == "Red Death") {
 			tgd.localLog( "searchFilter: " + searchFilter);

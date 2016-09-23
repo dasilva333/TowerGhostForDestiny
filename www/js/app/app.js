@@ -61,6 +61,7 @@ var app = function() {
     this.showArmorSC = ko.observable(tgd.defaults.showArmorSC);
     this.showArmorPerks = ko.observable(tgd.defaults.showArmorPerks);
     this.armorViewBy = ko.observable(tgd.defaults.armorViewBy);
+    this.lockedState = ko.observable("");
 
     this.activeItem = ko.observable();
     this.activeUser = ko.observable({});
@@ -841,6 +842,13 @@ var app = function() {
     this.setArmorFilter = function(armorType) {
         return this._setArmorFilter.bind(armorType);
     };
+    this.setLockState = function() {
+        var state = this.toString();
+        if (self.lockedState() != "" && self.lockedState() == state) {
+            state = "";
+        }
+        self.lockedState(state);
+    }
     this.setGeneralFilter = function() {
         var searchType = this.toString();
         self.toggleBootstrapMenu();

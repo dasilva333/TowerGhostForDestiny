@@ -376,6 +376,24 @@
 								</a>
                         </li>
                         <!--/ko  -->
+                        <li class="divider"></li>
+                        <li>
+                            <strong style="padding-left: 10px;">
+                                <span>Item Locked State</span>
+                            </strong>
+                        </li>
+                        <li data-bind="css: lockedState() == 'locked' ? 'active' : '', fastclick: setLockState.bind('locked')">
+                            <a href="#">
+                                <i class="fa" data-bind="css: lockedState() == 'locked' ? 'fa-check-square' : 'fa-square'"></i>
+                                Locked
+                            </a>
+                        </li>
+                       <li data-bind="css: lockedState() == 'unlocked' ? 'active' : '', fastclick: setLockState.bind('unlocked')">
+                            <a href="#">
+                                <i class="fa" data-bind="css: lockedState() == 'unlocked' ? 'fa-check-square' : 'fa-square'"></i>
+                                Unlocked
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>
