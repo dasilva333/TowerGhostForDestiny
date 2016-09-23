@@ -2114,7 +2114,7 @@ var app = function() {
                         array: item.actualBucketType
                     }).counts[0];
                 } else {
-                    maxSpaceAvailable = tgd.DestinyBucketSizes.indexOf(item.bucketType) > -1 ? tgd.DestinyBucketSizes[item.bucketType] : 10;
+                    maxSpaceAvailable = _.has(tgd.DestinyBucketSizes, item.bucketType) ? tgd.DestinyBucketSizes[item.bucketType] : 10;
                 }
                 if (slotsAvailable < maxSpaceAvailable) {
                     console.log(targetCharacterId, item.bucketType, slotsAvailable, maxSpaceAvailable);
@@ -2150,9 +2150,9 @@ var app = function() {
     };
 
     this.vaultItemHandler = function(items) {
-        var sortedItems = _.groupBy(items, 'actualBucketType'),
+        /*var sortedItems = _.groupBy(items, 'actualBucketType'),
             allSectionsFull = false;
-        /* detect the quantity amounts, keep track of which sections are full, if all sections full then disable farmMode */
+        // detect the quantity amounts, keep track of which sections are full, if all sections full then disable farmMode 
         _.each(tgd.DestinyLayout, function(layout) {
             var group = sortedItems[layout.array];
             if (group && group.length == layout.counts[0] && self.farmMode() === true && self.farmTarget() == "Vault") {
@@ -2170,7 +2170,7 @@ var app = function() {
         });
         if (allSectionsFull) {
             self.farmMode(false);
-        }
+        }*/
     };
 
 
