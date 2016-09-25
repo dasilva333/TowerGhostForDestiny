@@ -146,7 +146,7 @@ var Item = function(model, profile) {
             }
             maxBaseCSP = maxBaseCSP - maxBonusPoints;
         }
-        if (self._id == "6917529080710062428") {
+        if (self._id == "6917529091018349244") {
             console.log("futureBaseCSP", futureBaseCSP, "maxBaseCSP", maxBaseCSP, self.bucketType, tgd.DestinyMaxCSP);
         }
         //convert the fraction into a whole percentage
@@ -293,8 +293,9 @@ Item.prototype = {
         }).length === 0;
 
         var infusedStats = [currentCSP];
-        if (primaryStat >= 200 && self.tierType >= 5) {
-            var newStats = tgd.calculateInfusedStats(primaryStat, currentCSP - (self.hasUnlockedStats ? currentBonus : 0));
+        if (primaryStat >= 200 && self.tierType >= 5 && self.armorIndex > -1) {
+            var newStats = tgd.calculateInfusedStats(primaryStat, currentCSP - (self.hasUnlockedStats ? currentBonus : 0), bucketType);
+            //if (primaryStat == 340) console.log("newStats", newStats, self.description);
             infusedStats = _.uniq(_.map(newStats, function(stat) {
                 return Math.min(stat + maxLightBonus, tgd.DestinyMaxCSP[self.bucketType]);
             }));
@@ -332,10 +333,10 @@ Item.prototype = {
                 var currentStatValue = tmp[statPerk.name],
                     otherStatValue = tmp[otherStatName];
                 //Calculate both stats at Max Light with bonus
-                tmp[statPerk.name] = (primaryStat == tgd.DestinyLightCap ? currentStatValue : tgd.calculateInfusedStats(primaryStat, currentStatValue)[0]) + futureBonus;
+                tmp[statPerk.name] = (primaryStat == tgd.DestinyLightCap ? currentStatValue : tgd.calculateInfusedStats(primaryStat, currentStatValue)[0], bucketType) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
-                    tmp[otherStatName] = (primaryStat == tgd.DestinyLightCap ? otherStatValue : tgd.calculateInfusedStats(primaryStat, otherStatValue)[0]);
+                    tmp[otherStatName] = (primaryStat == tgd.DestinyLightCap ? otherStatValue : tgd.calculateInfusedStats(primaryStat, otherStatValue)[0], bucketType);
                 }
                 if (description == "Graviton Forfeit") {
                     console.log(description, stats, statPerks, statPerk.name, otherStatName, activeStatName, isStatActive, primaryStat, currentStatValue, tmp[statPerk.name], tmp);

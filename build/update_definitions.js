@@ -28,7 +28,21 @@ var neededFiles = [
 			obj.equippable = true;
 			obj.itemTypeName = "Armor%20Shader";
 			obj.icon = "/img/misc/missing_icon.png";
-			obj.itemDescription = "Equip%20this%20shader%20to%20change%20the%20color%20of%20your%20armor.";
+			obj.itemDescription = "Equip this shader to change the color of your armor.";
+		} else if ( obj.itemHash == "194424268" ){
+			obj.bucketTypeHash = "2973005342";
+			obj.itemName = "Sparklepony";
+			obj.equippable = true;
+			obj.itemTypeName = "Armor%20Shader";
+			obj.icon = "/img/misc/missing_icon.png";
+			obj.itemDescription = "Equip this shader to change the color of your armor.";
+		} else if ( obj.itemHash == "194424269" ){
+			obj.bucketTypeHash = "2973005342";
+			obj.itemName = "The Ointment";
+			obj.equippable = true;
+			obj.itemTypeName = "Armor%20Shader";
+			obj.icon = "/img/misc/missing_icon.png";
+			obj.itemDescription = "Equip this shader to change the color of your armor.";
 		}
 		obj.itemName = encodeURIComponent(obj.itemName);
 		obj.tierTypeName = encodeURIComponent(obj.tierTypeName);

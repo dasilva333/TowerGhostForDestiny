@@ -2134,10 +2134,10 @@ var app = function() {
             return;
         }
         var adhoc = new tgd.Loadout(itemsToTransfer, true);
-        tgd.autoTransferStacks = true;
-        tgd.transferringFarmItems = true;
         var msa = adhoc.transfer(targetCharacterId, true);
         if (msa.length > 0) {
+            tgd.autoTransferStacks = true;
+            tgd.transferringFarmItems = true;
             adhoc.swapItems(msa, targetCharacterId, function() {
                 tgd.autoTransferStacks = false;
                 tgd.transferringFarmItems = false;
@@ -2200,6 +2200,7 @@ var app = function() {
                 }
             });
         } else {
+            tgd.transferringFarmItems = false;
             clearInterval(remainingInterval);
             _.each(subscriptions, function(subscription) {
                 subscription.dispose();

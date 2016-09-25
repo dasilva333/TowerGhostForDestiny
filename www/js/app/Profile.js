@@ -1060,7 +1060,7 @@ Profile.prototype = {
         var characterLevel = character.level();
         var candidates = _.map(buckets, function(bucket) {
             return _.filter(items, function(item) {
-                return item.bucketType == bucket && item.equipRequiredLevel <= characterLevel && item.transferStatus < 2 && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == characterClassType) || (item.classType == 3 && item.bucketType == "Ghost") || item.weaponIndex > -1);
+                return item.bucketType == bucket && item.equipRequiredLevel <= characterLevel && item.transferStatus < 2 && item.canEquip === true && ((item.classType != 3 && tgd.DestinyClass[item.classType] == characterClassType) || (item.classType == 3 && (item.bucketType == "Ghost" || item.bucketType == "Artifact")) || item.weaponIndex > -1);
             });
         });
         candidates = _.map(candidates, function(group) {
@@ -1518,7 +1518,7 @@ Profile.prototype = {
         tgd.weaponTypes = _.map(app.weaponTypes(), function(type) {
             return type.name.split(" ")[0];
         }).concat(tgd.DestinyWeaponPieces);
-        //console.log("activeItems", activeItems.length);
+        //console.log("activeItems", activeItems.length, activeItems);
         if (type == "OptimizedBest") {
             /* Only consider the top 3 items sorted by CSP of the results provided */
             activeItems = _.reduce(_.groupBy(activeItems, 'bucketType'), function(memo, group) {
