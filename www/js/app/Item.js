@@ -333,10 +333,10 @@ Item.prototype = {
                 var currentStatValue = tmp[statPerk.name],
                     otherStatValue = tmp[otherStatName];
                 //Calculate both stats at Max Light with bonus
-                tmp[statPerk.name] = (primaryStat == tgd.DestinyLightCap ? currentStatValue : tgd.calculateInfusedStats(primaryStat, currentStatValue)[0], bucketType) + futureBonus;
+                tmp[statPerk.name] = (primaryStat >= tgd.DestinyStatCap ? currentStatValue : tgd.calculateInfusedStats(primaryStat, currentStatValue, bucketType)[0]) + futureBonus;
                 tmp["bonusOn"] = statPerk.name;
                 if (otherStatName !== "") {
-                    tmp[otherStatName] = (primaryStat == tgd.DestinyLightCap ? otherStatValue : tgd.calculateInfusedStats(primaryStat, otherStatValue)[0], bucketType);
+                    tmp[otherStatName] = (primaryStat >= tgd.DestinyStatCap ? otherStatValue : tgd.calculateInfusedStats(primaryStat, otherStatValue, bucketType)[0]);
                 }
                 if (description == "Graviton Forfeit") {
                     console.log(description, stats, statPerks, statPerk.name, otherStatName, activeStatName, isStatActive, primaryStat, currentStatValue, tmp[statPerk.name], tmp);

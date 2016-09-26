@@ -109,7 +109,6 @@ Profile.prototype = {
             self.level(profile.characterBase.level);
             self.stats(profile.characterBase.stats);
             self.race(profile.characterBase.race);
-            self.percentToNextLevel(0);
         } else {
             self.background(tgd.dataDir + profile.backgroundPath);
             self.icon(tgd.dataDir + profile.emblemPath);
@@ -119,7 +118,6 @@ Profile.prototype = {
             self.stats(profile.characterBase.stats);
             if (!("STAT_LIGHT" in self.stats()))
                 self.stats()['STAT_LIGHT'] = 0;
-            self.percentToNextLevel(profile.percentToNextLevel);
             self.race(_raceDefs[profile.characterBase.raceHash].raceName);
         }
     },
@@ -333,7 +331,9 @@ Profile.prototype = {
             var primaryStatsGear = _.map(eligibleGear, function(item) {
                 return item.primaryStatValue() * (weights[item.bucketType] / 100);
             });
-            var powerLevel = Math.floor(tgd.sum(primaryStatsGear));
+            var powerLevelSum = tgd.sum(primaryStatsGear);
+            var powerLevel = Math.floor(powerLevelSum);
+            this.percentToNextLevel((((powerLevelSum * 1000) - (powerLevel * 1000)) / 1000) * 100);
             return powerLevel;
         } else {
             return 0;
