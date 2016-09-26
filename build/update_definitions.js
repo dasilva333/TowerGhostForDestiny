@@ -26,21 +26,28 @@ var neededFiles = [
 			obj.bucketTypeHash = "2973005342";
 			obj.itemName = "Barrier Ethos";
 			obj.equippable = true;
-			obj.itemTypeName = "Armor%20Shader";
+			obj.itemTypeName = "Armor Shader";
 			obj.icon = "/img/misc/missing_icon.png";
 			obj.itemDescription = "Equip this shader to change the color of your armor.";
 		} else if ( obj.itemHash == "194424268" ){
 			obj.bucketTypeHash = "2973005342";
 			obj.itemName = "Sparklepony";
 			obj.equippable = true;
-			obj.itemTypeName = "Armor%20Shader";
+			obj.itemTypeName = "Armor Shader";
 			obj.icon = "/img/misc/missing_icon.png";
 			obj.itemDescription = "Equip this shader to change the color of your armor.";
 		} else if ( obj.itemHash == "194424269" ){
 			obj.bucketTypeHash = "2973005342";
 			obj.itemName = "The Ointment";
 			obj.equippable = true;
-			obj.itemTypeName = "Armor%20Shader";
+			obj.itemTypeName = "Armor Shader";
+			obj.icon = "/img/misc/missing_icon.png";
+			obj.itemDescription = "Equip this shader to change the color of your armor.";
+		} else if ( obj.itemHash == "1759332263" ){
+			obj.bucketTypeHash = "2973005342";
+			obj.itemName = "Stolen Chalice";
+			obj.equippable = true;
+			obj.itemTypeName = "Armor Shader";
 			obj.icon = "/img/misc/missing_icon.png";
 			obj.itemDescription = "Equip this shader to change the color of your armor.";
 		}
