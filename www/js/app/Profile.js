@@ -333,7 +333,7 @@ Profile.prototype = {
             });
             var powerLevelSum = tgd.sum(primaryStatsGear);
             var powerLevel = Math.floor(powerLevelSum);
-            this.percentToNextLevel((((powerLevelSum * 1000) - (powerLevel * 1000)) / 1000) * 100);
+            this.percentToNextLevel(Math.round((((powerLevelSum * 1000) - (powerLevel * 1000)) / 1000) * 100));
             return powerLevel;
         } else {
             return 0;

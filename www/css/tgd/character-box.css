@@ -34,7 +34,7 @@
 
 .character-box  .progression {
 	background-color: rgb(245, 220, 86); 
-	height:2px !important;
+	height:3px !important;
 	position: absolute;
 	top: 18px !important;
 	left: 0;

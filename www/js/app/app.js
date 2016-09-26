@@ -1110,6 +1110,7 @@ var app = function() {
 
     this.refresh = function() {
         if (self.bungie.gamertag()) {
+            tgd.autoRefreshTime = (new Date()).getTime();
             var count = 0,
                 finish = function() {
                     count++;
@@ -1158,7 +1159,6 @@ var app = function() {
             self.refreshInterval = setInterval(function() {
                 tgd.localLog("refreshing");
                 self.refresh();
-                tgd.autoRefreshTime = (new Date()).getTime();
             }, self.refreshSeconds() * 1000);
         }
     };
@@ -2179,6 +2179,9 @@ var app = function() {
             if (self.doRefresh() === false) {
                 self.doRefresh(true);
             }
+            if (_.has(window, 'plugins') && _.has(window.plugins, 'insomnia')) {
+                window.plugins.insomnia.keepAwake()
+            }
             clearInterval(remainingInterval);
             remainingInterval = setInterval(function() {
                 var timeRemaining = Math.floor(self.refreshSeconds() - ((((new Date()).getTime()) - tgd.autoRefreshTime) / 1000));
@@ -2200,6 +2203,9 @@ var app = function() {
                 }
             });
         } else {
+            if (_.has(window, 'plugins') && _.has(window.plugins, 'insomnia')) {
+                window.plugins.insomnia.allowSleepAgain()
+            }
             tgd.transferringFarmItems = false;
             clearInterval(remainingInterval);
             _.each(subscriptions, function(subscription) {
@@ -2309,7 +2315,6 @@ var app = function() {
                 self.loadData();
             }
         }
-        tgd.autoRefreshTime = (new Date()).getTime();
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
         self.activeView.subscribe(self.redraw);

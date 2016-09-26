@@ -29,7 +29,8 @@
 	<gap:plugin name="org.apache.cordova.file-transfer" />
 	<gap:plugin name="org.apache.cordova.file" />
 	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
-
+    <gap:plugin name="cordova-plugin-insomnia" />
+    
     <icon src="icon.png" />
     
 	<!-- iPhone 6 / 6+ -->

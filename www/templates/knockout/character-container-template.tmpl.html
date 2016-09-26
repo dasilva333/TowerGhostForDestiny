@@ -10,7 +10,7 @@
                             <div class="light" data-bind="text: level"></div>
                             <div class="power" data-bind="text: character.powerLevel"></div>
                         </div>
-                        <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }">&nbsp;</div>
+                        <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }, attr: { title: character.percentToNextLevel() + '% to next Light Level' }">&nbsp;</div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
                             <div class="btn-group col-xs-24">
 								<a data-bind="fastclick: character.setPane('info'), clickBubble: false, css: character.statsPane() == 'info' ? 'btn-primary' : 'btn-default'" class="btn btn-default btn-sm col-xs-8 text-center"><i class="fa fa-info"></i> Info</a>
