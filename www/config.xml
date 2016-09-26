@@ -29,7 +29,7 @@
 	<gap:plugin name="org.apache.cordova.file-transfer" />
 	<gap:plugin name="org.apache.cordova.file" />
 	<gap:plugin name="com.mohamnag.inappbilling" version="0.0.3" />
-    <gap:plugin name="cordova-plugin-insomnia" />
+    <plugin name="cordova-plugin-insomnia" version="4.1.0" source="npm" />
     
     <icon src="icon.png" />
     
