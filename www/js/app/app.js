@@ -2093,20 +2093,16 @@ var app = function() {
     this.transferFarmItems = function(targetCharacterId, items) {
         //console.log("transferFarmItems", targetCharacterId, items);
         if (tgd.transferringFarmItems) return;
-        var itemsToTransfer = [],
-            doTransfer = true,
-            farmItemCounts = self.farmItemCounts();
-        var selectedFarmItems = self.farmItems();
-        _.each(selectedFarmItems, function(itemType) {
+        var farmItemCounts = self.farmItemCounts();
+        var itemsToTransfer = _.object(_.map(self.farmItems(), function(itemType) {
             var filteredItems = _.sortBy(_.filter(_.filter(items, tgd.farmItemFilters[itemType]), function(item) {
                 return item.characterId() != targetCharacterId;
             }), 'tierType');
             var bucketKey = targetCharacterId == "Vault" ? "actualBucketType" : "bucketType";
-            itemsToTransfer = itemsToTransfer.concat(filteredItems);
             var spaceAvailable = _.countBy(_.findWhere(self.characters(), {
                 id: targetCharacterId
             }).items(), bucketKey);
-            itemsToTransfer = _.filter(itemsToTransfer, function(item) {
+            return [itemType, _.filter(filteredItems, function(item) {
                 var slotsAvailable = spaceAvailable[item[bucketKey]];
                 var maxSpaceAvailable = 0;
                 if (targetCharacterId == "Vault") {
@@ -2123,13 +2119,17 @@ var app = function() {
                 } else {
                     return false;
                 }
+            })];
+        }));
+        console.log("itemsToTransfer", itemsToTransfer);
+        if (targetCharacterId == "Vault") {
+            _.each(itemsToTransfer, function(filteredItems, itemType) {
+                console.log("itemType", itemType, filteredItems);
+                farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
             });
-        });
-        //return console.log("doTransfer", doTransfer, _.pluck(itemsToTransfer, 'description'));
-        if (targetCharacterId == "Vault" && doTransfer) {
-            //farmItemCounts[itemType] = (farmItemCounts[itemType] || 0) + filteredItems.length;
         }
         self.farmItemCounts(farmItemCounts);
+        itemsToTransfer = _.flatten(_.map(itemsToTransfer));
         if (itemsToTransfer.length === 0) {
             return;
         }
