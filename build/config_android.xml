@@ -9,7 +9,6 @@
     </author>
 
     <content src="index.html" />
-	<preference name="phonegap-version" value="cli-6.0.0" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
     <preference name="target-device" value="universal" />
@@ -27,7 +26,7 @@
     <preference name="android-installLocation" value="auto" />
 	<gap:plugin name="org.apache.cordova.globalization" />
 	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
-	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
+	<plugin spec="https://github.com/apache/cordova-plugin-inappbrowser.git" />
 	<gap:plugin name="cordova-plugin-splashscreen" source="npm" />
     <gap:plugin name="org.apache.cordova.statusbar" />
     <gap:plugin name="org.apache.cordova.device" />
