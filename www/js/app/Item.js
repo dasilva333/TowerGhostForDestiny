@@ -887,7 +887,7 @@ Item.prototype = {
                         bucketType: bucketType,
                         tierType: 6
                     }), function(item) {
-                        return item.isEquipped();
+                        return item.isEquipped() && item.hasLifeExotic === false;
                     });
                     //tgd.localLog( "otherExotic: " + JSON.stringify(_.pluck(otherExotic,'description')) );
                     if (otherExotic.length > 0) {
