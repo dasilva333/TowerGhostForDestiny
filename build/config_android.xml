@@ -34,7 +34,8 @@
 	<gap:plugin name="org.apache.cordova.file" />
 	<gap:plugin name="com.mohamnag.inappbilling" />
     <preference name="android-iabplugin-license-key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6kyZb15cxcGhaUVThjCY+c/rGCpKXW2Ek0v/dFOlx6MTAyTA9lUe3dMijtW1RjrTzqsZ+QgcCLRAGiAzL1+tgnalZJFeAIbbWA9DXjFrkw7hMqlrAeRLWWpLXCE96lqspvrxvtcnFb2doZTmuJmH68Y7MtItM7Gdg5K2G/bDACkWcA4qD2lNTkcWG/qTvUeOM0amV+2ENdJO0uQrneva/qM7BgIRqBQqTfiFL+xMAOwDRZBHdY35e+FMWgirIrKxA0XymIRbQVyHnTIFkQOMJBZ9dUaEn0LwRgBJjblYH7puwrYSUDshMXefcQDDfb9wfisDQD90iwbgy5SzDxmwwIDAQAB" />
-
+    <gap:plugin name="cordova-plugin-insomnia" />
+    
     <icon src="icon.png" />
     <icon gap:platform="android" gap:qualifier="ldpi" src="res/icon/android/icon-36-ldpi.png" />
     <icon gap:platform="android" gap:qualifier="mdpi" src="res/icon/android/icon-48-mdpi.png" />
