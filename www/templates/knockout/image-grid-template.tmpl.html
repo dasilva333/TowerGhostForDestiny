@@ -37,7 +37,7 @@
         <a class="itemLink" data-bind="attr:{href:href, instanceId:_id}">
             <img class="itemImage" data-bind="itemImageHandler: icon, attr: { instanceId:_id }, fastclick: function(){ return false }">
         </a>
-        <img src="assets/lock.png" class="lockIcon" data-bind="visible: locked" />
+        <i class="fa fa-lock lockIcon" aria-hidden="true" data-bind="visible: locked"></i>
         <div class="attkIcon" data-bind="visible: cspStat() != ''">
 			<div data-bind="text: cspStat, css: cspClass"></div>
 		</div>
