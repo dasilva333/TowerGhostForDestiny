@@ -9,7 +9,7 @@
 					<span data-bind="text: 'valued at: ' + (primaryStat() * 200) + 'G'"></span>
 					<!-- /ko -->
 					<!-- ko if: (bucketType !== 'Consumables' && bucketType !== 'Materials' && bucketType !== 'Messages' && bucketType !== 'Invisible' && bucketType !== 'Lost Items' && bucketType !== 'Bounties' && bucketType !== 'Mission') -->
-					<img data-bind="attr: { src: locked() ? 'assets/lock.png' : 'assets/unlock.png' }, fastclick: function(){ toggleLock() }" style="cursor:pointer;" />
+					<i class="fa text-info" aria-hidden="true" data-bind="css: locked() ? 'fa-lock' : 'fa-unlock', fastclick: function(){ toggleLock() }" style="cursor:pointer;"></i>
 					<!-- /ko -->
 				</div>
 				<div class="pull-right">
