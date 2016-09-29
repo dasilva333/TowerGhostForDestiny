@@ -2,7 +2,7 @@ tgd.DestinyCornRatio = -11.98 / 0.1617;
 tgd.calculateInfusedStats = function(initial_defense, initial_stat, bucketType) {
     var finalStats = [];
     var target_defense = tgd.DestinyStatCap; //temp hack until I can figure out the real solution
-    if (initial_defense == target_defense || initial_defense < 200) return [initial_stat, initial_stat];
+    if (initial_defense >= target_defense || initial_defense < 200) return [initial_stat, initial_stat];
     var newStats = Math.min(tgd.DestinyMaxCSP[bucketType] - tgd.bonusStatPoints(tgd.DestinyArmorPieces.indexOf(bucketType), target_defense), parseInt(initial_stat * ((target_defense + tgd.DestinyCornRatio) / (initial_defense + tgd.DestinyCornRatio))));
 
     return [newStats, newStats];
