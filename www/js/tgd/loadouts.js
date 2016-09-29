@@ -133,6 +133,7 @@ tgd.LoadoutItem = function(model) {
     });
     var _doEquip = (model && typeof model.hash == "undefined") ? ((self.doEquip && self.doEquip.toString() == "true") || false) : false;
     self.doEquip = ko.observable(_doEquip);
+    self.doSwap = _.has(self, 'doSwap') ? self.doSwap : false;
 };
 
 tgd.Loadout = function(model, isItems, character) {
@@ -166,6 +167,7 @@ tgd.Loadout = function(model, isItems, character) {
                 var itemFound = self.findItemById(equip.id);
                 if (itemFound) {
                     itemFound.doEquip = equip.doEquip;
+                    itemFound.doSwap = equip.doSwap;
                     itemFound.markAsEquip = self.markAsEquip;
                     if (equip && equip.bonusOn) {
                         itemFound.bonusOn = equip.bonusOn;
@@ -179,6 +181,7 @@ tgd.Loadout = function(model, isItems, character) {
                 var itemFound = self.findItemByHash(item.hash, item.characterId);
                 if (itemFound) {
                     itemFound.doEquip = item.doEquip;
+                    itemFound.doSwap = item.doSwap;
                     itemFound.markAsEquip = self.markAsEquip;
                     _items.push(itemFound);
                 }
@@ -374,10 +377,14 @@ tgd.Loadout.prototype = {
         app.saveLoadouts();
     },
     addUniqueItem: function(obj) {
-        this.ids.push(new tgd.LoadoutItem(obj));
+        var li = new tgd.LoadoutItem(obj);
+        console.log("LoadoutItem:unique", li);
+        this.ids.push(li);
     },
     addGenericItem: function(obj) {
-        this.generics.push(new tgd.LoadoutItem(obj));
+        var li = new tgd.LoadoutItem(obj);
+        console.log("LoadoutItem:generic", li);
+        this.generics.push(li);
     },
     findItemByHash: function(hash, characterId) {
         var itemFound;
@@ -708,8 +715,44 @@ tgd.Loadout.prototype = {
                 }
             };
         };
+        var getSwapItem = function(item, targetBucket, sourceBucketIds) {
+            /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
+                    e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
+                */
+            var itemFound = false;
+            tgd.localLog("looking for a swap item for " + item.description);
+            var sourceBucketHashes = _.pluck(_.where(item.character.items(), {
+                bucketType: item.bucketType
+            }), 'id');
+            tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
+            tgd.localLog("the target where this is going has these many items " + targetBucket.length);
+            var transferables = _.filter(targetBucket, function(otherItem) {
+                return otherItem.transferStatus < 2;
+            });
+            tgd.localLog("the target where this is going has these many items that are xferable " + transferables.length);
+            var candidates = _.filter(transferables, function(otherItem) {
+                var index = sourceBucketHashes.indexOf(otherItem.id);
+                tgd.localLog(index + " candidate: " + otherItem.description);
+                return index == -1;
+            });
+            tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+            swapItem = _.filter(_.where(candidates, {
+                type: item.type
+            }), getFirstItem(sourceBucketIds, itemFound));
+            tgd.localLog("1.swapItem: " + swapItem.length);
+            if (swapItem.length === 0) {
+                //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
+                tgd.localLog(transferables);
+            }
+            swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
+            /* if there is still no swapItem at this point I have to break the original rule the prevents duplicates*/
+            if (!swapItem) {
+                console.log("finding a swapItem from targetBucket");
+                swapItem = _.filter(transferables, getFirstItem(sourceBucketIds, itemFound))[0];
+            }
+            return swapItem;
+        };
         var masterSwapArray = [],
-            swapItem,
             sourceItems = self.items();
         if (sourceItems.length > 0) {
             var targetList = targetCharacter.items();
@@ -736,13 +779,13 @@ tgd.Loadout.prototype = {
                         }
                         //tgd.localLog("the current bucket size is " + targetBucketSize);
                         var targetMaxed = (targetBucketSize == maxBucketSize);
+                        var sourceBucketIds = _.pluck(sourceBucket, "_id");
                         tgd.localLog(key + " bucket max of " + maxBucketSize + " : " + targetMaxed);
                         tgd.localLog("need to transfer " + sourceBucket.length + " items, the target is this full " + targetBucketSize);
                         /* use the swap item strategy */
                         /* by finding a random item in the targetBucket that isnt part of sourceBucket */
                         if (sourceBucket.length + targetBucketSize > maxBucketSize) {
                             tgd.localLog("using swap strategy");
-                            var sourceBucketIds = _.pluck(sourceBucket, "_id");
                             swapArray = _.map(sourceBucket, function(item) {
                                 var ownerIcon = item.character.icon();
                                 /* if the item is already in the targetBucket */
@@ -769,45 +812,13 @@ tgd.Loadout.prototype = {
                                         };
                                     }
                                 } else {
-                                    var itemFound = false;
+                                    var swapItem;
                                     if (item.bucketType == "Shader") {
                                         swapItem = _.filter(targetBucket, function(otherItem) {
                                             return otherItem.bucketType == item.bucketType && otherItem.description != "Default Shader" && sourceBucketIds.indexOf(otherItem._id) == -1;
                                         })[0];
                                     } else {
-                                        /* This will ensure that an item of the same itemHash will not be used as a candidate for swapping 
-												e.g. if you have a Thorn on two characters, you want to send any hand cannon between them and never swap the Thorn
-											*/
-                                        tgd.localLog("looking for a swap item for " + item.description);
-                                        var sourceBucketHashes = _.pluck(_.where(item.character.items(), {
-                                            bucketType: item.bucketType
-                                        }), 'id');
-                                        tgd.localLog("the owner of this swap item has these items: " + sourceBucketHashes);
-                                        tgd.localLog("the target where this is going has these many items " + targetBucket.length);
-                                        var transferables = _.filter(targetBucket, function(otherItem) {
-                                            return otherItem.transferStatus < 2;
-                                        });
-                                        tgd.localLog("the target where this is going has these many items that are xferable " + transferables.length);
-                                        var candidates = _.filter(transferables, function(otherItem) {
-                                            var index = sourceBucketHashes.indexOf(otherItem.id);
-                                            tgd.localLog(index + " candidate: " + otherItem.description);
-                                            return index == -1;
-                                        });
-                                        tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
-                                        swapItem = _.filter(_.where(candidates, {
-                                            type: item.type
-                                        }), getFirstItem(sourceBucketIds, itemFound));
-                                        tgd.localLog("1.swapItem: " + swapItem.length);
-                                        if (swapItem.length === 0) {
-                                            //tgd.localLog("candidates: " + _.pluck(candidates, 'description'));
-                                            tgd.localLog(transferables);
-                                        }
-                                        swapItem = (swapItem.length > 0) ? swapItem[0] : _.filter(candidates, getFirstItem(sourceBucketIds, itemFound))[0];
-                                        /* if there is still no swapItem at this point I have to break the original rule the prevents duplicates*/
-                                        if (!swapItem) {
-                                            console.log("finding a swapItem from targetBucket");
-                                            swapItem = _.filter(transferables, getFirstItem(sourceBucketIds, itemFound))[0];
-                                        }
+                                        swapItem = getSwapItem(item, targetBucket, sourceBucketIds);
                                     }
                                     if (swapItem) {
                                         tgd.localLog("2.swapItem: " + swapItem.description);
@@ -882,7 +893,18 @@ tgd.Loadout.prototype = {
                                         swapIcon: ownerIcon
                                     };
                                 } else {
-                                    if (item.doEquip() === true) {
+                                    /* add logic here to check for doSwap: true */
+                                    console.log("clean move item", item);
+                                    if (item.doSwap == true) {
+                                        console.log("item manually requested to be swapped", item);
+                                        var swapItem = getSwapItem(item, targetBucket, sourceBucketIds);
+                                        return {
+                                            targetItem: item,
+                                            swapItem: swapItem,
+                                            actionState: 3,
+                                            description: "<%= item.description %> <%= app.activeText().loadouts_swap %> <%= swapItem.description %>"
+                                        };
+                                    } else if (item.doEquip() === true) {
                                         return {
                                             targetItem: item,
                                             actionState: 2,

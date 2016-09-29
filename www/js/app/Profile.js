@@ -1231,7 +1231,7 @@ Profile.prototype = {
             count++;
             if (count == highestSet.length) {
                 var msa = adhoc.transfer(character.id, true);
-                tgd.localLog(msa);
+                console.log("master swap array plan", adhoc, msa);
                 adhoc.swapItems(msa, character.id, function() {
                     $.toaster({
                         settings: {
@@ -1253,10 +1253,25 @@ Profile.prototype = {
             if (itemEquipped && itemEquipped._id && itemEquipped._id !== candidate._id) {
                 var message;
                 if ((type == "Light" && candidate.primaryStatValue() > itemEquipped.primaryStatValue()) || type != "Light") {
+                    var doSwap = character.id != "Vault";
+                    /* if it's not going to the Vault and there's only one slot free ensure it remains open */
+                    if (doSwap && character.get(candidate.bucketType).length >= 8) {
+                        /* Guns and Ghosts can freely be transferred around */
+                        if (tgd.DestinyWeaponPieces.indexOf(candidate.bucketType) > -1 || candidate.bucketType == "Ghost") {
+                            doSwap = true;
+                            /* Artifacts can be transferred around if it's the new Iron Lords ones (classType=3) */
+                        } else if (candidate.bucketType == "Artifact" && candidate.classType == 3) {
+                            doSwap = true;
+                            /* If the armor piece coming in (candidate) is the same class type as this character (two warlocks)  */
+                        } else if (tgd.DestinyArmorPieces.indexOf(candidate.bucketType) > -1 && tgd.DestinyClass[candidate.classType] == character.classType()) {
+                            doSwap = true;
+                        }
+                    }
                     adhoc.addUniqueItem({
                         id: candidate._id,
                         bucketType: candidate.bucketType,
-                        doEquip: true
+                        doEquip: true,
+                        doSwap: doSwap
                     });
                     message = candidate.bucketType + " can have a better item with " + candidate.description;
                     tgd.localLog(message);
