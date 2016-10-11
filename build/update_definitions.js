@@ -125,7 +125,11 @@ var neededFiles = [
 		delete item.acceptedItems;
 		delete item.unlockValueHash;
 		delete item.failureStrings;
+        delete item.sales;
 		return item;
+	}},
+    { table: "DestinyVendorDefinition", name: "questDefs", key: "hash", reduce: function(item){
+		return item.sales;
 	}},
 	{ table: "DestinyObjectiveDefinition", name: "objectiveDefs", key: "objectiveHash", reduce: function(item){
 		var obj = { objectiveHash: item.objectiveHash, completionValue: item.completionValue, displayDescription: item.displayDescription };
@@ -226,6 +230,17 @@ var extractData = function(callback){
 					console.log(fs.existsSync(dataPath) + " creating new path: " + dataPath);
 					fs.mkdirSync(dataPath);
 				}
+                global[set.name] = obj;
+                if ( set.name == "questDefs"){
+                    obj = _.reduce(obj, function(memo, entries){
+                            _.each(entries, function(q){
+                                if ( !_.has(global.itemDefs, q.itemHash) ){
+                                   memo[q.itemHash] = q.bucketHash;
+                                }
+                            });
+                        return memo;
+                    }, {});
+                }
 				fs.writeFileSync(dataPath + filename, "_" + set.name + "=" + JSON.stringify(obj) + ";");
 				//console.log("2.count " + count);
 				if (count == 0){
