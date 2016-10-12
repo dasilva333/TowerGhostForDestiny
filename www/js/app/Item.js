@@ -169,9 +169,9 @@ Item.prototype = {
         } else if (item.id in _itemDefs) {
             item.itemHash = item.id;
             info = _itemDefs[item.id];
-        } else if (item.itemHash in _questsDefs) {
+        } else if (item.itemHash in _questDefs) {
             info = {
-                bucketTypeHash: _questsDefs[item.itemHash],
+                bucketTypeHash: _questDefs[item.itemHash],
                 itemName: "Classified Quest",
                 tierTypeName: "Common",
                 icon: "/img/misc/missing_icon.png",
@@ -251,9 +251,9 @@ Item.prototype = {
         var info = {};
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
-        } else if (item.itemHash in _questsDefs) {
+        } else if (item.itemHash in _questDefs) {
             info = {
-                bucketTypeHash: _questsDefs[item.itemHash],
+                bucketTypeHash: _questDefs[item.itemHash],
                 itemName: "Classified Quest",
                 tierTypeName: "Common",
                 icon: "/img/misc/missing_icon.png",
