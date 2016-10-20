@@ -97,6 +97,7 @@ var neededFiles = [
 		obj.nodes = _.map(item.nodes, function(node){
 			return {
 				nodeHash: node.nodeHash,
+                column: node.column,
 				steps: _.map(node.steps, function(step){
 					return {
 						icon: step.icon,

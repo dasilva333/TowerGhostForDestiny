@@ -277,6 +277,7 @@ Item.prototype = {
         self.isEquipped(item.isEquipped);
         self.locked(item.locked);
         self.perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
+        self.perkTree = self.createPerkTree(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
         self.statPerks = _.where(self.perks, {
             isStat: true
         });
@@ -439,6 +440,26 @@ Item.prototype = {
             parsedStats = stats;
         }
         return parsedStats;
+    },
+    createPerkTree: function(id, talentGridHash, perks, nodes, itemInstanceId) {
+        var talentGrid = _talentGridDefs[talentGridHash];
+        var perkTree = _.reduce(nodes, function(memo, node) {
+            var tgNode = _.findWhere(talentGrid.nodes, {
+                nodeHash: node.nodeHash
+            })
+            var talent = tgNode.steps[node.stepIndex];
+            if (talent && !node.hidden) {
+                talent.node = node;
+                var level = tgNode.column;
+                if (!_.has(memo, level)) {
+                    memo[level] = [];
+                }
+                memo[level].push(talent);
+            }
+            return memo;
+        }, []);
+        //console.log("perkTree", perkTree);
+        return perkTree;
     },
     parsePerks: function(id, talentGridHash, perks, nodes, itemInstanceId) {
         var parsedPerks = [];
@@ -1591,6 +1612,18 @@ Item.prototype = {
                 self.locked(newState);
             }
         });
+    },
+    openPerkTree: function() {
+        (new tgd.koDialog({
+            templateName: 'itemPerkTreeTemplate',
+            viewModel: this,
+            buttons: [{
+                label: app.activeText().cancel,
+                action: function(dialog) {
+                    dialog.close();
+                }
+            }]
+        })).title("Perks for " + this.description).show(true);
     },
     openInDestinyTracker: function() {
         window.open("http://db.destinytracker.com/items/" + this.id, tgd.openTabAs);

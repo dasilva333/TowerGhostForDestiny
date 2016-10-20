@@ -429,3 +429,14 @@ input
 }
 /* used by the settings pop up */
 .settingsContainer hr { padding: 1px; margin: 1px }
+
+/* used by itemPerkTree template */
+
+.perkTree .perkColumn  { border-bottom: 1px solid white; padding-top: 10px; }
+.perkTree .perkColumn .row { padding: 3px 0px; }
+.perkTree h5 {
+    margin-bottom: 2px;
+    margin-top: 0px;
+    font-weight: bold;
+}
+.perkTree img { padding: 2px; width: 48px; }
