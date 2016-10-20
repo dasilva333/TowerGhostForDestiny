@@ -140,6 +140,9 @@ var Item = function(model, profile) {
         var maxBonusPoints = self.getValue("MaxBonusPoints");
         var futureBaseCSP = self.futureBaseCSP();
         var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType];
+        if (self.id == "2672107540") {
+            maxBaseCSP = 286;
+        }
         if (futureBaseCSP > maxBonusPoints) {
             if (self._id == "6917529080710062428") {
                 console.log("reducing maxBaseCSP by ", maxBonusPoints)
