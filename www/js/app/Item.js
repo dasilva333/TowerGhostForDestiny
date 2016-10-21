@@ -445,22 +445,32 @@ Item.prototype = {
         return parsedStats;
     },
     createPerkTree: function(id, talentGridHash, perks, nodes, itemInstanceId) {
+        var self = this;
         var talentGrid = _talentGridDefs[talentGridHash];
+        self.dtrUrl = [];
         var perkTree = _.reduce(nodes, function(memo, node) {
             var tgNode = _.findWhere(talentGrid.nodes, {
                 nodeHash: node.nodeHash
-            })
+            });
+            var level = tgNode.column;
+            var hash = node.nodeHash.toString(16);
+            if (hash.length > 1) hash += ".";
+            hash += node.stepIndex.toString(16);
+            if (node.isActivated) hash += "o";
+            self.dtrUrl.push(hash);
             var talent = tgNode.steps[node.stepIndex];
             if (talent && !node.hidden) {
                 talent.node = node;
-                var level = tgNode.column;
                 if (!_.has(memo, level)) {
                     memo[level] = [];
                 }
-                memo[level].push(talent);
+                if (_.pluck(memo[level], 'nodeStepHash').indexOf(talent.nodeStepHash) == -1) {
+                    memo[level].push(talent);
+                }
             }
             return memo;
         }, []);
+        self.dtrUrl = self.dtrUrl.join(";");
         //console.log("perkTree", perkTree);
         return perkTree;
     },
@@ -1629,7 +1639,7 @@ Item.prototype = {
         })).title("Perks for " + this.description).show(true);
     },
     openInDestinyTracker: function() {
-        window.open("http://db.destinytracker.com/items/" + this.id, tgd.openTabAs);
+        window.open("http://db.destinytracker.com/items/" + this.id + "#" + this.dtrUrl, tgd.openTabAs);
     },
     openInArmory: function() {
         window.open("https://www.bungie.net/en/armory/Detail?type=item&item=" + this.id, tgd.openTabAs);

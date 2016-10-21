@@ -101,6 +101,7 @@ var neededFiles = [
 				steps: _.map(node.steps, function(step){
 					return {
 						icon: step.icon,
+                        nodeStepHash: step.nodeStepHash,
 						nodeStepName: step.nodeStepName,
 						nodeStepDescription: step.nodeStepDescription,
 						perkHashes: step.perkHashes,
