@@ -1,0 +1,15 @@
+<div id="container_<%= id %>" class="form-group">
+    <div data-bind="foreach: { data: perkTree, as: 'column' }" class="row perkTree">
+        <div data-bind="foreach: { data: column, as: 'perk' }" class="col-xs-24 perkColumn"> <!--, css: 'col-xs-' + Math.floor(tgd.bootstrapGridColumns / $parent.perkTree.length)-->
+            <div class="row">
+                <div class="col-xs-5 text-center">
+                    <img class="img-circle" data-bind="itemImageHandler: 'data/' + perk.icon, attr: { title: perk.nodeStepName }, style: { backgroundColor: perk.node.isActivated ? 'cadetblue' : '' }">
+                </div>
+                <div class="col-xs-19">
+                    <h5 data-bind="text: perk.nodeStepName"></h5>
+                    <p data-bind="text: perk.nodeStepDescription"></p>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>

@@ -140,6 +140,9 @@ var Item = function(model, profile) {
         var maxBonusPoints = self.getValue("MaxBonusPoints");
         var futureBaseCSP = self.futureBaseCSP();
         var maxBaseCSP = tgd.DestinyMaxCSP[self.bucketType];
+        if (self.id == "2672107540") {
+            maxBaseCSP = 286;
+        }
         if (futureBaseCSP > maxBonusPoints) {
             if (self._id == "6917529080710062428") {
                 console.log("reducing maxBaseCSP by ", maxBonusPoints)
@@ -169,6 +172,14 @@ Item.prototype = {
         } else if (item.id in _itemDefs) {
             item.itemHash = item.id;
             info = _itemDefs[item.id];
+        } else if (item.itemHash in _questDefs) {
+            info = {
+                bucketTypeHash: _questDefs[item.itemHash],
+                itemName: "Classified Quest",
+                tierTypeName: "Common",
+                icon: "/img/misc/missing_icon.png",
+                itemTypeName: "Quests"
+            };
         } else {
             /* Classified Items */
             info = {
@@ -246,6 +257,14 @@ Item.prototype = {
         var info = {};
         if (item.itemHash in _itemDefs) {
             info = _itemDefs[item.itemHash];
+        } else if (item.itemHash in _questDefs) {
+            info = {
+                bucketTypeHash: _questDefs[item.itemHash],
+                itemName: "Classified Quest",
+                tierTypeName: "Common",
+                icon: "/img/misc/missing_icon.png",
+                itemTypeName: "Quests"
+            };
         } else {
             /* Classified Items */
             info = {
@@ -267,6 +286,7 @@ Item.prototype = {
         self.isEquipped(item.isEquipped);
         self.locked(item.locked);
         self.perks = self.parsePerks(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
+        self.perkTree = self.createPerkTree(item.id, item.talentGridHash, item.perks, item.nodes, item.itemInstanceId);
         self.statPerks = _.where(self.perks, {
             isStat: true
         });
@@ -429,6 +449,26 @@ Item.prototype = {
             parsedStats = stats;
         }
         return parsedStats;
+    },
+    createPerkTree: function(id, talentGridHash, perks, nodes, itemInstanceId) {
+        var talentGrid = _talentGridDefs[talentGridHash];
+        var perkTree = _.reduce(nodes, function(memo, node) {
+            var tgNode = _.findWhere(talentGrid.nodes, {
+                nodeHash: node.nodeHash
+            })
+            var talent = tgNode.steps[node.stepIndex];
+            if (talent && !node.hidden) {
+                talent.node = node;
+                var level = tgNode.column;
+                if (!_.has(memo, level)) {
+                    memo[level] = [];
+                }
+                memo[level].push(talent);
+            }
+            return memo;
+        }, []);
+        //console.log("perkTree", perkTree);
+        return perkTree;
     },
     parsePerks: function(id, talentGridHash, perks, nodes, itemInstanceId) {
         var parsedPerks = [];
@@ -1581,6 +1621,18 @@ Item.prototype = {
                 self.locked(newState);
             }
         });
+    },
+    openPerkTree: function() {
+        (new tgd.koDialog({
+            templateName: 'itemPerkTreeTemplate',
+            viewModel: this,
+            buttons: [{
+                label: app.activeText().cancel,
+                action: function(dialog) {
+                    dialog.close();
+                }
+            }]
+        })).title("Perks for " + this.description).show(true);
     },
     openInDestinyTracker: function() {
         window.open("http://db.destinytracker.com/items/" + this.id, tgd.openTabAs);
