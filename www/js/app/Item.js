@@ -216,7 +216,7 @@ Item.prototype = {
             }
             $.extend(self, {
                 id: item.itemHash,
-                href: "https://destinydb.com/items/" + item.itemHash,
+                href: "http://destinydb.com/items/" + item.itemHash,
                 _id: item.itemInstanceId,
                 characterId: ko.observable(self.character.id),
                 isEquipped: ko.observable(),
@@ -459,14 +459,16 @@ Item.prototype = {
                 nodeHash: node.nodeHash
             });
             var level = tgNode.column;
-            var hash = node.nodeHash.toString(16);
-            if (hash.length > 1) hash += ".";
-            hash += node.stepIndex.toString(16);
-            if (node.isActivated) hash += "o";
-            self.dtrUrl.push(hash);
+            var dtrHash = node.nodeHash.toString(16);
+            var stepIndex = node.stepIndex.toString(16);
+            if (dtrHash.length > 1) dtrHash += ".";
+            dtrHash += stepIndex;
+            if (node.isActivated) dtrHash += "o";
+            self.dtrUrl.push(dtrHash);
             var talent = tgNode.steps[node.stepIndex];
             if (talent && !node.hidden) {
                 talent.node = node;
+                talent.column = level;
                 if (!_.has(memo, level)) {
                     memo[level] = [];
                 }
@@ -476,8 +478,18 @@ Item.prototype = {
             }
             return memo;
         }, []);
+        self.ddbUrl = _.reduce(perkTree, function(memo, p, i) {
+            if (i > 0) {
+                _.each(p, function(n, ii) {
+                    if (n.node.isActivated) {
+                        memo.push([n.column, Math.max(ii - 1, 0), n.node.stepIndex + 1].join("-"));
+                    }
+                });
+            }
+            return memo;
+        }, []).join(";");
+        self.href = self.href + "#calc;" + self.ddbUrl;
         self.dtrUrl = self.dtrUrl.join(";");
-        //console.log("perkTree", perkTree);
         return perkTree;
     },
     parsePerks: function(id, talentGridHash, perks, nodes, itemInstanceId) {
