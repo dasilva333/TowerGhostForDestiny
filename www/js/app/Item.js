@@ -482,13 +482,15 @@ Item.prototype = {
             if (i > 0) {
                 _.each(p, function(n, ii) {
                     if (n.node.isActivated) {
-                        memo.push([n.column, Math.max(ii - 1, 0), n.node.stepIndex + 1].join("-"));
+                        memo.push([n.column, ii, n.node.stepIndex + 1].join("-"));
                     }
                 });
             }
             return memo;
         }, []).join(";");
-        self.href = self.href + "#calc;" + self.ddbUrl;
+        if (self.href.indexOf("#calc") == -1) {
+            self.href = self.href + "#calc;" + self.ddbUrl;
+        }
         self.dtrUrl = self.dtrUrl.join(";");
         return perkTree;
     },
