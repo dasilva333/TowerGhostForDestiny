@@ -396,6 +396,21 @@ tgd.bungie = (function(cookieString, complete) {
                 self.requestCookieCB(event.detail);
             });
         }
+        if (isChrome && chrome && chrome.webRequest) {
+            chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
+                for (var i = 0; i < details.requestHeaders.length; ++i) {
+                    if (details.requestHeaders[i].name === 'Origin') {
+                        details.requestHeaders.splice(i, 1);
+                        break;
+                    }
+                }
+                return {
+                    requestHeaders: details.requestHeaders
+                };
+            }, {
+                urls: ["https://*.bungie.net/*"]
+            }, ["blocking", "requestHeaders"]);
+        }
         tgd.localLog("bungie.init");
         if (isStaticBrowser) {
             complete("");
