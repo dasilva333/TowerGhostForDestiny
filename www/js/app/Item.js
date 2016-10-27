@@ -211,9 +211,6 @@ Item.prototype = {
             }
             info.icon = (info.icon === "") ? "/img/misc/missing_icon.png" : info.icon;
             bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
-            if (item.itemHash == "1000254847" || item.itemHash == "2391626504" || item.itemHash == "1000254841") {
-                bucketType = "Quests";
-            }
             $.extend(self, {
                 id: item.itemHash,
                 href: "http://destinydb.com/items/" + item.itemHash,
@@ -278,9 +275,6 @@ Item.prototype = {
             tgd.localLog(item.itemHash);
         }
         var bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
-        if (item.itemHash == "1000254847" || item.itemHash == "2391626504" || item.itemHash == "1000254841") {
-            bucketType = "Quests";
-        }
         var primaryStat = self.parsePrimaryStat(item, bucketType);
         self.primaryStat(primaryStat);
         self.isEquipped(item.isEquipped);
