@@ -4,39 +4,60 @@ tgd.bungie = (function(complete) {
     var _token,
         id = 0,
         active,
-        bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10702",
         domain = 'bungie.net',
         url = 'https://www.' + domain + '/',
-        apikey = '0eec3b0ba89c428889317df467094570'; //this one is linked to Tower Ghost for Destiny
+        bungieAuthURL, apikey;
 
+    if (isChrome) {
+        bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10702";
+        apikey = '0eec3b0ba89c428889317df467094570';
+    } else if (isIOS) {
+        bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10718";
+        apikey = '58f06666813243f082b5ffff307b34fd';
+    }
     this.bungled = "";
     this.systemIds = {};
     this.requests = {};
     this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
     this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
 
+    this.loginWithCode = function(code) {
+        self.getAccessTokensFromCode(code, function() {
+            self.user(function(user) {
+                app.activeUser(user);
+                console.log("finished loading");
+            });
+        });
+    };
+
     this.openBungieWindow = function(type) {
         return function() {
             window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
-            // Create IE + others compatible event handler
-            var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-            var eventer = window[eventMethod];
-            var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-            // Listen to message from child window
-            eventer(messageEvent, function(e) {
-
-                var code = e.data;
-
-                console.log("code", code);
-
-                self.getAccessTokensFromCode(code, function() {
-                    self.user(function(user) {
-                        app.activeUser(user);
-                        console.log("finished loading");
-                    });
+            if (isMobile) {
+                ref.addEventListener('loadstop', function(event) {
+                    if (event.url.match("oauth.cfm")) {
+                        var code = event.url.split("=")[1];
+                        console.log("code " + code, event.url);
+                        self.loginWithCode(code);
+                        ref.close();
+                    }
                 });
+            } else {
+                // Create IE + others compatible event handler
+                var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                var eventer = window[eventMethod];
+                var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+                // Listen to message from child window
+                eventer(messageEvent, function(e) {
 
-            }, false);
+                    var code = e.data;
+
+                    console.log("code", code);
+
+                    self.loginWithCode(code);
+
+                }, false);
+            }
         };
     };
 
@@ -113,7 +134,9 @@ tgd.bungie = (function(complete) {
 
     this.processTokens = function(result) {
         /* if refresh token or access token is invalid this needs to be determined  and set the values to blank */
-
+        if (result && result.ErrorCode && result.ErrorCode != 1) {
+            BootstrapDialog.alert(result.Message + " - " + JSON.stringify(result.MessageData))
+        }
         if (result && result.accessToken && result.accessToken.value) {
             self.accessToken("Bearer " + result.accessToken.value);
         }
@@ -127,7 +150,7 @@ tgd.bungie = (function(complete) {
             route: "/App/GetAccessTokensFromRefreshToken/",
             method: "POST",
             payload: {
-                refreshToken: self.refreshToken
+                refreshToken: self.refreshToken()
             },
             complete: function(result) {
                 self.processTokens(result);
