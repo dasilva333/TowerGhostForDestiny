@@ -1,72 +1,66 @@
-tgd.bungie = (function(cookieString, complete) {
+tgd.bungie = (function(complete) {
     var self = this;
 
     var _token,
         id = 0,
-        active,
         domain = 'bungie.net',
         url = 'https://www.' + domain + '/',
-        apikey = '5cae9cdee67a42848025223b4e61f929'; //this one is linked to dasilva333
+        bungieAuthURL, apikey;
 
-    this.bungled = "";
-    this.systemIds = {};
-    this.requests = {};
-
-    // private methods
-    function _getAllCookies(callback) {
-        if (chrome && chrome.cookies && chrome.cookies.getAll) {
-            chrome.cookies.getAll({
-                domain: '.' + domain
-            }, function() {
-                callback.apply(null, arguments);
-            });
-        } else if (isNWJS) {
-            require("nw.gui").Window.get().cookies.getAll({}, function(a, b) {
-                callback.apply(null, arguments);
-            });
-        } else {
-            callback([]);
-            return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
-        }
+    if (isChrome) {
+        bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10702";
+        apikey = '0eec3b0ba89c428889317df467094570';
+    } else if (isIOS) {
+        bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10718";
+        apikey = '58f06666813243f082b5ffff307b34fd';
     }
 
-    function readCookie(cname) {
-        //tgd.localLog("trying to read cookie passed " + savedCookie);
-        var name = cname + "=";
-        var ca = (cookieString || "").toString().split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
-        }
-        //tgd.localLog("found no match");
-        return "";
-    }
+    this.savedUsers = ko.observableArray();
+    this.activeUser = ko.observable();
+    this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
+    this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
 
-    this.requestCookie = function(callback) {
-        tgd.localLog("sending request-cookie-from-ps");
-        var event = new CustomEvent("request-cookie-from-ps", {});
-        window.dispatchEvent(event);
-        self.requestCookieCB = callback;
+    this.loginWithCode = function(code, cb) {
+        self.getAccessTokensFromCode(code, function(tokens) {
+            self.user(function(user) {
+                self.savedUsers.push({
+                    user: user,
+                    tokens: tokens,
+                    isDefault: true
+                });
+                self.activeUser(user);
+                if (cb) cb(user);
+            });
+        });
     };
 
-    this.getCookie = function(name, callback) {
-        if (isChrome) {
-            _getAllCookies(function(cookies) {
-                var c = null;
-                for (var i = 0, l = cookies.length; i < l; ++i) {
-                    if (cookies[i].name === name) {
-                        c = cookies[i];
-                        break;
+    this.openBungieWindow = function(type) {
+        return function(cb) {
+
+            if (isMobile) {
+                /*ref.addEventListener('loadstop', function(event) {
+                    if (event.url.match("oauth.cfm")) {
+                        var code = event.url.split("=")[1];
+                        ref.close();
+                        self.loginWithCode(code, cb);
                     }
-                }
-                callback(c ? c.value : null);
-            });
-        } else if (isFirefox) {
-            self.requestCookie(callback);
-        } else {
-            callback(readCookie('bungled'));
-        }
+                });*/
+                window.open(bungieAuthURL, '_system');
+            } else {
+                window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
+                // Create IE + others compatible event handler
+                var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+                var eventer = window[eventMethod];
+                var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+                // Listen to message from child window
+                eventer(messageEvent, function(e) {
+                    var code = e.data;
+
+                    self.loginWithCode(code, cb);
+
+                }, false);
+            }
+        };
     };
 
     this.retryRequest = function(opts) {
@@ -97,25 +91,16 @@ tgd.bungie = (function(cookieString, complete) {
         if (opts.payload) {
             data = JSON.stringify(opts.payload);
         }
-
+        var headers = {
+            'X-API-Key': apikey
+        };
+        if (self.accessToken() != "") {
+            headers["Authorization"] = self.accessToken();
+        }
         $.ajax({
             url: opts.route,
             type: opts.method,
-            headers: {
-                'X-API-Key': apikey,
-                'x-csrf': self.bungled
-            },
-            beforeSend: function(xhr) {
-                /* this cookie needs to be trimmed in order to work properly on iPad (https://forum.ionicframework.com/t/solved-ios9-fails-with-setrequestheader-native-with-custom-headers-in-http-service/32399)*/
-                if (isMobile && typeof cookieString == "string") {
-                    _.each(cookieString.split(";"), function(cookie) {
-                        try {
-                            var trimCookie = $.trim(cookie);
-                            xhr.setRequestHeader('Cookie', trimCookie);
-                        } catch (e) {}
-                    });
-                }
-            },
+            headers: headers,
             data: data,
             complete: function(xhr, status) {
                 tgd.localLog("ajax complete");
@@ -132,7 +117,20 @@ tgd.bungie = (function(cookieString, complete) {
                         var obj = response;
                         if (typeof obj == "object" && "Response" in obj)
                             obj = response.Response;
-                        opts.complete(obj, response);
+                        console.log("obj", obj);
+                        if (obj && obj.ErrorCode && obj.ErrorCode == 99) {
+                            self.getAccessTokensFromRefreshToken(function() {
+                                if (self.accessToken() == "") {
+                                    self.openBungieWindow(function() {
+                                        self.retryRequest(opts);
+                                    })();
+                                } else {
+                                    self.retryRequest(opts);
+                                }
+                            });
+                        } else {
+                            opts.complete(obj, response);
+                        }
                     }
                 } else {
                     self.retryRequest(opts);
@@ -141,9 +139,60 @@ tgd.bungie = (function(cookieString, complete) {
         });
     };
 
+    this.processTokens = function(result) {
+        /* if refresh token or access token is invalid this needs to be determined  and set the values to blank */
+        var tokens = {};
+        if (result && result.ErrorCode && result.ErrorCode != 1) {
+            BootstrapDialog.alert(result.Message + " - " + JSON.stringify(result.MessageData))
+        }
+        if (result && result.accessToken && result.accessToken.value) {
+            tokens.accessToken = "Bearer " + result.accessToken.value;
+            self.accessToken(tokens.accessToken);
+        }
+        if (result && result.refreshToken && result.refreshToken.value) {
+            tokens.refreshToken = result.refreshToken.value;
+            self.refreshToken(tokens.refreshToken);
+        }
+        return tokens;
+    }
+
+    this.getAccessTokensFromRefreshToken = function(callback) {
+        self.request({
+            route: "/App/GetAccessTokensFromRefreshToken/",
+            method: "POST",
+            payload: {
+                refreshToken: self.refreshToken()
+            },
+            complete: function(result) {
+                if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107)) {
+                    self.accessToken("");
+                    self.refreshToken("");
+                    callback();
+                } else {
+                    self.processTokens(result);
+                    callback();
+                }
+            }
+        });
+    };
+
+    this.getAccessTokensFromCode = function(code, callback) {
+        self.request({
+            route: "/App/GetAccessTokensFromCode/",
+            method: "POST",
+            payload: {
+                code: code
+            },
+            complete: function(result) {
+                var tokens = self.processTokens(result);
+                callback(tokens);
+            }
+        });
+    };
+
     this.getVendorData = function(characterId, vendorId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
+            route: '/Destiny/' + self.active.type +
                 '/MyAccount/' +
                 '/Character/' + characterId +
                 '/Vendor/' + vendorId + '/Metadata/',
@@ -154,49 +203,21 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.vault = function(callback) {
         self.request({
-            route: '/Destiny/' + active.type + '/MyAccount/Vault/',
+            route: '/Destiny/' + self.active.type + '/MyAccount/Vault/',
             method: 'GET',
             complete: callback
         });
     };
 
-    this.logout = function(callback) {
-        self.request({
-            route: url + 'en/User/SignOut',
-            method: 'GET',
-            complete: callback
+    this.logout = function() {
+        _.each(self.savedUsers(), function(u) {
+            u.isDefault = false;
         });
-    };
-
-    this.login = function(callback) {
-        tgd.localLog("bungie.login");
-        self.request({
-            route: url,
-            method: "GET",
-            complete: callback
-        });
+        self.activeUser({});
     };
 
     this.getUrl = function() {
         return url;
-    };
-
-    this.setsystem = function(type) {
-        active = self.systemIds.xbl;
-        if (type === 'PSN')
-            active = self.systemIds.psn;
-    };
-
-    this.getMemberId = function() {
-        return membershipId;
-    };
-
-    this.gamertag = function() {
-        return active ? active.id : null;
-    };
-
-    this.system = function() {
-        return systemIds;
     };
 
     this.user = function(callback) {
@@ -216,31 +237,38 @@ tgd.bungie = (function(cookieString, complete) {
                     });
                     return;
                 }
-
-                self.systemIds.xbl = {
-                    id: res.gamerTag,
-                    type: 1
+                var user = {};
+                user.user = {
+                    displayName: res.displayName,
+                    membershipId: res.membershipId
                 };
-                self.systemIds.psn = {
-                    id: res.psnId,
-                    type: 2
-                };
+                user.systems = [];
 
-                active = self.systemIds.xbl;
-
-                if (res.psnId)
-                    active = self.systemIds.psn;
-
-                callback(res);
+                if (!_.isEmpty(res.gamerTag)) {
+                    user.systems.push({
+                        system: 'xbl',
+                        id: res.gamerTag,
+                        type: 1,
+                        preferred: false
+                    });
+                }
+                if (!_.isEmpty(res.psnId)) {
+                    user.systems.push({
+                        system: 'psn',
+                        id: res.psnId,
+                        type: 2,
+                        preferred: false
+                    });
+                }
+                user.systems[0].preferred = true;
+                callback(user);
             }
         });
     };
 
     this.account = function(callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
-                '/',
+            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/',
             method: 'GET',
             complete: callback
         });
@@ -251,7 +279,7 @@ tgd.bungie = (function(cookieString, complete) {
             route: '/Destiny/SetLockState/',
             method: 'POST',
             payload: {
-                membershipType: active.type,
+                membershipType: self.active.type,
                 characterId: characterId,
                 itemId: itemId,
                 state: state
@@ -266,7 +294,7 @@ tgd.bungie = (function(cookieString, complete) {
             method: 'POST',
             payload: {
                 characterId: characterId,
-                membershipType: active.type,
+                membershipType: self.active.type,
                 itemId: itemId,
                 itemReferenceHash: itemHash,
                 stackSize: amount,
@@ -281,7 +309,7 @@ tgd.bungie = (function(cookieString, complete) {
             route: '/Destiny/EquipItem/',
             method: 'POST',
             payload: {
-                membershipType: active.type,
+                membershipType: self.active.type,
                 characterId: characterId,
                 itemId: itemId
             },
@@ -291,9 +319,7 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.getAccountSummary = function(callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
-                '/Summary/',
+            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/Summary/',
             method: 'GET',
             complete: callback
         });
@@ -301,8 +327,8 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.getItemDetail = function(characterId, instanceId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership +
                 '/Character/' + characterId +
                 '/Inventory/' + instanceId + '/',
             method: 'GET',
@@ -311,11 +337,11 @@ tgd.bungie = (function(cookieString, complete) {
     };
 
     this.inventory = function(characterId, callback) {
+        var system = _.findWhere(self.activeUser().user.systems, {
+            preferred: true
+        });
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
-                '/Character/' + characterId +
-                '/Inventory/',
+            route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Character/' + characterId + '/Inventory/',
             method: 'GET',
             complete: callback
         });
@@ -323,46 +349,43 @@ tgd.bungie = (function(cookieString, complete) {
 
     this.character = function(characterId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
-                '/Character/' + characterId + '/',
+            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
         });
     };
 
     this.search = function(activeSystem, callback) {
-        this.setsystem(activeSystem);
-        if (active && active.type) {
-            if (typeof active.membership == "undefined") {
-                self.request({
-                    route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
-                    method: 'GET',
-                    complete: function(membership) {
-                        if (membership > 0) {
-                            //tgd.localLog('error finding bungie account!', membership);
-                            active.membership = membership;
-                            self.account(callback);
-                        } else {
-                            callback({
-                                error: true
-                            });
-                            return;
-                        }
-
+        var system = _.findWhere(self.activeUser().user.systems, {
+            preferred: true
+        });
+        if (system && system.membership) {
+            self.account(callback);
+        } else {
+            self.request({
+                route: '/Destiny/' + system.type + '/Stats/GetMembershipIdByDisplayName/' + system.id + '/',
+                method: 'GET',
+                complete: function(membership) {
+                    if (membership > 0) {
+                        system.membership = membership;
+                        self.savedUsers(self.savedUsers());
+                        self.account(callback);
+                    } else {
+                        callback({
+                            error: true
+                        });
                     }
-                });
-            } else {
-                self.account(callback);
-            }
+                }
+            });
         }
     };
 
     this.account = function(callback) {
-        tgd.localLog(active.type + " log request to " + JSON.stringify(active.membership));
+        var system = _.findWhere(self.activeUser().user.systems, {
+            preferred: true
+        });
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership + '/',
+            route: '/Destiny/' + system.type + '/Account/' + system.membership + '/',
             method: 'GET',
             complete: callback
         });
@@ -390,38 +413,43 @@ tgd.bungie = (function(cookieString, complete) {
     };
 
     this.init = function() {
-        if (isFirefox) {
-            window.addEventListener("response-cookie-from-cs", function(event) {
-                tgd.localLog("response-cookie-from-cs: " + event.detail);
-                self.requestCookieCB(event.detail);
+        var usersCache = new tgd.StoreObj("savedUsers");
+        self.savedUsers.subscribe(function(users) {
+            usersCache.write(JSON.stringify(users));
+        });
+        self.activeUser.subscribe(function(activeUser) {
+            self.accessToken(activeUser && activeUser.tokens ? activeUser.tokens.accessToken : "");
+            self.refreshToken(activeUser && activeUser.tokens ? activeUser.tokens.refreshToken : "");
+            //app.activeUser(activeUser);
+        });
+        var savedUsers = usersCache.read();
+        if (!_.isEmpty(savedUsers)) {
+            self.savedUsers(JSON.parse(savedUsers));
+        }
+        if ($.isPlainObject(self.savedUsers())) {
+            self.savedUsers([self.savedUsers()]);
+        }
+        var defaultUser = _.findWhere(self.savedUsers(), {
+            isDefault: true
+        });
+        console.log("defaultUser", defaultUser);
+        if (tgd && tgd.bungieCode) {
+            self.loginWithCode(tgd.bungieCode, complete);
+        } else if (_.isEmpty(self.savedUsers())) {
+            complete({
+                "code": 99,
+                "error": "Please sign-in to continue."
             });
-        }
-        if (isChrome && chrome && chrome.webRequest) {
-            chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
-                for (var i = 0; i < details.requestHeaders.length; ++i) {
-                    if (details.requestHeaders[i].name === 'Origin') {
-                        details.requestHeaders.splice(i, 1);
-                        break;
-                    }
-                }
-                return {
-                    requestHeaders: details.requestHeaders
-                };
-            }, {
-                urls: ["https://*.bungie.net/*"]
-            }, ["blocking", "requestHeaders"]);
-        }
-        tgd.localLog("bungie.init");
-        if (isStaticBrowser) {
-            complete("");
+        } else if (defaultUser) {
+            console.log("using default", complete.toString());
+            self.activeUser(defaultUser);
+            self.user(function(bngUser) {
+                complete(bngUser);
+            });
         } else {
-            self.login(function() {
-                tgd.localLog("bungie.login.complete, now getCookie");
-                self.getCookie('bungled', function(token) {
-                    tgd.localLog("bungied started with token " + token);
-                    self.bungled = token;
-                    complete(token);
-                });
+            complete({
+                "code": 999,
+                "users": self.savedUsers()
             });
         }
     };

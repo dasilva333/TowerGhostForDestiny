@@ -297,13 +297,16 @@ Profile.prototype = {
                 var newItems = _.filter(app.bungie.flattenItemArray(results.data.buckets), self.reloadBucketFilter(buckets));
                 self.addItems(newItems, buckets);
                 done();
+            } else if (results && results.data && results.data.items) {
+                var newItems = _.filter(results.data.items, self.reloadBucketFilter(buckets));
+                self.addItems(newItems, buckets);
+                done();
             } else {
                 if (results && results.ErrorCode && results.ErrorCode == 99) {
                     done();
                     return BootstrapDialog.alert(results.Message);
                 } else {
                     done();
-                    app.refresh();
                     return BootstrapDialog.alert("Code 20: " + app.activeText().error_loading_inventory + JSON.stringify(response));
                 }
             }
