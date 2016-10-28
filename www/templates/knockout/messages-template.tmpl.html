@@ -75,15 +75,8 @@
                     </div>
                     <div class="panel-body">
                         <p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
-                        <div class="btn-padding">
-                            <div class="form-group">
-                                <a data-bind="fastclick:$root.bungie.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
-                                    <img src="assets/xbox_live.png" /> Xbox Live</a>
-                            </div>
-                            <div class="form-group">
-                                <a data-bind="fastclick:$root.bungie.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
-                                    <img src="assets/playstation.png"> Playstation Network</a>
-                            </div>
+                        <div class="form-group">
+                            <a data-bind="fastclick:$root.bungie.openBungieWindow()" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">Bungie.net</a>
                         </div>
                         <p data-bind="text: $root.activeText().login_help">Please wait for the login window to auto close as TGD prepares your information.</p>
                     </div>

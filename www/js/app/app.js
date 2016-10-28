@@ -1043,7 +1043,7 @@ var app = function() {
     };
 
     this.refresh = function() {
-        if (self.bungie.gamertag()) {
+        /*if (self.bungie.gamertag()) {
             tgd.autoRefreshTime = (new Date()).getTime();
             var count = 0,
                 finish = function() {
@@ -1075,7 +1075,7 @@ var app = function() {
                     tgd.localLog(result);
                 }
             });
-        }
+        }*/
     };
 
     this.refreshHandler = function() {
@@ -2159,8 +2159,8 @@ var app = function() {
                 return false;
             });
         }
-        self.activeUser.subscribe(function(user){
-            if (_.has(user,'user')) {
+        self.activeUser.subscribe(function(user) {
+            if (_.has(user, 'user')) {
                 self.search();
             }
         });

@@ -30,7 +30,10 @@ tgd.bungie = (function(complete) {
                 console.log("code", code);
 
                 self.getAccessTokensFromCode(code, function() {
-                    console.log("finished loading");
+                    self.user(function(user) {
+                        app.activeUser(user);
+                        console.log("finished loading");
+                    });
                 });
 
             }, false);
@@ -98,7 +101,7 @@ tgd.bungie = (function(complete) {
                         } else {
                             opts.complete(obj, response);
                         }                        
-                        */                            
+                        */
                         opts.complete(obj, response);
                     }
                 } else {
@@ -108,18 +111,18 @@ tgd.bungie = (function(complete) {
         });
     };
 
-    this.processTokens = function(result){
+    this.processTokens = function(result) {
         /* if refresh token or access token is invalid this needs to be determined  and set the values to blank */
-        
-        if ( result && result.accessToken && result.accessToken.value ){
+
+        if (result && result.accessToken && result.accessToken.value) {
             self.accessToken("Bearer " + result.accessToken.value);
         }
-        if ( result && result.refreshToken && result.refreshToken.value ){
+        if (result && result.refreshToken && result.refreshToken.value) {
             self.refreshToken(result.refreshToken.value);
         }
     }
-    
-    this.getAccessTokensFromRefreshToken = function(callback){
+
+    this.getAccessTokensFromRefreshToken = function(callback) {
         self.request({
             route: "/App/GetAccessTokensFromRefreshToken/",
             method: "POST",
@@ -128,7 +131,7 @@ tgd.bungie = (function(complete) {
             },
             complete: function(result) {
                 self.processTokens(result);
-                callback();                   
+                callback();
             }
         });
     };
@@ -142,7 +145,7 @@ tgd.bungie = (function(complete) {
             },
             complete: function(result) {
                 self.processTokens(result);
-                callback();                
+                callback();
             }
         });
     };
@@ -172,7 +175,7 @@ tgd.bungie = (function(complete) {
             method: 'GET',
             complete: callback
         });
-    };   
+    };
 
     this.getUrl = function() {
         return url;
@@ -387,16 +390,17 @@ tgd.bungie = (function(complete) {
     };
 
     this.init = function() {
-        if ( self.accessToken() == "" ){
+        console.log("self.accessToken()", self.accessToken());
+        if (_.isEmpty(self.accessToken())) {
             complete({
                 "code": 99,
                 "error": "Please sign-in to continue."
             });
         } else {
-            self.user(function(user){
+            self.user(function(user) {
                 complete(user);
             });
-        }        
+        }
     };
 
 
