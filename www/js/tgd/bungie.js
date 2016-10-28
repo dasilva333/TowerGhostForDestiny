@@ -25,7 +25,7 @@ tgd.bungie = (function(complete) {
         self.getAccessTokensFromCode(code, function() {
             self.user(function(user) {
                 app.activeUser(user);
-                if ( cb ) cb();
+                if (cb) cb();
             });
         });
     };
@@ -36,7 +36,7 @@ tgd.bungie = (function(complete) {
             if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
                     if (event.url.match("oauth.cfm")) {
-                        var code = event.url.split("=")[1];                        
+                        var code = event.url.split("=")[1];
                         ref.close();
                         self.loginWithCode(code, cb);
                     }
@@ -49,7 +49,7 @@ tgd.bungie = (function(complete) {
                 // Listen to message from child window
                 eventer(messageEvent, function(e) {
                     var code = e.data;
-                    
+
                     self.loginWithCode(code, cb);
 
                 }, false);
@@ -112,15 +112,15 @@ tgd.bungie = (function(complete) {
                         if (typeof obj == "object" && "Response" in obj)
                             obj = response.Response;
                         console.log("obj", obj);
-                       if (obj && obj.ErrorCode && obj.ErrorCode == 99){
-                            self.getAccessTokensFromRefreshToken(function(){
-                                if ( self.accessToken() == "" ){
-                                    self.openBungieWindow(function(){
+                        if (obj && obj.ErrorCode && obj.ErrorCode == 99) {
+                            self.getAccessTokensFromRefreshToken(function() {
+                                if (self.accessToken() == "") {
+                                    self.openBungieWindow(function() {
                                         self.retryRequest(opts);
                                     })();
                                 } else {
                                     self.retryRequest(opts);
-                                }                                
+                                }
                             });
                         } else {
                             opts.complete(obj, response);
