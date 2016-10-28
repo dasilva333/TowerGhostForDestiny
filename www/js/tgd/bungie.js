@@ -3,7 +3,6 @@ tgd.bungie = (function(complete) {
 
     var _token,
         id = 0,
-        active,
         domain = 'bungie.net',
         url = 'https://www.' + domain + '/',
         bungieAuthURL, apikey;
@@ -15,31 +14,31 @@ tgd.bungie = (function(complete) {
         bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10718";
         apikey = '58f06666813243f082b5ffff307b34fd';
     }
+    this.active = {};
     this.bungled = "";
     this.systemIds = {};
     this.requests = {};
     this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
     this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
 
-    this.loginWithCode = function(code) {
+    this.loginWithCode = function(code, cb) {
         self.getAccessTokensFromCode(code, function() {
             self.user(function(user) {
                 app.activeUser(user);
-                console.log("finished loading");
+                if ( cb ) cb();
             });
         });
     };
 
     this.openBungieWindow = function(type) {
-        return function() {
+        return function(cb) {
             window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
             if (isMobile) {
                 ref.addEventListener('loadstop', function(event) {
                     if (event.url.match("oauth.cfm")) {
-                        var code = event.url.split("=")[1];
-                        console.log("code " + code, event.url);
-                        self.loginWithCode(code);
+                        var code = event.url.split("=")[1];                        
                         ref.close();
+                        self.loginWithCode(code, cb);
                     }
                 });
             } else {
@@ -49,12 +48,9 @@ tgd.bungie = (function(complete) {
                 var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
                 // Listen to message from child window
                 eventer(messageEvent, function(e) {
-
                     var code = e.data;
-
-                    console.log("code", code);
-
-                    self.loginWithCode(code);
+                    
+                    self.loginWithCode(code, cb);
 
                 }, false);
             }
@@ -115,15 +111,20 @@ tgd.bungie = (function(complete) {
                         var obj = response;
                         if (typeof obj == "object" && "Response" in obj)
                             obj = response.Response;
-                        /* if (access token is expired){
+                        console.log("obj", obj);
+                       if (obj && obj.ErrorCode && obj.ErrorCode == 99){
                             self.getAccessTokensFromRefreshToken(function(){
-                                self.retryRequest(opts);
+                                if ( self.accessToken() == "" ){
+                                    self.openBungieWindow(function(){
+                                        self.retryRequest(opts);
+                                    })();
+                                } else {
+                                    self.retryRequest(opts);
+                                }                                
                             });
                         } else {
                             opts.complete(obj, response);
-                        }                        
-                        */
-                        opts.complete(obj, response);
+                        }
                     }
                 } else {
                     self.retryRequest(opts);
@@ -153,8 +154,14 @@ tgd.bungie = (function(complete) {
                 refreshToken: self.refreshToken()
             },
             complete: function(result) {
-                self.processTokens(result);
-                callback();
+                if (result && result.ErrorCode && result.ErrorCode == 5) {
+                    self.accessToken("");
+                    self.refreshToken("");
+                    callback();
+                } else {
+                    self.processTokens(result);
+                    callback();
+                }
             }
         });
     };
@@ -175,7 +182,7 @@ tgd.bungie = (function(complete) {
 
     this.getVendorData = function(characterId, vendorId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
+            route: '/Destiny/' + self.active.type +
                 '/MyAccount/' +
                 '/Character/' + characterId +
                 '/Vendor/' + vendorId + '/Metadata/',
@@ -186,7 +193,7 @@ tgd.bungie = (function(complete) {
 
     this.vault = function(callback) {
         self.request({
-            route: '/Destiny/' + active.type + '/MyAccount/Vault/',
+            route: '/Destiny/' + self.active.type + '/MyAccount/Vault/',
             method: 'GET',
             complete: callback
         });
@@ -205,9 +212,9 @@ tgd.bungie = (function(complete) {
     };
 
     this.setsystem = function(type) {
-        active = self.systemIds.xbl;
+        self.active = self.systemIds.xbl;
         if (type === 'PSN')
-            active = self.systemIds.psn;
+            self.active = self.systemIds.psn;
     };
 
     this.getMemberId = function() {
@@ -215,7 +222,7 @@ tgd.bungie = (function(complete) {
     };
 
     this.gamertag = function() {
-        return active ? active.id : null;
+        return self.active ? self.active.id : null;
     };
 
     this.system = function() {
@@ -249,10 +256,10 @@ tgd.bungie = (function(complete) {
                     type: 2
                 };
 
-                active = self.systemIds.xbl;
+                self.active = self.systemIds.xbl;
 
                 if (res.psnId)
-                    active = self.systemIds.psn;
+                    self.active = self.systemIds.psn;
 
                 callback(res);
             }
@@ -261,8 +268,8 @@ tgd.bungie = (function(complete) {
 
     this.account = function(callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership +
                 '/',
             method: 'GET',
             complete: callback
@@ -274,7 +281,7 @@ tgd.bungie = (function(complete) {
             route: '/Destiny/SetLockState/',
             method: 'POST',
             payload: {
-                membershipType: active.type,
+                membershipType: self.active.type,
                 characterId: characterId,
                 itemId: itemId,
                 state: state
@@ -289,7 +296,7 @@ tgd.bungie = (function(complete) {
             method: 'POST',
             payload: {
                 characterId: characterId,
-                membershipType: active.type,
+                membershipType: self.active.type,
                 itemId: itemId,
                 itemReferenceHash: itemHash,
                 stackSize: amount,
@@ -304,7 +311,7 @@ tgd.bungie = (function(complete) {
             route: '/Destiny/EquipItem/',
             method: 'POST',
             payload: {
-                membershipType: active.type,
+                membershipType: self.active.type,
                 characterId: characterId,
                 itemId: itemId
             },
@@ -314,8 +321,8 @@ tgd.bungie = (function(complete) {
 
     this.getAccountSummary = function(callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership +
                 '/Summary/',
             method: 'GET',
             complete: callback
@@ -324,8 +331,8 @@ tgd.bungie = (function(complete) {
 
     this.getItemDetail = function(characterId, instanceId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership +
                 '/Character/' + characterId +
                 '/Inventory/' + instanceId + '/',
             method: 'GET',
@@ -335,8 +342,8 @@ tgd.bungie = (function(complete) {
 
     this.inventory = function(characterId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership +
                 '/Character/' + characterId +
                 '/Inventory/',
             method: 'GET',
@@ -346,8 +353,8 @@ tgd.bungie = (function(complete) {
 
     this.character = function(characterId, callback) {
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership +
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership +
                 '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
@@ -356,15 +363,15 @@ tgd.bungie = (function(complete) {
 
     this.search = function(activeSystem, callback) {
         this.setsystem(activeSystem);
-        if (active && active.type) {
-            if (typeof active.membership == "undefined") {
+        if (self.active && self.active.type) {
+            if (typeof self.active.membership == "undefined") {
                 self.request({
-                    route: '/Destiny/' + active.type + '/Stats/GetMembershipIdByDisplayName/' + active.id + '/',
+                    route: '/Destiny/' + self.active.type + '/Stats/GetMembershipIdByDisplayName/' + self.active.id + '/',
                     method: 'GET',
                     complete: function(membership) {
                         if (membership > 0) {
                             //tgd.localLog('error finding bungie account!', membership);
-                            active.membership = membership;
+                            self.active.membership = membership;
                             self.account(callback);
                         } else {
                             callback({
@@ -382,10 +389,10 @@ tgd.bungie = (function(complete) {
     };
 
     this.account = function(callback) {
-        tgd.localLog(active.type + " log request to " + JSON.stringify(active.membership));
+        tgd.localLog(self.active.type + " log request to " + JSON.stringify(self.active.membership));
         self.request({
-            route: '/Destiny/' + active.type +
-                '/Account/' + active.membership + '/',
+            route: '/Destiny/' + self.active.type +
+                '/Account/' + self.active.membership + '/',
             method: 'GET',
             complete: callback
         });
