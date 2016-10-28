@@ -77,11 +77,11 @@
                         <p data-bind="text: $root.activeText().login_instructions">To get started you'll need to log in to your Bungie.net account via:</p>
                         <div class="btn-padding">
                             <div class="form-group">
-                                <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
+                                <a data-bind="fastclick:$root.bungie.openBungieWindow('Xuid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
                                     <img src="assets/xbox_live.png" /> Xbox Live</a>
                             </div>
                             <div class="form-group">
-                                <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
+                                <a data-bind="fastclick:$root.bungie.openBungieWindow('Psnid')" style="cursor:pointer; color:#1a1e24" class="btn btn-secondary btn-block">
                                     <img src="assets/playstation.png"> Playstation Network</a>
                             </div>
                         </div>
@@ -116,8 +116,8 @@
         </div>
         <div>
             <span data-bind="text: $root.activeText().login_authenticating_pt2">If log in screen remains for 4+ minutes, use these links for</span>
-            <a data-bind="fastclick:$root.openBungieWindow('Xuid')" style="text-decoration: underline;">Xbox Live</a> or
-            <a data-bind="fastclick:$root.openBungieWindow('Psnid')" style="text-decoration: underline;">Playstation Network</a>
+            <a data-bind="fastclick:$root.bungie.openBungieWindow('Xuid')" style="text-decoration: underline;">Xbox Live</a> or
+            <a data-bind="fastclick:$root.bungie.openBungieWindow('Psnid')" style="text-decoration: underline;">Playstation Network</a>
             <span data-bind="text: $root.activeText().login_authenticating_pt3">to retry signing in. </span>
         </div>
     </div>

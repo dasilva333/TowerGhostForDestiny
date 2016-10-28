@@ -1025,71 +1025,6 @@ var app = function() {
         });
     };
 
-    this.loadData = function(ref) {
-        if (self.loadingUser() === false || self.hiddenWindowOpen() === true) {
-            //window.t = (new Date());
-            self.loadingUser(true);
-            self.bungie = new tgd.bungie(self.bungie_cookies, function() {
-                self.characters.removeAll();
-                //console.time("self.bungie.user");
-                self.bungie.user(function(user) {
-                    //console.timeEnd("self.bungie.user");
-                    if (user.error) {
-                        if (user.error == 'network error:502') {
-                            return self.logout();
-                        }
-                        if (isMobile) {
-                            //login failed the first time, cookie might need to be refreshed
-                            //openHiddenBungieWindow will open Bungie, read the cookie and try it a second time 
-                            if (self.hiddenWindowOpen() === false) {
-                                self.hiddenWindowOpen(true);
-                                self.openHiddenBungieWindow();
-                            } else {
-                                //after re-reading the cookie it still didn't work so resetting login state
-                                self.activeUser(user);
-                                self.loadingUser(false);
-                                self.hiddenWindowOpen(false);
-                                window.localStorage.setItem("bungie_cookies", "");
-                            }
-                        } else {
-                            self.activeUser(user);
-                            self.loadingUser(false);
-                        }
-                        return;
-                    }
-                    if (ref && ref.close) {
-                        ref.close();
-                        self.hiddenWindowOpen(false);
-                        ref = null;
-                    }
-                    self.activeUser(user);
-                    if (user.psnId && user.gamerTag) {
-                        $.toaster({
-                            settings: {
-                                timeout: 10 * 1000
-                            },
-                            priority: 'info',
-                            title: 'Info',
-                            message: "Currently using " + self.preferredSystem() + ", <br><a href='' id='useOtherAccount'>click here to use " + (self.preferredSystem() == "XBL" ? "PSN" : "XBL") + "</a>"
-                        });
-                        $("#useOtherAccount").click(function() {
-                            if (self.preferredSystem() == "XBL") {
-                                self.usePlaystationAccount();
-                            } else {
-                                self.useXboxAccount();
-                            }
-                        });
-                    }
-                    self.locale(self.activeUser().user.locale);
-                    self.loadingUser(false);
-                    _.defer(function() {
-                        self.search();
-                    });
-                });
-            });
-        }
-    };
-
     this.toggleBootstrapMenu = function() {
         if ($(".navbar-toggle").hasClass("collapsed") === false) {
             $(".navbar-toggle").click();
@@ -1102,9 +1037,8 @@ var app = function() {
     };
 
     this.logout = function() {
-        self.clearCookies();
         self.bungie.logout(function() {
-            window.location.reload();
+            //window.location.reload();
         });
     };
 
@@ -1250,33 +1184,6 @@ var app = function() {
         });
     };
 
-    this.readBungieCookie = function(ref, loop) {
-        //tgd.localLog( typeof ref.executeScript );
-        //tgd.localLog( Object.keys(ref) ); 
-        try {
-            ref.executeScript({
-                code: 'document.cookie'
-            }, function(result) {
-                tgd.localLog("result " + result);
-                if ((result || "").toString().indexOf("bungled") > -1) {
-                    self.bungie_cookies = result;
-                    window.localStorage.setItem("bungie_cookies", result);
-                    self.loadData(ref, loop);
-                }
-            });
-        } catch (e) {
-            tgd.localLog(e);
-        }
-    };
-
-    this.openHiddenBungieWindow = function() {
-        window.ref = window.open("https://www.bungie.net/en/User/Profile", '_blank', 'location=no,hidden=yes');
-        ref.addEventListener('loadstop', function(event) {
-            //BootstrapDialog.alert("loadstop hidden");
-            self.readBungieCookie(ref, 1);
-        });
-    };
-
     this.findReference = function(item, callback) {
         if (item && item.id > 0) {
             var subscriptions = [];
@@ -1297,71 +1204,6 @@ var app = function() {
             }));
             newItemHandler(allItems);
         }
-    };
-
-    this.clearCookies = function() {
-        window.localStorage.setItem("bungie_cookies", "");
-        try {
-            window.cookies.clear(function() {
-                tgd.localLog("Cookies cleared");
-            });
-        } catch (e) {}
-    };
-
-    this.openBungieWindow = function(type) {
-        return function() {
-            var loop;
-            if (isNWJS) {
-                var gui = require('nw.gui');
-                var mainwin = gui.Window.get();
-                window.ref = gui.Window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", 'Test Popup');
-            } else if (isChrome || isMobile) {
-                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type + "?bru=%252Fen%252FUser%252FProfile", '_blank', 'location=yes');
-            } else {
-                //window.ref = window.open('about:blank');
-                //window.ref.opener = null;
-                window.ref = window.open('https://www.bungie.net/en/User/SignIn/' + type, '_blank', 'toolbar=0,location=0,menubar=0');
-            }
-            if (isMobile) {
-                ref.addEventListener('loadstop', function(event) {
-                    self.readBungieCookie(ref, loop);
-                });
-                ref.addEventListener('exit', function() {
-                    if (_.isEmpty(self.bungie_cookies)) {
-                        self.readBungieCookie(ref, loop);
-                    }
-                });
-            } else if (isNWJS) {
-                window.ref.on('loaded', function() {
-                    location.reload();
-                });
-            } else {
-                clearInterval(loop);
-                loop = setInterval(function() {
-                    if (window.ref.closed) {
-                        clearInterval(loop);
-                        if (!isMobile && !isChrome) {
-                            $.toaster({
-                                priority: 'success',
-                                title: 'Loading',
-                                message: "Please wait while Firefox acquires your arsenal",
-                                settings: {
-                                    timeout: tgd.defaults.toastTimeout
-                                }
-                            });
-                            var event = new CustomEvent("request-cookie-from-ps", {});
-                            window.dispatchEvent(event);
-                            setTimeout(function() {
-                                tgd.localLog("loadData");
-                                self.loadData();
-                            }, 5000);
-                        } else {
-                            self.loadData();
-                        }
-                    }
-                }, 100);
-            }
-        };
     };
 
     this.scrollTo = function(distance, callback) {
@@ -2288,12 +2130,6 @@ var app = function() {
         self.refreshHandler();
 
         if (!window.isStaticBrowser) {
-            self.bungie_cookies = "";
-            if (window.localStorage && window.localStorage.getItem) {
-                self.bungie_cookies = window.localStorage.getItem("bungie_cookies");
-            }
-            var isEmptyCookie = (self.bungie_cookies || "").indexOf("bungled") == -1;
-
             //This makes it so that the viewport width behaves like android/ios browsers
             if (isWindowsPhone) {
                 var msViewportStyle = document.createElement("style");
@@ -2304,16 +2140,6 @@ var app = function() {
             var dragAndDropEnabled = self.padBucketHeight() === true && self.dragAndDrop() === true;
             ko.bindingHandlers.sortable.isEnabled = dragAndDropEnabled;
             ko.bindingHandlers.draggable.isEnabled = dragAndDropEnabled;
-            if (isMobile && isEmptyCookie) {
-                self.bungie = new tgd.bungie('', function() {
-                    self.activeUser({
-                        "code": 99,
-                        "error": "Please sign-in to continue."
-                    });
-                });
-            } else {
-                self.loadData();
-            }
         }
         $("html").click(self.globalClickHandler);
         /* this fixes issue #16 */
@@ -2333,6 +2159,12 @@ var app = function() {
                 return false;
             });
         }
+        self.activeUser.subscribe(function(user){
+            if (_.has(user,'user')) {
+                self.search();
+            }
+        });
+        self.bungie = new tgd.bungie(self.activeUser);
         ko.applyBindings(self);
 
         $("form").bind("submit", false);

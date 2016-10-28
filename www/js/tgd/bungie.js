@@ -1,72 +1,40 @@
-tgd.bungie = (function(cookieString, complete) {
+tgd.bungie = (function(complete) {
     var self = this;
 
     var _token,
         id = 0,
         active,
+        bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10702",
         domain = 'bungie.net',
         url = 'https://www.' + domain + '/',
-        apikey = '5cae9cdee67a42848025223b4e61f929'; //this one is linked to dasilva333
+        apikey = '0eec3b0ba89c428889317df467094570'; //this one is linked to Tower Ghost for Destiny
 
     this.bungled = "";
     this.systemIds = {};
     this.requests = {};
+    this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
+    this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
 
-    // private methods
-    function _getAllCookies(callback) {
-        if (chrome && chrome.cookies && chrome.cookies.getAll) {
-            chrome.cookies.getAll({
-                domain: '.' + domain
-            }, function() {
-                callback.apply(null, arguments);
-            });
-        } else if (isNWJS) {
-            require("nw.gui").Window.get().cookies.getAll({}, function(a, b) {
-                callback.apply(null, arguments);
-            });
-        } else {
-            callback([]);
-            return BootstrapDialog.alert("You must enable cookie permissions in Chrome before loading TGD");
-        }
-    }
+    this.openBungieWindow = function(type) {
+        return function() {
+            window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
+            // Create IE + others compatible event handler
+            var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+            var eventer = window[eventMethod];
+            var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+            // Listen to message from child window
+            eventer(messageEvent, function(e) {
 
-    function readCookie(cname) {
-        //tgd.localLog("trying to read cookie passed " + savedCookie);
-        var name = cname + "=";
-        var ca = (cookieString || "").toString().split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1);
-            if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
-        }
-        //tgd.localLog("found no match");
-        return "";
-    }
+                var code = e.data;
 
-    this.requestCookie = function(callback) {
-        tgd.localLog("sending request-cookie-from-ps");
-        var event = new CustomEvent("request-cookie-from-ps", {});
-        window.dispatchEvent(event);
-        self.requestCookieCB = callback;
-    };
+                console.log("code", code);
 
-    this.getCookie = function(name, callback) {
-        if (isChrome) {
-            _getAllCookies(function(cookies) {
-                var c = null;
-                for (var i = 0, l = cookies.length; i < l; ++i) {
-                    if (cookies[i].name === name) {
-                        c = cookies[i];
-                        break;
-                    }
-                }
-                callback(c ? c.value : null);
-            });
-        } else if (isFirefox) {
-            self.requestCookie(callback);
-        } else {
-            callback(readCookie('bungled'));
-        }
+                self.getAccessTokensFromCode(code, function() {
+                    console.log("finished loading");
+                });
+
+            }, false);
+        };
     };
 
     this.retryRequest = function(opts) {
@@ -97,25 +65,16 @@ tgd.bungie = (function(cookieString, complete) {
         if (opts.payload) {
             data = JSON.stringify(opts.payload);
         }
-
+        var headers = {
+            'X-API-Key': apikey
+        };
+        if (self.accessToken() != "") {
+            headers["Authorization"] = self.accessToken();
+        }
         $.ajax({
             url: opts.route,
             type: opts.method,
-            headers: {
-                'X-API-Key': apikey,
-                'x-csrf': self.bungled
-            },
-            beforeSend: function(xhr) {
-                /* this cookie needs to be trimmed in order to work properly on iPad (https://forum.ionicframework.com/t/solved-ios9-fails-with-setrequestheader-native-with-custom-headers-in-http-service/32399)*/
-                if (isMobile && typeof cookieString == "string") {
-                    _.each(cookieString.split(";"), function(cookie) {
-                        try {
-                            var trimCookie = $.trim(cookie);
-                            xhr.setRequestHeader('Cookie', trimCookie);
-                        } catch (e) {}
-                    });
-                }
-            },
+            headers: headers,
             data: data,
             complete: function(xhr, status) {
                 tgd.localLog("ajax complete");
@@ -132,11 +91,58 @@ tgd.bungie = (function(cookieString, complete) {
                         var obj = response;
                         if (typeof obj == "object" && "Response" in obj)
                             obj = response.Response;
+                        /* if (access token is expired){
+                            self.getAccessTokensFromRefreshToken(function(){
+                                self.retryRequest(opts);
+                            });
+                        } else {
+                            opts.complete(obj, response);
+                        }                        
+                        */                            
                         opts.complete(obj, response);
                     }
                 } else {
                     self.retryRequest(opts);
                 }
+            }
+        });
+    };
+
+    this.processTokens = function(result){
+        /* if refresh token or access token is invalid this needs to be determined  and set the values to blank */
+        
+        if ( result && result.accessToken && result.accessToken.value ){
+            self.accessToken("Bearer " + result.accessToken.value);
+        }
+        if ( result && result.refreshToken && result.refreshToken.value ){
+            self.refreshToken(result.refreshToken.value);
+        }
+    }
+    
+    this.getAccessTokensFromRefreshToken = function(callback){
+        self.request({
+            route: "/App/GetAccessTokensFromRefreshToken/",
+            method: "POST",
+            payload: {
+                refreshToken: self.refreshToken
+            },
+            complete: function(result) {
+                self.processTokens(result);
+                callback();                   
+            }
+        });
+    };
+
+    this.getAccessTokensFromCode = function(code, callback) {
+        self.request({
+            route: "/App/GetAccessTokensFromCode/",
+            method: "POST",
+            payload: {
+                code: code
+            },
+            complete: function(result) {
+                self.processTokens(result);
+                callback();                
             }
         });
     };
@@ -166,16 +172,7 @@ tgd.bungie = (function(cookieString, complete) {
             method: 'GET',
             complete: callback
         });
-    };
-
-    this.login = function(callback) {
-        tgd.localLog("bungie.login");
-        self.request({
-            route: url,
-            method: "GET",
-            complete: callback
-        });
-    };
+    };   
 
     this.getUrl = function() {
         return url;
@@ -390,40 +387,16 @@ tgd.bungie = (function(cookieString, complete) {
     };
 
     this.init = function() {
-        if (isFirefox) {
-            window.addEventListener("response-cookie-from-cs", function(event) {
-                tgd.localLog("response-cookie-from-cs: " + event.detail);
-                self.requestCookieCB(event.detail);
+        if ( self.accessToken() == "" ){
+            complete({
+                "code": 99,
+                "error": "Please sign-in to continue."
             });
-        }
-        if (isChrome && chrome && chrome.webRequest) {
-            chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
-                for (var i = 0; i < details.requestHeaders.length; ++i) {
-                    if (details.requestHeaders[i].name === 'Origin') {
-                        details.requestHeaders.splice(i, 1);
-                        break;
-                    }
-                }
-                return {
-                    requestHeaders: details.requestHeaders
-                };
-            }, {
-                urls: ["https://*.bungie.net/*"]
-            }, ["blocking", "requestHeaders"]);
-        }
-        tgd.localLog("bungie.init");
-        if (isStaticBrowser) {
-            complete("");
         } else {
-            self.login(function() {
-                tgd.localLog("bungie.login.complete, now getCookie");
-                self.getCookie('bungled', function(token) {
-                    tgd.localLog("bungied started with token " + token);
-                    self.bungled = token;
-                    complete(token);
-                });
+            self.user(function(user){
+                complete(user);
             });
-        }
+        }        
     };
 
 
