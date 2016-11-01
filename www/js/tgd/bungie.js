@@ -192,11 +192,11 @@ tgd.bungie = (function(complete) {
     };
 
     this.vault = function(callback) {
-        self.request({
+        /*self.request({
             route: '/Destiny/' + self.active.type + '/MyAccount/Vault/',
             method: 'GET',
             complete: callback
-        });
+        });*/
     };
 
     this.logout = function(callback) {
