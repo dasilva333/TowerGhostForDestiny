@@ -14,17 +14,18 @@ tgd.bungie = (function(complete) {
         bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10718";
         apikey = '58f06666813243f082b5ffff307b34fd';
     }
-    this.active = {};
-    this.bungled = "";
-    this.systemIds = {};
-    this.requests = {};
+    
+    this.savedUsers = ko.observableArray();
+    this.activeUser = ko.observable();
     this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
     this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
-
+    
     this.loginWithCode = function(code, cb) {
-        self.getAccessTokensFromCode(code, function() {
-            self.user(function(user) {
-                app.activeUser(user);
+        self.getAccessTokensFromCode(code, function(tokens) {
+            self.user(function(user) { 
+                self.savedUsers.push({ user: user, tokens: tokens, isDefault: true });
+                self.activeUser(user);
+                console.log("cb", cb);
                 if (cb) cb();
             });
         });
@@ -135,15 +136,19 @@ tgd.bungie = (function(complete) {
 
     this.processTokens = function(result) {
         /* if refresh token or access token is invalid this needs to be determined  and set the values to blank */
+        var tokens = {};
         if (result && result.ErrorCode && result.ErrorCode != 1) {
             BootstrapDialog.alert(result.Message + " - " + JSON.stringify(result.MessageData))
         }
         if (result && result.accessToken && result.accessToken.value) {
-            self.accessToken("Bearer " + result.accessToken.value);
+            tokens.accessToken = "Bearer " + result.accessToken.value;
+            self.accessToken(tokens.accessToken);
         }
         if (result && result.refreshToken && result.refreshToken.value) {
-            self.refreshToken(result.refreshToken.value);
+            tokens.refreshToken = result.refreshToken.value;
+            self.refreshToken(tokens.refreshToken);
         }
+        return tokens;
     }
 
     this.getAccessTokensFromRefreshToken = function(callback) {
@@ -174,8 +179,8 @@ tgd.bungie = (function(complete) {
                 code: code
             },
             complete: function(result) {
-                self.processTokens(result);
-                callback();
+                var tokens = self.processTokens(result);
+                callback(tokens);
             }
         });
     };
@@ -192,41 +197,22 @@ tgd.bungie = (function(complete) {
     };
 
     this.vault = function(callback) {
-        /*self.request({
-            route: '/Destiny/' + self.active.type + '/MyAccount/Vault/',
-            method: 'GET',
-            complete: callback
-        });*/
-    };
-
-    this.logout = function(callback) {
         self.request({
-            route: url + 'en/User/SignOut',
+            route: '/Destiny/' + self.active.type + '/MyAccount/Vault/',
             method: 'GET',
             complete: callback
         });
     };
 
+    this.logout = function() {
+        _.each(self.savedUsers(), function(u){
+            u.isDefault = false;
+        });
+        self.activeUser({});
+    };
+
     this.getUrl = function() {
         return url;
-    };
-
-    this.setsystem = function(type) {
-        self.active = self.systemIds.xbl;
-        if (type === 'PSN')
-            self.active = self.systemIds.psn;
-    };
-
-    this.getMemberId = function() {
-        return membershipId;
-    };
-
-    this.gamertag = function() {
-        return self.active ? self.active.id : null;
-    };
-
-    this.system = function() {
-        return systemIds;
     };
 
     this.user = function(callback) {
@@ -246,31 +232,38 @@ tgd.bungie = (function(complete) {
                     });
                     return;
                 }
-
-                self.systemIds.xbl = {
-                    id: res.gamerTag,
-                    type: 1
+                var user = {};
+                user.user = {
+                    displayName: res.displayName,
+                    membershipId: res.membershipId
                 };
-                self.systemIds.psn = {
-                    id: res.psnId,
-                    type: 2
-                };
-
-                self.active = self.systemIds.xbl;
-
-                if (res.psnId)
-                    self.active = self.systemIds.psn;
-
-                callback(res);
+                user.systems = [];
+                
+                if ( !_.isEmpty(res.gamerTag) ){
+                    user.systems.push({
+                        system: 'xbl',
+                        id: res.gamerTag,
+                        type: 1,
+                        preferred: false
+                    });
+                }
+                if ( !_.isEmpty(res.psnId) ){
+                    user.systems.push({
+                        system: 'psn',
+                        id: res.psnId,
+                        type: 2,
+                        preferred: false
+                    });
+                }
+                user.systems[0].preferred = true;
+                callback(user);
             }
         });
     };
 
     this.account = function(callback) {
         self.request({
-            route: '/Destiny/' + self.active.type +
-                '/Account/' + self.active.membership +
-                '/',
+            route: '/Destiny/' + self.active.type +  '/Account/' + self.active.membership + '/',
             method: 'GET',
             complete: callback
         });
@@ -321,9 +314,7 @@ tgd.bungie = (function(complete) {
 
     this.getAccountSummary = function(callback) {
         self.request({
-            route: '/Destiny/' + self.active.type +
-                '/Account/' + self.active.membership +
-                '/Summary/',
+            route: '/Destiny/' + self.active.type +  '/Account/' + self.active.membership +  '/Summary/',
             method: 'GET',
             complete: callback
         });
@@ -341,11 +332,9 @@ tgd.bungie = (function(complete) {
     };
 
     this.inventory = function(characterId, callback) {
+        var system = _.findWhere(self.activeUser().user.systems, { preferred: true });
         self.request({
-            route: '/Destiny/' + self.active.type +
-                '/Account/' + self.active.membership +
-                '/Character/' + characterId +
-                '/Inventory/',
+            route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Character/' + characterId + '/Inventory/',
             method: 'GET',
             complete: callback
         });
@@ -353,46 +342,39 @@ tgd.bungie = (function(complete) {
 
     this.character = function(characterId, callback) {
         self.request({
-            route: '/Destiny/' + self.active.type +
-                '/Account/' + self.active.membership +
-                '/Character/' + characterId + '/',
+            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
         });
     };
 
     this.search = function(activeSystem, callback) {
-        this.setsystem(activeSystem);
-        if (self.active && self.active.type) {
-            if (typeof self.active.membership == "undefined") {
-                self.request({
-                    route: '/Destiny/' + self.active.type + '/Stats/GetMembershipIdByDisplayName/' + self.active.id + '/',
-                    method: 'GET',
-                    complete: function(membership) {
-                        if (membership > 0) {
-                            //tgd.localLog('error finding bungie account!', membership);
-                            self.active.membership = membership;
-                            self.account(callback);
-                        } else {
-                            callback({
-                                error: true
-                            });
-                            return;
-                        }
-
+        var system = _.findWhere(self.activeUser().user.systems, { preferred: true });
+        if ( system && system.membership ){
+            self.account(callback);
+        } else {
+            self.request({
+                route: '/Destiny/' + system.type + '/Stats/GetMembershipIdByDisplayName/' + system.id + '/',
+                method: 'GET',
+                complete: function(membership) {
+                    if (membership > 0) {
+                        system.membership = membership;
+                        self.savedUsers(self.savedUsers());
+                        self.account(callback);
+                    } else {
+                        callback({
+                            error: true
+                        });
                     }
-                });
-            } else {
-                self.account(callback);
-            }
+                }
+            });        
         }
     };
 
     this.account = function(callback) {
-        tgd.localLog(self.active.type + " log request to " + JSON.stringify(self.active.membership));
+        var system = _.findWhere(self.activeUser().user.systems, { preferred: true });
         self.request({
-            route: '/Destiny/' + self.active.type +
-                '/Account/' + self.active.membership + '/',
+            route: '/Destiny/' + system.type + '/Account/' + system.membership + '/',
             method: 'GET',
             complete: callback
         });
@@ -420,15 +402,39 @@ tgd.bungie = (function(complete) {
     };
 
     this.init = function() {
-        console.log("self.accessToken()", self.accessToken());
-        if (_.isEmpty(self.accessToken())) {
+        var usersCache = new tgd.StoreObj("savedUsers");
+        self.savedUsers.subscribe(function(users){
+            usersCache.write(JSON.stringify(users));
+        });
+        self.activeUser.subscribe(function(activeUser){
+            self.accessToken(activeUser && activeUser.tokens ? activeUser.tokens.accessToken : "");
+            self.refreshToken(activeUser && activeUser.tokens ? activeUser.tokens.refreshToken : "");
+            //app.activeUser(activeUser);
+        });
+        var savedUsers = usersCache.read();
+        if ( !_.isEmpty(savedUsers)){            
+            self.savedUsers(JSON.parse(savedUsers));
+        }        
+        if ( $.isPlainObject(self.savedUsers()) ){
+            self.savedUsers([self.savedUsers()]);
+        }
+        var defaultUser = _.findWhere(self.savedUsers(),{ isDefault: true });
+        console.log("defaultUser", defaultUser);
+        if (_.isEmpty(self.savedUsers())) {
             complete({
                 "code": 99,
                 "error": "Please sign-in to continue."
             });
+        } else if ( defaultUser ){
+            console.log("using default", complete.toString());
+            self.activeUser(defaultUser);
+            self.user(function(bngUser) {
+                complete(bngUser);
+            });
         } else {
-            self.user(function(user) {
-                complete(user);
+            complete({
+                "code": 999,
+                "users": self.savedUsers()
             });
         }
     };

@@ -942,6 +942,7 @@ var app = function() {
     var loadingData = false;
     this.search = function() {
         console.time("new profile");
+        console.log("searching");
         if (!("user" in self.activeUser())) {
             return;
         }
@@ -1037,12 +1038,13 @@ var app = function() {
     };
 
     this.logout = function() {
-        self.bungie.logout(function() {
-            //window.location.reload();
-        });
+        self.characters.removeAll();
+        self.activeUser({});
+        self.bungie.logout();
     };
 
     this.refresh = function() {
+        return;
         if (self.bungie.gamertag()) {
             tgd.autoRefreshTime = (new Date()).getTime();
             var count = 0,
