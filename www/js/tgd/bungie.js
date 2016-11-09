@@ -14,35 +14,40 @@ tgd.bungie = (function(complete) {
         bungieAuthURL = "https://www.bungie.net/en/Application/Authorize/10718";
         apikey = '58f06666813243f082b5ffff307b34fd';
     }
-    
+
     this.savedUsers = ko.observableArray();
     this.activeUser = ko.observable();
     this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
     this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
-    
+
     this.loginWithCode = function(code, cb) {
         self.getAccessTokensFromCode(code, function(tokens) {
-            self.user(function(user) { 
-                self.savedUsers.push({ user: user, tokens: tokens, isDefault: true });
+            self.user(function(user) {
+                self.savedUsers.push({
+                    user: user,
+                    tokens: tokens,
+                    isDefault: true
+                });
                 self.activeUser(user);
-                console.log("cb", cb);
-                if (cb) cb();
+                if (cb) cb(user);
             });
         });
     };
 
     this.openBungieWindow = function(type) {
         return function(cb) {
-            window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
+
             if (isMobile) {
-                ref.addEventListener('loadstop', function(event) {
+                /*ref.addEventListener('loadstop', function(event) {
                     if (event.url.match("oauth.cfm")) {
                         var code = event.url.split("=")[1];
                         ref.close();
                         self.loginWithCode(code, cb);
                     }
-                });
+                });*/
+                window.open(bungieAuthURL, '_system');
             } else {
+                window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
                 // Create IE + others compatible event handler
                 var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
                 var eventer = window[eventMethod];
@@ -205,7 +210,7 @@ tgd.bungie = (function(complete) {
     };
 
     this.logout = function() {
-        _.each(self.savedUsers(), function(u){
+        _.each(self.savedUsers(), function(u) {
             u.isDefault = false;
         });
         self.activeUser({});
@@ -238,8 +243,8 @@ tgd.bungie = (function(complete) {
                     membershipId: res.membershipId
                 };
                 user.systems = [];
-                
-                if ( !_.isEmpty(res.gamerTag) ){
+
+                if (!_.isEmpty(res.gamerTag)) {
                     user.systems.push({
                         system: 'xbl',
                         id: res.gamerTag,
@@ -247,7 +252,7 @@ tgd.bungie = (function(complete) {
                         preferred: false
                     });
                 }
-                if ( !_.isEmpty(res.psnId) ){
+                if (!_.isEmpty(res.psnId)) {
                     user.systems.push({
                         system: 'psn',
                         id: res.psnId,
@@ -263,7 +268,7 @@ tgd.bungie = (function(complete) {
 
     this.account = function(callback) {
         self.request({
-            route: '/Destiny/' + self.active.type +  '/Account/' + self.active.membership + '/',
+            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/',
             method: 'GET',
             complete: callback
         });
@@ -314,7 +319,7 @@ tgd.bungie = (function(complete) {
 
     this.getAccountSummary = function(callback) {
         self.request({
-            route: '/Destiny/' + self.active.type +  '/Account/' + self.active.membership +  '/Summary/',
+            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/Summary/',
             method: 'GET',
             complete: callback
         });
@@ -332,7 +337,9 @@ tgd.bungie = (function(complete) {
     };
 
     this.inventory = function(characterId, callback) {
-        var system = _.findWhere(self.activeUser().user.systems, { preferred: true });
+        var system = _.findWhere(self.activeUser().user.systems, {
+            preferred: true
+        });
         self.request({
             route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Character/' + characterId + '/Inventory/',
             method: 'GET',
@@ -349,8 +356,10 @@ tgd.bungie = (function(complete) {
     };
 
     this.search = function(activeSystem, callback) {
-        var system = _.findWhere(self.activeUser().user.systems, { preferred: true });
-        if ( system && system.membership ){
+        var system = _.findWhere(self.activeUser().user.systems, {
+            preferred: true
+        });
+        if (system && system.membership) {
             self.account(callback);
         } else {
             self.request({
@@ -367,12 +376,14 @@ tgd.bungie = (function(complete) {
                         });
                     }
                 }
-            });        
+            });
         }
     };
 
     this.account = function(callback) {
-        var system = _.findWhere(self.activeUser().user.systems, { preferred: true });
+        var system = _.findWhere(self.activeUser().user.systems, {
+            preferred: true
+        });
         self.request({
             route: '/Destiny/' + system.type + '/Account/' + system.membership + '/',
             method: 'GET',
@@ -403,29 +414,33 @@ tgd.bungie = (function(complete) {
 
     this.init = function() {
         var usersCache = new tgd.StoreObj("savedUsers");
-        self.savedUsers.subscribe(function(users){
+        self.savedUsers.subscribe(function(users) {
             usersCache.write(JSON.stringify(users));
         });
-        self.activeUser.subscribe(function(activeUser){
+        self.activeUser.subscribe(function(activeUser) {
             self.accessToken(activeUser && activeUser.tokens ? activeUser.tokens.accessToken : "");
             self.refreshToken(activeUser && activeUser.tokens ? activeUser.tokens.refreshToken : "");
             //app.activeUser(activeUser);
         });
         var savedUsers = usersCache.read();
-        if ( !_.isEmpty(savedUsers)){            
+        if (!_.isEmpty(savedUsers)) {
             self.savedUsers(JSON.parse(savedUsers));
-        }        
-        if ( $.isPlainObject(self.savedUsers()) ){
+        }
+        if ($.isPlainObject(self.savedUsers())) {
             self.savedUsers([self.savedUsers()]);
         }
-        var defaultUser = _.findWhere(self.savedUsers(),{ isDefault: true });
+        var defaultUser = _.findWhere(self.savedUsers(), {
+            isDefault: true
+        });
         console.log("defaultUser", defaultUser);
-        if (_.isEmpty(self.savedUsers())) {
+        if (tgd && tgd.bungieCode) {
+            self.loginWithCode(tgd.bungieCode, complete);
+        } else if (_.isEmpty(self.savedUsers())) {
             complete({
                 "code": 99,
                 "error": "Please sign-in to continue."
             });
-        } else if ( defaultUser ){
+        } else if (defaultUser) {
             console.log("using default", complete.toString());
             self.activeUser(defaultUser);
             self.user(function(bngUser) {

@@ -23,3 +23,12 @@ tgd.localLog = function(msg) {
         console.log(msg);
     }
 };
+
+function handleOpenURL(link) {
+    if (link && link.indexOf && link.indexOf("code") > -1) {
+        tgd.bungieCode = link.split("=")[1];
+        if ( app && app.bungie ){
+            app.bungie.loginWithCode(tgd.bungieCode, app.activeUser);
+        }        
+    }
+}
