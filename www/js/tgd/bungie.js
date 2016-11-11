@@ -310,6 +310,17 @@ tgd.bungie = (function(cookieString, complete) {
         });
     };
 
+    this.getCharacterProgression = function(characterId, callback) {
+        self.request({
+            route: '/Destiny/' + active.type +
+                '/Account/' + active.membership +
+                '/Character/' + characterId +
+                '/Progression/',
+            method: 'GET',
+            complete: callback
+        });
+    };
+
     this.inventory = function(characterId, callback) {
         self.request({
             route: '/Destiny/' + active.type +

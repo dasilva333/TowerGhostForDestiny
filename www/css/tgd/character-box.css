@@ -102,8 +102,8 @@
 	font-size: 15px;
 }
 .character-box .stats .skillStatRow div.row {
-	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-top: 2px;
+	padding-bottom: 2px;
 }
 .character-box .stats .btn-group {
 	padding-top: 3px;
