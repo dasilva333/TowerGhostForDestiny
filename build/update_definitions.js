@@ -50,6 +50,13 @@ var neededFiles = [
 			obj.itemTypeName = "Armor Shader";
 			obj.icon = "/img/misc/missing_icon.png";
 			obj.itemDescription = "Equip this shader to change the color of your armor.";
+		} else if ( obj.itemHash == "1759332262" ){
+			obj.bucketTypeHash = "2973005342";
+			obj.itemName = "Superblack";
+			obj.equippable = true;
+			obj.itemTypeName = "Armor Shader";
+			obj.icon = "/img/misc/missing_icon.png";
+			obj.itemDescription = "Equip this shader to change the color of your armor.";
 		}
 		obj.itemName = encodeURIComponent(obj.itemName);
 		obj.tierTypeName = encodeURIComponent(obj.tierTypeName);
