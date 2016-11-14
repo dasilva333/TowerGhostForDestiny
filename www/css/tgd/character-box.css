@@ -109,6 +109,9 @@
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
+.character-box .stats .font-bold {
+    font-size: 0.9em;
+}
 .container .title2 {
     text-transform: uppercase;
     position: relative;
