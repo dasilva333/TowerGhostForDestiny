@@ -410,12 +410,13 @@ Profile.prototype = {
         return this.calculatePowerLevelWithItems(this.equippedGear());
     },
     _highestLevel: function() {
-        var character = this;
+        return 0;
+        /*var character = this;
         var items = _.flatten(_.map(app.characters(), function(avatar) {
             return avatar.items();
         }));
         var highestSet = character.findHighestItemsByLight(tgd.DestinyWeaponPieces.concat(tgd.DestinyArmorPieces), items)[1];
-        return character.calculatePowerLevelWithItems(highestSet);
+        return character.calculatePowerLevelWithItems(highestSet);*/
     },
     _reloadBucket: function(model, event, callback, excludeMessage) {
         var self = this,

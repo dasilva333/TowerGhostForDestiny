@@ -43,10 +43,7 @@
 											<div class="font-bold col-xs-18 text-right"><span data-bind="text: $root.activeText().recovery"></span>: </div>
 											<div class="col-xs-6" data-bind="text: STAT_RECOVERY.value"></div>
 										</div>
-                                        <div class="row">
-											<div class="font-bold col-xs-18 text-right"><span data-bind="text: $root.activeText().light"></span>: </div>
-											<div class="col-xs-6" data-bind="text: character.highestLevel"></div>
-										</div>
+                                        
 									</div>
 									<div class="col-xs-14 text-left font-smaller-1">
 										<div title="Current tier possible for Armor Equipped">
@@ -81,7 +78,7 @@
 										<a title="Automatically equip gear with the most Intellect" data-bind="text: $root.activeText().inte, fastclick: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
 										<a title="Automatically equip gear with the most Discipline" data-bind="text: $root.activeText().disc, fastclick: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
 										<a title="Automatically equip gear with the most Strength" data-bind="text: $root.activeText().str, fastclick: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Str</a>
-										<a title="Automatically equip gear with the highest Light Level" data-bind="fastclick: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12"><span data-bind="text: $root.activeText().light"></span> @ <span data-bind="text: character.highestLevel"></span></a>
+										<a title="Automatically equip gear with the highest Light Level" data-bind="fastclick: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12"><span data-bind="text: $root.activeText().light"></span></a>
 										<a title="Automatically equip gear with the highest Combined Stat Points" data-bind="text: $root.activeText().most_points, fastclick: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
 									</div>
 									<span class="font-bold col-xs-24 statsToolTitle">
