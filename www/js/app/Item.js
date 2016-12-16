@@ -180,6 +180,7 @@ Item.prototype = {
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Quests"
             };
+            console.log("found a quest item! ", item.itemHash, item, info);
         } else {
             /* Classified Items */
             info = {
@@ -189,8 +190,7 @@ Item.prototype = {
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Classified"
             };
-            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
-            tgd.localLog(item.itemHash);
+            console.log("found an item without a definition! ", item.itemHash, item);
         }
         if (info.bucketTypeHash in tgd.DestinyBucketTypes) {
             //some weird stuff shows up under this bucketType w/o this filter
@@ -247,6 +247,8 @@ Item.prototype = {
                 }, "")
             });
             self.updateItem(item);
+        } else {
+            console.log("item not being inserted", item, info, self.character.uniqueName());
         }
     },
     updateItem: function(item) {
@@ -262,6 +264,7 @@ Item.prototype = {
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Quests"
             };
+            console.log("found a quest item! ", item.itemHash, item, info);
         } else {
             /* Classified Items */
             info = {
@@ -271,8 +274,7 @@ Item.prototype = {
                 icon: "/img/misc/missing_icon.png",
                 itemTypeName: "Classified"
             };
-            tgd.localLog("found an item without a definition! " + JSON.stringify(item));
-            tgd.localLog(item.itemHash);
+            console.log("found an item without a definition! ", item.itemHash, item);
         }
         var bucketType = item.bucketType || self.character.getBucketTypeHelper(item, info);
         var primaryStat = self.parsePrimaryStat(item, bucketType);

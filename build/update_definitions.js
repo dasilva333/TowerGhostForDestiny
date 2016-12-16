@@ -57,6 +57,18 @@ var neededFiles = [
 			obj.itemTypeName = "Armor Shader";
 			obj.icon = "/img/misc/missing_icon.png";
 			obj.itemDescription = "Equip this shader to change the color of your armor.";
+		} else if ( obj.itemHash == "1458765388" ){
+			obj.bucketTypeHash = "434908299";
+			obj.itemName = "Classified";
+			obj.equippable = true;
+			obj.itemTypeName = "Artifact";
+			obj.icon = "/img/misc/missing_icon.png";
+		} else if ( obj.itemHash == "320629370" ){
+			obj.bucketTypeHash = "434908299";
+			obj.itemName = "Classified";
+			obj.equippable = true;
+			obj.itemTypeName = "Artifact";
+			obj.icon = "/img/misc/missing_icon.png";
 		}
 		obj.itemName = encodeURIComponent(obj.itemName);
 		obj.tierTypeName = encodeURIComponent(obj.tierTypeName);
