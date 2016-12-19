@@ -157,9 +157,6 @@ tgd.bungie = (function(complete) {
     this.processTokens = function(result) {
         /* if refresh token or access token is invalid this needs to be determined  and set the values to blank */
         var tokens = {};
-        if (result && result.ErrorCode && result.ErrorCode != 1) {
-            BootstrapDialog.alert(result.Message + " - " + JSON.stringify(result.MessageData))
-        }
         if (result && result.accessToken && result.accessToken.value) {
             tokens.accessToken = "Bearer " + result.accessToken.value;
             self.accessToken(tokens.accessToken);
@@ -179,7 +176,10 @@ tgd.bungie = (function(complete) {
                 refreshToken: self.refreshToken()
             },
             complete: function(result) {
-                if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107 || result.ErrorCode == 19)) {
+                if (result && result.ErrorCode) {
+                    if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107 || result.ErrorCode == 19)) {
+                        BootstrapDialog.alert(result.Message + " - " + JSON.stringify(result.MessageData))
+                    }                
                     self.accessToken("");
                     self.refreshToken("");
                     callback();
