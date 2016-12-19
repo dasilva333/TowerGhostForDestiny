@@ -164,7 +164,7 @@ tgd.bungie = (function(complete) {
                 refreshToken: self.refreshToken()
             },
             complete: function(result) {
-                if (result && result.ErrorCode && result.ErrorCode == 5) {
+                if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107)) {
                     self.accessToken("");
                     self.refreshToken("");
                     callback();
