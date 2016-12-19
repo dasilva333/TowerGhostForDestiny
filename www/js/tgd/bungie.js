@@ -17,50 +17,65 @@ tgd.bungie = (function(complete) {
 
     this.savedUsers = ko.observableArray();
     this.activeUser = ko.observable();
+    this.activeSystem = ko.observable();
     this.accessToken = ko.pureComputed(new tgd.StoreObj("accessToken"));
     this.refreshToken = ko.pureComputed(new tgd.StoreObj("refreshToken"));
 
     this.loginWithCode = function(code, cb) {
+        console.log("loginWithCode", arguments);
         self.getAccessTokensFromCode(code, function(tokens) {
             self.user(function(user) {
                 self.savedUsers.push({
-                    user: user,
+                    profile: user,
                     tokens: tokens,
                     isDefault: true
                 });
-                self.activeUser(user);
+                console.log("setting activeUser to", user);
+                self.activeUser({
+                    profile: user,
+                    tokens: tokens
+                });
+                console.log("cb", cb);
                 if (cb) cb(user);
             });
         });
     };
 
-    this.openBungieWindow = function(type) {
-        return function(cb) {
-
-            if (isMobile) {
-                /*ref.addEventListener('loadstop', function(event) {
-                    if (event.url.match("oauth.cfm")) {
-                        var code = event.url.split("=")[1];
-                        ref.close();
-                        self.loginWithCode(code, cb);
-                    }
-                });*/
-                window.open(bungieAuthURL, '_system');
-            } else {
-                window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
-                // Create IE + others compatible event handler
-                var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
-                var eventer = window[eventMethod];
-                var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
-                // Listen to message from child window
-                eventer(messageEvent, function(e) {
-                    var code = e.data;
-
-                    self.loginWithCode(code, cb);
-
-                }, false);
-            }
+    this.login = function() {
+        return function(){
+            self.openBungieWindow(app.activeUser);
         };
+    };
+
+    this.openBungieWindow = function(cb, event) {
+        console.log("call openBungieWindow", arguments);
+        if (!_.isFunction(cb)) {
+            console.log("openBungieWindow called with invalid params");
+            return;
+        }
+        if (isMobile) {
+            /*ref.addEventListener('loadstop', function(event) {
+                if (event.url.match("oauth.cfm")) {
+                    var code = event.url.split("=")[1];
+                    ref.close();
+                    self.loginWithCode(code, cb);
+                }
+            });*/
+            window.open(bungieAuthURL, '_system');
+        } else {
+            window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
+            // Create IE + others compatible event handler
+            var eventMethod = window.addEventListener ? "addEventListener" : "attachEvent";
+            var eventer = window[eventMethod];
+            var messageEvent = eventMethod == "attachEvent" ? "onmessage" : "message";
+            // Listen to message from child window
+            eventer(messageEvent, function(e) {
+                var code = e.data;
+                console.log("code openBungieWindow", code, cb);
+                self.loginWithCode(code, cb);
+
+            }, false);
+        }
     };
 
     this.retryRequest = function(opts) {
@@ -123,7 +138,7 @@ tgd.bungie = (function(complete) {
                                 if (self.accessToken() == "") {
                                     self.openBungieWindow(function() {
                                         self.retryRequest(opts);
-                                    })();
+                                    });
                                 } else {
                                     self.retryRequest(opts);
                                 }
@@ -210,10 +225,10 @@ tgd.bungie = (function(complete) {
     };
 
     this.logout = function() {
-        _.each(self.savedUsers(), function(u) {
-            u.isDefault = false;
-        });
-        self.activeUser({});
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("savedUsers");
+        location.href = location.href;
     };
 
     this.getUrl = function() {
@@ -237,15 +252,17 @@ tgd.bungie = (function(complete) {
                     });
                     return;
                 }
-                var user = {};
-                user.user = {
-                    displayName: res.displayName,
-                    membershipId: res.membershipId
+                console.log("GetBungieNetUser", res);
+                var stUser = {};
+                stUser.ids = {
+                    displayName: res.user.displayName,
+                    membershipId: res.user.membershipId,
+                    uniqueName: res.user.uniqueName
                 };
-                user.systems = [];
+                stUser.systems = [];
 
                 if (!_.isEmpty(res.gamerTag)) {
-                    user.systems.push({
+                    stUser.systems.push({
                         system: 'xbl',
                         id: res.gamerTag,
                         type: 1,
@@ -253,15 +270,16 @@ tgd.bungie = (function(complete) {
                     });
                 }
                 if (!_.isEmpty(res.psnId)) {
-                    user.systems.push({
+                    stUser.systems.push({
                         system: 'psn',
                         id: res.psnId,
                         type: 2,
                         preferred: false
                     });
                 }
-                user.systems[0].preferred = true;
-                callback(user);
+                stUser.systems[0].preferred = true;
+                console.log("created user", stUser);
+                callback(stUser);
             }
         });
     };
@@ -337,9 +355,8 @@ tgd.bungie = (function(complete) {
     };
 
     this.inventory = function(characterId, callback) {
-        var system = _.findWhere(self.activeUser().user.systems, {
-            preferred: true
-        });
+        var system = self.activeSystem();
+        console.log("inventory", arguments, system);
         self.request({
             route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Character/' + characterId + '/Inventory/',
             method: 'GET',
@@ -356,18 +373,22 @@ tgd.bungie = (function(complete) {
     };
 
     this.search = function(activeSystem, callback) {
-        var system = _.findWhere(self.activeUser().user.systems, {
-            preferred: true
+        var system = _.findWhere(self.activeUser().profile.systems, {
+            system: activeSystem.toLowerCase()
         });
+        console.log("activeSystem", activeSystem, "systems", self.activeUser().profile.systems, "system", system);
         if (system && system.membership) {
+            self.activeSystem(system);
             self.account(callback);
         } else {
+            console.log("using system", system);
             self.request({
                 route: '/Destiny/' + system.type + '/Stats/GetMembershipIdByDisplayName/' + system.id + '/',
                 method: 'GET',
                 complete: function(membership) {
                     if (membership > 0) {
                         system.membership = membership;
+                        self.activeSystem(system);
                         self.savedUsers(self.savedUsers());
                         self.account(callback);
                     } else {
@@ -380,10 +401,8 @@ tgd.bungie = (function(complete) {
         }
     };
 
-    this.account = function(callback) {
-        var system = _.findWhere(self.activeUser().user.systems, {
-            preferred: true
-        });
+    this.account = function(callback) {        
+        var system = self.activeSystem();
         self.request({
             route: '/Destiny/' + system.type + '/Account/' + system.membership + '/',
             method: 'GET',
@@ -434,6 +453,7 @@ tgd.bungie = (function(complete) {
         });
         console.log("defaultUser", defaultUser);
         if (tgd && tgd.bungieCode) {
+            console.log("tgd.bungieCode");
             self.loginWithCode(tgd.bungieCode, complete);
         } else if (_.isEmpty(self.savedUsers())) {
             complete({
