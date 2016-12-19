@@ -25,42 +25,26 @@ tgd.bungie = (function(complete) {
         console.log("loginWithCode", arguments);
         self.getAccessTokensFromCode(code, function(tokens) {
             self.user(function(user) {
-                self.savedUsers.push({
+                var account = {
                     profile: user,
                     tokens: tokens,
                     isDefault: true
-                });
-                console.log("setting activeUser to", user);
-                self.activeUser({
-                    profile: user,
-                    tokens: tokens
-                });
-                console.log("cb", cb);
+                };
+                self.savedUsers.push(account);
+                self.activeUser(account);
                 if (cb) cb(user);
             });
         });
     };
 
     this.login = function() {
-        return function(){
+        return function() {
             self.openBungieWindow(app.activeUser);
         };
     };
 
     this.openBungieWindow = function(cb, event) {
-        console.log("call openBungieWindow", arguments);
-        if (!_.isFunction(cb)) {
-            console.log("openBungieWindow called with invalid params");
-            return;
-        }
         if (isMobile) {
-            /*ref.addEventListener('loadstop', function(event) {
-                if (event.url.match("oauth.cfm")) {
-                    var code = event.url.split("=")[1];
-                    ref.close();
-                    self.loginWithCode(code, cb);
-                }
-            });*/
             window.open(bungieAuthURL, '_system');
         } else {
             window.ref = window.open(bungieAuthURL, "authWindow", "width=600,height=600");
@@ -71,9 +55,7 @@ tgd.bungie = (function(complete) {
             // Listen to message from child window
             eventer(messageEvent, function(e) {
                 var code = e.data;
-                console.log("code openBungieWindow", code, cb);
                 self.loginWithCode(code, cb);
-
             }, false);
         }
     };
@@ -132,7 +114,6 @@ tgd.bungie = (function(complete) {
                         var obj = response;
                         if (typeof obj == "object" && "Response" in obj)
                             obj = response.Response;
-                        console.log("obj", obj);
                         if (obj && obj.ErrorCode && obj.ErrorCode == 99) {
                             self.getAccessTokensFromRefreshToken(function() {
                                 if (self.accessToken() == "") {
@@ -179,7 +160,7 @@ tgd.bungie = (function(complete) {
                 if (result && result.ErrorCode) {
                     if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107 || result.ErrorCode == 19)) {
                         BootstrapDialog.alert(result.Message + " - " + JSON.stringify(result.MessageData))
-                    }                
+                    }
                     self.accessToken("");
                     self.refreshToken("");
                     callback();
@@ -202,25 +183,6 @@ tgd.bungie = (function(complete) {
                 var tokens = self.processTokens(result);
                 callback(tokens);
             }
-        });
-    };
-
-    this.getVendorData = function(characterId, vendorId, callback) {
-        self.request({
-            route: '/Destiny/' + self.active.type +
-                '/MyAccount/' +
-                '/Character/' + characterId +
-                '/Vendor/' + vendorId + '/Metadata/',
-            method: 'GET',
-            complete: callback
-        });
-    };
-
-    this.vault = function(callback) {
-        self.request({
-            route: '/Destiny/' + self.active.type + '/MyAccount/Vault/',
-            method: 'GET',
-            complete: callback
         });
     };
 
@@ -252,7 +214,6 @@ tgd.bungie = (function(complete) {
                     });
                     return;
                 }
-                console.log("GetBungieNetUser", res);
                 var stUser = {};
                 stUser.ids = {
                     displayName: res.user.displayName,
@@ -278,26 +239,39 @@ tgd.bungie = (function(complete) {
                     });
                 }
                 stUser.systems[0].preferred = true;
-                console.log("created user", stUser);
                 callback(stUser);
             }
         });
     };
 
-    this.account = function(callback) {
+    this.getVendorData = function(characterId, vendorId, callback) {
+        var system = self.activeSystem();
         self.request({
-            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/',
+            route: '/Destiny/' + system.type +
+                '/MyAccount/' +
+                '/Character/' + characterId +
+                '/Vendor/' + vendorId + '/Metadata/',
+            method: 'GET',
+            complete: callback
+        });
+    };
+
+    this.vault = function(callback) {
+        var system = self.activeSystem();
+        self.request({
+            route: '/Destiny/' + system.type + '/MyAccount/Vault/',
             method: 'GET',
             complete: callback
         });
     };
 
     this.setlockstate = function(characterId, itemId, state, callback) {
+        var system = self.activeSystem();
         self.request({
             route: '/Destiny/SetLockState/',
             method: 'POST',
             payload: {
-                membershipType: self.active.type,
+                membershipType: system.type,
                 characterId: characterId,
                 itemId: itemId,
                 state: state
@@ -307,12 +281,13 @@ tgd.bungie = (function(complete) {
     };
 
     this.transfer = function(characterId, itemId, itemHash, amount, toVault, callback) {
+        var system = self.activeSystem();
         self.request({
             route: '/Destiny/TransferItem/',
             method: 'POST',
             payload: {
                 characterId: characterId,
-                membershipType: self.active.type,
+                membershipType: system.type,
                 itemId: itemId,
                 itemReferenceHash: itemHash,
                 stackSize: amount,
@@ -323,11 +298,12 @@ tgd.bungie = (function(complete) {
     };
 
     this.equip = function(characterId, itemId, callback) {
+        var system = self.activeSystem();
         self.request({
             route: '/Destiny/EquipItem/',
             method: 'POST',
             payload: {
-                membershipType: self.active.type,
+                membershipType: system.type,
                 characterId: characterId,
                 itemId: itemId
             },
@@ -336,17 +312,19 @@ tgd.bungie = (function(complete) {
     };
 
     this.getAccountSummary = function(callback) {
+        var system = self.activeSystem();
         self.request({
-            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/Summary/',
+            route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Summary/',
             method: 'GET',
             complete: callback
         });
     };
 
     this.getItemDetail = function(characterId, instanceId, callback) {
+        var system = self.activeSystem();
         self.request({
-            route: '/Destiny/' + self.active.type +
-                '/Account/' + self.active.membership +
+            route: '/Destiny/' + system.type +
+                '/Account/' + system.membership +
                 '/Character/' + characterId +
                 '/Inventory/' + instanceId + '/',
             method: 'GET',
@@ -356,7 +334,6 @@ tgd.bungie = (function(complete) {
 
     this.inventory = function(characterId, callback) {
         var system = self.activeSystem();
-        console.log("inventory", arguments, system);
         self.request({
             route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Character/' + characterId + '/Inventory/',
             method: 'GET',
@@ -365,8 +342,9 @@ tgd.bungie = (function(complete) {
     };
 
     this.character = function(characterId, callback) {
+        var system = self.activeSystem();
         self.request({
-            route: '/Destiny/' + self.active.type + '/Account/' + self.active.membership + '/Character/' + characterId + '/',
+            route: '/Destiny/' + system.type + '/Account/' + system.membership + '/Character/' + characterId + '/',
             method: 'GET',
             complete: callback
         });
@@ -376,7 +354,6 @@ tgd.bungie = (function(complete) {
         var system = _.findWhere(self.activeUser().profile.systems, {
             system: activeSystem.toLowerCase()
         });
-        console.log("activeSystem", activeSystem, "systems", self.activeUser().profile.systems, "system", system);
         if (system && system.membership) {
             self.activeSystem(system);
             self.account(callback);
@@ -401,7 +378,7 @@ tgd.bungie = (function(complete) {
         }
     };
 
-    this.account = function(callback) {        
+    this.account = function(callback) {
         var system = self.activeSystem();
         self.request({
             route: '/Destiny/' + system.type + '/Account/' + system.membership + '/',

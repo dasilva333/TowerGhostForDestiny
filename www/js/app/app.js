@@ -1044,8 +1044,7 @@ var app = function() {
     };
 
     this.refresh = function() {
-        return;
-        if (self.bungie.gamertag()) {
+        if (self.bungie.activeUser()) {
             tgd.autoRefreshTime = (new Date()).getTime();
             var count = 0,
                 finish = function() {

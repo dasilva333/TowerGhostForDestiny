@@ -150,7 +150,7 @@
     },
     "bungie.js": {
       "filename": "js/tgd/bungie.js",
-      "version": "94fa871828ed8a8691817e7a953007a532b22aa9701e7cf90441242d37fc4c07"
+      "version": "a1b4ec8dbaf2b1632421f2bc1e2413f72ba99cb8111ee10f61d5c26c589be9d3"
     },
     "dialog.js": {
       "filename": "js/tgd/dialog.js",
@@ -210,7 +210,7 @@
     },
     "app.js": {
       "filename": "js/app/app.js",
-      "version": "050966d2b17a5e731da63fd86b5a5fe1dbc24d4846967736f5da1c1eaab87229"
+      "version": "a057080a4da13662048153a42e7ae07b3e5207caaced273bebfc79ccac0740f3"
     },
     "buy.js": {
       "filename": "js/extras/buy.js",
