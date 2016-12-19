@@ -179,7 +179,7 @@ tgd.bungie = (function(complete) {
                 refreshToken: self.refreshToken()
             },
             complete: function(result) {
-                if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107)) {
+                if (result && result.ErrorCode && (result.ErrorCode == 5 || result.ErrorCode == 2107 || result.ErrorCode == 19)) {
                     self.accessToken("");
                     self.refreshToken("");
                     callback();
