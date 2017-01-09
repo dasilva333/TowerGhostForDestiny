@@ -24,14 +24,15 @@
     <preference name="android-minSdkVersion" value="7" />
 	<preference name="android-targetSdkVersion" value="19" />
     <preference name="android-installLocation" value="auto" />
-	<gap:plugin name="org.apache.cordova.globalization" />
-	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
 	<plugin spec="https://github.com/apache/cordova-plugin-inappbrowser.git" />
+	<plugin name="cordova-plugin-globalization" spec="~1.0.5" />
+	<gap:plugin name="cordova-plugin-whitelist" source="npm" />
+	<gap:plugin name="cordova-plugin-inappbrowser" source="npm" />
 	<gap:plugin name="cordova-plugin-splashscreen" source="npm" />
-    <gap:plugin name="org.apache.cordova.statusbar" />
-    <gap:plugin name="org.apache.cordova.device" />
-	<gap:plugin name="org.apache.cordova.file-transfer" />
-	<gap:plugin name="org.apache.cordova.file" />
+    <plugin name="cordova-plugin-statusbar" spec="~2.2.1" />
+    <plugin name="cordova-plugin-device" spec="~1.1.4" />
+	<plugin name="cordova-plugin-file-transfer" spec="~1.6.1" />
+	<plugin name="cordova-plugin-file" spec="~4.3.1" />
 	<gap:plugin name="com.mohamnag.inappbilling" />
     <preference name="android-iabplugin-license-key" value="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg6kyZb15cxcGhaUVThjCY+c/rGCpKXW2Ek0v/dFOlx6MTAyTA9lUe3dMijtW1RjrTzqsZ+QgcCLRAGiAzL1+tgnalZJFeAIbbWA9DXjFrkw7hMqlrAeRLWWpLXCE96lqspvrxvtcnFb2doZTmuJmH68Y7MtItM7Gdg5K2G/bDACkWcA4qD2lNTkcWG/qTvUeOM0amV+2ENdJO0uQrneva/qM7BgIRqBQqTfiFL+xMAOwDRZBHdY35e+FMWgirIrKxA0XymIRbQVyHnTIFkQOMJBZ9dUaEn0LwRgBJjblYH7puwrYSUDshMXefcQDDfb9wfisDQD90iwbgy5SzDxmwwIDAQAB" />
     <gap:plugin name="cordova-plugin-insomnia" />
