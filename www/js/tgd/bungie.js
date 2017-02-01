@@ -410,7 +410,7 @@ tgd.bungie = (function(cookieString, complete) {
         if (isChrome && chrome && chrome.webRequest) {
             chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
 				var headers = details.requestHeaders.filter(function(h) {
-				  return !(h.name === "Origin" && h.value.startsWith("chrome-extension://"));
+				  return !(h.name === "Origin" && h.value.startsWith(chrome.extension.getURL('')));
 				});
 				
                 return {
