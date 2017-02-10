@@ -915,7 +915,7 @@ var app = function() {
     };
 
     this.hasBothAccounts = function() {
-        return !_.isEmpty(self.activeUser().psnId) && !_.isEmpty(self.activeUser().gamerTag);
+        return self.activeUser() && self.activeUser().systems && self.activeUser().systems.length > 1;
     };
 
     this.useXboxAccount = function() {
@@ -942,7 +942,8 @@ var app = function() {
     var loadingData = false;
     this.search = function() {
         console.time("new profile");
-        if (!("user" in self.activeUser())) {
+        console.log("searching");
+        if (!("systems" in self.activeUser())) {
             return;
         }
         if (loadingData === true) {
@@ -1037,13 +1038,13 @@ var app = function() {
     };
 
     this.logout = function() {
-        self.bungie.logout(function() {
-            //window.location.reload();
-        });
+        self.characters.removeAll();
+        self.activeUser({});
+        self.bungie.logout();
     };
 
     this.refresh = function() {
-        /*if (self.bungie.gamertag()) {
+        if (self.bungie.activeUser()) {
             tgd.autoRefreshTime = (new Date()).getTime();
             var count = 0,
                 finish = function() {
@@ -1075,7 +1076,7 @@ var app = function() {
                     tgd.localLog(result);
                 }
             });
-        }*/
+        }
     };
 
     this.refreshHandler = function() {
@@ -1279,11 +1280,11 @@ var app = function() {
 
     this.saveLoadouts = function(includeMessage) {
         var _includeMessage = _.isUndefined(includeMessage) ? true : includeMessage;
-        if (self.activeUser() && self.activeUser().user && self.activeUser().user.membershipId) {
+        if (self.activeUser() && self.activeUser().ids && self.activeUser().ids.membershipId) {
             var loadoutKeys = ["name", "ids", "generics", "characterId"];
             var params = {
                 action: "save",
-                membershipId: parseFloat(self.activeUser().user.membershipId),
+                membershipId: parseFloat(self.activeUser().ids.membershipId),
                 loadouts: ko.toJSON(
                     _.map(self.loadouts(), function(loadout) {
                         return _.reduce(loadout, function(memo, value, key) {
@@ -1342,11 +1343,11 @@ var app = function() {
                             return item.getValue("All");
                         })));
                     }).join("");
-            } catch (e) {}
+            } catch (e) {};
             self.apiRequest({
                 action: "load",
                 //this ID is shared between PSN/XBL so a better ID is one that applies only to one profile
-                membershipId: parseFloat(self.activeUser().user.membershipId),
+                membershipId: parseFloat(self.activeUser().ids.membershipId),
                 //Crowd Sourced values for maxCSP
                 maxCSP: maxCSP
                     /*this one applies only to your current profile
@@ -2160,7 +2161,7 @@ var app = function() {
             });
         }
         self.activeUser.subscribe(function(user) {
-            if (_.has(user, 'user')) {
+            if (_.has(user, 'systems')) {
                 self.search();
             }
         });
