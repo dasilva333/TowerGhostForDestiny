@@ -51,6 +51,7 @@ function Profile(character) {
     this.potentialTier = ko.pureComputed(this._potentialTier, this);
     this.potentialCSP = ko.pureComputed(this._potentialCSP, this);
     this.powerLevel = ko.pureComputed(this._powerLevel, this);
+    this.highestLevel = ko.pureComputed(this._highestLevel, this);
     this.classLetter = ko.pureComputed(this._classLetter, this);
     this.uniqueName = ko.pureComputed(this._uniqueName, this);
     this.iconBG = ko.pureComputed(this._iconBG, this);
@@ -301,6 +302,10 @@ Profile.prototype = {
                 var newItems = _.filter(results.data.items, self.reloadBucketFilter(buckets));
                 self.addItems(newItems, buckets);
                 done();
+            } else if (results && results.data && results.data.items) {
+                var newItems = _.filter(results.data.items, self.reloadBucketFilter(buckets));
+                self.addItems(newItems, buckets);
+                done();
             } else {
                 if (results && results.ErrorCode && results.ErrorCode == 99) {
                     done();
@@ -407,6 +412,14 @@ Profile.prototype = {
     _powerLevel: function() {
         if (this.id == "Vault") return "";
         return this.calculatePowerLevelWithItems(this.equippedGear());
+    },
+    _highestLevel: function() {
+        var character = this;
+        var items = _.flatten(_.map(app.characters(), function(avatar) {
+            return avatar.items();
+        }));
+        var highestSet = character.findHighestItemsByLight(tgd.DestinyWeaponPieces.concat(tgd.DestinyArmorPieces), items)[1];
+        return character.calculatePowerLevelWithItems(highestSet);
     },
     _reloadBucket: function(model, event, callback, excludeMessage) {
         var self = this,

@@ -114,7 +114,7 @@ tgd.bungie = (function(complete) {
                         var obj = response;
                         if (typeof obj == "object" && "Response" in obj)
                             obj = response.Response;
-                        if (obj && obj.ErrorCode && obj.ErrorCode == 99) {
+                        if (obj && obj.ErrorCode && [99, 2111].indexOf(obj.ErrorCode) > -1) {
                             self.getAccessTokensFromRefreshToken(function() {
                                 if (self.accessToken() == "") {
                                     self.openBungieWindow(function() {

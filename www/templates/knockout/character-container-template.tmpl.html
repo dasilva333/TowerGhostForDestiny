@@ -77,7 +77,7 @@
 										<a title="Automatically equip gear with the most Intellect" data-bind="text: $root.activeText().inte, fastclick: character.equipHighest('Intellect'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Int</a>
 										<a title="Automatically equip gear with the most Discipline" data-bind="text: $root.activeText().disc, fastclick: character.equipHighest('Discipline'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Disc</a>
 										<a title="Automatically equip gear with the most Strength" data-bind="text: $root.activeText().str, fastclick: character.equipHighest('Strength'), clickBubble: false" class="btn btn-default btn-sm col-xs-8">Str</a>
-										<a title="Automatically equip gear with the highest Light Level" data-bind="text: $root.activeText().light, fastclick: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Light</a>
+										<a title="Automatically equip gear with the highest Light Level" data-bind="fastclick: character.equipHighest('Light'), clickBubble: false" class="btn btn-default btn-sm col-xs-12"><span data-bind="text: $root.activeText().light"></span></a>										
 										<a title="Automatically equip gear with the highest Combined Stat Points" data-bind="text: $root.activeText().most_points, fastclick: character.equipHighest('All'), clickBubble: false" class="btn btn-default btn-sm col-xs-12">Points</a>
 									</div>
 									<span class="font-bold col-xs-24 statsToolTitle">
