@@ -92,24 +92,24 @@
     font-size: 80%;
 }
 
-.character-box .stats {
-	position: absolute;     
-	top: 45px;
-    left: 5px; 
-	background: rgba(18, 21, 20, .8); 
-	z-index: 2; 
-	width: 99% !important;
-	font-size: 15px;
+.character .stats {
+    position: absolute;
+    top: 48px;
+    left: 10px;
+    background: rgba(18,21,20,.8);
+    z-index: 2;
+    width: 97%!important;
+    font-size: 15px;
 }
-.character-box .stats .skillStatRow div.row {
+.character .stats .skillStatRow div.row {
 	padding-top: 2px;
 	padding-bottom: 2px;
 }
-.character-box .stats .btn-group {
+.character .stats .btn-group {
 	padding-top: 3px;
 	padding-bottom: 3px;
 }
-.character-box .stats .font-bold {
+.character .stats .font-bold {
     font-size: 0.9em;
 }
 .container .title2 {

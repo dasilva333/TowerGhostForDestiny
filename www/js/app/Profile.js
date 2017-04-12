@@ -8,6 +8,7 @@ function Profile(character) {
     this.level = ko.observable("");
     this.stats = ko.observable("");
     this.race = ko.observable("");
+    this.loadoutsFilter = ko.observable("");
     this.percentToNextLevel = ko.observable("");
     this.background = ko.observable("");
     this.items = ko.observableArray().extend({

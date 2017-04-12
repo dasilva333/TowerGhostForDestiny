@@ -11,6 +11,8 @@
                             <div class="power" data-bind="text: character.powerLevel"></div>
                         </div>
                         <div class="progression" data-bind="visible: id != 'Vault', style: { width: character.percentToNextLevel() + '%' }, attr: { title: character.percentToNextLevel() + '% to next Light Level' }">&nbsp;</div>
+                    </div>
+                    <div>
                         <div class="row stats" data-bind="with: stats, visible: statsShowing">
                             <div class="btn-group col-xs-24">
 								<a data-bind="fastclick: character.setPane('info'), clickBubble: false, css: character.statsPane() == 'info' ? 'btn-primary' : 'btn-default'" class="btn btn-default btn-sm col-xs-8 text-center"><i class="fa fa-info"></i> Info</a>
@@ -102,13 +104,16 @@
 									</div>
 								</div>
 							</div>
-							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing()">
+							<div data-bind="if: character.statsPane() == 'more' && character.statsShowing(), clickBubble: false">
 								<span class="font-bold col-xs-24 statsToolTitle text-center" data-bind="visible: character.loadouts().length > 0" style="display:none;">
 									Loadouts (<span data-bind="text: character.loadouts().length"></span>)
 								</span>
+                                <div class="btn-group col-xs-24">
+									<input class="form-control" name="filter" autocomplete="off" data-bind="valueUpdate: 'input', value: character.loadoutsFilter, attr: { placeholder: 'Filter Loadouts' }, clickBubble: false" type="text">
+								</div>
 								<div class="btn-group col-xs-24">
 									<ul data-bind="foreach: { data: character.loadouts, as: 'loadout' }" class="list-group text-left" style="margin-bottom:0; max-height: 125px; overflow-y: scroll;">
-										<li class="list-group-item" style="padding:2px">
+										<li class="list-group-item" style="padding:2px" data-bind="visible: _.isEmpty(character.loadoutsFilter()) || loadout.name().toLowerCase().indexOf(character.loadoutsFilter().toLowerCase()) > -1">
 											<span class="font-smaller-2">
 												<input type="button" class="btn btn-sm btn-default" value="View" data-bind="fastclick: setActive, clickBubble: false">
 												<span data-bind="text: loadout.name"></span>
@@ -136,7 +141,7 @@
 									</ul>
 								</div>
 							</div>
-                        </div>
+                        </div>                    
                     </div>
                 </div>
                 <div class="inventory">

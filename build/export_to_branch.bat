@@ -24,3 +24,4 @@ cd ..\build
 rd /s /q ..\..\branches\%1\www\data\common\
 xcopy branch ..\..\branches\%1\www\ /E /Y
 rd /s /q branch
+echo '%1'

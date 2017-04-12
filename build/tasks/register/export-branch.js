@@ -16,7 +16,7 @@ module.exports = function (grunt) {
 		}, function (error, result, code) {
             
             if ( result ) {
-                grunt.log.ok("export complete: " + result.length);
+                grunt.log.ok("export complete: " + result);
                 done();                
             }	
             
