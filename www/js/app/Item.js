@@ -119,9 +119,15 @@ var Item = function(model, profile) {
         model.isEquipment = true;
     }
 
+    this.isEquipped = ko.observable();
+
     /* TODO: Determine why this is needed */
     _.each(model, function(value, key) {
-        self[key] = value;
+        if (_.isFunction(self[key])) {
+            self[key](value);
+        } else {
+            self[key] = value;
+        }
     });
 
     this.character = profile;
@@ -216,7 +222,6 @@ Item.prototype = {
                 href: "http://destinydb.com/items/" + item.itemHash,
                 _id: item.itemInstanceId,
                 characterId: ko.observable(self.character.id),
-                isEquipped: ko.observable(),
                 locked: ko.observable(),
                 bonusStatOn: ko.observable(),
                 primaryStat: ko.observable(),

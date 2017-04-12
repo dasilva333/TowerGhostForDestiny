@@ -6,17 +6,21 @@ module.exports = function (grunt) {
 		
 		var done = this.async();
 
-		var branch = this.target;
-		
+		var branch = this.data.branch;
+        
+        console.log("exporting to branch " + branch);
+        
 		grunt.util.spawn({
 		  cmd: 'export_to_branch.bat',
 		  args: [ branch ],
-		}, function done(error, result, code) {
-		  if ( result ) {
-			grunt.log.ok(result);
-		  }	
+		}, function (error, result, code) {
+            
+            if ( result ) {
+                grunt.log.ok("export complete: " + result.length);
+                done();                
+            }	
+            
 		});
 		
-		done();
 	});
 }
