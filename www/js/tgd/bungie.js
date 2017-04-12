@@ -409,14 +409,12 @@ tgd.bungie = (function(cookieString, complete) {
         }
         if (isChrome && chrome && chrome.webRequest) {
             chrome.webRequest.onBeforeSendHeaders.addListener(function(details) {
-                for (var i = 0; i < details.requestHeaders.length; ++i) {
-                    if (details.requestHeaders[i].name === 'Origin') {
-                        details.requestHeaders.splice(i, 1);
-                        break;
-                    }
-                }
+				var headers = details.requestHeaders.filter(function(h) {
+				  return !(h.name === "Origin" && h.value.startsWith(chrome.extension.getURL('')));
+				});
+				
                 return {
-                    requestHeaders: details.requestHeaders
+                    requestHeaders: headers
                 };
             }, {
                 urls: ["https://*.bungie.net/*"]
