@@ -11,7 +11,7 @@ To get started, check out <http://towerghostfordestiny.com//>! You can look up p
 - [Contributing](#contributing)
 - [Project Powered](#project-powered-by)
 
-##Store Install Links
+## Store Install Links
 
 - [Tower Ghost in Chrome Store](https://chrome.google.com/webstore/detail/tower-ghost-for-destiny/gdjndlpockopgjbonnfdmkcmkcikjhge)
 - [Tower Ghost in Firefox Store](https://addons.mozilla.org/en-us/firefox/addon/tower-ghost-for-destiny/)
@@ -19,19 +19,19 @@ To get started, check out <http://towerghostfordestiny.com//>! You can look up p
 - [Tower Ghost in Google Play Store](https://play.google.com/store/apps/details?id=com.richardpinedo.towerghostfordestiny)
 - [Tower Ghost in Windows Phone Store](http://www.windowsphone.com/en-us/store/app/destiny-item-viewer/f98e5060-3464-419c-b83d-14300714a676)
 
-##Download Files
+## Download Files
 
 You can find the latest download for each platform here:
 
 <http://towerghostfordestiny.com/index.php/downloads/>
 
-##Install Instructions
+## Install Instructions
 
 Latest help & FAQ support found here: 
 
 <http://towerghostfordestiny.com/index.php/support/>
 
-##Editing CSS
+## Editing CSS
 
 - Go to the build directory of the project (`cd build`)
 - First you need to make sure you have Node.js
@@ -44,10 +44,10 @@ Latest help & FAQ support found here:
 
 **NOTE!** If you make changes to the SCSS, you need to run `grunt prod` before you put in your PR, so it has a production build of the SCSS (aka, no source maps)
 
-##Contributing
+## Contributing
 
 Please read through our [contributing guidelines](CONTRIBUTING.md).
 
-##Project Powered By
+## Project Powered By
 
 <img src="http://towerghostfordestiny.com/browserstack.png">
